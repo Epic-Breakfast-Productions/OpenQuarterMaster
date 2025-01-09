@@ -21,6 +21,9 @@ class ScriptInfo:
 
     CONFIG_DEFAULT_UPDATE_FILE = "99-main.json"
 
+    OQM_USER = 'oqm'
+    OQM_GROUP = 'oqm'
+
 
 class ConfigKeys:
     # Email

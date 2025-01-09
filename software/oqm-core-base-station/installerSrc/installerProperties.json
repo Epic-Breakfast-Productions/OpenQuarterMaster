@@ -1,0 +1,17 @@
+{
+	"packageName": "oqm-core-base+station",
+	"maintainer": {
+		"name": "EBP <greg@epic-breakfast-productions.tech>"
+	},
+	"description": "Base Station instance for Open QuarterMaster.",
+	"homepage": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station",
+	"dependencies": {
+		"deb": "curl, jq, docker.io, oqm-manager-station+captain (>= 2.0.0), oqm-infra-jaeger (>= 1.1.0), oqm-infra-keycloak (>= 1.1.0), oqm-core-depot, oqm-core-api (>= 2.1.0)",
+		"debRec": "oqm-plugin-ext_item_search"
+	},
+	"copyright": {
+		"contact":"Greg Stewart <greg@epic-breakfast-productions.tech>",
+		"copyright":"2021-2024 Epic Breakfast Productions",
+		"licence":"GPL-3+"
+	}
+}

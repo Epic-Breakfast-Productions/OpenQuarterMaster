@@ -1,7 +1,8 @@
-import logging
 import os
 from enum import Enum
 from ConfigManager import *
+from LogUtils import *
+
 
 
 class CronFrequency(Enum):
@@ -16,6 +17,7 @@ class CronFrequency(Enum):
 
 
 class CronUtils:
+    log = LogUtils.setupLogger("CronUtils")
 
     @staticmethod
     def getFileName(name: str):
@@ -31,14 +33,14 @@ class CronUtils:
 
     @staticmethod
     def disableCron(name: str):
-        logging.info("Disabling cron " + name)
+        CronUtils.log.info("Disabling cron " + name)
         fileName = CronUtils.getFileName(name)
 
         for curFrequency in CronFrequency:
             curFile = CronUtils.getFileDir(curFrequency, fileName)
             try:
                 os.remove(curFile)
-                logging.info("Removed cron script %s", curFile)
+                CronUtils.log.info("Removed cron script %s", curFile)
             except OSError:
                 pass
 
@@ -49,7 +51,7 @@ class CronUtils:
             frequency: CronFrequency
     ):
         CronUtils.disableCron(name)
-        logging.info("Enabling cron %s", name)
+        CronUtils.log.info("Enabling cron %s", name)
         fileName = CronUtils.getFileName(name)
         filePath = CronUtils.getFileDir(frequency, fileName)
         fileContent = """
@@ -59,7 +61,7 @@ class CronUtils:
 """ + script
         with open(filePath, "w") as cronFile:
             cronFile.write(fileContent)
-        logging.info("Enabled cron %s at file %s", name, filePath)
+        CronUtils.log.info("Enabled cron %s at file %s", name, filePath)
 
     @staticmethod
     def isCronEnabled(name: str) -> bool:
@@ -67,6 +69,6 @@ class CronUtils:
         for curFrequency in CronFrequency:
             curFile = CronUtils.getFileDir(curFrequency, fileName)
             if os.path.exists(curFile):
-                logging.debug("Found cron file %s, indicating is enabled.", curFile)
+                CronUtils.log.debug("Found cron file %s, indicating is enabled.", curFile)
                 return True
         return False

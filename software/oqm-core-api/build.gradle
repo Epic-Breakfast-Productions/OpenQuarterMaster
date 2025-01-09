@@ -1,0 +1,112 @@
+plugins {
+	id 'java'
+	id 'io.quarkus'
+	id "io.freefair.lombok" version "8.11"
+}
+
+group 'com.ebp.openQuarterMaster'
+version '2.1.5'
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+	//for getting OQM Library snapshot versions
+	maven({url= "https://s01.oss.sonatype.org/content/repositories/snapshots/"})
+}
+
+dependencies {
+	implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+	implementation 'io.quarkus:quarkus-resteasy-reactive'
+	implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
+	implementation 'io.quarkus:quarkus-resteasy-reactive-qute'
+	implementation 'io.quarkus:quarkus-smallrye-openapi'
+	implementation 'io.quarkus:quarkus-smallrye-health'
+	implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-kafka'
+	implementation 'io.quarkus:quarkus-opentelemetry'
+	implementation 'io.quarkus:quarkus-config-yaml'
+	implementation 'io.quarkus:quarkus-qute'
+	implementation 'io.quarkus:quarkus-mongodb-panache'
+	implementation 'io.quarkus:quarkus-hibernate-validator'
+	implementation 'io.quarkus:quarkus-elytron-security'
+	implementation 'io.quarkus:quarkus-container-image-jib'
+	implementation 'io.quarkus:quarkus-rest-client-reactive'
+	implementation 'io.quarkus:quarkus-rest-client-reactive-jackson'
+	implementation 'io.quarkus:quarkus-mailer'
+	implementation 'io.quarkus:quarkus-scheduler'
+	implementation 'io.quarkus:quarkus-smallrye-jwt'
+	implementation 'io.quarkus:quarkus-elytron-security-properties-file'
+
+	//implementation 'io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:1.24.0-alpha'
+	// https://quarkus.io/guides/logging
+	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
+
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation 'com.fasterxml.jackson.module:jackson-module-blackbird'
+
+	// https://mvnrepository.com/artifact/tech.units/indriya
+	//     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
+	implementation 'tech.units:indriya:2.2.1'
+	implementation 'systems.uom:systems-common:2.1'
+	// https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
+	implementation 'tech.uom.lib:uom-lib-jackson:2.1'
+
+	implementation 'org.apache.commons:commons-lang3:3.17.0'
+	implementation 'org.apache.commons:commons-compress:1.27.1'
+	implementation 'org.apache.commons:commons-csv:1.12.0'
+	implementation 'org.apache.commons:commons-io:1.3.2'
+	implementation 'commons-codec:commons-codec:1.17.1'
+	implementation 'org.apache.tika:tika-core:3.0.0'
+
+	/*
+	Test Dependencies
+	 */
+	testImplementation group: 'io.quarkus', name: 'quarkus-junit5'
+	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
+	testImplementation group: 'io.rest-assured', name: 'rest-assured'
+	testImplementation 'io.quarkus:quarkus-smallrye-jwt-build'
+	testImplementation 'io.quarkus:quarkus-test-kafka-companion'
+	testImplementation 'net.datafaker:datafaker:2.4.2'
+	testImplementation 'org.assertj:assertj-core:3.27.0'
+	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
+}
+
+java {
+	java {
+		toolchain {
+			languageVersion.set(JavaLanguageVersion.of(21))
+		}
+	}
+}
+
+compileJava {
+	options.encoding = 'UTF-8'
+	options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+	options.encoding = 'UTF-8'
+}
+
+test {
+	minHeapSize = "128m" // initial heap size
+	maxHeapSize = "2g" // maximum heap size
+	jvmArgs(
+		"--add-opens", "java.base/java.lang=ALL-UNNAMED",
+		"--add-opens", "java.base/java.io=ALL-UNNAMED",
+		"--add-opens", "java.base/java.util=ALL-UNNAMED",
+		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
+	)
+	testLogging.showStandardStreams = true
+}
+
+/**
+ * Used to print the current version of this project.
+ *
+ * Used by the `makeInstallers.sh` script to get the version.
+ */
+tasks.register('printVersion') {
+	doLast {
+		println project.version
+	}
+}
+

@@ -6,14 +6,19 @@ from cryptography.hazmat.primitives.serialization import load_pem_private_key, p
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
 from cryptography.hazmat.primitives import hashes
-import logging
 import subprocess
 import os
 import datetime
 from cryptography import x509
+from cryptography.x509 import Certificate, Extensions, SubjectAlternativeName, GeneralName, ExtensionOID
+
 from ConfigManager import *
 from CronUtils import *
 from ServiceUtils import *
+from LogUtils import *
+from ipaddress import *
+
+from PackageManagement import PackageManagement
 
 
 class CertsUtils:
@@ -23,28 +28,33 @@ class CertsUtils:
      - https://cryptography.io/en/latest/x509/reference/
      - https://stackoverflow.com/questions/54677841/how-do-can-i-generate-a-pkcs12-file-using-python-and-the-cryptography-module
     """
+    log = LogUtils.setupLogger("CertsUtils")
 
     @staticmethod
-    def ensureCaInstalled()-> (bool, str):
+    def ensureCaInstalled(force: bool = False) -> (bool, str):
         output = ""
         root_ca_cert_path = mainCM.getConfigVal("cert.certs.CARootCert")
-        caCertName=os.path.basename(root_ca_cert_path)
+        caCertName = os.path.basename(root_ca_cert_path)
 
         # Install in system location
         updatePrevious = False
+        if force:
+            updatePrevious = True
+
         if os.path.exists("/usr/local/share/ca-certificates/" + caCertName):
             updatePrevious = True
             os.remove("/usr/local/share/ca-certificates/" + caCertName)
         if os.path.exists("/etc/ssl/certs/" + caCertName):
             updatePrevious = True
             os.remove("/etc/ssl/certs/" + caCertName)
-        if updatePrevious:
+
+        if force or updatePrevious:
             output += f"Removed previously installed root CA from system: {caCertName}\n\n"
             result = subprocess.run(["update-ca-certificates"], shell=False, capture_output=True, text=True, check=True)
 
         shutil.copy(root_ca_cert_path, "/usr/local/share/ca-certificates/")
         result = subprocess.run(["update-ca-certificates"], shell=False, capture_output=True, text=True, check=True)
-        output += "Output from updating system ca certs:\n" + result.stdout +"\n\n"
+        output += "Output from updating system ca certs:\n" + result.stdout + "\n\n"
 
         # Install for Firefox
         #   Where FF is a snap, no /usr/lib/firefox or /usr/lib/mozilla
@@ -53,22 +63,28 @@ class CertsUtils:
         ffPoliciesDir = None
         ffCertsDir = None
         if os.path.exists("/usr/lib/firefox"):
-            logging.debug("Firefox installed directly.")
+            CertsUtils.log.debug("Firefox installed directly.")
             ffInstalled = True
             ffPoliciesFile = "/usr/lib/firefox/distribution/policies.json"
             ffPoliciesDir = os.path.basename(ffPoliciesFile)
             ffCertsDir = "/usr/lib/mozilla/certificates/"
         elif os.path.exists("/etc/firefox"):
-            logging.debug("Firefox probably installed via snap.")
+            CertsUtils.log.debug("Firefox probably installed via snap.")
+            ffInstalled = True
+            ffPoliciesFile = "/etc/firefox/policies/policies.json"
+            ffPoliciesDir = os.path.basename(ffPoliciesFile)
+            ffCertsDir = "/etc/firefox/policies/certificates/"
+        elif PackageManagement.checkFirefoxSnapInstalled():
+            CertsUtils.log.debug("Firefox probably installed via newer snap.")
             ffInstalled = True
             ffPoliciesFile = "/etc/firefox/policies/policies.json"
             ffPoliciesDir = os.path.basename(ffPoliciesFile)
             ffCertsDir = "/etc/firefox/policies/certificates/"
         else:
-            logging.debug("Firefox not found on system.")
+            CertsUtils.log.debug("Firefox not found on system.")
 
         if ffInstalled:
-            logging.info("Firefox installed, setting up firefox certs.")
+            CertsUtils.log.info("Firefox installed, setting up firefox certs.")
 
             Path(ffCertsDir).mkdir(parents=True, exist_ok=True)
             shutil.copy(root_ca_cert_path, ffCertsDir)
@@ -105,8 +121,15 @@ class CertsUtils:
         return True, output
 
     @staticmethod
+    def getSAN(san: str)->GeneralName:
+        try:
+            return x509.IPAddress(ipaddress.ip_address(san))
+        except ValueError:
+            return x509.DNSName(san)
+
+    @staticmethod
     def generateSelfSignedCerts(forceRegenRoot: bool = False) -> (bool, str):
-        logging.info("Generating self-signed certs")
+        CertsUtils.log.info("Generating self-signed certs")
         output = ""
         try:
             domain = mainCM.getConfigVal("system.hostname")
@@ -213,9 +236,8 @@ class CertsUtils:
                     .serial_number(x509.random_serial_number())
                     .not_valid_before(nvb)
                     .not_valid_after(nva)
-                    .add_extension(x509.SubjectAlternativeName([x509.DNSName(domain)]), critical=False)
                     # TODO:: support multiple domains/ip's
-                    # .add_extension(x509.IPAddress(ipaddress.IPv4Address(domain)), critical=True)
+                    .add_extension(x509.SubjectAlternativeName([CertsUtils.getSAN(domain)]), critical=False)
                     .public_key(csr.public_key())
                     .sign(root_ca_key, hashes.SHA256(), default_backend())
                     )
@@ -262,19 +284,19 @@ class CertsUtils:
                 )
             output += "Wrote new private key and cert."
         except Exception as e:
-            logging.exception("FAILED to generate new certs: %s", e)
+            CertsUtils.log.exception("FAILED to generate new certs: %s", e)
             return False, f"{e}"
         return True, output
 
     @staticmethod
     def getLetsEncryptCerts() -> (bool, str):
-        logging.info("Getting Let's Encrypt certs")
+        CertsUtils.log.info("Getting Let's Encrypt certs")
         # TODO
         return False, "Not implemented yet."
 
     @staticmethod
-    def regenCerts(forceRegenCaRoot: bool = False, restartServices:bool = False) -> (bool, str):
-        logging.info("Re-running cert generation utilities")
+    def regenCerts(forceRegenCaRoot: bool = False, restartServices: bool = False) -> (bool, str):
+        CertsUtils.log.info("Re-running cert generation utilities")
         output = None
         certMode = mainCM.getConfigVal("cert.mode")
         if certMode == "provided":
@@ -292,7 +314,7 @@ class CertsUtils:
 
     @staticmethod
     def ensureCertsPresent() -> (bool, str):
-        logging.info("Ensuring certs are present.")
+        CertsUtils.log.info("Ensuring certs are present.")
         certMode = mainCM.getConfigVal("cert.mode")
         privateKeyLoc = mainCM.getConfigVal("cert.certs.privateKey")
         publicKeyLoc = mainCM.getConfigVal("cert.certs.systemCert")
@@ -310,13 +332,26 @@ class CertsUtils:
             missingList = ", ".join(missingList)
             message = f"{missingList} not present."
             if certMode == "self" or certMode == "letsEncrypt":
-                logging.info(message + " Getting.")
+                CertsUtils.log.info(message + " Getting.")
                 return CertsUtils.regenCerts()
             elif certMode == "provided":
-                logging.error(message)
+                CertsUtils.log.error(message)
                 return False, message
             else:
                 return False, "Invalid value for config cert.certs.systemCert : " + certMode
+
+        # Ensure cert has system.hostname in it
+
+        with (open(publicKeyLoc, "rb") as certFile):
+            cert: Certificate = x509.load_pem_x509_certificate(certFile.read())
+            sanExt = cert.extensions.get_extension_for_oid(ExtensionOID.SUBJECT_ALTERNATIVE_NAME) # TODO:: error check
+            sanEntries = sanExt.value.get_values_for_type(x509.DNSName) + sanExt.value.get_values_for_type(x509.IPAddress)
+            toFind = mainCM.getConfigVal("system.hostname")
+
+            if toFind not in sanEntries:
+                CertsUtils.log.info("No certificate found for system hostname set in config. Refreshing.")
+                return CertsUtils.regenCerts()
+
         return True, ""
 
     AUTO_REGEN_CERTS_CRON_NAME = "autoRegenCerts"
@@ -336,6 +371,3 @@ class CertsUtils:
     @staticmethod
     def isAutoRegenCertsEnabled() -> bool:
         return CronUtils.isCronEnabled(CertsUtils.AUTO_REGEN_CERTS_CRON_NAME)
-
-
-

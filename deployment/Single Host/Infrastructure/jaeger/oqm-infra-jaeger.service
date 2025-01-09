@@ -9,7 +9,7 @@
 # TODO:: connect to prometheus: https://github.com/open-telemetry/opentelemetry-demo/blob/main/docker-compose.yml#L595
 
 [Unit]
-Description=Jaeger server for Open Quartermaster. Version ${version}, using Jaeger all-in-one tagged to "1.51".
+Description=Jaeger server for Open Quartermaster. Version ${version}, using Jaeger all-in-one tagged to "1".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
 After=docker.service
 Wants=network-online.target docker.socket
@@ -20,7 +20,7 @@ Type=simple
 Restart=always
 Environment="CONTAINER_NAME=oqm-infra-jaeger"
 Environment="IMAGE_NAME=jaegertracing/all-in-one"
-Environment="IMAGE_VERSION=1.51"
+Environment="IMAGE_VERSION=1"
 #Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"
 
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
@@ -29,11 +29,12 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull jaeger image.'"
 #ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/infra/jaeger/uiEntry.json > /etc/oqm/ui.d/infra-jaeger.json"
 
-ExecStart=/bin/bash -c "/usr/bin/docker run \
+ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
+                                        --user $(id -u oqm):$(id -g oqm) --volume="/etc/group:/etc/group:ro" --volume="/etc/passwd:/etc/passwd:ro" --volume="/etc/shadow:/etc/shadow:ro" \
                                         --name $CONTAINER_NAME \
                                         --network=oqm-internal \
                                         -e COLLECTOR_OTLP_ENABLED=true \
-                                        jaegertracing/all-in-one:1.42"
+                                        $IMAGE_NAME:$IMAGE_VERSION --memory.max-traces=$(oqm-config -g 'infra.jaeger.options.maxTraces')"
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop jaeger container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove jaeger container'"
 

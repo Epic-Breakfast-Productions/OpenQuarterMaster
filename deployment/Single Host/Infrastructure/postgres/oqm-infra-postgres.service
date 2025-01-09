@@ -18,11 +18,12 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-TimeoutSec=5m
+TimeoutSec=10m
 Environment="CONTAINER_NAME=oqm-infra-postgres"
 Environment="IMAGE_NAME=postgres"
 Environment="IMAGE_VERSION=15"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/postgres/env.list"
+Environment="DATA_DIR=/db/postgres"
 
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
@@ -32,16 +33,21 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 # setup env list file
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/postgres"
 ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chown oqm $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"POSTGRES_USER=$(oqm-config -g 'infra.postgres.adminUser')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"POSTGRES_PASSWORD=$(oqm-config -g 'infra.postgres.adminPass')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config -g 'system.dataDir')$DATA_DIR"
+ExecStartPre=/bin/bash -c "chown -R oqm $(oqm-config -g 'system.dataDir')$DATA_DIR"
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
+                                 --rm \
+                                 --user $(id -u oqm):$(id -g oqm) --volume="/etc/group:/etc/group:ro" --volume="/etc/passwd:/etc/passwd:ro" --volume="/etc/shadow:/etc/shadow:ro" \
                                  --name $CONTAINER_NAME \
                                  --network=oqm-internal \
                                  --env-file $ENV_CONFIG_FILE \
-                                 -v /data/oqm/db/postgres/:/var/lib/postgresql/data/ \
+                                 -v $(oqm-config -g 'system.dataDir')$DATA_DIR:/var/lib/postgresql/data/ \
                                  $IMAGE_NAME:$IMAGE_VERSION"
 # determine is running
 ExecStartPost=/bin/bash -c "running=\"false\"; \

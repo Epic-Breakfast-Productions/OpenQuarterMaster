@@ -1,0 +1,23 @@
+{
+  "request": {
+    "urlPathPattern": "/upcitemdb/prod/v1/lookup",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "code" : "OK",
+      "total" : 0,
+      "offset" : 0,
+      "items" : [
+      ]
+    }
+  }
+}
+
+
+
+

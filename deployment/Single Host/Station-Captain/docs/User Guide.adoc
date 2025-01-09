@@ -55,7 +55,8 @@ This is a quick explanation of the menus in interactive mode, and what the tool 
 **** Storage usage
 **** RAM usage
 . *Manage Installation*
-
+.. *Setup Wizard*
+*** Guides you through the major setup of the system.
 .. *Select OQM major version* TODO, later
 
 .. *SSL/HTTPS Certs TODO*
@@ -99,6 +100,11 @@ TODO- document better
 .. *Plugins* TODO
 .. *Uninstall All* TODO
 
+. *Plugins*
+.. *Review Available Plugins* +
+   Select from a list of plugins to install
+.. *Select Plugins* +
+   Select from a list of plugins to uninstall
 . *Snapshots* +
   Snapshots allow you to take a current state of you system, and save it or back it up for later.
 

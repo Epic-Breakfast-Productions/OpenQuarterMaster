@@ -1,11 +1,12 @@
-import logging
 import os
 import shutil
 from ConfigManager import *
 from ServiceUtils import *
+from LogUtils import *
 
 
 class DataUtils:
+    log = LogUtils.setupLogger("DataUtils")
 
     @staticmethod
     def clearAllData() -> bool:
@@ -14,15 +15,15 @@ class DataUtils:
             ServiceUtils.SERVICE_ALL
         )
 
-        logging.info("Clearing ALL Data.")
+        DataUtils.log.info("Clearing ALL Data.")
 
         try:
             shutil.rmtree(mainCM.getConfigVal("system.dataDir"))
         except Exception as e:
-            logging.error("FAILED to clear data: %s", e)
+            DataUtils.log.error("FAILED to clear data: %s", e)
             return False
 
-        logging.info("Done Clearing ALL Data.")
+        DataUtils.log.info("Done Clearing ALL Data.")
 
         ServiceUtils.doServiceCommand(
             ServiceStateCommand.start,

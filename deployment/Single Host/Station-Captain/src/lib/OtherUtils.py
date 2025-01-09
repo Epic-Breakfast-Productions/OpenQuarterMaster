@@ -1,12 +1,13 @@
-import logging
 import os
 import shutil
 from ConfigManager import *
 from ServiceUtils import *
 import docker
+from LogUtils import *
 
 
 class OtherUtils:
+    log = LogUtils.setupLogger("OtherUtils")
 
     @staticmethod
     def human_size(numBytes: int, units=None):

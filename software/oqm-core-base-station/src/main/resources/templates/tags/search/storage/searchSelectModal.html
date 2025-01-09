@@ -1,0 +1,17 @@
+{!
+Template for the search form for storage blocks
+
+Ingests:
+- otherModalId - the modal to return to when closing, if any
+!}
+{!{@tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch emptyStorageBlockSearch}!}
+{#modal id='storageSearchSelect' size='xl' title='Select a Storage Block' otherModalId=otherModalId}
+{#titleIcon}{#icons/search}{/icons/search}{/titleIcon}
+{#search/storage/searchForm id='storageSearchSelectForm'}
+{/search/storage/searchForm}
+<div class="col table-responsive">
+  <table class=" table table-bordered table-striped table-hover table-sm" id="storageSearchSelectResults">
+
+  </table>
+</div>
+{/modal}

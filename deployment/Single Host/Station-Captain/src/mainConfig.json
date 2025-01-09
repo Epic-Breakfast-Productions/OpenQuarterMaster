@@ -11,7 +11,11 @@
 		"location": "#{system.systemDataDir}/oqm-snapshots",
 		"numToKeep": 5,
 		"frequency": "weekly",
-		"compressionAlg": "xz"
+		"compressionAlg": "xz",
+		"encryption": {
+			"enabled": false,
+			"pass": "<secret>"
+		}
 	},
 	"cert": {
 		"mode": "self",
@@ -42,5 +46,7 @@
 		"providedMode": {
 			"caProvided": true
 		}
+	},
+	"plugin": {
 	}
 }

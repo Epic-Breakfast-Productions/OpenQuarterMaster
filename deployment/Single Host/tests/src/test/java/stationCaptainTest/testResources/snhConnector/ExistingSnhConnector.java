@@ -139,6 +139,7 @@ public class ExistingSnhConnector extends SnhConnector<ExistingSnhSetupConfig> {
 	
 	@Override
 	public void copyFromHost(String remoteFile, OutputStream destination) {
+		log.debug("Copying file from existing host: '{}'", remoteFile);
 		try {
 			this.getScpClient().download(remoteFile, destination);
 		} catch(IOException e) {

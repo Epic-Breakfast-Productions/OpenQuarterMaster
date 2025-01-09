@@ -24,7 +24,12 @@ $infraContent = "";
 	$depotVersion = $json["version"];
 }
 
-$files = scandir(Context::$ENTRIES_DIR);
+$files = file_exists(Context::$ENTRIES_DIR);
+
+if($files){
+    $files = scandir(Context::$ENTRIES_DIR);
+}
+
 if ($files) {
 	$entryArr = [];
 	foreach ($files as $curFile) {

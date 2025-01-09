@@ -1,0 +1,66 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+    id "io.freefair.lombok" version "8.11"
+}
+
+group 'tech.ebp.openQuarterMaster'
+version '1.0.1'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-rest'
+    implementation 'io.quarkus:quarkus-rest-client-jackson'
+    implementation 'io.quarkus:quarkus-rest-client'
+    implementation 'io.quarkus:quarkus-smallrye-openapi'
+    implementation 'io.quarkus:quarkus-rest-jackson'
+    implementation 'io.quarkus:quarkus-opentelemetry'
+    implementation 'io.quarkus:quarkus-config-yaml'
+    implementation 'io.quarkus:quarkus-smallrye-jwt'
+    implementation 'io.quarkus:quarkus-smallrye-health'
+    implementation 'io.quarkus:quarkus-micrometer'
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-container-image-jib'
+    implementation 'io.quarkus:quarkus-arc'
+
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.18.3'
+    implementation 'io.quarkiverse.wiremock:quarkus-wiremock:1.4.1'
+
+
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
+//    compileOnly 'io.quarkiverse.mockserver:quarkus-mockserver-test:1.9.0'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+/**
+ * Used to print the current version of this project.
+ *
+ * Used by the `makeInstallers.sh` script to get the version.
+ */
+tasks.register('printVersion') {
+    doLast {
+        println project.version
+    }
+}

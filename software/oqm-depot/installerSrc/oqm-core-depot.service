@@ -29,7 +29,10 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/depot/files/"
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.privateKey)\" /tmp/oqm/serviceConfig/core/depot/files/systemPrivateKey.pem"
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.systemCert)\" /tmp/oqm/serviceConfig/core/depot/files/systemCert.crt"
-ExecStartPre=/bin/bash -c "chmod 600 -R /tmp/oqm/serviceConfig/core/depot/files/"
+ExecStartPre=/bin/bash -c "chown oqm:oqm /tmp/oqm/serviceConfig/core/depot/files"
+ExecStartPre=/bin/bash -c "chown -R oqm:oqm /tmp/oqm/serviceConfig/core/depot/files"
+ExecStartPre=/bin/bash -c "chmod 644 -R /tmp/oqm/serviceConfig/core/depot/files"
+ExecStartPre=/bin/bash -c "chmod 755 /tmp/oqm/serviceConfig/core/depot/files"
 # Pull image as separate task
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
 # Run Base Station
@@ -54,6 +57,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 fi; \
                             done; \
                             "
+
 # Remove from docker
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"

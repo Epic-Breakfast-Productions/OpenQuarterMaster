@@ -23,23 +23,27 @@ updates:
   #   labels:
   #     - "area-dependencies"
   #     - "project-lib-moduleDriver"
-  # Base Station
+
+  # Core API
   - package-ecosystem: "gradle"
-    directory: "/software/open-qm-base-station"
+    directory: "/software/oqm-core-api"
     target-branch: "dev"
     schedule:
       interval: "weekly"
     labels:
       - "area-dependencies"
       - "project-baseStation"
-  - package-ecosystem: "docker"
-    directory: "/software/open-qm-base-station/src/main/docker"
+
+  # Base Station
+  - package-ecosystem: "gradle"
+    directory: "/software/oqm-core-base-station"
     target-branch: "dev"
     schedule:
-      interval: "daily"
+      interval: "weekly"
     labels:
       - "area-dependencies"
       - "project-baseStation"
+
   # Station Captain
   - package-ecosystem: "maven"
     directory: "/software/Station Captain/stationCaptainTest"
@@ -52,12 +56,31 @@ updates:
 #
 # Plugins
 #
-  # Demo
+
+  # External Item Search
   - package-ecosystem: "gradle"
-    directory: "/software/plugins/open-qm-plugin-demo"
+    directory: "/software/plugins/external-item-search"
     target-branch: "dev"
     schedule:
       interval: "weekly"
     labels:
       - "area-dependencies"
-      - "project-plugins"
+  # Mss Controller
+  - package-ecosystem: "gradle"
+    directory: "/software/plugins/mss-controller"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "area-dependencies"
+
+  # Demo
+#  - package-ecosystem: "gradle"
+#    directory: "/software/plugins/open-qm-plugin-demo"
+#    target-branch: "dev"
+#    schedule:
+#      interval: "weekly"
+#    labels:
+#      - "area-dependencies"
+#      - "project-plugins"
+

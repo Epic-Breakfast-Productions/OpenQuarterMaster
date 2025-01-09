@@ -1,6 +1,5 @@
 import base64
 import datetime
-import logging
 import socket
 import uuid
 from pathlib import Path
@@ -16,6 +15,8 @@ import sys
 import re
 import collections.abc
 from ScriptInfos import *
+from LogUtils import *
+
 
 CONFIG_MNGR_MAIN_CONFIG_FILE = ScriptInfo.CONFIG_DIR + "/mainConfig.json"
 CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = ScriptInfo.CONFIG_VALUES_DIR + "/99-custom.json"
@@ -38,6 +39,7 @@ class SecretManager:
         - https://cryptography.io/en/latest/fernet/#using-passwords-with-fernet
         - https://docs.python.org/3/library/secrets.html
     """
+    log = LogUtils.setupLogger("SecretManager")
 
     def __init__(
             self,
@@ -199,6 +201,7 @@ class ConfigKeyNotFoundException(Exception):
 
 
 class ConfigManager:
+    log = LogUtils.setupLogger("ConfigManager")
     configData = {}
 
     def __init__(
@@ -282,8 +285,12 @@ class ConfigManager:
                 )
         elif isinstance(val, dict):
             for k, v in val.items():
+                newKey = key + "." + k
+                if not key:
+                    newKey = k
+
                 val[k] = self.updateReplacements(
-                    key + "." + k,
+                    newKey,
                     v,
                     generateSecretIfNone,
                     exceptOnNotPresent=exceptOnNotPresent
@@ -338,9 +345,14 @@ class ConfigManager:
             exceptOnNotPresent
         )
 
+    def getFilledOutData(self):
+        output = dict(self.configData)
+        self.updateReplacements("", output)
+        return output
+
     @staticmethod
     def getArrRef(configKey: str):
-        logging.debug('todo')
+        ConfigManager.log.debug('todo')
 
     @staticmethod
     def setConfigVal(configKey: str, configVal: str, data: dict):
@@ -371,7 +383,7 @@ class ConfigManager:
             ConfigManager.setConfigVal(keyLeft, configVal, data[curConfig])
         else:
             # TODO:: add array stuff here
-            logging.warn("err")
+            ConfigManager.log.warn("err")
 
     @staticmethod
     def setConfigValInFile(
@@ -476,7 +488,7 @@ class ConfigManager:
 
 mainCM = None
 if "NO_SET_MAINCM" in os.environ and os.environ["NO_SET_MAINCM"] == "true":
-    logging.info("Was directed not to setup main CM")
+    ConfigManager.log.info("Was directed not to setup main CM")
 else:
-    logging.info("Setting up main CM")
+    ConfigManager.log.info("Setting up main CM")
     mainCM = ConfigManager()

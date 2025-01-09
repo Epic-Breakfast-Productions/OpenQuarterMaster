@@ -126,7 +126,23 @@ else
 	echo "WARNING: could not run autocomplete!"
 fi
 
-oqm-captain --regen-certs
+oqm-captain --ensure-certs-present
+
+if [ ! -z "$(grep "oqm:" /etc/group)" ] ; then
+	echo 'OQM group already existent'
+else
+	echo 'OQM group not yet existent. Creating'
+	groupadd oqm
+	echo 'OQM group created.'
+fi
+
+if id "oqm" >/dev/null 2>&1; then
+	echo 'OQM user already existent'
+else
+	echo 'OQM user not yet existent. Creating.'
+	adduser --system --shell /sbin/nologin --ingroup oqm oqm
+	echo 'OQM user created.'
+fi
 
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postinst"
