@@ -7,18 +7,18 @@ from CronUtils import *
 import docker
 from LogUtils import *
 
-log = LogUtils.setupLogger(__name__)
 
 class ContainerUtils:
     """
     https://docker-py.readthedocs.io/en/stable/index.html
     """
+    log = LogUtils.setupLogger("ContainerUtils")
     CRON_NAME = "prune-container-resources"
     DOCKER_NW_NAME = "oqm-internal"
 
     @staticmethod
     def pruneContainerResources() -> str:
-        log.info("Pruning all container resources.")
+        ContainerUtils.log.info("Pruning all container resources.")
         client = docker.from_env()
 
         numBytesCleared = 0
@@ -30,7 +30,7 @@ class ContainerUtils:
         client.networks.prune()
 
         output = OtherUtils.human_size(numBytesCleared)
-        log.info("Done pruning container resources. Reclaimed %s", output)
+        ContainerUtils.log.info("Done pruning container resources. Reclaimed %s", output)
 
         return output
 
@@ -52,16 +52,16 @@ class ContainerUtils:
 
     @staticmethod
     def ensureSharedDockerResources():
-        log.info("Ensuring docker network exists.")
+        ContainerUtils.log.info("Ensuring docker network exists.")
         client = docker.from_env()
 
         try:
             client.networks.get(ContainerUtils.DOCKER_NW_NAME)
-            log.info("Network already present!")
+            ContainerUtils.log.info("Network already present!")
         except Exception as e:
             # TODO:: narrow exception
-            log.info("Need to create network.")
+            ContainerUtils.log.info("Need to create network.")
             client.networks.create(ContainerUtils.DOCKER_NW_NAME)
-            log.info("Created network.")
+            ContainerUtils.log.info("Created network.")
 
 
