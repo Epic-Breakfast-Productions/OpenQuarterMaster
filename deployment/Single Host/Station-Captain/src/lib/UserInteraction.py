@@ -895,15 +895,18 @@ class UserInteraction:
         PackageManagement.promptForAutoUpdates()
 
         code = self.dialog.yesno(
-            "Regenerate certs automatically?\n\nRecommend turning on. This can be managed later in settings.",
-            title="Automatic Certificate Regeneration? - Setup Wizard"
+            "Encrypt snapshots?\n\nRecommend turning on if syncing your snapshots or saving them offsite. This can be managed later in settings.",
+            title="Encrypt snapshots? - Setup Wizard"
         )
         if code != self.dialog.OK:
-            log.info("User chose not to automatically regenerate certs.")
-            CertsUtils.enableAutoRegenCerts()
+            log.info("User chose not to encrypt snapshots.")
         else:
-            log.info("User chose to automatically regenerate certs.")
-            CertsUtils.disableAutoRegenCerts()
+            log.info("User chose to encrypt snapshots.")
+            mainCM.setConfigValInFile("snapshots.encryption.enabled", True, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+            self.dialog.msgbox(
+                "Snapshot encryption was enabled!\n\nPlease keep the following text saved. It is the password to decrypt, and will be required to unpack the snapshots on a different system.\n\n" + mainCM.getConfigVal("snapshots.encryption.pass"),
+                title="Snapshot encryption enabled! - Setup Wizard"
+            )
 
         # TODO: if not .local, ask to select cert type
 

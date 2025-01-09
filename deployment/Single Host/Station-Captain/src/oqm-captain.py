@@ -62,7 +62,10 @@ if not os.geteuid() == 0:
 
 if args.takeSnapshot:
     trigger = SnapshotTrigger[args.takeSnapshot]
-    SnapshotUtils.performSnapshot(trigger)
+    success, message = SnapshotUtils.performSnapshot(trigger)
+    if not success:
+        print("FAILED to create snapshot: " + message, file=sys.stderr)
+        exit(2)
 elif args.pruneContainerResources:
     ContainerUtils.pruneContainerResources()
 elif args.ensureContainerSetup:

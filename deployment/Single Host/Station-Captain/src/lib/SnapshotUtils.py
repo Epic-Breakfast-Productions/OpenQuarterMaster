@@ -112,6 +112,26 @@ class SnapshotUtils:
             log.info("Completed archiving snapshot bundle. Took %s seconds", time.time() - start)
             success = True
 
+            if mainCM.getConfigVal("snapshots.encryption.enabled"):
+                log.info("Encrypting resulting bundle...")
+                origArchive = snapshotArchiveName
+                snapshotArchiveName = snapshotArchiveName+".enc"
+                result = subprocess.run(
+                    [
+                        "openssl", "enc", "-e",
+                        "-in", origArchive, "-out", snapshotArchiveName,
+                        "-pass", "pass:" + mainCM.getConfigVal("snapshots.encryption.pass"),
+                        "-pbkdf2"
+                    ],
+                    shell=False, capture_output=True, text=True, check=False
+                )
+                log.info("Finished encrypting snapshot.")
+                if result.returncode != 0:
+                    log.error("FAILED to encrypt resulting archive. Returned: %d. Erring script: %s\nError: %s", result.returncode, file, result.stderr)
+                    log.debug("Erring script err output: %s", result.stderr)
+                    return (False, "Error encrypting archive: " + result.stderr)
+                os.remove(origArchive)
+
             # remove extra files
             numToKeep = mainCM.getConfigVal("snapshots.numToKeep")
             log.debug("Value for number of snapshots to keep: %s (%s)", numToKeep, type(numToKeep))
@@ -139,6 +159,8 @@ class SnapshotUtils:
                     log.debug("Removing archive file.")
                     if os.path.exists(snapshotArchiveName):
                         os.remove(snapshotArchiveName)
+                    if os.path.exists(snapshotArchiveName+'.enc'):
+                        os.remove(snapshotArchiveName+'.enc')
                 log.debug("Removing compiling dir.")
                 shutil.rmtree(compilingDir)
                 log.info("Finished cleaning up after snapshot.")
@@ -146,12 +168,33 @@ class SnapshotUtils:
                 log.error("Failed to clean up after performing snapshot operation: %s", e)
 
     @staticmethod
-    def restoreFromSnapshot(snapshotFile: str) -> bool:
+    def restoreFromSnapshot(snapshotFile: str, decryptPass: str = None) -> bool:
         log.info("Performing snapshot Restore.")
         snapshotName = os.path.basename(snapshotFile).split('.')[0]
         extractionDir = ScriptInfo.TMP_DIR + "/snapshot-restore/" + snapshotName
+        # create extraction dir
+        os.makedirs(extractionDir)
 
         try:
+            if snapshotFile.endswith(".enc"):
+                log.info("Snapshot is encrypted. Decrypting...")
+                # TODO:: verify can extract to same location as file exists
+                encryptedFile = snapshotFile
+                snapshotFile = extractionDir + "/" + os.path.basename(snapshotFile).replace(".enc", "")
+                result = subprocess.run(
+                    [
+                        "openssl", "enc", "-d",
+                        "-in", encryptedFile, "-out", snapshotFile,
+                        "-pass", "pass:" + mainCM.getConfigVal("snapshots.encryption.pass"),
+                        "-pbkdf2"
+                    ],
+                    shell=False, capture_output=True, text=True, check=True
+                )
+                log.info("Finished encrypting snapshot.")
+                if result.returncode != 0:
+                    log.error("FAILED to encrypt resulting archive. Returned: %d. Erring script: %s\nError: %s", result.returncode, file, result.stderr)
+                    log.debug("Erring script err output: %s", result.stderr)
+
             log.info("Extracting files from archive.")
             with tarfile.open(snapshotFile, "r:*") as tar:
                 tar.extractall(extractionDir)
