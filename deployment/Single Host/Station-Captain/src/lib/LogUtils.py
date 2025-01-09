@@ -43,7 +43,7 @@ class LogUtils:
         logging.basicConfig(level=logging.WARNING)
         if console:
             fh = logging.StreamHandler(sys.stdout)
-            fh.setFormatter(logging.Formatter('%(name)-10s :: %(levelname)-8s :: %(message)s'))
+            fh.setFormatter(logging.Formatter('%(levelname)-8s :: %(name)-13s :: %(message)s'))
             fh.setLevel(LogUtils.consoleLogLevel)
             LogUtils.consoleHandler = fh
 
@@ -51,7 +51,7 @@ class LogUtils:
         if filePresent:
             # print("Logging to file path " + LogUtils.logFile)
             fh = logging.handlers.RotatingFileHandler(LogUtils.logFile, mode="a", maxBytes=10*1024*1024, backupCount=5)
-            fh.setFormatter(logging.Formatter('%(name)-13s :: %(levelname)-8s :: %(message)s'))
+            fh.setFormatter(logging.Formatter('%(asctime)s :: %(levelname)-8s :: %(name)-13s :: %(message)s'))
             fh.setLevel(LogUtils.fileLogLevel)
             LogUtils.fileHandler = fh
 
