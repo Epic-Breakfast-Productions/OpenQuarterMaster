@@ -20,7 +20,6 @@ from ipaddress import *
 
 from PackageManagement import PackageManagement
 
-log = LogUtils.setupLogger(__name__)
 
 class CertsUtils:
     """
@@ -29,6 +28,7 @@ class CertsUtils:
      - https://cryptography.io/en/latest/x509/reference/
      - https://stackoverflow.com/questions/54677841/how-do-can-i-generate-a-pkcs12-file-using-python-and-the-cryptography-module
     """
+    log = LogUtils.setupLogger("CertsUtils")
 
     @staticmethod
     def ensureCaInstalled(force: bool = False) -> (bool, str):
@@ -63,28 +63,28 @@ class CertsUtils:
         ffPoliciesDir = None
         ffCertsDir = None
         if os.path.exists("/usr/lib/firefox"):
-            log.debug("Firefox installed directly.")
+            CertsUtils.log.debug("Firefox installed directly.")
             ffInstalled = True
             ffPoliciesFile = "/usr/lib/firefox/distribution/policies.json"
             ffPoliciesDir = os.path.basename(ffPoliciesFile)
             ffCertsDir = "/usr/lib/mozilla/certificates/"
         elif os.path.exists("/etc/firefox"):
-            log.debug("Firefox probably installed via snap.")
+            CertsUtils.log.debug("Firefox probably installed via snap.")
             ffInstalled = True
             ffPoliciesFile = "/etc/firefox/policies/policies.json"
             ffPoliciesDir = os.path.basename(ffPoliciesFile)
             ffCertsDir = "/etc/firefox/policies/certificates/"
         elif PackageManagement.checkFirefoxSnapInstalled():
-            log.debug("Firefox probably installed via newer snap.")
+            CertsUtils.log.debug("Firefox probably installed via newer snap.")
             ffInstalled = True
             ffPoliciesFile = "/etc/firefox/policies/policies.json"
             ffPoliciesDir = os.path.basename(ffPoliciesFile)
             ffCertsDir = "/etc/firefox/policies/certificates/"
         else:
-            log.debug("Firefox not found on system.")
+            CertsUtils.log.debug("Firefox not found on system.")
 
         if ffInstalled:
-            log.info("Firefox installed, setting up firefox certs.")
+            CertsUtils.log.info("Firefox installed, setting up firefox certs.")
 
             Path(ffCertsDir).mkdir(parents=True, exist_ok=True)
             shutil.copy(root_ca_cert_path, ffCertsDir)
@@ -129,7 +129,7 @@ class CertsUtils:
 
     @staticmethod
     def generateSelfSignedCerts(forceRegenRoot: bool = False) -> (bool, str):
-        log.info("Generating self-signed certs")
+        CertsUtils.log.info("Generating self-signed certs")
         output = ""
         try:
             domain = mainCM.getConfigVal("system.hostname")
@@ -284,19 +284,19 @@ class CertsUtils:
                 )
             output += "Wrote new private key and cert."
         except Exception as e:
-            log.exception("FAILED to generate new certs: %s", e)
+            CertsUtils.log.exception("FAILED to generate new certs: %s", e)
             return False, f"{e}"
         return True, output
 
     @staticmethod
     def getLetsEncryptCerts() -> (bool, str):
-        log.info("Getting Let's Encrypt certs")
+        CertsUtils.log.info("Getting Let's Encrypt certs")
         # TODO
         return False, "Not implemented yet."
 
     @staticmethod
     def regenCerts(forceRegenCaRoot: bool = False, restartServices: bool = False) -> (bool, str):
-        log.info("Re-running cert generation utilities")
+        CertsUtils.log.info("Re-running cert generation utilities")
         output = None
         certMode = mainCM.getConfigVal("cert.mode")
         if certMode == "provided":
@@ -314,7 +314,7 @@ class CertsUtils:
 
     @staticmethod
     def ensureCertsPresent() -> (bool, str):
-        log.info("Ensuring certs are present.")
+        CertsUtils.log.info("Ensuring certs are present.")
         certMode = mainCM.getConfigVal("cert.mode")
         privateKeyLoc = mainCM.getConfigVal("cert.certs.privateKey")
         publicKeyLoc = mainCM.getConfigVal("cert.certs.systemCert")
@@ -332,10 +332,10 @@ class CertsUtils:
             missingList = ", ".join(missingList)
             message = f"{missingList} not present."
             if certMode == "self" or certMode == "letsEncrypt":
-                log.info(message + " Getting.")
+                CertsUtils.log.info(message + " Getting.")
                 return CertsUtils.regenCerts()
             elif certMode == "provided":
-                log.error(message)
+                CertsUtils.log.error(message)
                 return False, message
             else:
                 return False, "Invalid value for config cert.certs.systemCert : " + certMode
@@ -349,7 +349,7 @@ class CertsUtils:
             toFind = mainCM.getConfigVal("system.hostname")
 
             if toFind not in sanEntries:
-                log.info("No certificate found for system hostname set in config. Refreshing.")
+                CertsUtils.log.info("No certificate found for system hostname set in config. Refreshing.")
                 return CertsUtils.regenCerts()
 
         return True, ""

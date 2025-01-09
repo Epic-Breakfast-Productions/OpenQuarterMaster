@@ -17,7 +17,6 @@ import collections.abc
 from ScriptInfos import *
 from LogUtils import *
 
-log = LogUtils.setupLogger(__name__)
 
 CONFIG_MNGR_MAIN_CONFIG_FILE = ScriptInfo.CONFIG_DIR + "/mainConfig.json"
 CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = ScriptInfo.CONFIG_VALUES_DIR + "/99-custom.json"
@@ -40,6 +39,7 @@ class SecretManager:
         - https://cryptography.io/en/latest/fernet/#using-passwords-with-fernet
         - https://docs.python.org/3/library/secrets.html
     """
+    log = LogUtils.setupLogger("SecretManager")
 
     def __init__(
             self,
@@ -201,6 +201,7 @@ class ConfigKeyNotFoundException(Exception):
 
 
 class ConfigManager:
+    log = LogUtils.setupLogger("ConfigManager")
     configData = {}
 
     def __init__(
@@ -351,7 +352,7 @@ class ConfigManager:
 
     @staticmethod
     def getArrRef(configKey: str):
-        log.debug('todo')
+        ConfigManager.log.debug('todo')
 
     @staticmethod
     def setConfigVal(configKey: str, configVal: str, data: dict):
@@ -382,7 +383,7 @@ class ConfigManager:
             ConfigManager.setConfigVal(keyLeft, configVal, data[curConfig])
         else:
             # TODO:: add array stuff here
-            log.warn("err")
+            ConfigManager.log.warn("err")
 
     @staticmethod
     def setConfigValInFile(
@@ -487,7 +488,7 @@ class ConfigManager:
 
 mainCM = None
 if "NO_SET_MAINCM" in os.environ and os.environ["NO_SET_MAINCM"] == "true":
-    log.info("Was directed not to setup main CM")
+    ConfigManager.log.info("Was directed not to setup main CM")
 else:
-    log.info("Setting up main CM")
+    ConfigManager.log.info("Setting up main CM")
     mainCM = ConfigManager()

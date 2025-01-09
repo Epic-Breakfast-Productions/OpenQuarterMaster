@@ -6,7 +6,6 @@ import re
 from ServiceUtils import *
 from LogUtils import *
 
-log = LogUtils.setupLogger(__name__)
 
 class PackageManagement:
     """
@@ -18,6 +17,7 @@ class PackageManagement:
     grep -h -P -o "^Package: \K.*" /var/lib/apt/lists/deployment.openquartermaster.com_deb-ppa_._Packages | sort -u
 
     """
+    log = LogUtils.setupLogger("PackageManagement")
     BASE_STATION_PACKAGE = "oqm-core-base+station"
     ALL_OQM = "oqm-*"
     OQM_PLUGINS = "oqm-plugin-*"
@@ -27,14 +27,14 @@ class PackageManagement:
     def getSystemPackageManager() -> str:
         if PackageManagement.SYSTEM_PACKAGE_MANAGER is not None:
             return PackageManagement.SYSTEM_PACKAGE_MANAGER
-        log.debug("Determining the system's package manager.")
+        PackageManagement.log.debug("Determining the system's package manager.")
 
         systemReleaseInfo = platform.freedesktop_os_release()
         if ("ID_LIKE" in systemReleaseInfo and systemReleaseInfo['ID_LIKE'].casefold() == "debian".casefold()) or \
                 systemReleaseInfo['ID'].casefold() == "Debian".casefold():
             PackageManagement.SYSTEM_PACKAGE_MANAGER = "apt"
 
-        log.info("Determined system using %s", PackageManagement.SYSTEM_PACKAGE_MANAGER)
+        PackageManagement.log.info("Determined system using %s", PackageManagement.SYSTEM_PACKAGE_MANAGER)
         return PackageManagement.SYSTEM_PACKAGE_MANAGER
 
     @staticmethod
@@ -50,16 +50,16 @@ class PackageManagement:
 
     @staticmethod
     def coreInstalled() -> bool:
-        log.debug("Ensuring core components are installed.")
+        PackageManagement.log.debug("Ensuring core components are installed.")
         # TODO:: will likely need updated for yum
         result = PackageManagement.runPackageCommand("list", PackageManagement.BASE_STATION_PACKAGE, "-qq")
-        log.debug("Output of listing core components: " + result.stdout)
-        log.debug("Error Output of listing core components: " + result.stderr)
+        PackageManagement.log.debug("Output of listing core components: " + result.stdout)
+        PackageManagement.log.debug("Error Output of listing core components: " + result.stderr)
         return "installed" in result.stdout
 
     @staticmethod
     def installPackages(packages:list) -> (bool, str):
-        log.info("Installing packages: %s", packages)
+        PackageManagement.log.info("Installing packages: %s", packages)
         command:list = ["apt-get", "install", "-y"]
         command.extend(packages)
         result = subprocess.run(
@@ -67,13 +67,13 @@ class PackageManagement:
             shell=False, capture_output=True, text=True, check=False
         )
         if result.returncode != 0:
-            log.error("Failed to run install packages command: %s", result.stderr)
+            PackageManagement.log.error("Failed to run install packages command: %s", result.stderr)
             return False, result.stderr
         return True
 
     @staticmethod
     def removePackages(packages:list) -> (bool, str):
-        log.info("Removing packages: %s", packages)
+        PackageManagement.log.info("Removing packages: %s", packages)
         command:list = ["apt-get", "remove", "-y", "--purge"]
         command.extend(packages)
         result = subprocess.run(
@@ -81,7 +81,7 @@ class PackageManagement:
             shell=False, capture_output=True, text=True, check=False
         )
         if result.returncode != 0:
-            log.error("Failed to run remove packages command: %s", result.stderr)
+            PackageManagement.log.error("Failed to run remove packages command: %s", result.stderr)
             return False, result.stderr
         return True
 
@@ -89,46 +89,46 @@ class PackageManagement:
     def installCore():
         # TODO:: update to use new install, package get features
         # TODO:: update with error handling, return
-        log.info("Installing core components.")
+        PackageManagement.log.info("Installing core components.")
         # TODO:: will likely need updated for yum
         result = PackageManagement.runPackageCommand("update")
         result = PackageManagement.runPackageCommand("install", PackageManagement.BASE_STATION_PACKAGE, "-y")
-        log.debug("Result of install: " + result.stdout)
+        PackageManagement.log.debug("Result of install: " + result.stdout)
         if result.returncode != 0:
-            log.error("FAILED to install core components: %s", result.stderr)
+            PackageManagement.log.error("FAILED to install core components: %s", result.stderr)
 
     @staticmethod
     def updateSystem() -> (bool, str):
         if PackageManagement.getSystemPackageManager() == "apt":
-            log.debug("Updating apt cache.")
+            PackageManagement.log.debug("Updating apt cache.")
             result = subprocess.run(["apt-get", "update"], shell=False, capture_output=True, text=True, check=False)
             if result.returncode != 0:
-                log.error("Failed to run update command: %s", result.stderr)
+                PackageManagement.log.error("Failed to run update command: %s", result.stderr)
                 return False, result.stderr
-            log.debug("Upgrading apt packages.")
+            PackageManagement.log.debug("Upgrading apt packages.")
             subprocess.run(["clear"], shell=False, capture_output=False, text=True, check=False)
             result = subprocess.run(["apt-get", "dist-upgrade"], shell=False, capture_output=False, text=True,
                                     check=False)
             if result.returncode != 0:
-                log.error("Failed to run upgrade command: %s", result.stderr)
+                PackageManagement.log.error("Failed to run upgrade command: %s", result.stderr)
                 return False, result.stderr
         if PackageManagement.getSystemPackageManager() == "yum":
-            log.debug("Upgrading yum packages.")
+            PackageManagement.log.debug("Upgrading yum packages.")
             subprocess.run(["clear"], shell=False, capture_output=False, text=True, check=False)
             result = subprocess.run(["yum", "update"], shell=False, capture_output=False, text=True, check=False)
             if result.returncode != 0:
-                log.error("Failed to run upgrade command: %s", result.stderr)
+                PackageManagement.log.error("Failed to run upgrade command: %s", result.stderr)
                 return False, result.stderr
-        log.info("Done updating.")
+        PackageManagement.log.info("Done updating.")
         return True, None
 
     @staticmethod
     def promptForAutoUpdates() -> (bool, str):
         if "Ubuntu" in platform.version():
-            log.debug("Prompting user through unattended-upgrades.")
+            PackageManagement.log.debug("Prompting user through unattended-upgrades.")
             subprocess.run(["dpkg-reconfigure", "-plow", "unattended-upgrades"], shell=False, capture_output=False,
                            text=True, check=True)
-            log.info("Done.")
+            PackageManagement.log.info("Done.")
             # TODO:: doublecheck automatic restart, setting alert email
         else:
             return False, "Unsupported OS to setup auto updates on."
@@ -136,10 +136,10 @@ class PackageManagement:
 
     @staticmethod
     def getOqmPackagesStr(filter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True):
-        log.debug("Getting OQM packages.")
+        PackageManagement.log.debug("Getting OQM packages.")
         result = PackageManagement.runPackageCommand("list", filter, "-qq")
-        log.debug("Output of listing core components: " + result.stdout)
-        log.debug("Error Output of listing core components: " + result.stderr)
+        PackageManagement.log.debug("Output of listing core components: " + result.stdout)
+        PackageManagement.log.debug("Error Output of listing core components: " + result.stderr)
 
         result = result.stdout
         output = []
@@ -196,7 +196,7 @@ class PackageManagement:
 
     @staticmethod
     def getOqmPackagesList(filter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True):
-        log.debug("Getting OQM packages.")
+        PackageManagement.log.debug("Getting OQM packages.")
         result = PackageManagement.getOqmPackagesStr(filter, installed, notInstalled)
         # print("Package list str: " + result)
         result = result.splitlines()
@@ -207,7 +207,7 @@ class PackageManagement:
 
     @staticmethod
     def ensureOnlyPluginsInstalled(pluginList:list) -> (bool, str):
-        log.debug("Ensuring only plugins in list installed.")
+        PackageManagement.log.debug("Ensuring only plugins in list installed.")
 
         allInstalledPlugins = map(
             lambda i: i['package'],
@@ -229,7 +229,7 @@ class PackageManagement:
 
     @staticmethod
     def checkFirefoxSnapInstalled() -> (bool, str):
-        log.debug("Checking if ")
+        PackageManagement.log.debug("Checking if ")
         snapInfoResult = subprocess.run(['snap', 'info', 'firefox'], shell=False, capture_output=True, text=True, check=False)
         # print("Firefox snap output: " + snapInfoResult.stdout)
         if snapInfoResult.returncode != 0:

@@ -14,6 +14,7 @@ from ContainerUtils import *
 from LogManagement import *
 from CertsUtils import *
 import argparse
+import atexit
 import argcomplete
 # This script manages an installation of Open QuarterMaster on a single host
 #
@@ -30,9 +31,12 @@ import argcomplete
 # https://click.palletsprojects.com/en/8.1.x/
 # https://pythondialog.sourceforge.io/
 
-log = LogUtils.setupLogger(__name__)
-
+log = LogUtils.setupLogger("main")
 log.info("==== STARTING OQM-CAPTAIN SCRIPT ====")
+
+def handleExit():
+    log.info("==== END OF OQM-CAPTAIN SCRIPT ====")
+atexit.register(handleExit)
 
 argParser = argparse.ArgumentParser(
     prog="oqm-captain",
@@ -62,7 +66,10 @@ if not os.geteuid() == 0:
 
 if args.takeSnapshot:
     trigger = SnapshotTrigger[args.takeSnapshot]
-    SnapshotUtils.performSnapshot(trigger)
+    success, message = SnapshotUtils.performSnapshot(trigger)
+    if not success:
+        print("FAILED to create snapshot: " + message, file=sys.stderr)
+        exit(2)
 elif args.pruneContainerResources:
     ContainerUtils.pruneContainerResources()
 elif args.ensureContainerSetup:
