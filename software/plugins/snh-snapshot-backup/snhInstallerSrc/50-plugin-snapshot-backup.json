@@ -1,0 +1,25 @@
+{
+	"plugins": {
+		"snapshot-backup": {
+			"enabled": false,
+			"method": "",
+			"localDirectory": {
+				"destination": ""
+			},
+			"ssh":{
+				"host": "",
+				"user": "",
+				"destination": ""
+			},
+			"ftp":{
+				"host": "",
+				"user": "",
+				"password": "<secret>"
+			},
+			"objectStorage": {
+				
+				"accessKey": "<secret>"
+			}
+		}
+	}
+}
