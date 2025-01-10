@@ -38,5 +38,5 @@ In addition to these requirements, please look through the "Gotchas" section on 
 ### Proven SBC's and other 'specialty' hardware:
 
 - ARM:
-    - [Raspberry Pi 5B](https://www.raspberrypi.com/products/raspberry-pi-5/
+    - [Raspberry Pi 5B](https://www.raspberrypi.com/products/raspberry-pi-5/)
         - 8Gb+ memory recommended. 4Gb would probably be fine for testing and minimal purposes only, but any less than 8Gb is probably not going to be enough for a good experience.
