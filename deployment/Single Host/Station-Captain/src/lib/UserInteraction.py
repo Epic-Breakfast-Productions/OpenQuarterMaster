@@ -847,7 +847,7 @@ class UserInteraction:
         #         # TODO:: uninstall, uncomment this
 
         code = self.dialog.yesno(
-            "Perform OS/system updates and restart?\n\nHighly recommend doing this if:\n - you have not yet today.\n - this is your first time log into the system\n\nThe system tends to install better when things are up to date.\n\nIf you just did this, you can say no.",
+            "Perform OS/system updates and restart?\n\nHighly recommend doing this if:\n - you have not yet today\n - this is your first time logging into the system\n - you just changed the hostname and haven't restarted yet\n\nThe system tends to install better when things are up to date.\n\nIf you just did this, you can say no.",
             title="Update system? - Setup Wizard"
         )
         if code != self.dialog.OK:
