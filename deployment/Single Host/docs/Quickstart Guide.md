@@ -10,6 +10,8 @@ Note: this is not a tool meant for a distributed cloud environment such as Kuber
 
 [System Requirements](System%20Requirements.md)
 
+Having issues? Check out the [Gotchas, FAQ, & Troubleshooting](docs/tgf.md) page. The "gotchas" section would be a great readthrough to ensure you get up an running quickly!
+
 ## Installation
 
 Steps:
