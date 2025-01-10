@@ -1,5 +1,7 @@
 # Gotchas, FAQ, & Troubleshooting
 
+[Back](README.md)
+
 ## Gotchas
 
 These are common 'gotchas' that people can sometimes fall into when setting up or using the OQM system on a single host setup.
