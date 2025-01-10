@@ -4,6 +4,8 @@ This is a set of requirements for the entire core system, not necessarily includ
 
 This system is regularly tested on Ubuntu 24.04.
 
+In addition to these requirements, please look through the "Gotchas" section on the [Gotchas, FAQ, & Troubleshooting](docs/tgf.md) page to ensure a quick and easy setup.
+
 ## Software Requirements
 
 - A Modern Linux OS
