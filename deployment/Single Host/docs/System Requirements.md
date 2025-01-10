@@ -1,5 +1,7 @@
 # OQM Single Host Deployment System Requirements
 
+[Back](README.md)
+
 This is a set of requirements for the entire core system, not necessarily including any plugins.
 
 This system is regularly tested on Ubuntu 24.04.
