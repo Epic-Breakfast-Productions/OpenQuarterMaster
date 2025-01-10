@@ -10,3 +10,5 @@ If you are looking to use OQM, and want it to run on one of the following enviro
 To get started quickly, see the [quickstart guide](docs/Quickstart%20Guide.md)!
 
 Having issues? Check out the [Gotchas, FAQ, & Troubleshooting](docs/tgf.md) page.
+
+Otherwise, documentation is [here](docs/)
