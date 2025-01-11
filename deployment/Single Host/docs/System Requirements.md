@@ -31,8 +31,11 @@ In addition to these requirements, please look through the "Gotchas" section on 
                 - Intel N95, N100, N300
         - 64-bit ARM v8
 - Virtualization
-  - The system typically runs well in a virtualized environment, but ensure that environment meets the above spec. KVM/LibVirt runs great, haven't seen issues in cloud instances.
+  - The system typically runs well in a virtualized environment, but ensure that environment meets the above spec, and haven't seen issues in cloud instances.
   - It has been seen that __VirtualBox cannot run OQM as it does not provide the AVX extension__
+  - Tested on:
+    - KVM/LibVirt
+    - Hyper-V
 
 > [!NOTE]
 > it is possible certain plugins, or a large number of plugins, will require more resources or have different hardware requirements.
