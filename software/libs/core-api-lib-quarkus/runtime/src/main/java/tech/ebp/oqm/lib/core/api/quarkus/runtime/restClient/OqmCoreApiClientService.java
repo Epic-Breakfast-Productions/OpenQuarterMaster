@@ -686,7 +686,14 @@ public interface OqmCoreApiClientService {
 	Uni<ArrayNode> manageDbList(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 
 	@DELETE
-	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db/{oqmDbIdOrName}/clearDb")
+	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db/clearAllDbs")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ArrayNode> manageDbClearAll(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token
+	);
+
+	@DELETE
+	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db/clear/{oqmDbIdOrName}")
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ObjectNode> manageDbClear(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
