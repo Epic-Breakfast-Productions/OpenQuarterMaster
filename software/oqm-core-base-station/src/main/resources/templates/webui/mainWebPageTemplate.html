@@ -204,6 +204,9 @@ Ingests:
 						{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Admin
 					</a>
 					{/if}
+					<button class="btn-link dropdown-item" id="copyJwtButton" data-token="{userToken}" onclick="navigator.clipboard.writeText(this.dataset.token);">
+						{#icons/copy}{/icons/copy} Copy Token
+					</button>
 					<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="{config:['quarkus.oidc.logout.path']}" id="logoutButton">
 							{#icons/icon icon='door-closed'}{/icons/icon} Logout

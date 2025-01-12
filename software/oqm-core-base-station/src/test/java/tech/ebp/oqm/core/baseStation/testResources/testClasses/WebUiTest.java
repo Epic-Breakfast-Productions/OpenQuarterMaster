@@ -41,17 +41,10 @@ public abstract class WebUiTest extends RunningServerTest {
 	}
 
 	@Getter
-	@TestHTTPResource("/")
-	URL index;
-
-	@Getter
 	private BrowserContext context;
 
 	@Getter
 	private Path curTestUiResultDir;
-
-	@Getter
-	private final TestUserService testUserService = TestUserService.getInstance();
 
 	@BeforeEach
 	public void beforeEachUi(TestInfo testInfo) {
@@ -130,6 +123,8 @@ public abstract class WebUiTest extends RunningServerTest {
 			if (!output.locator("#topOqmLogo").isVisible()) {
 				throw new IllegalStateException("Not logged in.");
 			}
+			user.setJwt(output);
+			log.info("Logged in user: " + user);
 		} else {
 			log.info("Was already logged in?");
 		}

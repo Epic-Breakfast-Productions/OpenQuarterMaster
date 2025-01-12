@@ -121,7 +121,7 @@ quarkus:
     ssl-port: 443
   qute:
   oidc:
-    application-type: web_app
+    application-type: hybrid
     token-state-manager:
       split-tokens: true
     logout:
