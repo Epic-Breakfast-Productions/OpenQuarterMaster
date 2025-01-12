@@ -15,10 +15,9 @@ import re
 import os
 from LogUtils import *
 
-log = LogUtils.setupLogger(__name__)
-
 
 class InputValidators:
+    log = LogUtils.setupLogger("InputValidators")
 
     @staticmethod
     def getValidatorFor(valString: str):

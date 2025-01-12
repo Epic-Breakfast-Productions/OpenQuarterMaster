@@ -5,9 +5,9 @@ from ServiceUtils import *
 import docker
 from LogUtils import *
 
-log = LogUtils.setupLogger(__name__)
 
 class OtherUtils:
+    log = LogUtils.setupLogger("OtherUtils")
 
     @staticmethod
     def human_size(numBytes: int, units=None):
