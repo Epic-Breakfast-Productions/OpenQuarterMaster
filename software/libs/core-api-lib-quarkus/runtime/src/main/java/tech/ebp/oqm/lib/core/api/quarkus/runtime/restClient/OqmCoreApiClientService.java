@@ -1,11 +1,9 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.PermitAll;
-import jakarta.annotation.security.RolesAllowed;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -687,6 +685,14 @@ public interface OqmCoreApiClientService {
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ArrayNode> manageDbList(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 
+	@DELETE
+	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db/{oqmDbIdOrName}/clearDb")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> manageDbClear(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName")
+		String oqmDbIdOrName
+	);
 
 //	@GET
 //	@Path("processExpiry")
