@@ -26,6 +26,8 @@ import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.DeleteEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.core.api.model.rest.management.CollectionClearResult;
+import tech.ebp.oqm.core.api.model.rest.management.HistoriedCollectionClearResult;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeletedException;
@@ -309,9 +311,15 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	}
 	
 	@Override
-	public long clear(String oqmDbIdOrName, @NonNull ClientSession session) {
-		this.getHistoryService().clear(oqmDbIdOrName, session);
-		return super.clear(oqmDbIdOrName, session);
+	public HistoriedCollectionClearResult clear(String oqmDbIdOrName, @NonNull ClientSession session) {
+		CollectionClearResult historyClearResult = this.getHistoryService().clear(oqmDbIdOrName, session);
+		CollectionClearResult superClearResult = super.clear(oqmDbIdOrName, session);
+
+		return HistoriedCollectionClearResult.builder()
+			.collectionName(superClearResult.getCollectionName())
+			.numRecordsDeleted(superClearResult.getNumRecordsDeleted())
+			.historyCollectionResult(historyClearResult)
+			.build();
 	}
 	
 	/**

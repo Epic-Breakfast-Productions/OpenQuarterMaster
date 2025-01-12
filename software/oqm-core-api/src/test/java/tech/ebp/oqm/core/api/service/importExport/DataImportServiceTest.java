@@ -127,8 +127,8 @@ class DataImportServiceTest extends RunningServerTest {
 					NewDerivedCustomUnitRequest.DeriveType.multiply
 				)
 					.setUnitCategory(UnitCategory.Number)
-					.setName(FAKER.name().name())
-					.setSymbol(FAKER.food().dish().replace(" ", ""))
+					.setName("Custom Unit " + unitCount)
+					.setSymbol("u"+unitCount)
 			);
 			this.customUnitService.add(null, customUnitEntry);
 		}

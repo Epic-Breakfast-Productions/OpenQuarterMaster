@@ -24,6 +24,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
+import tech.ebp.oqm.core.api.model.rest.management.CollectionClearResult;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeletedException;
@@ -554,8 +555,11 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	@Override
-	public long clear(String oqmDbIdOrName, @NonNull ClientSession session) {
-		return this.getTypedCollection(oqmDbIdOrName).deleteMany(new BsonDocument()).getDeletedCount();
+	public CollectionClearResult clear(String oqmDbIdOrName, @NonNull ClientSession session) {
+		return CollectionClearResult.builder()
+			.collectionName(this.getCollectionName())
+			.numRecordsDeleted(this.getTypedCollection(oqmDbIdOrName).deleteMany(new BsonDocument()).getDeletedCount())
+			.build();
 	}
 	
 	/**

@@ -22,6 +22,8 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.MainObject;
+import tech.ebp.oqm.core.api.model.rest.management.CollectionClearResult;
+import tech.ebp.oqm.core.api.model.rest.management.DbClearResult;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.file.FileAttachmentService;
@@ -167,5 +169,5 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	 */
 	public abstract V getStats(String oqmDbIdOrName);
 	
-	public abstract long clear(String oqmDbIdOrName, @NonNull ClientSession session);
+	public abstract CollectionClearResult clear(String oqmDbIdOrName, @NonNull ClientSession session);
 }
