@@ -8,10 +8,10 @@ import javax.measure.Unit;
 import java.util.ArrayList;
 import java.util.List;
 
-public class UnitValidator extends Validator<ValidUnit, Unit> {
+public class UnitValidator extends Validator<ValidUnit, Unit<?>> {
 	
 	@Override
-	public boolean isValid(Unit unit, ConstraintValidatorContext constraintValidatorContext) {
+	public boolean isValid(Unit<?> unit, ConstraintValidatorContext constraintValidatorContext) {
 		List<String> errs = new ArrayList<>();
 		
 		if (unit == null) {

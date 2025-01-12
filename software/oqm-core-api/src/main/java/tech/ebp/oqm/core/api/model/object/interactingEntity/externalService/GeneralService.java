@@ -1,10 +1,8 @@
 package tech.ebp.oqm.core.api.model.object.interactingEntity.externalService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityType;
 
@@ -13,6 +11,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityTyp
 //@AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder(toBuilder = true)
 public class GeneralService extends ExternalService {
 	public static final int CUR_SCHEMA_VERSION = 1;
 	
