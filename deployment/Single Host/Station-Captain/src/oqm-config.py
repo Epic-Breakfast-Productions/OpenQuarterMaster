@@ -17,6 +17,7 @@ import json
 import argparse
 import re
 import jinja2
+import atexit
 
 SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V" + ScriptInfo.SCRIPT_VERSION
 
@@ -27,6 +28,11 @@ EXIT_CONFIG_INIT_ERR = 5
 EXIT_CONFIG_SET_ERR = 6
 
 log = LogUtils.setupLogger(__name__)
+
+log.info("==== STARTING OQM-CONFIG SCRIPT ====")
+def handleExit():
+    log.info("==== END OF OQM-CONFIG SCRIPT ====")
+atexit.register(handleExit)
 
 # Setup argument parser
 argParser = argparse.ArgumentParser(
