@@ -67,3 +67,15 @@ Users create a custom workflow for items to come into and work through, and fini
 
  - scheduled todos
  - simple project tracking
+ - TODO list for common/ repeated tasks
+
+## Shipping management
+
+ - Tie into major shipping provider APIs
+ - Make shipping things easy
+
+## Asset Management
+
+ - An addendum to the default dataset to tailor handling of assets:
+   - Maintenance tracking
+ - Tailored UI to handle this
