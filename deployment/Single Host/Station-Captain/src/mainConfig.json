@@ -3,7 +3,11 @@
 		"hostname": "#{#mdnsHost}",
 		"systemDataDir": "/data",
 		"dataDir": "#{system.systemDataDir}/oqm",
-		"automaticContainerPruneFrequency": "monthly"
+		"automaticContainerPruneFrequency": "monthly",
+		"defaultUi": {
+			"type": "core",
+			"name": "depot"
+		}
 	},
 	"captain": {
 	},
