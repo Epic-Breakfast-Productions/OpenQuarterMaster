@@ -113,12 +113,12 @@ function getEntryTable($name, $content) {
 	<meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="shortcut icon" href="/favicon.ico"/>
 	<title>OQM Depot</title>
-	<link href="/res/lib/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
+	<link href="<?=Context::getRootPath();?>/res/lib/bootstrap/5.3.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body class="min-vh-100 vstack">
 <main class="container flex-grow-1">
 	<div class="mb-3 mt-3 text-center">
-		<img src="/res/media/logo.svg" class="" style="max-width: 75%;" alt="OQM Logo">
+		<img src="<?=Context::getRootPath();?>/res/media/logo.svg" class="" style="max-width: 75%;" alt="OQM Logo">
 		<h1 class="display-5 fw-bold text-body-emphasis">OQM Depot</h1>
 		<p class="lead mb-4">
 			This is where you can access all your Open QuarterMaster components. Shown below are all available front-end interfaces you can visit and interact with.
@@ -176,7 +176,16 @@ function getEntryTable($name, $content) {
 	</div>
 </footer>
 
-<script src="/res/lib/jquery/3.7.1/jquery.min.js.js"></script>
-<script src="/res/lib/bootstrap/5.3.2/js/bootstrap.bundle.js"></script>
+<script src="<?=Context::getRootPath();?>/res/lib/jquery/3.7.1/jquery.min.js.js"></script>
+<script src="<?=Context::getRootPath();?>/res/lib/bootstrap/5.3.2/js/bootstrap.bundle.js"></script>
+
+<?php
+//print_r($_SERVER);
+//print_r($_ENV);
+//print_r($_REQUEST);
+//print_r($_SESSION);
+//print_r(headers_list());
+
+?>
 </body>
 </html>

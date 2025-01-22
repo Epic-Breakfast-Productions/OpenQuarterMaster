@@ -1,10 +1,11 @@
 {
 	"core": {
 		"depot": {
-			"host": "oqm_core_depot",
-			"httpPort": 80,
-			"httpsPort": 443,
-			"externalBaseUri": "http://#{system.hostname}:#{core.depot.httpPort}"
+			"internalHost": "oqm-core-depot",
+			"internalHttpPort": 80,
+			"internalHttpsPort": 443,
+			"externalBaseUri": "#{infra.traefik.externalRootUri}/core/depot",
+			"internalBaseUri": "http://#{core.depot.internalHost}:#{core.depot.internalHttpPort}"
 		}
 	}
 }

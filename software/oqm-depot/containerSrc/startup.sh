@@ -32,5 +32,8 @@ EOF
 else
    echo "Running without SSL Config.";
 fi
+cat <<EOF >> $CONF_FILE
+
+EOF
 
 apache2-foreground

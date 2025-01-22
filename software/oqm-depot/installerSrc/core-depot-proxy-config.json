@@ -1,8 +1,8 @@
 {
-	"title": "Depot (Main UI)",
 	"type": "core",
 	"name": "depot",
-	"hostConfig": "core.baseStation.host",
-	"portConfig": "core.baseStation.port",
-	"showInProxyRoot": true
+	"title": "Depot (Main UI)",
+	"internalBaseUriConfig": "core.depot.internalBaseUri",
+	"preservePath": false,
+	"stripPrefixes": true
 }
