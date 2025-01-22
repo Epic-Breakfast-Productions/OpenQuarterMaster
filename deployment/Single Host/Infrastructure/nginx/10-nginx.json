@@ -1,11 +1,15 @@
 {
 	"infra": {
 		"nginx": {
-			"host": "host.docker.internal",
-			"port": "8085",
-			"adminUser": "oqm_admin",
-			"adminPass": "<secret>",
-			"keyFileContent": "<secret>"
+			"host": "oqm-infra-nginx",
+			"httpPort": "80",
+			"httpsPort": "443",
+			"defaultUi": {
+				"type": "core",
+				"name": "depot"
+			},
+			"proxy_buffer": false,
+			"externalRootUri": "https://#{system.hostname}:#{infra.nginx.httpsPort}"
 		}
 	}
 }

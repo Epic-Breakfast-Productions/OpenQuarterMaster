@@ -44,8 +44,8 @@ ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_PORT=443\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HOSTNAME_STRICT=false\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"KEYCLOAK_ADMIN=$(oqm-config -g 'infra.keycloak.adminUser')\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"KEYCLOAK_ADMIN_PASSWORD=$(oqm-config -g 'infra.keycloak.adminPass')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_BOOTSTRAP_ADMIN_USERNAME=$(oqm-config -g 'infra.keycloak.adminUser')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_BOOTSTRAP_ADMIN_PASSWORD=$(oqm-config -g 'infra.keycloak.adminPass')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB=postgres\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB_USERNAME=$(oqm-config -g 'infra.keycloak.postgresUser')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB_PASSWORD=$(oqm-config -g 'infra.keycloak.postgresPass')\n\" >> $ENV_CONFIG_FILE"
@@ -57,6 +57,8 @@ ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_CERTIFICATE_FILE=/etc/oqm/serviceCo
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_CERTIFICATE_KEY_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/privateKey.pem\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/keystore.p12\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_PASSWORD=$(oqm-config -g cert.certs.keystorePass)\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_PROXY_HEADERS=xforwarded\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_HOSTNAME=$(oqm-config -g infra.keycloak.externalBaseUri)\n\" >> $ENV_CONFIG_FILE"
 #ExecStartPre=/bin/bash -c "printf \"QUARKUS_HTTP_LIMITS_MAX_HEADER_SIZE=100k\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"QUARKUS_HTTP_HTTP2=false\n\" >> $ENV_CONFIG_FILE"
 
@@ -112,7 +114,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 fi; \
                             done; \
                             "
-ExecStartPost=/bin/bash -c "/etc/oqm/static/keycloak/kc-realm-manager --update-realm"
+#ExecStartPost=/bin/bash -c "/etc/oqm/static/keycloak/kc-realm-manager --update-realm"
 
 ExecStop=/bin/bash -c "stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove keycloak container'"
