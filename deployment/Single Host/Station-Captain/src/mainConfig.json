@@ -22,33 +22,42 @@
 		}
 	},
 	"cert": {
-		"mode": "self",
-		"certs": {
-			"privateKey": "/etc/oqm/certs/oqmSystemPrivateKey.pem",
-			"systemCert": "/etc/oqm/certs/oqmSystemCert.crt",
-			"CARootPrivateKey": "/etc/oqm/certs/oqmCaRootPrivateKey.pem",
-			"CARootCert": "/etc/oqm/certs/oqmCaRootCert.crt",
-			"keystore": "/etc/oqm/certs/oqmSystemKeystore.p12",
-			"keystorePass": "<secret>"
-		},
-		"selfMode": {
+		"externalDefault": "self",
+		"selfSigned": {
+			"certs": {
+				"CARootPrivateKey": "/etc/oqm/certs/oqmSystemCaRootPrivateKey.pem",
+				"CARootCert":       "/etc/oqm/certs/oqmSystemCaRootCert.crt",
+				"systemExternalSelfCertKey": "/etc/oqm/certs/oqmSystemExternalSelfCertKey.pem",
+				"systemExternalSelfCert":    "/etc/oqm/certs/oqmSystemExternalSelfCert.crt",
+				"systemExternalSelfCertCsr": "/etc/oqm/certs/oqmSystemExternalSelfCert.csr",
+				"systemExternalKeystore": "/etc/oqm/certs/oqmSystemExternalKeystore.p12",
+				"systemExternalKeystorePass": "<secret>"
+			},
+			"generateKeystore": false,
 			"rootCaTtl": 2920,
 			"systemCertTtl": 365,
-			"publicKeyCsr": "/etc/oqm/certs/oqmSystemCert.csr",
-			"certInfo":{
+			"certInfo": {
 				"countryName": "US",
 				"stateOrProvinceName": "PA",
 				"localityName": "",
 				"organizationName": "OQM-LOCAL",
 				"organizationalUnitName": "",
-				"caCommonName": "#{cert.selfMode.certInfo.organizationName}"
+				"caCommonName": "#{cert.selfMode.certInfo.organizationName}",
+				"additionalExternalSANs": []
 			}
 		},
-		"letsEncryptMode": {
-			"acceptTerms": false
+		"acme": {
+			"contactEmail": "",
+			"caServer": "",
+			"eab": {
+				"kid": "",
+				"hmacEncoded": ""
+			}
 		},
-		"providedMode": {
-			"caProvided": true
+		"provided": {
+			"enabled": false,
+			"cert": "",
+			"key": ""
 		}
 	},
 	"plugin": {
