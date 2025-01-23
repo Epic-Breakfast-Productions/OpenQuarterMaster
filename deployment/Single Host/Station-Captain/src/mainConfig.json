@@ -31,11 +31,13 @@
 				"systemExternalSelfCert":    "/etc/oqm/certs/oqmSystemExternalSelfCert.crt",
 				"systemExternalSelfCertCsr": "/etc/oqm/certs/oqmSystemExternalSelfCert.csr",
 				"systemExternalKeystore": "/etc/oqm/certs/oqmSystemExternalKeystore.p12",
-				"systemExternalKeystorePass": "<secret>"
+				"systemExternalKeystorePass": "<secret>",
+				"internalKeystorePass": "<secret>"
 			},
 			"generateKeystore": false,
 			"rootCaTtl": 2920,
 			"systemCertTtl": 365,
+			"daysBeforeExpiryToRegen": 30,
 			"certInfo": {
 				"countryName": "US",
 				"stateOrProvinceName": "PA",
