@@ -79,3 +79,8 @@ Users create a custom workflow for items to come into and work through, and fini
  - An addendum to the default dataset to tailor handling of assets:
    - Maintenance tracking
  - Tailored UI to handle this
+
+## Workato connector
+
+https://www.workato.com/integrations?utm_medium=adwords&utm_source=cpc&utm_campaign=workato_brand&utm_content=workato_specific%20keywords&utm_term=workato
+
