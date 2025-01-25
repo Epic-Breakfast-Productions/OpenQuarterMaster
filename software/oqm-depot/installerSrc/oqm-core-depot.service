@@ -27,8 +27,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'C
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove depot container'"
 
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/depot/files/"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.privateKey)\" /tmp/oqm/serviceConfig/core/depot/files/systemPrivateKey.pem"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.systemCert)\" /tmp/oqm/serviceConfig/core/depot/files/systemCert.crt"
+ExecStartPre=/bin/bash -c "oqm-captain --write-internal-certs $CONTAINER_NAME /tmp/oqm/serviceConfig/core/depot/files/"
 ExecStartPre=/bin/bash -c "chown oqm:oqm /tmp/oqm/serviceConfig/core/depot/files"
 ExecStartPre=/bin/bash -c "chown -R oqm:oqm /tmp/oqm/serviceConfig/core/depot/files"
 ExecStartPre=/bin/bash -c "chmod 644 -R /tmp/oqm/serviceConfig/core/depot/files"

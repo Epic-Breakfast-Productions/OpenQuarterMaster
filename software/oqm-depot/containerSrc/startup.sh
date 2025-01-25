@@ -1,8 +1,8 @@
 #!/bin/bash
 
 CONF_FILE="/etc/apache2/sites-available/000-default.conf"
-CERT_FILE="/etc/oqm/certs/systemCert.crt"
-KEY_FILE="/etc/oqm/certs/systemPrivateKey.pem"
+CERT_FILE="/etc/oqm/certs/serviceCert.crt"
+KEY_FILE="/etc/oqm/certs/serviceCertKey.pem"
 
 if [ -f "$CERT_FILE" ] && [ -f "$KEY_FILE" ]; then
     echo "Determined have cert files, adjusting config file."
