@@ -3,6 +3,6 @@
 	"name": "depot",
 	"title": "Depot (Main UI)",
 	"internalBaseUriConfig": "core.depot.internalBaseUri",
-	"preservePath": false,
+	"preservePath": true,
 	"stripPrefixes": true
 }
