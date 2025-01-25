@@ -24,7 +24,9 @@ http:
         servers:
           - url: {{ service.internalBaseUri }}
             # TODO:: do we need this?
-            preservePath: true # {{ service.preservePath }}
+            {% if service.preservePath %}
+            preservePath: true
+            {% endif %}
     {% endfor %}
   # https://doc.traefik.io/traefik/routing/services/#serverstransport_1
   serversTransports:
@@ -50,5 +52,6 @@ http:
     strip-oqm-prefixes:
       stripprefix:
         prefixes:
+          # TODO:: iterate to find services that need stripped
           - /core/depot
 

@@ -2,5 +2,7 @@
 	"type": "infra",
 	"name": "keycloak",
 	"title": "Keycloak (Auth)",
-	"internalBaseUriConfig": "infra.keycloak.internalBaseUri"
+	"internalBaseUriConfig": "infra.keycloak.internalBaseUri",
+	"preservePath": false,
+	"stripPrefixes": false
 }
