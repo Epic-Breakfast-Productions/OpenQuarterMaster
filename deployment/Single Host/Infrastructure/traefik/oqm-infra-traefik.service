@@ -22,13 +22,13 @@ Environment="IMAGE_VERSION=v3.3"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/traefik/env.list"
 
 ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
-
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
 
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/traefik/certs/"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.privateKey)\" /tmp/oqm/serviceConfig/infra/traefik/certs/privateKey.pem"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.systemCert)\" /tmp/oqm/serviceConfig/infra/traefik/certs/publicCert.crt"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.CARootPrivateKey)\" /tmp/oqm/serviceConfig/infra/traefik/certs/rootCertKey.pem"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.CARootCert)\" /tmp/oqm/serviceConfig/infra/traefik/certs/rootCert.crt"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.systemExternalSelfCertKey)\" /tmp/oqm/serviceConfig/infra/traefik/certs/privateKey.pem"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.systemExternalSelfCert)\" /tmp/oqm/serviceConfig/infra/traefik/certs/publicCert.crt"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.CARootPrivateKey)\" /tmp/oqm/serviceConfig/infra/traefik/certs/rootCertKey.pem"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.CARootCert)\" /tmp/oqm/serviceConfig/infra/traefik/certs/rootCert.crt"
 
 
 

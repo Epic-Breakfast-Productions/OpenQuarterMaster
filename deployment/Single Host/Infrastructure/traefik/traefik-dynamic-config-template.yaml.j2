@@ -20,6 +20,7 @@ http:
     {% for service in services %}
     {{service.serviceName}}:
       loadBalancer:
+        serversTransport: oqmInternalTransport
         servers:
           - url: {{ service.internalBaseUri }}
             # TODO:: do we need this?
@@ -27,11 +28,10 @@ http:
     {% endfor %}
   # https://doc.traefik.io/traefik/routing/services/#serverstransport_1
   serversTransports:
-    {% for service in services %}
-    {{service.serviceName}}-transport:
-      serverName: {{service.serviceName}}
+    oqmInternalTransport:
+      rootCAs:
+        - {{ certs.rootCa }}
 {#      insecureSkipVerify: true#}
-    {% endfor %}
   # https://doc.traefik.io/traefik/routing/routers/
   routers:
     {% for service in services %}
@@ -42,6 +42,9 @@ http:
         {% if service.stripPrefixes %}
         - strip-oqm-prefixes
         {% endif %}
+{#      tls:  #}
+{#        domains:#}
+{#          - main: "{{ system.hostname }}"#}
     {% endfor %}
   middlewares:
     strip-oqm-prefixes:

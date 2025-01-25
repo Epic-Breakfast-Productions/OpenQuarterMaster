@@ -28,8 +28,12 @@ RESULT_CONFIG_FILE = "/tmp/oqm/serviceConfig/infra/traefik/config.d/dynamicConfi
 TRAEFIK_CONTAINER_CERT_LOCATION = "/etc/traefik/certs/"
 
 templateData = {
+    "system": {
+      "hostname": mainCM.getConfigVal("system.hostname")
+    },
     "services": [],
     "certs": {
+        "rootCa": TRAEFIK_CONTAINER_CERT_LOCATION + "rootCert.crt",
         "method": "self",
         "default": {
             "key": TRAEFIK_CONTAINER_CERT_LOCATION + "privateKey.pem",
@@ -39,10 +43,6 @@ templateData = {
             {
                 "key": TRAEFIK_CONTAINER_CERT_LOCATION + "privateKey.pem",
                 "cert": TRAEFIK_CONTAINER_CERT_LOCATION + "publicCert.crt"
-            },
-            {
-                "key": TRAEFIK_CONTAINER_CERT_LOCATION + "rootCertKey.pem",
-                "cert": TRAEFIK_CONTAINER_CERT_LOCATION + "rootCert.crt"
             }
         ]
     }
