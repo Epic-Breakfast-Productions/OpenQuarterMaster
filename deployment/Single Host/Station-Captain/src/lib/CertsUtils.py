@@ -12,7 +12,7 @@ import os
 import datetime
 from cryptography import x509
 from cryptography.x509 import Certificate, Extensions, SubjectAlternativeName, GeneralName, ExtensionOID
-from future.backports.datetime import timedelta
+from datetime import timedelta
 
 from ConfigManager import *
 from CronUtils import *
@@ -66,7 +66,7 @@ class CertsUtils:
         :return: If the cert expires soon
         """
         expiring = cert.not_valid_after
-        now = datetime.datetime.now(datetime.timezone.utc)
+        now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None) # expring doesn't have tz data; fails to compare otherwise
         soonThreshold = expiring - timedelta(days=mainCM.getConfigVal("cert.selfSigned.daysBeforeExpiryToRegen"))
         return now >= soonThreshold
 
@@ -82,7 +82,7 @@ class CertsUtils:
         :return:
         """
         output = ""
-        root_ca_cert_path = mainCM.getConfigVal("cert.certs.CARootCert")
+        root_ca_cert_path = mainCM.getConfigVal("cert.selfSigned.certs.CARootCert")
         caCertName = os.path.basename(root_ca_cert_path)
 
         # Install in system location
@@ -237,7 +237,7 @@ class CertsUtils:
         returned, caInstallOutput = CertsUtils.ensureCaInstalled()
         if not returned:
             return False, caInstallOutput
-        return True
+        return True, "CA generated."
 
     @staticmethod
     def generateCert(
@@ -300,8 +300,8 @@ class CertsUtils:
                 if curSanStr == commonName:
                     cnNameInSANS = True
                 certBuilder = certBuilder.add_extension(x509.SubjectAlternativeName([CertsUtils.getSAN(curSanStr)]), critical=False)
-            if not cnNameInSANS:
-                certBuilder = certBuilder.add_extension(x509.SubjectAlternativeName([CertsUtils.getSAN(commonName)]), critical=False)
+        if not cnNameInSANS:
+            certBuilder = certBuilder.add_extension(x509.SubjectAlternativeName([CertsUtils.getSAN(commonName)]), critical=False)
 
         cert = certBuilder.sign(root_ca_key, hashes.SHA256(), default_backend())
 
@@ -349,7 +349,7 @@ class CertsUtils:
                     )
                 )
         CertsUtils.log.info("Finished writing new cert.")
-        return True
+        return True, "Generated new cert."
 
     @staticmethod
     def generateSystemCert() -> (bool, str):
@@ -363,8 +363,8 @@ class CertsUtils:
             mainCM.getConfigVal("system.hostname"),
             mainCM.getConfigVal("cert.selfSigned.certInfo.additionalExternalSANs"),
             mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCertCsr"),
-            mainCM.getConfigVal("cert.selfSigned.certInfo.systemExternalKeystore") if mainCM.getConfigVal("cert.selfSigned.generateKeystore") else None,
-            mainCM.getConfigVal("cert.selfSigned.certInfo.systemExternalKeystorePass") if mainCM.getConfigVal("cert.selfSigned.generateKeystore") else None
+            mainCM.getConfigVal("cert.selfSigned.certs.systemExternalKeystore") if mainCM.getConfigVal("cert.selfSigned.generateKeystore") else None,
+            mainCM.getConfigVal("cert.selfSigned.systemExternalKeystorePass") if mainCM.getConfigVal("cert.selfSigned.generateKeystore") else None
         )
 
     @staticmethod
@@ -449,5 +449,5 @@ class CertsUtils:
             None,
             None,
             destination + "/serviceCertKeystore.p12",
-            mainCM.getConfigVal("cert.selfSigned.certInfo.internalKeystorePass")
+            mainCM.getConfigVal("cert.selfSigned.internalKeystorePass")
         )
