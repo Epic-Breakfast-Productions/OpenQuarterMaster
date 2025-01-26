@@ -52,6 +52,9 @@ http:
     strip-oqm-prefixes:
       stripprefix:
         prefixes:
-          # TODO:: iterate to find services that need stripped
-          - /core/depot
+          {% for service in services %}
+          {% if service.stripPrefixes %}
+          - {{ service.proxyPath }}
+          {% endif %}
+          {% endfor %}
 
