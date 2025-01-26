@@ -10,14 +10,19 @@ quarkus.http.insecure-requests=redirect
 quarkus.log.level=INFO
 
 # Files brought over in shared volume
-quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core/api/files/publicCert.pem
-quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/api/files/privateKey.pem
-quarkus.http.ssl.certificate.trust-store-file=/etc/oqm/serviceConfig/core/api/files/keystore.p12
-quarkus.http.ssl.certificate.trust-store-password={cert.certs.keystorePass}
+quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core/api/files/serviceCert.crt
+quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/api/files/serviceCertKey.pem
+quarkus.http.ssl.certificate.trust-store-file=/etc/oqm/serviceConfig/core/api/files/serviceCertKeystore.p12
+quarkus.http.ssl.certificate.trust-store-password={cert.selfSigned.internalKeystorePass}
+
+#quarkus.http.proxy.proxy-address-forwarding=true
+#quarkus.http.proxy.allow-x-forwarded=true
+#quarkus.http.proxy.enable-forwarded-host=true
+#quarkus.http.proxy.enable-forwarded-prefix=true
 
 # jwt verification
 smallrye.jwt.verify.key.location={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/certs
-smallrye.jwt.client.tls.certificate.path=/etc/oqm/serviceConfig/core/api/files/publicCert.pem
+smallrye.jwt.client.tls.certificate.path=/etc/oqm/serviceConfig/core/api/files/serviceCert.crt
 
 # Mongo Config:
 quarkus.mongodb.connection-string=mongodb://{core.api.mongodb.user}:{core.api.mongodb.pass}@{infra.mongodb.host}:{infra.mongodb.port}
@@ -34,11 +39,13 @@ mp.messaging.outgoing.events-outgoing.value.serializer=io.quarkus.kafka.client.s
 #    Kafka instance not installed
 {% endif %}
 
+{% if metrics is defined and metrics.jaeger is defined %}
 # Jaeger Config:
-quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
-quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
+#quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
+#quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
+{% endif %}
 
 runningInfo.protocol=https
-runningInfo.hostname={system.hostname}
+runningInfo.hostname={core.api.externalBaseUri}
 runningInfo.depotUri={core.depot.externalBaseUri}
 
