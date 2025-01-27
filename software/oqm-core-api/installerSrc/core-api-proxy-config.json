@@ -4,5 +4,5 @@
 	"title": "Core API",
 	"internalBaseUriConfig": "core.api.internalBaseUri",
 	"preservePath": false,
-	"stripPrefixes": true
+	"stripPrefixes": false
 }

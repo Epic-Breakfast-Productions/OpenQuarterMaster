@@ -15,10 +15,15 @@ quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/api/files/ser
 quarkus.http.ssl.certificate.trust-store-file=/etc/oqm/serviceConfig/core/api/files/serviceCertKeystore.p12
 quarkus.http.ssl.certificate.trust-store-password={cert.selfSigned.internalKeystorePass}
 
-#quarkus.http.proxy.proxy-address-forwarding=true
-#quarkus.http.proxy.allow-x-forwarded=true
-#quarkus.http.proxy.enable-forwarded-host=true
-#quarkus.http.proxy.enable-forwarded-prefix=true
+# https://quarkus.io/guides/http-reference#reverse-proxy
+quarkus.http.proxy.proxy-address-forwarding=true
+quarkus.http.proxy.allow-x-forwarded=true
+quarkus.http.proxy.enable-forwarded-host=true
+quarkus.http.proxy.enable-forwarded-prefix=true
+
+quarkus.http.root-path=/core/api
+#quarkus.smallrye-openapi.path=/core/api/q/openapi
+#quarkus.swagger-ui.path=/core/api/q/swagger-ui
 
 # jwt verification
 smallrye.jwt.verify.key.location={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/certs
