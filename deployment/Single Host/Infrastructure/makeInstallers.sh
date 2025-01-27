@@ -22,10 +22,12 @@ buildDir="build"
 
 debDir="InfraDeb"
 
-# All
-packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres" "keycloak" "nginx" "kafka")
+# Testing
+#packages=("jaeger" "mongo" "postgres" "keycloak" "nginx")
+#packages=("mongo" "postgres" "nginx")
+packages=("mongo" "postgres" "keycloak" "traefik")
 # Ready for deployment
-packages=("jaeger" "mongo" "postgres" "keycloak" "kafka-red-panda")
+packages=("traefik" "mongo" "postgres" "keycloak" "kafka-red-panda")
 #packages=("jaeger" "mongo" "postgres" "keycloak")
 
 #

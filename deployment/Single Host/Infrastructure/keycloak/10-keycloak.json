@@ -1,15 +1,17 @@
 {
 	"infra": {
 		"keycloak": {
-			"host": "oqm-infra-keycloak",
-			"port": "8115",
+			"internalHost": "oqm-infra-keycloak",
+			"internalHttpPort": 80,
+			"internalHttpsPort": 443,
+			"externalBaseUri": "#{infra.traefik.externalRootUri}/infra/keycloak",
+			"internalBaseUri": "https://#{infra.keycloak.internalHost}:#{infra.keycloak.internalHttpsPort}",
 			"adminUser": "oqmAdmin",
 			"adminPass": "<secret>",
 			"postgresUser": "oqm_keycloak_main",
 			"postgresPass": "<secret>",
 			"postgresDb": "oqm_keycloak",
 			"oqmRealmName": "oqm",
-			"externalBaseUri": "https://#{system.hostname}:#{infra.keycloak.port}",
 			"options": {
 				"userSelfRegistration": true
 			}

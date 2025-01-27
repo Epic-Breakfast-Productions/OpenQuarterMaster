@@ -32,7 +32,9 @@ Generally speaking, yes, with a couple of caveats!
 
 For 'normal' usage (general desktop use; web browser, gui programs, etc), you will be fine. For hosting other services and running additional containers, we strongly recommend running on a different host.
 
-Given the nature of Docker, allowing other users to run containers opens a large security can of worms. Additionally, the OQM system utilizes a range of [ports](ports.md) and expects to be the only system using host ports.
+Given the nature of Docker, allowing other users to run containers opens a large security can of worms. It is *highly, highly* recommended to not give any user the `docker` group to access docker resources on a host with OQM installed. 
+
+Additionally, the OQM system utilizes a reverse proxy that moves all external traffic through one service (more details [here](networking.md)). By default this reverse proxy uses the default HTTP/S ports of `80` and `443`. This can be changed, but whatever ports are used by OQM are obviously taken and can't be used by another service.
 
 That being said, 'normal' use of the system should be fine, and a regular non-root/sudoer/wheel account should not be able to affect the OQM instance. In fact, a usecase of the system is to access the OQM system from the same box to simplify operations.
 

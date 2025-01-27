@@ -1,0 +1,60 @@
+# Traefik configuration for OQM
+
+tls:
+  stores:
+    default:
+      defaultCertificate:
+        certFile: {{ certs.default.cert }}
+        keyFile: {{ certs.default.key }}
+  certificates:
+    {% for cert in certs.certList %}
+    - certFile: {{ cert.cert }}
+      keyFile: {{ cert.key }}
+      stores:
+        - default
+    {% endfor %}
+
+http:
+  # https://doc.traefik.io/traefik/routing/services/
+  services:
+    {% for service in services %}
+    {{service.serviceName}}:
+      loadBalancer:
+        serversTransport: oqmInternalTransport
+        servers:
+          - url: {{ service.internalBaseUri }}
+            # TODO:: do we need this?
+            {% if service.preservePath %}
+            preservePath: true
+            {% endif %}
+    {% endfor %}
+  # https://doc.traefik.io/traefik/routing/services/#serverstransport_1
+  serversTransports:
+    oqmInternalTransport:
+      rootCAs:
+        - {{ certs.rootCa }}
+{#      insecureSkipVerify: true#}
+  # https://doc.traefik.io/traefik/routing/routers/
+  routers:
+    {% for service in services %}
+    {{service.serviceName}}-router:
+      rule: "PathPrefix(`{{ service.proxyPath }}`)"
+      service: {{service.serviceName}}
+      middlewares:
+        {% if service.stripPrefixes %}
+        - strip-oqm-prefixes
+        {% endif %}
+{#      tls:  #}
+{#        domains:#}
+{#          - main: "{{ system.hostname }}"#}
+    {% endfor %}
+  middlewares:
+    strip-oqm-prefixes:
+      stripprefix:
+        prefixes:
+          {% for service in services %}
+          {% if service.stripPrefixes %}
+          - {{ service.proxyPath }}
+          {% endif %}
+          {% endfor %}
+

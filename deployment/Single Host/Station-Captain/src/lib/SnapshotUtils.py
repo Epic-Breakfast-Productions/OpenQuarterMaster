@@ -77,7 +77,7 @@ class SnapshotUtils:
                 shutil.copytree(ScriptInfo.CONFIG_DIR + "/secrets", compilingSecretsDir, dirs_exist_ok=True)
                 shutil.copytree(ScriptInfo.SERVICE_CONFIG_DIR, compilingServiceConfigsDir, dirs_exist_ok=True)
                 # copy certs
-                certs = mainCM.getConfigVal("cert.certs")
+                certs = mainCM.getConfigVal("cert.selfSigned.certs")
                 for cert in certs:
                     certPath = certs[cert]
                     # print(f"Cert: {cert}/{certPath}")
@@ -219,7 +219,7 @@ class SnapshotUtils:
             mainCM.rereadConfigData()
 
             # load in certs
-            certs = mainCM.getConfigVal("cert.certs")
+            certs = mainCM.getConfigVal("cert.selfSigned.certs")
             for cert in certs:
                 if "Pass" in cert:
                     continue

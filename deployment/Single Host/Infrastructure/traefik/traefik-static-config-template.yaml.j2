@@ -1,0 +1,24 @@
+# Traefik static config
+entryPoints:
+  web:
+    address: {{ infra.traefik.httpAddress }}
+    asDefault: false
+    forwardedHeaders:
+      insecure: true
+    http:
+      redirections:
+        entryPoint:
+          to: secureWeb
+          scheme: https
+  secureWeb:
+    address: {{ infra.traefik.httpsAddress }}
+    asDefault: true
+    http:
+      tls: true
+providers:
+  file:
+    directory: "/etc/traefik/dynamicConfig/"
+api:
+  insecure: true
+log:
+  level: DEBUG

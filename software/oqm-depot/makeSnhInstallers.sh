@@ -46,7 +46,7 @@ mkdir -p "$buildDir/$debDir/usr/share/applications"
 
 install -m 755 -D "$srcDir/20-core-depot.json" "$buildDir/$debDir/etc/oqm/config/configs/"
 install -m 755 -D "$srcDir/oqm-depot.desktop" "$buildDir/$debDir/usr/share/applications/"
-#install -m 755 -D "$srcDir/core-baseStation-proxy-config.json" "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
+install -m 755 -D "$srcDir/core-depot-proxy-config.json" "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 #install -m 755 -D "$srcDir/baseStationClient.json" "$buildDir/$debDir/etc/oqm/kcClients/"
 
 serviceFile="oqm-core-depot.service"
@@ -92,7 +92,7 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postinst"
 
 systemctl daemon-reload
 # restart proxy after we add config
-#systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
+systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dtraefik.service"
 systemctl enable "$serviceFileEscaped"
 systemctl start "$serviceFileEscaped"
 EOT
