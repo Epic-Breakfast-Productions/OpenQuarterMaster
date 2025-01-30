@@ -42,3 +42,4 @@ jobs:
           name: Unit Test Report            # Name of the check run which will be created
           path: "${{ inputs.path }}/build/test-results/test/*.xml"    # Path to test results
           reporter: java-junit        # Format of test results
+
