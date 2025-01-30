@@ -1,10 +1,10 @@
 name: WF - Gradle Unit Test
-on:
-  workflow_call:
-    inputs:
-      path:
-        required: true
-        type: string
+on: push
+  # workflow_call:
+  #   inputs:
+  #     path:
+  #       required: true
+  #       type: string
 jobs:
   unitTest:
     runs-on: ubuntu-latest
