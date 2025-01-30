@@ -5,6 +5,9 @@ on:
       path:
         required: true
         type: string
+  push:
+    branches:
+      - *
 jobs:
   unitTest:
     runs-on: ubuntu-latest
