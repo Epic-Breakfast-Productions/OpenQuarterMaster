@@ -1,0 +1,69 @@
+
+
+quarkus:
+  oidc:
+    application-type: web_app
+    token-state-manager:
+      split-tokens: true
+    logout:
+      path: /logout
+      post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
+  oqmCoreApi:
+    devservice:
+      #certPath: ../../../../dev/devTest-cert-cert.pem
+      #certKeyPath: ../../../../dev/devTest-cert-key.pem
+      certPath: dev/devTest-cert-cert.pem
+      certKeyPath: dev/devTest-cert-key.pem
+
+  keycloak:
+    devservices:
+      # Required to export realm
+      start-command: "start-dev --http-enabled=true --hostname-strict=false --https-certificate-file=/opt/keycloak/certs/devTest-cert-cert.pem --https-certificate-key-file=/opt/keycloak/certs/devTest-cert-key.pem"
+      #realm-path: "../../../../dev/oqm-realm.json"
+      realm-path: "dev/oqm-realm.json"
+      realm-name: "oqm"
+      resource-aliases:
+        #systemCert: ../../../../dev/devTest-cert-cert.pem
+        #systemCertKey: ../../../../dev/devTest-cert-key.pem
+        systemCert: dev/devTest-cert-cert.pem
+        systemCertKey: dev/devTest-cert-key.pem
+      resource-mappings:
+        systemCert: /opt/keycloak/certs/devTest-cert-cert.pem
+        systemCertKey: /opt/keycloak/certs/devTest-cert-key.pem
+
+smallrye:
+  jwt:
+    always-check-authorization: true
+
+
+"%dev":
+  quarkus:
+    application:
+    log:
+      level: DEBUG
+    http:
+      port: 8080
+      ssl-port: 8443
+      ssl:
+        certificate:
+          #files: ../../../../dev/devTest-cert-cert.pem
+          #key-files: ../../../../dev/devTest-cert-key.pem
+          files: dev/devTest-cert-cert.pem
+          key-files: dev/devTest-cert-key.pem
+    oidc:
+      client-id: oqm-app
+      credentials:
+        secret: "**********"
+    rest-client:
+      verify-host: false
+      oqmCoreApi:
+        verify-host: false
+      oqmCoreApi-oidc:
+        verify-host: false
+
+      #      auth-server-url: http://localhost:8115/realms/oqm
+
+          # quarkus.rest-client.oqmCoreApi.trust-store=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
+          #quarkus.rest-client.oqmCoreApi.trust-store-password={cert.certs.keystorePass}
+        #quarkus.rest-client.oqmCoreApi-oidc.trust-store=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
+        #quarkus.rest-client.oqmCoreApi-oidc.trust-store-password={cert.certs.keystorePass}
