@@ -46,22 +46,22 @@ jobs:
           arguments: javadoc jar javadocJar sourcesJar
           build-root-directory: "software/libs/open-qm-moduleDriver"
       - name: Archive code coverage results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Code Coverage Report
           path: "software/libs/open-qm-moduleDriver/build/reports/jacoco/test/html"
       - name: Archive Junit Test Report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Junit Test Report
           path: "software/libs/open-qm-moduleDriver/build/reports/tests/test"
       - name: Archive Javadocs
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Javadocs
           path: "software/libs/open-qm-moduleDriver/build/docs/javadoc"
       - name: Archive libs (Jars)
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Libs (Jars)
           path: "software/libs/open-qm-moduleDriver/build/libs/*"

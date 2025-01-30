@@ -41,12 +41,12 @@ jobs:
           arguments: check
           build-root-directory: "software/plugins/open-qm-plugin-demo"
       - name: Archive code coverage results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Code Coverage Report
           path: "software/plugins/open-qm-plugin-demo/build/jacoco-report"
       - name: Archive Test Report
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Test Report
           path: "software/plugins/open-qm-plugin-demo/build/reports/tests/test"
@@ -59,7 +59,7 @@ jobs:
           path: "software/plugins/open-qm-plugin-demo/build/test-results/test/*.xml"    # Path to test results
           reporter: java-junit        # Format of test results
       - name: Archive Selenium Recordings
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Selenium Recordings
           path: "software/plugins/open-qm-plugin-demo/build/seleniumRecordings"
@@ -93,7 +93,7 @@ jobs:
 #          path: "software/open-qm-base-station/build/test-results/quarkusIntTest/*.xml"    # Path to test results
 #          reporter: java-junit        # Format of test results
 #      - name: Archive Integration Test Report
-#        uses: actions/upload-artifact@v2
+#        uses: actions/upload-artifact@v4
 #        if: success() || failure()
 #        with:
 #          name: Integration Test Report
@@ -131,7 +131,7 @@ jobs:
 #          path: "software/open-qm-base-station/build/test-results/quarkusIntTest/*.xml"    # Path to test results
 #          reporter: java-junit        # Format of test results
 #      - name: Archive Native Integration Test Report
-#        uses: actions/upload-artifact@v2
+#        uses: actions/upload-artifact@v4
 #        if: success() || failure()
 #        with:
 #          name: Native Integration Test Report

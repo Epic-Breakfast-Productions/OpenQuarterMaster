@@ -78,7 +78,7 @@ jobs:  # This workflow contains a single job called "build"
       - name: Make Installers
         run: ./makeInstallers.sh
       - name: Archive Installers
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Installers Produced
           path: "deployment/Single Host/Station-Captain/bin"
@@ -112,7 +112,7 @@ jobs:  # This workflow contains a single job called "build"
       -
         name: Archive Cucumber Reports Ubuntu
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Cucumber Test Reports Ubuntu
           path: "deployment/Single Host/Station-Captain/stationCaptainTest/target/test-reports/*"
@@ -153,7 +153,7 @@ jobs:  # This workflow contains a single job called "build"
       -
         name: Archive Cucumber Reports Fedora
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Cucumber Test Reports Fedora
           path: "deployment/Single Host/Station-Captain/stationCaptainTest/target/test-reports/*"
