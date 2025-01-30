@@ -3,7 +3,9 @@
 name: CI - Manager - Station Captain
 
 # Controls when the workflow will run
-# on:
+on:
+  workflow_dispatch:
+    
 #   # Triggers the workflow on push or pull request events but only for the main branch
 #   push:
 #     branches: [ "**" ]
@@ -17,7 +19,6 @@ name: CI - Manager - Station Captain
 #       - ".github/workflows/stationCaptain.yml"
 #   workflow_call:
 #   # Allows you to run this workflow manually from the Actions tab
-#   workflow_dispatch:
 defaults:
   run:
     working-directory: "deployment/Single Host/Station-Captain/"
