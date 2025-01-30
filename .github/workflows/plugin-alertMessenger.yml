@@ -8,6 +8,9 @@ on:
     paths:
       - "software/plugins/alert-messenger/**"
       - ".github/workflows/plugin-alertMessenger.yml"
+      - ".github/workflows/lib/wf-gradleBuild.yaml"
+      - ".github/workflows/lib/wf-gradleUnitTest.yaml"
+      - ".github/workflows/lib/wf-gradleQuarkusIntTest.yaml"
   pull_request:
     branches: [ "**" ]
     paths:
@@ -22,15 +25,15 @@ defaults:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    uses: ./.github/workflows/wf-gradleBuild.yaml
+    uses: ./.github/workflows/lib/wf-gradleBuild.yaml
     with:
       path: "software/plugins/alert-messenger/"
   unitTest:
-    uses: ./.github/workflows/wf-gradleUnitTest.yaml
+    uses: ./.github/workflows/lib/wf-gradleUnitTest.yaml
     with:
       path: "software/plugins/alert-messenger/"
   intTest:
-    uses: ./.github/workflows/wf-gradleQuarkusIntTest.yaml
+    uses: ./.github/workflows/lib/wf-gradleQuarkusIntTest.yaml
     strategy:
       matrix:
         containerBased: [ false ] # TODO:: enable true
