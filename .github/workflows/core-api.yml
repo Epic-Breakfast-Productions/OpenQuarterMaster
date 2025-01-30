@@ -10,35 +10,39 @@ on:
     paths:
       - "software/oqm-core-api/**"
       - ".github/workflows/core-api.yml"
-      - ".github/workflows/lib/wf-gradleBuild.yaml"
-      - ".github/workflows/lib/wf-gradleUnitTest.yaml"
-      - ".github/workflows/lib/wf-gradleQuarkusIntTest.yaml"
+      - ".github/workflows/wf-gradleBuild.yaml"
+      - ".github/workflows/wf-gradleUnitTest.yaml"
+      - ".github/workflows/wf-gradleQuarkusIntTest.yaml"
+      - ".github/workflows/wf-setup.yaml"
+
   pull_request:
     branches: [ "**" ]
     paths:
       - "software/oqm-core-api/**"
       - ".github/workflows/core-api.yml"
-      - ".github/workflows/lib/wf-gradleBuild.yaml"
-      - ".github/workflows/lib/wf-gradleUnitTest.yaml"
-      - ".github/workflows/lib/wf-gradleQuarkusIntTest.yaml"
+      - ".github/workflows/wf-gradleBuild.yaml"
+      - ".github/workflows/wf-gradleUnitTest.yaml"
+      - ".github/workflows/wf-gradleQuarkusIntTest.yaml"
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 defaults:
   run:
     working-directory: "software/oqm-core-api"
+env:
+  SHA: ${{ github.sha }}
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
-    uses: ./.github/workflows/lib/wf-gradleBuild.yaml
+    uses: ./.github/workflows/wf-gradleBuild.yaml
     with:
       path: "software/oqm-core-api"
   unitTest:
-    uses: ./.github/workflows/lib/wf-gradleUnitTest.yaml
+    uses: ./.github/workflows/wf-gradleUnitTest.yaml
     with:
       path: "software/oqm-core-api"
   intTest:
-    uses: ./.github/workflows/lib/wf-gradleQuarkusIntTest.yaml
+    uses: ./.github/workflows/wf-gradleQuarkusIntTest.yaml
     strategy:
       matrix:
         containerBased: [ false ] # TODO:: enable true

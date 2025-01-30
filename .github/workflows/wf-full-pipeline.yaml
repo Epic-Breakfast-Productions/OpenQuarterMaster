@@ -1,0 +1,35 @@
+# This is a basic workflow to help you get started with Actions
+
+run-name: Pipeline build for ${{ inputs.path }}
+
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the main branch
+  workflow_call:
+    inputs:
+      path:
+        required: true
+        type: string
+  # Allows you to run this workflow manually from the Actions tab
+
+env:
+  PATH: ${{ inputs.path }}
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    uses: ./.github/workflows/wf-gradleBuild.yaml
+    with:
+      path: ${{ inputs.path }}
+  unitTest:
+    uses: ./.github/workflows/wf-gradleUnitTest.yaml
+    with:
+      path: ${{ inputs.path }}
+  intTest:
+    uses: ./.github/workflows/wf-gradleQuarkusIntTest.yaml
+    strategy:
+      matrix:
+        containerBased: [ false ] # TODO:: enable true
+    with:
+      path: ${{ inputs.path }}
+      containerBased: ${{ matrix.containerBased }}
+
