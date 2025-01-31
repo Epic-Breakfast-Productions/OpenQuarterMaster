@@ -433,7 +433,7 @@ class CertsUtils:
         CertsUtils.log.info("Ensuring core certs (CA and system certs) exist.")
         caSuccess, caMessage, caWritten = CertsUtils.ensureRootCA(force)
         sysSuccess, sysMessage, sysWritten = CertsUtils.ensureSystemCerts(force)
-        return (caSuccess and sysSuccess), caMessage + " " + sysMessage, (caWritten and sysWritten)
+        return (caSuccess and sysSuccess), caMessage + " " + sysMessage, (caWritten or sysWritten)
 
     @staticmethod
     def generateInternalCert(host, destination) -> (bool, str):
