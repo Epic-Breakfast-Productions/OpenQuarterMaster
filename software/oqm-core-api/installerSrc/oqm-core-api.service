@@ -53,6 +53,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         -v /etc/oqm/serviceConfig/core/api/files:/etc/oqm/serviceConfig/core/api/files:ro \
                                         --add-host $(oqm-config -g system.hostname):host-gateway \
                                         --env-file $MAIN_CONFIG_FILE \
+                                        --env-file $USER_CONFIG_FILE \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up
 ExecStartPost=/bin/bash -c "running=\"false\"; \

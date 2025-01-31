@@ -93,6 +93,7 @@ if [ ! -f "/etc/oqm/serviceConfig/core/api/user-config.list" ]; then
 # Configuration here will override those in core-api-config.list
 # Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/oqm-core-api/docs/BuildingAndDeployment.adoc
 
+# quarkus.log.level=DEBUG
 
 EOF
 fi

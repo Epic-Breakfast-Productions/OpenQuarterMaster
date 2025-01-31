@@ -21,7 +21,6 @@ quarkus.http.proxy.allow-x-forwarded=true
 quarkus.http.proxy.enable-forwarded-host=true
 quarkus.http.proxy.enable-forwarded-prefix=true
 
-quarkus.http.root-path=/core/api
 #quarkus.smallrye-openapi.path=/core/api/q/openapi
 #quarkus.swagger-ui.path=/core/api/q/swagger-ui
 

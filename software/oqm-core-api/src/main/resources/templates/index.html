@@ -4,7 +4,7 @@
 </head>
 <body>
 <main>
-	<img src="{config:['quarkus.http.root-path']}media/logo.svg" alt="OQM Logo">
+	<img src="{rootPrefix}/media/logo.svg" alt="OQM Logo">
 	<h1>
 		OQM Core API
 	</h1>
@@ -12,7 +12,7 @@
 		This service serves the core api forming the base functionality of the Open QuarterMaster system.
 	</p>
 	<p>
-		See <a href="/q/swagger-ui">Swagger</a> for API documentation.
+		See <a href="{rootPrefix}/q/swagger-ui">Swagger</a> for API documentation.
 	</p>
 	{#if config:['runningInfo.depotUri'] != " "}
 	<p>
