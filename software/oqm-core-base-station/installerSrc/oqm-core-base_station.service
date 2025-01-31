@@ -9,10 +9,10 @@ Description=Open QuarterMaster Base Station server for Open Quartermaster. Versi
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
 After=docker.service
 Wants=network-online.target
-Wants=oqm-infra-jaeger.service
 Requires=docker.socket
 Requires=oqm-infra-mongodb.service
 Requires=oqm-infra-keycloak.service
+Requires=oqm-infra-keycloak-client_watch.service
 
 [Service]
 Type=simple
@@ -32,9 +32,7 @@ ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
 # Ensure previous runs gone
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.privateKey)\" /etc/oqm/serviceConfig/core/base+station/files/privateKey.pem"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.systemCert)\" /etc/oqm/serviceConfig/core/base+station/files/publicCert.pem"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.keystore)\" /etc/oqm/serviceConfig/core/base+station/files/keystore.p12"
+ExecStartPre=/bin/bash -c "oqm-captain --write-internal-certs $CONTAINER_NAME /etc/oqm/serviceConfig/core/base+station/files/"
 
 # Create filled out configuration
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/core/base-station/uiEntry.json > /etc/oqm/ui.d/core-baseStation.json"
@@ -73,8 +71,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             done; \
                             "
 ExecStartPost=/bin/bash -c "running=\"false\"; \
-                            hostname=\"$(oqm-config -g system.hostname)\"; \
-                            port=\"$(oqm-config -g core.baseStation.httpsPort)\"; \
+                            healthUri=\"$(oqm-config -g core.baseStation.externalBaseUri)/q/health\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
@@ -82,7 +79,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                hcGet=\"$(/usr/bin/curl \"https://$hostname:$port/q/health\")\"; \
+                                hcGet=\"$(/usr/bin/curl \"$healthUri\")\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \
