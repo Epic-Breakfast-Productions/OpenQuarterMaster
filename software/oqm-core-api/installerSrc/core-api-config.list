@@ -26,7 +26,7 @@ quarkus.http.proxy.enable-forwarded-prefix=true
 
 # jwt verification
 smallrye.jwt.verify.key.location={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/certs
-smallrye.jwt.client.tls.certificate.path=/etc/oqm/serviceConfig/core/api/files/serviceCert.crt
+smallrye.jwt.client.tls.certificate.path=/etc/oqm/serviceConfig/core/api/files/systemCA.crt
 
 # Mongo Config:
 quarkus.mongodb.connection-string=mongodb://{core.api.mongodb.user}:{core.api.mongodb.pass}@{infra.mongodb.host}:{infra.mongodb.port}
