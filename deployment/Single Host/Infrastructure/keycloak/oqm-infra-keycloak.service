@@ -70,7 +70,6 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
                                  --add-host host.docker.internal:host-gateway \
                                  --add-host $(oqm-config -g system.hostname):host-gateway \
                                  --network=oqm-internal \
-                                 -p $(oqm-config -g 'infra.keycloak.port'):443 \
                                  --env-file $ENV_CONFIG_FILE \
                                  -v /etc/oqm/serviceConfig/infra/keycloak/files:/etc/oqm/serviceConfig/infra/keycloak/files:ro \
                                  -v /etc/oqm/static/keycloak/import:/opt/keycloak/data/import:ro \
@@ -94,8 +93,6 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             "
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             sleep 10s; \
-                            hostname=\"$(oqm-config -g system.hostname)\"; \
-                            servicePort=$(oqm-config -g 'infra.keycloak.port'); \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
