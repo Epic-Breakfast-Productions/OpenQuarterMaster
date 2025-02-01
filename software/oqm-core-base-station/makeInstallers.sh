@@ -97,6 +97,8 @@ if [ ! -f "/etc/oqm/serviceConfig/core/base+station/user-config.list" ]; then
 # Configuration here will override those in base-station-config.list
 # Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/open-qm-base-station/docs/BuildingAndDeployment.adoc
 
+#quarkus.log.level=DEBUG
+#quarkus.oqmCoreAPi.refreshDbCacheFrequency=600s
 
 EOF
 fi
