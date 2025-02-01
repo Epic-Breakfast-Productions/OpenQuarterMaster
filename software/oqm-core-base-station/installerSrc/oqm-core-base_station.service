@@ -47,8 +47,6 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --network=oqm-internal \
-                                        -p $(oqm-config -g core.baseStation.httpsPort):443 \
-                                        -p $(oqm-config -g core.baseStation.httpPort):80 \
                                         -v /etc/oqm/serviceConfig/core/base+station/files:/etc/oqm/serviceConfig/core/base+station/files:ro \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/base-station-config.list \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/user-config.list \
@@ -70,8 +68,10 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 fi; \
                             done; \
                             "
+# docker run --rm --name oqm-core-base_station-test --network=oqm-internal docker.io/curlimages/curl:latest https://oqm-core-base_station:443/q/health -k
+# docker run --rm --name oqm-core-base_station-ssl --network=oqm-internal docker.io/alpine/openssl:latest s_client -connect oqm-core-base_station:443 -servername oqm-core-base_station
 ExecStartPost=/bin/bash -c "running=\"false\"; \
-                            healthUri=\"$(oqm-config -g core.baseStation.externalBaseUri)/q/health\"; \
+                            healthUri=\"$(oqm-config -g core.baseStation.internalBaseUri)/q/health\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
@@ -79,8 +79,8 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                hcGet=\"$(/usr/bin/curl \"$healthUri\")\"; \
-                                echo \"Health check get: $hcGet\"; \
+                                hcGet=\"$(docker run --rm --name oqm-core-base_station-hc --network=oqm-internal docker.io/curlimages/curl:latest $healthUri -k)\"; \
+                                echo \"Health check get to $healthUri : $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \
                                 if [ \"$status\" = \"UP\" ]; then \

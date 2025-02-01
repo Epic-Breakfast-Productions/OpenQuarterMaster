@@ -101,6 +101,8 @@ quarkus:
     theme: flattop
     footer: With ❤️, EBP
   http:
+    port: 80
+    ssl-port: 443
     body:
       preallocate-body-buffer: true
     limits:
@@ -114,8 +116,6 @@ quarkus:
           policy: authenticated
     access-log:
       enabled: true
-    port: 80
-    ssl-port: 443
   qute:
   oidc:
     application-type: web_app

@@ -4,7 +4,7 @@
 			"internalHost": "oqm-core-base_station",
 			"internalHttpPort": 80,
 			"internalHttpsPort": 443,
-			"internalBaseUri": "https://#{core.baseStation.internalHost}:#{core.baseStation.internalHttpsPort}",
+			"internalBaseUri": "http://#{core.baseStation.internalHost}:#{core.baseStation.internalHttpPort}",
 			"externalBaseUri": "#{infra.traefik.externalRootUri}/core/base-station"
 		}
 	}

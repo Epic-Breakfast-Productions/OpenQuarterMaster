@@ -6,13 +6,15 @@
 # Basic configs
 quarkus.http.port=80
 quarkus.http.ssl.port=443
-quarkus.http.insecure-requests=redirect
+quarkus.http.insecure-requests=enabled
+#quarkus.http.insecure-requests=redirect
 
 # Files brought over in shared volume
 quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core/base+station/files/serviceCert.crt
 quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKey.pem
 quarkus.http.ssl.certificate.trust-store-file=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKeystore.p12
 quarkus.http.ssl.certificate.trust-store-password={cert.selfSigned.internalKeystorePass}
+
 quarkus.oidc.tls.trust-store-file=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKeystore.p12
 quarkus.oidc.tls.trust-store-password={cert.selfSigned.internalKeystorePass}
 
