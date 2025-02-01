@@ -69,7 +69,7 @@ const Carousel = {
 				ajaxPromises.push(
 					Rest.call({ //TODO:: move to getter
 						spinnerContainer: carousel[0],
-						url: "/api/passthrough/media/image/" + id,
+						url: Rest.passRoot + "/api/passthrough/media/image/" + id,
 						async: false,
 						done: function (data) {
 							carouselData[i] = {

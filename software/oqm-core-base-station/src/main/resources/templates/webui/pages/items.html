@@ -1,7 +1,7 @@
 {#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Items' page='items'}
 {!{@java.util.Map allowedUnitsMap}!}
 {#styleSheets}
-    <link rel="stylesheet" href="/lib/Croppie-2.6.4/croppie.css"/>
+    <link rel="stylesheet" href="{rootPrefix}/lib/Croppie-2.6.4/croppie.css"/>
 {/styleSheets}
 {#pageContent}
 <div class="row">
@@ -76,7 +76,7 @@
             <form id="addItemFromFileForm">
                 <div class="col-12 mb-3">
                     <label for="importBulkFileInput" class="form-label">
-                        <a href="/api/passthrough/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
+                        <a href="{rootPrefix}/api/passthrough/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
                         or {#icons/fileJson}{/icons/fileJson} JSON file:
                     </label>
                     <input class="form-control" type="file" id="addFromFileInput" name="file" accept="text/csv,application/json" required>
@@ -99,38 +99,38 @@
 {/modals}
 
 {#scripts}
-    <script src="/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-    <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
-    <script src="/res/js/obj/media/imageAdd.js"></script>
-    <script src="/res/js/obj/media/imageAddFromSelect.js"></script>
-    <script src="/res/js/search.js"></script>
-    <script src="/res/js/other.js"></script>
-    <script src="/res/js/historySearch.js"></script>
-    <script src="/res/js/obj/objEdit.js"></script>
-    <script src="/res/js/obj/objView.js"></script>
-    <script src="/res/js/storedTypeUtils.js"></script>
-    <script src="/res/js/obj/media/imageSearchSelect.js"></script>
-    <script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-    <script src="/res/js/obj/units.js"></script>
-    <script src="/res/js/obj/getters.js"></script>
-    <script src="/res/js/obj/storageBlock/capacities.js"></script>
-    <script src="/res/js/carousel.js"></script>
-    <script src="/res/js/obj/item/itemStoredAddSubTrans.js"></script>
-    <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
-    <script src="/res/js/obj/itemCategoryView.js"></script>
-    <script src="/res/js/textCopy.js"></script>
-    <script src="/res/js/item/extItemSearch.js"></script>
-	<script src="/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
-	<script src="/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
-	<script src="/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
-    <script src="/res/js/obj/item/itemAddEdit.js"></script>
-    <script src="/res/js/obj/item/storedView.js"></script>
-    <script src="/res/js/obj/item/storedEdit.js"></script>
-    <script src="/res/js/obj/item/itemView.js"></script>
-    <script src="/res/js/CodeScanning.js"></script>
-    <script src="/res/js/obj/itemCheckout/itemCheckout.js"></script>
-    <script src="/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
-    <script src="/res/js/pageComponents.js"></script>
+    <script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageAddFromSelect.js"></script>
+    <script src="{rootPrefix}/res/js/search.js"></script>
+    <script src="{rootPrefix}/res/js/other.js"></script>
+    <script src="{rootPrefix}/res/js/historySearch.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objView.js"></script>
+    <script src="{rootPrefix}/res/js/storedTypeUtils.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/units.js"></script>
+    <script src="{rootPrefix}/res/js/obj/getters.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
+    <script src="{rootPrefix}/res/js/carousel.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemStoredAddSubTrans.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/storageBlockTree.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCategoryView.js"></script>
+    <script src="{rootPrefix}/res/js/textCopy.js"></script>
+    <script src="{rootPrefix}/res/js/item/extItemSearch.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemAddEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/storedView.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/storedEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemView.js"></script>
+    <script src="{rootPrefix}/res/js/CodeScanning.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckout.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
+    <script src="{rootPrefix}/res/js/pageComponents.js"></script>
 {/scripts}
 {#pageScript}
 <script>
