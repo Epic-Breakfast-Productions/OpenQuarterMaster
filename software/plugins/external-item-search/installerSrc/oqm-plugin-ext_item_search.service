@@ -17,7 +17,7 @@ Type=simple
 Restart=always
 TimeoutSec=5m
 # Setup operating variables
-Environment="CONTAINER_NAME=oqm-plugin-ext-item-search"
+Environment="CONTAINER_NAME=oqm-plugin-ext_item_search"
 Environment="IMAGE_NAME=ebprod/oqm-plugin-ext_item_search"
 Environment="IMAGE_VERSION=${version}"
 Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/plugin/external-item-search/plugin-ext_item_search-config.list"
@@ -30,9 +30,7 @@ ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
 # Ensure previous runs gone
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop ext item search container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove ext item search container'"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.privateKey)\" /etc/oqm/serviceConfig/plugin/external-item-search/files/privateKey.pem"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.systemCert)\" /etc/oqm/serviceConfig/plugin/external-item-search/files/publicCert.pem"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.keystore)\" /etc/oqm/serviceConfig/plugin/external-item-search/files/keystore.p12"
+ExecStartPre=/bin/bash -c "oqm-captain --write-internal-certs $CONTAINER_NAME /etc/oqm/serviceConfig/plugin/external-item-search/files/"
 
 # Create filled out configuration
 #ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/core/api/uiEntry.json > /etc/oqm/ui.d/core-api.json"
@@ -49,6 +47,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --network=oqm-internal \
                                         -v /etc/oqm/serviceConfig/plugin/external-item-search/files:/etc/oqm/serviceConfig/plugin/external-item-search/files:ro \
                                         --env-file $MAIN_CONFIG_FILE \
+                                        --env-file $USER_CONFIG_FILE \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up
 ExecStartPost=/bin/bash -c "running=\"false\"; \
@@ -67,8 +66,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             done; \
                             "
 ExecStartPost=/bin/bash -c "running=\"false\"; \
-                            hostname=\"$(oqm-config -g system.hostname)\"; \
-                            port=\"$(oqm-config -g core.api.httpsPort)\"; \
+                            healthUri=\"$(oqm-config -g plugin.externalItemSearch.internalBaseUri)/q/health\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
@@ -76,7 +74,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                hcGet=\"$(/usr/bin/docker exec $CONTAINER_NAME /usr/bin/curl \"http://localhost/q/health\")\"; \
+                                hcGet=\"$(docker run --rm --name $CONTAINER_NAME-hc --network=oqm-internal docker.io/curlimages/curl:latest $healthUri -k)\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \
