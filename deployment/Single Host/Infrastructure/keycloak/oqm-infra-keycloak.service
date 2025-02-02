@@ -16,6 +16,7 @@ After=docker.service
 Wants=network-online.target
 Requires=docker.socket
 Requires=oqm-infra-postgres.service
+After=oqm-infra-postgres.service
 
 [Service]
 Type=simple
