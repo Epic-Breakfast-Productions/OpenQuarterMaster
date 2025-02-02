@@ -14,7 +14,9 @@ Wants=oqm-infra-kafka.service
 Wants=oqm-infra-kafka_red_panda.service
 Requires=docker.socket
 Requires=oqm-infra-mongodb.service
+After=oqm-infra-mongodb.service
 Requires=oqm-infra-keycloak.service
+After=oqm-infra-keycloak.service
 
 [Service]
 Type=simple
