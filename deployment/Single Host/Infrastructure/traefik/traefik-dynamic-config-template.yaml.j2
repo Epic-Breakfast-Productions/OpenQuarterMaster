@@ -7,27 +7,26 @@ tls:
         certFile: {{ certs.default.cert }}
         keyFile: {{ certs.default.key }}
   certificates:
-    {% for cert in certs.certList %}
+    {%- for cert in certs.certList %}
     - certFile: {{ cert.cert }}
       keyFile: {{ cert.key }}
       stores:
         - default
-    {% endfor %}
-
+    {%- endfor %}
 http:
   # https://doc.traefik.io/traefik/routing/services/
   services:
-    {% for service in services %}
+    {%- for service in services %}
     {{service.serviceName}}:
       loadBalancer:
         serversTransport: oqmInternalTransport
         servers:
           - url: {{ service.internalBaseUri }}
-            # TODO:: do we need this?
-            {% if service.preservePath %}
+            {#- TODO:: do we need this? -#}
+            {%- if service.preservePath %}
             preservePath: true
-            {% endif %}
-    {% endfor %}
+            {%- endif %}
+    {%- endfor %}
   # https://doc.traefik.io/traefik/routing/services/#serverstransport_1
   serversTransports:
     oqmInternalTransport:
@@ -36,25 +35,29 @@ http:
 {#      insecureSkipVerify: true#}
   # https://doc.traefik.io/traefik/routing/routers/
   routers:
-    {% for service in services %}
+    #defakultRoute:
+    #  service: core-depot
+    #  rule: "Path(`/`)"
+    #  middlewares:
+    #    - redirectToDefault
+    {%- for service in services %}
     {{service.serviceName}}-router:
       rule: "PathPrefix(`{{ service.proxyPath }}`)"
       service: {{service.serviceName}}
       middlewares:
-        {% if service.stripPrefixes %}
+        {%- if service.stripPrefixes %}
         - strip-oqm-prefixes
-        {% endif %}
-{#      tls:  #}
-{#        domains:#}
-{#          - main: "{{ system.hostname }}"#}
-    {% endfor %}
+        {%- endif %}
+    {%- endfor %}
   middlewares:
+    redirectToDefault:
+      replacePath:
+        path: "{{ defaultPath }}"
     strip-oqm-prefixes:
       stripprefix:
         prefixes:
-          {% for service in services %}
-          {% if service.stripPrefixes %}
+          {%- for service in services %}
+          {%- if service.stripPrefixes %}
           - {{ service.proxyPath }}
-          {% endif %}
-          {% endfor %}
-
+          {%- endif %}
+          {%- endfor %}
