@@ -43,14 +43,12 @@ public class IndexUi {
 	@Location("index.html")
 	Template indexTemplate;
 
-	
-	//Probably overthinking this
 	@GET
 	@Path("index.html")
 	@Operation(summary = "Simple index content to lead user to more resources. Same as / .")
 	public TemplateInstance getIndex() {
 		return this.getIndexTemplate()
-			.data("rootPrefix", forwardedPrefix.orElse(""));
+			.data("rootPrefix", this.forwardedPrefix.orElse(""));
 	}
 
 	@GET

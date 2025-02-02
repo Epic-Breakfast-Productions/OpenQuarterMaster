@@ -73,7 +73,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             done; \
                             "
 ExecStartPost=/bin/bash -c "running=\"false\"; \
-                            healthUri=\"$(oqm-config -g core.api.externalBaseUri)/q/health\"; \
+                            healthUri=\"$(oqm-config -g core.api.internalBaseUri)/q/health\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
@@ -81,7 +81,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                hcGet=\"$(/usr/bin/curl \"$healthUri\")\"; \
+                                hcGet=\"$(docker run --rm --name oqm-core-api-hc --network=oqm-internal docker.io/curlimages/curl:latest $healthUri -k)\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \
