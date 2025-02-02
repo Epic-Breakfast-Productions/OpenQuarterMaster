@@ -20,14 +20,14 @@ jobs:
           arguments: test
           build-root-directory: ${{ inputs.path }}
       - name: Archive code coverage results
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Code Coverage Report
           path: "${{ inputs.path }}/build/jacoco-report"
       - name: Archive Unit Test Report
         env:
           NODE_OPTIONS: "--max_old_space_size=4096"
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Unit Test Report
           path: "${{ inputs.path }}/build/reports/tests/test"
@@ -41,3 +41,4 @@ jobs:
           name: Unit Test Report            # Name of the check run which will be created
           path: "${{ inputs.path }}/build/test-results/test/*.xml"    # Path to test results
           reporter: java-junit        # Format of test results
+
