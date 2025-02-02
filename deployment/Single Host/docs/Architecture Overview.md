@@ -33,9 +33,9 @@ Please [reach out](../../../CONTRIBUTING.md) if you have ideas for plugins (or r
 
 ### Networking
 
-The networking of this system is facilitated by Docker, and the [nginx infrastructure component](../Infrastructure/nginx).
+The networking of this system is facilitated by Docker, and the [traefik infrastructure component](../Infrastructure/traefik).
 
-All services are run directly on the container network `oqm-internal`. This keeps all services close and reachable to each other, but unavailable to the outside world by default. Outside is then provided through the  [nginx reverse proxy.](../Infrastructure/nginx).
+All services are run directly on the container network `oqm-internal`. This keeps all services close and reachable to each other, but unavailable to the outside world by default. Outside is then provided through the [traefik reverse proxy.](../Infrastructure/traefik).
 
 Some services could be directly exposed to the net for specific use cases, but it is recommended to keep things going through the proxy.
 
