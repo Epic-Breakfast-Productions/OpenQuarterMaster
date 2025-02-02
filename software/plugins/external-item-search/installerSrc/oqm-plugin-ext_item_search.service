@@ -17,7 +17,7 @@ Type=simple
 Restart=always
 TimeoutSec=5m
 # Setup operating variables
-Environment="CONTAINER_NAME=oqm-plugin-ext_item_search"
+Environment="CONTAINER_NAME=oqm-plugin-ext-item-search"
 Environment="IMAGE_NAME=ebprod/oqm-plugin-ext_item_search"
 Environment="IMAGE_VERSION=${version}"
 Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/plugin/external-item-search/plugin-ext_item_search-config.list"
