@@ -82,7 +82,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                hcGet=\"$(docker run --rm --name oqm-core-base_station-hc --network=oqm-internal docker.io/curlimages/curl:latest $healthUri -k)\"; \
+                                hcGet=\"$(docker run --rm --name $CONTAINER_NAME-hc --network=oqm-internal docker.io/curlimages/curl:latest $healthUri -k)\"; \
                                 echo \"Health check get to $healthUri : $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \
