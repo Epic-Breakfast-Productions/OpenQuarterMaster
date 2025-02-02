@@ -35,7 +35,7 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/item/itemSearchForm id='mainPageSearch'}
+                    {#search/item/itemSearchForm id='mainPageSearch' rootPrefix=rootPrefix}
                     {/search/item/itemSearchForm}
                 </div>
             </div>
@@ -45,7 +45,7 @@
 <div class="row">
     <div class="col table-responsive">
         <table class=" table table-bordered table-striped table-hover table-sm">
-            {#search/item/itemSearchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch'}
+            {#search/item/itemSearchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' rootPrefix=rootPrefix}
             {/search/item/itemSearchResults}
         </table>
     </div>
@@ -54,7 +54,7 @@
 {/search/image/imageSelectFormInputHidden}
 {/pageContent}
 {#modals}
-    {#objView/itemViewModal currency=currency}
+    {#objView/itemViewModal currency=currency  rootPrefix=rootPrefix}
         {#footerButtons}
             <button type="button" id="itemViewEditButton" class="btn btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" >
                 {#icons/edit}{/icons/edit}
@@ -85,11 +85,11 @@
         </div>
     </div>
 {/modal}
-{#search/storage/searchSelectModal otherModalId="addEditItemModal"}
+{#search/storage/searchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix}
 {/search/storage/searchSelectModal}
-{#search/image/imageSearchSelectModal otherModalId="addEditItemModal"}
+{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix}
 {/search/image/imageSearchSelectModal}
-{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal"}
+{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal" rootPrefix=rootPrefix}
 {/itemCheckout/itemCheckoutModal}
 {#CodeScannerModal}{/CodeScannerModal}
 	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal"}

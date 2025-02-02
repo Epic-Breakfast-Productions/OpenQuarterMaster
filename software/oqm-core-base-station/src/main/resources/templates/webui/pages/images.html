@@ -28,7 +28,7 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/image/imageSearchForm id='mainImageSearch'}
+                    {#search/image/imageSearchForm id='mainImageSearch' rootPrefix=rootPrefix}
                     {/search/image/imageSearchForm}
                 </div>
             </div>
@@ -36,7 +36,7 @@
     </div>
 </div>
 <div id="imageSearchresults">
-    {#search/image/imageSearchResults searchResults=searchResults actionType='full' searchFormId='mainImageSearch'}
+    {#search/image/imageSearchResults searchResults=searchResults actionType='full' searchFormId='mainImageSearch' rootPrefix=rootPrefix}
     {/search/image/imageSearchResults}
 </div>
 
@@ -110,7 +110,7 @@
     {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
 </div>
 <div class="row">
-    {#objView/history/objHistoryView containerId='imageHistory' objectUrl='{rootPrefix}/api/passthrough/media/image/'}{/objView/history/objHistoryView}
+    {#objView/history/objHistoryView containerId='imageHistory' objectUrl=(rootPrefix + '/api/passthrough/media/image/')}{/objView/history/objHistoryView}
     
 </div>
 <hr />
