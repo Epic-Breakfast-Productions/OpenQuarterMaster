@@ -19,6 +19,6 @@ providers:
   file:
     directory: "/etc/traefik/dynamicConfig/"
 api:
-  insecure: true
+  insecure: {{ infra.traefik.managementPortEnabled }}
 log:
   level: DEBUG

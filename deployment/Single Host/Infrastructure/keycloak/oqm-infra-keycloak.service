@@ -100,7 +100,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                hcGet=\"$(docker run --rm --name oqm-infra-keycloak-hc --network=oqm-internal docker.io/curlimages/curl:latest https://oqm-infra-keycloak:9000/infra/keycloak/health -k)\"; \
+                                hcGet=\"$(docker run --rm --name oqm-infra-keycloak-hc --network=oqm-internal docker.io/curlimages/curl:latest https://$CONTAINER_NAME:9000/infra/keycloak/health -k)\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \
