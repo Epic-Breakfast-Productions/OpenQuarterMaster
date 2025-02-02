@@ -10,9 +10,12 @@ Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tr
 After=docker.service
 Wants=network-online.target
 Requires=docker.socket
-Requires=oqm-infra-mongodb.service
+Requires=oqm-core-api.service
+After=oqm-core-api.service
 Requires=oqm-infra-keycloak.service
+After=oqm-infra-keycloak.service
 Requires=oqm-infra-keycloak-client_watch.service
+After=oqm-infra-keycloak-client_watch.service
 
 [Service]
 Type=simple
