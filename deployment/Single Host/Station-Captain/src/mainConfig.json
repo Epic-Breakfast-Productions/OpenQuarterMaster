@@ -6,7 +6,8 @@
 		"automaticContainerPruneFrequency": "monthly",
 		"defaultUi": {
 			"type": "core",
-			"name": "depot"
+			"name": "depot",
+			"path": "/"
 		}
 	},
 	"captain": {
