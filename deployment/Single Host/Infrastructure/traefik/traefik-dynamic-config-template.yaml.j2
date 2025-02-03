@@ -35,11 +35,11 @@ http:
 {#      insecureSkipVerify: true#}
   # https://doc.traefik.io/traefik/routing/routers/
   routers:
-    #defakultRoute:
-    #  service: core-depot
-    #  rule: "Path(`/`)"
-    #  middlewares:
-    #    - redirectToDefault
+    defaultRoute:
+      service: core-depot
+      rule: "Path(`/`)"
+      middlewares:
+        - redirectToDefault
     {%- for service in services %}
     {{service.serviceName}}-router:
       rule: "PathPrefix(`{{ service.proxyPath }}`)"
@@ -51,8 +51,9 @@ http:
     {%- endfor %}
   middlewares:
     redirectToDefault:
-      replacePath:
-        path: "{{ defaultPath }}"
+      redirectRegex:
+        regex: "/$"
+        replacement: "{{ defaultPath }}"
     strip-oqm-prefixes:
       stripprefix:
         prefixes:

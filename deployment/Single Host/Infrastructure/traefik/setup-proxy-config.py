@@ -31,7 +31,7 @@ templateData = {
     "system": {
       "hostname": mainCM.getConfigVal("system.hostname")
     },
-    "defaultPath": "/" + mainCM.getConfigVal("system.defaultUi.type") + "/" + mainCM.getConfigVal("system.defaultUi.name"),
+    "defaultPath": "/" + mainCM.getConfigVal("system.defaultUi.type") + "/" + mainCM.getConfigVal("system.defaultUi.name") + mainCM.getConfigVal("system.defaultUi.path"),
     "services": [],
     "certs": {
         "rootCa": TRAEFIK_CONTAINER_CERT_LOCATION + "rootCert.crt",
