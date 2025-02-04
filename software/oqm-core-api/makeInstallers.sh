@@ -135,7 +135,6 @@ if [ $( docker ps -a | grep oqm-core-api | wc -l ) -gt 0 ]; then
 else
         echo "Docker container was already gone."
 fi
-#systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postrm"
