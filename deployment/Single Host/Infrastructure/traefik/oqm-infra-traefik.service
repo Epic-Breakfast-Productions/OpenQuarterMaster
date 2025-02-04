@@ -1,8 +1,8 @@
-# Service file for running an instance of MongoDB.
+# Service file for running an instance of Traefik.
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
 #
-#  Nginx tags: https://hub.docker.com/_/nginx
+#  Traefik tags: https://hub.docker.com/_/traefik
 #
 
 [Unit]
@@ -30,14 +30,10 @@ ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.systemExte
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.CARootPrivateKey)\" /tmp/oqm/serviceConfig/infra/traefik/certs/rootCertKey.pem"
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.CARootCert)\" /tmp/oqm/serviceConfig/infra/traefik/certs/rootCert.crt"
 
-
-
-
-
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop traefik container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove traefik container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull traefik image.'"
 ExecStartPre=/bin/bash -c "/etc/oqm/serviceConfig/infra/traefik/setup-proxy-config.py"
 # setup env list file
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/traefik/config.d/"
@@ -45,10 +41,6 @@ ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/infra/t
 ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
-#ExecStartPre=/bin/bash -c "printf \"MONGO_INITDB_ROOT_USERNAME=$(oqm-config -g 'infra.mongodb.adminUser')\n\" >> $ENV_CONFIG_FILE"
-#ExecStartPre=/bin/bash -c "printf \"MONGO_INITDB_ROOT_PASSWORD=$(oqm-config -g 'infra.mongodb.adminPass')\n\" >> $ENV_CONFIG_FILE"
-#ExecStartPre=/bin/bash -c "printf printf \"%s\n\" \"$(oqm-config -g 'infra.mongodb.keyFileContent' | base64)\""
-
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --rm \
@@ -62,19 +54,10 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  -v /tmp/oqm/serviceConfig/infra/traefik/config.d/dynamicConfig/:/etc/traefik/dynamicConfig:ro \
                                  -v /tmp/oqm/serviceConfig/infra/traefik/certs/:/etc/traefik/certs:ro \
                                  $IMAGE_NAME:$IMAGE_VERSION --log.level=DEBUG"
-#ExecStartPost=/bin/bash -c "running=\"false\"; \
-#                            while [ \"$running\" != \"true\" ]; do \
-#                                sleep 1s; \
-#                                /usr/bin/docker exec $CONTAINER_NAME mongosh --eval \"\"; \
-#                                if [ \"$?\" = \"0\" ]; then \
-#                                    echo \"Mongo container running and available!\"; \
-#                                    running=\"true\"; \
-#                                fi \
-#                            done \
-#                            "
+# TODO:: meaningful healthcheck for startup
 
-ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop nginx container'"
-ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove nginx container'"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop traefik container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove traefik container'"
 
 [Install]
 WantedBy=multi-user.target

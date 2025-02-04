@@ -1,7 +1,7 @@
 #!/bin/python3
 #
 # Setup Proxy Config Script
-# This script sets up the nginx proxy configuration file for Open QuarterMaster.
+# This script sets up the Traefik proxy configuration file for Open QuarterMaster.
 #
 
 import logging

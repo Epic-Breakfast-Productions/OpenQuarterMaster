@@ -111,8 +111,6 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 fi; \
                             done; \
                             "
-#ExecStartPost=/bin/bash -c "/etc/oqm/static/keycloak/kc-realm-manager --update-realm"
-
 ExecStop=/bin/bash -c "stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove keycloak container'"
 
