@@ -22,7 +22,7 @@ public class LoggingFilter implements ContainerRequestFilter {
 	
 	@Override
 	public void filter(ContainerRequestContext requestContext) throws IOException {
-		log.info(
+		log.debug(
 			"Incoming Request from {} - {}:{}  ssl?: {}  Headers ({}): {}",
 			request.remoteAddress().toString(),
 			requestContext.getMethod(),

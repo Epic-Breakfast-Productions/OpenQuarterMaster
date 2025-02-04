@@ -5,7 +5,7 @@ Ingests:
 - id - the id to give the form
 !}
 {!{@tech.ebp.oqm.baseStation.rest.search.CategoriesSearch searchObject}!}
-{#include tags/search/searchForm id=id action='/categories' showKeywords=true showAttributes=true defaultPageSize=config:['ui.itemCategory.search.defaultPageSize']}
+{#include tags/search/searchForm id=id action=(rootPrefix + '/categories') showKeywords=true showAttributes=true defaultPageSize=config:['ui.itemCategory.search.defaultPageSize']}
 {#inputs}
 <div class="mb-3 col col-3">
 	<label for="{id}-categoryNameInput" class="form-label">Name</label>

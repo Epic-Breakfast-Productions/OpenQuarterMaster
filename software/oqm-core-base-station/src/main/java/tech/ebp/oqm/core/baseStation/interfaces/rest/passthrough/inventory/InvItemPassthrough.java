@@ -5,12 +5,16 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.quarkus.qute.Location;
+import io.quarkus.qute.Template;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -31,6 +35,12 @@ import java.io.IOException;
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class InvItemPassthrough extends PassthroughProvider {
+
+
+	@Getter
+	@Inject
+	@Location("tags/search/item/itemSearchResults")
+	Template searchResultTemplate;
 	
 	@POST
 	@Operation(
@@ -108,7 +118,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
+		description = "Items retrieved.",
 		content = {
 			@Content(
 				mediaType = "application/json"
@@ -119,12 +129,24 @@ public class InvItemPassthrough extends PassthroughProvider {
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> search(
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	public Uni<Response> search(
 		//for actual queries
-		@BeanParam InventoryItemSearch itemSearch
+		@BeanParam InventoryItemSearch itemSearch,
+		@HeaderParam("Accept") String acceptType,
+		@HeaderParam("searchFormId") String searchFormId,
+		@HeaderParam("otherModalId") String otherModalId,
+		@HeaderParam("inputIdPrepend") String inputIdPrepend
 	) {
-		return this.getOqmCoreApiClient().invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemSearch);
+		return this.processSearchResults(
+			this.getOqmCoreApiClient().invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemSearch),
+			this.searchResultTemplate,
+			acceptType,
+			searchFormId,
+			otherModalId,
+			inputIdPrepend,
+			"select"
+		);
 	}
 	
 	@Path("{id}")

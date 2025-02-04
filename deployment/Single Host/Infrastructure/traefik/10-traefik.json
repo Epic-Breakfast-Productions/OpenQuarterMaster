@@ -1,0 +1,13 @@
+{
+	"infra": {
+		"traefik": {
+			"host": "oqm-infra-traefik",
+			"httpPort": "80",
+			"httpsPort": "443",
+			"httpAddress": ":#{infra.traefik.httpPort}",
+			"httpsAddress": ":#{infra.traefik.httpsPort}",
+			"externalRootUri": "https://#{system.hostname}:#{infra.traefik.httpsPort}",
+			"managementPortEnabled": false
+		}
+	}
+}
