@@ -91,8 +91,6 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postinst"
 #!/bin/bash
 
 systemctl daemon-reload
-# restart proxy after we add config
-systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dtraefik.service"
 systemctl enable "$serviceFileEscaped"
 systemctl start "$serviceFileEscaped"
 EOT
@@ -110,7 +108,6 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postrm"
 #!/bin/bash
 
 systemctl daemon-reload
-#systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postrm"
