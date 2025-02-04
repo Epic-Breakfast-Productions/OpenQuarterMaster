@@ -1,7 +1,6 @@
 {
 	"type": "core",
 	"name": "base-station",
-	"title": "Base Station",
 	"internalBaseUriConfig": "core.baseStation.internalBaseUri",
 	"preservePath": true,
 	"stripPrefixes": true

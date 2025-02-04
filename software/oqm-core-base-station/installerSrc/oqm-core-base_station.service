@@ -71,8 +71,6 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 fi; \
                             done; \
                             "
-# docker run --rm --name oqm-core-base_station-test --network=oqm-internal docker.io/curlimages/curl:latest https://oqm-core-base_station:443/q/health -k
-# docker run --rm --name oqm-core-base_station-ssl --network=oqm-internal docker.io/alpine/openssl:latest s_client -connect oqm-core-base_station:443 -servername oqm-core-base_station
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             healthUri=\"$(oqm-config -g core.baseStation.internalBaseUri)/q/health\"; \
                             while [ \"$running\" != \"true\" ]; do \
