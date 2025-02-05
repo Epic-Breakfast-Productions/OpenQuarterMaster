@@ -13,7 +13,6 @@ on:
       - ".github/workflows/wf-gradleBuild.yaml"
       - ".github/workflows/wf-gradleUnitTest.yaml"
       - ".github/workflows/wf-gradleQuarkusIntTest.yaml"
-      - ".github/workflows/wf-setup.yaml"
   pull_request:
     branches: [ "**" ]
     paths:

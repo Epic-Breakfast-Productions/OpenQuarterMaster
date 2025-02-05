@@ -13,7 +13,6 @@ on:
       - ".github/workflows/wf-gradleBuild.yaml"
       - ".github/workflows/wf-gradleUnitTest.yaml"
       - ".github/workflows/wf-gradleQuarkusIntTest.yaml"
-      - ".github/workflows/wf-setup.yaml"
 
   pull_request:
     branches: [ "**" ]
@@ -29,8 +28,6 @@ on:
 defaults:
   run:
     working-directory: "software/oqm-core-api"
-env:
-  SHA: ${{ github.sha }}
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
