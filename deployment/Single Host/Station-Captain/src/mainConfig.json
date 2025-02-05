@@ -24,6 +24,7 @@
 	},
 	"cert": {
 		"externalDefault": "self",
+		"additionalExternalSANs": [],
 		"selfSigned": {
 			"certs": {
 				"CARootPrivateKey": "/etc/oqm/certs/oqmSystemCaRootPrivateKey.pem",
@@ -42,8 +43,7 @@
 				"localityName": "",
 				"organizationName": "OQM-LOCAL",
 				"organizationalUnitName": "",
-				"caCommonName": "#{cert.selfSigned.certInfo.organizationName}",
-				"additionalExternalSANs": []
+				"caCommonName": "#{cert.selfSigned.certInfo.organizationName}"
 			},
 			"generateKeystore": false,
 			"systemExternalKeystorePass": "<secret>",

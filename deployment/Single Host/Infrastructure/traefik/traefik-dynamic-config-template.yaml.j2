@@ -3,9 +3,20 @@
 tls:
   stores:
     default:
+      {%- if certs.method != "acme" %}
       defaultCertificate:
         certFile: {{ certs.default.cert }}
         keyFile: {{ certs.default.key }}
+      {%- else %}
+      defaultGeneratedCert:
+        resolver: acmeResolver
+        domain:
+          main: {{ system.hostname }}
+          sans:
+            {%- for san in system.alternateSans %}
+            - {{ san }}
+            {%- endfor  %}
+      {%- endif  %}
   certificates:
     {%- for cert in certs.certList %}
     - certFile: {{ cert.cert }}

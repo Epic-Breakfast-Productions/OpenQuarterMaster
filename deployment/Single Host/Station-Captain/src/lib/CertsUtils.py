@@ -361,7 +361,7 @@ class CertsUtils:
             mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCertKey"),
             mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCert"),
             mainCM.getConfigVal("system.hostname"),
-            mainCM.getConfigVal("cert.selfSigned.certInfo.additionalExternalSANs"),
+            mainCM.getConfigVal("cert.additionalExternalSANs"),
             mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCertCsr"),
             mainCM.getConfigVal("cert.selfSigned.certs.systemExternalKeystore") if mainCM.getConfigVal("cert.selfSigned.generateKeystore") else None,
             mainCM.getConfigVal("cert.selfSigned.systemExternalKeystorePass") if mainCM.getConfigVal("cert.selfSigned.generateKeystore") else None
