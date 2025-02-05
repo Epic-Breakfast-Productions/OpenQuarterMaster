@@ -37,17 +37,15 @@ def updateTraefikConfig():
     log.info("Updating traefik config.")
     templateData = {
         "system": {
-          "hostname": mainCM.getConfigVal("system.hostname")
+          "hostname": mainCM.getConfigVal("system.hostname"),
+          "alternateSans": mainCM.getConfigVal("cert.additionalExternalSANs")
         },
         "defaultPath": "/" + mainCM.getConfigVal("system.defaultUi.type") + "/" + mainCM.getConfigVal("system.defaultUi.name") + mainCM.getConfigVal("system.defaultUi.path"),
         "services": [],
         "certs": {
             "rootCa": TRAEFIK_CONTAINER_CERT_LOCATION + "rootCert.crt",
-            "method": "self",
-            "default": {
-                "key": TRAEFIK_CONTAINER_CERT_LOCATION + "privateKey.pem",
-                "cert": TRAEFIK_CONTAINER_CERT_LOCATION + "publicCert.crt"
-            },
+            "method": mainCM.getConfigVal("cert.externalDefault"),
+            "default": None,
             "certList": [
                 {
                     "key": TRAEFIK_CONTAINER_CERT_LOCATION + "privateKey.pem",
@@ -56,6 +54,33 @@ def updateTraefikConfig():
             ]
         }
     }
+
+    if mainCM.getConfigVal("cert.provided.enabled"):
+        templateData["certs"]["certList"].append({
+            "key": TRAEFIK_CONTAINER_CERT_LOCATION + "providedKey.pem",
+            "cert": TRAEFIK_CONTAINER_CERT_LOCATION + "providedCert.crt"
+        })
+
+    match mainCM.getConfigVal("cert.externalDefault"):
+        case "self":
+            log.debug("Setting proxy config to self signed certs")
+            templateData["certs"]["default"] = {
+                "key": TRAEFIK_CONTAINER_CERT_LOCATION + "privateKey.pem",
+                "cert": TRAEFIK_CONTAINER_CERT_LOCATION + "publicCert.crt"
+            }
+        case "acme":
+            log.debug("Setting proxy config to acme certs")
+        case "provided":
+            log.debug("Setting proxy config to provided certs")
+            templateData["certs"]["default"] = {
+                "key": TRAEFIK_CONTAINER_CERT_LOCATION + "providedKey.pem",
+                "cert": TRAEFIK_CONTAINER_CERT_LOCATION + "providedCert.crt"
+            }
+        case _:
+            log.error("Value of external default was invalid.")
+
+
+
 
     for curProxyConfigFile in os.listdir(PROXY_CONFIG_DIR):
         if curProxyConfigFile.endswith(".json"):

@@ -30,6 +30,8 @@ ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.systemExte
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.systemExternalSelfCert)\" /tmp/oqm/serviceConfig/infra/traefik/certs/publicCert.crt"
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.CARootPrivateKey)\" /tmp/oqm/serviceConfig/infra/traefik/certs/rootCertKey.pem"
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.CARootCert)\" /tmp/oqm/serviceConfig/infra/traefik/certs/rootCert.crt"
+ExecStartPre=/bin/bash -c "if [[ \"$(oqm-config -g cert.provided.enabled)\" = "True" ]]; then cp \"$(oqm-config -g cert.provided.key)\" /tmp/oqm/serviceConfig/infra/traefik/certs/providedKey.pem; fi "
+ExecStartPre=/bin/bash -c "if [[ \"$(oqm-config -g cert.provided.enabled)\" = "True" ]]; then cp \"$(oqm-config -g cert.provided.key)\" /tmp/oqm/serviceConfig/infra/traefik/certs/providedCert.crt; fi "
 
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop traefik container'"
