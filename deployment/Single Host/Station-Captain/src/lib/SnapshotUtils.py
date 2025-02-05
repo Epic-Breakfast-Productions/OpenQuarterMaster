@@ -83,7 +83,12 @@ class SnapshotUtils:
                     # print(f"Cert: {cert}/{certPath}")
                     if "Pass" in cert:
                         continue
+                    if not os.path.exists(certPath):
+                        continue
                     shutil.copyfile(certPath, compilingCertsDir + "/" + cert)
+                if mainCM.getConfigVal("cert.provided.enabled"):
+                    shutil.copyfile(mainCM.getConfigVal("cert.provided.cert"), compilingCertsDir + "/providedCert.crt")
+                    shutil.copyfile(mainCM.getConfigVal("cert.provided.key"), compilingCertsDir + "/providedCertKey.pem")
 
                 SnapshotUtils.log.info("Running individual snapshots.")
                 for filename in os.listdir(ScriptInfo.SNAPSHOT_SCRIPTS_LOC):
@@ -207,7 +212,7 @@ class SnapshotUtils:
             shutil.copytree(extractionDir + "/config/secrets", ScriptInfo.CONFIG_DIR + "/secrets", dirs_exist_ok=True)
             shutil.copytree(extractionDir + "/serviceConfigs", ScriptInfo.SERVICE_CONFIG_DIR, dirs_exist_ok=True)
 
-            SnapshotUtils.log.info("Running individual restore.")
+            SnapshotUtils.log.info("Running individual restore scripts.")
             for filename in os.listdir(ScriptInfo.SNAPSHOT_SCRIPTS_LOC):
                 file = os.path.join(ScriptInfo.SNAPSHOT_SCRIPTS_LOC, filename)
                 SnapshotUtils.log.info("Running script %s", file)
@@ -215,17 +220,24 @@ class SnapshotUtils:
                 if result.returncode != 0:
                     SnapshotUtils.log.error("FAILED to run snapshot restore script, returned %d. Erring script: %s\nError: %s", result.returncode, file, result.stderr)
                     SnapshotUtils.log.debug("Erring script err output: %s", result.stderr)
-
+            SnapshotUtils.log.info("DONE Running individual restore scripts.")
             mainCM.rereadConfigData()
 
+            SnapshotUtils.log.info("Restoring certs from snapshot data...")
             # load in certs
             certs = mainCM.getConfigVal("cert.selfSigned.certs")
             for cert in certs:
                 if "Pass" in cert:
                     continue
+                if not os.path.exists(extractionDir + "/certs/" + cert):
+                    continue
                 # TODO:: broke here
                 shutil.copyfile(extractionDir + "/certs/" + cert, certs[cert])
             CertsUtils.ensureCaInstalled(True)
+            if mainCM.getConfigVal("cert.provided.enabled"):
+                shutil.copyfile(extractionDir + "/certs/providedCert.crt", mainCM.getConfigVal("cert.provided.cert"))
+                shutil.copyfile(extractionDir + "/certs/providedCertKey.pem", mainCM.getConfigVal("cert.provided.key"))
+            SnapshotUtils.log.info("DONE Restoring certs.")
 
             ServiceUtils.doServiceCommand(ServiceStateCommand.start, ServiceUtils.SERVICE_ALL)
         finally:
