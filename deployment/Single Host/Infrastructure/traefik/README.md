@@ -49,3 +49,5 @@ The schema of the configuration:
 ```
 
 The resulting path that the service is available is `https://<host>:<https port>/<type>/<name>/`
+
+Changing files in this directory will trigger the automatic update of the Traefik config. 

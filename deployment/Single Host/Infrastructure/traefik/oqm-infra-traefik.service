@@ -35,7 +35,7 @@ ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.CARootCert
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop traefik container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove traefik container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull traefik image.'"
-ExecStartPre=/bin/bash -c "/etc/oqm/serviceConfig/infra/traefik/setup-proxy-config.py"
+ExecStartPre=/bin/bash -c "/etc/oqm/static/infra/traefik/setup-proxy-config --update-config"
 # setup env list file
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/traefik/config.d/"
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/infra/traefik/traefik-static-config-template.yaml.j2 > /tmp/oqm/serviceConfig/infra/traefik/config.d/traefik-static-config.yaml"

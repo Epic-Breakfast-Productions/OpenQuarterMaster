@@ -248,7 +248,7 @@ try:
                 sleep(5)
         except KeyboardInterrupt:
             observer.stop()
-        log.info("STOPPING monitoring dirctory for changes.")
+        log.info("STOPPING monitoring directory for changes.")
         observer.join()
     else:
         argParser.print_usage()
