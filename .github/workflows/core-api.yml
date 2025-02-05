@@ -46,5 +46,3 @@ jobs:
     with:
       path: "software/oqm-core-api"
       containerBased: ${{ matrix.containerBased }}
-
-

@@ -127,6 +127,22 @@
         "userTesting",
         "ideas"
       ]
+    },
+    {
+      "login": "steve-dill",
+      "name": "steve-dill",
+      "avatar_url": "https://avatars.githubusercontent.com/u/175041555?v=4",
+      "profile": "https://github.com/steve-dill",
+      "contributions": [
+        "bug",
+        "code",
+        "ideas",
+        "infra",
+        "mentoring",
+        "tool",
+        "userTesting",
+        "maintenance"
+      ]
     }
   ],
   "contributorsPerLine": 7,
