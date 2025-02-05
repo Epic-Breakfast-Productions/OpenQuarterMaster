@@ -22,7 +22,7 @@ After=oqm-infra-traefik.service
 Type=simple
 Restart=always
 TimeoutSec=5m
-ExecStart=/bin/bash -c "/etc/oqm/static/infra/traefik/setup-proxy-config --monitor-client-changes"
+ExecStart=/bin/bash -c "/etc/oqm/static/infra/traefik/setup-proxy-config --monitor-proxy-changes"
 
 [Install]
 WantedBy=multi-user.target

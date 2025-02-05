@@ -132,7 +132,7 @@ argParser = argparse.ArgumentParser(
 )
 argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
 argParser.add_argument('--update-config', dest="updateConfig", action="store_true", help="Updates the OQM proxy config with the latest configuration.")
-argParser.add_argument('--monitor-client-changes', dest="monitorChanges", action="store_true", help="Monitors the proxy config dir for changes, updates as needed.")
+argParser.add_argument('--monitor-proxy-changes', dest="monitorChanges", action="store_true", help="Monitors the proxy config dir for changes, updates as needed.")
 args = argParser.parse_args()
 
 try:
