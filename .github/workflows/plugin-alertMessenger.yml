@@ -8,11 +8,17 @@ on:
     paths:
       - "software/plugins/alert-messenger/**"
       - ".github/workflows/plugin-alertMessenger.yml"
+      - ".github/workflows/wf-gradleBuild.yaml"
+      - ".github/workflows/wf-gradleUnitTest.yaml"
+      - ".github/workflows/wf-gradleQuarkusIntTest.yaml"
   pull_request:
     branches: [ "**" ]
     paths:
       - "software/plugins/alert-messenger/**"
       - ".github/workflows/plugin-alertMessenger.yml"
+      - ".github/workflows/wf-gradleBuild.yaml"
+      - ".github/workflows/wf-gradleUnitTest.yaml"
+      - ".github/workflows/wf-gradleQuarkusIntTest.yaml"
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:

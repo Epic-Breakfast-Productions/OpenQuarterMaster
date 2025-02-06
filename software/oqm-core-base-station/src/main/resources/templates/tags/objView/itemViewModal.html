@@ -129,7 +129,7 @@
                                     <div id="itemViewCheckoutSearchAccordionFieldsCollapse" class="accordion-collapse collapse"
                                                  aria-labelledby="itemViewCheckoutSearchAccordionFieldsHeader" data-bs-parent="#itemViewCheckoutSearchAccordion">
                                         <div class="accordion-body">
-                                            {#search/itemCheckout/searchForm id='itemViewCheckoutSearchForm'}
+                                            {#search/itemCheckout/searchForm id='itemViewCheckoutSearchForm' rootPrefix=rootPrefix}
                                             {/search/itemCheckout/searchForm}
                                         </div>
                                     </div>
@@ -161,7 +161,7 @@
 </div>
 <div class="row">
     <div class="col">
-        {#objView/history/objHistoryView containerId='itemHistory' objectUrl='/api/passthrough/inventory/item/'}{/objView/history/objHistoryView}
+        {#objView/history/objHistoryView containerId='itemHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item/')}{/objView/history/objHistoryView}
     </div>
 </div>
 {/modal}

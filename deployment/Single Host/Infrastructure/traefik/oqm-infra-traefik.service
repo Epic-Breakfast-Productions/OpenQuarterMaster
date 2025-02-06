@@ -1,0 +1,67 @@
+# Service file for running an instance of Traefik.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  Traefik tags: https://hub.docker.com/_/traefik
+#
+
+[Unit]
+Description=Traefik Reverse proxy server for Open Quartermaster. Version ${version}, using Traefik tagged to "v3.3".
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=simple
+Restart=always
+TimeoutSec=5m
+Environment="CONTAINER_NAME=oqm-infra-traefik"
+Environment="IMAGE_NAME=docker.io/traefik"
+Environment="IMAGE_VERSION=v3.3"
+Environment="DATA_DIR=/data/oqm/traefik"
+Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/traefik/env.list"
+
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
+
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/traefik/certs/"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.systemExternalSelfCertKey)\" /tmp/oqm/serviceConfig/infra/traefik/certs/privateKey.pem"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.systemExternalSelfCert)\" /tmp/oqm/serviceConfig/infra/traefik/certs/publicCert.crt"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.CARootPrivateKey)\" /tmp/oqm/serviceConfig/infra/traefik/certs/rootCertKey.pem"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.CARootCert)\" /tmp/oqm/serviceConfig/infra/traefik/certs/rootCert.crt"
+ExecStartPre=/bin/bash -c "if [[ \"$(oqm-config -g cert.provided.enabled)\" = "True" ]]; then cp \"$(oqm-config -g cert.provided.key)\" /tmp/oqm/serviceConfig/infra/traefik/certs/providedKey.pem; fi "
+ExecStartPre=/bin/bash -c "if [[ \"$(oqm-config -g cert.provided.enabled)\" = "True" ]]; then cp \"$(oqm-config -g cert.provided.key)\" /tmp/oqm/serviceConfig/infra/traefik/certs/providedCert.crt; fi "
+
+#ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop traefik container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove traefik container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull traefik image.'"
+ExecStartPre=/bin/bash -c "/etc/oqm/static/infra/traefik/setup-proxy-config --update-config"
+# setup env list file
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/traefik/config.d/"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/infra/traefik/traefik-static-config-template.yaml.j2 > /tmp/oqm/serviceConfig/infra/traefik/config.d/traefik-static-config.yaml"
+ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
+
+ExecStart=/bin/bash -c "/usr/bin/docker run \
+                                 --rm \
+                                 --name $CONTAINER_NAME \
+                                 -p=$(oqm-config -g 'infra.traefik.httpPort'):80 -p=$(oqm-config -g 'infra.traefik.httpsPort'):443 \
+                                 -p=8080:8080 \
+                                 --env-file $ENV_CONFIG_FILE \
+                                 --add-host host.docker.internal:host-gateway \
+                                 --network=oqm-internal \
+                                 -v /tmp/oqm/serviceConfig/infra/traefik/config.d/traefik-static-config.yaml:/etc/traefik/traefik.yml:ro \
+                                 -v /tmp/oqm/serviceConfig/infra/traefik/config.d/dynamicConfig/:/etc/traefik/dynamicConfig:ro \
+                                 -v /tmp/oqm/serviceConfig/infra/traefik/certs/:/etc/traefik/certs:ro \
+                                 -v /data/oqm/traefik/acme:/etc/traefik/acme \
+                                 $IMAGE_NAME:$IMAGE_VERSION --log.level=DEBUG"
+# TODO:: meaningful healthcheck for startup
+
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop traefik container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove traefik container'"
+
+[Install]
+WantedBy=multi-user.target

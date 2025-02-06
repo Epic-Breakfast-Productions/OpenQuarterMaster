@@ -51,7 +51,7 @@
 <tr class="storageBlockResultRow align-middle">
   <td>
     {#if !result.get("imageIds").isEmpty()}
-      <img src="/api/passthrough/media/image/for/storageBlock/{id}" class="searchResultImage" alt="Image for {label}">
+      <img src="{rootPrefix}/api/passthrough/media/image/for/storageBlock/{id}" class="searchResultImage" alt="Image for {label}">
     {/if}
   </td>
   <td>{label}</td>
