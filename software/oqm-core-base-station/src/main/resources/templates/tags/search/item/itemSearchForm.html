@@ -5,7 +5,7 @@ Ingests:
 - id - the id to give the form
 !}
 {!{@tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch searchObject}!}
-{#include tags/search/searchForm id=id action='/items' showKeywords=true showAttributes=true defaultPageSize=config:['ui.inventoryItem.search.defaultPageSize']}
+{#include tags/search/searchForm id=id action=(rootPrefix + '/items') showKeywords=true showAttributes=true defaultPageSize=config:['ui.inventoryItem.search.defaultPageSize']}
 {#inputs}
 <div class="mb-3 col col-3">
     <label for="{id}-itemNameInput" class="form-label">Name</label>
