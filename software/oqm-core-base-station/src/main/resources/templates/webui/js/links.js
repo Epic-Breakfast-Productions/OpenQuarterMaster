@@ -1,7 +1,7 @@
 
 //TODO:: determine if necessary
 const Links = {
-	storage: '<a href="/storage">'+Icons.storageBlock+' Storage</a>',
+	storage: '<a href="{rootPrefix}/storage">'+Icons.storageBlock+' Storage</a>',
 
 	getStorageViewLink: function (id, text=""){
 		let newLink = $(Links.storage);
@@ -26,7 +26,7 @@ const Links = {
 	getStorageViewButtonAsHtml(id, text=""){ return Links.getStorageViewButton(id, text).prop("outerHTML")},
 
 
-	items: '<a href="/items">'+Icons.items+' Items</a>',
+	items: '<a href="{rootPrefix}/items">'+Icons.items+' Items</a>',
 	getItemViewLink: function (id, text=""){
 		let newLink = $(Links.items);
 

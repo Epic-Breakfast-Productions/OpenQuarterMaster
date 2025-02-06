@@ -469,7 +469,7 @@ const ItemAddEdit = {
 			$('   <div class="accordion-item storedAccordion" id="' + accordId + '">\n' +
 				'        <h2 class="accordion-header" id="' + accordHeaderId + '">\n' +
 				'            <button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#' + accordCollapseId + '" aria-expanded="false" aria-controls="' + accordCollapseId + '">\n' +
-				'                <img class="accordion-thumb" src="'+Rest.passRoot+'/media/image/for/storageBlock/' + blockId + '" alt="' + blockName + ' image">\n' +
+				'                <img class="accordion-thumb" src="'+Rest.passRoot+'/media/image/for/storageBlock/' + blockId + '" alt="">\n' +
 				'                <span class="storageBlockName">' + blockName + '</span>\n' +
 				// TODO::: this'                &nbsp;(<span class="storageNumHeld">0</span>)\n'+
 				'            </button>\n' +

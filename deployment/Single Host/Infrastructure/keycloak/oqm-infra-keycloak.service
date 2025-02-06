@@ -16,6 +16,7 @@ After=docker.service
 Wants=network-online.target
 Requires=docker.socket
 Requires=oqm-infra-postgres.service
+After=oqm-infra-postgres.service
 
 [Service]
 Type=simple
@@ -34,9 +35,7 @@ ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
 ExecStartPre=/bin/bash -c "mkdir -p /etc/oqm/ui.d/"
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/keycloak/uiEntry.json > /etc/oqm/ui.d/infra-keycloak.json"
 ExecStartPre=/bin/bash -c "mkdir -p /etc/oqm/serviceConfig/infra/keycloak/files/"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.privateKey)\" /etc/oqm/serviceConfig/infra/keycloak/files/privateKey.pem"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.systemCert)\" /etc/oqm/serviceConfig/infra/keycloak/files/publicCert.pem"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.keystore)\" /etc/oqm/serviceConfig/infra/keycloak/files/keystore.p12"
+ExecStartPre=/bin/bash -c "oqm-captain --write-internal-certs $CONTAINER_NAME /etc/oqm/serviceConfig/infra/keycloak/files/"
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/keycloak"
 # TODO:: use file templating to achieve this
 ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
@@ -44,8 +43,8 @@ ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_PORT=443\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HOSTNAME_STRICT=false\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"KEYCLOAK_ADMIN=$(oqm-config -g 'infra.keycloak.adminUser')\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"KEYCLOAK_ADMIN_PASSWORD=$(oqm-config -g 'infra.keycloak.adminPass')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_BOOTSTRAP_ADMIN_USERNAME=$(oqm-config -g 'infra.keycloak.adminUser')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_BOOTSTRAP_ADMIN_PASSWORD=$(oqm-config -g 'infra.keycloak.adminPass')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB=postgres\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB_USERNAME=$(oqm-config -g 'infra.keycloak.postgresUser')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB_PASSWORD=$(oqm-config -g 'infra.keycloak.postgresPass')\n\" >> $ENV_CONFIG_FILE"
@@ -53,10 +52,13 @@ ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_HOST=$(oqm-config -g 'infra.postgr
 ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_PORT=$(oqm-config -g 'infra.postgres.port')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_DATABASE=$(oqm-config -g 'infra.keycloak.postgresDb')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HEALTH_ENABLED=true\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_CERTIFICATE_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/publicCert.pem\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_CERTIFICATE_KEY_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/privateKey.pem\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/keystore.p12\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_PASSWORD=$(oqm-config -g cert.certs.keystorePass)\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_CERTIFICATE_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/serviceCert.crt\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_CERTIFICATE_KEY_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/serviceCertKey.pem\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/serviceCertKeystore.p12\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_PASSWORD=$(oqm-config -g cert.selfSigned.internalKeystorePass)\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_PROXY_HEADERS=xforwarded\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_HOSTNAME=$(oqm-config -g infra.keycloak.externalBaseUri)\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_HTTP_RELATIVE_PATH=/infra/keycloak/\n\" >> $ENV_CONFIG_FILE"
 #ExecStartPre=/bin/bash -c "printf \"QUARKUS_HTTP_LIMITS_MAX_HEADER_SIZE=100k\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"QUARKUS_HTTP_HTTP2=false\n\" >> $ENV_CONFIG_FILE"
 
@@ -69,7 +71,6 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
                                  --add-host host.docker.internal:host-gateway \
                                  --add-host $(oqm-config -g system.hostname):host-gateway \
                                  --network=oqm-internal \
-                                 -p $(oqm-config -g 'infra.keycloak.port'):443 \
                                  --env-file $ENV_CONFIG_FILE \
                                  -v /etc/oqm/serviceConfig/infra/keycloak/files:/etc/oqm/serviceConfig/infra/keycloak/files:ro \
                                  -v /etc/oqm/static/keycloak/import:/opt/keycloak/data/import:ro \
@@ -93,8 +94,6 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             "
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             sleep 10s; \
-                            hostname=\"$(oqm-config -g system.hostname)\"; \
-                            servicePort=$(oqm-config -g 'infra.keycloak.port'); \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
@@ -102,7 +101,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                hcGet=\"$(docker run --rm --name oqm-infra-keycloak-hc --network=oqm-internal docker.io/curlimages/curl:latest https://oqm-infra-keycloak:9000/health -k)\"; \
+                                hcGet=\"$(docker run --rm --name oqm-infra-keycloak-hc --network=oqm-internal docker.io/curlimages/curl:latest https://$CONTAINER_NAME:9000/infra/keycloak/health -k)\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \
@@ -112,8 +111,6 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 fi; \
                             done; \
                             "
-ExecStartPost=/bin/bash -c "/etc/oqm/static/keycloak/kc-realm-manager --update-realm"
-
 ExecStop=/bin/bash -c "stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove keycloak container'"
 
