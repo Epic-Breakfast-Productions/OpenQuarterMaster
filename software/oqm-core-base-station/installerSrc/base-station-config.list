@@ -6,36 +6,52 @@
 # Basic configs
 quarkus.http.port=80
 quarkus.http.ssl.port=443
-quarkus.http.insecure-requests=redirect
+quarkus.http.insecure-requests=enabled
+#quarkus.http.insecure-requests=redirect
+quarkus.log.level=INFO
 
-# Files brought over in shared volume
-quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core/base+station/files/publicCert.pem
-quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/base+station/files/privateKey.pem
-quarkus.http.ssl.certificate.trust-store-file=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
-quarkus.http.ssl.certificate.trust-store-password={cert.certs.keystorePass}
-quarkus.oidc.tls.trust-store-file=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
-quarkus.oidc.tls.trust-store-password={cert.certs.keystorePass}
+# SSL Config
+quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core/base+station/files/serviceCert.crt
+quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKey.pem
+quarkus.http.ssl.certificate.trust-store-file=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKeystore.p12
+quarkus.http.ssl.certificate.trust-store-password={cert.selfSigned.internalKeystorePass}
 
-# Jaeger Config:
-quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
-quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
+quarkus.oidc.tls.trust-store-file=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKeystore.p12
+quarkus.oidc.tls.trust-store-password={cert.selfSigned.internalKeystorePass}
+
+# https://quarkus.io/guides/http-reference#reverse-proxy
+quarkus.http.proxy.proxy-address-forwarding=true
+quarkus.http.proxy.allow-x-forwarded=true
+quarkus.http.proxy.enable-forwarded-host=true
+quarkus.http.proxy.enable-forwarded-prefix=true
 
 # Keycloak Config:
 quarkus.oidc.client-id=oqm-base-station
 quarkus.oidc.credentials.secret={infra.keycloak.clientSecrets.oqm-base-station}
-quarkus.oidc.auth-server-url=https://{system.hostname}:{infra.keycloak.port}/realms/{infra.keycloak.oqmRealmName}
+quarkus.oidc.auth-server-url={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}
+#quarkus.oidc.authentication.redirect-path=/core/base-station
+#quarkus.oidc.authentication.restore-path-after-redirect=false
+
+quarkus.oidc.authentication.cookie-path=/core/base-station/
+quarkus.oidc.authentication.cookie-suffix=core-base-station
 
 # Core API config
-quarkus.oqmCoreApi.coreApiBaseUri={core.api.externalBaseUri}
-quarkus.rest-client.oqmCoreApi.trust-store=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
-quarkus.rest-client.oqmCoreApi.trust-store-password={cert.certs.keystorePass}
-quarkus.rest-client.oqmCoreApi-oidc.trust-store=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
-quarkus.rest-client.oqmCoreApi-oidc.trust-store-password={cert.certs.keystorePass}
+quarkus.oqmCoreApi.coreApiBaseUri={core.api.internalBaseUri}
+quarkus.rest-client.oqmCoreApi.trust-store=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKeystore.p12
+quarkus.rest-client.oqmCoreApi.trust-store-password={cert.selfSigned.internalKeystorePass}
+quarkus.rest-client.oqmCoreApi-oidc.trust-store=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKeystore.p12
+quarkus.rest-client.oqmCoreApi-oidc.trust-store-password={cert.selfSigned.internalKeystorePass}
 
 runningInfo.protocol=https
 runningInfo.hostname={system.hostname}
 runningInfo.depotUri={core.depot.externalBaseUri}
 
+
+{% if metrics is defined and metrics.jaeger is defined %}
+# Jaeger Config:
+#quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
+#quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
+{% endif %}
 
 #
 # Plugins
@@ -43,9 +59,9 @@ runningInfo.depotUri={core.depot.externalBaseUri}
 
 # External Item Search
 {% if plugin.externalItemSearch is defined %}
-quarkus.rest-client.externalItemSearch.trust-store=/etc/oqm/serviceConfig/core/base+station/files/keystore.p12
-quarkus.rest-client.externalItemSearch.trust-store-password={cert.certs.keystorePass}
-quarkus.rest-client.externalItemSearch.url={plugin.externalItemSearch.baseUrl}
+quarkus.rest-client.externalItemSearch.trust-store=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKeystore.p12
+quarkus.rest-client.externalItemSearch.trust-store-password={cert.selfSigned.internalKeystorePass}
+quarkus.rest-client.externalItemSearch.url={plugin.externalItemSearch.internalBaseUri}
 {% else %}
 #  External item search plugin not installed
 {% endif %}

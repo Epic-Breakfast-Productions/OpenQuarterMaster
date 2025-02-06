@@ -1,8 +1,7 @@
 {
-	"title": "Base Station (Main UI)",
 	"type": "core",
-	"name": "base-station",
-	"hostConfig": "core.api.host",
-	"portConfig": "core.api.httpsPort",
-	"showInProxyRoot": true
+	"name": "api",
+	"internalBaseUriConfig": "core.api.internalBaseUri",
+	"preservePath": true,
+	"stripPrefixes": true
 }

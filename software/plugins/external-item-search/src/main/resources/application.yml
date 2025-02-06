@@ -42,6 +42,13 @@ productLookup:
       apiKey: " "
 
 quarkus:
+  http:
+    port: 80
+    ssl-port: 443
+  jib:
+    ports:
+      - 80
+      - 443
   application:
 #    name: ${service.nameShort} - V${service.apiVersion}
   rest-client:
@@ -93,6 +100,9 @@ quarkus:
         apiKey: devKey
 
   quarkus:
+    http:
+      port: 8080
+      ssl-port: 8443
     log:
       level: DEBUG
     wiremock:

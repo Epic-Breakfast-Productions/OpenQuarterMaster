@@ -6,7 +6,7 @@
 	"configs": [
 	],
 	"dependencies": {
-		"deb": ", oqm-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, python3-watchdog"
+		"deb": ", oqm-manager-station+captain (>= 2.1.0), oqm-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, python3-watchdog"
 	},
 	"configFiles":{
 	},
