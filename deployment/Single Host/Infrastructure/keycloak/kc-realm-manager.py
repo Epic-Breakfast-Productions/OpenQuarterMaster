@@ -8,9 +8,13 @@ import logging
 import sys
 import json
 from time import sleep
+
+from requests.exceptions import HTTPError
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
 sys.path.append("/usr/lib/oqm/station-captain/")
+from LogUtils import *
+LogUtils.setupLogging("kc-realm-manager.log", True)
 from ConfigManager import *
 
 SCRIPT_VERSION = "1.0.0"
@@ -26,8 +30,7 @@ KC_DEFAULT_CLIENTS = [
     "realm-management",
     "security-admin-console"
 ]
-log = logging.getLogger('kc-realm-manager')
-log.setLevel(logging.DEBUG)
+log = LogUtils.setupLogger("main")
 
 def getClientConfigs() -> list:
     configList = os.listdir(KC_CLIENT_CONFIGS_DIR)
@@ -42,10 +45,20 @@ def getClientConfigs() -> list:
     log.debug("Client configs found: %s", json.dumps(configList))
     return configList
 
-
 def getKcContainer() -> Container:
+    log.debug("Getting keycloak container.")
     client = docker.from_env()
-    return client.containers.get(KC_CONTAINER_NAME)
+    log.debug("Running containers: %s", client.containers.list())
+
+    container = None
+    while container is None:
+        try:
+            container = client.containers.get(KC_CONTAINER_NAME)
+        except HTTPError as e:
+            log.warn("HTTP error from trying to get keycloak container: %s", e)
+            sleep(5)
+    log.info("Got keycloak container.")
+    return container
 
 
 def setupAdminConfig(kcContainer: Container | None = None):
@@ -57,8 +70,8 @@ def setupAdminConfig(kcContainer: Container | None = None):
     runResult = kcContainer.exec_run(
         [
             KC_ADM_SCRIPT, "config", "truststore",
-            "--trustpass", mainCM.getConfigVal("cert.certs.keystorePass"),
-            "/etc/oqm/serviceConfig/infra/keycloak/files/keystore.p12"
+            "--trustpass", mainCM.getConfigVal("cert.selfSigned.internalKeystorePass"),
+            "/etc/oqm/serviceConfig/infra/keycloak/files/serviceCertKeystore.p12"
         ])
     if runResult.exit_code != 0:
         log.error("Failed to setup oqm trust store for KC admin: %s", runResult.output)
@@ -210,22 +223,35 @@ argParser.add_argument('--update-realm', dest="updateRealm", action="store_true"
 argParser.add_argument('--monitor-client-changes', dest="monitorChanges", action="store_true", help="Monitors the clients config dir for changes, updates as needed.")
 args = argParser.parse_args()
 
-if args.v:
-    print(SCRIPT_VERSION)
-    exit()
-elif args.updateRealm:
-    updateKc()
-elif args.monitorChanges:
-    observer = Observer()
-    observer.schedule(Handler(), KC_CLIENT_CONFIGS_DIR)
-    observer.start()
+try:
+    if args.v:
+        print(SCRIPT_VERSION)
+        exit()
+    elif args.updateRealm:
+        updateKc()
+    elif args.monitorChanges:
+        log.info("Monitoring changes to keycloak clients in %s", KC_CLIENT_CONFIGS_DIR)
+        observer = Observer()
+        observer.schedule(Handler(), KC_CLIENT_CONFIGS_DIR)
 
-    try:
-        while True:
-            sleep(5)
-    except KeyboardInterrupt:
-        observer.stop()
+        log.info("Running initial update of keycloak clients.")
+        updateKc()
+        log.info("Done running initial update.")
+        log.info("Starting client change observer.")
 
-    observer.join()
-else:
-    argParser.print_usage()
+        observer.start()
+
+        log.info("Started observer.")
+
+        try:
+            while True:
+                sleep(5)
+        except KeyboardInterrupt:
+            observer.stop()
+        log.info("STOPPING monitoring directory for changes.")
+        observer.join()
+    else:
+        argParser.print_usage()
+except Exception as e:
+    log.error("Exception thrown: ", e)
+    exit(1)

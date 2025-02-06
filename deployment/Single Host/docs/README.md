@@ -13,5 +13,5 @@ General operation & Setup:
 In depth:
 
  - [Certs](Certs.md)
- - [Ports](ports.md)
+ - [Networking](networking.md)
  - [Configuration](config.md)

@@ -41,7 +41,7 @@
 				</p>
 				<div class="row">
 					<div class="col">
-						{#storageBlock/blockTree parentBlocks=parentBlocks}{/storageBlock/blockTree}
+						{#storageBlock/blockTree parentBlocks=parentBlocks rootPrefix=rootPrefix}{/storageBlock/blockTree}
 					</div>
 				</div>
 			</div>
@@ -104,9 +104,9 @@
 		</div>
 	{/pageContent}
 	{#scripts}
-		<script src="/res/js/obj/getters.js"></script>
-		<script src="/res/js/obj/units.js"></script>
-		<script src="/res/js/pageComponents.js"></script>
+		<script src="{rootPrefix}/res/js/obj/getters.js"></script>
+		<script src="{rootPrefix}/res/js/obj/units.js"></script>
+		<script src="{rootPrefix}/res/js/pageComponents.js"></script>
 	{/scripts}
 	{#pageScript}
 		<script>

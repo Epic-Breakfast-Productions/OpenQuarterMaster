@@ -1,8 +1,8 @@
 {
 	"type": "infra",
 	"name": "keycloak",
-	"hostConfig": "infra.keycloak.host",
-	"portConfig": "infra.keycloak.port",
-	"title": "Keycloak",
-	"showInProxyRoot": true
+	"title": "Keycloak (Auth)",
+	"internalBaseUriConfig": "infra.keycloak.internalBaseUri",
+	"preservePath": false,
+	"stripPrefixes": false
 }

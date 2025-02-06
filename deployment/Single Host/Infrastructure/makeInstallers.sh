@@ -22,10 +22,12 @@ buildDir="build"
 
 debDir="InfraDeb"
 
-# All
-packages=("jaeger" "mongo" "prometheus" "artemis" "otel" "postgres" "keycloak" "nginx" "kafka")
+# Testing
+#packages=("jaeger" "mongo" "postgres" "keycloak" "nginx")
+#packages=("mongo" "postgres" "nginx")
+packages=("mongo" "postgres" "keycloak" "traefik")
 # Ready for deployment
-packages=("jaeger" "mongo" "postgres" "keycloak" "kafka-red-panda")
+packages=("traefik" "mongo" "postgres" "keycloak" "kafka-red-panda")
 #packages=("jaeger" "mongo" "postgres" "keycloak")
 
 #
@@ -120,10 +122,7 @@ EOT
 #!/bin/bash
 
 systemctl daemon-reload
-# restart proxy after we add config
-#if [ $(systemctl list-unit-files "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service" | wc -l) -gt 3 ]; then
-#	systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
-#fi
+
 systemctl enable ${serviceFiles[@]@Q}
 systemctl start ${serviceFiles[@]@Q}
 
