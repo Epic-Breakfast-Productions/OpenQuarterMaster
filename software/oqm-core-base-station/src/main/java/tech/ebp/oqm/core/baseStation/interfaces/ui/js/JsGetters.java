@@ -9,12 +9,16 @@ import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
+
+import java.util.Optional;
 
 @Slf4j
 @Path("/res/js/")
@@ -22,10 +26,22 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 @ApplicationScoped
 @Produces(MediaType.TEXT_HTML)
 public class JsGetters {
-	
+
+	@Getter
+	@HeaderParam("x-forwarded-prefix")
+	Optional<String> forwardedPrefix;
+
+	protected String getRootPrefix(){
+		return this.forwardedPrefix.orElse("");
+	}
+
 	@Inject
 	@Location("webui/js/icons.js")
 	Template icons;
+
+	@Inject
+	@Location("webui/js/constants.js")
+	Template constants;
 	
 	@Inject
 	@Location("webui/js/links.js")
@@ -60,7 +76,15 @@ public class JsGetters {
 		this.attInputLines = this.templateToEscapedJs(attInputTemplate.instance());
 		this.keywordInputLines = this.templateToEscapedJs(keywordInputTemplate.instance());
 	}
-	
+
+	@GET
+	@Path("constants.js")
+	@PermitAll
+	@Produces("text/javascript")
+	public Uni<String> constants() {
+		return constants.data("rootPrefix", this.getRootPrefix()).createUni();
+	}
+
 	@GET
 	@Path("icons.js")
 	@PermitAll
@@ -74,7 +98,7 @@ public class JsGetters {
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> links() {
-		return links.instance().createUni();
+		return links.data("rootPrefix", this.getRootPrefix()).createUni();
 	}
 	
 	@GET

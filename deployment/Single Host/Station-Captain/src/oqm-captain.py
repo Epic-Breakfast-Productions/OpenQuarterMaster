@@ -52,6 +52,7 @@ g.add_argument('--ensure-container-setup', dest="ensureContainerSetup", action="
 g.add_argument('--package-logs', dest="packageLogs", action="store_true", help="Packages service logs for debugging.")
 g.add_argument('--regen-certs', dest="regenCerts", action="store_true", help="Regenerates the system certs based on configuration.")
 g.add_argument('--ensure-certs-present', dest="ensureCerts", action="store_true", help="Ensures that certs are present and usable by the system.")
+g.add_argument('--write-internal-certs', dest="writeInternalCerts", nargs=2, help="Writes certs for an internal service to use. Two arguments; first to name the service (the domain name to access the service), and second the directory to place the new certs.")
 # argcomplete.autocomplete(argParser)
 args = argParser.parse_args()
 
@@ -87,10 +88,19 @@ elif args.regenCerts:
         exit(4)
     print(message)
 elif args.ensureCerts:
-    result, message = CertsUtils.ensureCertsPresent()
+    result, message, written = CertsUtils.ensureCoreCerts()
     if not result:
         print("Failed to validate certs: " + message)
         exit(5)
+    print(message)
+elif args.writeInternalCerts:
+    result, message = CertsUtils.generateInternalCert(
+        args.writeInternalCerts[0],
+        args.writeInternalCerts[1]
+    )
+    if not result:
+        print("Failed to write certs for internal service: " + message)
+        exit(6)
     print(message)
 else:
     UserInteraction.ui.startUserInteraction()

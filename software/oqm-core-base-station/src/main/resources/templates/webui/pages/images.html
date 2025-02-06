@@ -1,6 +1,6 @@
 {#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Images' page='images'}
 {#styleSheets}
-<link rel="stylesheet" href="/lib/Croppie-2.6.4/croppie.css"/>
+<link rel="stylesheet" href="{rootPrefix}/lib/Croppie-2.6.4/croppie.css"/>
 {/styleSheets}
 {#pageStyle}
 
@@ -28,7 +28,7 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/image/imageSearchForm id='mainImageSearch'}
+                    {#search/image/imageSearchForm id='mainImageSearch' rootPrefix=rootPrefix}
                     {/search/image/imageSearchForm}
                 </div>
             </div>
@@ -36,7 +36,7 @@
     </div>
 </div>
 <div id="imageSearchresults">
-    {#search/image/imageSearchResults searchResults=searchResults actionType='full' searchFormId='mainImageSearch'}
+    {#search/image/imageSearchResults searchResults=searchResults actionType='full' searchFormId='mainImageSearch' rootPrefix=rootPrefix}
     {/search/image/imageSearchResults}
 </div>
 
@@ -110,7 +110,7 @@
     {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
 </div>
 <div class="row">
-    {#objView/history/objHistoryView containerId='imageHistory' objectUrl='/api/passthrough/media/image/'}{/objView/history/objHistoryView}
+    {#objView/history/objHistoryView containerId='imageHistory' objectUrl=(rootPrefix + '/api/passthrough/media/image/')}{/objView/history/objHistoryView}
     
 </div>
 <hr />
@@ -125,12 +125,12 @@
 
 {/modals}
 {#scripts}
-    <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
-    <script src="/res/js/search.js"></script>
-    <script src="/res/js/historySearch.js"></script>
-    <script src="/res/js/obj/objEdit.js"></script>
-    <script src="/res/js/obj/objView.js"></script>
-    <script src="/res/js/obj/media/imageAdd.js"></script>
+    <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
+    <script src="{rootPrefix}/res/js/search.js"></script>
+    <script src="{rootPrefix}/res/js/historySearch.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objView.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
 {/scripts}
 {#pageScript}
 <script>
@@ -181,14 +181,14 @@ function setupAddEditForEdit(id){
     addEditFormId.val(id);
 
     Rest.call({
-        url: "/api/v1/media/image/" + id,
+        url: Rest.apiRoot + "/v1/media/image/" + id,
         method: "GET",
         done: function(data) {
             console.log("Response from create request: " + JSON.stringify(data));
             // addEditTitleInput.val(data.title);
             addEditDescriptionInput.text(data.description);
 
-            bindCroppie("/api/v1/media/image/" + id + "/data");
+            bindCroppie(Rest.apiRoot + "/v1/media/image/" + id + "/data");
 			
 			KeywordAttEdit.addKeywordInputs(keywordInputDiv, data.keywords);
 			KeywordAttEdit.addAttInputs(attInputDiv, data.attributes);
@@ -217,7 +217,7 @@ addEditImageForm.submit(function (ev) {
         if (addEditFormMode.val() === "add") {
             console.log("Adding new image.");
             Rest.call({
-                url: "/api/passthrough/media/image",
+                url: Rest.passRoot + "/media/image",
                 method: "POST",
                 data: addEditData,
 				dataType: false,
@@ -235,7 +235,7 @@ addEditImageForm.submit(function (ev) {
             console.log("Editing image " + id);
         
             Rest.call({
-                url: "/api/passthrough/media/image/" + id,
+                url: Rest.passRoot + "/media/image/" + id,
                 method: "PUT",
                 data: addEditData,
                 done: function (data) {

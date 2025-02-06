@@ -27,8 +27,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'C
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove depot container'"
 
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/depot/files/"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.privateKey)\" /tmp/oqm/serviceConfig/core/depot/files/systemPrivateKey.pem"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.systemCert)\" /tmp/oqm/serviceConfig/core/depot/files/systemCert.crt"
+ExecStartPre=/bin/bash -c "oqm-captain --write-internal-certs $CONTAINER_NAME /tmp/oqm/serviceConfig/core/depot/files/"
 ExecStartPre=/bin/bash -c "chown oqm:oqm /tmp/oqm/serviceConfig/core/depot/files"
 ExecStartPre=/bin/bash -c "chown -R oqm:oqm /tmp/oqm/serviceConfig/core/depot/files"
 ExecStartPre=/bin/bash -c "chmod 644 -R /tmp/oqm/serviceConfig/core/depot/files"
@@ -36,8 +35,8 @@ ExecStartPre=/bin/bash -c "chmod 755 /tmp/oqm/serviceConfig/core/depot/files"
 # Pull image as separate task
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
 # Run Base Station
-ExecStart=/bin/bash -c "/usr/bin/docker run --name $CONTAINER_NAME \
-                                        -p 80:80 -p 443:443 \
+ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
+                                        --network=oqm-internal \
                                         -v /etc/oqm/ui.d/:/etc/oqm/ui.d/:ro \
                                         -v /tmp/oqm/serviceConfig/core/depot/files/:/etc/oqm/certs/:ro \
                                         $IMAGE_NAME:$IMAGE_VERSION"

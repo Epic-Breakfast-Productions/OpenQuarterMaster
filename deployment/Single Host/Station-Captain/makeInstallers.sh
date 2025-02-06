@@ -114,17 +114,17 @@ EOT
 # TODO:: updating bash completion doesn't work.
 cat <<'EOT' > "$buildDir/$debDir/DEBIAN/postinst"
 #!/bin/bash
-if [ -x "$(command -v register-python-argcomplete)" ]; then
-	echo "Using register-python-argcomplete"
-	register-python-argcomplete oqm-captain > /etc/bash_completion.d/oqm-captain
-	register-python-argcomplete oqm-config > /etc/bash_completion.d/oqm-config
-elif [ -x "$(command -v register-python-argcomplete3)" ]; then
-	echo "Using register-python-argcomplete3"
-	register-python-argcomplete3 oqm-captain > /etc/bash_completion.d/oqm-captain
-	register-python-argcomplete3 oqm-config > /etc/bash_completion.d/oqm-config
-else
-	echo "WARNING: could not run autocomplete!"
-fi
+#if [ -x "$(command -v register-python-argcomplete)" ]; then
+#	echo "Using register-python-argcomplete"
+#	register-python-argcomplete oqm-captain > /etc/bash_completion.d/oqm-captain
+#	register-python-argcomplete oqm-config > /etc/bash_completion.d/oqm-config
+#elif [ -x "$(command -v register-python-argcomplete3)" ]; then
+#	echo "Using register-python-argcomplete3"
+#	register-python-argcomplete3 oqm-captain > /etc/bash_completion.d/oqm-captain
+#	register-python-argcomplete3 oqm-config > /etc/bash_completion.d/oqm-config
+#else
+#	echo "WARNING: could not run autocomplete!"
+#fi
 
 oqm-captain --ensure-certs-present
 

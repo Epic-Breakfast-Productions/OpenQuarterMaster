@@ -4,20 +4,21 @@ name: CI - Manager - Station Captain
 
 # Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ "**" ]
-    paths:
-      - "deployment/Single Host/Station-Captain/**"
-      - ".github/workflows/stationCaptain.yml"
-  pull_request:
-    branches: [ "**" ]
-    paths:
-      - "deployment/Single Host/Station-Captain/**"
-      - ".github/workflows/stationCaptain.yml"
-  workflow_call:
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
+    
+#   # Triggers the workflow on push or pull request events but only for the main branch
+#   push:
+#     branches: [ "**" ]
+#     paths:
+#       - "deployment/Single Host/Station-Captain/**"
+#       - ".github/workflows/stationCaptain.yml"
+#   pull_request:
+#     branches: [ "**" ]
+#     paths:
+#       - "deployment/Single Host/Station-Captain/**"
+#       - ".github/workflows/stationCaptain.yml"
+#   workflow_call:
+#   # Allows you to run this workflow manually from the Actions tab
 defaults:
   run:
     working-directory: "deployment/Single Host/Station-Captain/"
@@ -78,7 +79,7 @@ jobs:  # This workflow contains a single job called "build"
       - name: Make Installers
         run: ./makeInstallers.sh
       - name: Archive Installers
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Installers Produced
           path: "deployment/Single Host/Station-Captain/bin"
@@ -112,7 +113,7 @@ jobs:  # This workflow contains a single job called "build"
       -
         name: Archive Cucumber Reports Ubuntu
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Cucumber Test Reports Ubuntu
           path: "deployment/Single Host/Station-Captain/stationCaptainTest/target/test-reports/*"
@@ -153,7 +154,7 @@ jobs:  # This workflow contains a single job called "build"
       -
         name: Archive Cucumber Reports Fedora
         if: always()
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: Cucumber Test Reports Fedora
           path: "deployment/Single Host/Station-Captain/stationCaptainTest/target/test-reports/*"

@@ -5,7 +5,7 @@ Ingests:
 - id - the id to give the form
 !}
 {!{@tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch searchObject}!}
-{#include tags/search/searchForm id=id action='/storage' showKeywords=true showAttributes=true defaultPageSize=config:['ui.storage.search.defaultPageSize']}
+{#include tags/search/searchForm id=id action=(rootPrefix + '/storage') showKeywords=true showAttributes=true defaultPageSize=config:['ui.storage.search.defaultPageSize']}
 {#inputs}
 <div class="mb-3 col col-3">
 	<label for="{id}-blockLabelInput" class="form-label">Label/Nickname</label>
