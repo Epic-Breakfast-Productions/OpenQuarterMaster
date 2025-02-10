@@ -3,12 +3,8 @@ package tech.ebp.oqm.core.api.model.object.storage.storageBlock;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.NoArgsConstructor;
-import lombok.NonNull;
-import lombok.ToString;
+import lombok.*;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.HasParent;
@@ -28,6 +24,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AllArgsConstructor
+@SuperBuilder(toBuilder = true)
 public class StorageBlock extends ImagedMainObject implements HasParent, FileAttachmentContaining {
 	public static final int CUR_SCHEMA_VERSION = 1;
 
@@ -44,6 +41,7 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String nickname = "";
 	
 	/**
@@ -51,6 +49,7 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String description = "";
 	
 	/**
@@ -58,6 +57,7 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String location = "";
 	
 	/**
@@ -70,6 +70,7 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private List<@NotNull Quantity<?>> capacityMeasures = new ArrayList<>();
 	
 	/**
@@ -77,6 +78,7 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private List<@NotNull ObjectId> storedCategories = new ArrayList<>();
 	
 	/**
@@ -84,6 +86,7 @@ public class StorageBlock extends ImagedMainObject implements HasParent, FileAtt
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private Set<@NotNull ObjectId> attachedFiles = new LinkedHashSet<>();
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)

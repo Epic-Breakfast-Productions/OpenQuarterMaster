@@ -7,6 +7,7 @@ import io.smallrye.mutiny.Uni;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
@@ -23,7 +24,7 @@ import java.util.Optional;
 @Slf4j
 @Path("/res/js/")
 @Tags({@Tag(name = "JS Utilities")})
-@ApplicationScoped
+@RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class JsGetters {
 

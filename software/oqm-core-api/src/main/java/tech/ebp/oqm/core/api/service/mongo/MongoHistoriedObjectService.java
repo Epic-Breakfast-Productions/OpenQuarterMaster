@@ -19,9 +19,15 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.history.EventType;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.core.api.model.object.history.details.FieldsAffectedHistoryDetail;
+import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
+import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetailType;
 import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.DeleteEvent;
+import tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.core.api.model.rest.management.CollectionClearResult;
+import tech.ebp.oqm.core.api.model.rest.management.HistoriedCollectionClearResult;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeletedException;
@@ -30,9 +36,9 @@ import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 /**
  * Abstract Service that implements all basic functionality when dealing with mongo collections.
@@ -55,6 +61,10 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 			throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
 		}
 		//TODO:: check has id
+	}
+
+	public static Map<String, HistoryDetail> detailListToMap(HistoryDetail ... details){
+		return Arrays.stream(details).collect(Collectors.toMap((detail)->detail.getType().name(), Function.identity()));
 	}
 	
 	@Getter
@@ -129,16 +139,23 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 			throw e;
 		}
 	}
-	
-	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, ObjectHistoryEvent event) throws DbNotFoundException {
+
+	@WithSpan
+	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
 		object = this.update(oqmDbIdOrName, cs, object);
-		this.addHistoryFor(oqmDbIdOrName, cs, object, entity, event);
+		this.addHistoryFor(oqmDbIdOrName, cs, object, entity,
+			UpdateEvent.builder()
+				.objectId(object.getId())
+				.entity(entity.getId())
+				.details(detailListToMap(details))
+				.build()
+		);
 		return object;
 	}
 	
 	@WithSpan
-	public T update(String oqmDbIdOrName, T object, InteractingEntity entity, ObjectHistoryEvent event) throws DbNotFoundException {
-		return this.update(oqmDbIdOrName, null, object, entity, event);
+	public T update(String oqmDbIdOrName, T object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
+		return this.update(oqmDbIdOrName, null, object, entity, details);
 	}
 	
 	/**
@@ -151,33 +168,37 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	 * @return
 	 */
 	@WithSpan
-	public T update(String oqmDbIdOrName, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity) {
+	public T update(String oqmDbIdOrName, ClientSession cs, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity, HistoryDetail ... details) {
 		assertNotNullEntity(interactingEntity);
-		T updated = this.update(oqmDbIdOrName, id, updateJson);
+		T updated = this.update(oqmDbIdOrName, cs, id, updateJson);
+
+		List<HistoryDetail> newDeets = new ArrayList<>(List.of(details));
+		newDeets.add(FieldsAffectedHistoryDetail.builder().fieldsUpdated(FieldsAffectedHistoryDetail.getFields(updateJson)).build());
 		
 		this.getHistoryService().objectUpdated(
 			oqmDbIdOrName,
+			cs,
 			updated,
 			interactingEntity,
-			updateJson
+			newDeets.toArray(HistoryDetail[]::new)
 		);
 		
 		return updated;
 	}
-	
-	public T update(String oqmDbIdOrName, String id, ObjectNode updateJson, InteractingEntity interactingEntity) {
-		return this.update(oqmDbIdOrName, new ObjectId(id), updateJson, interactingEntity);
+
+	public T update(String oqmDbIdOrName, ClientSession cs, String id, ObjectNode updateJson, InteractingEntity interactingEntity, HistoryDetail ... details) {
+		return this.update(oqmDbIdOrName, cs, new ObjectId(id), updateJson, interactingEntity, details);
 	}
-	
-	/**
-	 * Adds an object to the collection. Adds a created history event and the object's new object id to that object in-place.
-	 *
-	 * @param object The object to add
-	 *
-	 * @return The id of the newly added object.
-	 */
+
+		/**
+		 * Adds an object to the collection. Adds a created history event and the object's new object id to that object in-place.
+		 *
+		 * @param object The object to add
+		 *
+		 * @return The id of the newly added object.
+		 */
 	@WithSpan
-	public ObjectId add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid T object, InteractingEntity entity) {
+	public ObjectId add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid T object, InteractingEntity entity, HistoryDetail ... details) {
 		if (!this.allowNullEntityForCreate) {
 			assertNotNullEntity(entity);
 		}
@@ -187,7 +208,8 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 			oqmDbIdOrName,
 			session,
 			object,
-			entity
+			entity,
+			details
 		);
 		
 		return object.getId();
@@ -243,7 +265,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	 * @return The object that was removed
 	 */
 	@WithSpan
-	public T remove(String oqmDbIdOrName, ClientSession session, ObjectId objectId, InteractingEntity entity) {
+	public T remove(String oqmDbIdOrName, ClientSession session, ObjectId objectId, InteractingEntity entity, HistoryDetail ... details) {
 		assertNotNullEntity(entity);
 		T removed = super.remove(oqmDbIdOrName, session, objectId);
 		
@@ -251,7 +273,8 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 			oqmDbIdOrName,
 			session,
 			removed,
-			entity
+			entity,
+			details
 		);
 		
 		return removed;
@@ -288,9 +311,15 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	}
 	
 	@Override
-	public long clear(String oqmDbIdOrName, @NonNull ClientSession session) {
-		this.getHistoryService().clear(oqmDbIdOrName, session);
-		return super.clear(oqmDbIdOrName, session);
+	public HistoriedCollectionClearResult clear(String oqmDbIdOrName, @NonNull ClientSession session) {
+		CollectionClearResult historyClearResult = this.getHistoryService().clear(oqmDbIdOrName, session);
+		CollectionClearResult superClearResult = super.clear(oqmDbIdOrName, session);
+
+		return HistoriedCollectionClearResult.builder()
+			.collectionName(superClearResult.getCollectionName())
+			.numRecordsDeleted(superClearResult.getNumRecordsDeleted())
+			.historyCollectionResult(historyClearResult)
+			.build();
 	}
 	
 	/**
@@ -332,7 +361,12 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, T object) {
 		return this.getHistoryFor(oqmDbIdOrName, object.getId());
 	}
-	
+
+	@WithSpan
+	public ObjectId addHistoryFor(String oqmDbIdOrName, ClientSession clientSession, ObjectId object, InteractingEntity entity, ObjectHistoryEvent event) {
+		return this.getHistoryService().addHistoryFor(oqmDbIdOrName, clientSession, object, entity, event);
+	}
+
 	@WithSpan
 	public ObjectId addHistoryFor(String oqmDbIdOrName, ClientSession clientSession, T object, InteractingEntity entity, ObjectHistoryEvent event) {
 		return this.getHistoryService().addHistoryFor(oqmDbIdOrName, clientSession, object, entity, event);

@@ -2,7 +2,7 @@
 const Getters = {
 	InventoryItem: {
 		get(itemId, doneFunc) {
-			console.log("Getting name for inventory item \"" + itemId + "\"");
+			console.log("Getting inventory item \"" + itemId + "\"");
 			return Rest.call({
 				spinnerContainer: null,
 				url: Rest.passRoot + "/inventory/item/" + itemId,
@@ -19,6 +19,23 @@ const Getters = {
 				done: function (data) {
 					console.log("Got item name: " + data.name);
 					doneFunc(data.name);
+				}
+			});
+		}
+	},
+	StoredItem: {
+		getSingleStoredForItemInBlock: async function(itemId, blockId, doneFunc = function(){}){
+			return Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/inventory/item/" + itemId + "/stored/inBlock/" + blockId,
+				done: function(storedSearchResults){
+					if(storedSearchResults.numResults === 0){
+						throw new Error("No results where expected one.");
+					}
+					if(storedSearchResults.numResults > 1){
+						throw new Error("More than one result. Expected one.");
+					}
+					doneFunc(storedSearchResults.results[0]);
 				}
 			});
 		}
