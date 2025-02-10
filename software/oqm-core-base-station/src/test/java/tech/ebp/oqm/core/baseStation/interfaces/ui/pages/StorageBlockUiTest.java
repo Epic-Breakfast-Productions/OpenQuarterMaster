@@ -8,6 +8,10 @@ import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.StorageBlockPage;
+import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.AttKeywordUiUtils;
+
+import java.util.List;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,6 +38,9 @@ public class StorageBlockUiTest extends WebUiTest {
 		oqm.locator(StorageBlockPage.ADDEDIT_FORM_NICKNAME_INPUT).fill(expectedNickname);
 		oqm.locator(StorageBlockPage.ADDEDIT_FORM_DESCRIPTION_INPUT).fill(expectedDescription);
 		oqm.locator(StorageBlockPage.ADDEDIT_FORM_LOCATION_INPUT).fill(expectedLocation);
+
+		List<String> keywords = AttKeywordUiUtils.fillKeywords(oqm.locator(StorageBlockPage.ADDEDIT_FORM), 5);
+		Map<String, String> atts = AttKeywordUiUtils.fillAtts(oqm.locator(StorageBlockPage.ADDEDIT_FORM), 5);
 
 		oqm.locator(StorageBlockPage.ADDEDIT_FORM_SUBMIT_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
@@ -79,8 +86,11 @@ public class StorageBlockUiTest extends WebUiTest {
 			historyRows.first().locator(".event-type").textContent().strip()
 		);
 
+		AttKeywordUiUtils.assertKeywords(oqm.locator(StorageBlockPage.VIEW_MODAL), keywords);
+		AttKeywordUiUtils.assertAtts(oqm.locator(StorageBlockPage.VIEW_MODAL), atts);
 
-		//TODO:: images, files, att/keywords
+
+		//TODO:: images, files
 
 		//TODO:: categories
 
@@ -93,4 +103,5 @@ public class StorageBlockUiTest extends WebUiTest {
 	//TODO:: id copy button
 	//TODO:: printouts
 	//TODO:: bulk adding
+	//TODO:: test empty field containers not shown
 }

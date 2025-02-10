@@ -19,6 +19,7 @@ public class StorageBlockPage {
 	public static final String ADDEDIT_FORM_DESCRIPTION_INPUT = "#addEditDescriptionInput";
 	public static final String ADDEDIT_FORM_LOCATION_INPUT = "#addEditLocationInput";
 
+	public static final String VIEW_MODAL = "#storageBlockViewModal";
 	public static final String VIEW_MODAL_LABEL = "#storageBlockViewModalLabel";
 	public static final String VIEW_ID = "#storageBlockViewId";
 	public static final String VIEW_DESCRIPTION = "#storageBlockViewDescription";
