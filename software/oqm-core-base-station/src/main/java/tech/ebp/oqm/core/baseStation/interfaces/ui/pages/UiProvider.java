@@ -9,24 +9,31 @@ import io.quarkus.qute.TemplateInstance;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.groups.UniJoin;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import tech.ebp.oqm.core.baseStation.interfaces.RestInterface;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.SearchObject;
 
-import java.util.Currency;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 
 
 @Slf4j
 public abstract class UiProvider extends RestInterface {
+
+	@Getter
+	@HeaderParam("x-forwarded-prefix")
+	Optional<String> forwardedPrefix;
 	
 	@Inject
 	Span span;
+
+	protected String getRootPrefix(){
+		return this.forwardedPrefix.orElse("");
+	}
 	
 	protected int getDefaultPageSize(){
 		return 25;
@@ -45,6 +52,7 @@ public abstract class UiProvider extends RestInterface {
 	
 	protected TemplateInstance setupPageTemplate(Template template) {
 		return template
+				   .data("rootPrefix", this.getRootPrefix())
 				   .data("userInfo", this.getUserInfo())
 				   .data("userToken", this.getUserTokenStr())
 				   .data("oqmDbs", this.getOqmDatabases())

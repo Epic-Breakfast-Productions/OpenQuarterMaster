@@ -5,7 +5,7 @@ Ingests:
 - id - the id to give the form
 !}
 {!{@tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch searchObject}!}
-{#include tags/search/searchForm id=id action='/interactingEntity' showKeywords=true showAttributes=true defaultPageSize=config:['ui.interactingEntity.search.defaultPageSize']}
+{#include tags/search/searchForm id=id action=(rootPrefix + '/interactingEntity') showKeywords=true showAttributes=true defaultPageSize=config:['ui.interactingEntity.search.defaultPageSize']}
 	{#inputs}
 		<div class="mb-3 col col-3">
 			<label for="{id}-nameInput" class="form-label">Name</label>

@@ -116,6 +116,7 @@ public abstract class PassthroughProvider extends ApiProvider {
 					log.debug("Final result of search: {}", endResults);
 					return Response.ok(
 						searchResultTemplate
+							.data("rootPrefix", this.getRootPrefix())
 							.data("actionType", actionType)
 							.data("searchFormId", searchFormId)
 							.data("otherModalId", otherModalId)

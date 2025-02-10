@@ -21,23 +21,23 @@ Ingests:
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 	
-	<link rel="shortcut icon" href="/favicon.ico"/>
+	<link rel="shortcut icon" href="{rootPrefix}/favicon.ico"/>
 	<title>{#if title??}{title} - {/if}{config:['service.nameFull']}</title>
 	
 	<!-- CSS -->
-	<link href="/lib/bootstrap/5.3.3/bootswatch.yeti.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="/lib/bootstrap-icons/1.11.1/bootstrap-icons.min.css">
-	<link rel="stylesheet" href="/lib/spin.js/spin.css">
-	<link rel="stylesheet" href="/lib/dselect/1.0.4/dist/css/dselect.min.css">
-	<link rel="stylesheet" href="/res/css/bootstrap-adjust.css">
-	<link rel="stylesheet" href="/res/css/main.css">
+	<link href="{rootPrefix}/lib/bootstrap/5.3.3/bootswatch.yeti.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="{rootPrefix}/lib/bootstrap-icons/1.11.1/bootstrap-icons.min.css">
+	<link rel="stylesheet" href="{rootPrefix}/lib/spin.js/spin.css">
+	<link rel="stylesheet" href="{rootPrefix}/lib/dselect/1.0.4/dist/css/dselect.min.css">
+	<link rel="stylesheet" href="{rootPrefix}/res/css/bootstrap-adjust.css">
+	<link rel="stylesheet" href="{rootPrefix}/res/css/main.css">
 	{#insert styleSheets}{/}
 	<style>
 		{#insert pageStyle} /* No page css */
 		{/}
 	</style>
 	<!--  At top in order to prevent flashing -->
-	<script src="/res/js/theme.js"></script>
+	<script src="{rootPrefix}/res/js/theme.js"></script>
 </head>
 <body class="min-vh-100 vstack">
 <span id="oqmPageInfo" data-page-initted="false"></span>
@@ -48,8 +48,8 @@ Ingests:
 <nav class="navbar navbar-expand-lg bg-light top-nav mb-2" data-bs-theme="light" id="top-nav">
 	{#if navbar == "full"}
 	<div class="container-fluid">
-		<a class="navbar-brand p-0" href="/overview">
-			<img src="/media/logo.svg" alt=""  id="topOqmLogo">
+		<a class="navbar-brand p-0" href="{rootPrefix}/overview">
+			<img src="{rootPrefix}/media/logo.svg" alt=""  id="topOqmLogo">
 		</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavBar"
 				aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@ Ingests:
 					</form>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link {#if page is 'overview'}active{/if}" href="/overview">
+					<a class="nav-link {#if page is 'overview'}active{/if}" href="{rootPrefix}/overview">
 						{#icons/pageIcon page='overview'}{/icons/pageIcon} Overview
 						{#if page is 'overview'}
 						<span class="visually-hidden">(current)</span>
@@ -81,7 +81,7 @@ Ingests:
 					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link {#if page is 'storage'}active{/if}" href="/storage">
+					<a class="nav-link {#if page is 'storage'}active{/if}" href="{rootPrefix}/storage">
 						{#icons/pageIcon page='storage'}{/icons/pageIcon} Storage
 						{#if page is 'storage'}
 						<span class="visually-hidden">(current)</span>
@@ -89,7 +89,7 @@ Ingests:
 					</a>
 				</li>
 				<li class="nav-item">
-					<a class="nav-link pe-0 {#if page is 'items'}active{/if}" href="/items">
+					<a class="nav-link pe-0 {#if page is 'items'}active{/if}" href="{rootPrefix}/items">
 						{#icons/pageIcon page='items'}{/icons/pageIcon} Items
 						{#if page is 'items'}
 						<span class="visually-hidden">(current)</span>
@@ -112,14 +112,14 @@ Ingests:
 							{#icons/add}{/icons/add} New Item List
 						</a>
 						-->
-						<a class="dropdown-item {#if page is 'categories'}active{/if}" href="/itemCategories">
+						<a class="dropdown-item {#if page is 'categories'}active{/if}" href="{rootPrefix}/itemCategories">
 							{#icons/categories}{/icons/categories} Categories
 							{#if page is 'categories'}
 							<span class="visually-hidden">(current)</span>
 							{/if}
 						</a>
 						{#if userInfo.getRoles().contains('inventoryEdit')}
-						<a class="dropdown-item {#if page is 'itemCheckout'}active{/if}" href="/itemCheckout">
+						<a class="dropdown-item {#if page is 'itemCheckout'}active{/if}" href="{rootPrefix}/itemCheckout">
 							{#icons/checkinout}{/icons/checkinout} Checkouts
 							{#if page is 'itemCheckout'}
 							<span class="visually-hidden">(current)</span>
@@ -133,25 +133,25 @@ Ingests:
 							aria-haspopup="true" aria-expanded="false">
 						{#icons/icon icon='infinity'}{/icons/icon} Other</a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item {#if page is 'images'}active{/if}" href="/images">
+						<a class="dropdown-item {#if page is 'images'}active{/if}" href="{rootPrefix}/images">
 							{#icons/pageIcon page='images'}{/icons/pageIcon} Images
 							{#if page is 'images'}
 							<span class="visually-hidden">(current)</span>
 							{/if}
 						</a>
-						<a class="dropdown-item {#if page is 'files'}active{/if}" href="/files">
+						<a class="dropdown-item {#if page is 'files'}active{/if}" href="{rootPrefix}/files">
 							{#icons/pageIcon page='files'}{/icons/pageIcon} Files
 							{#if page is 'files'}
 							<span class="visually-hidden">(current)</span>
 							{/if}
 						</a>
-						<a class="dropdown-item {#if page is 'codes'}active{/if}" href="/codes">
+						<a class="dropdown-item {#if page is 'codes'}active{/if}" href="{rootPrefix}/codes">
 							{#icons/pageIcon page='codes'}{/icons/pageIcon} QR &amp; Bar Code Generator
 							{#if page is 'codes'}
 							<span class="visually-hidden">(current)</span>
 							{/if}
 						</a>
-						<a class="dropdown-item {#if page is 'help'}active{/if}" href="/help">
+						<a class="dropdown-item {#if page is 'help'}active{/if}" href="{rootPrefix}/help">
 							{#icons/pageIcon page='help'}{/icons/pageIcon} Help & User Guide
 							{#if page is 'help'}
 							<span class="visually-hidden">(current)</span>
@@ -161,13 +161,13 @@ Ingests:
 				</li>
 			</ul>
 		
-			<form class="d-flex me-auto" method="get" action="/items" id="navSearchForm">
+			<form class="d-flex me-auto" method="get" action="{rootPrefix}/items" id="navSearchForm">
 				<div class="input-group">
 					<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name" style="max-width:150px;">
 					<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchTypeSelect">{#icons/items}{/icons/items}</button>
 					<ul class="dropdown-menu dropdown-menu-end">
-						<li><a class="dropdown-item" href="#" onclick="updateNavSearchDestination('/items', Icons.items, 'name')">{#icons/items}{/icons/items} Items</a></li>
-						<li><a class="dropdown-item" href="#" onclick="updateNavSearchDestination('/storage', Icons.storageBlocks, 'labelOrNickname')">{#icons/storageBlocks}{/icons/storageBlocks} Storage Blocks</a></li>
+						<li><a class="dropdown-item" href="#" onclick="updateNavSearchDestination('{rootPrefix}/items', Icons.items, 'name')">{#icons/items}{/icons/items} Items</a></li>
+						<li><a class="dropdown-item" href="#" onclick="updateNavSearchDestination('{rootPrefix}/storage', Icons.storageBlocks, 'labelOrNickname')">{#icons/storageBlocks}{/icons/storageBlocks} Storage Blocks</a></li>
 					</ul>
 					<button class="btn btn-outline-dark" type="submit">{#icons/search}{/icons/search}</button>
 				</div>
@@ -185,7 +185,7 @@ Ingests:
 						{#icons/user}{/icons/user}
 						<span id="userNameDisplay">{userInfo.getName()}</span></a>
 					<div class="dropdown-menu">
-						<a class="dropdown-item" href="/you" id="youLink">
+						<a class="dropdown-item" href="{rootPrefix}/you" id="youLink">
 							{#icons/you}{/icons/you} You
 						</a>
 						<a class="dropdown-item" href="{config:['service.auth.userSettingsUrl']}" id="youEditLink" target="_blank">
@@ -195,12 +195,12 @@ Ingests:
 					<div class="dropdown-divider"></div>
 					{/if}
 					{#if userInfo.getRoles().contains('userAdmin')}
-					<a class="dropdown-item" href="/userAdmin" id="userAdminLink">
+					<a class="dropdown-item" href="{rootPrefix}/userAdmin" id="userAdminLink">
 						{#icons/userAdmin}{/icons/userAdmin} User Administration
 					</a>
 					{/if}
 					{#if userInfo.getRoles().contains('inventoryAdmin')}
-					<a class="dropdown-item" href="/inventoryAdmin" id="inventoryAdminLink">
+					<a class="dropdown-item" href="{rootPrefix}/inventoryAdmin" id="inventoryAdminLink">
 						{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Admin
 					</a>
 					{/if}
@@ -208,7 +208,7 @@ Ingests:
 						{#icons/copy}{/icons/copy} Copy Token
 					</button>
 					<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="{config:['quarkus.oidc.logout.path']}" id="logoutButton">
+						<a class="dropdown-item" href="{rootPrefix}{config:['quarkus.oidc.logout.path']}" id="logoutButton">
 							{#icons/icon icon='door-closed'}{/icons/icon} Logout
 						</a>
 					</div>
@@ -219,7 +219,7 @@ Ingests:
 	{#else if navbar == "toLogin"}
 	<div class="container-fluid">
 		<a class="navbar-brand" href="/">
-			<img src="/media/logo.svg" alt="" height="40" width="97" id="topLogo">
+			<img src="{rootPrefix}/media/logo.svg" alt="" height="40" width="97" id="topLogo">
 		</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavBar"
 			aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
@@ -236,7 +236,7 @@ Ingests:
 				</li>
 				{/if}
 				<li class="nav-item">
-					<a class="nav-link" href="/">
+					<a class="nav-link" href="{rootPrefix}/">
 						{#icons/icon icon='door-open'}{/icons/icon} Login
 					</a>
 				</li>
@@ -267,7 +267,7 @@ Ingests:
 	<div class="row">
 		<div class="col-sm-4">
 			<span class="h5">Open QuarterMaster Base Station</span><br/>
-			Version <a href="{config:['service.gitLink']}" target="_blank">{config:['service.version']}</a>, &copy; 2024 <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP <img src="/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a><br/>
+			Version <a href="{config:['service.gitLink']}" target="_blank">{config:['service.version']}</a>, &copy; 2024 <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP <img src="{rootPrefix}/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a><br/>
 			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
 			<div class="dropup color-modes" id="theme-picker">
 				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
@@ -368,22 +368,23 @@ Ingests:
 {#insert modals}{/}
 
 <!-- scripts -->
-<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
-<script src="/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
-<script src="/lib/luxon/3.3.0/luxon.min.js"></script>
-<script src="/lib/js-cookie/3.0.5/js.cookie.min.js"></script>
-<script src="/lib/spin.js/spin.umd.js"></script>
-<script src="/lib/dselect/1.0.4/dist/js/dselect.js"></script>
-<script src="/res/js/spinnerHelpers.js"></script>
-<script src="/res/js/getParamUtils.js"></script>
-<script src="/res/js/pageMessages.js"></script>
-<script src="/res/js/dselectHelpers.js"></script>
-<script src="/res/js/rest.js"></script>
-<script src="/res/js/timeHelpers.js"></script>
-<script src="/res/js/OqmDb.js"></script>
-<script src="/res/js/main.js"></script>
-<script src="/res/js/icons.js"></script>
-<script src="/res/js/links.js"></script>
+<script src="{rootPrefix}/webjars/jquery/3.7.1/jquery.min.js"></script>
+<script src="{rootPrefix}/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="{rootPrefix}/lib/luxon/3.3.0/luxon.min.js"></script>
+<script src="{rootPrefix}/lib/js-cookie/3.0.5/js.cookie.min.js"></script>
+<script src="{rootPrefix}/lib/spin.js/spin.umd.js"></script>
+<script src="{rootPrefix}/lib/dselect/1.0.4/dist/js/dselect.js"></script>
+<script src="{rootPrefix}/res/js/constants.js"></script>
+<script src="{rootPrefix}/res/js/spinnerHelpers.js"></script>
+<script src="{rootPrefix}/res/js/getParamUtils.js"></script>
+<script src="{rootPrefix}/res/js/pageMessages.js"></script>
+<script src="{rootPrefix}/res/js/dselectHelpers.js"></script>
+<script src="{rootPrefix}/res/js/rest.js"></script>
+<script src="{rootPrefix}/res/js/timeHelpers.js"></script>
+<script src="{rootPrefix}/res/js/OqmDb.js"></script>
+<script src="{rootPrefix}/res/js/main.js"></script>
+<script src="{rootPrefix}/res/js/icons.js"></script>
+<script src="{rootPrefix}/res/js/links.js"></script>
 <script>
 	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
 	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {

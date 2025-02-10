@@ -1,7 +1,7 @@
 {#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Items' page='items'}
 {!{@java.util.Map allowedUnitsMap}!}
 {#styleSheets}
-    <link rel="stylesheet" href="/lib/Croppie-2.6.4/croppie.css"/>
+    <link rel="stylesheet" href="{rootPrefix}/lib/Croppie-2.6.4/croppie.css"/>
 {/styleSheets}
 {#pageContent}
 <div class="row">
@@ -35,7 +35,7 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/item/itemSearchForm id='mainPageSearch'}
+                    {#search/item/itemSearchForm id='mainPageSearch' rootPrefix=rootPrefix}
                     {/search/item/itemSearchForm}
                 </div>
             </div>
@@ -45,7 +45,7 @@
 <div class="row">
     <div class="col table-responsive">
         <table id="mainPageSearchResults" class="table table-bordered table-striped table-hover table-sm">
-            {#search/item/itemSearchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch'}
+            {#search/item/itemSearchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' rootPrefix=rootPrefix}
             {/search/item/itemSearchResults}
         </table>
     </div>
@@ -54,7 +54,7 @@
 {/search/image/imageSelectFormInputHidden}
 {/pageContent}
 {#modals}
-    {#objView/itemViewModal currency=currency}
+    {#objView/itemViewModal currency=currency  rootPrefix=rootPrefix}
         {#footerButtons}
             <button type="button" id="itemViewEditButton" class="btn btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" >
                 {#icons/edit}{/icons/edit}
@@ -76,7 +76,7 @@
             <form id="addItemFromFileForm">
                 <div class="col-12 mb-3">
                     <label for="importBulkFileInput" class="form-label">
-                        <a href="/api/passthrough/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
+                        <a href="{rootPrefix}/api/passthrough/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
                         or {#icons/fileJson}{/icons/fileJson} JSON file:
                     </label>
                     <input class="form-control" type="file" id="addFromFileInput" name="file" accept="text/csv,application/json" required>
@@ -85,11 +85,11 @@
         </div>
     </div>
 {/modal}
-{#search/storage/searchSelectModal otherModalId="addEditItemModal"}
+{#search/storage/searchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix}
 {/search/storage/searchSelectModal}
-{#search/image/imageSearchSelectModal otherModalId="addEditItemModal"}
+{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix}
 {/search/image/imageSearchSelectModal}
-{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal"}
+{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal" rootPrefix=rootPrefix}
 {/itemCheckout/itemCheckoutModal}
 {#itemStored/transaction/addTransactionModal}
 {/itemStored/transaction/addTransactionModal}
@@ -101,43 +101,50 @@
 {/modals}
 
 {#scripts}
-    <script src="/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-    <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
-    <script src="/res/js/obj/media/imageAdd.js"></script>
-    <script src="/res/js/obj/media/imageAddFromSelect.js"></script>
-    <script src="/res/js/search.js"></script>
-    <script src="/res/js/other.js"></script>
-    <script src="/res/js/historySearch.js"></script>
-    <script src="/res/js/obj/objEdit.js"></script>
-    <script src="/res/js/obj/objView.js"></script>
-    <script src="/res/js/storedTypeUtils.js"></script>
-    <script src="/res/js/obj/media/imageSearchSelect.js"></script>
-    <script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-    <script src="/res/js/obj/units.js"></script>
-    <script src="/res/js/obj/getters.js"></script>
-    <script src="/res/js/obj/storageBlock/capacities.js"></script>
-    <script src="/res/js/carousel.js"></script>
-    <script src="/res/js/obj/item/itemStoredAddSubTrans.js"></script>
-    <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
-    <script src="/res/js/obj/itemCategoryView.js"></script>
-    <script src="/res/js/textCopy.js"></script>
-    <script src="/res/js/item/extItemSearch.js"></script>
-	<script src="/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
-	<script src="/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
-	<script src="/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
-    <script src="/res/js/obj/item/itemAddEdit.js"></script>
-    <script src="/res/js/obj/item/storedView.js"></script>
-    <script src="/res/js/obj/item/storedEdit.js"></script>
-    <script src="/res/js/obj/item/itemView.js"></script>
-    <script src="/res/js/obj/itemStored/itemStoredSearch.js"></script>
-    <script src="/res/js/CodeScanning.js"></script>
-    <script src="/res/js/obj/itemCheckout/itemCheckout.js"></script>
-    <script src="/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
-    <script src="/res/js/pageComponents.js"></script>
-    <script src="/res/js/modalHelpers.js"></script>
-    <script src="/res/js/obj/itemStored/itemStoredTransaction.js"></script>
-
+    <script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageAddFromSelect.js"></script>
+    <script src="{rootPrefix}/res/js/search.js"></script>
+    <script src="{rootPrefix}/res/js/other.js"></script>
+    <script src="{rootPrefix}/res/js/historySearch.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objView.js"></script>
+    <script src="{rootPrefix}/res/js/storedTypeUtils.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/units.js"></script>
+    <script src="{rootPrefix}/res/js/obj/getters.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
+    <script src="{rootPrefix}/res/js/carousel.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemStoredAddSubTrans.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/storageBlockTree.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCategoryView.js"></script>
+    <script src="{rootPrefix}/res/js/textCopy.js"></script>
+    <script src="{rootPrefix}/res/js/item/extItemSearch.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemAddEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/storedView.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/storedEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemView.js"></script>
+    <script src="{rootPrefix}/res/js/CodeScanning.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckout.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
+    <script src="{rootPrefix}/res/js/pageComponents.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearch.js"></script>
+	<script src="{rootPrefix}/res/js/modalHelpers.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredTransaction.js"></script>
 {/scripts}
+
+
+
+
+
+
+
+
 {#pageScript}
 <script>
 const STORAGE_CLASS = "storageBlock";

@@ -1,8 +1,8 @@
 
 const Rest = {
 	wholeBody: $('body'),
-	apiRoot: "/api",
-	passRoot: "/api/passthrough",
+	apiRoot: Constants.rootPrefix + "/api",
+	passRoot: Constants.rootPrefix + "/api/passthrough",
 	buildErrorMessageFromResponse(response, statusMessage){
 		let output = "";
 

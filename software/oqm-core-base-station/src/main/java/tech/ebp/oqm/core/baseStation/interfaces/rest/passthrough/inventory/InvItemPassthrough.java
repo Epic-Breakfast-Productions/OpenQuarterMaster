@@ -34,7 +34,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 	@Inject
 	@Location("tags/search/item/itemSearchResults")
 	Template searchResultTemplate;
-	
+
 	@POST
 	@Operation(
 		summary = "Adds a new inventory item."
@@ -111,7 +111,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
+		description = "Items retrieved.",
 		content = {
 			@Content(
 				mediaType = "application/json"
@@ -122,7 +122,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Uni<Response> search(
 		//for actual queries
 		@BeanParam InventoryItemSearch itemSearch,

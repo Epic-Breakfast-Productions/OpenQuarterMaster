@@ -3,10 +3,10 @@
 		No Storage Blocks!
 	</h2>
 	<p>
-		No storage blocks currently exist. Go to <a href="/storage">{#icons/storageBlocks}{/icons/storageBlocks} Storage</a> to add a place where items are stored!
+		No storage blocks currently exist. Go to <a href="{rootPrefix}/storage">{#icons/storageBlocks}{/icons/storageBlocks} Storage</a> to add a place where items are stored!
 	</p>
 	<p>
-		You can then go to <a href="/items">{#icons/item}{/icons/item} Items</a> to add an item that is stored in that location!
+		You can then go to <a href="{rootPrefix}/items">{#icons/item}{/icons/item} Items</a> to add an item that is stored in that location!
 	</p>
 {#else}
 	<div class="accordion" id="mainParentAccordion">
@@ -15,7 +15,7 @@
 		<div class="accordion-item" id="accordItem{id}" data-storage-block-id="{id}">
 		<h2 class="accordion-header" id="accordHeader{id}" onclick="overviewAccordionClicked('{id}', $(this).parent())">
 			<button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse" data-bs-target="#accordCollapse{id}" aria-expanded="false" aria-controls="accordCollapse{id}">
-				<img class="accordion-thumb" src="/api/passthrough/media/image/for/storageBlock/{id}" alt="">
+				<img class="accordion-thumb" src="{rootPrefix}/api/passthrough/media/image/for/storageBlock/{id}" alt="">
 				{parent.get("labelText").asText()}
 			</button>
 		</h2>

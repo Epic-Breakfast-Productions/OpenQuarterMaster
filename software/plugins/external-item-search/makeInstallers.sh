@@ -92,6 +92,7 @@ if [ ! -f "/etc/oqm/serviceConfig/plugin/external-item-search/user-config.list" 
 # Add your own config here.
 # Configuration here will override those in core-api-config.list
 
+# quarkus.log.level=DEBUG
 
 EOF
 fi
