@@ -6,6 +6,7 @@ import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -25,7 +26,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmUnitService;
 @Path("/api/pageComponents/unit/inputs")
 @Tags({@Tag(name = "Units", description = "Endpoints for getting units.")})
 @RolesAllowed(Roles.INVENTORY_VIEW)
-@ApplicationScoped
+@RequestScoped
 public class UnitInputs extends ApiProvider {
 
 	@Getter
