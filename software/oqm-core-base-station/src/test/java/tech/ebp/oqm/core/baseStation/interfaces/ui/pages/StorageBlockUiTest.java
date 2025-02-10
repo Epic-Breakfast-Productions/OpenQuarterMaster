@@ -28,7 +28,7 @@ public class StorageBlockUiTest extends WebUiTest {
 		String expectedLabel = FAKER.location().building();
 		String expectedNickname = FAKER.name().title();
 		String expectedDescription = FAKER.lorem().paragraph();
-		String expectedLocation= FAKER.location().nature();
+		String expectedLocation = FAKER.location().nature();
 
 		oqm.locator(StorageBlockPage.ADDEDIT_FORM_LABEL_INPUT).fill(expectedLabel);
 		oqm.locator(StorageBlockPage.ADDEDIT_FORM_NICKNAME_INPUT).fill(expectedNickname);
@@ -64,8 +64,24 @@ public class StorageBlockUiTest extends WebUiTest {
 			oqm.locator(StorageBlockPage.VIEW_LOCATION).textContent()
 		);
 
+		oqm.locator(StorageBlockPage.VIEW_HISTORY_EXPAND).click();
+		Thread.sleep(250);
+
+		Locator historyRows = oqm.locator(StorageBlockPage.VIEW_HISTORY_TABLE).locator("tbody")
+			.locator("tr");
+		assertEquals(
+			1,
+			historyRows.count()
+		);
+
+		assertEquals(
+			"CREATE",
+			historyRows.first().locator(".event-type").textContent().strip()
+		);
+
+
 		//TODO:: images, files, att/keywords
-		//TODO:: history view
+
 		//TODO:: categories
 
 		//TODO:: more
@@ -76,4 +92,5 @@ public class StorageBlockUiTest extends WebUiTest {
 	//TODO:: can see items in view list
 	//TODO:: id copy button
 	//TODO:: printouts
+	//TODO:: bulk adding
 }

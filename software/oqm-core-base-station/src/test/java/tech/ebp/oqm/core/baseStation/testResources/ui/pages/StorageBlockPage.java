@@ -23,6 +23,8 @@ public class StorageBlockPage {
 	public static final String VIEW_ID = "#storageBlockViewId";
 	public static final String VIEW_DESCRIPTION = "#storageBlockViewDescription";
 	public static final String VIEW_LOCATION = "#storageBlockViewLocation";
+	public static final String VIEW_HISTORY_EXPAND = "#storageBlockHistoryAccordionHeading";
+	public static final String VIEW_HISTORY_TABLE = "#storageBlockHistory";
 
 	public static void assertNoStorageBlocks(Page page) {
 		log.info("Asserting no storage blocks on storage block page.");
