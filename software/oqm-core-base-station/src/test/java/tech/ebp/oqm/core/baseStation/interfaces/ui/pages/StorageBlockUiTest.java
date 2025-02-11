@@ -9,6 +9,7 @@ import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.StorageBlockPage;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.AttKeywordUiUtils;
+import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.HistoryUiUtils;
 
 import java.util.List;
 import java.util.Map;
@@ -71,23 +72,12 @@ public class StorageBlockUiTest extends WebUiTest {
 			oqm.locator(StorageBlockPage.VIEW_LOCATION).textContent()
 		);
 
-		oqm.locator(StorageBlockPage.VIEW_HISTORY_EXPAND).click();
-		Thread.sleep(250);
+		Locator viewModal = oqm.locator(StorageBlockPage.VIEW_MODAL);
 
-		Locator historyRows = oqm.locator(StorageBlockPage.VIEW_HISTORY_TABLE).locator("tbody")
-			.locator("tr");
-		assertEquals(
-			1,
-			historyRows.count()
-		);
+		HistoryUiUtils.assertHistory(viewModal, List.of("CREATE"));
 
-		assertEquals(
-			"CREATE",
-			historyRows.first().locator(".event-type").textContent().strip()
-		);
-
-		AttKeywordUiUtils.assertKeywords(oqm.locator(StorageBlockPage.VIEW_MODAL), keywords);
-		AttKeywordUiUtils.assertAtts(oqm.locator(StorageBlockPage.VIEW_MODAL), atts);
+		AttKeywordUiUtils.assertKeywords(viewModal, keywords);
+		AttKeywordUiUtils.assertAtts(viewModal, atts);
 
 
 		//TODO:: images, files

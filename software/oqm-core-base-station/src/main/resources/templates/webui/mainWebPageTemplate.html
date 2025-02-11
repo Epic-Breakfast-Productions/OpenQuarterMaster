@@ -375,6 +375,7 @@ Ingests:
 <script src="{rootPrefix}/lib/spin.js/spin.umd.js"></script>
 <script src="{rootPrefix}/lib/dselect/1.0.4/dist/js/dselect.js"></script>
 <script src="{rootPrefix}/res/js/constants.js"></script>
+<script src="{rootPrefix}/res/js/main.js"></script>
 <script src="{rootPrefix}/res/js/spinnerHelpers.js"></script>
 <script src="{rootPrefix}/res/js/getParamUtils.js"></script>
 <script src="{rootPrefix}/res/js/pageMessages.js"></script>
@@ -382,15 +383,10 @@ Ingests:
 <script src="{rootPrefix}/res/js/rest.js"></script>
 <script src="{rootPrefix}/res/js/timeHelpers.js"></script>
 <script src="{rootPrefix}/res/js/OqmDb.js"></script>
-<script src="{rootPrefix}/res/js/main.js"></script>
 <script src="{rootPrefix}/res/js/icons.js"></script>
 <script src="{rootPrefix}/res/js/links.js"></script>
 <script>
-	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-		return new bootstrap.Popover(popoverTriggerEl)
-	});
-	Dselect.setupPageDselects();
+
 </script>
 {#insert scripts}{/}
 {!

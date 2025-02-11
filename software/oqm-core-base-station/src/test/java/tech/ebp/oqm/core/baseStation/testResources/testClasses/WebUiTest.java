@@ -1,5 +1,9 @@
 package tech.ebp.oqm.core.baseStation.testResources.testClasses;
 
+import com.microsoft.playwright.options.HarMode;
+import com.microsoft.playwright.options.RecordVideoSize;
+import com.microsoft.playwright.options.ScreenSize;
+import com.microsoft.playwright.options.ViewportSize;
 import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUser;
 import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUserService;
 import tech.ebp.oqm.core.baseStation.testResources.ui.PlaywrightSetup;
@@ -10,6 +14,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.NavUtils;
 
+import javax.swing.text.View;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
@@ -49,11 +54,14 @@ public abstract class WebUiTest extends RunningServerTest {
 	@BeforeEach
 	public void beforeEachUi(TestInfo testInfo) {
 		this.curTestUiResultDir = getCurTestDir(testInfo);
+		ScreenSize screenSize = new ScreenSize(1920, 1080);
+
 		Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
 			.setRecordVideoDir(this.curTestUiResultDir)
-			.setScreenSize(1920, 1080)
-			.setRecordVideoSize(1920, 1080)
-			.setViewportSize(1920, 1080);
+			.setRecordHarPath(this.curTestUiResultDir.resolve("har.json"))
+			.setScreenSize(screenSize)
+			.setRecordVideoSize(new RecordVideoSize(screenSize.width, screenSize.height))
+			.setViewportSize(new ViewportSize(screenSize.width, screenSize.height));
 
 		this.context = PlaywrightSetup.getInstance().getBrowser().newContext(newContextOptions);
 	}
