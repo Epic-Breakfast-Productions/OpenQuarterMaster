@@ -50,8 +50,6 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 			"image/png",
 			"image/jpeg",
 			"image/bmp",
-			"image/tiff",
-			"image/webp",
 			"image/gif"
 		);
 	}
@@ -64,7 +62,7 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 	 * @return The resized image
 	 */
 	public BufferedImage resizeImage(BufferedImage inputImage) {
-		log.debug("Resizing image {}", inputImage);
+		log.debug("Resizing image: {}", inputImage);
 		// creates output image
 		BufferedImage outputImage = new BufferedImage(
 			this.imageResizeConfig.width(),
@@ -83,17 +81,21 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 			null
 		);
 		g2d.dispose();
+
+		log.debug("Resized image: {}", outputImage);
 		
 		return outputImage;
 	}
 	
 	@Override
 	public ObjectId add(String oqmDbIdOrName, ClientSession clientSession, Image fileObject, File origImage, String fileName, InteractingEntity interactingEntity) throws IOException {
-		File usingImage;
+		File endImage;
 		if(this.imageResizeConfig.enabled()) {
-			usingImage = this.getTempFileService().getTempFile(
-				FilenameUtils.removeExtension(fileName) + "-resized",
-				FilenameUtils.getExtension(fileName),
+			String origFileNameNoExt = FilenameUtils.removeExtension(fileName);
+
+			endImage = this.getTempFileService().getTempFile(
+				origFileNameNoExt + "-resized",
+				this.imageResizeConfig.savedType(),
 				"imageUploads"
 			);
 			log.info("Image needs resized: {}", origImage);
@@ -105,13 +107,19 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 				}
 
 				bufferedImage = resizeImage(bufferedImage);
-				ImageIO.write(bufferedImage, this.imageResizeConfig.savedType(), usingImage);
+				if(
+					//TODO:: support dealing with higher quality jpg's: https://stackoverflow.com/questions/17108234/setting-jpg-compression-level-with-imageio-in-java
+					!ImageIO.write(bufferedImage, this.imageResizeConfig.savedType(), endImage)
+				){
+					log.error("FAILED to write resized image file.");
+					throw new IllegalStateException("FAILED to write resized image file.");
+				}
 			}
 		} else {
-			usingImage = origImage;
+			endImage = origImage;
 		}
 		
-		return super.add(oqmDbIdOrName, clientSession, fileObject, usingImage, fileName, interactingEntity);
+		return super.add(oqmDbIdOrName, clientSession, fileObject, endImage, fileName, interactingEntity);
 	}
 	
 	@Override
