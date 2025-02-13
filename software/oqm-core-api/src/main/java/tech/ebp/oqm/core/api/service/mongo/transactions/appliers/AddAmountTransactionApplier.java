@@ -13,9 +13,12 @@ import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.units.indriya.quantity.Quantities;
 
-import java.util.LinkedHashSet;
 import java.util.Set;
 
+/**
+ * Applier to handle AddAmountTransactions.
+ *
+ */
 public class AddAmountTransactionApplier extends TransactionApplier<AddAmountTransaction> {
 
 	public AddAmountTransactionApplier(StoredService storedService) {
