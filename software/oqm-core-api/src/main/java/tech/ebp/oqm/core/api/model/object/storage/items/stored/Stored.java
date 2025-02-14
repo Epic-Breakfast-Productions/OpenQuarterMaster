@@ -61,6 +61,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 * TODO:: validate?
 	 * TODO:: rework, support multiple
 	 */
+	@lombok.Builder.Default
 	private String barcode = null;
 
 	/**

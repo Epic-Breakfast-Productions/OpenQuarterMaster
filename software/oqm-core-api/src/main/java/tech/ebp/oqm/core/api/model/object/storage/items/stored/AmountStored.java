@@ -35,6 +35,7 @@ public class AmountStored extends Stored {
 	 * Null for no threshold, Quantity with compatible unit to set the threshold.
 	 * TODO:: validate unit is compatible with main unit
 	 */
+	@lombok.Builder.Default
 	private Quantity<?> lowStockThreshold = null;
 	
 	public AmountStored(Unit<?> unit) {

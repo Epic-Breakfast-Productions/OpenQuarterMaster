@@ -63,6 +63,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * TODO:: validate?
 	 * TODO:: rework
 	 */
+	@lombok.Builder.Default
 	private String barcode = null;
 
 	/**
@@ -114,6 +115,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * Null for no threshold, Quantity with compatible unit to set the threshold.
 	 * TODO:: validate unit is compatible with main unit
 	 */
+	@lombok.Builder.Default
 	private Quantity<?> lowStockThreshold = null;
 
 	/**
@@ -121,6 +123,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * <p>
 	 * Null if a transaction was never performed on this item.
 	 */
+	@lombok.Builder.Default
 	private ItemStoredStats stats = null;
 
 	/**
