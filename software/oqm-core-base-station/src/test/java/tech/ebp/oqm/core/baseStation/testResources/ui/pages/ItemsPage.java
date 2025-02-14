@@ -16,6 +16,7 @@ public class ItemsPage {
 	public static final String ADD_EDIT_FORM_SUBMIT_BUTTON = "#addEditItemFormSubmitButton";
 	public static final String ADDEDIT_FORM_INPUT_NAME = "#addEditItemNameInput";
 	public static final String ADDEDIT_FORM_INPUT_DESCRIPTION = "#addEditItemDescriptionInput";
+	public static final String ADDEDIT_FORM_INPUT_TYPE = "#addEditItemStorageTypeInput";
 	// view modal
 	public static final String VIEW_MODAL = "#itemViewModal";
 	public static final String VIEW_NAME = "#itemViewModalLabel";

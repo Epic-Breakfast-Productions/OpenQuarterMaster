@@ -6,12 +6,15 @@ import com.microsoft.playwright.Page;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.ItemsPage;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.StorageBlockPage;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.AttKeywordUiUtils;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.HistoryUiUtils;
+import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.ItemsUiUtils;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.StorageBlockUiUtils;
 
 import java.util.List;
@@ -23,8 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @QuarkusTest
 public class ItemsUiTest extends WebUiTest {
 
-	@Test
-	public void testAddItem() {
+	@ParameterizedTest
+	@MethodSource("tech.ebp.oqm.core.baseStation.testResources.ui.utilities.ItemsUiUtils#itemTypeArgs")
+	public void testAddItem(String itemType) {
 		Page oqm = this.getLoggedInPage(this.getTestUserService().getTestUser(), ItemsPage.ITEMS_PAGE);
 
 		ObjectNode storageBlock = StorageBlockUiUtils.newStorageBlock(oqm);
@@ -39,6 +43,8 @@ public class ItemsUiTest extends WebUiTest {
 
 		oqm.locator(ItemsPage.ADDEDIT_FORM_INPUT_NAME).fill(expectedName);
 		oqm.locator(ItemsPage.ADDEDIT_FORM_INPUT_DESCRIPTION).fill(expectedDescription);
+		oqm.locator(ItemsPage.ADDEDIT_FORM_INPUT_TYPE).selectOption(itemType);
+
 
 		List<String> keywords = AttKeywordUiUtils.fillKeywords(oqm.locator(ItemsPage.ADD_EDIT_FORM), 5);
 		Map<String, String> atts = AttKeywordUiUtils.fillAtts(oqm.locator(ItemsPage.ADD_EDIT_FORM), 5);
