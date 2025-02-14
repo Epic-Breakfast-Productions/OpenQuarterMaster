@@ -1,6 +1,6 @@
-//TODO:: finish adding to 'namespace'
 const ItemAddEdit = {
     addEditItemForm: $('#addEditItemForm'),
+    addEditItemFormSubmitButton: $('#addEditItemFormSubmitButton'),
     addEditItemModal: $("#addEditItemModal"),
     addEditItemModalBs: new bootstrap.Modal("#addEditItemModal"),
     addEditItemFormMessages: $("#addEditItemFormMessages"),
@@ -104,6 +104,7 @@ const ItemAddEdit = {
         ItemAddEdit.addEditItemModalLabelIcon.html(Icons.iconWithSub(Icons.item, Icons.add));
         ItemAddEdit.addEditItemModalLabel.text("Item Add");
         ItemAddEdit.addEditItemFormMode.val("add");
+        ItemAddEdit.addEditItemFormSubmitButton.html(Icons.iconWithSub(Icons.item, Icons.add) + " Add Item");
     },
 
     setupAddEditForEdit(itemId) {
@@ -112,6 +113,7 @@ const ItemAddEdit = {
         ItemAddEdit.addEditItemModalLabel.text("Item Edit");
         ItemAddEdit.addEditItemFormMode.val("edit");
         ItemAddEdit.addEditItemModalLabelIcon.html(Icons.iconWithSub(Icons.item, Icons.edit));
+        ItemAddEdit.addEditItemFormSubmitButton.html(Icons.iconWithSub(Icons.item, Icons.edit) + " Edit Item");
 
         ItemAddEdit.addEditItemStorageTypeInput.prop("disabled", true);
 

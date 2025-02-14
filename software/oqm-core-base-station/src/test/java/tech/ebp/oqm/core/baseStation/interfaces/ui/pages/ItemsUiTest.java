@@ -31,7 +31,6 @@ public class ItemsUiTest extends WebUiTest {
 
 		ItemsPage.assertNoItems(oqm);
 
-
 		oqm.locator(ItemsPage.SEARCH_RESULTS_TABLE).locator(ItemsPage.SEARCH_RESULTS_NONE_ADD_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
 
@@ -78,8 +77,7 @@ public class ItemsUiTest extends WebUiTest {
 		AttKeywordUiUtils.assertAtts(viewModal, atts);
 
 		//TODO:: types of item
-		//TODO:: images, files, att/keywords
-		//TODO:: history view
+		//TODO:: images, files
 		//TODO:: categories
 
 		//TODO:: more
