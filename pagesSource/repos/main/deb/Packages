@@ -742,6 +742,21 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Traefik Reverse Proxy instance for Open QuarterMaster.
 Developer: EBP
 
+Package: oqm-infra-traefik
+Version: 1.0.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0), oqm-manager-station+captain (>= 2.6.0), python3-docker, python3-watchdog
+Filename: ./oqm-infra-traefik_1.0.1_all.deb
+Size: 5880
+MD5sum: fd4582ee9722afd831d7677277748dc0
+SHA1: e432dfba17e93946ca6ceec3b808791ed1b1760b
+SHA256: d9be07f53b8a1aadc6df7102cada592363664e5645c07e913df4ca0fd47ab783
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/traefik
+Description: Traefik Reverse Proxy instance for Open QuarterMaster.
+Developer: EBP
+
 Package: oqm-manager-station+captain
 Version: 2.0.10
 Architecture: all
