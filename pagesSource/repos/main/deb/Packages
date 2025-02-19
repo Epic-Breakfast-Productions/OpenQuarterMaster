@@ -637,6 +637,21 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Keycloak instance for Open QuarterMaster.
 Developer: EBP
 
+Package: oqm-infra-keycloak
+Version: 1.2.4
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0), oqm-manager-station+captain (>= 2.6.0), oqm-infra-traefik (>= 1.0.0), oqm-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, python3-watchdog
+Filename: ./oqm-infra-keycloak_1.2.4_all.deb
+Size: 15406
+MD5sum: 2cd64385d2960cb7f7a5cb7631d815dd
+SHA1: cb110e48ad370477d8a76cfd0f3662b3d9f952c3
+SHA256: f3b0e10c3f78d2282847f6d12b850fcc8daece3cd637e46033f1fcb87d262796
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/deployment/Single%20Host/Infrastructure/keycloak
+Description: Keycloak instance for Open QuarterMaster.
+Developer: EBP
+
 Package: oqm-infra-mongodb
 Version: 1.1.3
 Architecture: all
@@ -752,6 +767,21 @@ Size: 5880
 MD5sum: fd4582ee9722afd831d7677277748dc0
 SHA1: e432dfba17e93946ca6ceec3b808791ed1b1760b
 SHA256: d9be07f53b8a1aadc6df7102cada592363664e5645c07e913df4ca0fd47ab783
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/traefik
+Description: Traefik Reverse Proxy instance for Open QuarterMaster.
+Developer: EBP
+
+Package: oqm-infra-traefik
+Version: 1.0.2
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0), oqm-manager-station+captain (>= 2.6.0), python3-docker, python3-watchdog
+Filename: ./oqm-infra-traefik_1.0.2_all.deb
+Size: 5886
+MD5sum: 315b90011fcce2f76c89157874d558f5
+SHA1: 8bd19e5079cdccb61cdf337931d49d2d2a0091a5
+SHA256: 78264815a6ffda59b046254345a83774c88687a5e56463db18a79aa873b35c52
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/traefik
 Description: Traefik Reverse Proxy instance for Open QuarterMaster.
