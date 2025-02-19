@@ -451,3 +451,12 @@ class CertsUtils:
             destination + "/serviceCertKeystore.p12",
             mainCM.getConfigVal("cert.selfSigned.internalKeystorePass")
         )
+
+    @staticmethod
+    def regenCerts() -> (bool, str):
+        CertsUtils.ensureCoreCerts(True);
+        ServiceUtils.doServiceCommand(
+            ServiceStateCommand.restart,
+            ServiceUtils.SERVICE_ALL
+        );
+        return True, ""
