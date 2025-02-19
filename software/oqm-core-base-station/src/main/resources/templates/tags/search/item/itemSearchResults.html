@@ -54,7 +54,7 @@
       <img src="{rootPrefix}/api/passthrough/media/image/for/item/{id}" class="searchResultImage">
       {/if}
     </td>
-    <td>{name}</td>
+    <td class="itemResultsName">{name}</td>
     <td>{cdi:EnumFormattingService.formatEnum(result.get("storageType").asText())}</td>
     <td>
       {#amountDisplay amount=result.get("stats").get("total")}{/amountDisplay}

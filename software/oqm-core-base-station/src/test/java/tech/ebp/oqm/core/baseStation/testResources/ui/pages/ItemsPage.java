@@ -20,9 +20,11 @@ public class ItemsPage {
 	public static final String ADDEDIT_FORM_ADD_STORAGE_BUTTON = "#addEditItemAssociatedStorageAddButton";
 	// view modal
 	public static final String VIEW_MODAL = "#itemViewModal";
+	public static final String VIEW_ID = "#itemViewId";
 	public static final String VIEW_NAME = "#itemViewModalLabel";
 	public static final String VIEW_DESCRIPTION = "#itemViewDescription";
 	public static final String VIEW_NONE_PRESENT_NO_STORAGE_CONTAINER = "#itemViewStoredNonePresentNoStorageContainer";
+	public static final String VIEW_NONE_PRESENT_NO_STORAGE_ADD_STORED_BUTTON = "#itemViewStoredNonePresentHasStorageAddStoredButton";
 
 
 	public static void assertNoItems(Page page) {

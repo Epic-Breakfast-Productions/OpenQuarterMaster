@@ -32,6 +32,7 @@ public class StorageBlockUiUtils {
 
 
 				page1.locator(StorageBlockPage.ADDEDIT_FORM_LABEL_INPUT).fill(finalNewBlock.get(OBJ_KEY_LABEL).asText());
+				//TODO:: other datas
 //					oqm.locator(StorageBlockPage.ADDEDIT_FORM_NICKNAME_INPUT).fill(expectedNickname);
 //					oqm.locator(StorageBlockPage.ADDEDIT_FORM_DESCRIPTION_INPUT).fill(expectedDescription);
 //					oqm.locator(StorageBlockPage.ADDEDIT_FORM_LOCATION_INPUT).fill(expectedLocation);
