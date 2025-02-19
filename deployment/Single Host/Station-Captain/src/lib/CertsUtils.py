@@ -454,9 +454,9 @@ class CertsUtils:
 
     @staticmethod
     def regenCerts() -> (bool, str):
-        CertsUtils.ensureCoreCerts(True);
+        CertsUtils.ensureCoreCerts(True)
         ServiceUtils.doServiceCommand(
             ServiceStateCommand.restart,
             ServiceUtils.SERVICE_ALL
-        );
+        )
         return True, ""
