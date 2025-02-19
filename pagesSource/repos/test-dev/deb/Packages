@@ -1,118 +1,134 @@
 Package: oqm-core-api
-Version: 1.0.0
+Version: 2.1.6
 Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
-Depends: curl, jq, docker.io, docker, oqm-manager-station+captain (>= 2.0.0), oqm-infra-jaeger (>= 1.1.0), oqm-infra-mongodb (>= 1.1.0), oqm-core-depot
-Filename: ./oqm-core-api_1.0.0_all.deb
-Size: 3904
-MD5sum: 5f8189c43abe0093ce99d3230f5f9a91
-SHA1: 487e78a3529bd52d45a1adc1563b01e86311f3e2
-SHA256: 7fcf01e6b0f627d726f4c1969b6e863dd001fb9da05aad1567fc5a8e91e39c10
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.6.0), oqm-infra-keycloak (>= 1.2.3), oqm-infra-mongodb (>= 1.1.0), oqm-infra-traefik (>= 1.0.0)
+Filename: ./oqm-core-api_2.1.6_all.deb
+Size: 4222
+MD5sum: 8654073da9dd3cbffea4b17db1210f97
+SHA1: 341c4bc8d3c74fefc482a6d90cd0372514fc2602
+SHA256: e5e8579f444ed554efe072d2fb81926bbdd6a420f7de853b95a5ab9a39772938
 Section: Open QuarterMaster
-Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
-Description: Base Station instance for Open QuarterMaster.
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/oqm-core-api
+Description: Core API instance for Open QuarterMaster.
 Licence: GPL-3+
 
 Package: oqm-core-base+station
-Version: 1.1.0
+Version: 1.5.0
 Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
-Depends: curl, jq, docker.io, docker, oqm-manager-station+captain (>= 2.0.0), oqm-infra-jaeger (>= 1.1.0), oqm-infra-keycloak (>= 1.1.0), oqm-core-depot, oqm-core-api (>= 1.0.0)
-Filename: ./oqm-core-base+station_1.1.0_all.deb
-Size: 3978
-MD5sum: 9c6a8b01570236d49b0de0bc8a515edd
-SHA1: 1945771fed6b04ed26cc13742bcdf4cfc157f3e5
-SHA256: 98c3f3d2e8ae0fda453a0c074e76025f66b605bfc6afaa375b0a6df28f53eb11
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.6.0), oqm-infra-keycloak (>= 1.2.3), oqm-infra-traefik (>= 1.0.0), oqm-core-depot, oqm-core-api (>= 2.1.6)
+Recommends: oqm-plugin-ext_item_search
+Filename: ./oqm-core-base+station_1.5.0_all.deb
+Size: 4306
+MD5sum: 0275efb8c2a184edf2335dd5e6d68b47
+SHA1: 0a789d50a6af526d9af6d4de3c25acbe0ace9381
+SHA256: df7a35ab56feabc7cd53566830a0812610012b679e8b59c262d5be0f8ba6bd1c
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
 Description: Base Station instance for Open QuarterMaster.
 Licence: GPL-3+
 
 Package: oqm-core-depot
-Version: 1.0.0
+Version: 1.2.0
 Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
-Depends: docker.io, docker
-Filename: ./oqm-core-depot_1.0.0_all.deb
-Size: 2484
-MD5sum: b4ba9b8bb9dfd45f9b98ecfdf65db021
-SHA1: 94f15838131a1f2f8f67117acf053c0a7342fbcc
-SHA256: c35d5e0d5f0df50bcefcc40fe0600f98b1d05d91aab3cdd4419242b048d4e468
+Depends: docker.io, oqm-manager-station+captain (>= 2.6.0), oqm-infra-traefik (>= 1.0.0)
+Filename: ./oqm-core-depot_1.2.0_all.deb
+Size: 2578
+MD5sum: b2b3e35b39a7f165afafc0192f731920
+SHA1: 0491eec7e2b44b76d0363300d4dab0d03417900d
+SHA256: 72dc575930acdd6497210b7560fe3f1c90f357c8a2247313aec2a5641b3413be
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/oqm-depot
 Description: Depot instance for Open QuarterMaster.
 Licence: GPL-3+
 
-Package: oqm-infra-jaeger
-Version: 1.1.1
+Package: oqm-infra-kafka+red+panda
+Version: 1.0.1
 Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
-Depends: docker, docker.io, oqm-manager-station+captain (>= 2.0.0)
-Filename: ./oqm-infra-jaeger_1.1.1_all.deb
-Size: 10342
-MD5sum: 7489564a533b3b2cd351efa77afd369c
-SHA1: c9218432fb144ae11c721f137828aee1cf65ab1d
-SHA256: 1e65cae462792bafe8ee188ce492449460e9f43bccaa90c02d2271dcd5a9d631
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0)
+Filename: ./oqm-infra-kafka+red+panda_1.0.1_all.deb
+Size: 2262
+MD5sum: 72796d06a4d2cea1fc9323681f69d821
+SHA1: 38f9bd26fb36e0b144be24f26b769aa4f72ce68a
+SHA256: 34b8b0597d06fbe7362adce6309ee2148ee2f553f4bf6a0fddf597086d6542f7
 Section: Open QuarterMaster
-Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/jaeger
-Description: Jaeger instance for Open QuarterMaster.
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/kafka-red-panda
+Description: Kafka instance for Open QuarterMaster using Red Panda.
 Developer: EBP
 
 Package: oqm-infra-keycloak
-Version: 1.1.4
+Version: 1.2.4
 Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
-Depends: docker, docker.io, oqm-manager-station+captain (>= 2.0.0), oqm-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, python3-watchdog
-Filename: ./oqm-infra-keycloak_1.1.4_all.deb
-Size: 15024
-MD5sum: a053ba798579e577214f9afc7ffafee7
-SHA1: 9e8dd2f5799fd84ee7ae21755d188fb79d568191
-SHA256: aad346358ab8c23d99d6eb9124f574b7b987893b45ba5e7c8cd42cb8e17d4f6b
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0), oqm-manager-station+captain (>= 2.6.0), oqm-infra-traefik (>= 1.0.0), oqm-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, python3-watchdog
+Filename: ./oqm-infra-keycloak_1.2.4_all.deb
+Size: 15382
+MD5sum: 294bea75efa41a011c6f7897141cb30e
+SHA1: e42341dbcbd0697a34ec5f2c807da5d44ae7edfd
+SHA256: 2acee2a7d6ed6b32a8e236efeeaeaa45c9359c0a89b0c24da39e6dd109f75c99
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/deployment/Single%20Host/Infrastructure/keycloak
 Description: Keycloak instance for Open QuarterMaster.
 Developer: EBP
 
 Package: oqm-infra-mongodb
-Version: 1.1.3
+Version: 1.2.1
 Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
-Depends: docker, docker.io, oqm-manager-station+captain (>= 2.0.0)
-Filename: ./oqm-infra-mongodb_1.1.3_all.deb
-Size: 3420
-MD5sum: bd1a2e4906c218dbb67e3db04f797d3a
-SHA1: ee476d3e96ff3ca7d1c6ad9575fa1021a6473a52
-SHA256: 75288537f500765bb301004437fd0566e2248b61adeca02c8db8c89ac9e18d0d
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0)
+Filename: ./oqm-infra-mongodb_1.2.1_all.deb
+Size: 3570
+MD5sum: 8f73dfe93b34bf85fe44aa55fd7093f8
+SHA1: 201d29089ce202512ced1ca750e0e54e9f5ac88c
+SHA256: 9e69723a3e987f65d6fc19c7235d7de4ed0d783ef5a8a348c807933d693bc180
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/mongo
 Description: MongoDb instance for Open QuarterMaster.
 Developer: EBP
 
 Package: oqm-infra-postgres
-Version: 1.1.3
+Version: 1.2.1
 Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
-Depends: docker, docker.io, oqm-manager-station+captain (>= 2.0.0)
-Filename: ./oqm-infra-postgres_1.1.3_all.deb
-Size: 3172
-MD5sum: 45e024a9699f1268e0a87e95d4b1d9f8
-SHA1: bd847eff80971e3252876783c0d45ec4a4acdcbb
-SHA256: f277a157fed177f21a214b0a83d4b5812a62dc87173e9564d676b5b6ba068fe2
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0)
+Filename: ./oqm-infra-postgres_1.2.1_all.deb
+Size: 3260
+MD5sum: f51f4107e227638b8bf3743c765547a8
+SHA1: 59cd6f880458d2d5f9710f37ea5dcde291f9339e
+SHA256: 2fa87428a949c2f95fb404ecddde100795d453863f6e7ea19eb2f9274367876f
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/postgresql
 Description: Postgresql instance for Open QuarterMaster.
 Developer: EBP
 
+Package: oqm-infra-traefik
+Version: 1.0.2
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0), oqm-manager-station+captain (>= 2.6.0), python3-docker, python3-watchdog
+Filename: ./oqm-infra-traefik_1.0.2_all.deb
+Size: 5884
+MD5sum: 7b085b12c7b9ed0c6555ed97fb00e3c8
+SHA1: 167e96bfccf7207792e67d3738e8bb0424522e73
+SHA256: 9cdd34b33c7fdb7580085f0bc3717b0e47b08398574468b5a97649ba9aadaf36
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/traefik
+Description: Traefik Reverse Proxy instance for Open QuarterMaster.
+Developer: EBP
+
 Package: oqm-manager-station+captain
-Version: 2.0.11
+Version: 2.6.1
 Architecture: all
 Maintainer: EBP
-Pre-Depends: bash, curl, jq, libnss-mdns, hwinfo, moreutils, dialog, docker, docker.io, unattended-upgrades, ca-certificates, python3 (>= 3.10.0), python3-dialog, python3-docker, python3-systemd, python3-argcomplete
-Filename: ./oqm-manager-station+captain_2.0.11_all.deb
-Size: 38470
-MD5sum: 44bece047be772be725d836c17ef1c07
-SHA1: 75d0db14c6bb6cb42e241c5ecc39f291ff3fe6e4
-SHA256: babe11cd91124dd0681424eb9eea58c10c094202d09531e92e07248abab179c4
+Pre-Depends: bash, curl, jq, libnss-mdns, hwinfo, moreutils, dialog, docker.io, unattended-upgrades, ca-certificates, python3 (>= 3.10.0), python3-cryptography, python3-dialog, python3-docker, python3-systemd, python3-argcomplete, python3-jinja2, python3-distutils-extra
+Filename: ./oqm-manager-station+captain_2.6.1_all.deb
+Size: 34190
+MD5sum: a629ac8d09a2f27895acd01adc8fbb47
+SHA1: 3e71fe059ff935c8aa88d1c686b5f736fdcc5d80
+SHA256: 468f3ddc0a8c5dfdb2074ad559fd880cdfe9089e846c7496dfc49d3fdbf628ab
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain
 Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
