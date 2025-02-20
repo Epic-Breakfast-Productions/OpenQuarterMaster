@@ -17,5 +17,5 @@ public class StoredInBlockStats extends StatsWithTotalContaining {
 		super(unit);
 	}
 
-	//TODO:: any others?
+	private boolean hasStored = false;
 }

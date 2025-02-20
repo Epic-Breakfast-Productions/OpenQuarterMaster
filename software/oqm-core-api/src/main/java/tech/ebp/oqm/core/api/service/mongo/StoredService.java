@@ -213,13 +213,11 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	}
 
 	private void addToStats(StoredInBlockStats storedInBlockStats, Stored stored) {
+		storedInBlockStats.setHasStored(true);
 		this.addToStats((StatsWithTotalContaining) storedInBlockStats, stored);
 	}
 
 	private void addToStats(ItemStoredStats itemStoredStats, Stored stored) {
-		if (!itemStoredStats.getStorageBlockStats().containsKey(stored.getStorageBlock())) {
-			itemStoredStats.getStorageBlockStats().put(stored.getStorageBlock(), new StoredInBlockStats(itemStoredStats.getTotal().getUnit()));
-		}
 		StoredInBlockStats storedInBlockStats = itemStoredStats.getStorageBlockStats().get(stored.getStorageBlock());
 
 		this.addToStats(storedInBlockStats, stored);
@@ -264,7 +262,12 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, ObjectId itemId) {
 		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(itemId));
 
-		ItemStoredStats output = new ItemStoredStats(this.inventoryItemService.get(oqmDbIdOrName, cs, itemId).getUnit());
+		InventoryItem item = this.inventoryItemService.get(oqmDbIdOrName, cs, itemId);
+		ItemStoredStats output = new ItemStoredStats(item.getUnit());
+
+		for (ObjectId storageBlock : item.getStorageBlocks()){
+			output.getStorageBlockStats().put(storageBlock, new StoredInBlockStats(output.getTotal().getUnit()));
+		}
 
 		try (
 			MongoCursor<Stored> storedIterator = storedInItem.iterator()
@@ -340,6 +343,16 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		return Optional.empty();
 	}
 
+	/**
+	 * @param oqmDbIdOrName
+	 * @param cs
+	 * @param item
+	 * @param transactionId
+	 * @param concerning
+	 * @param entity
+	 * @param historyDetails
+	 * @return
+	 */
 	public ItemPostTransactionProcessResults postTransactionProcess(
 		String oqmDbIdOrName,
 		ClientSession cs,
