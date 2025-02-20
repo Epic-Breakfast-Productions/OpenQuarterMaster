@@ -15,12 +15,12 @@ import org.junit.jupiter.api.*;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.NavUtils;
 
 import javax.swing.text.View;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.OutputStream;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -50,6 +50,8 @@ public abstract class WebUiTest extends RunningServerTest {
 
 	@Getter
 	private Path curTestUiResultDir;
+
+	Map<Integer, OutputStream> consoleOutputs = new HashMap<>();
 
 	@BeforeEach
 	public void beforeEachUi(TestInfo testInfo) {
@@ -90,11 +92,70 @@ public abstract class WebUiTest extends RunningServerTest {
 			}
 		}
 		Thread.sleep(250);
+		for (OutputStream outputStream : this.consoleOutputs.values()) {
+			outputStream.close();
+		}
 		this.context.close();
 	}
 
-	protected Page getLoggedInPage(TestUser user, String page) {
+	protected Page getPage() {
 		Page output = this.getContext().newPage();
+
+		int i = this.getContext().pages().indexOf(output);
+		Path curPageConsoleFile = this.curTestUiResultDir.resolve("page-" + (i + 1) + "-console.log");
+		OutputStream outputStream = null;
+		try {
+			outputStream = new FileOutputStream(curPageConsoleFile.toFile());
+		} catch (FileNotFoundException e) {
+			throw new RuntimeException(e);
+		}
+		this.consoleOutputs.put(i, outputStream);
+
+		OutputStream finalOutputStream = outputStream;
+		output.onPageError(consoleError -> {
+			try {
+				finalOutputStream.write(
+					String.format(
+						"\n\nERROR on page: %s\n\n",
+						new String(consoleError.getBytes(StandardCharsets.UTF_8))
+					).getBytes()
+				);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
+		output.onConsoleMessage(consoleMessage -> {
+			StringBuilder message = new StringBuilder();
+			if(!consoleMessage.args().isEmpty()){
+				boolean first = true;
+				for (JSHandle curHandle : consoleMessage.args()){
+					if(first){
+						first = false;
+						message.append("\t");
+					}
+					message.append(curHandle.jsonValue().toString().strip()).append("\n");
+				}
+			}
+
+			try {
+				finalOutputStream.write(
+					String.format(
+						"[%s][%s] %s\n",
+						consoleMessage.location(),
+						consoleMessage.type(),
+						message.toString()
+					).getBytes()
+				);
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+		});
+
+		return output;
+	}
+
+	protected Page getLoggedInPage(TestUser user, String page) {
+		Page output = this.getPage();
 
 		NavUtils.navigateToEndpoint(output, page);
 

@@ -6,27 +6,25 @@ import com.microsoft.playwright.Page;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.ItemsPage;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.*;
+import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.transaction.AddTransactionUtils;
 
 import java.util.List;
-import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @QuarkusTest
 public class AddTransactionUiTest extends WebUiTest {
 
 	/**
+	 *
 	 */
 	@Test
-	public void testAddWholeToBulk() {
+	public void testAddAmountToNewBulk() {
 		Page oqm = this.getLoggedInPage(this.getTestUserService().getTestUser(), ItemsPage.ITEMS_PAGE);
 
 		List<ObjectNode> storageBlocks = List.of(
@@ -40,6 +38,42 @@ public class AddTransactionUiTest extends WebUiTest {
 
 		oqm.locator(ItemsPage.VIEW_NONE_PRESENT_NO_STORAGE_ADD_STORED_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
+
+		Locator attTransactionModal = oqm.locator(AddTransactionUtils.MODAL);
+		assertTrue(attTransactionModal.isVisible());
+
+		assertFalse(attTransactionModal.locator(AddTransactionUtils.ITEM_INPUT_CONTAINER).isVisible());
+		assertTrue(attTransactionModal.locator(AddTransactionUtils.TYPE_INPUT_CONTAINER).isVisible());
+
+		assertFalse(attTransactionModal.locator(AddTransactionUtils.TYPE_INPUT).isEditable());
+		assertEquals("ADD_AMOUNT", attTransactionModal.locator(AddTransactionUtils.TYPE_INPUT).inputValue());
+
+		assertTrue(attTransactionModal.locator(AddTransactionUtils.TO_BLOCK_CONTAINER).isVisible());
+		assertTrue(attTransactionModal.locator(AddTransactionUtils.TO_BLOCK_RADIO).isChecked());
+
+		assertFalse(attTransactionModal.locator(AddTransactionUtils.TO_STORED_CONTAINER).isVisible());
+
+		Locator addStoredInputs = attTransactionModal.locator(AddTransactionUtils.INPUTS_CONTAINER);
+		assertTrue(
+			addStoredInputs
+				.locator(AddTransactionUtils.AMOUNT_INPUTS_CONTAINER)
+				.isVisible()
+		);
+
+		addStoredInputs.locator(AddTransactionUtils.AMOUNT_VALUE_INPUT).fill("5");
+
+		attTransactionModal.locator(AddTransactionUtils.SUBMIT_BUTTON).click();
+		MainAssertions.assertDoneProcessing(oqm);
+
+		ItemsUiUtils.viewItem(oqm, item);
+
+		assertEquals(
+			"5units",
+			oqm.locator(ItemsPage.VIEW_TOTAL).textContent().strip()
+		);
+
+		//TODO:: fix issue making this fail on rendering side
+		//TODO:: assert stored accord
 	}
 
 }

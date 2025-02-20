@@ -16,7 +16,7 @@ public class TestUser {
 
 	private String firstname;
 	private String lastname;
-	private String username = null;
+	private String username;
 	private String email;
 	private String password;
 	private String jwt;

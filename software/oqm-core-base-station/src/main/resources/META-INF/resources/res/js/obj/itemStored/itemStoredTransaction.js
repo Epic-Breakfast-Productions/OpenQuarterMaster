@@ -235,7 +235,14 @@ const ItemStoredTransaction = {
 
 		inputsContainer: $("#itemStoredTransactionAddFormInputsContainer"),
 
-		ableToInputs(inputsContainerJq, disabled = true, readonly = false, clearRadios = true) {
+		ableToInputs(inputsContainerJq, disabled = true, readonly = false, clearRadios = true, show = true) {
+
+			if(show){
+				inputsContainerJq.show();
+			} else {
+				inputsContainerJq.hide();
+			}
+
 			let radioInputs = inputsContainerJq.find('input[name="toInput"]');
 			let inputs = inputsContainerJq.find(".card-body").find('input, select');
 			let cardBody = inputsContainerJq.find(".card-body");
@@ -282,7 +289,8 @@ const ItemStoredTransaction = {
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
 
 					if (!item.stats.numStored) {
-						ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false);
+						ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false, false);
+						ItemStoredTransaction.Add.toBlockRadio.click();
 					}
 
 					let type = ItemStoredTransaction.Add.typeInput.val();
@@ -349,6 +357,7 @@ const ItemStoredTransaction = {
 			this.toBlockInput.html("");
 		},
 		setupFormForItem: async function (itemId) {
+			Main.processStart();
 			console.log("Setting up item stored add form for item ", itemId);
 			this.resetForm(false);
 			Getters.InventoryItem.get(itemId, async function (item) {
@@ -391,6 +400,7 @@ const ItemStoredTransaction = {
 				);
 				promises.push(ItemStoredTransaction.Add.updateInputs(item));
 				await Promise.all(promises);
+				Main.processStop();
 			});
 		},
 		setupForm: async function (itemId = null, preselectedStoredId = null, buttonElement = null) {

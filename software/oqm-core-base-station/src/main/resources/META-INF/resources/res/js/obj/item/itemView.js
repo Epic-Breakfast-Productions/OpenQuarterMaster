@@ -163,6 +163,7 @@ const ItemView = {
 		return $("<p>Search!</p>");//TODO
 	},
 	setupView(itemId) {
+		Main.processStart();
 		console.log("Setting up view for item " + itemId);
 		ItemView.resetView();
 
@@ -342,7 +343,7 @@ const ItemView = {
 				ItemView.checkoutSearchFormItemIdInput.val(itemId);
 				ItemView.checkoutSearchForm.submit();
 				await Promise.all(promises);
-
+				Main.processStop();
 			}
 		});
 
