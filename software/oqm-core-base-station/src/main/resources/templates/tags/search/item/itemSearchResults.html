@@ -22,9 +22,9 @@
   <tr>
     <th scope="col" class="searchResultImageCol">Image</th>
     <th scope="col">Name</th>
-    <th scope="col">Stored Type</th>
+    <th scope="col">Storage Type</th>
     <th scope="col">Total</th>
-    <th scope="col"># Blocks used</th>
+    <th scope="col"># {#icons/storageBlocks}{/icons/storageBlocks}</th>
     <th scope="col" width="150px">Actions</th>
   </tr>
   </thead>
@@ -37,7 +37,7 @@
       </h2>
       {#if actionType == 'full'}
       <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
+        <button type="button" class="btn btn-success btn-lg noResultsAddButton" data-bs-toggle="modal"
                 data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForAdd();">
           {#icons/add}{/icons/add} Add Item
         </button>
@@ -54,13 +54,17 @@
       <img src="{rootPrefix}/api/passthrough/media/image/for/item/{id}" class="searchResultImage">
       {/if}
     </td>
-    <td>{name}</td>
+    <td class="itemResultsName">{name}</td>
     <td>{cdi:EnumFormattingService.formatEnum(result.get("storageType").asText())}</td>
-    <td>{#amountDisplay amount=result.get("total")}{/amountDisplay}</td>
-    <td>{result.get("storageMap").size()}</td>
+    <td>
+      {#amountDisplay amount=result.get("stats").get("total")}{/amountDisplay}
+    </td>
+    <td>
+      {result.get("storageBlocks").size()}
+    </td>
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
+      <button type="button" class="btn btn-sm btn-info viewButton" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
         {#icons/view}{/icons/view}
       </button>
       <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">

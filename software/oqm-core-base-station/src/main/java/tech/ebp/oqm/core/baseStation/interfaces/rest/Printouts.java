@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.baseStation.interfaces.rest;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.Response;
@@ -19,7 +20,7 @@ import tech.ebp.oqm.core.baseStation.utils.Roles;
 @Path("/api/media/printouts")
 @Tags({@Tag(name = "Media", description = "Endpoints for printouts")})
 @RolesAllowed(Roles.INVENTORY_VIEW)
-@ApplicationScoped
+@RequestScoped
 public class Printouts extends ApiProvider {
 
 	@Inject
