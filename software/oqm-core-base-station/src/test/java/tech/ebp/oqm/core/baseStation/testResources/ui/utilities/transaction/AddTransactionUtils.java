@@ -10,6 +10,7 @@ public class AddTransactionUtils {
 	public static final String TYPE_INPUT = "#itemStoredTransactionAddFormTypeInput";
 	public static final String TO_BLOCK_CONTAINER = "#itemStoredTransactionAddFormToBlockInputContainer";
 	public static final String TO_BLOCK_RADIO = "#itemStoredTransactionAddFormToBlockRadio";
+	public static final String TO_BLOCK_SELECT = "#itemStoredTransactionAddFormToBlockInput";
 	public static final String TO_STORED_CONTAINER = "#itemStoredTransactionAddFormToStoredInputContainer";
 	public static final String INPUTS_CONTAINER = "#itemStoredTransactionAddFormInputsContainer";
 	public static final String AMOUNT_INPUTS_CONTAINER = ".amountStoredFormElements";

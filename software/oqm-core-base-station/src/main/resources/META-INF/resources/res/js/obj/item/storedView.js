@@ -1,6 +1,6 @@
 const StoredView = {
-	getBlockViewCell(name, value) {
-		let output = $('<div class="col-sm-4 col-4 col-xs-6"><h5></h5><p></p></div>');
+	getBlockViewCell(name, value, classes = "") {
+		let output = $('<div class="col-sm-4 col-4 col-xs-6 '+classes+'"><h5></h5><p></p></div>');
 
 		output.find("h5").text(name);
 		output.find("p").text(value);
@@ -14,7 +14,7 @@ const StoredView = {
 	},
 	getStorageBlockAmountHeldView(stored, showCurrently = false) {
 		if (stored.type.includes("AMOUNT")) {
-			return StoredView.getBlockViewCell((showCurrently ? "Currently " : "") + "Stored:", stored.amount.value + stored.amount.unit.symbol);
+			return StoredView.getBlockViewCell((showCurrently ? "Currently " : "") + "Stored:", stored.amount.value + stored.amount.unit.symbol, "storedViewAmount");
 		}
 		return "";
 	},

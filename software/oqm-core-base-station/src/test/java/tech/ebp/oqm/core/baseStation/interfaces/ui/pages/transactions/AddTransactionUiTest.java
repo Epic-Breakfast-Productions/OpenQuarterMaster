@@ -61,6 +61,7 @@ public class AddTransactionUiTest extends WebUiTest {
 		);
 
 		addStoredInputs.locator(AddTransactionUtils.AMOUNT_VALUE_INPUT).fill("5");
+		attTransactionModal.locator(AddTransactionUtils.TO_BLOCK_SELECT).selectOption(storageBlocks.getFirst().get("id").asText());
 
 		attTransactionModal.locator(AddTransactionUtils.SUBMIT_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
@@ -72,8 +73,32 @@ public class AddTransactionUiTest extends WebUiTest {
 			oqm.locator(ItemsPage.VIEW_TOTAL).textContent().strip()
 		);
 
-		//TODO:: fix issue making this fail on rendering side
-		//TODO:: assert stored accord
+		Locator blocksWithNoneStoredContainer = oqm.locator(ItemsPage.VIEW_STORED_BULK_NONE_PRESENT_BLOCK_LIST);
+		assertTrue(blocksWithNoneStoredContainer.isVisible());
+		List<Locator> noStoredLinks = blocksWithNoneStoredContainer.locator("a").all();
+
+		assertEquals(1, noStoredLinks.size());
+
+		assertEquals(
+			storageBlocks.getLast().get("label").asText(),
+			noStoredLinks.getFirst().locator("span").textContent().strip()
+		);
+
+		Locator storedAccord = oqm.locator(ItemsPage.VIEW_STORED_BULK_ACCORDION);
+		assertTrue(storedAccord.isVisible());
+
+		List<Locator> storedAccordItems = storedAccord.locator("div.accordion-item").all();
+		assertEquals(1, storedAccordItems.size());
+
+		Locator storedAccordItem = storedAccordItems.getFirst();
+
+		storedAccordItem.click();
+		MainAssertions.assertDoneProcessing(oqm);
+
+		assertEquals(
+			"5units",
+			storedAccordItem.locator(ItemsPage.VIEW_STORED_AMOUNT).locator("p").textContent().strip()
+		);
 	}
 
 }

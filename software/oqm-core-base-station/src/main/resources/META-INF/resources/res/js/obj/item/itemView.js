@@ -233,7 +233,7 @@ const ItemView = {
 							itemData.storageBlocks.forEach(function (blockId) {
 								console.debug("Displaying block: ", blockId);
 
-								if (itemData.stats.storageBlockStats[blockId].numStored) {
+								if (itemData.stats.storageBlockStats[blockId].hasStored) {
 									promises.push(
 										Getters.StoredItem.getSingleStoredForItemInBlock(itemId, blockId, async function (stored) {
 											ItemView.addStoredBlockViewAccordionItem(
@@ -253,7 +253,7 @@ const ItemView = {
 									);
 								} else {
 									if (ItemView.storedBulkNonePresentBlocksList.empty()) {
-										ItemView.storedBulkNonePresentBlocksList.append("Blocks with no items:");
+										ItemView.storedBulkNonePresentBlocksList.append("Blocks with no stored items: ");
 									}
 									getStorageBlockLabel(blockId, function (labelText) {
 										let newLink = Links.getStorageViewLink(blockId, labelText);

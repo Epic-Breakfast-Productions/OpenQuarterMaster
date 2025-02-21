@@ -54,6 +54,7 @@ public class ItemsUiUtils {
 				//TODO:: other datas
 
 				for (ObjectNode storageBlock : storageBlocks) {
+					log.info("Adding storage block: {}", storageBlock);
 					StorageSearchSelectUiUtils.select(
 						storageBlock,
 						page1,

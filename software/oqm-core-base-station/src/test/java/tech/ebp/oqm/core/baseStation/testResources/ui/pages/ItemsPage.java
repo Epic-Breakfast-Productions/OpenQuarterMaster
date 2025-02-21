@@ -26,6 +26,10 @@ public class ItemsPage {
 	public static final String VIEW_TOTAL = "#itemViewTotal";
 	public static final String VIEW_NONE_PRESENT_NO_STORAGE_CONTAINER = "#itemViewStoredNonePresentNoStorageContainer";
 	public static final String VIEW_NONE_PRESENT_NO_STORAGE_ADD_STORED_BUTTON = "#itemViewStoredNonePresentHasStorageAddStoredButton";
+	public static final String VIEW_STORED_BULK_ACCORDION = "#itemViewStoredBulkAccordion";
+	public static final String VIEW_STORED_BULK_NONE_PRESENT_BLOCK_LIST = "#itemViewStoredBulkNonePresentBlocksList";
+	public static final String VIEW_STORED_AMOUNT = ".storedViewAmount";
+
 
 
 	public static void assertNoItems(Page page) {
