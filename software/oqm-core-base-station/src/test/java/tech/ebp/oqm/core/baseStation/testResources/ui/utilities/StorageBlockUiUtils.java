@@ -10,16 +10,33 @@ import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MessageAssertio
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.StorageBlockPage;
 import tech.ebp.oqm.core.baseStation.utils.ObjectUtils;
 
+import java.util.HashSet;
+import java.util.Set;
+
 @Slf4j
 public class StorageBlockUiUtils {
 	public static final String OBJ_KEY_LABEL = "label";
+	private static final Set<String> blockNamesUsed = new HashSet<>();
+	
+	public static String newBlockName() {
+		String output;
+		do{
+			output = WebServerTest.FAKER.location().building();
+		} while (blockNamesUsed.contains(output));
+		blockNamesUsed.add(output);
+		return output;
+	}
+	
+	public static void resetBlockNames(){
+		blockNamesUsed.clear();
+	}
 
 	public static ObjectNode newStorageBlock(Page page, ObjectNode newBlock) {
 		if (newBlock == null) {
 			newBlock = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		}
 		if (!newBlock.has(OBJ_KEY_LABEL)) {
-			newBlock.put(OBJ_KEY_LABEL, WebServerTest.FAKER.location().building());
+			newBlock.put(OBJ_KEY_LABEL, newBlockName());
 		}
 
 		ObjectNode finalNewBlock = newBlock;

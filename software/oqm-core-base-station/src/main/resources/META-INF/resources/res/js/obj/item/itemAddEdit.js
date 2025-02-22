@@ -255,8 +255,10 @@ ItemAddEdit.addEditItemBarcodeInput.on('keypress', function (e) {
 });
 
 StorageSearchSelect.selectStorageBlock = function (blockName, blockId, inputIdPrepend, otherModalId) {
+    Main.processStart();
     console.log("Selected " + blockId + " - " + blockName);
     ItemAddEdit.storageInput.addStorage(blockName, blockId);
+    Main.processStop();
 }
 
 ItemAddEdit.addEditItemForm.submit(async function (event) {

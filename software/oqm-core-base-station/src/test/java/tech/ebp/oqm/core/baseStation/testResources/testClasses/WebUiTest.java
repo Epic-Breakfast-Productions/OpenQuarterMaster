@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.NavUtils;
+import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.StorageBlockUiUtils;
 
 import javax.swing.text.View;
 import java.io.*;
@@ -55,6 +56,7 @@ public abstract class WebUiTest extends RunningServerTest {
 
 	@BeforeEach
 	public void beforeEachUi(TestInfo testInfo) {
+		StorageBlockUiUtils.resetBlockNames();
 		this.curTestUiResultDir = getCurTestDir(testInfo);
 		ScreenSize screenSize = new ScreenSize(1920, 1080);
 
