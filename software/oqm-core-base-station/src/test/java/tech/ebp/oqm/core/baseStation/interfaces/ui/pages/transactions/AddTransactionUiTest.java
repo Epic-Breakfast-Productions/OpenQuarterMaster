@@ -5,9 +5,11 @@ import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
+import org.jboss.jandex.Main;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
+import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MessageAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.ItemsPage;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.*;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.transaction.AddTransactionUtils;
@@ -98,6 +100,55 @@ public class AddTransactionUiTest extends WebUiTest {
 		assertEquals(
 			"5units",
 			storedAccordItem.locator(ItemsPage.VIEW_STORED_AMOUNT).locator("p").textContent().strip()
+		);
+	}
+
+	@Test
+	public void testAddAmountToExistingBulk() throws InterruptedException {
+		Page oqm = this.getLoggedInPage(this.getTestUserService().getTestUser(), ItemsPage.ITEMS_PAGE);
+		
+		List<ObjectNode> storageBlocks = List.of(
+			StorageBlockUiUtils.newStorageBlock(oqm),
+			StorageBlockUiUtils.newStorageBlock(oqm)
+		);
+		
+		ObjectNode item = ItemsUiUtils.newItem(oqm, storageBlocks);
+		ObjectNode concerningBlock = storageBlocks.getFirst();
+		String concerningBlockId = concerningBlock.get("id").asText();
+		
+		AddTransactionUtils.doAddAmountTransaction(oqm, item, concerningBlock, 5);
+		
+		ItemsUiUtils.viewItem(oqm, item);
+		
+		Locator storedAccord = oqm.locator(ItemsPage.VIEW_STORED_BULK_ACCORDION);
+		
+		Locator concerningAccordItem = storedAccord.locator("div.accordion-item").all()
+										   .stream().filter(
+											   curItem->{
+												   return concerningBlockId.equals(curItem.getAttribute("data-block-id"));
+											   })
+										   .findFirst().get();
+		concerningAccordItem.locator("button.accordion-button").click();
+		MainAssertions.assertDoneProcessing(oqm);
+		
+		Locator blockAccordContent = concerningAccordItem.locator("div.accordion-body");
+		
+		Locator transactDropdown = blockAccordContent.locator("div.transact-dropdown");
+		transactDropdown.locator("button.transactDropdown").click();
+		transactDropdown.locator("button.transactDropdownAdd").click();
+		MainAssertions.assertDoneProcessing(oqm);
+		
+		oqm.locator(AddTransactionUtils.TO_BLOCK_SELECT).selectOption(concerningBlockId);
+		oqm.locator(AddTransactionUtils.MODAL).locator(AddTransactionUtils.AMOUNT_VALUE_INPUT).fill("5");
+		oqm.locator(AddTransactionUtils.SUBMIT_BUTTON).click();
+		MainAssertions.assertDoneProcessing(oqm);
+		MessageAssertions.assertMessage(oqm, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Transaction Successful!");
+		
+		ItemsUiUtils.viewItem(oqm, item);
+		
+		assertEquals(
+			"10units",
+			oqm.locator(ItemsPage.VIEW_TOTAL).textContent().strip()
 		);
 	}
 

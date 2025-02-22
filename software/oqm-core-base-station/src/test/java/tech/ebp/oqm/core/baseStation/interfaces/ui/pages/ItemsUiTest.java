@@ -10,6 +10,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
+import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MessageAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.ItemsPage;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.StorageBlockPage;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.*;
@@ -51,6 +52,7 @@ public class ItemsUiTest extends WebUiTest {
 
 		oqm.locator(ItemsPage.ADD_EDIT_FORM_SUBMIT_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
+		MessageAssertions.assertMessage(oqm, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Created item successfully!");
 
 		log.info("first: {}", oqm.locator(ItemsPage.SEARCH_RESULTS_TABLE)
 			.locator("tbody")
@@ -97,7 +99,7 @@ public class ItemsUiTest extends WebUiTest {
 	 */
 	@ParameterizedTest
 	@MethodSource("tech.ebp.oqm.core.baseStation.testResources.ui.utilities.ItemsUiUtils#itemTypeArgs")
-	public void testAddItemBlock(String itemType) {
+	public void testAddItemWithBlock(String itemType) {
 		Page oqm = this.getLoggedInPage(this.getTestUserService().getTestUser(), ItemsPage.ITEMS_PAGE);
 
 		ObjectNode storageBlock = StorageBlockUiUtils.newStorageBlock(oqm);
@@ -122,6 +124,7 @@ public class ItemsUiTest extends WebUiTest {
 
 		oqm.locator(ItemsPage.ADD_EDIT_FORM_SUBMIT_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
+		MessageAssertions.assertMessage(oqm, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Created item successfully!");
 
 		log.info("first: {}", oqm.locator(ItemsPage.SEARCH_RESULTS_TABLE)
 			.locator("tbody")

@@ -24,6 +24,15 @@ const Getters = {
 		}
 	},
 	StoredItem: {
+		getStoredForItem: async function(itemId, doneFunc = function(){}){
+			return Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/inventory/item/" + itemId + "/stored",
+				done: function(storedSearchResults){
+					doneFunc(storedSearchResults);
+				}
+			});
+		},
 		getSingleStoredForItemInBlock: async function(itemId, blockId, doneFunc = function(){}){
 			return Rest.call({
 				method: "GET",
@@ -38,6 +47,22 @@ const Getters = {
 					doneFunc(storedSearchResults.results[0]);
 				}
 			});
+		},
+		getLabelForStored: async function(stored, doneFunc = function(){}){
+			let storedLabel = stored["storageBlock-labelText"];
+
+			StoredTypeUtils.runForType(
+				stored,
+				function(){
+					storedLabel += " - " + stored.labelText;
+				},
+				function (){
+					//TODO:: better
+					storedLabel += " " + stored.labelText
+				}
+			);
+			await doneFunc(storedLabel);
+			return storedLabel;
 		}
 	}
 }

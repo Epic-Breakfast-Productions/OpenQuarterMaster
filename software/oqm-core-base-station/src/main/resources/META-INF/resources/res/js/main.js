@@ -29,6 +29,37 @@ const Main = {
     },
     noProcessesRunning(){
         return !this.processesRunning();
+    },
+    /**
+     * @async
+     * @function waitUntilTrue
+     * @param {() => boolean} conditionFunction
+     * @param {number} [interval=10]
+     * @param {number} [timeout=10000]
+     * @param {boolean} [throwOnTimeout=false]
+     * @returns {Promise<void>}
+     */
+    waitUntilTrue: async function(
+        conditionFunction,
+        interval = 10,
+        timeout = 10_000,
+        throwOnTimeout = false,
+    ) {
+        if(conditionFunction()){
+            return;
+        }
+
+        let timePassed = 0;
+        return new Promise(function poll(resolve, reject) {
+            if (timePassed >= timeout) {
+                return throwOnTimeout ? reject() : resolve();
+            }
+            if (conditionFunction()) {
+                return resolve();
+            }
+            timePassed += interval;
+            setTimeout(() => poll(resolve, reject), interval);
+        });
     }
 }
 

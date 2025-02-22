@@ -7,10 +7,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.provider.Arguments;
 import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebServerTest;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
+import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MessageAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.ItemsPage;
 import tech.ebp.oqm.core.baseStation.utils.ObjectUtils;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -61,9 +63,21 @@ public class ItemsUiUtils {
 						ItemsPage.ADDEDIT_FORM_ADD_STORAGE_BUTTON
 					);
 				}
-
+				
+				List<Locator> associatedStorage = page1.locator(ItemsPage.ADDEDIT_FORM_STORAGE_CONTAINER).locator("div.blockSelection").all();
+				assertEquals(
+					storageBlocks.stream().map(block->block.get("id").asText()).toList(),
+					associatedStorage.stream().map(locator->locator.getAttribute("data-block-id")).toList()
+				);
+				try {
+					Thread.sleep(250);
+				} catch(InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+				
 				page1.locator(ItemsPage.ADD_EDIT_FORM_SUBMIT_BUTTON).click();
 				MainAssertions.assertDoneProcessing(page1);
+				MessageAssertions.assertMessage(page1, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Created item successfully!");
 
 				ItemsUiUtils.readItemInfo(page1, finalNewItem);
 
@@ -77,10 +91,13 @@ public class ItemsUiUtils {
 	public static ObjectNode newItem(Page page, List<ObjectNode> storageBlocks) {
 		return newItem(page, null, storageBlocks);
 	}
+	
+	public static String getViewItemEndpoint(ObjectNode itemInfo){
+		return ItemsPage.ITEMS_PAGE + "?view=" + itemInfo.get("id").asText();
+	}
 
 	public static void viewItem(Page page, ObjectNode itemInfo){
-		//TODO:: if not on items page, goto
-		NavUtils.navigateToEndpoint(page, ItemsPage.ITEMS_PAGE + "?view=" + itemInfo.get("id").asText());
+		NavUtils.navigateToEndpoint(page, getViewItemEndpoint(itemInfo));
 		Locator viewName = page.locator(ItemsPage.VIEW_NAME);
 		assertTrue(viewName.isVisible());
 		assertEquals(

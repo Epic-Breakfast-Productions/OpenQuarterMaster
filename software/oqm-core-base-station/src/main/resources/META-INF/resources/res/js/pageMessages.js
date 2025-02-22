@@ -34,7 +34,7 @@ const PageMessages = {
 		}
 
 		if(heading != null){
-			headingObj.append($('<span class=""></span>').text(heading));
+			headingObj.append($('<span class="alert-heading-text"></span>').text(heading));
 		}
 		output = output.append(headingObj);
 		output = output.append($('<span class="message"></span>').text(message));

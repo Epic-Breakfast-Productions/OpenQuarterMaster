@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
+import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MessageAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.StorageBlockPage;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.AttKeywordUiUtils;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.HistoryUiUtils;
@@ -45,6 +46,8 @@ public class StorageBlockUiTest extends WebUiTest {
 
 		oqm.locator(StorageBlockPage.ADDEDIT_FORM_SUBMIT_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
+		
+		MessageAssertions.assertMessage(oqm, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Created storage block successfully!");
 
 
 		log.info("first: {}", oqm.locator(StorageBlockPage.SEARCH_RESULTS_TABLE)

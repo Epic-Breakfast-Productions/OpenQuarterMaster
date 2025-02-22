@@ -199,6 +199,7 @@ const ItemAddEdit = {
 
     storageInput: {
         addStorage: function (blockName, blockId) {
+            Main.processStart();
             let found = false;
             ItemAddEdit.associatedStorageInputContainer.find('input[name="storageBlocks[]"]').each(function () {
                 if ($(this).val() === blockId) {
@@ -210,7 +211,7 @@ const ItemAddEdit = {
                 return;
             }
 
-            let newBlock = $('<div class="col-3">' +
+            let newBlock = $('<div class="col-3 blockSelection" data-block-id="">' +
                 '  <input type="hidden" name="storageBlocks[]" />' +
                 '  <div class="card">' +
                 '    <div class="card-body">' +
@@ -221,10 +222,12 @@ const ItemAddEdit = {
                 '    </div>' +
                 '  </div>' +
                 '</div>');
+            newBlock.attr("data-block-id", blockId);
             newBlock.find('input[name="storageBlocks[]"]').val(blockId);
             newBlock.find(".blockInputName").text(blockName);
 
             ItemAddEdit.associatedStorageInputContainer.append(newBlock);
+            Main.processStop();
         },
         removeStorage: function (removeButtonClicked) {//or input card?
             if (confirm("Are you sure you want to\nremove this associated storage?")) {

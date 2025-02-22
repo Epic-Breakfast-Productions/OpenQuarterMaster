@@ -6,6 +6,7 @@ import com.microsoft.playwright.Page;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebServerTest;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
+import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MessageAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.StorageBlockPage;
 import tech.ebp.oqm.core.baseStation.utils.ObjectUtils;
 
@@ -39,6 +40,7 @@ public class StorageBlockUiUtils {
 
 				page1.locator(StorageBlockPage.ADDEDIT_FORM_SUBMIT_BUTTON).click();
 				MainAssertions.assertDoneProcessing(page1);
+				MessageAssertions.assertMessage(page1, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Created storage block successfully!");
 
 				//TODO:: find block in search, get id
 				StorageBlockUiUtils.readBlockInfo(page1, finalNewBlock);

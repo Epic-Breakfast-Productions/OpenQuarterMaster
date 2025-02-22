@@ -34,13 +34,13 @@ const ItemStoredTransaction = {
 			}
 		) {
 			if (stored != null) {
-				if(itemId == null) {
+				if (itemId == null) {
 					itemId = stored.item;
 				}
 				//TODO:: not show based on stored
 			}
-			let output = $('<div class="dropdown">\n' +
-				'  <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">\n' +
+			let output = $('<div class="dropdown transact-dropdown">\n' +
+				'  <button class="btn btn-secondary dropdown-toggle transactDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">\n' +
 				'    ' + Icons.transaction + (buttonText ? " Transact" : "") + '\n' +
 				'  </button>\n' +
 				'  <ul class="dropdown-menu">\n' +
@@ -49,29 +49,29 @@ const ItemStoredTransaction = {
 			let menu = output.find(".dropdown-menu");
 
 			if (showAllTransactions || showAddTransaction) {
-				menu.append($('<li><button class="dropdown-item" type="button" onclick="ItemStoredTransaction.Add.setupForm(\'' + itemId + '\', \'' + stored.id + '\', this);" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal">' +
+				menu.append($('<li><button class="dropdown-item transactDropdownAdd" type="button" onclick="ItemStoredTransaction.Add.setupForm(\'' + itemId + '\', \'' + stored.id + '\', this);" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal">' +
 					Icons.addTransaction + ' Add' +
 					'</button></li>'));
 			}
 			//TODO:: modal js
 			if (showAllTransactions || showSubtractTransaction) {
-				menu.append($('<li><button class="dropdown-item" type="button">' + Icons.subtractTransaction + ' Subtract</button></li>'));
+				menu.append($('<li><button class="dropdown-item transactDropdownSubtract" type="button">' + Icons.subtractTransaction + ' Subtract</button></li>'));
 			}
 			//TODO:: modal js
 			if (showAllTransactions || showCheckinTransaction) {
-				menu.append($('<li><button class="dropdown-item" type="button">' + Icons.checkinTransaction + ' Checkin</button></li>'));
+				menu.append($('<li><button class="dropdown-item transactDropdownCheckin" type="button">' + Icons.checkinTransaction + ' Checkin</button></li>'));
 			}
 			//TODO:: modal js
 			if (showAllTransactions || showCheckoutTransaction) {
-				menu.append($('<li><button class="dropdown-item" type="button">' + Icons.checkoutTransaction + ' Checkout</button></li>'));
+				menu.append($('<li><button class="dropdown-item transactDropdownCheckout" type="button">' + Icons.checkoutTransaction + ' Checkout</button></li>'));
 			}
 			//TODO:: modal js
 			if (showAllTransactions || showTransferTransaction) {
-				menu.append($('<li><button class="dropdown-item" type="button">' + Icons.transferTransaction + ' Transfer</button></li>'));
+				menu.append($('<li><button class="dropdown-item transactDropdownTransfer" type="button">' + Icons.transferTransaction + ' Transfer</button></li>'));
 			}
 			//TODO:: modal js
 			if (showAllTransactions || showSetTransaction) {
-				menu.append($('<li><button class="dropdown-item" type="button">' + Icons.setTransaction + ' Set</button></li>'));
+				menu.append($('<li><button class="dropdown-item transactDropdownSet" type="button">' + Icons.setTransaction + ' Set</button></li>'));
 			}
 
 			return output;
@@ -235,14 +235,7 @@ const ItemStoredTransaction = {
 
 		inputsContainer: $("#itemStoredTransactionAddFormInputsContainer"),
 
-		ableToInputs(inputsContainerJq, disabled = true, readonly = false, clearRadios = true, show = true) {
-
-			if(show){
-				inputsContainerJq.show();
-			} else {
-				inputsContainerJq.hide();
-			}
-
+		ableToInputs(inputsContainerJq, disabled = true, readonly = false, clearRadios = true) {
 			let radioInputs = inputsContainerJq.find('input[name="toInput"]');
 			let inputs = inputsContainerJq.find(".card-body").find('input, select');
 			let cardBody = inputsContainerJq.find(".card-body");
@@ -277,6 +270,7 @@ const ItemStoredTransaction = {
 				Getters.InventoryItem.get(item, this.updateInputs);
 				return;
 			}
+			console.log("Updating add transaction form inputs.");
 
 			ItemStoredTransaction.Add.inputsContainer.text("");
 			let storedInputs = await ItemStoredTransaction.StoredFormUtils.getStoredInputs(item, null);
@@ -284,14 +278,10 @@ const ItemStoredTransaction = {
 
 			StorageTypeUtils.runForType(
 				item,
-				function () {
+				async function () {
+					console.log("Updating inputs for Bulk item");
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, false, false, false);
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
-
-					if (!item.stats.numStored) {
-						ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false, false);
-						ItemStoredTransaction.Add.toBlockRadio.click();
-					}
 
 					let type = ItemStoredTransaction.Add.typeInput.val();
 					switch (type) {
@@ -300,17 +290,13 @@ const ItemStoredTransaction = {
 							ItemStoredTransaction.Add.inputsContainer.find(".commonStoredFormElements").remove();
 							break;
 						case "ADD_WHOLE":
-							ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, true);
+							ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false);
 							//TODO:: disable toBlock values with something already stored in it
 							break;
 					}
 				}, function () {
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, false, false, false);
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
-
-					if (!item.stats.numStored) {
-						ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, false);
-					}
 
 					let type = ItemStoredTransaction.Add.typeInput.val();
 					switch (type) {
@@ -338,12 +324,12 @@ const ItemStoredTransaction = {
 
 			if (changeItemRelated) {
 				this.itemIdInput.val("");
-				this.itemInputContainer.hide();
+				this.itemInputContainer.hide(0);
 				this.itemNameInput.val("");
 				this.itemNameInput.prop("disabled", true);
 				this.itemClearButton.prop("disabled", true);
 				this.itemSearchButton.prop("disabled", true);
-				this.itemDisplayContainer.hide();
+				this.itemDisplayContainer.hide(0);
 				this.itemDisplayName.text('');
 			}
 
@@ -351,7 +337,9 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Add.typeInput.prop("disabled", false);
 
 			this.ableToInputs(this.toStoredInputContainer);
+			this.toStoredInputContainer.hide(0);
 			this.ableToInputs(this.toBlockInputContainer);
+			this.toBlockInputContainer.hide(0);
 
 			this.toStoredInput.html("");
 			this.toBlockInput.html("");
@@ -360,8 +348,10 @@ const ItemStoredTransaction = {
 			Main.processStart();
 			console.log("Setting up item stored add form for item ", itemId);
 			this.resetForm(false);
-			Getters.InventoryItem.get(itemId, async function (item) {
-				let promises = [];
+			//TODO:: populate stored dropdown
+			let promises = [];
+			promises.push(Getters.InventoryItem.get(itemId, async function (item) {
+				let itemPromises = [];
 
 				ItemStoredTransaction.Add.itemIdInput.val(item.id);
 				ItemStoredTransaction.Add.itemNameInput.val(item.name);
@@ -371,7 +361,7 @@ const ItemStoredTransaction = {
 					let blockOp = $("<option></option>");
 					blockOp.val(blockId);
 					blockOp.text(blockId);
-					promises.push(getStorageBlockLabel(blockId, function (blockLabel) {
+					itemPromises.push(getStorageBlockLabel(blockId, function (blockLabel) {
 						blockOp.text(blockLabel);
 					}));
 					ItemStoredTransaction.Add.toBlockInput.append(blockOp);
@@ -380,28 +370,51 @@ const ItemStoredTransaction = {
 				StorageTypeUtils.runForType(
 					item,
 					function () {
-						ItemStoredTransaction.Add.typeInputContainer.show();
+						ItemStoredTransaction.Add.typeInputContainer.show(0);
 						ItemStoredTransaction.Add.typeInput.val("ADD_AMOUNT");
 						ItemStoredTransaction.Add.typeInput.prop("disabled", true);
+						ItemStoredTransaction.Add.toBlockInputContainer.show(0);
+						ItemStoredTransaction.Add.toBlockRadio.prop("checked", true);
 					},
 					function () {
-						ItemStoredTransaction.Add.typeInputContainer.show();
+						ItemStoredTransaction.Add.typeInputContainer.show(0);
+						ItemStoredTransaction.Add.toBlockInputContainer.show(0);
+						ItemStoredTransaction.Add.toStoredInputContainer.show(0);
 					},
 					function () {
-						ItemStoredTransaction.Add.typeInputContainer.show();
+						ItemStoredTransaction.Add.typeInputContainer.show(0);
 						ItemStoredTransaction.Add.typeInput.val("ADD_WHOLE");
 						ItemStoredTransaction.Add.typeInput.prop("disabled", true);
+						ItemStoredTransaction.Add.toBlockInputContainer.show(0);
 					},
 					function () {
-						ItemStoredTransaction.Add.typeInputContainer.show();
+						ItemStoredTransaction.Add.typeInputContainer.show(0);
 						ItemStoredTransaction.Add.typeInput.val("ADD_WHOLE");
 						ItemStoredTransaction.Add.typeInput.prop("disabled", true);
+						ItemStoredTransaction.Add.toBlockInputContainer.show(0);
 					}
 				);
-				promises.push(ItemStoredTransaction.Add.updateInputs(item));
-				await Promise.all(promises);
-				Main.processStop();
-			});
+				itemPromises.push(ItemStoredTransaction.Add.updateInputs(item));
+				await Promise.all(itemPromises);
+			}));
+			promises.push(Getters.StoredItem.getStoredForItem(itemId, async function (storedResults) {
+				console.log("Processing stored for item into selects: ", storedResults.numResults);
+				let storedPromises = [];
+				storedResults.results.forEach(function (curStored) {
+					let newSelect = $('<option>...</option>');
+					newSelect.val(curStored.id);
+
+					storedPromises.push(Getters.StoredItem.getLabelForStored(curStored, function (label) {
+						newSelect.text(label);
+						ItemStoredTransaction.Add.toStoredInput.append(newSelect);
+					}));
+				});
+				await Promise.all(storedPromises);
+			}));
+
+			await Promise.all(promises);
+			console.log("Finished setting up add transaction form .");
+			Main.processStop();
 		},
 		setupForm: async function (itemId = null, preselectedStoredId = null, buttonElement = null) {
 			//TODO:: do something wiht preselected stored
@@ -419,7 +432,7 @@ const ItemStoredTransaction = {
 				this.itemClearButton.prop("disabled", false);
 				this.itemSearchButton.prop("disabled", false);
 			}
-			if(preselectedStoredId != null){
+			if (preselectedStoredId != null) {
 				//TODO:: setup form for stored
 			}
 		},

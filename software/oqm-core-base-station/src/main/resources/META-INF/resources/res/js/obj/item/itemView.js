@@ -126,7 +126,7 @@ const ItemView = {
 		let headerId = blockId + "-stored-view-accord-header";
 		let collapseId = headerId + "-collapse";
 
-		let newAccordItem = $('<div class="accordion-item">' +
+		let newAccordItem = $('<div class="accordion-item" data-block-id="">' +
 			'  <h2 class="accordion-header">' +
 			'    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">' +
 			'    </button>' +
@@ -136,6 +136,7 @@ const ItemView = {
 			'    </div>' +
 			'  </div>' +
 			'</div>');
+		newAccordItem.attr("data-block-id", blockId);
 
 		let header = newAccordItem.find(".accordion-header");
 		header.prop("id", headerId);

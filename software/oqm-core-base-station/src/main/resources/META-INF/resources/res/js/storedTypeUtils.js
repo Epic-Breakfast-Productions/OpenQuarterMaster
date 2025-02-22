@@ -1,7 +1,7 @@
 const StoredTypeUtils = {
     types: ["AMOUNT", "UNIQUE"],
     typeFromStored(stored){
-        return stored.storedType;
+        return stored.type;
     },
     runForType(
         storedType,
