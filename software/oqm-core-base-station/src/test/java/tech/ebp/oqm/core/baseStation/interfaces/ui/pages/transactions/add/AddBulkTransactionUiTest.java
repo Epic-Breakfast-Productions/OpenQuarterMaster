@@ -1,11 +1,10 @@
-package tech.ebp.oqm.core.baseStation.interfaces.ui.pages.transactions;
+package tech.ebp.oqm.core.baseStation.interfaces.ui.pages.transactions.add;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.microsoft.playwright.Locator;
 import com.microsoft.playwright.Page;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
-import org.jboss.jandex.Main;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
@@ -20,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @QuarkusTest
-public class AddTransactionUiTest extends WebUiTest {
+public class AddBulkTransactionUiTest extends WebUiTest {
 
 	/**
 	 *
@@ -61,13 +60,25 @@ public class AddTransactionUiTest extends WebUiTest {
 				.locator(AddTransactionUtils.AMOUNT_INPUTS_CONTAINER)
 				.isVisible()
 		);
+		assertFalse(
+			addStoredInputs
+				.locator(AddTransactionUtils.COMMON_INPUTS_CONTAINER)
+				.isVisible()
+		);
+		assertFalse(
+			addStoredInputs
+				.locator(AddTransactionUtils.UNIQUE_INPUTS_CONTAINER)
+				.isVisible()
+		);
 
 		addStoredInputs.locator(AddTransactionUtils.AMOUNT_VALUE_INPUT).fill("5");
 		attTransactionModal.locator(AddTransactionUtils.TO_BLOCK_SELECT).selectOption(storageBlocks.getFirst().get("id").asText());
 
 		attTransactionModal.locator(AddTransactionUtils.SUBMIT_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
-
+		MessageAssertions.assertMessage(oqm, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Transaction Successful!");
+		
+		
 		ItemsUiUtils.viewItem(oqm, item);
 
 		assertEquals(
@@ -151,5 +162,16 @@ public class AddTransactionUiTest extends WebUiTest {
 			oqm.locator(ItemsPage.VIEW_TOTAL).textContent().strip()
 		);
 	}
-
+	
+	//TODO:: new amount list, amount
+	//TODO:: new amount list, whole
+	
+	//TODO:: existing amount list, amount
+	//TODO:: existing amount list, amount to existing
+	//TODO:: existing amount list, whole
+	
+	//TODO:: new unique list
+	//TODO:: existing unique list
+	
+	//TODO:: new single unique
 }

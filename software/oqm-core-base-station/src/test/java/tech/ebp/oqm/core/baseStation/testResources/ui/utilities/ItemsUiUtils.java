@@ -31,7 +31,7 @@ public class ItemsUiUtils {
 	}
 
 	public static final String OBJ_KEY_LABEL = "label";
-	public static final String OBJ_KEY_TYPE = "type";
+	public static final String OBJ_KEY_TYPE = "storageType";
 
 	public static ObjectNode newItem(Page page, ObjectNode newItem, List<ObjectNode> storageBlocks) {
 		if (newItem == null) {

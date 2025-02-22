@@ -29,6 +29,10 @@ public class AddTransactionUtils {
 	public static final String INPUTS_CONTAINER = "#itemStoredTransactionAddFormInputsContainer";
 	public static final String AMOUNT_INPUTS_CONTAINER = ".amountStoredFormElements";
 	public static final String AMOUNT_VALUE_INPUT = ".amountStoredValueInput";
+	public static final String UNIQUE_INPUTS_CONTAINER = ".uniqueStoredFormInputs";
+	public static final String COMMON_INPUTS_CONTAINER = ".commonStoredFormElements";
+	public static final String COMMON_BARCODE_INPUT = ".storedBarcodeInput";
+	public static final String COMMON_CONDITION_INPUT = ".storedConditionPercentageInput";
 	public static final String SUBMIT_BUTTON = "#itemStoredTransactionAddFormSubmitButton";
 	
 	
