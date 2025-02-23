@@ -103,6 +103,20 @@ public class AddUniqueSingleTransactionUiTest extends WebUiTest {
 		);
 		
 		//TODO:: validate where stored
+		
+		Locator storedInLabel = oqm.locator(".uniqueItemStoredInLabel");
+		assertTrue(storedInLabel.isVisible());
+		assertEquals(
+			storageBlocks.getFirst().get("label").asText(),
+			storedInLabel.locator("span").textContent().strip()
+		);
+		Locator alsoStoredInLabel = oqm.locator(".uniqueItemStoredAlsoInLabel");
+		assertTrue(alsoStoredInLabel.isVisible());
+		assertEquals(
+			storageBlocks.getLast().get("label").asText(),
+			alsoStoredInLabel.locator("span").textContent().strip()
+		);
+		
 		Locator storedViewContainer = oqm.locator("#itemViewStoredSingleContainer");
 		assertTrue(storedViewContainer.isVisible());
 		
@@ -120,8 +134,6 @@ public class AddUniqueSingleTransactionUiTest extends WebUiTest {
 		
 		AttKeywordUiUtils.assertKeywords(storedViewContainer.locator(".keywordsViewContainer").locator(".."), keywords);
 		AttKeywordUiUtils.assertAtts(storedViewContainer.locator(".attsViewContainer").locator(".."), atts);
-		
-		
 		
 	}
 	
