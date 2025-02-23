@@ -48,6 +48,21 @@ const Getters = {
 				}
 			});
 		},
+		getSingleStoredForItem: async function(itemId, doneFunc = function(){}){
+			return Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/inventory/item/" + itemId + "/stored",
+				done: function(storedSearchResults){
+					if(storedSearchResults.numResults === 0){
+						throw new Error("No results where expected one.");
+					}
+					if(storedSearchResults.numResults > 1){
+						throw new Error("More than one result. Expected one.");
+					}
+					doneFunc(storedSearchResults.results[0]);
+				}
+			});
+		},
 		getLabelForStored: async function(stored, doneFunc = function(){}){
 			let storedLabel = stored["storageBlock-labelText"];
 

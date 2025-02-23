@@ -149,7 +149,7 @@ const ItemStoredTransaction = {
 				//TODO:: better label of better to worse
 				'    </div>\n' + '</div>\n' + '<div class="mb-3">\n' +
 				'    <label class="form-label">Condition Details</label>\n' +
-				'    <textarea class="form-control" name="conditionDetails"></textarea>\n' +
+				'    <textarea class="form-control storedConditionNotesInput" name="conditionNotes"></textarea>\n' +
 				'</div>\n' +
 				'<div class="mb-3">\n' +
 				'    <label class="form-label">Expires</label>\n' +
@@ -477,7 +477,7 @@ const ItemStoredTransaction = {
 
 						toAddFieldsTo["barcode"] = commFormElements.find('input[name="barcode"]').val();
 						toAddFieldsTo["condition"] = commFormElements.find('input[name="condition"]').val();
-						toAddFieldsTo["conditionDetails"] = commFormElements.find('input[name="conditionDetails"]').val();
+						toAddFieldsTo["conditionNotes"] = commFormElements.find('textarea[name="conditionNotes"]').val();
 						toAddFieldsTo["expires"] = commFormElements.find('input[name="expires"]').val();
 						toAddFieldsTo["item"] = ItemStoredTransaction.Add.itemIdInput.val();
 						toAddFieldsTo["storageBlock"] = ItemStoredTransaction.Add.toBlockInput.val();

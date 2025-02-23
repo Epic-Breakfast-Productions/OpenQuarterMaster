@@ -9,8 +9,6 @@ import tech.ebp.oqm.core.baseStation.testResources.ui.pages.ItemsPage;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.ItemsUiUtils;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.NavUtils;
 
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -33,6 +31,7 @@ public class AddTransactionUtils {
 	public static final String COMMON_INPUTS_CONTAINER = ".commonStoredFormElements";
 	public static final String COMMON_BARCODE_INPUT = ".storedBarcodeInput";
 	public static final String COMMON_CONDITION_INPUT = ".storedConditionPercentageInput";
+	public static final String COMMON_CONDITION_NOTES_INPUT = ".storedConditionNotesInput";
 	public static final String SUBMIT_BUTTON = "#itemStoredTransactionAddFormSubmitButton";
 	
 	

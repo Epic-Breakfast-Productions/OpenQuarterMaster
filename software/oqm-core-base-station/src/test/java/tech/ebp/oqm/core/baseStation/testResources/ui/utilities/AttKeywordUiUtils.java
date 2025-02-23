@@ -92,7 +92,7 @@ public class AttKeywordUiUtils {
 	}
 
 	public static void assertAttViewVisible(Locator container){
-		assertTrue(container.locator(KW_VIEW_CONTAINER).isVisible());
+		assertTrue(container.locator(ATT_VIEW_CONTAINER).isVisible());
 	}
 	public static void assertAtts(Locator container, Map<String, String> attsExpected){
 		assertAttViewVisible(container);

@@ -79,11 +79,12 @@ public class AddUniqueSingleTransactionUiTest extends WebUiTest {
 	
 		String barcode = String.valueOf(FAKER.barcode().gtin14());
 		String condition = "100";
-		String conditionDeets = FAKER.lorem().paragraph();
+		String conditionNotes = FAKER.lorem().paragraph();
 		
 		attTransactionModal.locator(AddTransactionUtils.TO_BLOCK_SELECT).selectOption(storageBlocks.getFirst().get("id").asText());
 		addStoredInputs.locator(AddTransactionUtils.COMMON_BARCODE_INPUT).fill(barcode);
 		addStoredInputs.locator(AddTransactionUtils.COMMON_CONDITION_INPUT).fill(condition);
+		addStoredInputs.locator(AddTransactionUtils.COMMON_CONDITION_NOTES_INPUT).fill(conditionNotes);
 		List<String> keywords = AttKeywordUiUtils.fillKeywords(addStoredInputs, 5);
 		Map<String, String> atts = AttKeywordUiUtils.fillAtts(addStoredInputs, 5);
 		
@@ -94,7 +95,6 @@ public class AddUniqueSingleTransactionUiTest extends WebUiTest {
 		MainAssertions.assertDoneProcessing(oqm);
 		MessageAssertions.assertMessage(oqm, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Transaction Successful!");
 		
-		
 		ItemsUiUtils.viewItem(oqm, item);
 		
 		assertEquals(
@@ -102,8 +102,27 @@ public class AddUniqueSingleTransactionUiTest extends WebUiTest {
 			oqm.locator(ItemsPage.VIEW_TOTAL).textContent().strip()
 		);
 		
-		//TODO:: implement viewing of stored
-		//TODO:: validate stored data
+		//TODO:: validate where stored
+		Locator storedViewContainer = oqm.locator("#itemViewStoredSingleContainer");
+		assertTrue(storedViewContainer.isVisible());
+		
+		assertTrue(storedViewContainer.locator(".barcodeViewImg").isVisible());
+		assertTrue(storedViewContainer.locator(".storedCondition").isVisible());
+		assertEquals(
+			condition + "%",
+			storedViewContainer.locator(".storedCondition").textContent().strip()
+		);
+		assertTrue(storedViewContainer.locator(".storedConditionNotes").isVisible());
+		assertEquals(
+			conditionNotes,
+			storedViewContainer.locator(".storedConditionNotes").textContent().strip()
+		);
+		
+		AttKeywordUiUtils.assertKeywords(storedViewContainer.locator(".keywordsViewContainer").locator(".."), keywords);
+		AttKeywordUiUtils.assertAtts(storedViewContainer.locator(".attsViewContainer").locator(".."), atts);
+		
+		
+		
 	}
 	
 }

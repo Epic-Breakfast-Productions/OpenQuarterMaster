@@ -269,7 +269,35 @@ const ItemView = {
 						multiDisplay,
 						multiDisplay,
 						function () {
-							//TODO
+							Getters.StoredItem.getSingleStoredForItem(itemId, async function (stored) {
+								let promises = [];
+								let storageLabel = $('<h3>Stored in: <span class="uniqueItemStoredInLabel"></span></h3><p>Also found in: <span class="uniqueItemStoredAlsoInLabel"></span></p>');
+
+								itemData.storageBlocks.forEach(function(curBlock){
+									promises.push(getStorageBlockLabel(curBlock, function (labelText) {
+										let newLink = Links.getStorageViewLink(curBlock, labelText);
+
+										if(curBlock === stored.storageBlock){
+											storageLabel.find(".uniqueItemStoredInLabel").append(newLink);
+										} else {
+											storageLabel.find(".uniqueItemStoredAlsoInLabel").append(newLink);
+										}
+									}));
+								});
+
+								ItemView.storedSingleContainer.append(storageLabel);
+
+								ItemView.storedSingleContainer.append(
+									StoredView.getStoredViewContent(
+									stored,
+									{
+										includeBlockLink: false,
+										showAllTransactions: true
+									})
+								);
+								await Promise.all(promises);
+								ItemView.storedSingleContainer.show();
+							})
 						}
 					);
 				} else {

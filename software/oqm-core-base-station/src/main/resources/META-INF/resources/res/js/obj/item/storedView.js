@@ -1,57 +1,80 @@
 const StoredView = {
-	getBlockViewCell(name, value, classes = "") {
-		let output = $('<div class="col-sm-4 col-4 col-xs-6 '+classes+'"><h5></h5><p></p></div>');
+	getBlockViewCell(name, ...valueJqs) {
+		let output = $('<div class="col-sm-4 col-4 col-xs-6">' +
+			'<h5 class="storedDataTitle"></h5>' +
+			'<div class="storedDataContainer"></div>' +
+			'</div>');
+		output.find(".storedDataTitle").text(name);
+		let container = output.find(".storedDataContainer");
+		valueJqs.forEach(value=>{
+			container.append(value);
+		});
 
-		output.find("h5").text(name);
-		output.find("p").text(value);
 		return output;
+	},
+	getSimpleBlockViewCell(name, value, classes = "") {
+		let valueJq = $('<p class="'+classes+'"></p>');
+		valueJq.text(value);
+		return StoredView.getBlockViewCell(name, valueJq);
 	},
 	getStorageBlockTrackedIdentifierView(stored) {
 		if (stored.type.includes("UNIQUE")) {
-			return StoredView.getBlockViewCell("Identifier", stored.identifier);
+			return StoredView.getSimpleBlockViewCell("Identifier", stored.identifier);
 		}
 		return "";
 	},
 	getStorageBlockAmountHeldView(stored, showCurrently = false) {
 		if (stored.type.includes("AMOUNT")) {
-			return StoredView.getBlockViewCell((showCurrently ? "Currently " : "") + "Stored:", stored.amount.value + stored.amount.unit.symbol, "storedViewAmount");
+			return StoredView.getSimpleBlockViewCell((showCurrently ? "Currently " : "") + "Stored:", stored.amount.value + stored.amount.unit.symbol, "storedViewAmount");
 		}
 		return "";
 	},
 	getStorageBlockBarcodeView(stored, index = false) {
 		//TODO:: rework
 		if (stored.barcode) {
-			let url = "/api/media/code/item/" + stored.item + "/barcode/stored/" + stored.storageBlock;
+			let url = "/api/media/code/barcode/" + encodeURIComponent(stored.barcode);
 
 			if (index !== false) {
 				url += "/" + index;
 			}
 
-			return '<div class="col"><h5>Barcode:</h5><img src="' + url + '" title="Stored item barcode" alt="Stored item barcode" class="barcodeViewImg"></div>';
+			return StoredView.getBlockViewCell(
+				"Barcode",
+				$('<img src="' + url + '" title="Stored item barcode" alt="Stored item barcode" class="barcodeViewImg">')
+			);
 		}
 		return "";
 	},
 	getStorageBlockIdentifyingDetailsView(stored) {
 		if (stored.type.includes("TRACKED") && stored.identifyingDetails) {
-			return StoredView.getBlockViewCell("Identifying Details", stored.identifyingDetails);
+			return StoredView.getSimpleBlockViewCell("Identifying Details", stored.identifyingDetails);
 		}
 		return "";
 	},
 	getStorageBlockConditionView(stored) {
 		if (stored.condition) {
-			return StoredView.getBlockViewCell("Condition", stored.condition + "%");
-		}
-		return "";
-	},
-	getStorageBlockConditionNotesView(stored) {
-		if (stored.conditionNotes) {
-			return StoredView.getBlockViewCell("Condition Notes", stored.conditionNotes);
+			let conditionJqs = [];
+
+			let newJq = $('<p class="storedCondition mb-0"></p>');
+			newJq.text(stored.condition + "%");
+			conditionJqs.push(newJq);
+
+			if(stored.conditionNotes){
+				let newJq = $('<p class="storedConditionNotes mt-0 small"></p>');
+				newJq.text(stored.conditionNotes);
+				conditionJqs.push(newJq);
+			}
+
+			return StoredView.getBlockViewCell(
+				"Condition",
+				...conditionJqs
+			);
 		}
 		return "";
 	},
 	getStorageBlockExpiresView(stored) {
 		if (stored.expires) {
-			return StoredView.getBlockViewCell("Expires", stored.expires);
+			return StoredView.getSimpleBlockViewCell("Expires", stored.expires);
 		}
 		return "";
 	},
@@ -66,6 +89,30 @@ const StoredView = {
 		}
 
 		return output;
+	},
+	getStoredKeywords(stored) {
+		if(stored.keywords){
+			let keywordContainer = $('<div class="keywordsViewContainer"></div>');
+			KeywordAttUtils.displayKeywordsIn(keywordContainer, stored.keywords);
+
+			return StoredView.getBlockViewCell(
+				"Keywords",
+				keywordContainer
+			);
+		}
+		return "";
+	},
+	getStoredAtts(stored) {
+		if(stored.attributes){
+			let keywordContainer = $('<div class="attsViewContainer"></div>');
+			KeywordAttUtils.displayAttsIn(keywordContainer, stored.attributes);
+
+			return StoredView.getBlockViewCell(
+				"Attributes",
+				keywordContainer
+			);
+		}
+		return "";
 	},
 
 	getCheckoutBlockLink(stored, small = false) {
@@ -166,8 +213,9 @@ const StoredView = {
 			StoredView.getStorageBlockBarcodeView(stored, index),
 			StoredView.getStorageBlockIdentifyingDetailsView(stored),
 			StoredView.getStorageBlockConditionView(stored),
-			StoredView.getStorageBlockConditionNotesView(stored),
 			StoredView.getStorageBlockExpiresView(stored),
+			StoredView.getStoredKeywords(stored),
+			StoredView.getStoredAtts(stored),
 			StoredView.getTransactBlockLink(stored, true, {
 				showAllTransactions: showAllTransactions,
 				showAddTransaction: showAddTransaction,
