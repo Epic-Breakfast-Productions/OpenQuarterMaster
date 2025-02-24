@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
-    id "io.freefair.lombok" version "8.12.1"
+    id "io.freefair.lombok" version "8.12.2"
 }
 
 group 'tech.ebp.openQuarterMaster'
