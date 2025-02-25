@@ -392,6 +392,7 @@ const ItemStoredTransaction = {
 						ItemStoredTransaction.Add.typeInput.val("ADD_WHOLE");
 						ItemStoredTransaction.Add.typeInput.prop("disabled", true);
 						ItemStoredTransaction.Add.toBlockInputContainer.show(0);
+						ItemStoredTransaction.Add.toBlockRadio.prop("checked", true);
 					},
 					function () {
 						ItemStoredTransaction.Add.typeInputContainer.show(0);

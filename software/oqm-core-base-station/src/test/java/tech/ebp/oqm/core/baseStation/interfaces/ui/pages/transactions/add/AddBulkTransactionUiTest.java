@@ -110,7 +110,7 @@ public class AddBulkTransactionUiTest extends WebUiTest {
 
 		assertEquals(
 			"5units",
-			storedAccordItem.locator(ItemsPage.VIEW_STORED_AMOUNT).locator("p").textContent().strip()
+			storedAccordItem.locator(ItemsPage.VIEW_STORED_AMOUNT).textContent().strip()
 		);
 	}
 
