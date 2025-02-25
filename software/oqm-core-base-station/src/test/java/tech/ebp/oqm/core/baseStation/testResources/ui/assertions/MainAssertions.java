@@ -8,6 +8,7 @@ import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.NavUtils;
 public class MainAssertions {
 
 	public static void assertDoneProcessing(Page page) {
+		log.info("Waiting for page to load and things to finish processing.");
 		try {
 			Thread.sleep(500);
 		} catch (InterruptedException e) {
@@ -20,14 +21,11 @@ public class MainAssertions {
 			page.waitForFunction("()=>Main.noProcessesRunning();");
 			log.info("DONE waiting for page processes to finish up.");
 
-			//TODO:: check for console errors
+			//TODO:: check for console errors?
 //			page.onConsoleMessage();
 		} else {
 			log.info("NOT on OQM Base Station page: {}", page.url());
 		}
-	}
-
-	public static void assertMainPageAlert(Page page, String type, String content){
-		//TODO
+		log.info("DONE Waiting for page to load and things to finish processing.");
 	}
 }

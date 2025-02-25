@@ -102,8 +102,6 @@ public class AddUniqueSingleTransactionUiTest extends WebUiTest {
 			oqm.locator(ItemsPage.VIEW_TOTAL).textContent().strip()
 		);
 		
-		//TODO:: validate where stored
-		
 		Locator storedInLabel = oqm.locator(".uniqueItemStoredInLabel");
 		assertTrue(storedInLabel.isVisible());
 		assertEquals(

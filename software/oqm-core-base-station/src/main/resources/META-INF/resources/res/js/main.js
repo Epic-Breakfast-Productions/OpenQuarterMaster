@@ -18,11 +18,17 @@ const Main = {
      *  - dselect
      */
     processCount: 4,
-    processStart(){
+    processStart(process = null){
         this.processCount++;
+        if(process){
+            console.log("Started process " + process);
+        }
     },
-    processStop(){
+    processStop(process = null){
         this.processCount--;
+        if(process){
+            console.log("Finished process " + process);
+        }
     },
     processesRunning(){
         return this.processCount !== 0;

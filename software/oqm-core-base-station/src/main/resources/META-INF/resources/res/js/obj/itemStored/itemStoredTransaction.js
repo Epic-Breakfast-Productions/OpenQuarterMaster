@@ -263,11 +263,13 @@ const ItemStoredTransaction = {
 		 * @param item
 		 */
 		updateInputs: async function (item = null) {
+			Main.processStart("Update add transaction inputs.");
 			if (item == null) {
 				item = this.itemIdInput.val();
 			}
 			if (typeof item === "string" || (item instanceof String)) {
 				Getters.InventoryItem.get(item, this.updateInputs);
+				Main.processStop("Update add transaction inputs. (recursive call)");
 				return;
 			}
 			console.log("Updating add transaction form inputs.");
@@ -303,9 +305,12 @@ const ItemStoredTransaction = {
 						case "ADD_AMOUNT":
 							console.debug("Removing common elements.");
 							ItemStoredTransaction.Add.inputsContainer.find(".commonStoredFormElements").remove();
+							ItemStoredTransaction.Add.toStoredInputContainer.show(0);
 							break;
 						case "ADD_WHOLE":
 							ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toStoredInputContainer, true, false, true);
+							ItemStoredTransaction.Add.toStoredInputContainer.hide(0);
+							ItemStoredTransaction.Add.toBlockRadio.prop("checked", true);
 							break;
 					}
 				}, function () {
@@ -316,6 +321,7 @@ const ItemStoredTransaction = {
 					ItemStoredTransaction.Add.ableToInputs(ItemStoredTransaction.Add.toBlockInputContainer, false, false, false);
 				});
 			console.debug("Done updating inputs.");
+			Main.processStop("Update add transaction inputs.");
 		},
 		resetForm: function (changeItemRelated = true) {
 			console.log("Resetting item stored add transaction form.");
@@ -379,7 +385,7 @@ const ItemStoredTransaction = {
 					function () {
 						ItemStoredTransaction.Add.typeInputContainer.show(0);
 						ItemStoredTransaction.Add.toBlockInputContainer.show(0);
-						ItemStoredTransaction.Add.toStoredInputContainer.show(0);
+						ItemStoredTransaction.Add.toBlockRadio.prop("checked", true);
 					},
 					function () {
 						ItemStoredTransaction.Add.typeInputContainer.show(0);
