@@ -16,6 +16,7 @@ const ItemView = {
 	storedMultiNumStoredDisplay: $("#itemViewStoredMultiNumStoredDisplay"),
 	storedMultiNumBlocksDisplay: $("#itemViewStoredMultiBlockNum"),
 	storedSingleAccordion: $("#itemViewStoredSingleAccordion"),
+	storedViewTabAllStoredPane: $("#itemViewStoredViewTabAllStoredContainer"),
 
 	storedBulkContainer: $("#itemViewStoredBulkContainer"),
 	storedBulkAccordion: $("#itemViewStoredBulkAccordion"),
@@ -161,7 +162,38 @@ const ItemView = {
 		return newAccordItem;
 	},
 	getStoredInBlockSearch: function (itemId, blockId) {
-		return $("<p>Search!</p>");//TODO
+		let accordId = "itemViewStoredIn"+blockId+"SearchAccordion";
+		let accordHeaderId = accordId + "Header";
+		let accordCollapseId = accordId + "Collapse";
+		let searchResultsId = accordId + "SearchResults";
+		let searchFormId = accordId + "SearchForm";
+
+		let output = ItemView.storedViewTabAllStoredPane.clone();
+		output.find("#itemViewAllStoredSearchResults").empty();
+		output = $(
+			output.html()
+			.replaceAll("itemViewAllStoredSearchResults", searchResultsId)
+			.replaceAll("itemViewAllStoredSearchAccordion", accordId)
+			.replaceAll("itemViewAllStoredSearchAccordionFieldsHeader", accordHeaderId)
+			.replaceAll("itemViewAllStoredSearchAccordionFieldsCollapse", accordCollapseId)
+			.replaceAll("itemViewAllStoredSearchResults", searchResultsId)
+			.replaceAll("itemViewAllStoredSearchForm", searchFormId)
+		);
+		output.find(".spinner").remove();//race condition; sometimes catch the spinner
+		output.find("#"+searchFormId+"-storageBlockInputId").val(blockId);
+		output.find("#"+searchFormId+"-storageBlockInputName").val(blockId);
+		output.find("#"+searchFormId+"-storageBlockInputName").prop("disabled", true);
+		output.find("#"+searchFormId+"-storageBlockInputName").prop("readonly", true);
+		output.find("#"+searchFormId+"-storageBlockInputSearchButton").prop("disabled", true);
+		output.find("#"+searchFormId+"-storageBlockInputSearchButton").prop("readonly", true);
+		output.find("#"+searchFormId+"-storageBlockInputClearButton").prop("disabled", true);
+		output.find("#"+searchFormId+"-storageBlockInputClearButton").prop("readonly", true);
+
+		getStorageBlockLabel(blockId, function(blockLabel){
+			output.find("#"+searchFormId+"-storageBlockInputName").val(blockLabel);
+		});
+
+		return output;
 	},
 	setupView(itemId) {
 		Main.processStart();
@@ -190,13 +222,15 @@ const ItemView = {
 					ItemView.storedBulkBlockNum.text(itemData.storageBlocks.length);
 					let multiDisplay = function () {
 						console.log(itemData.stats.numStored + " stored.");
-						ItemView.storedMultiNumBlocksDisplay.text(itemData.stats.numStored);
+						ItemView.storedMultiNumStoredDisplay.text(itemData.stats.numStored);
+						ItemView.storedMultiNumBlocksDisplay.text(itemData.storageBlocks.length);
 						ItemView.storedMultiContainer.show();
 
 						ItemView.allStoredSearchFormItemInputName.val(itemData.name);
 						ItemView.allStoredSearchFormItemInputId.val(itemId);
 						ItemView.allStoredSearchForm.submit();
-						//TODO:: doublecheck above
+
+
 						//TODO:: populate by block accordion
 
 
@@ -213,6 +247,7 @@ const ItemView = {
 											ItemView.getStoredInBlockSearch(itemId, blockId)
 										).then(function (newAccordItem) {
 											ItemView.storedMultiByBlockAccordion.append(newAccordItem);
+											newAccordItem.find(".pagingSearchForm").submit();
 										});
 									})
 								);
