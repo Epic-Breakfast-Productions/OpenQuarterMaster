@@ -153,8 +153,7 @@ const ItemView = {
 		collapseButton.text(blockId);
 		getStorageBlockLabel(blockId, function (blockLabel) {
 			let labelText = blockLabel;
-			//TODO:: num stored
-			//TODO:: total/unit
+			//TODO:: image
 
 			collapseButton.text(labelText);
 		});
@@ -195,6 +194,30 @@ const ItemView = {
 
 		return output;
 	},
+	getMultiStoredInBlockView: function(itemData, blockId){
+		let output = $('<div></div>');
+
+		let dataRow = $('<div class="d-flex"></div>');
+		output.append(dataRow);
+		dataRow.append($('<div class="card"></div>').append($('<div class="card-body"></div>').append($('<h5 class="card-title d-inline">Num Stored:</h5>')).append($('<p class="card-text d-inline"></p>').text(itemData.stats.storageBlockStats[blockId].numStored))));
+		dataRow.append(
+			$('<div class="card"></div>')
+				.append(
+					$('<div class="card-body"></div>')
+						.append($('<h5 class="card-title d-inline">Total:</h5>'))
+						.append(
+							$('<p class="card-text d-inline"></p>')
+								.text(
+									UnitUtils.quantityToDisplayStr(itemData.stats.storageBlockStats[blockId].total)
+								)
+						)
+				)
+		);
+
+		output.append($("<hr />"));
+		output.append(ItemView.getStoredInBlockSearch(itemData.id, blockId));
+		return output;
+	},
 	setupView(itemId) {
 		Main.processStart();
 		console.log("Setting up view for item " + itemId);
@@ -230,10 +253,6 @@ const ItemView = {
 						ItemView.allStoredSearchFormItemInputId.val(itemId);
 						ItemView.allStoredSearchForm.submit();
 
-
-						//TODO:: populate by block accordion
-
-
 						itemData.storageBlocks.forEach(function (blockId) {
 							console.debug("Displaying block: ", blockId);
 
@@ -244,7 +263,7 @@ const ItemView = {
 											itemData,
 											blockId,
 											"itemViewStoredBulkAccordion",
-											ItemView.getStoredInBlockSearch(itemId, blockId)
+											ItemView.getMultiStoredInBlockView(itemData, blockId)
 										).then(function (newAccordItem) {
 											ItemView.storedMultiByBlockAccordion.append(newAccordItem);
 											newAccordItem.find(".pagingSearchForm").submit();
