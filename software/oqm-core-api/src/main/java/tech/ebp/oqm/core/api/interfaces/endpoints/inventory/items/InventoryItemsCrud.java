@@ -269,6 +269,9 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem update(
 		@PathParam("itemId") String id,
+		@Schema(
+			implementation = InventoryItem.class
+		)
 		ObjectNode updates
 	) {
 		return super.update(id, updates);

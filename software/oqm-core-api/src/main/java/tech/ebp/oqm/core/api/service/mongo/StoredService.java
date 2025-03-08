@@ -106,7 +106,11 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 
 		if (item.getStorageType() == BULK || item.getStorageType() == UNIQUE_SINGLE) {
-			SearchResult<Stored> inBlock = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId()).setStorageBlockId(newOrChangedObject.getStorageBlock()));
+			SearchResult<Stored> inBlock = this.search(oqmDbIdOrName,
+				new StoredSearch()
+					.setInventoryItemId(item.getId().toHexString())
+					.setStorageBlockId(newOrChangedObject.getStorageBlock().toHexString())
+			);
 
 			if (!inBlock.isEmpty()) {
 				if (inBlock.getNumResults() != 1) {
@@ -120,7 +124,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 
 		if (item.getStorageType() == UNIQUE_SINGLE) {
-			SearchResult<Stored> inItem = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId()));
+			SearchResult<Stored> inItem = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
 			if (!inItem.isEmpty()) {
 				if (inItem.getNumResults() != 1) {
 					throw new ValidationException("More than one globally unique stored held");
@@ -139,7 +143,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		SearchResult<Stored> results = super.search(oqmDbIdOrName, cs, searchObject);
 
 		if(searchObject.getInventoryItemId() != null){
-			results = new ItemAwareSearchResult<>(this.getInventoryItemService().get(oqmDbIdOrName, cs, searchObject.getInventoryItemId()), results);
+			results = new ItemAwareSearchResult<>(this.getInventoryItemService().get(oqmDbIdOrName, cs, new ObjectId(searchObject.getInventoryItemId())), results);
 		}
 
 		return results;
@@ -152,7 +156,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	}
 
 	public <T extends Stored> SearchResult<T> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
-		SearchResult<T> result = (SearchResult<T>) this.search(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(itemId).setStorageBlockId(storageBlockId));
+		SearchResult<T> result = (SearchResult<T>) this.search(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(itemId.toHexString()).setStorageBlockId(storageBlockId.toHexString()));
 
 		if (result.isEmpty()) {
 			throw new DbNotFoundException("No stored currently stored in this block (" + storageBlockId + ") under this item (" + itemId + ").", this.clazz);
@@ -260,7 +264,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	}
 
 	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, ObjectId itemId) {
-		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(itemId));
+		FindIterable<Stored> storedInItem = this.listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(itemId.toHexString()));
 
 		InventoryItem item = this.inventoryItemService.get(oqmDbIdOrName, cs, itemId);
 		ItemStoredStats output = new ItemStoredStats(item.getUnit());
@@ -368,7 +372,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		{
 			FindIterable<Stored> storedInItem = this.listIterator(
 				oqmDbIdOrName, cs, new StoredSearch()
-					.setInventoryItemId(item.getId())
+					.setInventoryItemId(item.getId().toHexString())
 					.setInStorageBlocks(concerning.stream().map(Stored::getStorageBlock).distinct().collect(Collectors.toList()))
 			);
 			try (

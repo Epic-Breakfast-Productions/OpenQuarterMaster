@@ -22,9 +22,9 @@ import static com.mongodb.client.model.Filters.*;
 @Setter
 public class StoredSearch extends SearchKeyAttObject<Stored> {
 
-	@PathParam("itemId") ObjectId inventoryItemId;
+	@PathParam("itemId") String inventoryItemId;
 
-	@PathParam("blockId") ObjectId storageBlockId;
+	@PathParam("blockId") String storageBlockId;
 
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
 
@@ -44,10 +44,10 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 		List<Bson> filters = super.getSearchFilters();
 
 		if(this.hasValue(this.getInventoryItemId())){
-			filters.add(eq("item", this.getInventoryItemId()));
+			filters.add(eq("item", new ObjectId(this.getInventoryItemId())));
 		}
 		if(this.hasValue(this.getStorageBlockId())){
-			filters.add(eq("storageBlock", this.getStorageBlockId()));
+			filters.add(eq("storageBlock", new ObjectId(this.getStorageBlockId())));
 		}
 
 		//TODO::item

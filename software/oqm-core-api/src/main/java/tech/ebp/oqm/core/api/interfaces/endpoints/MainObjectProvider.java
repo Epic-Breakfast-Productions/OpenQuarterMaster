@@ -364,7 +364,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		//@BeanParam
 		HistorySearch searchObject
 	) {
-		log.info("Searching for objects with: {}", searchObject);
+		log.info("Searching for history with: {}", searchObject);
 		
 		return this.getObjectService().searchHistory(this.getOqmDbIdOrName(), searchObject, false);
 	}
