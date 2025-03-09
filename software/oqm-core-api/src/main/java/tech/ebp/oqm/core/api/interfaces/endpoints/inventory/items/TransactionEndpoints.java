@@ -31,7 +31,7 @@ import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item/{itemId}/stored")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item/{itemId}/stored/transaction")
 @Tags({@Tag(name = "Inventory Items", description = "Endpoints for inventory item CRUD, and managing stored items.")})
 @RequestScoped
 public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearch> {
@@ -64,8 +64,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 		return this.inventoryItem;
 	}
 
-	@PUT
-	@Path("/transact")
+	@POST
 	@Operation(
 		summary = "Applies a transaction to a stored item."
 	)
@@ -89,7 +88,6 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	}
 
 	@GET
-	@Path("/transaction")
 	@Operation(
 		summary = "Searches all of an item's stored item transactions."
 	)
@@ -119,7 +117,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	}
 
 	@GET
-	@Path("/transaction/{transactionId}")
+	@Path("{transactionId}")
 	@Operation(
 		summary = "Gets a particular applied transaction."
 	)

@@ -199,7 +199,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	@GET
 	@Path("history")
 	@Operation(
-		summary = "Searches the history for the stored items in this item and storage block."
+		summary = "Searches the history for the stored items in this item."
 	)
 	@APIResponse(
 		responseCode = "200",
