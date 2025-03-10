@@ -28,7 +28,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-container-image-jib'
     implementation 'io.quarkus:quarkus-arc'
 
-    implementation group: 'org.jsoup', name: 'jsoup', version: '1.18.3'
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.19.1'
     implementation 'io.quarkiverse.wiremock:quarkus-wiremock:1.4.1'
 
 
