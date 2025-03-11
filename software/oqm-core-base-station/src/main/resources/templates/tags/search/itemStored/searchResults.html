@@ -67,9 +67,13 @@
     {#if showAmount}<td>{#amountDisplay amount=result.get("amount")}{/amountDisplay}</td>{/if}
     {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
-        {#icons/view}{/icons/view}
-      </button>
+		{!TODO:: configure to choose row or modal. Separate button/group?!}
+		{!<button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemStoredViewModal" onclick="StoredView.setupViewModal('{result.get("item").asText()}', '{result.get("storageBlock").asText()}', '{id}');">!}
+			{!{#icons/view}{/icons/view}!}
+		{!</button>!}
+		<button type="button" class="btn btn-sm btn-info" title="View" onclick="StoredView.toggleViewResultTableRow(this, '{result.get("item").asText()}', '{id}');">
+			{#icons/view}{/icons/view}
+		</button>
       <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
         {#icons/edit}{/icons/edit}
       </button>

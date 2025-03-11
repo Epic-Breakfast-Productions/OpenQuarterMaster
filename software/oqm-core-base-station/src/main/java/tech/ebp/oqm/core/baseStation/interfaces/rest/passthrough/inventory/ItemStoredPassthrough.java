@@ -19,6 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import tech.ebp.oqm.core.baseStation.interfaces.rest.passthrough.PassthroughProvider;
 import tech.ebp.oqm.core.baseStation.service.modelTweak.SearchResultTweak;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.AppliedTransactionSearch;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.HistorySearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StoredSearch;
 
 import java.util.Optional;
@@ -41,7 +42,7 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 
 	@Inject
 	SearchResultTweak searchResultTweak;
-
+	
 	@GET
 	@Operation(
 		summary = "Searches all of an item's stored entries."
@@ -79,107 +80,123 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 			actionType.orElse("select")
 		);
 	}
-
+	
+//	@GET //TODO if necessary
+//	@Path("history")
+//	@Operation(
+//		summary = "Searches all of an item's stored entries."
+//	)
+//	@APIResponse(
+//		responseCode = "200",
+//		description = "Stored entries retrieved."
+//	)
+//	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+//	public Uni<Response> searchHistory(
+//		@BeanParam StoredSearch storedSearch,
+//		@HeaderParam("Accept") String acceptType,
+//		@HeaderParam("searchFormId") String searchFormId,
+//		@HeaderParam("otherModalId") String otherModalId,
+//		@HeaderParam("inputIdPrepend") String inputIdPrepend,
+//		@HeaderParam("showItem") boolean showItem,
+//		@HeaderParam("showStorage") boolean showStorage,
+//		@HeaderParam("actionType") Optional<String> actionType
+//	) {
+//		return this.processSearchResults(
+//			this.getOqmCoreApiClient()
+//				.invItemStoredSearch(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), storedSearch)
+//				.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "storageBlock", this.getBearerHeaderStr()))
+//				.call(results -> searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
+//			,
+//			this.searchResultTemplate
+//				.data("showItem", showItem)
+//				.data("showStorage", showStorage)
+//				.data("showType", false)
+//			,
+//			acceptType,
+//			searchFormId,
+//			otherModalId,
+//			inputIdPrepend,
+//			actionType.orElse("select")
+//		);
+//	}
+	
+	
 	@GET
-	@Path("inBlock/{blockId}")
+	@Path("{storedId}")
 	@Operation(
-		summary = "Searches all of an item's stored entries."
+		summary = "Gets an individual stored item object."
 	)
 	@APIResponse(
 		responseCode = "200",
 		description = "Stored entries retrieved."
 	)
-	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
-	public Uni<Response> searchInBlock(
-		@BeanParam StoredSearch storedSearch,
-		@HeaderParam("Accept") String acceptType,
-		@HeaderParam("searchFormId") String searchFormId,
-		@HeaderParam("otherModalId") String otherModalId,
-		@HeaderParam("inputIdPrepend") String inputIdPrepend,
-		@HeaderParam("showItem") boolean showItem,
-		@HeaderParam("showStorage") boolean showStorage,
-		@HeaderParam("actionType") Optional<String> actionType
+	@Produces(MediaType.APPLICATION_JSON)
+	public Uni<ObjectNode> getStored(
+		@PathParam("storedId") String storedId
 	) {
-		return this.processSearchResults(
-			this.getOqmCoreApiClient()
-				.invItemStoredSearch(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), storedSearch)
-				.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "storageBlock", this.getBearerHeaderStr()))
-				.call(results -> searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
-			,
-			this.searchResultTemplate
-				.data("showItem", showItem)
-				.data("showStorage", showStorage)
-			,
-			acceptType,
-			searchFormId,
-			otherModalId,
-			inputIdPrepend,
-			actionType.orElse("select")
+		return this.getOqmCoreApiClient().invItemStoredGet(
+			this.getBearerHeaderStr(),
+			this.getSelectedDb(),
+			this.getItemId(),
+			storedId
 		);
 	}
-
+	
 	@PUT
-	@Path("/transact")
+	@Path("{storedId}")
 	@Operation(
-		summary = "Applies a transaction to a stored item."
+		summary = "Updates an individual stored item object."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "The id of the applied transaction record.",
+		description = "Stored entries retrieved."
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Uni<ObjectNode> updateStored(
+		@PathParam("storedId") String storedId,
+		ObjectNode updates
+	) {
+		return this.getOqmCoreApiClient().invItemStoredUpdate(
+			this.getBearerHeaderStr(),
+			this.getSelectedDb(),
+			this.getItemId(),
+			storedId,
+			updates
+		);
+	}
+	
+	@GET
+	@Path("{storedId}/history")
+	@Operation(
+		summary = "Gets a particular object's history."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object retrieved.",
 		content = {
 			@Content(
 				mediaType = "application/json"
 			)
 		}
 	)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<String> transact(
-		ObjectNode transaction
-	) throws Exception {
-		log.info("Transacting item.");
-		return this.getOqmCoreApiClient().invItemStoredTransact(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, transaction);
-	}
-
-	@GET
-	@Path("/transaction")
-	@Operation(
-		summary = "Searches all of an item's stored item transactions."
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
 	)
 	@APIResponse(
-		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json"
-			)
-		},
-		headers = {
-			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
-		}
+		responseCode = "404",
+		description = "No history found for object with that id.",
+		content = @Content(mediaType = "text/plain")
 	)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> searchTransactions(
-		AppliedTransactionSearch appliedTransactionSearch
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	public Uni<Response> getHistoryForObject(
+		@PathParam("storedId") String storedId,
+		@BeanParam HistorySearch searchObject,
+		@HeaderParam("Accept") String acceptType,
+		@HeaderParam("searchFormId") String searchFormId
 	) {
-		return this.getOqmCoreApiClient().invItemStoredTransactionSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, appliedTransactionSearch);
+		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().invItemStoredSearchHistory(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), storedId, searchObject);
+		return this.processHistoryResults(searchUni, acceptType, searchFormId);
 	}
-
-	@GET
-	@Path("/transaction/{transactionId}")
-	@Operation(
-		summary = "Gets a particular applied transaction."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Blocks retrieved."
-	)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> getAppliedTransaction(
-		@PathParam("transactionId") String transactionId
-	) {
-		return this.getOqmCoreApiClient().invItemStoredTransactionGet(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, transactionId);
-	}
-
 }

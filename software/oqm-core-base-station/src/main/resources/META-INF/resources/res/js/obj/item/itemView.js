@@ -197,7 +197,7 @@ const ItemView = {
 	getMultiStoredInBlockView: function(itemData, blockId){
 		let output = $('<div></div>');
 
-		let dataRow = $('<div class="d-flex"></div>');
+		let dataRow = $('<div class="d-flex mb-5"></div>');
 		output.append(dataRow);
 		dataRow.append($('<div class="card"></div>').append($('<div class="card-body"></div>').append($('<h5 class="card-title d-inline">Num Stored:</h5>')).append($('<p class="card-text d-inline"></p>').text(itemData.stats.storageBlockStats[blockId].numStored))));
 		dataRow.append(
@@ -214,7 +214,6 @@ const ItemView = {
 				)
 		);
 
-		output.append($("<hr />"));
 		output.append(ItemView.getStoredInBlockSearch(itemData.id, blockId));
 		return output;
 	},

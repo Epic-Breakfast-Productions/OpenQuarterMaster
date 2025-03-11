@@ -1,0 +1,18 @@
+{#modal id='itemStoredView' size='xl' title='Item Stored View'}
+	{#titleIcon}{#icons/stored /}{/titleIcon}
+	<div class="row">
+		<div class="col" id="itemStoredViewMessages"></div>
+	</div>
+	<div class="row" id="itemStoredViewDisplayContainer">
+	</div>
+	<hr />
+	<div class="row">
+		{#objView/objKeywordsView id='itemStoredViewKeywordsSection' classes='col' /}
+		{#objView/objAttsView id='itemStoredViewAttsSection' classes='col' /}
+	</div>
+	<div class="row">
+		<div class="col">
+			{#objView/history/objHistoryView containerId='itemStoredHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item/') /}
+		</div>
+	</div>
+{/modal}

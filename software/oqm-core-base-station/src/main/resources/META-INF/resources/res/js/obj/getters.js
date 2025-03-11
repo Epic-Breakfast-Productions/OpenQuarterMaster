@@ -36,7 +36,7 @@ const Getters = {
 		getSingleStoredForItemInBlock: async function(itemId, blockId, doneFunc = function(){}){
 			return Rest.call({
 				method: "GET",
-				url: Rest.passRoot + "/inventory/item/" + itemId + "/stored/inBlock/" + blockId,
+				url: Rest.passRoot + "/inventory/item/" + itemId + "/block/" + blockId + "/stored",
 				done: function(storedSearchResults){
 					if(storedSearchResults.numResults === 0){
 						throw new Error("No results where expected one.");
@@ -78,14 +78,18 @@ const Getters = {
 			);
 			await doneFunc(storedLabel);
 			return storedLabel;
-		}
+		},
+		getStored: async function(itemId, storedId, doneFunc = function(){}){
+			return Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/inventory/item/" + itemId + "/stored/" + storedId,
+				done: function(itemStored){
+					doneFunc(itemStored);
+				}
+			});
+		},
 	}
 }
-
-async function getStorageBlock(blockId){
-	//TODO
-}
-
 
 async function getStorageBlockItemData(blockId) {
 	console.log("Getting item data for storage block \"" + blockId + "\"");

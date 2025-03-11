@@ -1,4 +1,12 @@
 const StoredView = {
+	viewModal: $("#itemStoredViewModal"),
+	viewModalLabel: $("#itemStoredViewModalLabel"),
+	viewModalMessages: $("#itemStoredViewMessages"),
+	viewModalContent: $("#itemStoredViewDisplayContainer"),
+	viewModalKeywords: $("#itemStoredViewKeywordsSection"),
+	viewModalAtts: $("#itemStoredViewAttsSection"),
+	viewModalHistory: $("#itemStoredHistory"),
+
 	getBlockViewCell(name, ...valueJqs) {
 		let output = $('<div class="col-sm-4 col-4 col-xs-6">' +
 			'<h5 class="storedDataTitle"></h5>' +
@@ -6,14 +14,14 @@ const StoredView = {
 			'</div>');
 		output.find(".storedDataTitle").text(name);
 		let container = output.find(".storedDataContainer");
-		valueJqs.forEach(value=>{
+		valueJqs.forEach(value => {
 			container.append(value);
 		});
 
 		return output;
 	},
 	getSimpleBlockViewCell(name, value, classes = "") {
-		let valueJq = $('<p class="'+classes+'"></p>');
+		let valueJq = $('<p class="' + classes + '"></p>');
 		valueJq.text(value);
 		return StoredView.getBlockViewCell(name, valueJq);
 	},
@@ -59,7 +67,7 @@ const StoredView = {
 			newJq.text(stored.condition + "%");
 			conditionJqs.push(newJq);
 
-			if(stored.conditionNotes){
+			if (stored.conditionNotes) {
 				let newJq = $('<p class="storedConditionNotes mt-0 small"></p>');
 				newJq.text(stored.conditionNotes);
 				conditionJqs.push(newJq);
@@ -91,7 +99,7 @@ const StoredView = {
 		return output;
 	},
 	getStoredKeywords(stored) {
-		if(stored.keywords){
+		if (stored.keywords) {
 			let keywordContainer = $('<div class="keywordsViewContainer"></div>');
 			KeywordAttUtils.displayKeywordsIn(keywordContainer, stored.keywords);
 
@@ -103,7 +111,7 @@ const StoredView = {
 		return "";
 	},
 	getStoredAtts(stored) {
-		if(stored.attributes){
+		if (stored.attributes) {
 			let keywordContainer = $('<div class="attsViewContainer"></div>');
 			KeywordAttUtils.displayAttsIn(keywordContainer, stored.attributes);
 
@@ -227,7 +235,72 @@ const StoredView = {
 		);
 		//TODO:: images, keywords, atts
 
-
+		//TODO:: history, applied transactions
 		return newContent;
 	},
+	resetViewModal() {
+		StoredView.viewModalMessages.text("");
+		StoredView.viewModalLabel.text("");
+		StoredView.viewModalAtts.text("");
+		StoredView.viewModalKeywords.text("");
+		StoredView.viewModalContent.text("");
+		//TODO:: clear history
+	},
+	setupViewModal: async function (itemId, blockId, storedId, previousModal) {
+		Main.processStart();
+		console.log("Setting up stored view for ", storedId);
+		ModalHelpers.setReturnModal(StoredView.viewModal, previousModal);
+		StoredView.resetViewModal();
+
+		let promises = [];
+
+		promises.push(Getters.StoredItem.getStored(
+			itemId, blockId, storedId, function (stored) {
+				StoredView.viewModalContent.append(StoredView.getStoredViewContent(stored));
+			}));
+		//TODO:: setup history search
+
+		Promise.all(promises);
+		console.log("Finished setting up stored view for ", storedId);
+		Main.processStop();
+	},
+	setupViewResultTableRow(rowJq, itemId, storedId){
+		//TODO:: create new row under row of button pressed, display stored info
+	},
+	toggleViewResultTableRow: async function(buttonPressed, itemId, storedId){
+		Main.processStart();
+		let buttonPressedJq = $(buttonPressed);
+		let storedResultRow = buttonPressedJq.closest("tr.itemStoredResultRow");
+		let nextRow = storedResultRow.next();
+		let viewRow;
+
+		if(nextRow.length === 0 || nextRow.hasClass("itemStoredResultRow")){//no current view row exists
+			console.debug("No view for selected stored exists. Generating.");
+			viewRow = $('<tr class="itemStoredResultViewRow table-active" style="display: none"><td class="itemStoredViewDisplayContainer" colspan="100"></td></tr>');
+			let viewContainer = viewRow.find("td.itemStoredViewDisplayContainer");
+
+			await Getters.StoredItem.getStored(itemId, storedId, function(stored){
+				viewContainer.append(StoredView.getStoredViewContent(stored, {}));
+			});
+			storedResultRow.after(viewRow);
+		} else if(nextRow.hasClass("itemStoredResultViewRow")) {
+			console.debug("View row for stored result already existent.");
+			viewRow = nextRow;
+		} else {
+			console.error("FAILED to properly determine view row.");
+			return null;
+		}
+
+		viewRow.toggle();
+
+		if(viewRow.is(":visible")){
+			buttonPressedJq.html(Icons.viewClose);
+			buttonPressedJq.attr("title", "Close View");
+		} else {
+			buttonPressedJq.html(Icons.view);
+			buttonPressedJq.attr("title", "View");
+		}
+
+		Main.processStop();
+	}
 };
