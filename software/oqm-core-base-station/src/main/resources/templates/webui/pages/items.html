@@ -92,6 +92,7 @@
 {#itemCheckout/itemCheckoutModal otherModalId="itemViewModal" rootPrefix=rootPrefix}
 {/itemCheckout/itemCheckoutModal}
 {#itemStored/itemStoredViewModal rootPrefix=rootPrefix /}
+{#itemStored/itemStoredEditModal rootPrefix=rootPrefix /}
 {#itemStored/transaction/addTransactionModal /}
 {#CodeScannerModal}{/CodeScannerModal}
 	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal"}
@@ -126,8 +127,9 @@
 	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
 	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
     <script src="{rootPrefix}/res/js/obj/item/itemAddEdit.js"></script>
-    <script src="{rootPrefix}/res/js/obj/item/storedView.js"></script>
-    <script src="{rootPrefix}/res/js/obj/item/storedEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemStored/storedView.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemStored/storedFormInput.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemStored/itemStoredEdit.js"></script>
     <script src="{rootPrefix}/res/js/obj/item/itemView.js"></script>
     <script src="{rootPrefix}/res/js/CodeScanning.js"></script>
     <script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckout.js"></script>

@@ -1,0 +1,16 @@
+{#modal id='itemStoredEdit' size='xl' title='Item Stored Edit'}
+	{#titleIcon}{#icons/stored /}{/titleIcon}
+	{#footerButtons}
+		<button class="btn btn-success" type="submit" form="itemStoredEditForm">
+			{#icons/stored /}<sup>{#icons/edit /}</sup> Save changes
+		</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col" id="itemStoredEditMessages"></div>
+	</div>
+	<div class="row">
+		<div class="col" id="itemStoredEditItemDetailContainer"></div>
+	</div>
+	<form id="itemStoredEditForm">
+	</form>
+{/modal}

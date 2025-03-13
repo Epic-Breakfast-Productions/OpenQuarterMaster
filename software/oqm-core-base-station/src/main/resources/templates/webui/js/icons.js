@@ -11,6 +11,7 @@ const Icons = {
 	locked: '{#icons/locked /}',
 	item: '{#icons/item /}',
 	items: '{#icons/items /}',
+	stored: '{#icons/stored /}',
 	newTab: '{#icons/newTab /}',
 	remove: '{#icons/remove /}',
 	unlocked: '{#icons/unlocked /}',

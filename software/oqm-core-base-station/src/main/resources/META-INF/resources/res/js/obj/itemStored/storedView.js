@@ -99,7 +99,7 @@ const StoredView = {
 		return output;
 	},
 	getStoredKeywords(stored) {
-		if (stored.keywords) {
+		if (stored.keywords.length) {
 			let keywordContainer = $('<div class="keywordsViewContainer"></div>');
 			KeywordAttUtils.displayKeywordsIn(keywordContainer, stored.keywords);
 
@@ -111,7 +111,7 @@ const StoredView = {
 		return "";
 	},
 	getStoredAtts(stored) {
-		if (stored.attributes) {
+		if (Object.keys(stored.attributes).length) {
 			let keywordContainer = $('<div class="attsViewContainer"></div>');
 			KeywordAttUtils.displayAttsIn(keywordContainer, stored.attributes);
 
@@ -123,29 +123,6 @@ const StoredView = {
 		return "";
 	},
 
-	getCheckoutBlockLink(stored, small = false) {
-		let output = $('<div class=""></div>');
-
-		console.log("Creating checkout link. Item: " + stored.item + " Block: " + stored.storageBlock + " Stored: ", stored)
-
-		let checkoutButton = $('<button type=button class="btn btn-warning" data-bs-toggle="modal" data-bs-target="#itemCheckoutModal"></button>');
-		let setupCheckoutFunc = function () {
-			//TODO:: move to transaction
-			// ItemCheckout.setupCheckoutItemModal(stored, itemId, storageId);
-
-		}
-		checkoutButton = checkoutButton.on("click", setupCheckoutFunc);
-		checkoutButton.append(Icons.itemCheckout + "Checkout");
-		output.append(checkoutButton);
-
-		if (small) {
-			output.addClass("col-sm-6 col-xs-6 col-md-4 col-lg-2");
-		} else {
-			output.addClass("col-sm-6 col-xs-6 col-md-4 col-lg-2");
-		}
-
-		return output;
-	},
 	//TODO: finish figuring this out
 	getTransactBlockLink(stored, small = false,
 						 {
@@ -192,6 +169,7 @@ const StoredView = {
 		{
 			index = false,
 			includeBlockLink = false,
+			includeEditButton = true,
 			includeIdentifier = false,
 			showCurrentlyStored = false,
 			showAllTransactions = false,
@@ -202,10 +180,12 @@ const StoredView = {
 			showSetTransaction = false,
 		}) {
 		console.log("Getting stored view html for: ", stored)
-		let newContent = $('<div class="row storedViewRow"></div>');
+		let newContent = $('<div class="storedView"><div class="row storedInfo"></div><div class="storedButtons d-flex"</div></div>');
+		let newContentInfo = newContent.find(".storedInfo");
+		let newContentButtons = newContent.find(".storedButtons");
 
 		if (includeBlockLink) {
-			newContent.append(
+			newContentButtons.append(
 				StoredView.getStoredBlockLink(stored.storageBlock, true)
 			);
 		}
@@ -216,24 +196,31 @@ const StoredView = {
 			);
 		}
 
-		newContent.append(
+		newContentInfo.append(
 			StoredView.getStorageBlockAmountHeldView(stored, showCurrentlyStored),
 			StoredView.getStorageBlockBarcodeView(stored, index),
 			StoredView.getStorageBlockIdentifyingDetailsView(stored),
 			StoredView.getStorageBlockConditionView(stored),
 			StoredView.getStorageBlockExpiresView(stored),
 			StoredView.getStoredKeywords(stored),
-			StoredView.getStoredAtts(stored),
-			StoredView.getTransactBlockLink(stored, true, {
-				showAllTransactions: showAllTransactions,
-				showAddTransaction: showAddTransaction,
-				showSubtractTransaction: showSubtractTransaction,
-				showCheckoutTransaction: showCheckoutTransaction,
-				showTransferTransaction: showTransferTransaction,
-				showSetTransaction: showSetTransaction
-			})
+			StoredView.getStoredAtts(stored)
 		);
-		//TODO:: images, keywords, atts
+		//TODO:: images, files
+
+		newContentButtons.append(StoredView.getTransactBlockLink(stored, true, {
+			showAllTransactions: showAllTransactions,
+			showAddTransaction: showAddTransaction,
+			showSubtractTransaction: showSubtractTransaction,
+			showCheckoutTransaction: showCheckoutTransaction,
+			showTransferTransaction: showTransferTransaction,
+			showSetTransaction: showSetTransaction
+		}));
+
+		if(includeEditButton){
+			newContentButtons.append($('<button class="btn btn-warning"  title="Edit This Stored Item" data-bs-toggle="modal" data-bs-target="#itemStoredEditModal" onclick="ItemStoredEdit.setupEditForm(this, \''+stored.item+'\', \''+stored.id+'\');">' +
+				Icons.iconWithSub(Icons.stored, Icons.edit)+' Edit' +
+				'</button>'));
+		}
 
 		//TODO:: history, applied transactions
 		return newContent;
