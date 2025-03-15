@@ -386,6 +386,7 @@ const ItemStoredTransaction = {
 				data.toBlock = this.toBlockInput.val();
 			}
 
+			//TODO:: modularize
 			switch (data.transactionType) {
 				case "ADD_AMOUNT":
 					console.debug("Amount fields present.");
@@ -393,28 +394,9 @@ const ItemStoredTransaction = {
 					break;
 				case "ADD_WHOLE":
 					data.toAdd = {};
-					let toAddFieldsTo = data.toAdd;
-
-					let amtFormElements = this.inputsContainer.find(".amountStoredFormElements");
-					if (amtFormElements.length) {
-						console.debug("Amount fields present.");
-						toAddFieldsTo.amount = UnitUtils.getQuantityFromInputs(this.inputsContainer);
-						toAddFieldsTo.type = "AMOUNT";
-					} else {
-						toAddFieldsTo.type = "UNIQUE";
-					}
-					let commFormElements = this.inputsContainer.find(".commonStoredFormElements");
-					if (commFormElements) {
-						console.debug("Common fields present.");
-
-						toAddFieldsTo["barcode"] = commFormElements.find('input[name="barcode"]').val();
-						toAddFieldsTo["condition"] = commFormElements.find('input[name="condition"]').val();
-						toAddFieldsTo["conditionNotes"] = commFormElements.find('textarea[name="conditionNotes"]').val();
-						toAddFieldsTo["expires"] = commFormElements.find('input[name="expires"]').val();
-						toAddFieldsTo["item"] = ItemStoredTransaction.Add.itemIdInput.val();
-						toAddFieldsTo["storageBlock"] = ItemStoredTransaction.Add.toBlockInput.val();
-						KeywordAttEdit.addKeywordAttData(toAddFieldsTo, commFormElements.find(".keywordInputDiv"), commFormElements.find(".attInputDiv"));
-					}
+					data["item"] = ItemStoredTransaction.Add.itemIdInput.val();
+					data["storageBlock"] = ItemStoredTransaction.Add.toBlockInput.val();
+					StoredFormInput.dataFromInputs(data.toAdd, this.inputsContainer);
 					break;
 			}
 

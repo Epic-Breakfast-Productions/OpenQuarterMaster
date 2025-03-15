@@ -180,7 +180,7 @@ const StoredView = {
 			showSetTransaction = false,
 		}) {
 		console.log("Getting stored view html for: ", stored)
-		let newContent = $('<div class="storedView"><div class="row storedInfo"></div><div class="storedButtons d-flex"</div></div>');
+		let newContent = $('<div class="storedView"><div class="row storedInfo"></div><hr /><div class="storedButtons d-flex"</div></div>');
 		let newContentInfo = newContent.find(".storedInfo");
 		let newContentButtons = newContent.find(".storedButtons");
 

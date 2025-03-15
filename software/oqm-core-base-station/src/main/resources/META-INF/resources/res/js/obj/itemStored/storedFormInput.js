@@ -1,7 +1,6 @@
 const StoredFormInput = {
 	getBasicInputs(stored) {
 		//TODO:: update to use barcode input
-		//TODO:: update these
 		let output = $(
 			'<div class="commonStoredFormElements">' +
 			'<div class="mb-3 ">\n' +
@@ -12,7 +11,6 @@ const StoredFormInput = {
 			'    <label class="form-label">Condition Percentage</label>\n' +
 			'    <div class="input-group">\n' +
 			'        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition">\n' +
-			//TODO:: better label of better to worse
 			'        <span class="input-group-text" id="addon-wrapping">%</span>\n' +
 			//TODO:: better label of better to worse
 			'    </div>\n' + '</div>\n' + '<div class="mb-3">\n' +
@@ -26,13 +24,28 @@ const StoredFormInput = {
 			'</div>\n' + //TODO:: move these templates to js calls
 			// imageInputTemplate.html() +
 
-			//TODO:: show kw/att on same row. images too?
 			PageComponents.Inputs.keywords +
 			PageComponents.Inputs.attribute +
+			//TODO:: images/files
 			'</div>\n'
 		);
 
-		//TODO:: populate from stored
+		if(stored != null){
+			if(stored.barcode){
+				output.find(".storedBarcodeInput").val(stored.barcode);
+			}
+			if(stored.condition){
+				output.find(".storedConditionPercentageInput").val(stored.condition);
+			}
+			if(stored.conditionNotes){
+				output.find(".storedConditionNotesInput").val(stored.conditionNotes);
+			}
+			if(stored.expires){
+				output.find(".storedExpiredInput").val(stored.expires);
+			}
+			KeywordAttEdit.addKeywordInputs(output.find(".keywordInputDiv"), stored.keywords);
+			KeywordAttEdit.addAttInputs(output.find(".attInputDiv"), stored.attributes);
+		}
 
 		return output;
 	},
@@ -47,7 +60,7 @@ const StoredFormInput = {
 		if (showAmount) {
 			output.append($(
 				'<label class="form-label">Amount:</label>\n' +
-				'<div class="input-group mt-2 mb-3">\n' +
+				'<div class="input-group mt-2 mb-3 amountStoredInput">\n' +
 				'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required>\n' +
 				'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit"></select>\n' +
 				'</div>'))
@@ -81,5 +94,32 @@ const StoredFormInput = {
 		output.append(this.getBasicInputs(stored));
 
 		return output;
+	},
+	dataFromInputs(dataToAddTo, containerJq){
+		//common inputs
+		let commonInputsContainer = containerJq.find(".commonStoredFormElements");
+		if(commonInputsContainer.length && commonInputsContainer.is(":visible")){
+			console.log("Had common form elements section.");
+			dataToAddTo["barcode"] = commonInputsContainer.find('input[name="barcode"]').val();
+			dataToAddTo["condition"] = commonInputsContainer.find('input[name="condition"]').val();
+			dataToAddTo["conditionNotes"] = commonInputsContainer.find('textarea[name="conditionNotes"]').val();
+			dataToAddTo["expires"] = commonInputsContainer.find('input[name="expires"]').val();
+			KeywordAttEdit.addKeywordAttData(dataToAddTo, commonInputsContainer.find(".keywordInputDiv"), commonInputsContainer.find(".attInputDiv"));
+		}
+		//amount inputs
+		let amountInputsContainer = containerJq.find(".amountStoredFormElements");
+		if(amountInputsContainer.length && amountInputsContainer.is(":visible")){
+			console.log("Had amount form elements section.");
+			let amountStoredInput = amountInputsContainer.find(".amountStoredInput");
+			if(amountStoredInput.length && amountStoredInput.is(":visible")){
+				console.log("Had amount form elements.");
+				dataToAddTo.amount = UnitUtils.getQuantityFromInputs(this.inputsContainer);
+			}
+		}
+		//unique inputs
+		// let uniqueInputsContainer = containerJq.find(".uniqueStoredFormInputs");
+		// if(uniqueInputsContainer.length && uniqueInputsContainer.is(":visible")){
+		// 	//TODO
+		// }
 	}
 };
