@@ -386,7 +386,6 @@ const ItemStoredTransaction = {
 				data.toBlock = this.toBlockInput.val();
 			}
 
-			//TODO:: modularize
 			switch (data.transactionType) {
 				case "ADD_AMOUNT":
 					console.debug("Amount fields present.");

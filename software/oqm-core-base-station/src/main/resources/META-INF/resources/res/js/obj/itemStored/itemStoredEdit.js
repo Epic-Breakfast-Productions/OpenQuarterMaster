@@ -3,9 +3,15 @@ const ItemStoredEdit = {
 	modal: $("#itemStoredEditModal"),
 	form: $("#itemStoredEditForm"),
 	formMessages: $("#itemStoredEditMessages"),
+	infoStoredLabel: $("#itemStoredEditItemInfoStoredLabel"),
+	infoItemName: $("#itemStoredEditItemInfoItemName"),
+	infoBlockLabel: $("#itemStoredEditItemInfoBlockLabel"),
 	resetForm(){
 		ItemStoredEdit.form.attr("action", "");
 		ItemStoredEdit.form.html("");
+		ItemStoredEdit.infoStoredLabel.text("");
+		ItemStoredEdit.infoItemName.text("");
+		ItemStoredEdit.infoBlockLabel.text("");
 	},
 	setupEditForm: async function(buttonPressed, itemId, stored){
 		Main.processStart();
@@ -19,12 +25,23 @@ const ItemStoredEdit = {
 		ModalHelpers.setReturnModal(ItemStoredEdit.modal, buttonPressed);
 		ItemStoredEdit.resetForm();
 
+		let promises = [];
+
 		//TODO:: item info display
+		ItemStoredEdit.infoStoredLabel.text(stored.labelText);
+		promises.push(Getters.InventoryItem.getItemName(itemId, function (itemName){
+			ItemStoredEdit.infoItemName.text(itemName);
+		}));
+		promises.push(getStorageBlockLabel(stored.storageBlock, function (blockLabel){
+			ItemStoredEdit.infoBlockLabel.text(blockLabel);
+		}));
 
 		ItemStoredEdit.form.attr("action", Rest.passRoot + "/inventory/item/"+itemId+"/stored/"+stored.id);
 
 		let inputs = await StoredFormInput.getStoredInputs(stored.type, stored, null, true);
 		ItemStoredEdit.form.append(inputs);
+
+		Promise.all(promises);
 
 		Main.processStop();
 	}
