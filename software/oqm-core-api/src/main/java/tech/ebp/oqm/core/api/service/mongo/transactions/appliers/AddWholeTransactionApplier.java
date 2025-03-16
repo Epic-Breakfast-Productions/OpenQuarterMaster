@@ -41,6 +41,14 @@ public class AddWholeTransactionApplier extends TransactionApplier<AddWholeTrans
 		ClientSession cs
 	) {
 		Stored stored = transaction.getToAdd();
+		
+		if(stored.getItem() == null) {
+			stored.setItem(inventoryItem.getId());
+		}
+		
+		if(stored.getStorageBlock() == null) {
+			stored.setStorageBlock(transaction.getToBlock());
+		}
 
 		if (!inventoryItem.getId().equals(stored.getItem())) {
 			throw new IllegalArgumentException("Stored given is not associated with item.");
