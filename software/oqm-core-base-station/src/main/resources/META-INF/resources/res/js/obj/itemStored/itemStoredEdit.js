@@ -27,7 +27,6 @@ const ItemStoredEdit = {
 
 		let promises = [];
 
-		//TODO:: item info display
 		ItemStoredEdit.infoStoredLabel.text(stored.labelText);
 		promises.push(Getters.InventoryItem.getItemName(itemId, function (itemName){
 			ItemStoredEdit.infoItemName.text(itemName);

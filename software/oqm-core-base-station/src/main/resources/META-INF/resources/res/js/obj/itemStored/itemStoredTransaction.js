@@ -393,8 +393,7 @@ const ItemStoredTransaction = {
 					break;
 				case "ADD_WHOLE":
 					data.toAdd = {};
-					data["item"] = ItemStoredTransaction.Add.itemIdInput.val();
-					data["storageBlock"] = ItemStoredTransaction.Add.toBlockInput.val();
+					data["toBlock"] = ItemStoredTransaction.Add.toBlockInput.val();
 					StoredFormInput.dataFromInputs(data.toAdd, this.inputsContainer);
 					break;
 			}

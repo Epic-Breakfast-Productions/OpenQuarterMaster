@@ -110,16 +110,19 @@ const StoredFormInput = {
 		let amountInputsContainer = containerJq.find(".amountStoredFormElements");
 		if(amountInputsContainer.length && amountInputsContainer.is(":visible")){
 			console.log("Had amount form elements section.");
+			dataToAddTo["type"] = "AMOUNT";
 			let amountStoredInput = amountInputsContainer.find(".amountStoredInput");
 			if(amountStoredInput.length && amountStoredInput.is(":visible")){
 				console.log("Had amount form elements.");
-				dataToAddTo.amount = UnitUtils.getQuantityFromInputs(this.inputsContainer);
+				dataToAddTo.amount = UnitUtils.getQuantityFromInputs(amountInputsContainer);
 			}
 		}
 		//unique inputs
-		// let uniqueInputsContainer = containerJq.find(".uniqueStoredFormInputs");
-		// if(uniqueInputsContainer.length && uniqueInputsContainer.is(":visible")){
-		// 	//TODO
-		// }
+		let uniqueInputsContainer = containerJq.find(".uniqueStoredFormInputs");
+		if(uniqueInputsContainer.length && uniqueInputsContainer.is(":visible")){
+			console.log("Had unique form elements section.");
+			dataToAddTo["type"] = "UNIQUE";
+			//TODO
+		}
 	}
 };
