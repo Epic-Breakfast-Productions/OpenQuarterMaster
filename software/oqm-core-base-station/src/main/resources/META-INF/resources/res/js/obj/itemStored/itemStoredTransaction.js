@@ -130,9 +130,7 @@ const ItemStoredTransaction = {
 			return output;
 		}
 	},
-	StoredFormUtils: {
-
-	}, Add: {
+	Add: {
 		modal: $("#itemStoredTransactionAddModal"),
 		messages: $("#itemStoredTransactionAddMessages"),
 		form: $("#itemStoredTransactionAddForm"),
@@ -414,15 +412,45 @@ const ItemStoredTransaction = {
 			event.preventDefault();
 			await ItemStoredTransaction.Add.submitForm();
 		}
-	}, Checkin: {
+	},
+	Checkin: {
+		modal: $("#itemStoredTransactionCheckinModal"),
+		messages: $("#itemStoredTransactionCheckinMessages"),
+		form: $("#itemStoredTransactionCheckinForm"),
+
 		//TODO
-	}, Checkout: {
+	},
+	Checkout: {
+		modal: $("#itemStoredTransactionCheckoutModal"),
+		messages: $("#itemStoredTransactionCheckoutMessages"),
+		form: $("#itemStoredTransactionCheckoutForm"),
+
 		//TODO
-	}, Set: {
 		//TODO
-	}, Subtract: {
+	},
+	Set: {
+		modal: $("#itemStoredTransactionSetModal"),
+		messages: $("#itemStoredTransactionSetMessages"),
+		form: $("#itemStoredTransactionSetForm"),
+
+		storedIdInput: $("#itemStoredTransactionSetFormStoredIdInput"),
 		//TODO
-	}, Transfer: {
+	},
+	Subtract: {
+		modal: $("#itemStoredTransactionSubtractModal"),
+		messages: $("#itemStoredTransactionSubtractMessages"),
+		form: $("#itemStoredTransactionSubtractForm"),
+
+		storedIdInput: $("#itemStoredTransactionSubtractFormStoredIdInput"),
+		//TODO
+	},
+	Transfer: {
+		modal: $("#itemStoredTransactionTransferModal"),
+		messages: $("#itemStoredTransactionTransferMessages"),
+		form: $("#itemStoredTransactionTransferForm"),
+
+		storedIdInput: $("#itemStoredTransactionTransferFormStoredIdInput"),
+
 		//TODO
 	}
 };

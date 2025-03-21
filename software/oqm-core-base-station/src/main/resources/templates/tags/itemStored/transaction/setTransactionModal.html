@@ -1,0 +1,18 @@
+{#modal id='itemStoredTransactionSet' size='xl' title='Set Item Stored'}
+	{#titleIcon}
+		{#icons/transactionTransfer /}
+	{/titleIcon}
+	{#footerButtons}
+	<button type="submit" id="itemStoredTransactionSetFormSubmitButton" class="btn btn-success" form="itemStoredTransactionSetForm">
+		{#icons/transactionSet /} Set Item Stored
+	</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col messages" id="itemStoredTransactionSetMessages"></div>
+	</div>
+
+	<form id='itemStoredTransactionSetForm'>
+		<input type="hidden" name="itemId" id="itemStoredTransactionSetFormStoredIdInput" value=""/>
+		{!TODO!}
+	</form>
+{/modal}

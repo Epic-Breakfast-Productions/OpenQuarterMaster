@@ -1,0 +1,18 @@
+{#modal id='itemStoredSubtractTransfer' size='xl' title='Subtract Item Stored'}
+	{#titleIcon}
+		{#icons/transactionTransfer /}
+	{/titleIcon}
+	{#footerButtons}
+	<button type="submit" id="itemStoredTransactionTransferFormSubmitButton" class="btn btn-success" form="itemStoredTransactionSubtractForm">
+		{#icons/transactionSubtract /} Subtract Item Stored
+	</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col messages" id="itemStoredTransactionSubtractMessages"></div>
+	</div>
+
+	<form id='itemStoredTransactionSubtractForm'>
+		<input type="hidden" name="itemId" id="itemStoredTransactionSubtractFormStoredIdInput" value=""/>
+		{!TODO!}
+	</form>
+{/modal}
