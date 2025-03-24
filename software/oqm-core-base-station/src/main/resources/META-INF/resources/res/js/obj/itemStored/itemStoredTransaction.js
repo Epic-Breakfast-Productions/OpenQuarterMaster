@@ -450,8 +450,30 @@ const ItemStoredTransaction = {
 		form: $("#itemStoredTransactionTransferForm"),
 
 		storedIdInput: $("#itemStoredTransactionTransferFormStoredIdInput"),
+		amountInputContainer: $("#itemStoredTransactionTransferFormAmountInputContainer"),
+		toBlockInput: $("#itemStoredTransactionTransferFormToBlockSelect"),
 
-		//TODO
+		resetForm: function () {
+			ItemStoredTransaction.Transfer.messages.text("");
+			ItemStoredTransaction.Transfer.amountInputContainer.text("");
+			ItemStoredTransaction.Transfer.toBlockInput.text("");
+		},
+		setupForm: async function (itemId, stored) {
+			Main.processStart();
+			if (typeof stored === "string" || (stored instanceof String)) {
+				return Getters.StoredItem.getStored(itemId, stored, function (storedData) {
+					ItemStoredTransaction.Transfer.setupForm(buttonPressed, itemId, storedData);
+					Main.processStop();
+				});
+			}
+			console.log("Setting up stored transfer form for stored item: ", stored);
+			ItemStoredTransaction.Transfer.resetForm();
+			let promises = [];
+
+
+			Promise.all(promises);
+			Main.processStop();
+		}
 	}
 };
 

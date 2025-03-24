@@ -10,9 +10,42 @@
 	<div class="row">
 		<div class="col messages" id="itemStoredTransactionTransferMessages"></div>
 	</div>
+	<div id="itemStoredTransactionTransferInfoContainer">
+		<h2>
+			{#icons/stored /} <span id="itemStoredTransactionTransferInfoStoredLabel"></span>
+		</h2>
+		<h3>
+			{#icons/item /} <span id="itemStoredTransactionTransferInfoItemName"></span>
+		</h3>
+		<h4>
+			Stored in {#icons/storageBlock /} <span id="itemStoredTransactionTransferInfoBlockLabel"></span>
+		</h4>
+	</div>
+	<hr />
 
 	<form id='itemStoredTransactionTransferForm'>
 		<input type="hidden" name="itemId" id="itemStoredTransactionTransferFormStoredIdInput" value=""/>
-		{!TODO!}
+		
+		<div class="row">
+			<div class="col" id="itemStoredTransactionTransferFormTypeRadioAmountContainer">
+				{!TODO!}
+			</div>
+			<div class="col" id="itemStoredTransactionTransferFormTypeRadioWholeContainer">
+				{!TODO!}
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col" id="itemStoredTransactionTransferFormAmountInputContainer">
+			
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col">
+				<label for="itemStoredTransactionTransferFormToBlockSelect" class="form-label">To {#icons/storageBlock /} Storage Block</label>
+				<select class="form-select form-select-lg" id="itemStoredTransactionTransferFormToBlockSelect" required></select>
+			</div>
+		</div>
 	</form>
 {/modal}
