@@ -27,7 +27,7 @@ import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 @QuarkusTest
 @QuarkusTestResource(value = TestResourceLifecycleManager.class)
 //@TestHTTPEndpoint(StoredEndpoints.class)
-public class StoredEndpointsTest extends RunningServerTest {
+public class StoredInItemEndpointsTest extends RunningServerTest {
 
 	@Inject
 	InventoryItemTestObjectCreator testObjectCreator;

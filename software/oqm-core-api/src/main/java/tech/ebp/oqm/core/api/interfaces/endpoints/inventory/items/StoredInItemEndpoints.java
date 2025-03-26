@@ -4,12 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.BeanParam;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
@@ -31,15 +26,15 @@ import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
+import tech.ebp.oqm.core.api.service.mongo.transactions.AppliedTransactionService;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
-import tech.ebp.oqm.core.api.service.mongo.transactions.AppliedTransactionService;
 
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item/stored")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item/{itemId}/stored")
 @Tags({@Tag(name = "Inventory Items", description = "Endpoints for inventory item CRUD, and managing stored items.")})
 @RequestScoped
-public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
+public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 
 	@Getter
 	@Inject
@@ -55,6 +50,19 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 
 	@Getter
 	Class<Stored> objectClass = Stored.class;
+
+	@Getter
+	@PathParam("itemId")
+	String itemId;
+
+	private InventoryItem inventoryItem = null;
+
+	public InventoryItem getInventoryItem() {
+		if(inventoryItem == null) {
+			this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
+		}
+		return inventoryItem;
+	}
 
 //	@PostConstruct
 //	public void setup(){
@@ -218,4 +226,5 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 		//TODO:: adjust?
 		return super.searchHistory(searchObject);
 	}
+
 }
