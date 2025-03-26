@@ -144,8 +144,8 @@ const StoredView = {
 
 		console.log("Creating checkout link. Item: " + stored.item + " Block: " + stored.storageBlock + " Stored: ", stored)
 
-
-		output.append(ItemStoredTransaction.ModalUtils.getTransactionSelectDropdown((stored ? stored.item : null),
+		ItemStoredTransaction.ModalButtons.getTransactionSelectDropdown(
+			(stored ? stored.item : null),
 			stored,
 			{
 				showAllTransactions: showAllTransactions,
@@ -154,7 +154,10 @@ const StoredView = {
 				showCheckoutTransaction: showCheckoutTransaction,
 				showTransferTransaction: showTransferTransaction,
 				showSetTransaction: showSetTransaction
-			}));
+			}
+		).then((dropdown) => {
+			output.append(dropdown);
+		});
 
 		if (small) {
 			output.addClass("col-sm-6 col-xs-6 col-md-4 col-lg-2");
@@ -216,9 +219,9 @@ const StoredView = {
 			showSetTransaction: showSetTransaction
 		}));
 
-		if(includeEditButton){
-			newContentButtons.append($('<button class="btn btn-warning"  title="Edit This Stored Item" data-bs-toggle="modal" data-bs-target="#itemStoredEditModal" onclick="ItemStoredEdit.setupEditForm(this, \''+stored.item+'\', \''+stored.id+'\');">' +
-				Icons.iconWithSub(Icons.stored, Icons.edit)+' Edit' +
+		if (includeEditButton) {
+			newContentButtons.append($('<button class="btn btn-warning"  title="Edit This Stored Item" data-bs-toggle="modal" data-bs-target="#itemStoredEditModal" onclick="ItemStoredEdit.setupEditForm(this, \'' + stored.item + '\', \'' + stored.id + '\');">' +
+				Icons.iconWithSub(Icons.stored, Icons.edit) + ' Edit' +
 				'</button>'));
 		}
 
@@ -251,26 +254,26 @@ const StoredView = {
 		console.log("Finished setting up stored view for ", storedId);
 		Main.processStop();
 	},
-	setupViewResultTableRow(rowJq, itemId, storedId){
+	setupViewResultTableRow(rowJq, itemId, storedId) {
 		//TODO:: create new row under row of button pressed, display stored info
 	},
-	toggleViewResultTableRow: async function(buttonPressed, itemId, storedId){
+	toggleViewResultTableRow: async function (buttonPressed, itemId, storedId) {
 		Main.processStart();
 		let buttonPressedJq = $(buttonPressed);
 		let storedResultRow = buttonPressedJq.closest("tr.itemStoredResultRow");
 		let nextRow = storedResultRow.next();
 		let viewRow;
 
-		if(nextRow.length === 0 || nextRow.hasClass("itemStoredResultRow")){//no current view row exists
+		if (nextRow.length === 0 || nextRow.hasClass("itemStoredResultRow")) {//no current view row exists
 			console.debug("No view for selected stored exists. Generating.");
 			viewRow = $('<tr class="itemStoredResultViewRow table-active" style="display: none"><td class="itemStoredViewDisplayContainer" colspan="100"></td></tr>');
 			let viewContainer = viewRow.find("td.itemStoredViewDisplayContainer");
 
-			await Getters.StoredItem.getStored(itemId, storedId, function(stored){
+			await Getters.StoredItem.getStored(itemId, storedId, function (stored) {
 				viewContainer.append(StoredView.getStoredViewContent(stored, {}));
 			});
 			storedResultRow.after(viewRow);
-		} else if(nextRow.hasClass("itemStoredResultViewRow")) {
+		} else if (nextRow.hasClass("itemStoredResultViewRow")) {
 			console.debug("View row for stored result already existent.");
 			viewRow = nextRow;
 		} else {
@@ -280,7 +283,7 @@ const StoredView = {
 
 		viewRow.toggle();
 
-		if(viewRow.is(":visible")){
+		if (viewRow.is(":visible")) {
 			buttonPressedJq.html(Icons.viewClose);
 			buttonPressedJq.attr("title", "Close View");
 		} else {

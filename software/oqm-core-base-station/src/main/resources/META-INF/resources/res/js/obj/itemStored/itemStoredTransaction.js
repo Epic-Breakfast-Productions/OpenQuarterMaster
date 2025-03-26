@@ -15,12 +15,12 @@ const ItemStoredTransaction = {
 			}
 		});
 	},
-	ModalUtils: {
+	ModalButtons: {
 		getTransactionSelectButton: function () {
 			//TODO
 		},
-		getTransactionSelectDropdown: function (
-			itemId = null,
+		getTransactionSelectDropdown: async function (
+			item = null,
 			stored = null,
 			{
 				buttonText = true,
@@ -33,46 +33,20 @@ const ItemStoredTransaction = {
 				showSetTransaction = false,
 			}
 		) {
-			if (stored != null) {
-				if (itemId == null) {
-					itemId = stored.item;
-				}
-				//TODO:: not show based on stored
-			}
-			let output = $('<div class="dropdown transact-dropdown">\n' +
-				'  <button class="btn btn-secondary dropdown-toggle transactDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">\n' +
-				'    ' + Icons.transaction + (buttonText ? " Transact" : "") + '\n' +
-				'  </button>\n' +
-				'  <ul class="dropdown-menu">\n' +
-				'  </ul>\n' +
-				'</div>');
-			let menu = output.find(".dropdown-menu");
 
-			if (showAllTransactions || showAddTransaction) {
-				menu.append($('<li><button class="dropdown-item transactDropdownAdd" type="button" onclick="ItemStoredTransaction.Add.setupForm(\'' + itemId + '\', \'' + stored.id + '\', this);" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal">' +
-					Icons.addTransaction + ' Add' +
-					'</button></li>'));
-			}
-			//TODO:: modal js
-			if (showAllTransactions || showSubtractTransaction) {
-				menu.append($('<li><button class="dropdown-item transactDropdownSubtract" type="button">' + Icons.subtractTransaction + ' Subtract</button></li>'));
-			}
-			//TODO:: modal js
-			if (showAllTransactions || showCheckinTransaction) {
-				menu.append($('<li><button class="dropdown-item transactDropdownCheckin" type="button">' + Icons.checkinTransaction + ' Checkin</button></li>'));
-			}
-			//TODO:: modal js
-			if (showAllTransactions || showCheckoutTransaction) {
-				menu.append($('<li><button class="dropdown-item transactDropdownCheckout" type="button">' + Icons.checkoutTransaction + ' Checkout</button></li>'));
-			}
-			//TODO:: modal js
-			if (showAllTransactions || showTransferTransaction) {
-				menu.append($('<li><button class="dropdown-item transactDropdownTransfer" type="button">' + Icons.transferTransaction + ' Transfer</button></li>'));
-			}
-			//TODO:: modal js
-			if (showAllTransactions || showSetTransaction) {
-				menu.append($('<li><button class="dropdown-item transactDropdownSet" type="button">' + Icons.setTransaction + ' Set</button></li>'));
-			}
+			let query = new URLSearchParams();
+
+			//TODO:: add to query
+
+
+			let output;
+			await Rest.call({
+				url: Rest.componentRoot + "/itemStoredTransaction/dropdown?" + query.toString(),
+				returnType:"html",
+				done: function (buttonData){
+					output = $(buttonData);
+				}
+			});
 
 			return output;
 		},

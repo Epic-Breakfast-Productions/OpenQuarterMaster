@@ -3,6 +3,7 @@ const Rest = {
 	wholeBody: $('body'),
 	apiRoot: Constants.rootPrefix + "/api",
 	passRoot: Constants.rootPrefix + "/api/passthrough",
+	componentRoot: Constants.rootPrefix + "/api/pageComponents",
 	buildErrorMessageFromResponse(response, statusMessage){
 		let output = "";
 

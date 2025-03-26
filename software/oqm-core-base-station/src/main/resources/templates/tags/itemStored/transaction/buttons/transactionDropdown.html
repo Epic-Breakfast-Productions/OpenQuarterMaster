@@ -1,0 +1,62 @@
+{! Inputs:
+	item(optional),
+	stored(optional),
+	addButton=true checkinButton=true checkoutButton=true setButton=true subtractButton=true transferButton=true
+!}
+{#let itemId=(item ? item.get("id").asText() : null) storedId=(stored ? stored.get("id").asText() : null)}
+
+<div class="dropdown transact-dropdown">
+	<button class="btn btn-secondary dropdown-toggle transactDropdown" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+		{#icons/transaction /} {#if buttonText.or(true)}Transact{/if}
+	</button>
+	<ul class="dropdown-menu">
+		{#if addButton.or(true)}
+		<li>
+			<button class="dropdown-item transactDropdownAdd" type="button" onclick="ItemStoredTransaction.Add.setupForm({#if itemId}'{itemId}'{#else}null{/if}, {#if storedId}'{storedId}'{#else}null{/if}, this);" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal">
+				{#icons/transactionAdd /} Add
+			</button>
+		</li>
+		{/if}
+		{#if subtractButton.or(true)}
+		<li>
+			<button class="dropdown-item transactDropdownSubtract" type="button">
+				{#icons/transactionSubtract /} Subtract
+			</button>
+		</li>
+		{/if}
+		{#if checkinButton.or(true) || checkoutButton.or(true)}
+			<li><hr class="dropdown-divider transactDropdownCheckinoutDivider"></li>
+			{#if checkoutButton.or(true)}
+			<li>
+				<button class="dropdown-item transactDropdownCheckout" type="button">
+					{#icons/transactionCheckout /} Checkout
+				</button>
+			</li>
+			{/if}
+			{#if checkinButton.or(true)}
+			<li>
+				<button class="dropdown-item transactDropdownCheckin" type="button">
+					{#icons/transactionCheckin /} Checkin
+				</button>
+			</li>
+			{/if}
+		{/if}
+		{#if transferButton.or(true) || setButton.or(true)}
+			<li><hr class="dropdown-divider transactDropdownOtherDivider"></li>
+			{#if transferButton.or(true)}
+			<li>
+				<button class="dropdown-item transactDropdownTransfer" type="button">
+					{#icons/transactionTransfer /} Transfer
+				</button>
+			</li>
+			{/if}
+			{#if setButton.or(true)}
+			<li>
+				<button class="dropdown-item transactDropdownSet" type="button">
+					{#icons/transactionSet /} Set
+				</button>
+			</li>
+			{/if}
+		{/if}
+	</ul>
+</div>
