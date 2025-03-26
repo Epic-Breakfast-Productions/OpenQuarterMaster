@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects;
 
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,6 +17,9 @@ import java.util.List;
 @Setter
 @SuperBuilder
 public class StoredSearch extends SearchKeyAttObject {
+	
+	@QueryParam("itemId") String inventoryItemIdFromQuery;
+	@QueryParam("blockId") String storageBlockIdFromQuery;
 
 	@QueryParam("inStorageBlock") List<String> inStorageBlocks;
 
