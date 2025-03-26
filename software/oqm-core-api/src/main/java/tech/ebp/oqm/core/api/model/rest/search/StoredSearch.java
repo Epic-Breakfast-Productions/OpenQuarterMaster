@@ -22,9 +22,11 @@ import static com.mongodb.client.model.Filters.*;
 @Setter
 public class StoredSearch extends SearchKeyAttObject<Stored> {
 
-	@PathParam("itemId") String inventoryItemId;
+	@PathParam("itemId") String inventoryItemIdFromPath;
+	@QueryParam("itemId") String inventoryItemIdFromQuery;
 
-	@PathParam("blockId") String storageBlockId;
+	@PathParam("blockId") String storageBlockIdFromPath;
+	@QueryParam("blockId") String storageBlockIdFromQuery;
 
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
 
@@ -39,17 +41,41 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 	
 	//TODO:: object specific fields, add to bson filter list
 	
+	
+	public StoredSearch setInventoryItemId(String itemId){
+		this.inventoryItemIdFromPath = itemId;
+		return this;
+	}
+	public StoredSearch setStorageBlockId(String blockId){
+		this.storageBlockIdFromPath = blockId;
+		return this;
+	}
+	
+	public String getInventoryItemId(){
+		if(this.hasValue(this.getInventoryItemIdFromPath())){
+			return this.getInventoryItemIdFromPath();
+		} else if(this.hasValue(this.getInventoryItemIdFromQuery())){
+			return this.getInventoryItemIdFromQuery();
+		}
+		return null;
+	}
+	
 	@Override
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 
-		if(this.hasValue(this.getInventoryItemId())){
-			filters.add(eq("item", new ObjectId(this.getInventoryItemId())));
+		if(this.hasValue(this.getInventoryItemIdFromPath())){
+			filters.add(eq("item", new ObjectId(this.getInventoryItemIdFromPath())));
+		} else if(this.hasValue(this.getInventoryItemIdFromQuery())){
+			filters.add(eq("item", new ObjectId(this.getInventoryItemIdFromQuery())));
 		}
-		if(this.hasValue(this.getStorageBlockId())){
-			filters.add(eq("storageBlock", new ObjectId(this.getStorageBlockId())));
+		
+		if(this.hasValue(this.getStorageBlockIdFromPath())){
+			filters.add(eq("storageBlock", new ObjectId(this.getStorageBlockIdFromPath())));
+		} else if(this.hasValue(this.getStorageBlockIdFromQuery())){
+			filters.add(eq("storageBlock", new ObjectId(this.getStorageBlockIdFromQuery())));
 		}
-
+		
 		//TODO::item
 		//TODO:: redo these
 //		if (this.hasValue(this.getItemBarcode())) {
