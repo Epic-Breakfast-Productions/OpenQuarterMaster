@@ -392,15 +392,30 @@ const ItemStoredTransaction = {
 		messages: $("#itemStoredTransactionCheckinMessages"),
 		form: $("#itemStoredTransactionCheckinForm"),
 
-		//TODO
+		resetForm(){
+			//TODO
+		},
+		setupForm(itemId, storedId, buttonElement){
+			console.log("Setting up item stored checkin transaction form for item", itemId);
+			ModalHelpers.setReturnModal(this.modal, buttonElement);
+			this.resetForm();
+			//TODO
+		}
 	},
 	Checkout: {
 		modal: $("#itemStoredTransactionCheckoutModal"),
 		messages: $("#itemStoredTransactionCheckoutMessages"),
 		form: $("#itemStoredTransactionCheckoutForm"),
 
-		//TODO
-		//TODO
+		resetForm(){
+			//TODO
+		},
+		setupForm(itemId, storedId, buttonElement){
+			console.log("Setting up item stored checkout transaction form for item", itemId);
+			ModalHelpers.setReturnModal(this.modal, buttonElement);
+			this.resetForm();
+			//TODO
+		}
 	},
 	Set: {
 		modal: $("#itemStoredTransactionSetModal"),
@@ -408,7 +423,17 @@ const ItemStoredTransaction = {
 		form: $("#itemStoredTransactionSetForm"),
 
 		storedIdInput: $("#itemStoredTransactionSetFormStoredIdInput"),
-		//TODO
+
+
+		resetForm(){
+			//TODO
+		},
+		setupForm(itemId, storedId, buttonElement){
+			console.log("Setting up item stored set transaction form for item", itemId);
+			ModalHelpers.setReturnModal(this.modal, buttonElement);
+			this.resetForm();
+			//TODO
+		}
 	},
 	Subtract: {
 		modal: $("#itemStoredTransactionSubtractModal"),
@@ -416,7 +441,16 @@ const ItemStoredTransaction = {
 		form: $("#itemStoredTransactionSubtractForm"),
 
 		storedIdInput: $("#itemStoredTransactionSubtractFormStoredIdInput"),
-		//TODO
+
+		resetForm(){
+			//TODO
+		},
+		setupForm(itemId, storedId, buttonElement){
+			console.log("Setting up item stored subtract transaction form for item", itemId);
+			ModalHelpers.setReturnModal(this.modal, buttonElement);
+			this.resetForm();
+			//TODO
+		}
 	},
 	Transfer: {
 		modal: $("#itemStoredTransactionTransferModal"),
@@ -432,16 +466,17 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Transfer.amountInputContainer.text("");
 			ItemStoredTransaction.Transfer.toBlockInput.text("");
 		},
-		setupForm: async function (itemId, stored) {
+		setupForm: async function (itemId, stored, buttonElement) {
 			Main.processStart();
 			if (typeof stored === "string" || (stored instanceof String)) {
 				return Getters.StoredItem.getStored(itemId, stored, function (storedData) {
-					ItemStoredTransaction.Transfer.setupForm(buttonPressed, itemId, storedData);
+					ItemStoredTransaction.Transfer.setupForm(itemId, storedData, buttonElement);
 					Main.processStop();
 				});
 			}
 			console.log("Setting up stored transfer form for stored item: ", stored);
 			ItemStoredTransaction.Transfer.resetForm();
+			ModalHelpers.setReturnModal(this.modal, buttonElement);
 			let promises = [];
 
 
