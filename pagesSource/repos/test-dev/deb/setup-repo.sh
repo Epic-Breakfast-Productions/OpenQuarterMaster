@@ -2,7 +2,7 @@
 #Script to setup the Debian OQM repo and install oqm-captain
 
 SUDOTXT=""
-if [ "1000" -ne 0 ]; then
+if [ "1001" -ne 0 ]; then
   SUDOTXT="sudo"
 fi
 
