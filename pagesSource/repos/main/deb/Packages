@@ -472,6 +472,21 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Depot instance for Open QuarterMaster.
 Licence: GPL-3+
 
+Package: oqm-core-depot
+Version: 1.2.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.6.0), oqm-infra-traefik (>= 1.0.0)
+Filename: ./oqm-core-depot_1.2.1_all.deb
+Size: 2558
+MD5sum: ac847191937489ea6b8de0ac3af5a2a8
+SHA1: c3b085f64796a642d72a8f07c8f18cfef4cf2413
+SHA256: a88ed3049679e389f7c16ae7515fb039013d9dbe1c3210e168d40ac569ca5ed6
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/oqm-depot
+Description: Depot instance for Open QuarterMaster.
+Licence: GPL-3+
+
 Package: oqm-infra-jaeger
 Version: 1.1.1
 Architecture: all
