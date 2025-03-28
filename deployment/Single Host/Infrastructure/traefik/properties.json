@@ -1,6 +1,6 @@
 {
 	"packageName":"oqm-infra-traefik",
-	"version":"1.0.0",
+	"version":"1.0.2",
 	"description":"Traefik Reverse Proxy instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/traefik",
 	"configs": [],

@@ -21,7 +21,7 @@ sys.path.append("/usr/lib/oqm/station-captain/")
 from ConfigManager import *
 from LogUtils import *
 
-LogUtils.setupLogging("infra-traefik-proxy-config.log", "--verbose" in sys.argv)
+LogUtils.setupLogging("infra-traefik-proxy-config.log", True)
 
 log = LogUtils.setupLogger("main")
 log.info("==== STARTING TRAEFIK CONFIG GENERATION ====")
@@ -83,25 +83,28 @@ def updateTraefikConfig():
 
 
     for curProxyConfigFile in os.listdir(PROXY_CONFIG_DIR):
-        if curProxyConfigFile.endswith(".json"):
-            log.info("Cur proxy file: " + curProxyConfigFile)
-            with open(PROXY_CONFIG_DIR + "/" + curProxyConfigFile, 'r') as stream:
-                curProxyConfig = json.load(stream)
+        try:
+            if curProxyConfigFile.endswith(".json"):
+                log.info("Cur proxy file: " + curProxyConfigFile)
+                with open(PROXY_CONFIG_DIR + "/" + curProxyConfigFile, 'r') as stream:
+                    curProxyConfig = json.load(stream)
 
-            curProxyConfig["serviceName"] = curProxyConfig["type"] + "-" + curProxyConfig["name"]
-            curProxyConfig["proxyPath"] = "/" + curProxyConfig["type"] + "/" + curProxyConfig["name"]
+                curProxyConfig["serviceName"] = curProxyConfig["type"] + "-" + curProxyConfig["name"]
+                curProxyConfig["proxyPath"] = "/" + curProxyConfig["type"] + "/" + curProxyConfig["name"]
 
-            if "internalBaseUri" not in curProxyConfig:
-                curProxyConfig["internalBaseUri"] = mainCM.getConfigVal(curProxyConfig["internalBaseUriConfig"])
-            if "preservePath" not in curProxyConfig:
-                curProxyConfig["preservePath"] = False
-            if "stripPrefixes" not in curProxyConfig:
-                curProxyConfig["stripPrefixes"] = False
+                if "internalBaseUri" not in curProxyConfig:
+                    curProxyConfig["internalBaseUri"] = mainCM.getConfigVal(curProxyConfig["internalBaseUriConfig"])
+                if "preservePath" not in curProxyConfig:
+                    curProxyConfig["preservePath"] = False
+                if "stripPrefixes" not in curProxyConfig:
+                    curProxyConfig["stripPrefixes"] = False
 
-            log.info("Using proxy config: %s", curProxyConfig)
-            templateData["services"].append(curProxyConfig)
-        else:
-            continue
+                log.debug("Using proxy config: %s", curProxyConfig)
+                templateData["services"].append(curProxyConfig)
+            else:
+                continue
+        except Exception as error:
+            log.warning("Error processing proxy config file {} : {}".format(curProxyConfigFile, str(error)), exc_info=1)
 
     log.info("Done reading in proxy config files. Data: %s", templateData)
 
