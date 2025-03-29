@@ -54,6 +54,7 @@ public abstract class UiProvider extends RestInterface {
 		return template
 				   .data("rootPrefix", this.getRootPrefix())
 				   .data("userInfo", this.getUserInfo())
+				   .data("userToken", this.getUserTokenStr())
 				   .data("oqmDbs", this.getOqmDatabases())
 				   .data("selectedOqmDb", this.getSelectedDb())
 				   .data("traceId", this.span.getSpanContext().getTraceId())

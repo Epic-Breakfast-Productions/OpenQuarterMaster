@@ -103,6 +103,7 @@ let Search = {
 
 
 $(document).ready(function(){
+	Main.processStart();
 	if (Search.hasMainPageSearch()) {
 		console.log("Filling in main search form from GET params")
 		Search.fillInQueryForm(Search.mainPageSearch);
@@ -110,6 +111,7 @@ $(document).ready(function(){
 	} else {
 		console.log("Page has no main search to fill in.")
 	}
+	Main.processStop();
 });
 
 $(".pagingSearchForm").each(function (i, form) {

@@ -25,7 +25,8 @@ Accepts:
     <div class="row mb-2">
         <div class="col d-grid gap-2">
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditModal"
-                    onclick="setupAddEditForAdd();">{#icons/add}{/icons/add} Add Storage Block
+                    onclick="setupAddEditForAdd();"
+                    id="mainAddButton">{#icons/add}{/icons/add} Add Storage Block
             </button>
         </div>
         <!--
@@ -56,7 +57,7 @@ Accepts:
 </div>
 <div class="row">
     <div class="col table-responsive">
-        <table class=" table table-bordered table-striped table-hover table-sm">
+        <table id="mainPageSearchResults" class="table table-bordered table-striped table-hover table-sm">
             {#search/storage/searchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' rootPrefix=rootPrefix}
             {/search/storage/searchResults}
         </table>
@@ -460,6 +461,7 @@ function resetAddEdit(){
 
 
 function setupAddEditForAdd(){
+    Main.processStart();
     console.log("Setting up add/edit form for add.");
     resetAddEdit();
     addBulkAccord.show();
@@ -467,9 +469,11 @@ function setupAddEditForAdd(){
     addEditModalTitleText.text("Add Storage Block");
     addEditModalTitleIcon.html(Icons.iconWithSub(Icons.storageBlock, Icons.add));
     addEditFormSubmitButton.html(Icons.add + ' Add Storage Block');
+    Main.processStop();
 }
 
 function setupAddEditForEdit(blockId){
+    Main.processStart()
     console.log("Setting up add/edit form for editing storage block " + blockId);
     resetAddEdit();
     addBulkAccord.hide();
@@ -497,9 +501,11 @@ function setupAddEditForEdit(blockId){
             }
             KeywordAttEdit.addKeywordInputs(keywordInputDiv, data.keywords);
             KeywordAttEdit.addAttInputs(attInputDiv, data.attributes);
-            addCapacityInputs(capacityInputDiv, data.capacityMeasures);
+            // addCapacityInputs(capacityInputDiv, data.capacityMeasures);
+            Main.processStop();
     	}
     });
+
 }
 
 addEditStorageForm.submit(async function (event) {
@@ -546,7 +552,6 @@ addEditStorageForm.submit(async function (event) {
                 url: Rest.passRoot +"/inventory/storage-block/bulk",
                 method: "POST",
                 data: addEditData,
-                async: false,
                 done: function (data) {
                     console.log("Response from create request: " + JSON.stringify(data));
                     result = true;
@@ -561,7 +566,6 @@ addEditStorageForm.submit(async function (event) {
                 url: Rest.passRoot +"/inventory/storage-block",
                 method: "POST",
                 data: addEditData,
-                async: false,
                 done: function (data) {
                     console.log("Response from create request: " + JSON.stringify(data));
                     result = true;
@@ -596,29 +600,29 @@ addEditStorageForm.submit(async function (event) {
     }
 });
 
-var storageBlockViewModal = $('#storageBlockViewModal');
-var storageBlockViewMessages = $("#storageBlockViewMessages");
-var storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
-var storageBlockViewCarousel = $('#storageBlockViewCarousel');
+let storageBlockViewModal = $('#storageBlockViewModal');
+let storageBlockViewMessages = $("#storageBlockViewMessages");
+let storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
+let storageBlockViewCarousel = $('#storageBlockViewCarousel');
 
-var storageBlockHistoryAccordionCollapse = $("#storageBlockHistoryAccordionCollapse");
-var storageBlockHistoryForm = $('#storageBlockHistoryForm');
-var storageBlockHistory = $('#storageBlockHistory');
+let storageBlockHistoryAccordionCollapse = $("#storageBlockHistoryAccordionCollapse");
+let storageBlockHistoryForm = $('#storageBlockHistoryForm');
+let storageBlockHistory = $('#storageBlockHistory');
 
-var storageBlockViewId = $('#storageBlockViewId');
-var storageBlockViewLocationContainer = $('#storageBlockViewLocationContainer');
-var storageBlockViewDescriptionContainer = $('#storageBlockViewDescriptionContainer');
-var storageBlockViewCapacityContainer = $('#storageBlockViewCapacityContainer');
-var storageBlockViewLocation = $('#storageBlockViewLocation');
-var storageBlockViewDescription = $('#storageBlockViewDescription');
-var storageBlockViewCapacity = $('#storageBlockViewCapacity');
-var viewKeywordsSection = $('#viewKeywordsSection');
-var viewAttsSection = $('#viewAttsSection');
-var storageBlockViewBreadcrumbContainer = $('#storageBlockViewBreadcrumbContainer');
-var storageBlockViewChildrenContainer = $('#storageBlockViewChildrenContainer');
-var storageBlockViewChildrenContainerTitle = $('#storageBlockViewChildrenContainerTitle');
-var storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
-var storageBlockViewStoredItemCategories = $("#storageBlockViewStoredItemCategories");
+let storageBlockViewId = $('#storageBlockViewId');
+let storageBlockViewLocationContainer = $('#storageBlockViewLocationContainer');
+let storageBlockViewDescriptionContainer = $('#storageBlockViewDescriptionContainer');
+let storageBlockViewCapacityContainer = $('#storageBlockViewCapacityContainer');
+let storageBlockViewLocation = $('#storageBlockViewLocation');
+let storageBlockViewDescription = $('#storageBlockViewDescription');
+let storageBlockViewCapacity = $('#storageBlockViewCapacity');
+let viewKeywordsSection = $('#viewKeywordsSection');
+let viewAttsSection = $('#viewAttsSection');
+let storageBlockViewBreadcrumbContainer = $('#storageBlockViewBreadcrumbContainer');
+let storageBlockViewChildrenContainer = $('#storageBlockViewChildrenContainer');
+let storageBlockViewChildrenContainerTitle = $('#storageBlockViewChildrenContainerTitle');
+let storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
+let storageBlockViewStoredItemCategories = $("#storageBlockViewStoredItemCategories");
 
 function resetView(){
     storageBlockViewMessages.text("");
@@ -647,6 +651,7 @@ function resetView(){
 }
 
 function setupView(blockId){
+    Main.processStart();
     console.log("Setting up view for storage block " + blockId);
     resetView();
     storageBlockViewId.text(blockId);
@@ -734,6 +739,7 @@ function setupView(blockId){
                 });
             }
             await Promise.all(promises);
+            Main.processStop();
     	}
     });
     

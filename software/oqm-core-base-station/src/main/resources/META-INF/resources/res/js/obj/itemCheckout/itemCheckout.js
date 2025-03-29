@@ -92,7 +92,9 @@ const ItemCheckout = {
 
 		if(stored.storedType === "AMOUNT"){
 			//TODO:: set max to current amount stored?
-			UnitUtils.updateCompatibleUnits(stored.amount.unit.string, this.amountInputContainer);
+
+
+			// UnitUtils.updateCompatibleUnits(stored.amount.unit.string, this.amountInputContainer);
 
 			this.amountContainer.show();
 		} else {

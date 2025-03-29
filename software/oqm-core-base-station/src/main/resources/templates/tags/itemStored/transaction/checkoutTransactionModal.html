@@ -1,0 +1,18 @@
+{#modal id='itemStoredTransactionCheckout' size='xl' title='Checkout Item Stored'}
+	{#titleIcon}
+		{#icons/transactionTransfer /}
+	{/titleIcon}
+	{#footerButtons}
+	<button type="submit" id="itemStoredTransactionCheckoutFormSubmitButton" class="btn btn-success" form="itemStoredTransactionCheckoutForm">
+		{#icons/transactionCheckout /} Checkout Item Stored
+	</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col messages" id="itemStoredTransactionCheckoutMessages"></div>
+	</div>
+
+	<form id='itemStoredTransactionCheckoutForm'>
+		<input type="hidden" name="itemId" id="itemStoredTransactionCheckoutFormStoredIdInput" value=""/>
+		{!TODO!}
+	</form>
+{/modal}
