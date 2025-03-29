@@ -126,16 +126,15 @@ const StoredView = {
 	//TODO: finish figuring this out
 	getTransactBlockLink(stored, small = false,
 						 {
-							 showAllTransactions = false,
-							 showAddTransaction = false,
-							 showSubtractTransaction = false,
-							 showTransferTransaction = false,
-							 showCheckoutTransaction = false,
-							 showSetTransaction = false
+							 showAddTransaction = true,
+							 showSubtractTransaction = true,
+							 showTransferTransaction = true,
+							 showCheckoutTransaction = true,
+							 showSetTransaction = true
 						 }
 	) {
 		if (!(
-			showAllTransactions || showAddTransaction || showSubtractTransaction ||
+			showAddTransaction || showSubtractTransaction ||
 			showTransferTransaction || showCheckoutTransaction || showSetTransaction
 		)) {
 			return "";
@@ -148,7 +147,6 @@ const StoredView = {
 			(stored ? stored.item : null),
 			stored,
 			{
-				showAllTransactions: showAllTransactions,
 				showAddTransaction: showAddTransaction,
 				showSubtractTransaction: showSubtractTransaction,
 				showCheckoutTransaction: showCheckoutTransaction,
@@ -175,12 +173,11 @@ const StoredView = {
 			includeEditButton = true,
 			includeIdentifier = false,
 			showCurrentlyStored = false,
-			showAllTransactions = false,
-			showAddTransaction = false,
-			showSubtractTransaction = false,
-			showTransferTransaction = false,
-			showCheckoutTransaction = false,
-			showSetTransaction = false,
+			showAddTransaction = true,
+			showSubtractTransaction = true,
+			showTransferTransaction = true,
+			showCheckoutTransaction = true,
+			showSetTransaction = true,
 		}) {
 		console.log("Getting stored view html for: ", stored)
 		let newContent = $('<div class="storedView"><div class="row storedInfo"></div><hr /><div class="storedButtons d-flex"</div></div>');
@@ -211,7 +208,6 @@ const StoredView = {
 		//TODO:: images, files
 
 		newContentButtons.append(StoredView.getTransactBlockLink(stored, true, {
-			showAllTransactions: showAllTransactions,
 			showAddTransaction: showAddTransaction,
 			showSubtractTransaction: showSubtractTransaction,
 			showCheckoutTransaction: showCheckoutTransaction,

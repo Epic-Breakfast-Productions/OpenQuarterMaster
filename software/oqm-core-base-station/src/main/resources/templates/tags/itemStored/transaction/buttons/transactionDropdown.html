@@ -3,7 +3,7 @@
 	stored(optional),
 	addButton=true checkinButton=true checkoutButton=true setButton=true subtractButton=true transferButton=true
 !}
-{#let itemId=(item ? item.get("id").asText() : null) storedId=(stored ? stored.get("id").asText() : null)}
+{#let itemId=itemId.or(item ? item.get("id").asText() : null) storedId=storedId.or(stored ? stored.get("id").asText() : null)}
 
 <div class="dropdown transact-dropdown {overallClasses.or("")}" style="{overallStyles.or("")}">
 	<button class="btn btn-secondary dropdown-toggle transactDropdown {dropdownClasses.or("")}" style="{dropdownStyles.or("")}" type="button" data-bs-toggle="dropdown" aria-expanded="false">

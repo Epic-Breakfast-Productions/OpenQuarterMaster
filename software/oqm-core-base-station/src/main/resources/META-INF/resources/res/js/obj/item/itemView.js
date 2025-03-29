@@ -297,8 +297,7 @@ const ItemView = {
 												StoredView.getStoredViewContent(
 													stored,
 													{
-														includeBlockLink: true,
-														showAllTransactions: true
+														includeBlockLink: true
 													})
 											).then(function (newAccordItem) {
 												ItemView.storedBulkAccordion.append(newAccordItem);
@@ -344,8 +343,7 @@ const ItemView = {
 									StoredView.getStoredViewContent(
 									stored,
 									{
-										includeBlockLink: false,
-										showAllTransactions: true
+										includeBlockLink: false
 									})
 								);
 								await Promise.all(promises);

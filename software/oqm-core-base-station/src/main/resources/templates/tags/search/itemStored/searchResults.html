@@ -28,7 +28,7 @@
     {#if showItem}<th scope="col">Item</th>{/if}
     {#if showStorage}<th scope="col">{#icons/storageBlock}{/icons/storageBlock} Stored In</th>{/if}
     {#if showAmount}<th scope="col">Amount</th>{/if}
-    <th scope="col" width="150px">Actions</th>
+    <th scope="col" style="width: 150px;">Actions</th>
   </tr>
   </thead>
   <tbody>
@@ -51,7 +51,7 @@
   </tr>
   {#else}
   {#for result in searchResults.get("results")}
-  	{#let id=result.get("id").asText() labelText=result.get("labelText").asText()}
+  	{#let id=result.get("id").asText() labelText=result.get("labelText").asText() itemId=result.get("item").asText()}
   <tr class="itemStoredResultRow align-middle">
     <td>
       {#if !result.get("imageIds").isEmpty()}
@@ -66,17 +66,18 @@
     {#if showStorage}<td>{result.get("storageBlock-labelText").asText()}</td>{/if}{!TODO:: link !}
     {#if showAmount}<td>{#amountDisplay amount=result.get("amount")}{/amountDisplay}</td>{/if}
     {#if actionType == 'full'}
-    <td>
+    <td class="d-flex flex-row">
 		{!TODO:: configure to choose row or modal. Separate button/group?!}
 		{!<button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemStoredViewModal" onclick="StoredView.setupViewModal('{result.get("item").asText()}', '{result.get("storageBlock").asText()}', '{id}');">!}
 			{!{#icons/view}{/icons/view}!}
 		{!</button>!}
-		<button type="button" class="btn btn-sm btn-info" title="View" onclick="StoredView.toggleViewResultTableRow(this, '{result.get("item").asText()}', '{id}');">
+		<button type="button" class="btn btn-sm btn-info me-1" title="View" onclick="StoredView.toggleViewResultTableRow(this, '{result.get("item").asText()}', '{id}');">
 			{#icons/view}{/icons/view}
 		</button>
-      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
+      <button type="button" class="btn btn-sm btn-warning me-1" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
         {#icons/edit}{/icons/edit}
       </button>
+      {#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false storedId=id itemId=itemId /}
       {!<button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{id}');">!}
         {!{#icons/addSubTrans}{/icons/addSubTrans}!}
       {!</button>!}

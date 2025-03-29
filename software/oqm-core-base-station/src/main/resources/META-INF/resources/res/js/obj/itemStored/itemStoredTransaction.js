@@ -24,20 +24,32 @@ const ItemStoredTransaction = {
 			stored = null,
 			{
 				buttonText = true,
-				showAllTransactions = false,
-				showAddTransaction = false,
-				showSubtractTransaction = false,
-				showTransferTransaction = false,
-				showCheckinTransaction = false,
-				showCheckoutTransaction = false,
-				showSetTransaction = false,
+				showAddTransaction = true,
+				showSubtractTransaction = true,
+				showTransferTransaction = true,
+				showCheckinTransaction = true,
+				showCheckoutTransaction = true,
+				showSetTransaction = true,
 			}
 		) {
 
 			let query = new URLSearchParams();
 
-			//TODO:: add to query
-
+			if(item != null){
+				if (typeof item === 'string' || item instanceof String){
+					query.set("item", item);
+				} else {
+					query.set("item", item.id);
+				}
+			}
+			if(stored != null){
+				if (typeof stored === 'string' || stored instanceof String){
+					query.set("stored", stored);
+				} else {
+					query.set("stored", stored.id);
+				}
+			}
+			//TODO:: add flags to query
 
 			let output;
 			await Rest.call({
