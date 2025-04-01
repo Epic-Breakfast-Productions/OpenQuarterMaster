@@ -344,10 +344,10 @@ const ItemStoredTransaction = {
 				await this.setupFormForItem(itemId);
 			} else {
 				console.log("Enabling for searching for item.");
-				this.itemInputContainer.show();
 				this.itemNameInput.prop("disabled", false);
 				this.itemClearButton.prop("disabled", false);
 				this.itemSearchButton.prop("disabled", false);
+				this.itemInputContainer.show();
 			}
 			if (preselectedStoredId != null) {
 				//TODO:: setup form for stored
@@ -499,3 +499,11 @@ const ItemStoredTransaction = {
 };
 
 ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitFormHandler);
+
+ItemStoredTransaction.Add.itemIdInput.on("change", function (){
+	let itemId = ItemStoredTransaction.Add.itemIdInput.val();
+
+	console.log("Got item for add transaction form. Setting up: ", itemId);
+
+	ItemStoredTransaction.Add.setupForm(itemId);
+});

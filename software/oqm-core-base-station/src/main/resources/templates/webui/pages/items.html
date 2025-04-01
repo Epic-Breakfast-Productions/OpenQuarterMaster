@@ -88,12 +88,10 @@
         </div>
     </div>
 {/modal}
-{#search/storage/searchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix}
-{/search/storage/searchSelectModal}
-{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix}
-{/search/image/imageSearchSelectModal}
-{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal" rootPrefix=rootPrefix}
-{/itemCheckout/itemCheckoutModal}
+{#search/storage/searchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
+{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
+{#search/item/itemSearchSelectModal rootPrefix=rootPrefix /}
+{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal" rootPrefix=rootPrefix /}
 {#itemStored/itemStoredViewModal rootPrefix=rootPrefix /}
 {#itemStored/itemStoredEditModal rootPrefix=rootPrefix /}
 {#itemStored/transaction/allTransactionModals /}
@@ -117,6 +115,7 @@
     <script src="{rootPrefix}/res/js/storedTypeUtils.js"></script>
     <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
     <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemSearchSelect.js"></script>
     <script src="{rootPrefix}/res/js/obj/units.js"></script>
     <script src="{rootPrefix}/res/js/obj/getters.js"></script>
     <script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>

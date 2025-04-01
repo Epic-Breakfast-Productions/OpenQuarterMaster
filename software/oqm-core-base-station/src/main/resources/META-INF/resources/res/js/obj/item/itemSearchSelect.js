@@ -10,13 +10,19 @@ const ItemSearchSelect = {
 
 		$("#" + nameInputId).val(itemId);
 		$("#" + nameInputName).val(itemName);
+		$("#" + nameInputId).trigger("change");
 	},
-	setupItemSearchModal(inputIdPrepend) {
+	setupItemSearchModal(inputIdPrepend, buttonPressed) {
+		console.log("setting up itemSearchModal:", inputIdPrepend);
+		ModalHelpers.setReturnModal(ItemSearchSelect.itemSearchSelectModal, buttonPressed);
 		ItemSearchSelect.itemSearchSelectModal.attr("data-bs-inputIdPrepend", inputIdPrepend);
+		ItemSearchSelect.itemSearchSelectForm.submit();
 	},
 	clearSearchInput(clearButtPushed){
 		clearButtPushed.siblings("input[name=itemName]").val("");
 		clearButtPushed.siblings("input[name=item]").val("");
+		clearButtPushed.siblings("input[name=item]").trigger("change");
+
 	}
 };
 
@@ -30,6 +36,7 @@ ItemSearchSelect.itemSearchSelectForm.on("submit", function (event) {
 	Rest.call({
 		spinnerContainer: ItemSearchSelect.itemSearchSelectModal.get(0),
 		url: Rest.passRoot + "/inventory/item?" + searchParams,
+		returnType:"html",
 		method: 'GET',
 		failNoResponse: null,
 		failNoResponseCheckStatus: true,
