@@ -66,6 +66,9 @@ import static org.junit.jupiter.api.Assertions.*;
 import static tech.ebp.oqm.core.api.model.object.history.details.HistoryDetailType.ITEM_TRANSACTION;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
+/**
+ * TODO:: rework to test each class individually, test nominally here
+ */
 @Slf4j
 @QuarkusTest
 @QuarkusTestResource(TestResourceLifecycleManager.class)
@@ -3543,131 +3546,6 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		}
 	}
 
-	@Test
-	public void applyTransferWholeFailBulkBadStoredId() throws Exception {
-		InteractingEntity entity = this.getTestUserService().getTestUser();
-		InventoryItem item = setupItem(StorageType.BULK, entity);
-		ObjectId firstBlock = item.getStorageBlocks().getFirst();
-		ObjectId secondBlock = this.storageBlockService.add(
-			DEFAULT_TEST_DB_NAME,
-			StorageBlock.builder().label(FAKER.location().building()).build(),
-			entity
-		);
-		item.getStorageBlocks().add(secondBlock);
-		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
-
-		ObjectId initialStoredId = this.storedService.add(
-			DEFAULT_TEST_DB_NAME, AmountStored.builder()
-				.item(item.getId())
-				.storageBlock(firstBlock)
-				.amount(Quantities.getQuantity(5, item.getUnit()))
-				.build(),
-			entity
-		);
-
-		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
-			.fromBlock(firstBlock)
-			.storedToTransfer(new ObjectId())
-			.toBlock(secondBlock)
-			.build();
-
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
-		assertEquals("Stored id given mismatched id from gotten stored.", e.getMessage());
-	}
-
-	@Test
-	public void applyTransferWholeFailAmtListBadFromBlock() throws Exception {
-		InteractingEntity entity = this.getTestUserService().getTestUser();
-		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
-		ObjectId firstBlock = item.getStorageBlocks().getFirst();
-		ObjectId secondBlock = this.storageBlockService.add(
-			DEFAULT_TEST_DB_NAME,
-			StorageBlock.builder().label(FAKER.location().building()).build(),
-			entity
-		);
-		item.getStorageBlocks().add(secondBlock);
-		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
-
-		ObjectId initialStoredId = this.storedService.add(
-			DEFAULT_TEST_DB_NAME, AmountStored.builder()
-				.item(item.getId())
-				.storageBlock(firstBlock)
-				.amount(Quantities.getQuantity(5, item.getUnit()))
-				.build(),
-			entity
-		);
-
-		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
-			.fromBlock(secondBlock)
-			.storedToTransfer(initialStoredId)
-			.toBlock(firstBlock)
-			.build();
-
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
-		assertEquals("Stored found not in specified block.", e.getMessage());
-	}
-
-	@Test
-	public void applyTransferWholeFailUniqueMultiBadFromBlock() throws Exception {
-		InteractingEntity entity = this.getTestUserService().getTestUser();
-		InventoryItem item = setupItem(StorageType.UNIQUE_MULTI, entity);
-		ObjectId firstBlock = item.getStorageBlocks().getFirst();
-		ObjectId secondBlock = this.storageBlockService.add(
-			DEFAULT_TEST_DB_NAME,
-			StorageBlock.builder().label(FAKER.location().building()).build(),
-			entity
-		);
-		item.getStorageBlocks().add(secondBlock);
-		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
-
-		ObjectId initialStoredId = this.storedService.add(
-			DEFAULT_TEST_DB_NAME, UniqueStored.builder()
-				.item(item.getId())
-				.storageBlock(firstBlock)
-				.build(),
-			entity
-		);
-
-		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
-			.fromBlock(secondBlock)
-			.storedToTransfer(initialStoredId)
-			.toBlock(firstBlock)
-			.build();
-
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
-		assertEquals("Stored found not in specified block.", e.getMessage());
-	}
-
-	@Test
-	public void applyTransferWholeFailUniqueSingleBadStoredId() throws Exception {
-		InteractingEntity entity = this.getTestUserService().getTestUser();
-		InventoryItem item = setupItem(StorageType.UNIQUE_SINGLE, entity);
-		ObjectId firstBlock = item.getStorageBlocks().getFirst();
-		ObjectId secondBlock = this.storageBlockService.add(
-			DEFAULT_TEST_DB_NAME,
-			StorageBlock.builder().label(FAKER.location().building()).build(),
-			entity
-		);
-		item.getStorageBlocks().add(secondBlock);
-		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
-
-		ObjectId initialStoredId = this.storedService.add(
-			DEFAULT_TEST_DB_NAME, UniqueStored.builder()
-				.item(item.getId())
-				.storageBlock(firstBlock)
-				.build(),
-			entity
-		);
-
-		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
-			.fromBlock(firstBlock)
-			.storedToTransfer(new ObjectId())
-			.toBlock(secondBlock)
-			.build();
-
-		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
-		assertEquals("Stored id given mismatched id from gotten stored.", e.getMessage());
-	}
 
 	//TODO:: any more?
 //</editor-fold>

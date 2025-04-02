@@ -13,11 +13,4 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredT
 @NoArgsConstructor
 public abstract class TransferTransaction extends ItemStoredTransaction {
 
-	@NotNull
-	@NonNull
-	private ObjectId fromBlock;
-
-	@NotNull
-	@NonNull
-	private ObjectId toBlock;
 }

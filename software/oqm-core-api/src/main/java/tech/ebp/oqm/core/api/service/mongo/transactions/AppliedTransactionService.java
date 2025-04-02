@@ -58,20 +58,20 @@ import static tech.ebp.oqm.core.api.model.object.storage.items.transactions.Tran
 @Named("ItemStoredTransactionService")
 @ApplicationScoped
 public class AppliedTransactionService extends MongoObjectService<AppliedTransaction, AppliedTransactionSearch, CollectionStats> {
-
+	
 	@Inject
 	StoredService storedService;
-
+	
 	@Inject
 	ItemCheckoutService itemCheckoutService;
-
+	
 	@Getter
 	Map<TransactionType, TransactionApplier> appliers = new HashMap<>();
-
+	
 	public AppliedTransactionService() {
 		super(AppliedTransaction.class);
 	}
-
+	
 	@PostConstruct
 	void setupAppliers() {
 		appliers.put(ADD_AMOUNT, new AddAmountTransactionApplier(this.storedService));
@@ -86,7 +86,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 		appliers.put(TRANSFER_AMOUNT, new TransferAmountTransactionApplier(this.storedService));
 		appliers.put(TRANSFER_WHOLE, new TransferWholeTransactionApplier(this.storedService));
 	}
-
+	
 	/**
 	 * Applies the transaction given.
 	 *
@@ -95,6 +95,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 	 * @param inventoryItem
 	 * @param itemStoredTransaction
 	 * @param interactingEntity
+	 *
 	 * @return
 	 */
 	public <T extends ItemStoredTransaction> ObjectId apply(
@@ -106,7 +107,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 		HistoryDetail... details
 	) throws Exception {
 		try (MongoSessionWrapper csw = new MongoSessionWrapper(cs, this)) {
-			return csw.runTransaction(() -> {
+			return csw.runTransaction(()->{
 				log.info("Applying {} transaction ", itemStoredTransaction.getTransactionType());
 				log.debug("Transaction: {}", itemStoredTransaction);
 				final ObjectId appliedTransactionId = new ObjectId();
@@ -118,13 +119,13 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 					historyDetails = deetsCollection.toArray(new HistoryDetail[0]);
 				}
 				AppliedTransaction.Builder<?, ?> appliedTransactionBuilder = AppliedTransaction.builder()
-					.id(appliedTransactionId)
-					.inventoryItem(inventoryItem.getId())
-					.transaction(itemStoredTransaction)
-					.entity(interactingEntity.getId());
+																				 .id(appliedTransactionId)
+																				 .inventoryItem(inventoryItem.getId())
+																				 .transaction(itemStoredTransaction)
+																				 .entity(interactingEntity.getId());
 				LinkedHashSet<Stored> affectedStored = new LinkedHashSet<>();
-
-
+				
+				
 				//noinspection rawtypes
 				TransactionApplier applier = this.getAppliers().get(itemStoredTransaction.getTransactionType());
 				if (applier == null) {
@@ -141,8 +142,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 					historyDetails,
 					csw.getClientSession()
 				);
-
-				ItemPostTransactionProcessResults postProcessResults = this.storedService.postTransactionProcess(
+				
+				appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(affectedStored.stream().map(Stored::getId).toList()));
+				appliedTransactionBuilder.postApplyResults(this.storedService.postTransactionProcess(
 					oqmDbIdOrName,
 					csw.getClientSession(),
 					inventoryItem,
@@ -150,17 +152,14 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 					affectedStored,
 					interactingEntity,
 					historyDetails
-				);
-
-				appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(affectedStored.stream().map(Stored::getId).toList()));
-				appliedTransactionBuilder.postApplyResults(postProcessResults);
-
+				));
+				
 				AppliedTransaction appliedTransaction = appliedTransactionBuilder.build();
 				ObjectId newId = this.add(oqmDbIdOrName, appliedTransaction);
-
+				
 				log.info("Completed transaction. Applied transaction id: {}", newId);
 				log.debug("Applied transaction: {}", appliedTransaction);
-
+				
 				if (!newId.equals(appliedTransactionId)) {
 					log.warn(
 						"New id after adding applied transaction DIFFERENT from one generated previously; Original: {} / From Mongo: {}",
@@ -168,15 +167,15 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 						newId
 					);
 				}
-
+				
 				return newId;
 			});
-		} catch (Exception e) {
+		} catch(Exception e) {
 			log.error("Failed to apply transaction: ", e);
 			throw e;
 		}
 	}
-
+	
 	@Override
 	public CollectionStats getStats(String oqmDbIdOrName) {
 		return null;//TODO

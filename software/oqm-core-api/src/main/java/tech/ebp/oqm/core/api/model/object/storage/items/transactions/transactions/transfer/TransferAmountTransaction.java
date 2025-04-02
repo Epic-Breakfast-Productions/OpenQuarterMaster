@@ -22,7 +22,12 @@ public class TransferAmountTransaction extends TransferTransaction {
 	@NonNull
 	@NotNull
 	private Quantity<?> amount;
-
+	
+	
+	private ObjectId fromBlock;
+	
+	private ObjectId toBlock;
+	
 	/**
 	 * If applicable, the specific stored item we are transferring from.
 	 */

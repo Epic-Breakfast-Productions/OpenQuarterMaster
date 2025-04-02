@@ -1,8 +1,10 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
@@ -24,9 +26,18 @@ public class TransferWholeTransaction extends TransferTransaction {
 	public int getSchemaVersion() {
 		return 1;
 	}
-
+	
+	@NotNull
+	@NonNull
+	private ObjectId toBlock;
+	
 	/**
-	 * The specific stored object to move.
+	 * The block we are pulling the whole stored from. Item must be either "BULK" or "AMOUNT UNIQUE".
+	 */
+	private ObjectId fromBlock;
+	
+	/**
+	 * The specific stored object to move. Item must be either "AMOUNT_LIST" or "UNIQUE_MULTI".
 	 */
 	private ObjectId storedToTransfer;
 }

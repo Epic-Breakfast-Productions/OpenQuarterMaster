@@ -39,20 +39,21 @@ public class TransferWholeTransactionApplier extends TransactionApplier<Transfer
 		HistoryDetail[] historyDetails,
 		ClientSession cs
 	) {
+		
 		Stored toTransfer;
 		switch (inventoryItem.getStorageType()) {
 			case BULK, UNIQUE_SINGLE -> {
 				toTransfer = this.getStoredService().getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transaction.getFromBlock(), Stored.class);
-
-				if (transaction.getStoredToTransfer() != null && !transaction.getStoredToTransfer().equals(toTransfer.getId())) {
-					throw new IllegalArgumentException("Stored id given mismatched id from gotten stored.");
+				
+				if(transaction.getStoredToTransfer() != null && !toTransfer.getId().equals(transaction.getStoredToTransfer())) {
+					throw new IllegalArgumentException("Stored item from block does not match stored specified.");
 				}
 			}
 			case AMOUNT_LIST, UNIQUE_MULTI -> {
 				toTransfer = this.getStoredService().get(oqmDbIdOrName, cs, transaction.getStoredToTransfer());
-
-				if (!transaction.getFromBlock().equals(toTransfer.getStorageBlock())) {
-					throw new IllegalArgumentException("Stored found not in specified block.");
+				
+				if(transaction.getFromBlock() != null && !toTransfer.getStorageBlock().equals(transaction.getFromBlock())) {
+					throw new IllegalArgumentException("Stored item specified does not match stored from storage block.");
 				}
 			}
 			default ->
