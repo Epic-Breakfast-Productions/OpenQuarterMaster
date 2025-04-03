@@ -12,17 +12,20 @@ class UiEntry {
 	 */
 	public function __construct(string $fileLoc) {
 		$json = array();
-		{
-			$jsonRaw = file_get_contents($fileLoc);
-			//json_validate($jsonRaw);//needed?
-			$json = json_decode($jsonRaw, true);
+		try {
+			{
+				$jsonRaw = file_get_contents($fileLoc);
+				//json_validate($jsonRaw);//needed?
+				$json = json_decode($jsonRaw, true);
+			}
+			
+			$this->type = EntryCategory::fromName($json['type']);
+			$this->url = htmlspecialchars($json['url']);
+			$this->name = htmlspecialchars($json['name']);
+			$this->description = htmlspecialchars($json['description']);
+		} catch (\Exception $e) {
+			throw new \Exception("Failed to read UI Entry file from " . $fileLoc . " / ".json_encode($json), previous: $e);
 		}
-		
-		$this->type = EntryCategory::fromName($json['type']);
-		$this->url = htmlspecialchars($json['url']);
-		$this->name = htmlspecialchars($json['name']);
-		$this->description = htmlspecialchars($json['description']);
-		
 	}
 	
 	public function getType(): EntryCategory {
