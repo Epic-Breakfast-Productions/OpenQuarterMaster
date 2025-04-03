@@ -104,7 +104,7 @@ def updateTraefikConfig():
             else:
                 continue
         except Exception as error:
-            log.warn("Error processing proxy config file %s : %s", curProxyConfigFile, str(error), exc_info=1)
+            log.warning("Error processing proxy config file {} : {}".format(curProxyConfigFile, str(error)), exc_info=1)
 
     log.info("Done reading in proxy config files. Data: %s", templateData)
 

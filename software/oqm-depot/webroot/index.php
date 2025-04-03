@@ -12,6 +12,7 @@ $depotVersion = "";
 $numCorePlugins = 0;
 $numInfraMetrics = 0;
 
+$alertContent = "";
 $coreContent = "";
 $pluginContent = "";
 $metricsContent = "";
@@ -31,12 +32,17 @@ if($files){
 }
 
 if ($files) {
+	$entryErrors = [];
 	$entryArr = [];
 	foreach ($files as $curFile) {
 		if (!str_ends_with($curFile, ".json")) {
 			continue;
 		}
-		$curEntry = new UiEntry(Context::$ENTRIES_DIR . $curFile);
+		try {
+			$curEntry = new UiEntry(Context::$ENTRIES_DIR . $curFile);
+		} catch (Exception $e) {
+			$entryErrors[] = $e;
+		}
 		$entryArr[] = $curEntry;
 	}
 	
@@ -65,6 +71,14 @@ if ($files) {
 				$numInfraMetrics++;
 				$metricsContent .= $curContent;
 		}
+	}
+	foreach ($entryErrors as  $curError) {
+		$alertContent .= '<div class="alert alert-danger alert-dismissible fade show mb-1" role="alert">
+  <strong>Oops!</strong> An error occurred reading in some entry data. Please pass this information along to the developers: <br />
+  '.$curError->getMessage().'<br />
+  '.$curError->getTraceAsString().'
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+</div>';
 	}
 }
 
@@ -123,6 +137,9 @@ function getEntryTable($name, $content) {
 		<p class="lead mb-4">
 			This is where you can access all your Open QuarterMaster components. Shown below are all available front-end interfaces you can visit and interact with.
 		</p>
+	</div>
+	<div class="messages">
+		<?php echo $alertContent; ?>
 	</div>
 	<ul class="nav nav-tabs" id="mainTab" role="tablist">
 		<li class="nav-item" role="presentation">
