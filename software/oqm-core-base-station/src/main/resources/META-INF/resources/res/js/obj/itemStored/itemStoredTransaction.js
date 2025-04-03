@@ -469,14 +469,27 @@ const ItemStoredTransaction = {
 		messages: $("#itemStoredTransactionTransferMessages"),
 		form: $("#itemStoredTransactionTransferForm"),
 
-		storedIdInput: $("#itemStoredTransactionTransferFormStoredIdInput"),
-		amountInputContainer: $("#itemStoredTransactionTransferFormAmountInputContainer"),
-		toBlockInput: $("#itemStoredTransactionTransferFormToBlockSelect"),
+		itemIdInput: $("#itemStoredTransactionTransferFormItemIdInput"),
+		transactionTypeInput: $("#itemStoredTransactionTransferFormTypeInput"),
+		fromBlockContainer: $("#itemStoredTransactionTransferFormFromBlockContainer"),
+		fromBlockSelect: $("#itemStoredTransactionTransferFormFromBlockSelect"),
+		fromStoredContainer: $("#itemStoredTransactionTransferFormFromStoredContainer"),
+		fromStoredSelect: $("#itemStoredTransactionTransferFormFromStoredSelect"),
+
+		amountInputContainer: $("#itemStoredTransactionTransferFormAmountContainer"),
+		amountInputs: $("#itemStoredTransactionTransferFormAmountInputs"),
+		amountTransferAllInput: $("#itemStoredTransactionTransferFormAmountTransferAllInput"),
+
+
+		toBlockContainer: $("#itemStoredTransactionTransferFormToBlockContainer"),
+		toBlockSelect: $("#itemStoredTransactionTransferFormToBlockSelect"),
+		toStoredContainer: $("#itemStoredTransactionTransferFormToStoredContainer"),
+		toStoredSelect: $("#itemStoredTransactionTransferFormToStoredSelect"),
 
 		resetForm: function () {
 			ItemStoredTransaction.Transfer.messages.text("");
-			ItemStoredTransaction.Transfer.amountInputContainer.text("");
-			ItemStoredTransaction.Transfer.toBlockInput.text("");
+			// ItemStoredTransaction.Transfer.amountInputContainer.text("");
+			// ItemStoredTransaction.Transfer.toBlockInput.text("");
 		},
 		setupForm: async function (itemId, stored, buttonElement) {
 			Main.processStart();
@@ -491,7 +504,6 @@ const ItemStoredTransaction = {
 			ModalHelpers.setReturnModal(this.modal, buttonElement);
 			let promises = [];
 
-
 			Promise.all(promises);
 			Main.processStop();
 		}
@@ -499,11 +511,8 @@ const ItemStoredTransaction = {
 };
 
 ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitFormHandler);
-
 ItemStoredTransaction.Add.itemIdInput.on("change", function (){
 	let itemId = ItemStoredTransaction.Add.itemIdInput.val();
-
 	console.log("Got item for add transaction form. Setting up: ", itemId);
-
 	ItemStoredTransaction.Add.setupForm(itemId);
 });

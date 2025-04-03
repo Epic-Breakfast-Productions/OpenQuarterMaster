@@ -23,18 +23,22 @@ public class TransferAmountTransaction extends TransferTransaction {
 	@NotNull
 	private Quantity<?> amount;
 	
-	
+	/**
+	 * If applicable, the storage block we are pulling the amount from. Used for BULK items.
+	 */
 	private ObjectId fromBlock;
 	
-	private ObjectId toBlock;
-	
 	/**
-	 * If applicable, the specific stored item we are transferring from.
+	 * If applicable, the specific stored item we are transferring from. Used for AMOUNT_LIST items.
 	 */
 	private ObjectId fromStored;
-
+	
 	/**
-	 * If applicable, the specific stored item we are transferring to.
+	 * If applicable, the storage block we are putting the amount into. Used for BULK items.
+	 */
+	private ObjectId toBlock;
+	/**
+	 * If applicable, the specific stored item we are transferring to. Used for AMOUNT_LIST
 	 */
 	private ObjectId toStored;
 
