@@ -14,13 +14,15 @@
 		<label for=itemStoredTransactionTransferFormItem-itemInputSearchButton" class="form-label h3">{#icons/item}{/icons/item} Item:</label>
 		{#inputs/item/itemSelectInput id="itemStoredTransactionTransferFormItem" /}
 	</div>
+	<div id="itemStoredTransactionTransferItemInfoContainer">
+		<h3>
+			{#icons/item /} <span id="itemStoredTransactionTransferItemInfoItemName"></span>
+		</h3>
+	</div>
 	<div id="itemStoredTransactionTransferInfoContainer">
 		<h2>
 			{#icons/stored /} <span id="itemStoredTransactionTransferInfoStoredLabel"></span>
 		</h2>
-		<h3>
-			{#icons/item /} <span id="itemStoredTransactionTransferInfoItemName"></span>
-		</h3>
 		<h4>
 			Stored in {#icons/storageBlock /} <span id="itemStoredTransactionTransferInfoBlockLabel"></span>
 		</h4>

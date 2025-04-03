@@ -469,6 +469,14 @@ const ItemStoredTransaction = {
 		messages: $("#itemStoredTransactionTransferMessages"),
 		form: $("#itemStoredTransactionTransferForm"),
 
+		itemInputContainer: $("#itemStoredTransactionTransferFormItemInputContainer"),
+		itemInputClearButton: $("#itemStoredTransactionTransferFormItemInputContainer.clearButton"),
+
+		itemInfoContainer: $("#itemStoredTransactionTransferItemInfoContainer"),
+		itemInfoItemName: $("#itemStoredTransactionTransferItemInfoItemName"),
+
+		storedInfoContainer: $("#itemStoredTransactionTransferInfoContainer"),
+
 		itemIdInput: $("#itemStoredTransactionTransferFormItemIdInput"),
 		transactionTypeInput: $("#itemStoredTransactionTransferFormTypeInput"),
 		fromBlockContainer: $("#itemStoredTransactionTransferFormFromBlockContainer"),
@@ -480,16 +488,36 @@ const ItemStoredTransaction = {
 		amountInputs: $("#itemStoredTransactionTransferFormAmountInputs"),
 		amountTransferAllInput: $("#itemStoredTransactionTransferFormAmountTransferAllInput"),
 
-
 		toBlockContainer: $("#itemStoredTransactionTransferFormToBlockContainer"),
 		toBlockSelect: $("#itemStoredTransactionTransferFormToBlockSelect"),
 		toStoredContainer: $("#itemStoredTransactionTransferFormToStoredContainer"),
 		toStoredSelect: $("#itemStoredTransactionTransferFormToStoredSelect"),
 
 		resetForm: function () {
+			ItemStoredTransaction.Transfer.itemInputContainer.hide();
+			ItemSearchSelect.clearSearchInput(ItemStoredTransaction.Transfer.itemInputClearButton);
+
+			ItemStoredTransaction.Transfer.itemInfoContainer.hide();
+			ItemStoredTransaction.Transfer.itemInfoItemName.text("");
+
+			ItemStoredTransaction.Transfer.storedInfoContainer.hide();
+			//TODO
+
 			ItemStoredTransaction.Transfer.messages.text("");
-			// ItemStoredTransaction.Transfer.amountInputContainer.text("");
-			// ItemStoredTransaction.Transfer.toBlockInput.text("");
+			ItemStoredTransaction.Transfer.itemIdInput.val("");
+			ItemStoredTransaction.Transfer.fromBlockContainer.hide();
+			ItemStoredTransaction.Transfer.fromBlockSelect.text("");
+			ItemStoredTransaction.Transfer.fromStoredContainer.hide();
+			ItemStoredTransaction.Transfer.fromStoredSelect.text("");
+
+			ItemStoredTransaction.Transfer.amountInputContainer.hide();
+			ItemStoredTransaction.Transfer.amountInputs.text("");
+			ItemStoredTransaction.Transfer.amountTransferAllInput.prop("checked", false);
+
+			ItemStoredTransaction.Transfer.toBlockContainer.hide();
+			ItemStoredTransaction.Transfer.toBlockSelect.text("");
+			ItemStoredTransaction.Transfer.toStoredContainer.hide();
+			ItemStoredTransaction.Transfer.toStoredSelect.text("");
 		},
 		setupForm: async function (itemId, stored, buttonElement) {
 			Main.processStart();
