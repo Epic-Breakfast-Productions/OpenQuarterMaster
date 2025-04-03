@@ -6,8 +6,7 @@ enum EntryCategory {
 	case infra;
 	case metric;
 	
-	public static function fromName(string $name): EntryCategory
-	{
+	public static function fromName(string $name): EntryCategory {
 		foreach (self::cases() as $status) {
 			if( $name === $status->name ){
 				return $status;
