@@ -11,10 +11,10 @@ Accepts:
 <Unit>> the map of allowed units
     !}
     {#styleSheets}
-    <link rel="stylesheet" href="/res/css/storageTree.css">
-    <link rel="stylesheet" href="/lib/treant-js/Treant.css">
-    <link rel="stylesheet" href="/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.css">
-        <link rel="stylesheet" href="/lib/Croppie-2.6.4/croppie.css"/>
+    <link rel="stylesheet" href="{rootPrefix}/res/css/storageTree.css">
+    <link rel="stylesheet" href="{rootPrefix}/lib/treant-js/Treant.css">
+    <link rel="stylesheet" href="{rootPrefix}/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.css">
+        <link rel="stylesheet" href="{rootPrefix}/lib/Croppie-2.6.4/croppie.css"/>
     {/styleSheets}
     {#pageStyle}
     #storageBlockViewCarousel{
@@ -47,7 +47,7 @@ Accepts:
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/storage/searchForm id='mainPageSearch'}
+                    {#search/storage/searchForm id='mainPageSearch' rootPrefix=rootPrefix}
                     {/search/storage/searchForm}
                 </div>
             </div>
@@ -57,7 +57,7 @@ Accepts:
 <div class="row">
     <div class="col table-responsive">
         <table class=" table table-bordered table-striped table-hover table-sm">
-            {#search/storage/searchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch'}
+            {#search/storage/searchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' rootPrefix=rootPrefix}
             {/search/storage/searchResults}
         </table>
     </div>
@@ -201,9 +201,9 @@ Accepts:
     {/modal}
     
     
-{#search/storage/searchSelectModal otherModalId="addEditModal"}
+{#search/storage/searchSelectModal otherModalId="addEditModal" rootPrefix=rootPrefix}
 {/search/storage/searchSelectModal}
-{#search/image/imageSearchSelectModal otherModalId="addEditModal"}
+{#search/image/imageSearchSelectModal otherModalId="addEditModal" rootPrefix=rootPrefix}
 {/search/image/imageSearchSelectModal}
 
 {#modal id='storageBlockInventorySheetPrintout' title='Inventory Sheet Printout' otherModalId="storageBlockViewModal" submitForm="storageBlockInventorySheetPrintoutForm" submitDismiss=false}
@@ -353,7 +353,7 @@ Accepts:
     </div>
     <div class="row">
         <div class="col">
-            {#objView/history/objHistoryView containerId='storageBlockHistory' objectUrl='/api/passthrough/inventory/storage-block/'}{/objView/history/objHistoryView}
+            {#objView/history/objHistoryView containerId='storageBlockHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/storage-block/')}{/objView/history/objHistoryView}
         </div>
     </div>
 {/modal}
@@ -361,28 +361,28 @@ Accepts:
 {/modals}
 
 {#scripts}
-<script src="/res/js/search.js"></script>
-<script src="/res/js/historySearch.js"></script>
-<script src="/res/js/obj/objEdit.js"></script>
-<script src="/res/js/obj/objView.js"></script>
-<script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-<script src="/res/js/obj/media/imageSearchSelect.js"></script>
-<script src="/res/js/obj/units.js"></script>
-<script src="/res/js/obj/getters.js"></script>
-<script src="/res/js/obj/itemCategoryView.js"></script>
-<script src="/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
-<script src="/res/js/obj/storageBlock/capacities.js"></script>
-<script src="/res/js/carousel.js"></script>
-<script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
-<script src="/res/js/obj/media/imageAdd.js"></script>
-<script src="/res/js/obj/media/imageAddFromSelect.js"></script>
-<script src="/res/js/textCopy.js"></script>
+<script src="{rootPrefix}/res/js/search.js"></script>
+<script src="{rootPrefix}/res/js/historySearch.js"></script>
+<script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
+<script src="{rootPrefix}/res/js/obj/objView.js"></script>
+<script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+<script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
+<script src="{rootPrefix}/res/js/obj/units.js"></script>
+<script src="{rootPrefix}/res/js/obj/getters.js"></script>
+<script src="{rootPrefix}/res/js/obj/itemCategoryView.js"></script>
+<script src="{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
+<script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
+<script src="{rootPrefix}/res/js/carousel.js"></script>
+<script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
+<script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
+<script src="{rootPrefix}/res/js/obj/media/imageAddFromSelect.js"></script>
+<script src="{rootPrefix}/res/js/textCopy.js"></script>
 
-<script src="/lib/treant-js/vendor/raphael.js"></script>
-<script src="/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
-<script src="/lib/treant-js/vendor/jquery.easing.js"></script>
-<script src="/lib/treant-js/Treant.js"></script>
-<script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
+<script src="{rootPrefix}/lib/treant-js/vendor/raphael.js"></script>
+<script src="{rootPrefix}/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+<script src="{rootPrefix}/lib/treant-js/vendor/jquery.easing.js"></script>
+<script src="{rootPrefix}/lib/treant-js/Treant.js"></script>
+<script src="{rootPrefix}/res/js/obj/storageBlock/storageBlockTree.js"></script>
 {/scripts}
 {#pageScript}
 <script>
@@ -711,7 +711,7 @@ function setupView(blockId){
                             '<td class="blockViewItemName"></td>' +//name
                             '<td class="blockViewItemAmountIn"></td>' +//amount in
                             '<td class="blockViewItemTotal"></td>' +//total
-                            '<td class="blockViewItemActions"><a href="/items?view='+item.id+'" class="btn btn-info btn-sm">{#icons/view}{/icons/view}</a> </td>' +//actions
+                            '<td class="blockViewItemActions"><a href="{rootPrefix}/items?view='+item.id+'" class="btn btn-info btn-sm">{#icons/view}{/icons/view}</a> </td>' +//actions
                             '</tr>');
                     row.find(".blockViewItemName").text(item.name);
                     row.find(".blockViewItemAmountIn").text(item.storageMap[blockId].total.value + item.storageMap[blockId].total.unit.symbol);
@@ -728,7 +728,7 @@ function setupView(blockId){
                     let newGetParams = new URLSearchParams(window.location.search);
                     newGetParams.set("view", child.id)
                     
-                    let newChildLink = $('<li class="list-inline-item"><a href="/storage?'+newGetParams.toString()+'"></li></a>');
+                    let newChildLink = $('<li class="list-inline-item"><a href="{rootPrefix}/storage?'+newGetParams.toString()+'"></li></a>');
                     newChildLink.find("a").text(child.labelText);
                     storageBlockViewChildrenContainer.append(newChildLink);
                 });

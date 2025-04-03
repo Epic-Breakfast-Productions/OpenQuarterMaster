@@ -14,6 +14,7 @@ from ContainerUtils import *
 from LogManagement import *
 from CertsUtils import *
 import argparse
+import atexit
 import argcomplete
 # This script manages an installation of Open QuarterMaster on a single host
 #
@@ -30,9 +31,12 @@ import argcomplete
 # https://click.palletsprojects.com/en/8.1.x/
 # https://pythondialog.sourceforge.io/
 
-log = LogUtils.setupLogger(__name__)
-
+log = LogUtils.setupLogger("main")
 log.info("==== STARTING OQM-CAPTAIN SCRIPT ====")
+
+def handleExit():
+    log.info("==== END OF OQM-CAPTAIN SCRIPT ====")
+atexit.register(handleExit)
 
 argParser = argparse.ArgumentParser(
     prog="oqm-captain",
@@ -48,6 +52,7 @@ g.add_argument('--ensure-container-setup', dest="ensureContainerSetup", action="
 g.add_argument('--package-logs', dest="packageLogs", action="store_true", help="Packages service logs for debugging.")
 g.add_argument('--regen-certs', dest="regenCerts", action="store_true", help="Regenerates the system certs based on configuration.")
 g.add_argument('--ensure-certs-present', dest="ensureCerts", action="store_true", help="Ensures that certs are present and usable by the system.")
+g.add_argument('--write-internal-certs', dest="writeInternalCerts", nargs=2, help="Writes certs for an internal service to use. Two arguments; first to name the service (the domain name to access the service), and second the directory to place the new certs.")
 # argcomplete.autocomplete(argParser)
 args = argParser.parse_args()
 
@@ -62,7 +67,10 @@ if not os.geteuid() == 0:
 
 if args.takeSnapshot:
     trigger = SnapshotTrigger[args.takeSnapshot]
-    SnapshotUtils.performSnapshot(trigger)
+    success, message = SnapshotUtils.performSnapshot(trigger)
+    if not success:
+        print("FAILED to create snapshot: " + message, file=sys.stderr)
+        exit(2)
 elif args.pruneContainerResources:
     ContainerUtils.pruneContainerResources()
 elif args.ensureContainerSetup:
@@ -80,10 +88,19 @@ elif args.regenCerts:
         exit(4)
     print(message)
 elif args.ensureCerts:
-    result, message = CertsUtils.ensureCertsPresent()
+    result, message, written = CertsUtils.ensureCoreCerts()
     if not result:
         print("Failed to validate certs: " + message)
         exit(5)
+    print(message)
+elif args.writeInternalCerts:
+    result, message = CertsUtils.generateInternalCert(
+        args.writeInternalCerts[0],
+        args.writeInternalCerts[1]
+    )
+    if not result:
+        print("Failed to write certs for internal service: " + message)
+        exit(6)
     print(message)
 else:
     UserInteraction.ui.startUserInteraction()

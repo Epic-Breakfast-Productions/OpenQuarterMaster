@@ -5,7 +5,7 @@ Ingests:
 - id - the id to give the form
 !}
 {!{@tech.ebp.oqm.baseStation.rest.search.CategoriesSearch searchObject}!}
-{#include tags/search/searchForm id=id action='/itemCheckout' showKeywords=true showAttributes=true defaultPageSize=config:['ui.itemCheckout.search.defaultPageSize']}
+{#include tags/search/searchForm id=id action=(rootPrefix + '/itemCheckout') showKeywords=true showAttributes=true defaultPageSize=config:['ui.itemCheckout.search.defaultPageSize']}
 {#inputs}
 	{#inputs/item/itemSelectInput id=id}
 	{/inputs/item/itemSelectInput}

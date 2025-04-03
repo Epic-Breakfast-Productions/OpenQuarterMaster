@@ -1,0 +1,17 @@
+{
+	"packageName":"oqm-infra-traefik",
+	"version":"1.0.2",
+	"description":"Traefik Reverse Proxy instance for Open QuarterMaster.",
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/traefik",
+	"configs": [],
+	"dependencies": {
+		"deb": ", oqm-manager-station+captain (>= 2.6.0), python3-docker, python3-watchdog"
+	},
+	"configFiles":{
+	},
+	"files": {
+		"/etc/oqm/static/infra/traefik/setup-proxy-config": "setup-proxy-config.py",
+		"/etc/oqm/serviceConfig/infra/traefik/traefik-dynamic-config-template.yaml.j2": "traefik-dynamic-config-template.yaml.j2",
+		"/etc/oqm/serviceConfig/infra/traefik/traefik-static-config-template.yaml.j2": "traefik-static-config-template.yaml.j2"
+	}
+}
