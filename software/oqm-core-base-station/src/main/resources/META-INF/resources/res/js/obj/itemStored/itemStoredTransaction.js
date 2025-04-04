@@ -478,6 +478,7 @@ const ItemStoredTransaction = {
 		storedInfoContainer: $("#itemStoredTransactionTransferInfoContainer"),
 
 		itemIdInput: $("#itemStoredTransactionTransferFormItemIdInput"),
+		transactionTypeContainer: $("#itemStoredTransactionTransferFormTypeInputContainer"),
 		transactionTypeInput: $("#itemStoredTransactionTransferFormTypeInput"),
 		fromBlockContainer: $("#itemStoredTransactionTransferFormFromBlockContainer"),
 		fromBlockSelect: $("#itemStoredTransactionTransferFormFromBlockSelect"),
@@ -505,6 +506,7 @@ const ItemStoredTransaction = {
 
 			ItemStoredTransaction.Transfer.messages.text("");
 			ItemStoredTransaction.Transfer.itemIdInput.val("");
+			ItemStoredTransaction.Transfer.transactionTypeContainer.hide();
 			ItemStoredTransaction.Transfer.fromBlockContainer.hide();
 			ItemStoredTransaction.Transfer.fromBlockSelect.text("");
 			ItemStoredTransaction.Transfer.fromStoredContainer.hide();
@@ -519,21 +521,160 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Transfer.toStoredContainer.hide();
 			ItemStoredTransaction.Transfer.toStoredSelect.text("");
 		},
-		setupForm: async function (itemId, stored, buttonElement) {
+		setupForm: async function (item, stored, buttonElement) {
 			Main.processStart();
-			if (typeof stored === "string" || (stored instanceof String)) {
-				return Getters.StoredItem.getStored(itemId, stored, function (storedData) {
-					ItemStoredTransaction.Transfer.setupForm(itemId, storedData, buttonElement);
+			ModalHelpers.setReturnModal(this.modal, buttonElement);
+			ItemStoredTransaction.Transfer.resetForm();
+			if(item == null){
+				ItemStoredTransaction.Transfer.itemInputContainer.show();
+				Main.processStop();
+				return;
+			}
+
+			if(typeof item === "string" || (item instanceof String)){
+				return Getters.InventoryItem.get(item, function (itemData) {
+					ItemStoredTransaction.Transfer.setupForm(itemData, stored, buttonElement);
 					Main.processStop();
 				});
 			}
-			console.log("Setting up stored transfer form for stored item: ", stored);
-			ItemStoredTransaction.Transfer.resetForm();
-			ModalHelpers.setReturnModal(this.modal, buttonElement);
+
+			if (typeof stored === "string" || (stored instanceof String)) {
+				return Getters.StoredItem.getStored(item.id, stored, function (storedData) {
+					ItemStoredTransaction.Transfer.setupForm(item, storedData, buttonElement);
+					Main.processStop();
+				});
+			}
+			console.log("Setting up stored transfer form for stored item/stored: ", item, stored);
 			let promises = [];
 
+			ItemStoredTransaction.Transfer.itemInfoItemName.text(item.name);
+			ItemStoredTransaction.Transfer.itemInfoContainer.show();
+
+			let typeSelect = false;
+			let fromBlock = false;
+			let fromStored = false;
+			let amount = false;
+			let toBlock = false;
+			let toStored = false;
+			StorageTypeUtils.runForType(
+				item,
+				function(){
+					fromBlock = true;
+					toBlock = true;
+					amount = true;
+				},
+				function (){
+					typeSelect = true;
+					fromStored = true;
+					amount = true;
+					toStored = true;
+					toBlock = true;
+				},
+				function (){
+					fromStored = true;
+					toBlock = true;
+				},
+				function (){
+					fromBlock = true;
+					toBlock = true;
+				}
+			);
+
+			//populate inputs that are used
+			if(typeSelect){
+				ItemStoredTransaction.Transfer.transactionTypeContainer.show();
+			}
+			if(fromBlock){
+				ItemStoredTransaction.Transfer.fromBlockContainer.show();
+				item.storageBlocks.forEach(function (blockId){
+					let newBlockOption = $('<option></option>');
+					newBlockOption.val(blockId);
+					promises.push(getStorageBlockLabel(blockId, function (blockLabel){
+						newBlockOption.text(blockLabel);
+					}));
+					ItemStoredTransaction.Transfer.fromBlockSelect.append(newBlockOption);
+				});
+			}
+			if(fromStored){
+				ItemStoredTransaction.Transfer.fromStoredContainer.show();
+				//TODO:: swap to stored search/select
+				item.storageBlocks.forEach(function (blockId){
+					let newOptGroup = $('<optgroup></optgroup>');
+					newOptGroup.attr("data-blockId", blockId);
+					promises.push(getStorageBlockLabel(blockId, function (blockLabel){
+						newOptGroup.attr("label", blockLabel);
+					}));
+
+					promises.push(Getters.StoredItem.getStoredForItemInBlock(item.id, blockId, function (storedSearchResults) {
+						storedSearchResults.results.forEach(function(curStoredData){
+							let newOption = $('<option></option>');
+							newOption.attr("value", curStoredData.id);
+							newOption.text(curStoredData.labelText);
+							newOptGroup.append(newOption);
+						});
+					}));
+					ItemStoredTransaction.Transfer.fromStoredSelect.append(newOptGroup);
+				});
+			}
+			if(amount){
+				ItemStoredTransaction.Transfer.amountInputContainer.show();
+
+				promises.push(
+					StoredFormInput.getAmountInputs(item, stored).then(function (inputs){
+						ItemStoredTransaction.Transfer.amountInputs.append(inputs);
+					})
+				);
+			}
+			if(toBlock){
+				ItemStoredTransaction.Transfer.toBlockContainer.show();
+				item.storageBlocks.forEach(function (blockId){
+					let newBlockOption = $('<option></option>');
+					newBlockOption.val(blockId);
+					promises.push(getStorageBlockLabel(blockId, function (blockLabel){
+						newBlockOption.text(blockLabel);
+					}));
+					ItemStoredTransaction.Transfer.toBlockSelect.append(newBlockOption);
+				});
+			}
+			if(toStored){
+				ItemStoredTransaction.Transfer.toStoredContainer.show();
+				//TODO:: swap to stored search/select
+				item.storageBlocks.forEach(function (blockId){
+					let newOptGroup = $('<optgroup></optgroup>');
+					promises.push(getStorageBlockLabel(blockId, function (blockLabel){
+						newOptGroup.attr("label", blockLabel);
+					}));
+
+					promises.push(Getters.StoredItem.getStoredForItem(item.id, function (storedSearchResults) {
+						storedSearchResults.results.forEach(function(curStoredData){
+							let newOption = $('<option></option>');
+							newOption.attr("value", curStoredData.id);
+							newOption.text(curStoredData.labelText);
+							newOptGroup.append(newOption);
+						});
+					}));
+					ItemStoredTransaction.Transfer.toStoredSelect.append(newOptGroup);
+				});
+			}
+
+
+			if(stored != null){
+				//TODO:: lock type to whole, select that from stored and make readonly
+				//TODO:: populate stored info
+			}
+
 			Promise.all(promises);
+			ItemStoredTransaction.Transfer.updateForm();
 			Main.processStop();
+		},
+		/**
+		 * Updates visibility of fields, selected/disabled in dropdowns based on what is selected
+		 */
+		updateForm(){
+			//TODO visibility based on type if type is visible
+			//TODO:: enabledness of amount if checked and visible
+			//TODO:: max amount of amount based on from if amount visible
+			//TODO:: enable/disable "to" options based on "from" selections
 		}
 	}
 };

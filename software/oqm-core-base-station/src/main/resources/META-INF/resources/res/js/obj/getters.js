@@ -25,9 +25,20 @@ const Getters = {
 	},
 	StoredItem: {
 		getStoredForItem: async function(itemId, doneFunc = function(){}){
+			//TODO:: handle paging
 			return Rest.call({
 				method: "GET",
 				url: Rest.passRoot + "/inventory/item/" + itemId + "/stored",
+				done: function(storedSearchResults){
+					doneFunc(storedSearchResults);
+				}
+			});
+		},
+		getStoredForItemInBlock: async function(itemId, blockId, doneFunc = function(){}){
+			//TODO:: handle paging
+			return Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/inventory/item/" + itemId + "/block/" + blockId + "/stored",
 				done: function(storedSearchResults){
 					doneFunc(storedSearchResults);
 				}
@@ -116,6 +127,7 @@ async function getStorageBlockChildrenData(blockId) {
 }
 
 function getStorageBlockLabel(blockId, doneFunc) {
+	//TODO:: cache called ids
 	console.log("Getting label for storage block \"" + blockId + "\"");
 	return Rest.call({
 		spinnerContainer: null,

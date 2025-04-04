@@ -41,10 +41,13 @@ public class ItemInBlockPassthrough extends PassthroughProvider {
 	@Inject
 	@Location("tags/search/itemStored/searchResults")
 	Template searchResultTemplate;
-
+	
 	@Getter
 	@PathParam("itemId")
 	String itemId;
+	@Getter
+	@PathParam("blockId")
+	String blockId;
 
 	@Inject
 	SearchResultTweak searchResultTweak;
@@ -71,7 +74,7 @@ public class ItemInBlockPassthrough extends PassthroughProvider {
 	) {
 		return this.processSearchResults(
 			this.getOqmCoreApiClient()
-				.invItemStoredSearch(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), storedSearch)
+				.invItemStoredInBlockSearch(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), this.getBlockId(), storedSearch)
 				.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "storageBlock", this.getBearerHeaderStr()))
 				.call(results -> searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
 			,

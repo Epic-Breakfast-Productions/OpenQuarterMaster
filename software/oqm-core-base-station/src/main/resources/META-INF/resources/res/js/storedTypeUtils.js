@@ -62,6 +62,8 @@ const StorageTypeUtils = {
 			if (whenUniqueSingle !== null) {
 				return whenUniqueSingle();
 			}
+		} else {
+			console.warn("Storage type was not valid; ", storedType);
 		}
 	},
 	runForStoredType(
