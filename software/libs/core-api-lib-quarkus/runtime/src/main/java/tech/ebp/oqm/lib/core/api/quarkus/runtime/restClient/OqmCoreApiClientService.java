@@ -268,7 +268,7 @@ public interface OqmCoreApiClientService {
 	);
 	
 	@GET
-	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/block/{storageBlockId}/stored")
+	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/block/{storageBlockId}/stored")
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ObjectNode> invItemStoredInBlockSearch(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
