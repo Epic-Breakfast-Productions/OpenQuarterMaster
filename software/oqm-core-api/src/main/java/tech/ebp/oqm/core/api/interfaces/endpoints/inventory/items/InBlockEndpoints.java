@@ -24,10 +24,12 @@ import tech.ebp.oqm.core.api.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
+import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 
@@ -40,10 +42,14 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	@Getter
 	@Inject
 	StoredService objectService;
-
+	
 	@Getter
 	@Inject
 	InventoryItemService inventoryItemService;
+	
+	@Getter
+	@Inject
+	StorageBlockService storageBlockService;
 
 	@Getter
 	Class<Stored> objectClass = Stored.class;
@@ -51,20 +57,31 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	@Getter
 	@PathParam("itemId")
 	String itemId;
+	
 	@Getter
 	@PathParam("blockId")
 	String blockId;
 
-	@Getter
 	private InventoryItem inventoryItem;
-
-	@PostConstruct
-	public void setup(){
-		this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
-
-		if(!this.inventoryItem.getStorageBlocks().contains(new ObjectId(this.blockId))){
-			throw new NotFoundException("Storage block given not found in the given item");
+	private StorageBlock storageBlock;
+	
+	private StorageBlock getStorageBlock() {
+		if (this.storageBlock == null) {
+			this.storageBlock = this.storageBlockService.get(this.getOqmDbIdOrName(), this.blockId);
+			
 		}
+		return this.storageBlock;
+	}
+	
+	private InventoryItem getInventoryItem() {
+		if (this.inventoryItem == null) {
+			this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
+			
+			if(!this.inventoryItem.getStorageBlocks().contains(this.getStorageBlock().getId())){
+				throw new NotFoundException("Storage block given not found in the given item");
+			}
+		}
+		return this.inventoryItem;
 	}
 	
 	@GET
