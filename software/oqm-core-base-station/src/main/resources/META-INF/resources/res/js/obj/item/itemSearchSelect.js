@@ -22,7 +22,6 @@ const ItemSearchSelect = {
 		clearButtPushed.siblings("input[name=itemName]").val("");
 		clearButtPushed.siblings("input[name=item]").val("");
 		clearButtPushed.siblings("input[name=item]").trigger("change");
-
 	}
 };
 

@@ -483,7 +483,7 @@ const ItemStoredTransaction = {
 		fromBlockContainer: $("#itemStoredTransactionTransferFormFromBlockContainer"),
 		fromBlockSelect: $("#itemStoredTransactionTransferFormFromBlockSelect"),
 		fromStoredContainer: $("#itemStoredTransactionTransferFormFromStoredContainer"),
-		fromStoredSelect: $("#itemStoredTransactionTransferFormFromStoredSelect"),
+		fromStoredSelect: $("#itemStoredTransactionTransferFormFromItemStored-inputGroup"),
 
 		amountInputContainer: $("#itemStoredTransactionTransferFormAmountContainer"),
 		amountInputs: $("#itemStoredTransactionTransferFormAmountInputs"),
@@ -492,7 +492,7 @@ const ItemStoredTransaction = {
 		toBlockContainer: $("#itemStoredTransactionTransferFormToBlockContainer"),
 		toBlockSelect: $("#itemStoredTransactionTransferFormToBlockSelect"),
 		toStoredContainer: $("#itemStoredTransactionTransferFormToStoredContainer"),
-		toStoredSelect: $("#itemStoredTransactionTransferFormToStoredSelect"),
+		toStoredSelect: $("#itemStoredTransactionTransferFormToItemStored-inputGroup"),
 
 		resetForm: function () {
 			ItemStoredTransaction.Transfer.itemInputContainer.hide();
@@ -510,7 +510,8 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Transfer.fromBlockContainer.hide();
 			ItemStoredTransaction.Transfer.fromBlockSelect.text("");
 			ItemStoredTransaction.Transfer.fromStoredContainer.hide();
-			ItemStoredTransaction.Transfer.fromStoredSelect.text("");
+			ItemStoredSearchSelect.resetSearchInput(ItemStoredTransaction.Transfer.fromStoredSelect);
+
 
 			ItemStoredTransaction.Transfer.amountInputContainer.hide();
 			ItemStoredTransaction.Transfer.amountInputs.text("");
@@ -519,7 +520,7 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Transfer.toBlockContainer.hide();
 			ItemStoredTransaction.Transfer.toBlockSelect.text("");
 			ItemStoredTransaction.Transfer.toStoredContainer.hide();
-			ItemStoredTransaction.Transfer.toStoredSelect.text("");
+			ItemStoredSearchSelect.resetSearchInput(ItemStoredTransaction.Transfer.toStoredSelect);
 		},
 		setupForm: async function (item, stored, buttonElement) {
 			Main.processStart();
@@ -549,6 +550,9 @@ const ItemStoredTransaction = {
 
 			ItemStoredTransaction.Transfer.itemInfoItemName.text(item.name);
 			ItemStoredTransaction.Transfer.itemInfoContainer.show();
+
+			ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.fromStoredSelect, item);
+			ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.toStoredSelect, item);
 
 			let typeSelect = false;
 			let fromBlock = false;
@@ -597,24 +601,6 @@ const ItemStoredTransaction = {
 			}
 			if(fromStored){
 				ItemStoredTransaction.Transfer.fromStoredContainer.show();
-				//TODO:: swap to stored search/select
-				item.storageBlocks.forEach(function (blockId){
-					let newOptGroup = $('<optgroup></optgroup>');
-					newOptGroup.attr("data-blockId", blockId);
-					promises.push(getStorageBlockLabel(blockId, function (blockLabel){
-						newOptGroup.attr("label", blockLabel);
-					}));
-
-					promises.push(Getters.StoredItem.getStoredForItemInBlock(item.id, blockId, function (storedSearchResults) {
-						storedSearchResults.results.forEach(function(curStoredData){
-							let newOption = $('<option></option>');
-							newOption.attr("value", curStoredData.id);
-							newOption.text(curStoredData.labelText);
-							newOptGroup.append(newOption);
-						});
-					}));
-					ItemStoredTransaction.Transfer.fromStoredSelect.append(newOptGroup);
-				});
 			}
 			if(amount){
 				ItemStoredTransaction.Transfer.amountInputContainer.show();
@@ -638,23 +624,6 @@ const ItemStoredTransaction = {
 			}
 			if(toStored){
 				ItemStoredTransaction.Transfer.toStoredContainer.show();
-				//TODO:: swap to stored search/select
-				item.storageBlocks.forEach(function (blockId){
-					let newOptGroup = $('<optgroup></optgroup>');
-					promises.push(getStorageBlockLabel(blockId, function (blockLabel){
-						newOptGroup.attr("label", blockLabel);
-					}));
-
-					promises.push(Getters.StoredItem.getStoredForItem(item.id, function (storedSearchResults) {
-						storedSearchResults.results.forEach(function(curStoredData){
-							let newOption = $('<option></option>');
-							newOption.attr("value", curStoredData.id);
-							newOption.text(curStoredData.labelText);
-							newOptGroup.append(newOption);
-						});
-					}));
-					ItemStoredTransaction.Transfer.toStoredSelect.append(newOptGroup);
-				});
 			}
 
 

@@ -50,8 +50,9 @@
 				<select class="form-select form-select-lg" id="itemStoredTransactionTransferFormFromBlockSelect" required></select>
 			</div>
 			<div class="col" id="itemStoredTransactionTransferFormFromStoredContainer">
-				<label for="itemStoredTransactionTransferFormFromStoredSelect" class="form-label">From {#icons/stored /} Stored Item</label>
-				<select class="form-select form-select-lg" id="itemStoredTransactionTransferFormFromStoredSelect" required></select>
+				{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionTransferFormFromItemStored" /}
+				{!<label for="itemStoredTransactionTransferFormFromStoredSelect" class="form-label">From {#icons/stored /} Stored Item</label>!}
+				{!<select class="form-select form-select-lg" id="itemStoredTransactionTransferFormFromStoredSelect" required></select>!}
 			</div>
 		</div>
 		<div class="row mt-3" id="itemStoredTransactionTransferFormAmountContainer">
@@ -70,8 +71,7 @@
 				<select class="form-select form-select-lg" id="itemStoredTransactionTransferFormToBlockSelect" required></select>
 			</div>
 			<div class="col" id="itemStoredTransactionTransferFormToStoredContainer">
-				<label for="itemStoredTransactionTransferFormToStoredSelect" class="form-label">To {#icons/stored /} Stored Item</label>
-				<select class="form-select form-select-lg" id="itemStoredTransactionTransferFormToStoredSelect" required></select>
+				{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionTransferFormToItemStored" /}
 			</div>
 		</div>
 		

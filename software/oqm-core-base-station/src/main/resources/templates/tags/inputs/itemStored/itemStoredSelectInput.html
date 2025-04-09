@@ -1,0 +1,11 @@
+<div class="mb-3 col">
+	{!TODO:: label/id of item for which is stored searching !}
+	<div class="input-group input-group-lg itemStoredSearchInputGroup" id="{id}-inputGroup">
+		<input type="hidden" id="{id}-itemStoredInputItemId" name="item">
+		<input type="hidden" id="{id}-itemStoredInputId" name="itemStored">
+		<button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#itemStoredSearchSelectModal" id="{id}-itemStoredInputSearchButton" onclick="ItemStoredSearchSelect.setupItemStoredSearchModal(this);">{#icons/search}{/icons/search}</button>
+		<input type="text" class="form-control" id="{id}-itemStoredInputLabel" placeholder="Item Stored" name="itemStoredLabel" aria-describedby="{id}-itemNameInput-help" readonly>
+		<button class="btn btn-outline-secondary clearButton" type="button" id="{id}-itemStoredInputClearButton" onclick="ItemStoredSearchSelect.clearSearchInput($(this));">{#icons/remove}{/icons/remove}</button>
+	</div>
+	<div id="{id}-itemStoredNameInput-help" class="form-text"></div>
+</div>
