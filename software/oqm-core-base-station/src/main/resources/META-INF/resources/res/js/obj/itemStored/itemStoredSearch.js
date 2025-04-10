@@ -42,6 +42,7 @@ ItemStoredSearch = {
 		if (forSelect) {
 			headers['actionType'] = "select";
 			headers['inputIdPrepend'] = selectDestination;
+			headers['otherModalId'] = ModalHelpers.getModalOfElement($("#"+selectDestination)).prop("id");
 		}
 
 		return Rest.call({

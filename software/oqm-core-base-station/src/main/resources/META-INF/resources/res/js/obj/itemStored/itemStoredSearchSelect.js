@@ -8,14 +8,27 @@ ItemStoredSearchSelect = {
     itemClearButton: $("#itemStoredSearchSelectForm-itemInputClearButton"),
     curDestinationId: null,
 
-    selectStoredItem(storedLabel, storedItemId, inputGroupId) {
+    selectStoredItem(storedLabel, storedItemId, inputGroupId, trigger = true) {
         console.log("Selected stored item: " + storedItemId + " - " + storedLabel);
         let inputGroup = $("#" + inputGroupId);
 
-        inputGroup.find("input[name=itemStoredLabel]").val(storedLabel);
+        if(storedLabel == null) {
+            Getters.StoredItem.getStored(
+                "",
+                storedItemId,
+                function (storedData) {
+                    inputGroup.find("input[name=itemStoredLabel]").val(storedData.labelText);
+                }
+            );
+        } else {
+            inputGroup.find("input[name=itemStoredLabel]").val(storedLabel);
+        }
+
         let storedIdInput = inputGroup.find("input[name=itemStored]");
         storedIdInput.val(storedItemId);
-        storedIdInput.trigger("change");
+        if(trigger) {
+            storedIdInput.trigger("change");
+        }
     },
 
     setupItemStoredSearchModal(buttonPressed) {

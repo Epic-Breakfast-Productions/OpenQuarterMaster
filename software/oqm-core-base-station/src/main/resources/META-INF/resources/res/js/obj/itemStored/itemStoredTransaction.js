@@ -628,7 +628,7 @@ const ItemStoredTransaction = {
 
 
 			if(stored != null){
-				//TODO:: lock type to whole, select that from stored and make readonly
+				//TODO:: select that from stored and make readonly
 				//TODO:: populate stored info
 			}
 

@@ -12,6 +12,9 @@ const ModalHelpers = {
 		modalCloseButton.removeAttr("data-bs-target");
 		modalCloseButton.removeAttr("data-bs-toggle");
 	},
+	getModalOfElement(element){
+		return element.closest(".modal");
+	},
 	/**
 	 *
 	 * @param destModalJq The jQuery object of the modal we are going to.
@@ -28,7 +31,7 @@ const ModalHelpers = {
 			returnModal = $(returnModal.target);
 		}
 		//get modal parent, if applicable
-		returnModal = returnModal.closest(".modal");
+		returnModal = ModalHelpers.getModalOfElement(returnModal);
 
 		if(returnModal == null){
 			this.clearModalReturn(destModalJq);

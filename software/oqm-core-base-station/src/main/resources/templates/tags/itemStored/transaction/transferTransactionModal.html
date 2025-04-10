@@ -58,8 +58,8 @@
 		<div class="row mt-3" id="itemStoredTransactionTransferFormAmountContainer">
 			<div class="col" id="itemStoredTransactionTransferFormAmountInputs">
 			</div>
-			<div class="col">
-				<div class="form-check">
+			<div class="col my-auto">
+				<div class="form-check form-control-lg">
 					<input class="form-check-input" type="checkbox" value="" id="itemStoredTransactionTransferFormAmountTransferAllInput">
 					<label class="form-check-label" for="itemStoredTransactionTransferFormAmountTransferAllInput">Transfer All</label>
 				</div>
@@ -71,7 +71,7 @@
 				<select class="form-select form-select-lg" id="itemStoredTransactionTransferFormToBlockSelect" required></select>
 			</div>
 			<div class="col" id="itemStoredTransactionTransferFormToStoredContainer">
-				{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionTransferFormToItemStored" /}
+				{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionTransferFormToItemStored" labelText='To Stored'/}
 			</div>
 		</div>
 		
