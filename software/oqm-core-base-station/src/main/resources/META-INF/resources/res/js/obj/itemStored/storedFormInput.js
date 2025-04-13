@@ -49,7 +49,7 @@ const StoredFormInput = {
 
 		return output;
 	},
-	getAmountInputs: async function (item, stored, showAmount = true) {
+	getAmountInputs: async function (item, stored, showAmount = true, maxFromStored = false) {
 		console.log("Getting amount inputs");
 
 		let output = $(
@@ -63,14 +63,41 @@ const StoredFormInput = {
 				'<div class="input-group mt-2 mb-3 amountStoredInput">\n' +
 				'     <input type="number" class="form-control amountStoredValueInput" name="amountStored" placeholder="Value" value="0.00" min="0.00" step="any" required>\n' +
 				'     <select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit"></select>\n' +
-				'</div>'))
-			//TODO:: amount value
-			//TODO:: selected unit from stored
-			let unitOps = await UnitUtils.getCompatibleUnitOptions(item.unit.string);
-			output.find(".unitInput").append(unitOps);
+				'</div>'));
+
+			let unitOps = null;
+			let unit = null;
+			if(stored == null){
+				console.debug("No stored given basing units off of item.");
+				unit = item.unit.string;
+				unitOps = await UnitUtils.getCompatibleUnitOptions(
+					unit
+				);
+			} else {
+				console.debug("Stored given, basing units off ot that.");
+				output.find(".amountStoredValueInput").val(stored.amount.value);
+				unit = stored.amount.unit.string;
+				unitOps = await UnitUtils.getCompatibleUnitOptions(stored);
+			}
+			let unitInput = output.find(".unitInput");
+			unitInput.append(unitOps).val(unit);
+
+			if(stored != null && maxFromStored){
+				console.debug("Setting up amount input to adapt to max specified by stored.")
+				unitInput.on("change", function (event) {
+					StoredFormInput.updateMaxAmount($(event.target));
+				});
+				unitInput.change();
+			}
 		}
 
 		return output;
+	},
+	updateMaxAmount(unitInputJq){
+		console.log("Updating max value for amount input.");
+		let amountStoredInputGroup = unitInputJq.parent();
+		let amountStoredValueInput = amountStoredInputGroup.find(".amountStoredValueInput");
+		amountStoredValueInput.attr("max", unitInputJq.find(":selected").attr("data-max-value"));
 	},
 	getUniqueInputs(stored) {
 		let output = $('<div class="uniqueStoredFormInputs"></div>');

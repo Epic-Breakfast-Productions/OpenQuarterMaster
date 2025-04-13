@@ -551,7 +551,7 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Transfer.itemInfoItemName.text(item.name);
 			ItemStoredTransaction.Transfer.itemInfoContainer.show();
 
-			ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.fromStoredSelect, item);
+			ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.fromStoredSelect, item, stored);
 			ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.toStoredSelect, item);
 
 			let typeSelect = false;
@@ -606,7 +606,7 @@ const ItemStoredTransaction = {
 				ItemStoredTransaction.Transfer.amountInputContainer.show();
 
 				promises.push(
-					StoredFormInput.getAmountInputs(item, stored).then(function (inputs){
+					StoredFormInput.getAmountInputs(item, stored, true, true).then(function (inputs){
 						ItemStoredTransaction.Transfer.amountInputs.append(inputs);
 					})
 				);
@@ -627,12 +627,12 @@ const ItemStoredTransaction = {
 			}
 
 
-			if(stored != null){
-				//TODO:: select that from stored and make readonly
-				//TODO:: populate stored info
-			}
-
 			Promise.all(promises);
+			if(stored != null){
+				//TODO:: populate stored info?
+				//TODO:: set max amount if relevant
+				
+			}
 			ItemStoredTransaction.Transfer.updateForm();
 			Main.processStop();
 		},
@@ -644,6 +644,11 @@ const ItemStoredTransaction = {
 			//TODO:: enabledness of amount if checked and visible
 			//TODO:: max amount of amount based on from if amount visible
 			//TODO:: enable/disable "to" options based on "from" selections
+		},
+		submitFormHandler(event){
+			event.preventDefault();
+			//TODO:: simple validation: to/from same stored
+			//TODO:: build transact object, do thing
 		}
 	}
 };
@@ -654,3 +659,4 @@ ItemStoredTransaction.Add.itemIdInput.on("change", function (){
 	console.log("Got item for add transaction form. Setting up: ", itemId);
 	ItemStoredTransaction.Add.setupForm(itemId);
 });
+ItemStoredTransaction.Transfer.form.on("change", ItemStoredTransaction.Transfer.submitFormHandler);

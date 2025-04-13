@@ -24,27 +24,56 @@ const UnitUtils = {
 		}
 		return output;
 	},
-	getCompatibleUnitOptions: async function (unit, selectedVal = null) {
-		if (!(unit in this.compatibleUnitOptionsCache)) {
-			console.debug("Cache miss, getting compatible units for ", unit);
+	getCompatibleUnitOptions: async function (unitStrOrAmtStored) {
+		let wasStored = false;
+		let unitStr = unitStrOrAmtStored;
+
+		if (typeof unitStrOrAmtStored === 'object' && unitStrOrAmtStored !== null && !Array.isArray(unitStrOrAmtStored)) {
+			wasStored = true;
+			unitStr = unitStrOrAmtStored.amount.unit.string;
+		}
+		console.log("Getting compatible inputs for unit: ", unitStr, unitStrOrAmtStored);
+
+		if (!(unitStr in this.compatibleUnitOptionsCache)) {
+			console.debug("Cache miss, getting compatible units for ", unitStr);
 			await Rest.call({
 				method: "GET",
-				url: Rest.apiRoot + "/pageComponents/unit/inputs/compatibleWith/"+unit,
+				url: Rest.apiRoot + "/pageComponents/unit/inputs/compatibleWith/"+unitStr,
 				returnType: "html",
 				extraHeaders: {
 					"accept": "text/html",
 				},
 				done: function (compatibleUnitOptions) {
-					UnitUtils.compatibleUnitOptionsCache[unit] = compatibleUnitOptions;
+					UnitUtils.compatibleUnitOptionsCache[unitStr] = compatibleUnitOptions;
 				}
 			});
 		}
 
-		let output = $(this.compatibleUnitOptionsCache[unit]);
+		let output = $(this.compatibleUnitOptionsCache[unitStr]).clone();
 
-		if (selectedVal == null) {
-			//TODO:: find value, mark as selected
+		if(wasStored){
+			console.log("Had stored object.");
+			let quantity = unitStrOrAmtStored.amount;
+			let convData = [];
+
+			output.each(function(i, option){
+				let optionJq = $(option);
+				let curUnit = UnitUtils.getUnitObj(optionJq.val());
+				convData.push(UnitUtils.getConvertRequestObj(quantity, curUnit));
+			});
+
+			let convertedQuantities = await UnitUtils.convertQuantity(convData);
+
+			output.each(function(i, option){
+				let optionJq = $(option);
+				let convertedQuantity = convertedQuantities[i];
+
+				optionJq.attr("data-amount-converted-original", convertedQuantity.value);
+				optionJq.attr("data-max-value", convertedQuantity.value);
+			});
 		}
+
+		console.debug("Got compatible unit options: ", output)
 		return output;
 	},
 
@@ -55,22 +84,17 @@ const UnitUtils = {
 	quantityToDisplayStr(quantityObj) {
 		return quantityObj.value + quantityObj.unit.symbol;
 	},
-
 	getUnitObj(unitStr) {
-		let output = {
+		return {
 			string: unitStr
 		};
-
-		return output;
 	},
 	getQuantityObj(value, unit) {
-		let output = {
+		return {
 			unit: UnitUtils.getUnitObj(unit),
 			scale: "ABSOLUTE",
 			value: value
 		};
-
-		return output;
 	},
 	getQuantityFromInputs(inputsContainerJq) {
 		let output = this.getQuantityObj(
@@ -79,6 +103,26 @@ const UnitUtils = {
 		);
 		console.debug("Got quantity from form: ", output);
 
+		return output;
+	},
+	getConvertRequestObj(quantityObj, unitObj){
+		return {
+			quantity: quantityObj,
+			newUnit: unitObj,
+		};
+	},
+	convertQuantity: async function(requestObj){
+		let output = null;
+		await Rest.call({
+			spinnerContainer: null,
+			method: "PUT",
+			url: Rest.passRoot + "/inventory/unit/convert",
+			data: requestObj,
+			done: function (resultQuantity) {
+				console.log("Got converted quantity: ", resultQuantity);
+				output = resultQuantity;
+			}
+		});
 		return output;
 	}
 };
