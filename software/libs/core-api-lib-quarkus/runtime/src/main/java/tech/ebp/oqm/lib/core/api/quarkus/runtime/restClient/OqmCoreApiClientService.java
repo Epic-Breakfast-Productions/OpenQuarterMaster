@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Uni;
@@ -92,7 +93,7 @@ public interface OqmCoreApiClientService {
 	Uni<ObjectNode> unitCustomGetAll(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token
 	);
-
+	
 	@POST
 	@Path(UNIT_ROOT_ENDPOINT + "/custom")
 	@Consumes(MediaType.APPLICATION_JSON)
@@ -100,6 +101,14 @@ public interface OqmCoreApiClientService {
 	Uni<String> unitCreateCustomUnit(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		ObjectNode ncur
+	);
+	
+	@PUT
+	@Path(UNIT_ROOT_ENDPOINT + "/convert")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<String> unitConvertQuantity(
+		JsonNode quantityConvertRequest
 	);
 	//</editor-fold>
 
