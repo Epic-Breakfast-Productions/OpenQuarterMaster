@@ -484,6 +484,8 @@ const ItemStoredTransaction = {
 		fromBlockSelect: $("#itemStoredTransactionTransferFormFromBlockSelect"),
 		fromStoredContainer: $("#itemStoredTransactionTransferFormFromStoredContainer"),
 		fromStoredSelect: $("#itemStoredTransactionTransferFormFromItemStored-inputGroup"),
+		fromStoredItemIdInput: $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputItemId"),
+		fromStoredStoredIdInput: $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputId"),
 
 		amountInputContainer: $("#itemStoredTransactionTransferFormAmountContainer"),
 		amountInputs: $("#itemStoredTransactionTransferFormAmountInputs"),
@@ -607,7 +609,7 @@ const ItemStoredTransaction = {
 
 				promises.push(
 					StoredFormInput.getAmountInputs(item, stored, true, true).then(function (inputs){
-						ItemStoredTransaction.Transfer.amountInputs.append(inputs);
+						ItemStoredTransaction.Transfer.amountInputs.html(inputs);
 					})
 				);
 			}
@@ -628,11 +630,7 @@ const ItemStoredTransaction = {
 
 
 			Promise.all(promises);
-			if(stored != null){
-				//TODO:: populate stored info?
-				//TODO:: set max amount if relevant
-				
-			}
+
 			ItemStoredTransaction.Transfer.updateForm();
 			Main.processStop();
 		},
@@ -644,6 +642,14 @@ const ItemStoredTransaction = {
 			//TODO:: enabledness of amount if checked and visible
 			//TODO:: max amount of amount based on from if amount visible
 			//TODO:: enable/disable "to" options based on "from" selections
+		},
+		updateAllAmount(){
+			let inputs = ItemStoredTransaction.Transfer.amountInputs.find("input, select");
+			if(ItemStoredTransaction.Transfer.amountTransferAllInput.is(":checked")){
+				inputs.prop("disabled", true);
+			} else {
+				inputs.prop("disabled", false);
+			}
 		},
 		submitFormHandler(event){
 			event.preventDefault();
@@ -659,4 +665,27 @@ ItemStoredTransaction.Add.itemIdInput.on("change", function (){
 	console.log("Got item for add transaction form. Setting up: ", itemId);
 	ItemStoredTransaction.Add.setupForm(itemId);
 });
-ItemStoredTransaction.Transfer.form.on("change", ItemStoredTransaction.Transfer.submitFormHandler);
+
+ItemStoredTransaction.Transfer.fromStoredStoredIdInput.on("change", function (){
+	let itemId = ItemStoredTransaction.Transfer.fromStoredItemIdInput.val();
+	let itemStoredId = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
+	console.log("Updating item stored form data ", itemStoredId);
+
+	if(itemId != null && itemStoredId != null){
+		Getters.InventoryItem.get(itemId, function(item){
+			if(itemStoredId != null){
+				Getters.StoredItem.getStored(itemId, itemStoredId, function (stored) {
+					StoredFormInput.getAmountInputs(item, stored, true, true).then(function (inputs){
+						ItemStoredTransaction.Transfer.amountInputs.html(inputs);
+					});
+					//TODO:: update stored info?
+				});
+			} else {
+				StoredFormInput.getAmountInputs(item, null, true, true).then(function (inputs){
+					ItemStoredTransaction.Transfer.amountInputs.html(inputs);
+				});
+			}
+		});
+	}
+});
+ItemStoredTransaction.Transfer.form.on("submit", ItemStoredTransaction.Transfer.submitFormHandler);
