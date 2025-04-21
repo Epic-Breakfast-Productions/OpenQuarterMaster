@@ -43,7 +43,8 @@ public class LifecycleEvents extends BaseStepDefinitions {
 		
 		HttpClient client = RestHelpers.NULL_CERT_TRUST_MANAGER_CLIENT_BUILDER.build();
 		HttpRequest request = HttpRequest.newBuilder()
-								  .uri(ConfigReader.getTestRunConfig().getInstance().getUri(9001, "/api/v1/inventory/manage/clearDb"))
+								  //TODO:: update this when we have the appropriate endpoint brought in from stored refactor
+								  .uri(ConfigReader.getTestRunConfig().getInstance().getUri("/core/api", "/api/v1/inventory/manage/clearDb"))
 								  .header("Authorization", RestHelpers.getClientCredentialString())
 								  .DELETE()
 								  .build();

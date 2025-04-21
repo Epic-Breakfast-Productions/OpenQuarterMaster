@@ -14,9 +14,10 @@ public class InstanceConnectionConfig {
 	private String hostname;
 	private String clientId;
 	private String clientSecret;
-	private int keycloakPort = 8115;
+	private int port = 443;
+	private String database;
 	
-	public URI getUri(int port, String endpoint) throws URISyntaxException {
-		return new URI("https", null, this.getHostname(), port, endpoint, null, null);
+	public URI getUri(String service, String endpoint) throws URISyntaxException {
+		return new URI("https", null, this.getHostname(), this.getPort(), service + endpoint, null, null);
 	}
 }
