@@ -117,7 +117,14 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 				db.getMongoDatabase().getCollection(this.collectionName, this.clazz)
 			);
 		}
-		return this.collections.get(db.getDbId());
+		
+		MongoCollection<T> output =  this.collections.get(db.getDbId());
+		
+		if(output == null){
+			log.warn("Collection gotten was null. This is an error. DB Cache entry: {}", db);
+		}
+		
+		return output;
 	}
 
 	public MongoCollection<T> getTypedCollection(String oqmDbIdOrName) {
