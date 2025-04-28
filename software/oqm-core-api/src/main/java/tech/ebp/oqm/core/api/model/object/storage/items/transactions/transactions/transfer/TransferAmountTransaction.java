@@ -15,13 +15,20 @@ import javax.measure.Quantity;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 public class TransferAmountTransaction extends TransferTransaction {
-
+	
 	/**
 	 * The amount we are transferring.
+	 * <p>
+	 * Only specify when {@link TransferAmountTransaction#all} is `false`.
 	 */
-	@NonNull
-	@NotNull
 	private Quantity<?> amount;
+	
+	/**
+	 * Flag to specify to transfer all of what is in the source to the destination.
+	 * <p>
+	 * Only specify "true" if {@link TransferAmountTransaction#amount}
+	 */
+	private boolean all = false;
 	
 	/**
 	 * If applicable, the storage block we are pulling the amount from. Used for BULK items.
@@ -41,12 +48,12 @@ public class TransferAmountTransaction extends TransferTransaction {
 	 * If applicable, the specific stored item we are transferring to. Used for AMOUNT_LIST
 	 */
 	private ObjectId toStored;
-
+	
 	@Override
 	public TransactionType getTransactionType() {
 		return TransactionType.TRANSFER_AMOUNT;
 	}
-
+	
 	@Override
 	public int getSchemaVersion() {
 		return 1;
