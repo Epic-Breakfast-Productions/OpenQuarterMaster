@@ -75,7 +75,10 @@ const StoredFormInput = {
 				);
 			} else {
 				console.debug("Stored given, basing units off ot that.");
-				output.find(".amountStoredValueInput").val(stored.amount.value);
+				let amountValueInput = output.find(".amountStoredValueInput");
+				amountValueInput.val(stored.amount.value);
+				amountValueInput.attr("data-originalValue", JSON.stringify(stored.amount));
+
 				unit = stored.amount.unit.string;
 				unitOps = await UnitUtils.getCompatibleUnitOptions(stored);
 			}

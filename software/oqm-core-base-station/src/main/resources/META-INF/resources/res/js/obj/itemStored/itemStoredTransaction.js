@@ -495,6 +495,8 @@ const ItemStoredTransaction = {
 		toBlockSelect: $("#itemStoredTransactionTransferFormToBlockSelect"),
 		toStoredContainer: $("#itemStoredTransactionTransferFormToStoredContainer"),
 		toStoredSelect: $("#itemStoredTransactionTransferFormToItemStored-inputGroup"),
+		toStoredItemIdInput: $("#itemStoredTransactionTransferFormToItemStored-itemStoredInputItemId"),
+		toStoredIdInput: $("#itemStoredTransactionTransferFormToItemStored-itemStoredInputId"),
 
 		resetForm: function () {
 			ItemStoredTransaction.Transfer.itemInputContainer.hide();
@@ -550,6 +552,7 @@ const ItemStoredTransaction = {
 			console.log("Setting up stored transfer form for stored item/stored: ", item, stored);
 			let promises = [];
 
+			ItemStoredTransaction.Transfer.itemIdInput.val(item.id);
 			ItemStoredTransaction.Transfer.itemInfoItemName.text(item.name);
 			ItemStoredTransaction.Transfer.itemInfoContainer.show();
 
@@ -597,9 +600,11 @@ const ItemStoredTransaction = {
 					newBlockOption.val(blockId);
 					promises.push(getStorageBlockLabel(blockId, function (blockLabel){
 						newBlockOption.text(blockLabel);
+						//TODO:: select from block if stored given
 					}));
 					ItemStoredTransaction.Transfer.fromBlockSelect.append(newBlockOption);
 				});
+
 			}
 			if(fromStored){
 				ItemStoredTransaction.Transfer.fromStoredContainer.show();
@@ -628,8 +633,8 @@ const ItemStoredTransaction = {
 				ItemStoredTransaction.Transfer.toStoredContainer.show();
 			}
 
-
 			Promise.all(promises);
+			//TODO:: make & run update to block to not select same block as is selected in from
 
 			ItemStoredTransaction.Transfer.updateForm();
 			Main.processStop();
@@ -638,6 +643,14 @@ const ItemStoredTransaction = {
 		 * Updates visibility of fields, selected/disabled in dropdowns based on what is selected
 		 */
 		updateForm(){
+			if(ItemStoredTransaction.Transfer.transactionTypeContainer.is(":visible")){
+				console.debug("Type input was visible!");
+
+				//TODO:: if amount
+
+				//TODO:: if whole
+			}
+
 			//TODO visibility based on type if type is visible
 			//TODO:: enabledness of amount if checked and visible
 			//TODO:: max amount of amount based on from if amount visible
@@ -651,10 +664,46 @@ const ItemStoredTransaction = {
 				inputs.prop("disabled", false);
 			}
 		},
-		submitFormHandler(event){
+		submitFormHandler: async function(event){
 			event.preventDefault();
+			let transaction = {};
+
 			//TODO:: simple validation: to/from same stored
-			//TODO:: build transact object, do thing
+			//TODO:: fill out transaction
+
+			if(ItemStoredTransaction.Transfer.amountInputContainer.is(":visible")){
+				transaction['transactionType'] = "TRANSFER_AMOUNT";
+				if(ItemStoredTransaction.Transfer.amountTransferAllInput.is(":checked")){
+					transaction['all'] = true;
+				} else {
+					transaction['amount'] = UnitUtils.getQuantityFromInputs(ItemStoredTransaction.Transfer.amountInputs);
+				}
+			} else {
+				transaction['transactionType'] = "TRANSFER_WHOLE";
+			}
+
+			if(ItemStoredTransaction.Transfer.fromBlockContainer.is(":visible")){
+				transaction['fromBlock'] = ItemStoredTransaction.Transfer.fromBlockSelect.val();
+			}
+
+			if(ItemStoredTransaction.Transfer.fromStoredContainer.is(":visible")){
+				transaction['fromStored'] = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
+			}
+
+			if(ItemStoredTransaction.Transfer.toBlockContainer.is(":visible")){
+				transaction['toBlock'] = ItemStoredTransaction.Transfer.toBlockSelect.val();
+			}
+
+			if(ItemStoredTransaction.Transfer.toStoredContainer.is(":visible")){
+				transaction['toBlock'] = ItemStoredTransaction.Transfer.toStoredIdInput.val();
+			}
+
+			console.log("Built transaction object: ", transaction);
+			await ItemStoredTransaction.submitTransaction(
+				ItemStoredTransaction.Transfer.itemIdInput.val(),
+				transaction,
+				ItemStoredTransaction.Transfer.modal
+			);
 		}
 	}
 };
