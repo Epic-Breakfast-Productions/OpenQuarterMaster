@@ -31,6 +31,7 @@ public class CoreApiPerformanceTests extends BaseStepDefinitions {
 	private static final String NUM_BLOCKS_KEY = "numStorageBlocks";
 	private static final String NUM_ITEMS_KEY = "numItems";
 	private static final String NUM_UPDATES_KEY = "numUpdates";
+	private static final String NUM_IMAGES_KEY = "numUpdates";
 	private static final String RESULTS_KEY = "processingResults";
 	
 	public CoreApiPerformanceTests(TestContext context) {
@@ -61,6 +62,11 @@ public class CoreApiPerformanceTests extends BaseStepDefinitions {
 	@And("each client is creating {int} items")
 	public void eachClientIsCreatingNumItemsItems(int numItems) {
 		this.getContext().getData().put(NUM_ITEMS_KEY, numItems);
+	}
+	
+	@And("each client is creating {int} images for each item")
+	public void eachClientIsCreatingNumImagesPerItem(int numImages) {
+		this.getContext().getData().put(NUM_IMAGES_KEY, numImages);
 	}
 	
 	@And("each client is performing {int} updates to each object")
