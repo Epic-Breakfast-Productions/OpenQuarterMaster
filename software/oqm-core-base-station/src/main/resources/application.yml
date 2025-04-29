@@ -124,36 +124,27 @@ quarkus:
     logout:
       path: /logout
       post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
-  oqmCoreApi:
-    devservice:
-      certPath: ../../../../dev/devTest-cert-cert.pem
-      certKeyPath: ../../../../dev/devTest-cert-key.pem
+#  oqmCoreApi:
+#    devservice:
+#      certPath: ../../../../dev/devTest-cert-cert.pem
+#      certKeyPath: ../../../../dev/devTest-cert-key.pem
       
   keycloak:
     devservices:
-      # Required to export realm
-      start-command: "start-dev --http-enabled=true --hostname-strict=false --hostname-strict-https=false --https-certificate-file=/opt/keycloak/certs/devTest-cert-cert.pem --https-certificate-key-file=/opt/keycloak/certs/devTest-cert-key.pem"
-      realm-path: "../../../../dev/oqm-realm.json"
-      realm-name: "oqm"
-      resource-aliases:
-        systemCert: ../../../../dev/devTest-cert-cert.pem
-        systemCertKey: ../../../../dev/devTest-cert-key.pem
-      resource-mappings:
-        systemCert: /opt/keycloak/certs/devTest-cert-cert.pem
-        systemCertKey: /opt/keycloak/certs/devTest-cert-key.pem
-      # TODO:: figure out
+      port: 9328
+      realm-name: oqm
       users:
-        alice: 1!Letmein
+        alice: alice
+        bob: bob
+#        TODO:: waiting on: https://github.com/quarkusio/quarkus/issues/47581
       roles:
+        # roles listed in https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/oqm-core-api/src/main/java/tech/ebp/oqm/core/api/model/rest/auth/roles/Roles.java
         alice:
-          - "default-roles-oqm"
-          - "inventoryView"
-          - "offline_access"
-          - "itemCheckout"
-          - "inventoryEdit"
-          - "uma_authorization"
-          - "inventoryAdmin"
-          - "user"
+          - user
+          - inventoryAdmin
+          - inventoryView
+          - inventoryEdit
+          - itemCheckout
 
 
 #  messaging:
@@ -182,14 +173,14 @@ smallrye:
     http:
       port: 8080
       ssl-port: 8443
-      ssl:
-        certificate:
-          files: ../../../../dev/devTest-cert-cert.pem
-          key-files: ../../../../dev/devTest-cert-key.pem
+#      ssl:
+#        certificate:
+#          files: ../../../../dev/devTest-cert-cert.pem
+#          key-files: ../../../../dev/devTest-cert-key.pem
     oidc:
-      client-id: oqm-app
-      credentials:
-        secret: "**********"
+#      client-id: oqm-app
+#      credentials:
+#        secret: "**********"
     #      auth-server-url: http://localhost:8115/realms/oqm
 
   runningInfo:
