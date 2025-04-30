@@ -143,6 +143,20 @@
         "userTesting",
         "maintenance"
       ]
+    },
+    {
+      "login": "mulliar22",
+      "name": "mulliar22",
+      "avatar_url": "https://avatars.githubusercontent.com/u/168582625?v=4",
+      "profile": "https://github.com/mulliar22",
+      "contributions": [
+        "code",
+        "data",
+        "doc",
+        "example",
+        "plugin",
+        "research"
+      ]
     }
   ],
   "contributorsPerLine": 7,
