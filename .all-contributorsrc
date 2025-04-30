@@ -143,6 +143,21 @@
         "userTesting",
         "maintenance"
       ]
+    },
+    {
+      "login": "mallom21",
+      "name": "mallom21",
+      "avatar_url": "https://avatars.githubusercontent.com/u/113387289?v=4",
+      "profile": "https://github.com/mallom21",
+      "contributions": [
+        "code",
+        "data",
+        "doc",
+        "example",
+        "plugin",
+        "research",
+        "projectManagement"
+      ]
     }
   ],
   "contributorsPerLine": 7,
