@@ -158,6 +158,20 @@
         "research",
         "projectManagement"
       ]
+    },
+    {
+      "login": "Coletrane315",
+      "name": "Coletrane315",
+      "avatar_url": "https://avatars.githubusercontent.com/u/52933325?v=4",
+      "profile": "https://github.com/Coletrane315",
+      "contributions": [
+        "code",
+        "data",
+        "doc",
+        "example",
+        "plugin",
+        "research"
+      ]
     }
   ],
   "contributorsPerLine": 7,
