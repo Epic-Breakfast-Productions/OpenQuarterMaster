@@ -1,0 +1,37 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Date: Thu, 01 May 2025 02:56:06 +0000
+MD5Sum:
+ a3b14da3e93e737859b7c4704d4bfb1f             6242 Packages
+ 7bd6dc48a8af3f134dd2c58a229e8068             1858 Packages.gz
+ d911681d8b0ae560611c05e2e7d28c60               38 Release
+SHA1:
+ efd2a7e6e244b8e5698525cc0767c851b5623582             6242 Packages
+ 4305b46f2afcf23f018cfae2d325abe6970979e5             1858 Packages.gz
+ a97ac9c96bad42ffe7a724e41f4d9209dcfb0c78               38 Release
+SHA256:
+ 332490e48af380f152a8e0ef35fce73d15b385ae2580dfa60e35404e30c291fc             6242 Packages
+ b1c5efce14411768f54dbf1162251a42c3a8f157852fdbc327c97c428b280f39             1858 Packages.gz
+ 0f2708983e93a55c3aba46bf4bf56338c200c71c0ce0bb873b53e8d580460d3f               38 Release
+SHA512:
+ 628aee45fa085e3b1dfad77e73cba9d3e0b55420b7a49a464a09ac9e2c0f7e99cdd784f33208ec9b3c3c4a3d9080d00962d68338bfb88b14f522748ce627ba1e             6242 Packages
+ 6ed3552a0220ddd4c2da1f09b9253f7fbe77bca74a59dc0a1f795e9953a67bed6630631e06dc8f978551ef9d70f30c7684f20ffdd65f553f8be71c205968803b             1858 Packages.gz
+ ffc54ed822eb5170c1a55cdbc63b878cea9cb05a350eaeed6004e1e69abf205caf27b9f9508f873acc8afc53956d7d9fe94eb5a37d43e89079b46e924eead8a4               38 Release
+-----BEGIN PGP SIGNATURE-----
+
+iQJZBAEBCgBDFiEET4mMzDxL82g2xa7Aa9cIQRtcMhYFAmgS4sclHGdyZWdAZXBp
+Yy1icmVha2Zhc3QtcHJvZHVjdGlvbnMudGVjaAAKCRBr1whBG1wyFt/aEAClXQ+G
+8M4HeeEErnzeBfmCDWnOfKLqxBhQerfO0phpcMIQ7rAUn948VXAPus9xV7TAvEfw
+Hs3PIXJG7qLRdtMV6xSrjHFPkERx4xxXqioV5DBHA6ani6/DiUhbynXpUDNKbzhr
+PO10zeULth59OFQuQu1sN8Ggo8LD/pxzpIoV3+8d/9tRvZTebJQsrD+Ie0eEA+nX
+L5N0PQIo++XpnLS5pWPTB1JbXucl9j82QUakLnxgupOt0UFAx60tiAUCRh70ZEuv
+fwck72U5L++TCsdxjXKnPJMODS9MOrw6QDJ6CrzyMi55S1cle4Fjf4EA9huyk+Jc
++LBt9fXq/LA/t5fTf/KkgDcKFtiyERPPyEH12VCnRYgUeDv46yYQg9t1zY+FnTwv
+08OWHBWwpbrDM0wHgpeQGpJcruGIizmilxspZP49mkD6yrF31m1m2ywIdQm4VFAA
+uEuG9/GICRBvTd9bIpuvbkX6MlRLcrJrU5seVNZbo1wDAZ+qutpCpNgtXfDMiIf5
+pR07aNKAO2vkGiMd0E8ienEkBbNgFXf+SDI0S6pYfcDSs51e+6ja4NuKksq3Mbbu
+f6Pe5cToyyxPdDnbpcbnJdOE447k4bZThqBVlG3jtUlyDBhUTGbO7IDz/WzOwTTk
+3f5i5mglly3bHOx8PdJIR3HtFdB8exnpaWZNvw==
+=QT22
+-----END PGP SIGNATURE-----
