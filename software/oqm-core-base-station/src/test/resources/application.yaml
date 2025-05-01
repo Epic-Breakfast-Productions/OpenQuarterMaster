@@ -20,15 +20,8 @@ quarkus:
   keycloak:
     devservices:
       # Required to export realm
-      start-command: "start-dev --http-enabled=true --hostname-strict=false --hostname-strict-https=false --https-certificate-file=/opt/keycloak/certs/devTest-cert-cert.pem --https-certificate-key-file=/opt/keycloak/certs/devTest-cert-key.pem"
       realm-path: "dev/oqm-realm.json"
       realm-name: "oqm"
-      resource-aliases:
-        systemCert: dev/devTest-cert-cert.pem
-        systemCertKey: dev/devTest-cert-key.pem
-      resource-mappings:
-        systemCert: /opt/keycloak/certs/devTest-cert-cert.pem
-        systemCertKey: /opt/keycloak/certs/devTest-cert-key.pem
 
 runningInfo:
   depotUri: "Hello World"

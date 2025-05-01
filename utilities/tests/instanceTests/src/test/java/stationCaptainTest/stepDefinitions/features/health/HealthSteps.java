@@ -10,6 +10,7 @@ import stationCaptainTest.testResources.BaseStepDefinitions;
 import stationCaptainTest.testResources.TestContext;
 
 import java.io.IOException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -32,12 +33,16 @@ public class HealthSteps extends BaseStepDefinitions {
 		log.debug("scenario: {}", this.getScenario());
 	}
 	
-	@When("the health check call to {string} on port {int} is made")
-	public void theHealthCheckCallToOnPortServicePortIsMade(String healthEndpoint, int port) throws URISyntaxException, IOException, InterruptedException {
+	@When("the health check call to {string} at path {string} is made")
+	public void theHealthCheckCallToOnPortServicePortIsMade(String healthEndpoint, String servicePath) throws URISyntaxException, IOException, InterruptedException {
 		HttpClient client = NULL_CERT_TRUST_MANAGER_CLIENT_BUILDER.build();
 		
+		URI uri = CONFIG.getInstance().getUri(servicePath, healthEndpoint);
+		
+		log.info("Hitting health uri at: {}", uri);
+		
 		HttpRequest request = HttpRequest.newBuilder()
-								  .uri(CONFIG.getInstance().getUri(port, healthEndpoint))
+								  .uri(uri)
 								  .build();
 		
 		HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
