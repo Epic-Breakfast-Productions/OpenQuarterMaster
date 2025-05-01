@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -13,14 +14,20 @@ class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServic
 	
 	static final int PORT = 8123;
 	
-	public OqmCoreApiWebServiceContainer(DockerImageName image) {
+	private final CoreApiLibDevserviceConfig devserviceConfig;
+	
+	public OqmCoreApiWebServiceContainer(DockerImageName image, CoreApiLibDevserviceConfig devserviceConfig) {
 		super(image);
+		this.devserviceConfig = devserviceConfig;
 	}
 	
 	@Override
 	protected void configure() {
 		withNetwork(Network.SHARED);
+		//TODO:: use config to get port
 		withEnv("quarkus.http.port", ""+PORT);
+		
+		Testcontainers.exposeHostPorts(this.devserviceConfig.keycloakDevservicePort);//TODO:: get from config
 		
 		addExposedPorts(PORT);
 		// Tell the dev service how to know the container is ready

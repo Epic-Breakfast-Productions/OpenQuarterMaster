@@ -36,10 +36,22 @@ public class CoreApiLibDevserviceConfig {
 	 */
 	@ConfigItem(name="certKeyPath")
 	public Optional<File> certKeyPath;
-
+	
 	/**
 	 * The version/ tag of the core api container image
 	 */
 	@ConfigItem(name="coreApiVersion", defaultValue = "2.1.3")
 	public String coreApiVersion;
+	
+	/**
+	 * The version/ tag of the core api container image
+	 */
+	@ConfigItem(name="keycloakDevservicePort", defaultValue = "9328")
+	public Integer keycloakDevservicePort;
+	
+	/**
+	 * The version/ tag of the core api container image
+	 */
+	@ConfigItem(name="keycloakDevserviceRealm", defaultValue = "oqm")
+	public String keycloakDevserviceRealm;
 }

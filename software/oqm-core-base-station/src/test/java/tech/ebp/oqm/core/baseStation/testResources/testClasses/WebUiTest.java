@@ -121,7 +121,7 @@ public abstract class WebUiTest extends RunningServerTest {
 				output.locator("#password").fill(user.getPassword());
 				output.locator("#password-confirm").fill(user.getPassword());
 
-				output.locator("#kc-form-buttons").locator(".pf-c-button").click();
+				output.locator("#kc-form-buttons").locator("input").click();
 				output.waitForLoadState();
 
 			}
