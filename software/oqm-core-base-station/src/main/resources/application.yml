@@ -127,36 +127,24 @@ quarkus:
     logout:
       path: /logout
       post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
-  oqmCoreApi:
-    devservice:
-      certPath: ../../../../dev/devTest-cert-cert.pem
-      certKeyPath: ../../../../dev/devTest-cert-key.pem
       
   keycloak:
     devservices:
-      # Required to export realm
-      start-command: "start-dev --http-enabled=true --hostname-strict=false --hostname-strict-https=false --https-certificate-file=/opt/keycloak/certs/devTest-cert-cert.pem --https-certificate-key-file=/opt/keycloak/certs/devTest-cert-key.pem"
+      port: 9328
       realm-path: "../../../../dev/oqm-realm.json"
-      realm-name: "oqm"
-      resource-aliases:
-        systemCert: ../../../../dev/devTest-cert-cert.pem
-        systemCertKey: ../../../../dev/devTest-cert-key.pem
-      resource-mappings:
-        systemCert: /opt/keycloak/certs/devTest-cert-cert.pem
-        systemCertKey: /opt/keycloak/certs/devTest-cert-key.pem
-      # TODO:: figure out
-      users:
-        alice: 1!Letmein
-      roles:
-        alice:
-          - "default-roles-oqm"
-          - "inventoryView"
-          - "offline_access"
-          - "itemCheckout"
-          - "inventoryEdit"
-          - "uma_authorization"
-          - "inventoryAdmin"
-          - "user"
+      realm-name: oqm
+#      users:
+#        alice: alice
+#        bob: bob
+##        TODO:: waiting on: https://github.com/quarkusio/quarkus/issues/47581
+#      roles:
+#        # roles listed in https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/oqm-core-api/src/main/java/tech/ebp/oqm/core/api/model/rest/auth/roles/Roles.java
+#        alice:
+#          - user
+#          - inventoryAdmin
+#          - inventoryView
+#          - inventoryEdit
+#          - itemCheckout
 
 
 #  messaging:
@@ -185,11 +173,8 @@ smallrye:
     http:
       port: 8080
       ssl-port: 8443
-      ssl:
-        certificate:
-          files: ../../../../dev/devTest-cert-cert.pem
-          key-files: ../../../../dev/devTest-cert-key.pem
     oidc:
+      # TODO:: remove when https://github.com/quarkusio/quarkus/issues/47581
       client-id: oqm-app
       credentials:
         secret: "**********"

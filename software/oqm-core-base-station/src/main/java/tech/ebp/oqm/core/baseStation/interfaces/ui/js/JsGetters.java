@@ -27,6 +27,10 @@ import java.util.Optional;
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class JsGetters {
+	
+	private static String carouselLines = "";
+	private static String attInputLines;
+	private static String keywordInputLines;
 
 	@Getter
 	@HeaderParam("x-forwarded-prefix")
@@ -51,13 +55,11 @@ public class JsGetters {
 	@Inject
 	@Location("webui/js/carousel.js")
 	Template carouselJs;
-	String carouselLines = "";
+	
 	
 	@Inject
 	@Location("webui/js/pageComponents.js")
 	Template componentsJs;
-	String attInputLines;
-	String keywordInputLines;
 	
 	private String templateToEscapedJs(TemplateInstance templateInstance){
 		return templateInstance
@@ -73,9 +75,15 @@ public class JsGetters {
 		@Location("tags/inputs/attInput.html") Template attInputTemplate,
 		@Location("tags/inputs/keywordInput.html") Template keywordInputTemplate
 	){
-		this.carouselLines = this.templateToEscapedJs(carouselTemplate.data("id", ""));
-		this.attInputLines = this.templateToEscapedJs(attInputTemplate.instance());
-		this.keywordInputLines = this.templateToEscapedJs(keywordInputTemplate.instance());
+		if(carouselLines == null){
+			carouselLines = this.templateToEscapedJs(carouselTemplate.data("id", ""));
+		}
+		if(attInputLines == null){
+			attInputLines = this.templateToEscapedJs(attInputTemplate.instance());
+		}
+		if(keywordInputLines == null){
+			keywordInputLines = this.templateToEscapedJs(keywordInputTemplate.instance());
+		}
 	}
 
 	@GET
@@ -108,7 +116,7 @@ public class JsGetters {
 	@Produces("text/javascript")
 	public Uni<String> carousel() {
 		return this.carouselJs
-				   .data("carouselLines", this.carouselLines)
+				   .data("carouselLines", carouselLines)
 				   .createUni();
 	}
 	
@@ -118,8 +126,8 @@ public class JsGetters {
 	@Produces("text/javascript")
 	public Uni<String> components() {
 		return this.componentsJs
-				   .data("attInputLines", this.attInputLines)
-				   .data("keywordInputLines", this.keywordInputLines)
+				   .data("attInputLines", attInputLines)
+				   .data("keywordInputLines", keywordInputLines)
 				   .createUni();
 	}
 }
