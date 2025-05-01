@@ -8,6 +8,7 @@ import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
 import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.redpanda.RedpandaContainer;
@@ -54,8 +55,7 @@ class CoreApiLibQuarkusProcessor {
 	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
 	public List<DevServicesResultBuildItem> createContainer(
 		LaunchModeBuildItem launchMode,
-		CoreApiLibBuildTimeConfig config,
-		CoreApiLibDevserviceConfig devserviceConfig
+		CoreApiLibBuildTimeConfig config
 	) {
 		List<DevServicesResultBuildItem> output = new ArrayList<>();
 		Map<String, String> mongoConnectionInfo = new HashMap<>();
@@ -109,7 +109,10 @@ class CoreApiLibQuarkusProcessor {
 		{//Core API
 			DockerImageName dockerImageName = DockerImageName.parse("docker.io/ebprod/oqm-core-api:" + config.devservice.coreApiVersion);
 			
-			OqmCoreApiWebServiceContainer container = new OqmCoreApiWebServiceContainer(dockerImageName, devserviceConfig)
+			OqmCoreApiWebServiceContainer container = new OqmCoreApiWebServiceContainer(
+				dockerImageName,
+				config.devservice
+			)
 														  .withAccessToHost(true)
 														  .withEnv(mongoConnectionInfo)
 														  .withEnv(kafkaConnectionInfo)
