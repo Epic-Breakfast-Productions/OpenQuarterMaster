@@ -2,6 +2,14 @@
 
 This library is made for utilization in a Quarkus app. It provides a devservice to connect to, and enables communication to the core api from another service.
 
+## Utilities
+
+### API
+
+### HealthCheck
+
+### Database Service
+
 ## Usage:
 
 1. Include in project
