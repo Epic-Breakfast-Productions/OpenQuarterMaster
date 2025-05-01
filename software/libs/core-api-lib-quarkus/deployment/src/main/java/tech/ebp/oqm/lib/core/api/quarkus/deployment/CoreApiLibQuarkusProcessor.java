@@ -8,15 +8,12 @@ import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
 import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
 import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
-import org.eclipse.microprofile.config.ConfigProvider;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.redpanda.RedpandaContainer;
 import org.testcontainers.utility.DockerImageName;
-import org.testcontainers.utility.MountableFile;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
