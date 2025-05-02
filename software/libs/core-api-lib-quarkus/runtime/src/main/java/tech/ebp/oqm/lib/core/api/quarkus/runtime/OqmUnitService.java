@@ -51,7 +51,7 @@ public class OqmUnitService {
 	}
 
 	//TODO:: instead of this, watch for message? Both?
-	@Scheduled(every = "{quarkus." + Constants.CONFIG_ROOT_NAME + ".refreshDbCacheFrequency}")
+	@Scheduled(every = "{" + Constants.CONFIG_ROOT_NAME + ".caching.unit.refreshFrequencyEvery}")
 	public void refreshCache(){
 		if(!enabled){
 			return;
