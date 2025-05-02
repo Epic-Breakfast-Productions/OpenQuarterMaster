@@ -16,12 +16,6 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
 2. Configuration:
    ```yaml
    quarkus:
-     oqm:
-       core:
-         api:
-          baseUri:
-          
-           
      keycloak:
        devservices:
          port: 9328
@@ -37,6 +31,8 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
             - inventoryView
             - inventoryEdit
             - itemCheckout
+   oqm.core.api:
+         baseUri:
    ```
 
 ## TODOs:
