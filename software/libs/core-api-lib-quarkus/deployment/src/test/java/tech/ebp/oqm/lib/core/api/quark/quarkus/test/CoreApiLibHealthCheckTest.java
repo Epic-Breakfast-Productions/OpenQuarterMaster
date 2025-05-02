@@ -13,7 +13,9 @@ public class CoreApiLibHealthCheckTest {
 	@RegisterExtension
 	static final QuarkusUnitTest config = new QuarkusUnitTest()
 											  .withEmptyApplication()
-												  .overrideConfigKey(Constants.CONFIG_ROOT_NAME + ".health.enabled", "true")
+													//TODO:: setting this breaks things.... why?
+//												  .overrideConfigKey(Constants.CONFIG_ROOT_NAME + ".health.enabled", "true")
+
 //											  .withConfigurationResource("application-default-datasource.properties")
 //											  .overrideConfigKey("quarkus.datasource.health.enabled", "true")
 		;

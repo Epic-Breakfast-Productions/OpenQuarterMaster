@@ -6,7 +6,7 @@ import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
-import io.quarkus.deployment.dev.devservices.GlobalDevServicesConfig;
+import io.quarkus.deployment.dev.devservices.DevServicesConfig;
 import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
@@ -35,9 +35,9 @@ class CoreApiLibQuarkusProcessor {
 		return List.of(
 			new RunTimeConfigurationDefaultBuildItem(
 				"quarkus.rest-client.\"" + Constants.CORE_API_CLIENT_NAME + "\".url",
-				"${quarkus."+Constants.CONFIG_ROOT_NAME + ".baseUri}"
+				"${" + Constants.CONFIG_ROOT_NAME + ".baseUri}"
 			),
-			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client." + Constants.CORE_API_CLIENT_OIDC_NAME + ".url", "${quarkus.oidc.auth-server-url:}")
+			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client.\"" + Constants.CORE_API_CLIENT_OIDC_NAME + "\".url", "${quarkus.oidc.auth-server-url:}")
 		);
 	}
 	
@@ -45,11 +45,11 @@ class CoreApiLibQuarkusProcessor {
 	HealthBuildItem addHealthCheck(CoreApiLibBuildTimeConfig buildTimeConfig) {
 		return new HealthBuildItem(
 			"tech.ebp.oqm.lib.core.api.quarkus.runtime.CoreApiHealthCheck",
-			buildTimeConfig.healthEnabled
+			buildTimeConfig.health().enabled()
 		);
 	}
 	
-	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = GlobalDevServicesConfig.Enabled.class)
+	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
 	public List<DevServicesResultBuildItem> createContainer(
 		LaunchModeBuildItem launchMode,
 		CoreApiLibBuildTimeConfig config
@@ -101,11 +101,11 @@ class CoreApiLibQuarkusProcessor {
 			);
 		}
 		{//Core API
-			DockerImageName dockerImageName = DockerImageName.parse("docker.io/ebprod/oqm-core-api:" + config.devservice.coreApiVersion);
+			DockerImageName dockerImageName = DockerImageName.parse("docker.io/ebprod/oqm-core-api:" + config.devservice().coreApiVersion());
 			
 			OqmCoreApiWebServiceContainer container = new OqmCoreApiWebServiceContainer(
 				dockerImageName,
-				config.devservice
+				config.devservice()
 			)
 														  .withAccessToHost(true)
 														  .withEnv(mongoConnectionInfo)
@@ -116,16 +116,16 @@ class CoreApiLibQuarkusProcessor {
 				"smallrye.jwt.verify.key.location",
 				String.format(
 					"http://host.testcontainers.internal:%s/realms/%s/protocol/openid-connect/certs",
-					config.devservice.keycloakDevservicePort,
-					config.devservice.keycloakDevserviceRealm
+					config.devservice().keycloak().port(),
+					config.devservice().keycloak().realm()
 				)
 			);
 			
 			container.start();
 			
 			Map<String, String> props = new HashMap<>();
-			props.put("quarkus." + Constants.CONFIG_ROOT_NAME + ".baseUri", "http://" + container.getHost() + ":" + container.getPort());
-			props.put("quarkus.rest-client.\"" + Constants.CORE_API_CLIENT_NAME + "\".url", "${quarkus." + Constants.CONFIG_ROOT_NAME + ".baseUri}");
+			props.put(Constants.CONFIG_ROOT_NAME + ".baseUri", "http://" + container.getHost() + ":" + container.getPort());
+			props.put("quarkus.rest-client.\"" + Constants.CORE_API_CLIENT_NAME + "\".url", "${" + Constants.CONFIG_ROOT_NAME + ".baseUri}");
 			
 			if (!kafkaConnectionInfo.isEmpty()) {
 				props.put("devservice.kafka.bootstrapServers", kafkaConnectionInfo.get("devservice.kafka.bootstrapServers"));
