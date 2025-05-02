@@ -42,7 +42,7 @@ public class BarcodeCreation extends ApiProvider {
 	
 	@ConfigProperty(name = "runningInfo.baseUrl")
 	String selfBaseUrl;
-	@ConfigProperty(name = "quarkus.oqmCoreApi.coreApiBaseUri")
+	@ConfigProperty(name = "oqm.core.api.baseUri")
 	String apiUri;
 	
 	private Response getBarcodeResponse(
