@@ -128,20 +128,28 @@ quarkus:
   keycloak:
     devservices:
       port: 9328
-      realm-path: "../../../../dev/oqm-realm.json"
+#      realm-path: "../../../../dev/oqm-realm.json"
       realm-name: oqm
-#      users:
-#        alice: alice
-#        bob: bob
-##        TODO:: waiting on: https://github.com/quarkusio/quarkus/issues/47581
-#      roles:
-#        # roles listed in https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/oqm-core-api/src/main/java/tech/ebp/oqm/core/api/model/rest/auth/roles/Roles.java
-#        alice:
-#          - user
-#          - inventoryAdmin
-#          - inventoryView
-#          - inventoryEdit
-#          - itemCheckout
+      create-client: true
+      client-roles:
+        - user
+        - inventoryAdmin
+        - inventoryView
+        - inventoryEdit
+        - itemCheckout
+      
+      users:
+        alice: alice
+        bob: bob
+#        TODO:: waiting on: https://github.com/quarkusio/quarkus/issues/47581
+      roles:
+        # roles listed in https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/oqm-core-api/src/main/java/tech/ebp/oqm/core/api/model/rest/auth/roles/Roles.java
+        alice:
+          - user
+          - inventoryAdmin
+          - inventoryView
+          - inventoryEdit
+          - itemCheckout
 
 
 #  messaging:
