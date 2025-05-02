@@ -19,6 +19,8 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
      oqm:
        core:
          api:
+          baseUri:
+          
            
      keycloak:
        devservices:

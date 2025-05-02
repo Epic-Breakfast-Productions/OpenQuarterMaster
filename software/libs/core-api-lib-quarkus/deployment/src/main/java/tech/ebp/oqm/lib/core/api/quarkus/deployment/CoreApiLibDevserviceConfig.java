@@ -17,25 +17,6 @@ public class CoreApiLibDevserviceConfig {
 	 */
 	@WithDefault("true")
 	public boolean enable;
-
-	/**
-	 * Enables kafka.
-	 */
-	@ConfigItem(name="enableKafka")
-	@WithDefault("true")
-	public boolean enableKafka;
-	
-	/**
-	 * The path of the public key file
-	 */
-	@ConfigItem(name="certPath")
-	public Optional<File> certPath;
-
-	/**
-	 * The path of the private key file
-	 */
-	@ConfigItem(name="certKeyPath")
-	public Optional<File> certKeyPath;
 	
 	/**
 	 * The version/ tag of the core api container image

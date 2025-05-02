@@ -15,13 +15,11 @@ public class OqmCoreApiConfig {
 	 * The base uri for the OQM core API service. example: `<pre>http://host:port/</pre>`
 	 */
 	@ConfigItem(name = ConfigItem.ELEMENT_NAME)
-	public String coreApiBaseUri;
-
+	public String baseUri;
+	
 	/**
 	 * The frequency of which to refresh the cache of oqm databases.
 	 */
 	@ConfigItem(name = ConfigItem.ELEMENT_NAME, defaultValue = "30s")
 	public String refreshDbCacheFrequency;
-
-
 }
