@@ -14,9 +14,9 @@ class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServic
 	
 	static final int PORT = 8123;
 	
-	private final CoreApiLibDevserviceConfig devserviceConfig;
+	private final CoreApiLibBuildTimeConfig.DevserviceConfig devserviceConfig;
 	
-	public OqmCoreApiWebServiceContainer(DockerImageName image, CoreApiLibDevserviceConfig devserviceConfig) {
+	public OqmCoreApiWebServiceContainer(DockerImageName image, CoreApiLibBuildTimeConfig.DevserviceConfig devserviceConfig) {
 		super(image);
 		this.devserviceConfig = devserviceConfig;
 	}
@@ -27,7 +27,7 @@ class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServic
 		//TODO:: use config to get port
 		withEnv("quarkus.http.port", ""+PORT);
 		
-		Testcontainers.exposeHostPorts(this.devserviceConfig.keycloakDevservicePort);//TODO:: get from config
+		Testcontainers.exposeHostPorts(this.devserviceConfig.keycloak().port());
 		
 		addExposedPorts(PORT);
 		// Tell the dev service how to know the container is ready
