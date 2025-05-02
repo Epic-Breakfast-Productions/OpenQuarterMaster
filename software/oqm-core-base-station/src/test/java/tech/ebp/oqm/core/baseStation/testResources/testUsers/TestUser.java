@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.AllPages;
 
 @Data
@@ -17,8 +18,11 @@ public class TestUser {
 	private String firstname;
 	private String lastname;
 	private String username;
+	@ToString.Exclude
 	private String email;
+	@ToString.Exclude
 	private String password;
+	@ToString.Exclude
 	private String jwt;
 
 	public String getUsername(){
