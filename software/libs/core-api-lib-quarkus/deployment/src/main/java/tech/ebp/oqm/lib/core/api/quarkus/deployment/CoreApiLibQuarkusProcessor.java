@@ -34,8 +34,8 @@ class CoreApiLibQuarkusProcessor {
 	List<RunTimeConfigurationDefaultBuildItem> addRestConfiguration() {
 		return List.of(
 			new RunTimeConfigurationDefaultBuildItem(
-				"quarkus.rest-client." + Constants.CORE_API_CLIENT_NAME + ".url",
-				"${quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}"
+				"quarkus.rest-client.\"" + Constants.CORE_API_CLIENT_NAME + "\".url",
+				"${quarkus."+Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}"
 			),
 			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client." + Constants.CORE_API_CLIENT_OIDC_NAME + ".url", "${quarkus.oidc.auth-server-url:}")
 		);
@@ -128,7 +128,7 @@ class CoreApiLibQuarkusProcessor {
 			
 			Map<String, String> props = new HashMap<>();
 			props.put("quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri", "http://" + container.getHost() + ":" + container.getPort());
-			props.put("quarkus.rest-client.\"" + Constants.CONFIG_ROOT_NAME + "\".url", "${quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}");
+			props.put("quarkus.rest-client.\"" + Constants.CORE_API_CLIENT_NAME + "\".url", "${quarkus." + Constants.CONFIG_ROOT_NAME + ".coreApiBaseUri}");
 			
 			if (!kafkaConnectionInfo.isEmpty()) {
 				props.put("devservice.kafka.bootstrapServers", kafkaConnectionInfo.get("devservice.kafka.bootstrapServers"));

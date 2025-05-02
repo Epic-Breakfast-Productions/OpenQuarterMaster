@@ -13,7 +13,7 @@ public class CoreApiLibHealthCheckTest {
 	@RegisterExtension
 	static final QuarkusUnitTest config = new QuarkusUnitTest()
 											  .withEmptyApplication()
-												  .overrideConfigKey("quarkus."+Constants.CONFIG_ROOT_NAME + ".health.enabled", "true")
+												  .overrideConfigKey(Constants.CONFIG_ROOT_NAME + ".health.enabled", "true")
 //											  .withConfigurationResource("application-default-datasource.properties")
 //											  .overrideConfigKey("quarkus.datasource.health.enabled", "true")
 		;

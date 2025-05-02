@@ -16,6 +16,10 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
 2. Configuration:
    ```yaml
    quarkus:
+     oqm:
+       core:
+         api:
+           
      keycloak:
        devservices:
          port: 9328

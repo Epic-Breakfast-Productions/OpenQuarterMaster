@@ -1,10 +1,10 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime;
 
 public class Constants {
-	public static final String CONFIG_ROOT_NAME = "oqmCoreApi";
+	public static final String CONFIG_ROOT_NAME = "oqm.core.api";
 
 	public static final String CORE_API_CLIENT_NAME = CONFIG_ROOT_NAME;
-	public static final String CORE_API_CLIENT_OIDC_NAME = CONFIG_ROOT_NAME + "-oidc";
+	public static final String CORE_API_CLIENT_OIDC_NAME = CORE_API_CLIENT_NAME + "-oidc";
 
 	
 	public static final String AUTH_HEADER_NAME = "Authorization";
