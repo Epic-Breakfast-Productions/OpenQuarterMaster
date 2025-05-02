@@ -22,7 +22,7 @@ public class CoreApiLibDevserviceConfig {
 	 * Enables kafka.
 	 */
 	@ConfigItem(name="enableKafka")
-	@WithDefault("false")
+	@WithDefault("true")
 	public boolean enableKafka;
 	
 	/**
@@ -40,7 +40,7 @@ public class CoreApiLibDevserviceConfig {
 	/**
 	 * The version/ tag of the core api container image
 	 */
-	@ConfigItem(name="coreApiVersion", defaultValue = "2.1.3")
+	@ConfigItem(name="coreApiVersion", defaultValue = "2.1.7-SNAPSHOT")
 	public String coreApiVersion;
 	
 	/**

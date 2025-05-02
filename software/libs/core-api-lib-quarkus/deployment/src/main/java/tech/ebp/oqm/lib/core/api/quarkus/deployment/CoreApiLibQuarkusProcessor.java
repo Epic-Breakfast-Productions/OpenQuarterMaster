@@ -77,7 +77,7 @@ class CoreApiLibQuarkusProcessor {
 						   .toBuildItem()
 			);
 		}
-		if (config.devservice.enableKafka) {
+		{
 			RedpandaContainer kafka = new RedpandaContainer(DockerImageName.parse("docker.redpanda.com/redpandadata/redpanda:v23.1.2"))
 										  .withNetwork(Network.SHARED)
 										  .withAccessToHost(true)
@@ -88,10 +88,7 @@ class CoreApiLibQuarkusProcessor {
 			kafkaConnectionInfo.putAll(Map.of(
 				"quarkus.reactive-messaging.health.enabled", "true",
 				"mp.messaging.outgoing.events-outgoing.bootstrap.servers", String.format("PLAINTEXT://%s:%d", KAFKA_DEVSERVICE_HOSTNAME, 19092),
-				"devservice.kafka.bootstrapServers", kafka.getBootstrapServers(),
-				"mp.messaging.outgoing.events-outgoing.connector", "smallrye-kafka",
-				"mp.messaging.outgoing.events-outgoing.broadcast", "true",
-				"mp.messaging.outgoing.events-outgoing.value.serializer", "io.quarkus.kafka.client.serialization.ObjectMapperSerializer"
+				"devservice.kafka.bootstrapServers", kafka.getBootstrapServers()
 			));
 			
 			output.add(
