@@ -2,6 +2,7 @@ import ipaddress
 import shutil
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives._serialization import BestAvailableEncryption
+from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
 from cryptography.hazmat.primitives.serialization import load_pem_private_key, pkcs12
 from cryptography.hazmat.primitives import serialization
 from cryptography.hazmat.primitives.asymmetric import rsa
@@ -11,6 +12,7 @@ import os
 import datetime
 from cryptography import x509
 from cryptography.x509 import Certificate, Extensions, SubjectAlternativeName, GeneralName, ExtensionOID
+from datetime import timedelta
 
 from ConfigManager import *
 from CronUtils import *
@@ -23,17 +25,64 @@ from PackageManagement import PackageManagement
 
 class CertsUtils:
     """
-
     Resources:
      - https://cryptography.io/en/latest/x509/reference/
      - https://stackoverflow.com/questions/54677841/how-do-can-i-generate-a-pkcs12-file-using-python-and-the-cryptography-module
     """
     log = LogUtils.setupLogger("CertsUtils")
+    AUTO_REGEN_CERTS_CRON_NAME = "autoRegenCerts"
+
+    @staticmethod
+    def newPrivateKey() -> RSAPrivateKey:
+        """
+        Gets a new default private key setup
+        :return: A new private key
+        """
+        return rsa.generate_private_key(
+            public_exponent=65537,
+            key_size=2048,
+            backend=default_backend()
+        )
+
+    @staticmethod
+    def getSAN(san: str) -> GeneralName:
+        """
+        Gets a new SAN (Subject Alternative Name) entry for the string given.
+
+        If IP, returns and IP name. Otherwise, DNS
+        :param san:
+        :return:
+        """
+        try:
+            return x509.IPAddress(ipaddress.ip_address(san))
+        except ValueError:
+            return x509.DNSName(san)
+
+    @staticmethod
+    def certExpiresSoon(cert: Certificate) -> bool:
+        """
+        Determines if a cert is expiring soon based on the configured value.
+        :param cert:
+        :return: If the cert expires soon
+        """
+        expiring = cert.not_valid_after
+        now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None) # expring doesn't have tz data; fails to compare otherwise
+        soonThreshold = expiring - timedelta(days=mainCM.getConfigVal("cert.selfSigned.daysBeforeExpiryToRegen"))
+        return now >= soonThreshold
 
     @staticmethod
     def ensureCaInstalled(force: bool = False) -> (bool, str):
+        """
+        Ensures that the CA is installed on this system.
+
+        Installs to:
+          - /usr/local/share/ca-certificates/ (and subsequently calls update-ca-certificates)
+          - Wherever firefox keeps its system certs
+        :param force:
+        :return:
+        """
         output = ""
-        root_ca_cert_path = mainCM.getConfigVal("cert.certs.CARootCert")
+        root_ca_cert_path = mainCM.getConfigVal("cert.selfSigned.certs.CARootCert")
         caCertName = os.path.basename(root_ca_cert_path)
 
         # Install in system location
@@ -44,9 +93,6 @@ class CertsUtils:
         if os.path.exists("/usr/local/share/ca-certificates/" + caCertName):
             updatePrevious = True
             os.remove("/usr/local/share/ca-certificates/" + caCertName)
-        if os.path.exists("/etc/ssl/certs/" + caCertName):
-            updatePrevious = True
-            os.remove("/etc/ssl/certs/" + caCertName)
 
         if force or updatePrevious:
             output += f"Removed previously installed root CA from system: {caCertName}\n\n"
@@ -121,243 +167,11 @@ class CertsUtils:
         return True, output
 
     @staticmethod
-    def getSAN(san: str)->GeneralName:
-        try:
-            return x509.IPAddress(ipaddress.ip_address(san))
-        except ValueError:
-            return x509.DNSName(san)
-
-    @staticmethod
-    def generateSelfSignedCerts(forceRegenRoot: bool = False) -> (bool, str):
-        CertsUtils.log.info("Generating self-signed certs")
-        output = ""
-        try:
-            domain = mainCM.getConfigVal("system.hostname")
-            root_ca_key_path = mainCM.getConfigVal("cert.certs.CARootPrivateKey")
-            root_ca_cert_path = mainCM.getConfigVal("cert.certs.CARootCert")
-
-            #
-            # Make RootCA public/private key
-            #
-            # TODO:: more smartly determine if need to regen based on expiry
-            if forceRegenRoot or not all(os.path.exists(path) for path in [root_ca_key_path, root_ca_cert_path]):
-                output += "Regenerated CA.\n\n"
-                ca_private_key = rsa.generate_private_key(
-                    public_exponent=65537,
-                    key_size=2048,
-                    backend=default_backend()
-                )
-
-                ca_name = x509.Name([
-                    x509.NameAttribute(x509.NameOID.COUNTRY_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.countryName")),
-                    x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.stateOrProvinceName")),
-                    x509.NameAttribute(x509.NameOID.LOCALITY_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.localityName")),
-                    x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.organizationName")),
-                    x509.NameAttribute(x509.NameOID.COMMON_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.caCommonName")),
-                ])
-                nvb = datetime.datetime.utcnow()
-                nva = nvb + datetime.timedelta(days=mainCM.getConfigVal("cert.selfMode.rootCaTtl"))
-
-                root_cert = (
-                    x509.CertificateBuilder()
-                    .subject_name(ca_name)
-                    .issuer_name(ca_name)
-                    .public_key(ca_private_key.public_key())
-                    .serial_number(x509.random_serial_number())
-                    .not_valid_before(nvb)
-                    .not_valid_after(nva)
-                    .add_extension(x509.BasicConstraints(ca=True, path_length=None), critical=True)
-                )
-                # root_cert.add_extensions([
-                #     crypto.X509Extension("subjectKeyIdentifier", False, "hash", subject=ca_cert),
-                # ])
-                # root_cert.add_extensions([
-                #     crypto.X509Extension("authorityKeyIdentifier", False, "keyid:always", issuer=ca_cert),
-                # ])
-                # root_cert.add_extensions([
-                #     x509.Extension
-                #     crypto.X509Extension("basicConstraints", False, "CA:TRUE"),
-                #     crypto.X509Extension("keyUsage", False, "keyCertSign, cRLSign"),
-                # ])
-                root_cert = root_cert.sign(ca_private_key, hashes.SHA256(), default_backend())
-
-                with open(root_ca_key_path, 'wb') as key_file:
-                    key_file.write(
-                        ca_private_key.private_bytes(
-                            encoding=serialization.Encoding.PEM,
-                            format=serialization.PrivateFormat.TraditionalOpenSSL,
-                            encryption_algorithm=serialization.NoEncryption()
-                        )
-                    )
-
-                with open(root_ca_cert_path, 'wb') as cert_file:
-                    cert_file.write(
-                        root_cert.public_bytes(
-                            encoding=serialization.Encoding.PEM
-                        )
-                    )
-                returned, caInstallOutput = CertsUtils.ensureCaInstalled()
-                if not returned:
-                    return False, caInstallOutput
-                output += caInstallOutput
-
-            #
-            # Make Private key / CSR
-            #
-            private_key = rsa.generate_private_key(
-                public_exponent=65537,
-                key_size=2048,
-                backend=default_backend()
-            )
-
-            name = x509.Name([
-                x509.NameAttribute(x509.NameOID.COUNTRY_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.countryName")),
-                x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.stateOrProvinceName")),
-                x509.NameAttribute(x509.NameOID.LOCALITY_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.localityName")),
-                x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.organizationName")),
-                x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.selfMode.certInfo.organizationalUnitName")),
-                x509.NameAttribute(x509.NameOID.COMMON_NAME, domain),
-            ])
-
-            csr = (x509.CertificateSigningRequestBuilder()
-                   .subject_name(name)
-                   .sign(private_key, hashes.SHA256(), default_backend())
-                   )
-
-            root_ca_cert = x509.load_pem_x509_certificate(open(root_ca_cert_path, 'rb').read(), default_backend())
-            root_ca_key = serialization.load_pem_private_key(open(root_ca_key_path, 'rb').read(), password=None, backend=default_backend())
-
-            nvb = datetime.datetime.utcnow()
-            nva = nvb + datetime.timedelta(days=mainCM.getConfigVal("cert.selfMode.systemCertTtl"))
-
-            cert = (x509.CertificateBuilder()
-                    .subject_name(name)
-                    .issuer_name(root_ca_cert.subject)
-                    .serial_number(x509.random_serial_number())
-                    .not_valid_before(nvb)
-                    .not_valid_after(nva)
-                    # TODO:: support multiple domains/ip's
-                    .add_extension(x509.SubjectAlternativeName([CertsUtils.getSAN(domain)]), critical=False)
-                    .public_key(csr.public_key())
-                    .sign(root_ca_key, hashes.SHA256(), default_backend())
-                    )
-
-            # Write out private key
-            with open(mainCM.getConfigVal("cert.certs.privateKey"), 'wb') as key_file:
-                key_file.write(
-                    private_key.private_bytes(
-                        encoding=serialization.Encoding.PEM,
-                        format=serialization.PrivateFormat.TraditionalOpenSSL,
-                        encryption_algorithm=serialization.NoEncryption()
-                    )
-                )
-            # Write out system cert
-            with open(mainCM.getConfigVal("cert.certs.systemCert"), 'wb') as cert_file:
-                cert_file.write(
-                    cert.public_bytes(
-                        encoding=serialization.Encoding.PEM
-                    )
-                )
-            # Generate Keystore
-            with (open(mainCM.getConfigVal("cert.certs.keystore"), 'wb') as cert_file,
-                  open(root_ca_cert_path, "rb") as root_ca_cert,
-                  open(root_ca_key_path, "rb") as root_ca_key
-                  ):
-                cert = x509.load_pem_x509_certificate(root_ca_cert.read())
-                key = load_pem_private_key(root_ca_key.read(), None)
-
-                cert_file.write(
-                    pkcs12.serialize_key_and_certificates(
-                        b"OQM CA",
-                        key,
-                        cert,
-                        None,
-                        BestAvailableEncryption(bytes(mainCM.getConfigVal("cert.certs.keystorePass"), 'UTF-8'))
-                    )
-                )
-            # write out CSR
-            with open(mainCM.getConfigVal("cert.selfMode.publicKeyCsr"), 'wb') as csr_file:
-                csr_file.write(
-                    csr.public_bytes(
-                        encoding=serialization.Encoding.PEM
-                    )
-                )
-            output += "Wrote new private key and cert."
-        except Exception as e:
-            CertsUtils.log.exception("FAILED to generate new certs: %s", e)
-            return False, f"{e}"
-        return True, output
-
-    @staticmethod
-    def getLetsEncryptCerts() -> (bool, str):
-        CertsUtils.log.info("Getting Let's Encrypt certs")
-        # TODO
-        return False, "Not implemented yet."
-
-    @staticmethod
-    def regenCerts(forceRegenCaRoot: bool = False, restartServices: bool = False) -> (bool, str):
-        CertsUtils.log.info("Re-running cert generation utilities")
-        output = None
-        certMode = mainCM.getConfigVal("cert.mode")
-        if certMode == "provided":
-            output = (True, "Nothing to do for provided certs.")
-        elif certMode == "self":
-            output = CertsUtils.generateSelfSignedCerts(forceRegenCaRoot)
-        elif certMode == "letsEncrypt":
-            output = CertsUtils.generateSelfSignedCerts(forceRegenCaRoot)
-        else:
-            return False, "Invalid value for config cert.mode : " + certMode
-
-        if restartServices:
-            ServiceUtils.doServiceCommand(ServiceStateCommand.restart, ServiceUtils.SERVICE_ALL)
-        return output
-
-    @staticmethod
-    def ensureCertsPresent() -> (bool, str):
-        CertsUtils.log.info("Ensuring certs are present.")
-        certMode = mainCM.getConfigVal("cert.mode")
-        privateKeyLoc = mainCM.getConfigVal("cert.certs.privateKey")
-        publicKeyLoc = mainCM.getConfigVal("cert.certs.systemCert")
-
-        missingList = []
-        if not os.path.isfile(privateKeyLoc) or not os.path.exists(privateKeyLoc):
-            missingList.append("Private Key")
-        if not os.path.isfile(publicKeyLoc) or not os.path.exists(publicKeyLoc):
-            missingList.append("Public Key/System Cert")
-        if not os.path.isfile(publicKeyLoc) or not os.path.exists(publicKeyLoc):
-            missingList.append("Keystore")
-
-        output = ""
-        if len(missingList) != 0:
-            missingList = ", ".join(missingList)
-            message = f"{missingList} not present."
-            if certMode == "self" or certMode == "letsEncrypt":
-                CertsUtils.log.info(message + " Getting.")
-                return CertsUtils.regenCerts()
-            elif certMode == "provided":
-                CertsUtils.log.error(message)
-                return False, message
-            else:
-                return False, "Invalid value for config cert.certs.systemCert : " + certMode
-
-        # Ensure cert has system.hostname in it
-
-        with (open(publicKeyLoc, "rb") as certFile):
-            cert: Certificate = x509.load_pem_x509_certificate(certFile.read())
-            sanExt = cert.extensions.get_extension_for_oid(ExtensionOID.SUBJECT_ALTERNATIVE_NAME) # TODO:: error check
-            sanEntries = sanExt.value.get_values_for_type(x509.DNSName) + sanExt.value.get_values_for_type(x509.IPAddress)
-            toFind = mainCM.getConfigVal("system.hostname")
-
-            if toFind not in sanEntries:
-                CertsUtils.log.info("No certificate found for system hostname set in config. Refreshing.")
-                return CertsUtils.regenCerts()
-
-        return True, ""
-
-    AUTO_REGEN_CERTS_CRON_NAME = "autoRegenCerts"
-
-    @staticmethod
     def enableAutoRegenCerts():
+        """
+        Enables the cert regen checks to automatically happen through a cron job, monthly
+        :return:
+        """
         CronUtils.enableCron(
             CertsUtils.AUTO_REGEN_CERTS_CRON_NAME,
             "oqm-captain --regen-certs",
@@ -371,3 +185,278 @@ class CertsUtils:
     @staticmethod
     def isAutoRegenCertsEnabled() -> bool:
         return CronUtils.isCronEnabled(CertsUtils.AUTO_REGEN_CERTS_CRON_NAME)
+
+    @staticmethod
+    def generateRootCA() -> (bool, str):
+        """
+        Generates a new CA, then installs it on the system.
+        :return:
+        """
+        CertsUtils.log.info("Generating a new root CA")
+        root_ca_key_path = mainCM.getConfigVal("cert.selfSigned.certs.CARootPrivateKey")
+        root_ca_cert_path = mainCM.getConfigVal("cert.selfSigned.certs.CARootCert")
+        ca_private_key = CertsUtils.newPrivateKey()
+
+        ca_name = x509.Name([
+            x509.NameAttribute(x509.NameOID.COUNTRY_NAME,           mainCM.getConfigVal("cert.selfSigned.certInfo.countryName")),
+            x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, mainCM.getConfigVal("cert.selfSigned.certInfo.stateOrProvinceName")),
+            x509.NameAttribute(x509.NameOID.LOCALITY_NAME,          mainCM.getConfigVal("cert.selfSigned.certInfo.localityName")),
+            x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME,      mainCM.getConfigVal("cert.selfSigned.certInfo.organizationName")),
+            x509.NameAttribute(x509.NameOID.COMMON_NAME,            mainCM.getConfigVal("cert.selfSigned.certInfo.caCommonName")),
+        ])
+        nvb = datetime.datetime.now(datetime.UTC)
+        nva = nvb + datetime.timedelta(days=mainCM.getConfigVal("cert.selfSigned.rootCaTtl"))
+
+        root_cert = (
+            x509.CertificateBuilder()
+            .subject_name(ca_name)
+            .issuer_name(ca_name)
+            .public_key(ca_private_key.public_key())
+            .serial_number(x509.random_serial_number())
+            .not_valid_before(nvb)
+            .not_valid_after(nva)
+            .add_extension(x509.BasicConstraints(ca=True, path_length=None), critical=True)
+        )
+        root_cert = root_cert.sign(ca_private_key, hashes.SHA256(), default_backend())
+
+        with open(root_ca_key_path, 'wb') as key_file:
+            key_file.write(
+                ca_private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encryption_algorithm=serialization.NoEncryption()
+                )
+            )
+
+        with open(root_ca_cert_path, 'wb') as cert_file:
+            cert_file.write(
+                root_cert.public_bytes(
+                    encoding=serialization.Encoding.PEM
+                )
+            )
+        returned, caInstallOutput = CertsUtils.ensureCaInstalled()
+        if not returned:
+            return False, caInstallOutput
+        return True, "CA generated."
+
+    @staticmethod
+    def generateCert(
+            keyFile,
+            certFile,
+            commonName,
+            subjectAltNames=None,
+            csrFile = None,
+            keystoreFile = None,
+            keystorePassword = None
+    ) -> (bool, str):
+        """
+        Generates a cert based on the information given.
+        :param keyFile:
+        :param certFile:
+        :param commonName:
+        :param subjectAltNames:
+        :param csrFile:
+        :param keystoreFile:
+        :param keystorePassword: Must be set if keystore file given.
+        :return:
+        """
+        CertsUtils.log.info("Generating a new cert")
+
+        root_ca_key_path = mainCM.getConfigVal("cert.selfSigned.certs.CARootPrivateKey")
+        root_ca_cert_path = mainCM.getConfigVal("cert.selfSigned.certs.CARootCert")
+
+        private_key = CertsUtils.newPrivateKey()
+
+        name = x509.Name([
+            x509.NameAttribute(x509.NameOID.COUNTRY_NAME,             mainCM.getConfigVal("cert.selfSigned.certInfo.countryName")),
+            x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME,   mainCM.getConfigVal("cert.selfSigned.certInfo.stateOrProvinceName")),
+            x509.NameAttribute(x509.NameOID.LOCALITY_NAME,            mainCM.getConfigVal("cert.selfSigned.certInfo.localityName")),
+            x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME,        mainCM.getConfigVal("cert.selfSigned.certInfo.organizationName")),
+            x509.NameAttribute(x509.NameOID.ORGANIZATIONAL_UNIT_NAME, mainCM.getConfigVal("cert.selfSigned.certInfo.organizationalUnitName")),
+            x509.NameAttribute(x509.NameOID.COMMON_NAME, commonName),
+        ])
+        nvb = datetime.datetime.now(datetime.timezone.utc)
+        nva = nvb + datetime.timedelta(days=mainCM.getConfigVal("cert.selfSigned.systemCertTtl"))
+
+        csr = (x509.CertificateSigningRequestBuilder()
+               .subject_name(name)
+               .sign(private_key, hashes.SHA256(), default_backend())
+               )
+
+        root_ca_cert = x509.load_pem_x509_certificate(open(root_ca_cert_path, 'rb').read(), default_backend())
+        root_ca_key = serialization.load_pem_private_key(open(root_ca_key_path, 'rb').read(), password=None, backend=default_backend())
+
+        certBuilder = (x509.CertificateBuilder()
+                       .subject_name(name)
+                       .issuer_name(root_ca_cert.subject)
+                       .serial_number(x509.random_serial_number())
+                       .not_valid_before(nvb)
+                       .not_valid_after(nva)
+                       .public_key(csr.public_key())
+                       )
+        cnNameInSANS = False
+        if subjectAltNames is not None:
+            for curSanStr in subjectAltNames:
+                if curSanStr == commonName:
+                    cnNameInSANS = True
+                certBuilder = certBuilder.add_extension(x509.SubjectAlternativeName([CertsUtils.getSAN(curSanStr)]), critical=False)
+        if not cnNameInSANS:
+            certBuilder = certBuilder.add_extension(x509.SubjectAlternativeName([CertsUtils.getSAN(commonName)]), critical=False)
+
+        cert = certBuilder.sign(root_ca_key, hashes.SHA256(), default_backend())
+
+        # Write out private key
+        with open(keyFile, 'wb') as key_file:
+            key_file.write(
+                private_key.private_bytes(
+                    encoding=serialization.Encoding.PEM,
+                    format=serialization.PrivateFormat.TraditionalOpenSSL,
+                    encryption_algorithm=serialization.NoEncryption()
+                )
+            )
+        # Write out cert
+        with open(certFile, 'wb') as cert_file:
+            cert_file.write(
+                cert.public_bytes(
+                    encoding=serialization.Encoding.PEM
+                )
+            )
+
+        # Generate Keystore
+        if keystoreFile is not None:
+            with (open(keystoreFile, 'wb') as cert_file,
+                  open(root_ca_cert_path, "rb") as root_ca_cert,
+                  open(root_ca_key_path, "rb") as root_ca_key
+                  ):
+                cert = x509.load_pem_x509_certificate(root_ca_cert.read())
+                key = load_pem_private_key(root_ca_key.read(), None)
+
+                cert_file.write(
+                    pkcs12.serialize_key_and_certificates(
+                        b"OQM CA",
+                        key,
+                        cert,
+                        None,
+                        BestAvailableEncryption(bytes(keystorePassword, 'UTF-8'))
+                    )
+                )
+        # write out CSR
+        if csrFile is not None:
+            with open(csrFile, 'wb') as csr_file:
+                csr_file.write(
+                    csr.public_bytes(
+                        encoding=serialization.Encoding.PEM
+                    )
+                )
+        CertsUtils.log.info("Finished writing new cert.")
+        return True, "Generated new cert."
+
+    @staticmethod
+    def generateSystemCert() -> (bool, str):
+        """
+        Wrapper for generateCert(), configured for writing the external system cert.
+        :return:
+        """
+        return CertsUtils.generateCert(
+            mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCertKey"),
+            mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCert"),
+            mainCM.getConfigVal("system.hostname"),
+            mainCM.getConfigVal("cert.additionalExternalSANs"),
+            mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCertCsr"),
+            mainCM.getConfigVal("cert.selfSigned.certs.systemExternalKeystore") if mainCM.getConfigVal("cert.selfSigned.generateKeystore") else None,
+            mainCM.getConfigVal("cert.selfSigned.systemExternalKeystorePass") if mainCM.getConfigVal("cert.selfSigned.generateKeystore") else None
+        )
+
+    @staticmethod
+    def ensureRootCA(force=False) -> (bool, str, bool):
+        """
+        Ensures that the root CA is present, and not expiring soon.
+        :param force: If to force writing a new CA anyways
+        :return: success, message, if new certs written
+        """
+        CertsUtils.log.info("Ensuring self signed root ca is present")
+        root_ca_key_path = mainCM.getConfigVal("cert.selfSigned.certs.CARootPrivateKey")
+        root_ca_cert_path = mainCM.getConfigVal("cert.selfSigned.certs.CARootCert")
+
+        needWritten = False
+        if force or not all(os.path.exists(path) for path in [root_ca_key_path, root_ca_cert_path]):
+            CertsUtils.log.info("Root CA did NOT exist.")
+            needWritten = True
+        else:
+            rootCert = x509.load_pem_x509_certificate(open(root_ca_cert_path, 'rb').read(), default_backend())
+            if CertsUtils.certExpiresSoon(rootCert):
+                CertsUtils.log.info("Root CA expiring soon.")
+                needWritten = True
+
+        if needWritten:
+            CertsUtils.log.info("Writing new CA.")
+            success, message = CertsUtils.generateRootCA()
+            return success, message, True
+
+        return True, "Root CA Already Existent and not expiring soon.", False
+
+    @staticmethod
+    def ensureSystemCerts(force=False) -> (bool, str, bool):
+        """
+        Ensures that the external system cert is present, and not expiring soon.
+        :param force: If to force writing a new CA anyways
+        :return: success, message, if new certs written
+        """
+        CertsUtils.log.info("Ensuring self signed system cert is present")
+        systemCertKeyPath = mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCertKey")
+        systemCertPath = mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCert")
+
+        needWritten = False
+        if force or not all(os.path.exists(path) for path in [systemCertKeyPath, systemCertPath]):
+            CertsUtils.log.info("System Cert did NOT exist.")
+            needWritten = True
+        else:
+            rootCert = x509.load_pem_x509_certificate(open(systemCertPath, 'rb').read(), default_backend())
+            if CertsUtils.certExpiresSoon(rootCert):
+                CertsUtils.log.info("System Cert expiring soon.")
+                needWritten = True
+
+        if needWritten:
+            CertsUtils.log.info("Writing new System Cert.")
+            success, message = CertsUtils.generateSystemCert()
+            return success, message, True
+
+        return True, "System Cert Already Existent and not expiring soon.", False
+
+    @staticmethod
+    def ensureCoreCerts(force=False) -> (bool, str, bool):
+        """
+        Ensures all system level certs are where they need to be. Wrapper for both ensureRootCA() and ensureSystemCerts()
+        :param force: If to write these certs anyways.
+        :return: success, message, if new certs written
+        """
+        CertsUtils.log.info("Ensuring core certs (CA and system certs) exist.")
+        caSuccess, caMessage, caWritten = CertsUtils.ensureRootCA(force)
+        sysSuccess, sysMessage, sysWritten = CertsUtils.ensureSystemCerts(force)
+        return (caSuccess and sysSuccess), caMessage + " " + sysMessage, (caWritten or sysWritten)
+
+    @staticmethod
+    def generateInternalCert(host, destination) -> (bool, str):
+        """
+        Wrapper for generateCert(), configured for writing a cert for an internal service to use.
+        :return:
+        """
+        CertsUtils.log.info("Writing new cert for internal service %s", host)
+        return CertsUtils.generateCert(
+            destination + "/serviceCertKey.pem",
+            destination + "/serviceCert.crt",
+            host,
+            None,
+            None,
+            destination + "/serviceCertKeystore.p12",
+            mainCM.getConfigVal("cert.selfSigned.internalKeystorePass")
+        )
+
+    @staticmethod
+    def regenCerts() -> (bool, str):
+        CertsUtils.ensureCoreCerts(True)
+        ServiceUtils.doServiceCommand(
+            ServiceStateCommand.restart,
+            ServiceUtils.SERVICE_ALL
+        )
+        return True, ""

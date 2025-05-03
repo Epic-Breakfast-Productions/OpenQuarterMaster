@@ -18,7 +18,7 @@ class LogUtils:
 
     https://docs.python.org/3/library/logging.html
     """
-    defaultFormat =                        '%(levelname)-8s :: %(name)-13s :: %(message)s'
+    defaultFormat = '%(levelname)-8s :: %(name)-13s :: %(message)s'
     defaultFormatWithTime = '%(asctime)s :: %(levelname)-8s :: %(name)-13s :: %(message)s'
     fileLogLevel = logging.DEBUG
     consoleLogLevel = logging.DEBUG
@@ -26,11 +26,11 @@ class LogUtils:
     logFile = ""
     fileHandler = None
     consoleHandler = None
-    logFileMaxSize = 50*1024*1024 # 50 MB
+    logFileMaxSize = 50 * 1024 * 1024  # 50 MB
     logFileBackups = 5
 
     @staticmethod
-    def setupLogging(logFile:str, console:bool=False):
+    def setupLogging(logFile: str, console: bool = False):
         """
         Only to be run at beginning of script (main), before any modules call setupLogger. Only call once.
         :param logFile: The file within LogUtils.logDir to use for this run
@@ -39,7 +39,7 @@ class LogUtils:
         """
         logFile = LogUtils.logDir + logFile
         LogUtils.logFile = logFile
-        filePresent:bool = False
+        filePresent: bool = False
         if not os.path.exists(logFile):
             try:
                 Path(LogUtils.logDir).mkdir(parents=True, exist_ok=True)
@@ -57,10 +57,14 @@ class LogUtils:
             LogUtils.consoleHandler = fh
 
         if filePresent:
-            fh = logging.handlers.RotatingFileHandler(LogUtils.logFile, mode="a", maxBytes=LogUtils.logFileMaxSize, backupCount=LogUtils.logFileBackups)
-            fh.setFormatter(logging.Formatter(LogUtils.defaultFormatWithTime))
-            fh.setLevel(LogUtils.fileLogLevel)
-            LogUtils.fileHandler = fh
+            try:
+                fh = logging.handlers.RotatingFileHandler(LogUtils.logFile, mode="a", maxBytes=LogUtils.logFileMaxSize,
+                                                          backupCount=LogUtils.logFileBackups)
+                fh.setFormatter(logging.Formatter(LogUtils.defaultFormatWithTime))
+                fh.setLevel(LogUtils.fileLogLevel)
+                LogUtils.fileHandler = fh
+            except Exception as e:
+                fh = None
 
     @staticmethod
     def setupLogger(name: str) -> logging.Logger:

@@ -243,7 +243,7 @@ const ItemView = {
 				}
 
 				if (itemData.barcode) {
-					ItemView.itemViewBarcode.attr("src", Rest.passRoot + "/media/code/item/" + itemData.id + "/barcode")
+					ItemView.itemViewBarcode.attr("src", Rest.apiRoot + "/media/code/item/" + itemData.id + "/barcode")
 					ItemView.itemViewBarcodeContainer.show();
 				}
 

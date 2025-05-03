@@ -3,7 +3,12 @@
 		"hostname": "#{#mdnsHost}",
 		"systemDataDir": "/data",
 		"dataDir": "#{system.systemDataDir}/oqm",
-		"automaticContainerPruneFrequency": "monthly"
+		"automaticContainerPruneFrequency": "monthly",
+		"defaultUi": {
+			"type": "core",
+			"name": "depot",
+			"path": "/"
+		}
 	},
 	"captain": {
 	},
@@ -18,33 +23,44 @@
 		}
 	},
 	"cert": {
-		"mode": "self",
-		"certs": {
-			"privateKey": "/etc/oqm/certs/oqmSystemPrivateKey.pem",
-			"systemCert": "/etc/oqm/certs/oqmSystemCert.crt",
-			"CARootPrivateKey": "/etc/oqm/certs/oqmCaRootPrivateKey.pem",
-			"CARootCert": "/etc/oqm/certs/oqmCaRootCert.crt",
-			"keystore": "/etc/oqm/certs/oqmSystemKeystore.p12",
-			"keystorePass": "<secret>"
-		},
-		"selfMode": {
+		"externalDefault": "self",
+		"additionalExternalSANs": [],
+		"selfSigned": {
+			"certs": {
+				"CARootPrivateKey": "/etc/oqm/certs/oqmSystemCaRootPrivateKey.pem",
+				"CARootCert":       "/etc/oqm/certs/oqmSystemCaRootCert.crt",
+				"systemExternalSelfCertKey": "/etc/oqm/certs/oqmSystemExternalSelfCertKey.pem",
+				"systemExternalSelfCert":    "/etc/oqm/certs/oqmSystemExternalSelfCert.crt",
+				"systemExternalSelfCertCsr": "/etc/oqm/certs/oqmSystemExternalSelfCert.csr",
+				"systemExternalKeystore": "/etc/oqm/certs/oqmSystemExternalKeystore.p12"
+			},
 			"rootCaTtl": 2920,
 			"systemCertTtl": 365,
-			"publicKeyCsr": "/etc/oqm/certs/oqmSystemCert.csr",
-			"certInfo":{
+			"daysBeforeExpiryToRegen": 30,
+			"certInfo": {
 				"countryName": "US",
 				"stateOrProvinceName": "PA",
 				"localityName": "",
 				"organizationName": "OQM-LOCAL",
 				"organizationalUnitName": "",
-				"caCommonName": "#{cert.selfMode.certInfo.organizationName}"
+				"caCommonName": "#{cert.selfSigned.certInfo.organizationName}"
+			},
+			"generateKeystore": false,
+			"systemExternalKeystorePass": "<secret>",
+			"internalKeystorePass": "<secret>"
+		},
+		"acme": {
+			"contactEmail": "",
+			"caServer": "",
+			"eab": {
+				"kid": "",
+				"hmacEncoded": ""
 			}
 		},
-		"letsEncryptMode": {
-			"acceptTerms": false
-		},
-		"providedMode": {
-			"caProvided": true
+		"provided": {
+			"enabled": false,
+			"cert": "",
+			"key": ""
 		}
 	},
 	"plugin": {

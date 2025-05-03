@@ -3,7 +3,7 @@ package tech.ebp.oqm.core.api.service.mongo.utils;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.codecs.Codec;
-import org.bson.codecs.MapCodec;
+import org.bson.codecs.MapCodecProvider;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.ColorCodec;
@@ -25,8 +25,8 @@ public class CustomCodecProvider implements CodecProvider {
 		new UnitCodec(),
 		new ColorCodec(),
 		new ZonedDateTimeCodec(),
-		new DurationCodec(),
-		new MapCodec()//deprecated
+		new DurationCodec()
+//		new MapCodec()//deprecated
 	);
 	
 	@Override

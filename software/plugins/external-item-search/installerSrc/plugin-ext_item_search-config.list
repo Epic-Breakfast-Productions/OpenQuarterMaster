@@ -10,18 +10,14 @@ quarkus.http.insecure-requests=enabled
 quarkus.log.level=INFO
 
 # Files brought over in shared volume
-quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/plugin/external-item-search/files/publicCert.pem
-quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/plugin/external-item-search/files/privateKey.pem
-quarkus.http.ssl.certificate.trust-store-file=/etc/oqm/serviceConfig/plugin/external-item-search/files/keystore.p12
-quarkus.http.ssl.certificate.trust-store-password={cert.certs.keystorePass}
+quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/plugin/external-item-search/files/serviceCert.crt
+quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/plugin/external-item-search/files/serviceCertKey.pem
+quarkus.http.ssl.certificate.trust-store-file=/etc/oqm/serviceConfig/plugin/external-item-search/files/serviceCertKeystore.p12
+quarkus.http.ssl.certificate.trust-store-password={cert.selfSigned.internalKeystorePass}
 
 # jwt verification
 #smallrye.jwt.verify.key.location={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/certs
 #smallrye.jwt.client.tls.certificate.path=/etc/oqm/serviceConfig/plugin/external-item-search/files/publicCert.pem
-
-# Jaeger Config:
-quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
-quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
 
 # Lookup config
 

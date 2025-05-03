@@ -14,7 +14,7 @@ class PackageManagement:
     Helpful tricks:
 
     See what packages exist:
-    grep -h -P -o "^Package: \K.*" /var/lib/apt/lists/deployment.openquartermaster.com_deb-ppa_._Packages | sort -u
+    grep -h -P -o "^Package: .*" /var/lib/apt/lists/deployment.openquartermaster.com_deb-ppa_._Packages | sort -u
 
     """
     log = LogUtils.setupLogger("PackageManagement")
