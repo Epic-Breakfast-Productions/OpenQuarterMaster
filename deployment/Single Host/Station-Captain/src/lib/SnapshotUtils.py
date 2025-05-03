@@ -25,6 +25,28 @@ class SnapshotUtils:
     """
     log = LogUtils.setupLogger("SnapshotUtils")
     CRON_NAME = "take-snapshot"
+    SNAPSHOT_FILE_PREFIX = "OQM-snapshot-"
+    SNAPSHOT_FILE_TEMPLATE = SNAPSHOT_FILE_PREFIX + "{}-{}"
+
+    @staticmethod
+    def filterSnapshotFile(curFile: str) -> any:
+        return (not os.path.isdir(mainCM.getConfigVal("snapshots.location") + "/" + curFile)
+                and curFile.startsWith(SnapshotUtils.SNAPSHOT_FILE_PREFIX)
+                )
+
+    @staticmethod
+    def listSnapshots() -> list[str]:
+        return list(
+            filter(
+                SnapshotUtils.filterSnapshotFile,
+                [
+                    entry.name for entry in sorted(
+                        os.scandir(mainCM.getConfigVal("snapshots.location")),
+                        key=lambda x: x.stat().st_mtime, reverse=True
+                    )
+                ]
+            )
+        )
 
     @staticmethod
     def performSnapshot(snapshotTrigger: SnapshotTrigger) -> (bool, str):
@@ -38,7 +60,7 @@ class SnapshotUtils:
         if all(curAlg not in compressionAlg for curAlg in ["xz", "gz", "bz2"]):
             return False, "Configured compression algorithm was invalid."
 
-        snapshotName = "OQM-snapshot-{}-{}".format(
+        snapshotName = SnapshotUtils.SNAPSHOT_FILE_TEMPLATE.format(
             datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S"),
             snapshotTrigger.name
         )
@@ -120,7 +142,7 @@ class SnapshotUtils:
             if mainCM.getConfigVal("snapshots.encryption.enabled"):
                 SnapshotUtils.log.info("Encrypting resulting bundle...")
                 origArchive = snapshotArchiveName
-                snapshotArchiveName = snapshotArchiveName+".enc"
+                snapshotArchiveName = snapshotArchiveName + ".enc"
                 result = subprocess.run(
                     [
                         "openssl", "enc", "-e",
@@ -145,9 +167,8 @@ class SnapshotUtils:
                 numToKeep = 5
             if numToKeep > 0:
                 SnapshotUtils.log.info("Pairing down number of files in snapshot destination to %s", numToKeep)
-                filenames = [entry.name for entry in sorted(os.scandir(snapshotLocation),
-                                                            key=lambda x: x.stat().st_mtime, reverse=True)]
-                filenames = list(filter(lambda curFile: not os.path.isdir(snapshotLocation + "/" + curFile), filenames))
+                filenames = SnapshotUtils.listSnapshots()
+
                 SnapshotUtils.log.debug("Current files in snapshot dir (%s): %s", len(filenames), ", ".join(filenames))
                 for curFile in filenames[5:]:
                     SnapshotUtils.log.info("REMOVING excess file %s", curFile)
@@ -164,8 +185,8 @@ class SnapshotUtils:
                     SnapshotUtils.log.debug("Removing archive file.")
                     if os.path.exists(snapshotArchiveName):
                         os.remove(snapshotArchiveName)
-                    if os.path.exists(snapshotArchiveName+'.enc'):
-                        os.remove(snapshotArchiveName+'.enc')
+                    if os.path.exists(snapshotArchiveName + '.enc'):
+                        os.remove(snapshotArchiveName + '.enc')
                 SnapshotUtils.log.debug("Removing compiling dir.")
                 shutil.rmtree(compilingDir)
                 SnapshotUtils.log.info("Finished cleaning up after snapshot.")
@@ -173,7 +194,7 @@ class SnapshotUtils:
                 SnapshotUtils.log.error("Failed to clean up after performing snapshot operation: %s", e)
 
     @staticmethod
-    def restoreFromSnapshot(snapshotFile: str, decryptPass: str = None) -> bool:
+    def restoreFromSnapshot(snapshotFile: str, decryptPass: str = None) -> (bool, str):
         SnapshotUtils.log.info("Performing snapshot Restore.")
         snapshotName = os.path.basename(snapshotFile).split('.')[0]
         extractionDir = ScriptInfo.TMP_DIR + "/snapshot-restore/" + snapshotName
@@ -197,8 +218,9 @@ class SnapshotUtils:
                 )
                 SnapshotUtils.log.info("Finished encrypting snapshot.")
                 if result.returncode != 0:
-                    SnapshotUtils.log.error("FAILED to encrypt resulting archive. Returned: %d. Erring script: %s\nError: %s", result.returncode, file, result.stderr)
+                    SnapshotUtils.log.error("FAILED to decrypt archive. Returned: %d. File: %s\nError: %s", result.returncode, encryptedFile, result.stderr)
                     SnapshotUtils.log.debug("Erring script err output: %s", result.stderr)
+                    return False, "Error decrypting archive: " + result.stderr
 
             SnapshotUtils.log.info("Extracting files from archive.")
             with tarfile.open(snapshotFile, "r:*") as tar:
@@ -246,7 +268,7 @@ class SnapshotUtils:
                 shutil.rmtree(extractionDir)
 
         SnapshotUtils.log.info("Done Performing snapshot Restore.")
-        return True
+        return True, ""
 
     @staticmethod
     def enableAutomatic():
