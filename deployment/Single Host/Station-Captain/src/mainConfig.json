@@ -25,10 +25,10 @@
 			"method": "local",
 			"enabled": false,
 			"local": {
-				"location": ""
+				"path": ""
 			},
 			"ssh": {
-
+				"path": ""
 			},
 			"objStorage": {
 				"accessKey": "<secret>",

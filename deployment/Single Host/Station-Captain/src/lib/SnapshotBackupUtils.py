@@ -91,7 +91,7 @@ class SyncImpl:
 
     @classmethod
     @abstractmethod
-    def pullFile(cls, fileToPull: str) -> (bool, str):
+    def pullFile(cls, fileToPull: str, destination: str = None) -> (bool, str):
         """
         Pulls a file from the backup location into the snapshot location. This should overwrite a local file if present.
         :param fileToPull: The filename of the file in the backup location to delete.
@@ -138,7 +138,8 @@ class LocalSync(SyncImpl):
         return True, ""
 
     @classmethod
-    def pullFile(cls, fileToPull: str) -> (bool, str):
+    def pullFile(cls, fileToPull: str, destination: str = None) -> (bool, str):
+        # TODO:: respect destination
         shutil.copy(
             cls.getDestFilePath(fileToPull),
             cls.getSnapshotFilePath(fileToPull)
@@ -223,10 +224,11 @@ class ObjStorageSync(SyncImpl):
         return True, ""
 
     @classmethod
-    def pullFile(cls, fileToPull: str) -> (bool, str):
+    def pullFile(cls, fileToPull: str, destination: str = None) -> (bool, str):
         osClient = cls.getS3()
         bucket = cls.getBucket(osClient)
 
+        # TODO:: respect destination
         bucket.Object(cls.getDestFilePath(fileToPull)).download_file(cls.getSnapshotFilePath(fileToPull))
         return True, ""
 
@@ -250,14 +252,63 @@ class SnapshotBackupUtils:
     """
     log = LogUtils.setupLogger("SnapshotBackupUtils")
 
-    @staticmethod
-    def backupSnapshots() -> (bool, str):
+    @classmethod
+    def getSyncImpl(cls):
+        syncMethod = mainCM.getConfigVal("snapshots.backup.method")
+        if syncMethod == "local":
+            return LocalSync
+        elif syncMethod == "objStorage" :
+            return ObjStorageSync
+        else:
+            return None
+
+    @classmethod
+    def backupEnabled(cls)->bool:
+        return mainCM.getConfigVal("snapshots.backup.enabled")
+
+    @classmethod
+    def syncSnapshots(cls) -> (bool, str):
         """
 
         :return:
         """
-        if not mainCM.getConfigVal("snapshots.backup.enabled"):
-            SnapshotBackupUtils.log.info("Snapshot backup is disabled.")
+        if not cls.backupEnabled():
+            cls.log.info("Snapshot backup is disabled.")
+            return True, "Disabled"
+        cls.log.info("Syncing snapshots.")
+        return cls.getSyncImpl().sync()
+
+    @classmethod
+    def listBackedupSnapshots(cls) -> list[str]:
+        if not cls.backupEnabled():
+            cls.log.info("Snapshot backup is disabled.")
+            return []
+        return cls.getSyncImpl().listFiles()
+
+    @classmethod
+    def downloadSnapshot(cls, snapshotFile: str, destination:str = None) -> (bool, str):
+        """
+
+        :return:
+        """
+        if not cls.backupEnabled():
+            cls.log.info("Snapshot backup is disabled.")
+            return True, "Disabled"
+        cls.log.info("Backing up snapshots.")
+        return cls.getSyncImpl().pullFile(snapshotFile, destination)
+
+    @classmethod
+    def clearSnapshots(cls) -> (bool, str):
+        """
+        :return:
+        """
+        if not cls.backupEnabled():
+            cls.log.info("Snapshot backup is disabled.")
             return True, "Disabled"
         SnapshotBackupUtils.log.info("Backing up snapshots.")
+        si = cls.getSyncImpl()
+        for curFile in si.listFiles():
+            si.delFile(curFile)
         return True, "Success"
+
+

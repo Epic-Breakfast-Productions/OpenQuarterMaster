@@ -4,6 +4,7 @@ from ConfigManager import *
 from ServiceUtils import *
 from CronUtils import *
 from CertsUtils import *
+from SnapshotBackupUtils import *
 import logging
 import subprocess
 import datetime
@@ -176,6 +177,10 @@ class SnapshotUtils:
             else:
                 SnapshotUtils.log.info("Skipping pairing down number of files in snapshot destination.")
             SnapshotUtils.log.info("Done Performing snapshot.")
+
+            if SnapshotBackupUtils.backupEnabled():
+                SnapshotBackupUtils.syncSnapshots()
+
             return True, snapshotArchiveName
         finally:
             SnapshotUtils.log.info("Cleaning up after snapshot operations")
