@@ -20,6 +20,25 @@
 		"encryption": {
 			"enabled": false,
 			"pass": "<secret>"
+		},
+		"backup": {
+			"method": "local",
+			"enabled": false,
+			"local": {
+				"path": ""
+			},
+			"ssh": {
+				"path": ""
+			},
+			"objStorage": {
+				"accessKey": "<secret>",
+				"secretKey": "<secret>",
+				"bucket": "",
+				"prefix": "",
+				"endpointUrl": "",
+				"region": "",
+				"skipVerifySsl": false
+			}
 		}
 	},
 	"cert": {
