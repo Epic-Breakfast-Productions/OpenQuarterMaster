@@ -10,10 +10,10 @@ quarkus.http.insecure-requests=redirect
 quarkus.log.level=INFO
 
 # Files brought over in shared volume
-quarkus.http.ssl.certificate.files=/etc/oqm/serviceConfig/core/api/files/serviceCert.crt
-quarkus.http.ssl.certificate.key-files=/etc/oqm/serviceConfig/core/api/files/serviceCertKey.pem
-quarkus.http.ssl.certificate.trust-store-file=/etc/oqm/serviceConfig/core/api/files/serviceCertKeystore.p12
-quarkus.http.ssl.certificate.trust-store-password={cert.selfSigned.internalKeystorePass}
+quarkus.tls.key-store.pem.0.cert=/etc/oqm/serviceConfig/core/api/files/serviceCert.crt
+quarkus.tls.key-store.pem.0.key=/etc/oqm/serviceConfig/core/api/files/serviceCertKey.pem
+quarkus.tls.trust-store.p12.path=/etc/oqm/serviceConfig/core/api/files/serviceCertKeystore.p12
+quarkus.tls.trust-store.p12.password={cert.selfSigned.internalKeystorePass}
 
 # https://quarkus.io/guides/http-reference#reverse-proxy
 quarkus.http.proxy.proxy-address-forwarding=true
@@ -34,13 +34,11 @@ quarkus.mongodb.database={core.api.mongodb.database}
 
 # Kafka Config:
 {% if infra.kafka is defined %}
-quarkus.reactive-messaging.health.enabled=true
+mp.messaging.outgoing.events-outgoing.enabled=true
 mp.messaging.outgoing.events-outgoing.bootstrap.servers=OUTSIDE://{infra.kafka.host}:{infra.kafka.port}
-mp.messaging.outgoing.events-outgoing.connector=smallrye-kafka
-mp.messaging.outgoing.events-outgoing.broadcast=true
-mp.messaging.outgoing.events-outgoing.value.serializer=io.quarkus.kafka.client.serialization.ObjectMapperSerializer
 {% else %}
 #    Kafka instance not installed
+mp.messaging.outgoing.events-outgoing.enabled=false
 {% endif %}
 
 {% if metrics is defined and metrics.jaeger is defined %}
