@@ -56,6 +56,10 @@ g.add_argument('--write-internal-certs', dest="writeInternalCerts", nargs=2, hel
 # argcomplete.autocomplete(argParser)
 args = argParser.parse_args()
 
+# TODO:: use subparsers for actions;
+# list_parser = subparsers.add_parser("list", parents=[parent_parser], help="List files in a directory")
+# list_parser.set_defaults(func=list_files)
+
 # print(str(args))
 if args.v:
     print(ScriptInfo.SCRIPT_VERSION)
