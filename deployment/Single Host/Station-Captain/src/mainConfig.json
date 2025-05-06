@@ -36,7 +36,8 @@
 				"bucket": "",
 				"prefix": "",
 				"endpointUrl": "",
-				"region": ""
+				"region": "",
+				"skipVerifySsl": false
 			}
 		}
 	},

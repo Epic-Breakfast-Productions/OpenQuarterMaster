@@ -1,21 +1,20 @@
 import time
 from enum import Enum
-
-from botocore.client import BaseClient
-
 from ConfigManager import *
 from CronUtils import *
 from CertsUtils import *
-from SnapshotUtils import *
+from SnapshotShared import *
 import logging
 import subprocess
 import datetime
 import os
+import pathlib
 import shutil
 import tarfile
 import boto3
 from LogUtils import *
 from botocore.config import Config
+from botocore.client import BaseClient
 from abc import ABC, abstractmethod
 
 
@@ -41,7 +40,7 @@ class SyncImpl:
     def sync(cls) -> (bool, str):
         cls.log.info("Synchronizing snapshot files to destination via %s.", cls.method().name)
         previousRemoteFiles: list[str] = cls.listFiles()
-        curSnapshotFiles: list[str] = SnapshotUtils.listSnapshots()
+        curSnapshotFiles: list[str] = SnapshotSharedUtils.listSnapshots()
 
         movedFiles = []
         alreadyPresentFiles = []
@@ -114,7 +113,7 @@ class LocalSync(SyncImpl):
 
     @staticmethod
     def getDestFilePath(snapshotFile: str) -> str:
-        return mainCM.getConfigVal("snapshots.backup.local.location") + "/" + snapshotFile
+        return mainCM.getConfigVal("snapshots.backup.local.path") + "/" + snapshotFile
 
     @staticmethod
     def method() -> SyncMethod:
@@ -122,9 +121,11 @@ class LocalSync(SyncImpl):
 
     @classmethod
     def addFile(cls, fileToAdd: str) -> (bool, str):
+        destFile = cls.getDestFilePath(fileToAdd)
+        pathlib.Path(os.path.dirname(destFile)).mkdir(parents=True, exist_ok=True)
         shutil.copy(
             cls.getSnapshotFilePath(fileToAdd),
-            cls.getDestFilePath(fileToAdd)
+            destFile
         )
         return True, ""
 
@@ -148,12 +149,15 @@ class LocalSync(SyncImpl):
 
     @classmethod
     def listFiles(cls) -> list[str]:
+        backupPath = mainCM.getConfigVal("snapshots.backup.local.path")
+        if not os.path.exists(backupPath):
+            return []
         return list(
             filter(
-                SnapshotUtils.filterSnapshotFile,
+                SnapshotSharedUtils.filterSnapshotFile,
                 [
                     entry.name for entry in sorted(
-                    os.scandir(mainCM.getConfigVal("snapshots.backup.local.location")),
+                    os.scandir(backupPath),
                     key=lambda x: x.stat().st_mtime, reverse=True
                 )
                 ]
@@ -184,8 +188,10 @@ class ObjStorageSync(SyncImpl):
             kwargs['endpoint_url'] = mainCM.getConfigVal("snapshots.backup.objStorage.endpointUrl")
         if mainCM.getConfigVal("snapshots.backup.objStorage.region"):
             kwargs['region_name'] = mainCM.getConfigVal("snapshots.backup.objStorage.region")
+        if mainCM.getConfigVal("snapshots.backup.objStorage.skipVerifySsl"):
+            cls.log.warning("SETTING TO IGNORE SSL CERT ISSUES WHEN CONNECTING TO S3.")
+            kwargs['verify'] = False
 
-        endpoint_url='http://your-minio-endpoint:9000'
         return boto3.resource(
             's3',
             **kwargs
@@ -239,9 +245,9 @@ class ObjStorageSync(SyncImpl):
 
         snapshotFiles = []
         for curObj in bucket.objects.filter(Prefix=mainCM.getConfigVal("snapshots.backup.objStorage.prefix")):
-            snapshotFiles.append(os.path.basename(curObj['Key']))
+            snapshotFiles.append(os.path.basename(curObj.key))
 
-        snapshotFiles = list(filter(lambda curFile : curFile.startsWith(SnapshotUtils.SNAPSHOT_FILE_PREFIX), snapshotFiles))
+        snapshotFiles = list(filter(lambda curFile : curFile.startsWith(SnapshotSharedUtils.SNAPSHOT_FILE_PREFIX), snapshotFiles))
 
         return snapshotFiles
 

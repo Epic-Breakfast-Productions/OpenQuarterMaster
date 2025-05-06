@@ -4,6 +4,7 @@ from ConfigManager import *
 from ServiceUtils import *
 from CronUtils import *
 from CertsUtils import *
+from SnapshotShared import *
 from SnapshotBackupUtils import *
 import logging
 import subprocess
@@ -26,28 +27,7 @@ class SnapshotUtils:
     """
     log = LogUtils.setupLogger("SnapshotUtils")
     CRON_NAME = "take-snapshot"
-    SNAPSHOT_FILE_PREFIX = "OQM-snapshot-"
-    SNAPSHOT_FILE_TEMPLATE = SNAPSHOT_FILE_PREFIX + "{}-{}"
-
-    @staticmethod
-    def filterSnapshotFile(curFile: str) -> any:
-        return (not os.path.isdir(mainCM.getConfigVal("snapshots.location") + "/" + curFile)
-                and curFile.startsWith(SnapshotUtils.SNAPSHOT_FILE_PREFIX)
-                )
-
-    @staticmethod
-    def listSnapshots() -> list[str]:
-        return list(
-            filter(
-                SnapshotUtils.filterSnapshotFile,
-                [
-                    entry.name for entry in sorted(
-                        os.scandir(mainCM.getConfigVal("snapshots.location")),
-                        key=lambda x: x.stat().st_mtime, reverse=True
-                    )
-                ]
-            )
-        )
+    SNAPSHOT_FILE_TEMPLATE = SnapshotSharedUtils.SNAPSHOT_FILE_PREFIX + "{}-{}"
 
     @staticmethod
     def performSnapshot(snapshotTrigger: SnapshotTrigger) -> (bool, str):
@@ -168,7 +148,7 @@ class SnapshotUtils:
                 numToKeep = 5
             if numToKeep > 0:
                 SnapshotUtils.log.info("Pairing down number of files in snapshot destination to %s", numToKeep)
-                filenames = SnapshotUtils.listSnapshots()
+                filenames = SnapshotSharedUtils.listSnapshots()
 
                 SnapshotUtils.log.debug("Current files in snapshot dir (%s): %s", len(filenames), ", ".join(filenames))
                 for curFile in filenames[5:]:
@@ -180,6 +160,8 @@ class SnapshotUtils:
 
             if SnapshotBackupUtils.backupEnabled():
                 SnapshotBackupUtils.syncSnapshots()
+            else:
+                SnapshotUtils.log.info("Backups are disabled. Skipping.")
 
             return True, snapshotArchiveName
         finally:
