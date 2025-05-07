@@ -180,9 +180,9 @@ smallrye:
       ssl-port: 8443
     oidc:
       # TODO:: remove when https://github.com/quarkusio/quarkus/issues/47581
-      client-id: oqm-app
-      credentials:
-        secret: "**********"
+#      client-id: oqm-app
+#      credentials:
+#        secret: "**********"
     #      auth-server-url: http://localhost:8115/realms/oqm
 
   runningInfo:
