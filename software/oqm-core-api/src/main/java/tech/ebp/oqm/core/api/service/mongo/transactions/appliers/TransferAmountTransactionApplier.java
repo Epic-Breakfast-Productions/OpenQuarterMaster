@@ -90,6 +90,9 @@ public class TransferAmountTransactionApplier extends TransactionApplier<Transfe
 		if (transaction.getToStored() != null && !transaction.getToStored().equals(toStored.getId())) {
 			throw new IllegalArgumentException("To Stored retrieved not in specified block.");
 		}
+		if(fromStored.equals(toStored) || fromStored.getId().equals(toStored.getId())){
+			throw new IllegalArgumentException("Cannot transfer from/to the same Stored.");
+		}
 		if (transaction.getAmount() == null && !transaction.isAll()) {
 			throw new IllegalArgumentException("Either amount or all is required.");
 		}
