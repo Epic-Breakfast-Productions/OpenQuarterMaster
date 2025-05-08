@@ -5,8 +5,8 @@ const ItemStoredTransaction = {
 	submitTransaction: async function (itemId, transaction, transactionModal) {
 		console.log("Submitting transaction for item " + itemId + ":", transaction);
 		Rest.call({
-			spinnerContainer: transactionModal.find("modal-body")[0],
-			failMessagesDiv: transactionModal.find("messages")[0],
+			spinnerContainer: transactionModal.find(".modal-body")[0],
+			failMessagesDiv: transactionModal.find(".messages"),
 			method: "PUT",
 			url: Rest.passRoot + "/inventory/item/" + itemId + "/stored/transact",
 			data: transaction,
@@ -35,15 +35,15 @@ const ItemStoredTransaction = {
 
 			let query = new URLSearchParams();
 
-			if(item != null){
-				if (typeof item === 'string' || item instanceof String){
+			if (item != null) {
+				if (typeof item === 'string' || item instanceof String) {
 					query.set("item", item);
 				} else {
 					query.set("item", item.id);
 				}
 			}
-			if(stored != null){
-				if (typeof stored === 'string' || stored instanceof String){
+			if (stored != null) {
+				if (typeof stored === 'string' || stored instanceof String) {
 					query.set("stored", stored);
 				} else {
 					query.set("stored", stored.id);
@@ -54,8 +54,8 @@ const ItemStoredTransaction = {
 			let output;
 			await Rest.call({
 				url: Rest.componentRoot + "/itemStoredTransaction/dropdown?" + query.toString(),
-				returnType:"html",
-				done: function (buttonData){
+				returnType: "html",
+				done: function (buttonData) {
 					output = $(buttonData);
 				}
 			});
@@ -404,10 +404,10 @@ const ItemStoredTransaction = {
 		messages: $("#itemStoredTransactionCheckinMessages"),
 		form: $("#itemStoredTransactionCheckinForm"),
 
-		resetForm(){
+		resetForm() {
 			//TODO
 		},
-		setupForm(itemId, storedId, buttonElement){
+		setupForm(itemId, storedId, buttonElement) {
 			console.log("Setting up item stored checkin transaction form for item", itemId);
 			ModalHelpers.setReturnModal(this.modal, buttonElement);
 			this.resetForm();
@@ -419,10 +419,10 @@ const ItemStoredTransaction = {
 		messages: $("#itemStoredTransactionCheckoutMessages"),
 		form: $("#itemStoredTransactionCheckoutForm"),
 
-		resetForm(){
+		resetForm() {
 			//TODO
 		},
-		setupForm(itemId, storedId, buttonElement){
+		setupForm(itemId, storedId, buttonElement) {
 			console.log("Setting up item stored checkout transaction form for item", itemId);
 			ModalHelpers.setReturnModal(this.modal, buttonElement);
 			this.resetForm();
@@ -437,10 +437,10 @@ const ItemStoredTransaction = {
 		storedIdInput: $("#itemStoredTransactionSetFormStoredIdInput"),
 
 
-		resetForm(){
+		resetForm() {
 			//TODO
 		},
-		setupForm(itemId, storedId, buttonElement){
+		setupForm(itemId, storedId, buttonElement) {
 			console.log("Setting up item stored set transaction form for item", itemId);
 			ModalHelpers.setReturnModal(this.modal, buttonElement);
 			this.resetForm();
@@ -454,10 +454,10 @@ const ItemStoredTransaction = {
 
 		storedIdInput: $("#itemStoredTransactionSubtractFormStoredIdInput"),
 
-		resetForm(){
+		resetForm() {
 			//TODO
 		},
-		setupForm(itemId, storedId, buttonElement){
+		setupForm(itemId, storedId, buttonElement) {
 			console.log("Setting up item stored subtract transaction form for item", itemId);
 			ModalHelpers.setReturnModal(this.modal, buttonElement);
 			this.resetForm();
@@ -530,13 +530,13 @@ const ItemStoredTransaction = {
 			Main.processStart();
 			ModalHelpers.setReturnModal(this.modal, buttonElement);
 			ItemStoredTransaction.Transfer.resetForm();
-			if(item == null){
+			if (item == null) {
 				ItemStoredTransaction.Transfer.itemInputContainer.show();
 				Main.processStop();
 				return;
 			}
 
-			if(typeof item === "string" || (item instanceof String)){
+			if (typeof item === "string" || (item instanceof String)) {
 				return Getters.InventoryItem.get(item, function (itemData) {
 					ItemStoredTransaction.Transfer.setupForm(itemData, stored, buttonElement);
 					Main.processStop();
@@ -567,38 +567,38 @@ const ItemStoredTransaction = {
 			let toStored = false;
 			StorageTypeUtils.runForType(
 				item,
-				function(){
+				function () {
 					fromBlock = true;
 					toBlock = true;
 					amount = true;
 				},
-				function (){
+				function () {
 					typeSelect = true;
 					fromStored = true;
 					amount = true;
 					toStored = true;
 					toBlock = true;
 				},
-				function (){
+				function () {
 					fromStored = true;
 					toBlock = true;
 				},
-				function (){
+				function () {
 					fromBlock = true;
 					toBlock = true;
 				}
 			);
 
 			//populate inputs that are used
-			if(typeSelect){
+			if (typeSelect) {
 				ItemStoredTransaction.Transfer.transactionTypeContainer.show();
 			}
-			if(fromBlock){
+			if (fromBlock) {
 				ItemStoredTransaction.Transfer.fromBlockContainer.show();
-				item.storageBlocks.forEach(function (blockId){
+				item.storageBlocks.forEach(function (blockId) {
 					let newBlockOption = $('<option></option>');
 					newBlockOption.val(blockId);
-					promises.push(getStorageBlockLabel(blockId, function (blockLabel){
+					promises.push(getStorageBlockLabel(blockId, function (blockLabel) {
 						newBlockOption.text(blockLabel);
 						//TODO:: select from block if stored given
 					}));
@@ -606,30 +606,33 @@ const ItemStoredTransaction = {
 				});
 
 			}
-			if(fromStored){
+			if (fromStored) {
 				ItemStoredTransaction.Transfer.fromStoredContainer.show();
 			}
-			if(amount){
+			if (amount) {
 				ItemStoredTransaction.Transfer.amountInputContainer.show();
 
 				promises.push(
-					StoredFormInput.getAmountInputs(item, stored, true, true).then(function (inputs){
+					StoredFormInput.getAmountInputs(item, stored, true, true).then(function (inputs) {
 						ItemStoredTransaction.Transfer.amountInputs.html(inputs);
 					})
 				);
 			}
-			if(toBlock){
+			if (toBlock) {
 				ItemStoredTransaction.Transfer.toBlockContainer.show();
-				item.storageBlocks.forEach(function (blockId){
+				item.storageBlocks.forEach(function (blockId) {
 					let newBlockOption = $('<option></option>');
 					newBlockOption.val(blockId);
-					promises.push(getStorageBlockLabel(blockId, function (blockLabel){
+					promises.push(getStorageBlockLabel(blockId, function (blockLabel) {
 						newBlockOption.text(blockLabel);
 					}));
 					ItemStoredTransaction.Transfer.toBlockSelect.append(newBlockOption);
 				});
+				if(fromBlock){
+					ItemStoredTransaction.Transfer.updateToBlock(ItemStoredTransaction.Transfer.fromBlockSelect.val());
+				}
 			}
-			if(toStored){
+			if (toStored) {
 				ItemStoredTransaction.Transfer.toStoredContainer.show();
 			}
 
@@ -642,8 +645,8 @@ const ItemStoredTransaction = {
 		/**
 		 * Updates visibility of fields, selected/disabled in dropdowns based on what is selected
 		 */
-		updateForm(){
-			if(ItemStoredTransaction.Transfer.transactionTypeContainer.is(":visible")){
+		updateForm() {
+			if (ItemStoredTransaction.Transfer.transactionTypeContainer.is(":visible")) {
 				console.debug("Type input was visible!");
 
 				//TODO:: if amount
@@ -656,24 +659,38 @@ const ItemStoredTransaction = {
 			//TODO:: max amount of amount based on from if amount visible
 			//TODO:: enable/disable "to" options based on "from" selections
 		},
-		updateAllAmount(){
+		updateToBlock(selectedBlockId = null) {
+			if (ItemStoredTransaction.Transfer.toBlockSelect.is(":visible")) {
+				console.debug("Updating availability of to block options. Block to make unavailable: ", selectedBlockId);
+				ItemStoredTransaction.Transfer.toBlockSelect.find("option").each(function (i, option) {
+					$(option).prop("disabled", false);
+				});
+
+				if (selectedBlockId != null) {
+					let toDisable = ItemStoredTransaction.Transfer.toBlockSelect.find("option[value=" + selectedBlockId + "]");
+					toDisable.prop("disabled", true);
+					toDisable.prop("selected", false);
+				}
+			}
+		},
+		updateAllAmount() {
 			let inputs = ItemStoredTransaction.Transfer.amountInputs.find("input, select");
-			if(ItemStoredTransaction.Transfer.amountTransferAllInput.is(":checked")){
+			if (ItemStoredTransaction.Transfer.amountTransferAllInput.is(":checked")) {
 				inputs.prop("disabled", true);
 			} else {
 				inputs.prop("disabled", false);
 			}
 		},
-		submitFormHandler: async function(event){
+		submitFormHandler: async function (event) {
 			event.preventDefault();
 			let transaction = {};
 
 			//TODO:: simple validation: to/from same stored
 			//TODO:: fill out transaction
 
-			if(ItemStoredTransaction.Transfer.amountInputContainer.is(":visible")){
+			if (ItemStoredTransaction.Transfer.amountInputContainer.is(":visible")) {
 				transaction['transactionType'] = "TRANSFER_AMOUNT";
-				if(ItemStoredTransaction.Transfer.amountTransferAllInput.is(":checked")){
+				if (ItemStoredTransaction.Transfer.amountTransferAllInput.is(":checked")) {
 					transaction['all'] = true;
 				} else {
 					transaction['amount'] = UnitUtils.getQuantityFromInputs(ItemStoredTransaction.Transfer.amountInputs);
@@ -682,19 +699,19 @@ const ItemStoredTransaction = {
 				transaction['transactionType'] = "TRANSFER_WHOLE";
 			}
 
-			if(ItemStoredTransaction.Transfer.fromBlockContainer.is(":visible")){
+			if (ItemStoredTransaction.Transfer.fromBlockContainer.is(":visible")) {
 				transaction['fromBlock'] = ItemStoredTransaction.Transfer.fromBlockSelect.val();
 			}
 
-			if(ItemStoredTransaction.Transfer.fromStoredContainer.is(":visible")){
+			if (ItemStoredTransaction.Transfer.fromStoredContainer.is(":visible")) {
 				transaction['fromStored'] = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
 			}
 
-			if(ItemStoredTransaction.Transfer.toBlockContainer.is(":visible")){
+			if (ItemStoredTransaction.Transfer.toBlockContainer.is(":visible")) {
 				transaction['toBlock'] = ItemStoredTransaction.Transfer.toBlockSelect.val();
 			}
 
-			if(ItemStoredTransaction.Transfer.toStoredContainer.is(":visible")){
+			if (ItemStoredTransaction.Transfer.toStoredContainer.is(":visible")) {
 				transaction['toBlock'] = ItemStoredTransaction.Transfer.toStoredIdInput.val();
 			}
 
@@ -709,28 +726,28 @@ const ItemStoredTransaction = {
 };
 
 ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitFormHandler);
-ItemStoredTransaction.Add.itemIdInput.on("change", function (){
+ItemStoredTransaction.Add.itemIdInput.on("change", function () {
 	let itemId = ItemStoredTransaction.Add.itemIdInput.val();
 	console.log("Got item for add transaction form. Setting up: ", itemId);
 	ItemStoredTransaction.Add.setupForm(itemId);
 });
 
-ItemStoredTransaction.Transfer.fromStoredStoredIdInput.on("change", function (){
+ItemStoredTransaction.Transfer.fromStoredStoredIdInput.on("change", function () {
 	let itemId = ItemStoredTransaction.Transfer.fromStoredItemIdInput.val();
 	let itemStoredId = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
 	console.log("Updating item stored form data ", itemStoredId);
 
-	if(itemId != null && itemStoredId != null){
-		Getters.InventoryItem.get(itemId, function(item){
-			if(itemStoredId != null){
+	if (itemId != null && itemStoredId != null) {
+		Getters.InventoryItem.get(itemId, function (item) {
+			if (itemStoredId != null) {
 				Getters.StoredItem.getStored(itemId, itemStoredId, function (stored) {
-					StoredFormInput.getAmountInputs(item, stored, true, true).then(function (inputs){
+					StoredFormInput.getAmountInputs(item, stored, true, true).then(function (inputs) {
 						ItemStoredTransaction.Transfer.amountInputs.html(inputs);
 					});
 					//TODO:: update stored info?
 				});
 			} else {
-				StoredFormInput.getAmountInputs(item, null, true, true).then(function (inputs){
+				StoredFormInput.getAmountInputs(item, null, true, true).then(function (inputs) {
 					ItemStoredTransaction.Transfer.amountInputs.html(inputs);
 				});
 			}

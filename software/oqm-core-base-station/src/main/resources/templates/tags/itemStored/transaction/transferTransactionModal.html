@@ -47,7 +47,7 @@
 		
 			<div class="col" id="itemStoredTransactionTransferFormFromBlockContainer">
 				<label for="itemStoredTransactionTransferFormFromBlockSelect" class="form-label">From {#icons/storageBlock /} Storage Block</label>
-				<select class="form-select form-select-lg" id="itemStoredTransactionTransferFormFromBlockSelect" required></select>
+				<select class="form-select form-select-lg" id="itemStoredTransactionTransferFormFromBlockSelect" onchange="ItemStoredTransaction.Transfer.updateToBlock($(this).val());" required></select>
 			</div>
 			<div class="col" id="itemStoredTransactionTransferFormFromStoredContainer">
 				{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionTransferFormFromItemStored" /}
