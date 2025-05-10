@@ -37,6 +37,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'C
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove homepage container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull homepage image.'"
 # setup env list file
+ExecStartPre=/bin/bash -c "if [ -d \"/tmp/oqm/serviceConfig/infra/homepage/config\" ]; then rm -Rf /tmp/oqm/serviceConfig/infra/homepage/config; fi"
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/homepage/config/"
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/infra/homepage/settings.yaml.j2 > /tmp/oqm/serviceConfig/infra/homepage/config/settings.yaml"
 
@@ -45,7 +46,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name $CONTAINER_NAME \
                                  -e HOMEPAGE_ALLOWED_HOSTS=* \
                                  --network=oqm-internal \
-                                 -v /tmp/oqm/serviceConfig/infra/homepage/config/settings.yaml:/app/config/settings.yaml:ro \
+                                 -v /tmp/oqm/serviceConfig/infra/homepage/config:/config \
                                  $IMAGE_NAME:$IMAGE_VERSION"
 # TODO:: meaningful healthcheck for startup
 
