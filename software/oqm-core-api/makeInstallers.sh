@@ -45,7 +45,7 @@ mkdir -p "$buildDir/$debDir/etc/oqm/config/configs/"
 mkdir -p "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 
-install -m 755 -D "$srcDir/uiEntry.json" "$buildDir/$debDir/etc/oqm/static/core/api/"
+install -m 755 -D "$srcDir/uiEntry.json" "$buildDir/$debDir/etc/oqm/ui.d/oqm-core-api.json"
 install -m 755 -D "$srcDir/core-api-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/core/api/"
 install -m 755 -D "$srcDir/20-coreApi.json" "$buildDir/$debDir/etc/oqm/config/configs/"
 install -m 755 -D "$srcDir/core-api-proxy-config.json" "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
