@@ -4,21 +4,22 @@
 # https://gethomepage.dev/configs/info-widgets/
 
 - logo:
-    # TODO:: get from local
-    # TODO:: use icon
-    icon: https://openquartermaster.com/resources/media/logo/Quarter%20Master%20Main%20Logo.svg
+    icon: /oqm/static/oqm-icon.svg
 
 - greeting:
     text_size: xl
     text: Open QuarterMaster
 
+{% if customization.widgets.resources %}
 - resources:
     cpu: true
     memory: true
     disk: /
+{% endif  %}
 
+{% if customization.widgets.search %}
 # TODO:: search on base station
 - search:
-    # TODO:: set in config
-    provider: duckduckgo
+    provider: {{customization.searchProvider}}
     target: _blank
+{% endif  %}

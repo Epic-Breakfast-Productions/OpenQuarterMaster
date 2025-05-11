@@ -1,44 +1,28 @@
 ---
-title: Open Quartermaster
-description: {{infra.homepage.customization.description}}
+title: {{customization.title}}
+description: {{customization.description}}
 color: slate
-#favicon: #TODO
+favicon: /oqm/static/oqm-icon.svg
 
 layout:
   tab: Core
 
-  Core:
-    tab: Core
+  {%- for group, serviceList in services.items() %}
+  {{group}}:
+    tab: {{group}}
     style: row
     columns: 3
     header: false
-  Plugins:
-    tab: Plugins
-    style: row
-    columns: 3
-    header: false
-  Metrics:
-    tab: Metrics
-    style: row
-    columns: 3
-    header: false
-  Infrastructure:
-    tab: Infrastructure
-    style: row
-    columns: 3
-    header: false
+  {%- endfor %}
   Resources:
-    initiallyCollapsed: true
+    initiallyCollapsed: false
 
 quicklaunch:
   searchDescriptions: true
   hideInternetSearch: true
   showSearchSuggestions: true
   hideVisitURL: false
-  # TODO:: set in config
-  provider: duckduckgo # google, duckduckgo, bing, baidu, brave or custom
-
-
+  provider: {{customization.searchProvider}} # google, duckduckgo, bing, baidu, brave or custom
 
 # Breaks the setup. don't know why.
 #disableUpdateCheck: true

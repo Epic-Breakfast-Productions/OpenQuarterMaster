@@ -39,16 +39,14 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 # setup env list file
 ExecStartPre=/bin/bash -c "if [ -d \"/tmp/oqm/serviceConfig/infra/homepage/config\" ]; then rm -Rf /tmp/oqm/serviceConfig/infra/homepage/config; fi"
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/homepage/config/"
-ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/infra/homepage/settings.yaml.j2 > /tmp/oqm/serviceConfig/infra/homepage/config/settings.yaml"
-ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/infra/homepage/bookmarks.yaml.j2 > /tmp/oqm/serviceConfig/infra/homepage/config/bookmarks.yaml"
-ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/infra/homepage/services.yaml.j2 > /tmp/oqm/serviceConfig/infra/homepage/config/services.yaml"
-ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/serviceConfig/infra/homepage/widgets.yaml.j2 > /tmp/oqm/serviceConfig/infra/homepage/config/widgets.yaml"
+ExecStartPre=/bin/bash -c "/etc/oqm/static/infra/homepage/setup-homepage-config --update-config"
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --rm \
                                  --name $CONTAINER_NAME \
                                  -e HOMEPAGE_ALLOWED_HOSTS=* \
                                  --network=oqm-internal \
+                                 -v /etc/oqm/static/oqm-icon.svg:/app/public/oqm/static/oqm-icon.svg:ro \
                                  -v /tmp/oqm/serviceConfig/infra/homepage/config/settings.yaml:/config/settings.yaml:ro \
                                  -v /tmp/oqm/serviceConfig/infra/homepage/config/bookmarks.yaml:/config/bookmarks.yaml:ro \
                                  -v /tmp/oqm/serviceConfig/infra/homepage/config/services.yaml:/config/services.yaml:ro \

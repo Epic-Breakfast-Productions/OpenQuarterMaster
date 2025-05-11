@@ -3,26 +3,17 @@
 # For configuration options and examples, please see:
 # https://gethomepage.dev/configs/services/
 
-- Core:
-    - My First Service:
-        href: http://localhost/
-        description: Homepage is awesome
-        # TODO:: this, with external url. Ensure the entry that lets this show (ui entry) is present at install, not runtime
-        siteMonitor: http://sonarr.host/
-        statusStyle: "dot"
-
-- Plugins:
-    - My Second Service:
-        href: http://localhost/
-        description: Homepage is \U0001f60e
-
-- Metrics:
-    - My Third Service:
-        href: http://localhost/
-        description: Homepage is \U0001f60e
-
-- Infrastructure:
-    - My Fourth Service:
-        href: http://localhost/
-        description: Homepage is the best
-
+{%- for group, serviceList in services.items() %}
+{%- if serviceList %}
+- {{group}}:
+  {%- for service in serviceList %}
+  - {{ service.name }}:
+      description: {{ service.description }}
+      href: {{ service.url }}
+      siteMonitor: {{ service.url }}
+      statusStyle: "dot"
+  {%- endfor %}
+{%- else %}
+# Group {{ group }} had no entries
+{%- endif %}
+{%- endfor %}

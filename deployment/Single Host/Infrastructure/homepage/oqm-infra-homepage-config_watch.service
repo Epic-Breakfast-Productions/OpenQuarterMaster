@@ -1,12 +1,6 @@
-# Service file for running an instance of Keycloak.
+# Service file for running the watcher for updating homepage configuration.
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
-#
-#  Keycloak tags: https://quay.io/repository/keycloak/keycloak?tab=tags
-#
-# - https://www.keycloak.org/server/containers
-# - https://www.keycloak.org/getting-started/getting-started-docker
-# - https://www.keycloak.org/server/db
 #
 
 [Unit]
@@ -15,14 +9,14 @@ Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tr
 After=docker.service
 Wants=network-online.target
 Requires=docker.socket
-Requires=oqm-infra-traefik.service
-After=oqm-infra-traefik.service
+Requires=oqm-infra-homepage.service
+After=oqm-infra-homepage.service
 
 [Service]
 Type=simple
 Restart=always
 TimeoutSec=5m
-ExecStart=/bin/bash -c "/etc/oqm/static/infra/traefik/setup-proxy-config --monitor-proxy-changes"
+ExecStart=/bin/bash -c "/etc/oqm/static/infra/homepage/setup-homepage-config --monitor-changes"
 
 [Install]
 WantedBy=multi-user.target

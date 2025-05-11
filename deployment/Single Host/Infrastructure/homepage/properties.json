@@ -10,6 +10,8 @@
 	"configFiles":{
 	},
 	"files": {
+		"/usr/share/applications/oqm-homepage.desktop": "oqm-homepage.desktop",
+		"/etc/oqm/static/infra/homepage/setup-homepage-config": "setup-homepage-config.py",
 		"/etc/oqm/serviceConfig/infra/homepage/settings.yaml.j2": "config/settings.yaml.j2",
 		"/etc/oqm/serviceConfig/infra/homepage/bookmarks.yaml.j2": "config/bookmarks.yaml.j2",
 		"/etc/oqm/serviceConfig/infra/homepage/services.yaml.j2": "config/services.yaml.j2",
