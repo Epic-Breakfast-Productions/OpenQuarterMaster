@@ -1,6 +1,7 @@
 {
+	"type": "Core",
+	"order": 0,
 	"name": "Base Station",
-	"type": "core",
 	"description": "The Main UI for Open QuarterMaster. If you are unsure where to start, start here!",
-	"url": "{core.baseStation.externalBaseUri}"
+	"urlConfigKey": "core.baseStation.externalBaseUri"
 }
