@@ -50,7 +50,9 @@ http:
       service: infra-homepage
       rule: "PathPrefix(`/`)"
       middlewares:
-{#        - redirectToDefault#}
+        {%- if defaultPath %}
+        - redirectToDefault
+        {%- endif %}
     {%- for service in services %}
     {{service.serviceName}}-router:
       rule: "PathPrefix(`{{ service.proxyPath }}`)"
