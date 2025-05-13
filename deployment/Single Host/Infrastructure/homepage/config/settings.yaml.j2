@@ -5,12 +5,12 @@ color: {{customization.color}}
 favicon: /oqm/media/oqm-icon.svg
 
 layout:
-  tab: Core
+  tab: Core ({{ services["Core"] | count }})
 
   {%- for group, serviceList in services.items() %}
   {%- if serviceList %}
   {{group}}:
-    tab: {{group}}
+    tab: {{group}} ({{ serviceList | count }})
     style: row
     columns: 2
     header: false
