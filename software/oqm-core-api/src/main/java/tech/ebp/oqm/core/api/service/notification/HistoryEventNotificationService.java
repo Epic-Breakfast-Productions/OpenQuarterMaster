@@ -54,7 +54,7 @@ public class HistoryEventNotificationService {
 	}
 
 	/**
-	 * Don't call this directly, use the other one
+	 * Don't call this directly, use the other one(s)
 	 */
 	@WithSpan
 	@Incoming(INTERNAL_EVENT_CHANNEL)
