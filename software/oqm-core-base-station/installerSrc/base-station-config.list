@@ -43,7 +43,7 @@ quarkus.rest-client."oqm.core.api-oidc".trust-store-password={cert.selfSigned.in
 
 runningInfo.protocol=https
 runningInfo.hostname={system.hostname}
-runningInfo.depotUri={core.depot.externalBaseUri}
+runningInfo.depotUri={infra.homepage.externalBaseUri}
 
 
 {% if metrics is defined and metrics.jaeger is defined %}
