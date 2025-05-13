@@ -41,7 +41,7 @@ public class ImageComparisonProjectFinal {
         inputTName = "serving_default_inputs";
         outputTName = "StatefulPartitionedCall";
         numSimilar = 10;
-        modelImageSize = new Size(224, 224);
+        modelImageSize = new Size(500, 500);
         jsonFilePath = "imageData.json";
         jsonFile = generateJson();
         ImageData inputData = getImageData(inputImage);
