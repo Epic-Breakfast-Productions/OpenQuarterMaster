@@ -14,6 +14,7 @@
 		"/etc/oqm/static/keycloak/import/oqm-realm.json": "oqm-realm.json",
 		"/etc/oqm/static/keycloak/kc-realm-manager": "kc-realm-manager.py",
 		"/etc/oqm/kcClients/README.md": "clientFileExplainer.md",
-		"/etc/oqm/ui.d/oqm-infra-keycloak.json": "uiEntry.json"
+		"/etc/oqm/ui.d/oqm-infra-keycloak.json": "uiEntry.json",
+		"/etc/oqm/static/media/infra/keycloak/kc.svg": "kc.svg"
 	}
 }

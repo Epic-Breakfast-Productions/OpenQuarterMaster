@@ -10,6 +10,7 @@
 				"title": "Open QuarterMaster",
 				"description": "The homepage for Open QuarterMaster. Use this page to get to where you need to go within the system.",
 				"searchProvider": "duckduckgo",
+				"color": "slate",
 				"widgets": {
 					"resources": true,
 					"search": true

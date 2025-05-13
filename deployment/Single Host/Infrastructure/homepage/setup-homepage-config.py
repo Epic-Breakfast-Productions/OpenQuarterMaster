@@ -53,16 +53,27 @@ def updateHomepageConfig():
         try:
             if curUiFile.endswith(".json"):
                 log.info("Cur ui file: " + curUiFile)
+                writeBack = False
                 with open(UI_CONFIG_DIR + "/" + curUiFile, 'r') as stream:
                     curUiConfig = json.load(stream)
 
-                curUiConfig["url"] = mainCM.getConfigVal(curUiConfig["urlConfigKey"])
-
+                if "url" not in curUiConfig or curUiConfig["url"] is None or mainCM.getConfigVal(curUiConfig["urlConfigKey"]) != curUiConfig["url"] :
+                    curUiConfig["url"] = mainCM.getConfigVal(curUiConfig["urlConfigKey"])
+                    writeBack = True
                 if "order" not in curUiConfig or curUiConfig["order"] is None:
                     curUiConfig["order"] = 999
+                    writeBack = True
+                if "monitorEndpoint" not in curUiConfig or curUiConfig["monitorEndpoint"] is None:
+                    curUiConfig["monitorEndpoint"] = ""
+                    writeBack = True
 
                 log.debug("Using ui config: %s", curUiConfig)
                 templateData["services"][curUiConfig["type"]].append(curUiConfig)
+
+                if writeBack:
+                    log.info("Updated entries in ui file. Updating original file.")
+                    with open(UI_CONFIG_DIR + "/" + curUiFile, 'w') as stream:
+                        json.dump(curUiConfig, stream, indent=4)
             else:
                 continue
         except Exception as error:

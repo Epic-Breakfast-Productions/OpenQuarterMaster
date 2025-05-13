@@ -1,18 +1,20 @@
 ---
 title: {{customization.title}}
 description: {{customization.description}}
-color: slate
-favicon: /oqm/static/oqm-icon.svg
+color: {{customization.color}}
+favicon: /oqm/media/oqm-icon.svg
 
 layout:
   tab: Core
 
   {%- for group, serviceList in services.items() %}
+  {%- if serviceList %}
   {{group}}:
     tab: {{group}}
     style: row
-    columns: 3
+    columns: 2
     header: false
+  {%- endif %}
   {%- endfor %}
   Resources:
     initiallyCollapsed: false
@@ -25,4 +27,4 @@ quicklaunch:
   provider: {{customization.searchProvider}} # google, duckduckgo, bing, baidu, brave or custom
 
 # Breaks the setup. don't know why.
-#disableUpdateCheck: true
+disableUpdateCheck: true

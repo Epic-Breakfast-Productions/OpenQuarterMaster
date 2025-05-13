@@ -10,8 +10,12 @@
   - {{ service.name }}:
       description: {{ service.description }}
       href: {{ service.url }}
-      siteMonitor: {{ service.url }}
+      target: _self
+      siteMonitor: {{ service.url }}{{ service.monitorEndpoint }}
       statusStyle: "dot"
+    {%- if service.icon %}
+      icon: /oqm/media{{ service.icon }}
+    {%- endif %}
   {%- endfor %}
 {%- else %}
 # Group {{ group }} had no entries

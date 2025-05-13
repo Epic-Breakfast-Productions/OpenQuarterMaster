@@ -46,7 +46,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name $CONTAINER_NAME \
                                  -e HOMEPAGE_ALLOWED_HOSTS=* \
                                  --network=oqm-internal \
-                                 -v /etc/oqm/static/oqm-icon.svg:/app/public/oqm/static/oqm-icon.svg:ro \
+                                 -v /etc/oqm/static/media/:/app/public/oqm/media:ro \
                                  -v /tmp/oqm/serviceConfig/infra/homepage/config/settings.yaml:/config/settings.yaml:ro \
                                  -v /tmp/oqm/serviceConfig/infra/homepage/config/bookmarks.yaml:/config/bookmarks.yaml:ro \
                                  -v /tmp/oqm/serviceConfig/infra/homepage/config/services.yaml:/config/services.yaml:ro \
