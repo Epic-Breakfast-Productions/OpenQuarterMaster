@@ -30,3 +30,5 @@ Currently, this project returns the top 10 (can adjust number of returned with v
 is currently just printed to the console, but could be easily modified to return this information in another format.
 
 A folder of test images is included, with the program pointing to that folder along with the inputImage pointing to the image "screw.jpg" in that folder.
+
+Run with ` ./gradlew clean run`

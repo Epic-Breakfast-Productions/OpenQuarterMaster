@@ -33,16 +33,16 @@ public class ImageComparisonProjectFinal {
 
     public static void main(String[] args) throws IOException {
         OpenCV.loadLocally();
-        inputImagePath = "testImages/screw.jpg";
+        inputImagePath = "testImages/Screw.jpg";
         inputImage = new File(inputImagePath);
         imageFolderPath = "testImages";
         imageFolder = new File(imageFolderPath);
-        model = SavedModelBundle.load("resnet-v2-tensorflow2-152-feature-vector-v2");
+        model = SavedModelBundle.load("model/resnet-v2-tensorflow2-152-feature-vector-v2");
         inputTName = "serving_default_inputs";
         outputTName = "StatefulPartitionedCall";
         numSimilar = 10;
         modelImageSize = new Size(224, 224);
-        jsonFilePath = "testImages/imageData.json";
+        jsonFilePath = "imageData.json";
         jsonFile = generateJson();
         ImageData inputData = getImageData(inputImage);
         if(inputData != null){
@@ -174,7 +174,7 @@ public class ImageComparisonProjectFinal {
                 float[] deepFeatures = extractDeepFeatures(imageFile);
                 return new ImageData(imageFile.getAbsolutePath(), imageFile.getName(), deepFeatures);
             } else {
-                throw new IOException("File not found");
+                throw new IOException("File not found; " + imageFile.getAbsolutePath());
             }
         } catch (IOException e){
             e.printStackTrace();
