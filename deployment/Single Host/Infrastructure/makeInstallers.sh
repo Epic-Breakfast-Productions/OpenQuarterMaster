@@ -28,6 +28,7 @@ debDir="InfraDeb"
 packages=("mongo" "postgres" "keycloak" "traefik")
 # Ready for deployment
 packages=("traefik" "mongo" "postgres" "keycloak" "kafka-red-panda")
+packages=("traefik" "mongo" "postgres" "keycloak" "kafka-red-panda", "homepage")
 #packages=("jaeger" "mongo" "postgres" "keycloak")
 
 #

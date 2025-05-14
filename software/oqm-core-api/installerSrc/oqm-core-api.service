@@ -41,7 +41,6 @@ ExecStartPre=/bin/bash -c "oqm-captain --write-internal-certs $CONTAINER_NAME /e
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.CARootCert)\" /etc/oqm/serviceConfig/core/api/files/systemCA.crt"
 
 # Create filled out configuration
-ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/core/api/uiEntry.json > /etc/oqm/ui.d/core-api.json"
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/api/"
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"

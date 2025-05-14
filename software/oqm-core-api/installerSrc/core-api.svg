@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="41.641182mm"
+   height="52.634048mm"
+   viewBox="0 0 41.641182 52.634048"
+   version="1.1"
+   id="svg434"
+   inkscape:version="1.2.2 (b0a8486541, 2022-12-01)"
+   sodipodi:docname="Quarter Master Logo Symbol Outlined.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview436"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:document-units="mm"
+     showgrid="false"
+     inkscape:zoom="3.4160637"
+     inkscape:cx="88.69858"
+     inkscape:cy="93.382334"
+     inkscape:window-width="1920"
+     inkscape:window-height="979"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="layer1" />
+  <defs
+     id="defs431" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-81.09958,-64.178131)">
+    <polygon
+       transform="matrix(0.4057632,0,0,0.42580491,80.643533,64.111385)"
+       points="65.48,25.39 65.48,47.29 84.46,58.25 103.43,47.29 103.43,25.39 84.46,14.42 "
+       id="polygon80"
+       style="overflow:visible;color-interpolation-filters:sRGB;fill:#101115;stroke:#ffffff;stroke-width:0.636533;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       d="m 81.231893,71.277682 0.004,13.885494 11.458756,6.94488 11.458751,-6.94488 V 71.273424 L 92.690592,64.332803 Z m 3.07974,1.865025 8.379009,-5.079852 8.379008,5.075594 0.004,10.155447 -8.383066,5.07559 -8.379011,-5.07133 z"
+       id="path82"
+       style="overflow:visible;color-interpolation-filters:sRGB;fill:#101115;stroke:#ffffff;stroke-width:0.264583;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <polygon
+       transform="matrix(0.4057632,0,0,0.42580491,80.643533,64.111385)"
+       points="12.68,103.92 12.68,66.08 28.66,75.3 63.23,55.35 63.23,55.16 80.18,64.94 80.19,103.92 46.43,123.4 "
+       id="polygon84"
+       style="overflow:visible;color-interpolation-filters:sRGB;fill:#94b17b;stroke:#ffffff;stroke-width:0.636533;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+  </g>
+</svg>

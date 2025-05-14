@@ -5,7 +5,7 @@ GenericName=Base Station - OQM
 Comment=Quick link to open the Open QuarterMaster
 
 Exec=bash -c 'xdg-open $(oqm-config -g core.baseStation.externalBaseUri)'
-Icon=/etc/oqm/static/oqm-icon.svg
+Icon=/etc/oqm/static/media/core/base-station/core-base-station.svg
 Terminal=false
 
 Type=Application

@@ -1,0 +1,23 @@
+---
+# services for OQM
+# For configuration options and examples, please see:
+# https://gethomepage.dev/configs/services/
+
+{%- for group, serviceList in services.items() %}
+{%- if serviceList %}
+- {{group}}:
+  {%- for service in serviceList %}
+  - {{ service.name }}:
+      description: {{ service.description }}
+      href: {{ service.url }}
+      target: _self
+      siteMonitor: {{ service.url }}{{ service.monitorEndpoint }}
+      statusStyle: "dot"
+    {%- if service.icon %}
+      icon: /oqm/media{{ service.icon }}
+    {%- endif %}
+  {%- endfor %}
+{%- else %}
+# Group {{ group }} had no entries
+{%- endif %}
+{%- endfor %}

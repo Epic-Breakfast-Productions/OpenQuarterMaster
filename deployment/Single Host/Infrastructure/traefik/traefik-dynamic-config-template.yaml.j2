@@ -47,10 +47,12 @@ http:
   # https://doc.traefik.io/traefik/routing/routers/
   routers:
     defaultRoute:
-      service: core-depot
-      rule: "Path(`/`)"
+      service: infra-homepage
+      rule: "PathPrefix(`/`)"
       middlewares:
+        {%- if defaultPath %}
         - redirectToDefault
+        {%- endif %}
     {%- for service in services %}
     {{service.serviceName}}-router:
       rule: "PathPrefix(`{{ service.proxyPath }}`)"
