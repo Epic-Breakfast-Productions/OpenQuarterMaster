@@ -6,7 +6,7 @@
 #
 
 [Unit]
-Description=Traefik Reverse proxy server for Open Quartermaster. Version ${version}, using Traefik tagged to "v3.3".
+Description=Traefik Reverse proxy server for Open Quartermaster. Version ${version}, using Traefik tagged to "3".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure
 After=docker.service
 Wants=network-online.target docker.socket
@@ -18,7 +18,7 @@ Restart=always
 TimeoutSec=5m
 Environment="CONTAINER_NAME=oqm-infra-traefik"
 Environment="IMAGE_NAME=docker.io/traefik"
-Environment="IMAGE_VERSION=v3.3"
+Environment="IMAGE_VERSION=3"
 Environment="DATA_DIR=/data/oqm/traefik"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/traefik/env.list"
 
