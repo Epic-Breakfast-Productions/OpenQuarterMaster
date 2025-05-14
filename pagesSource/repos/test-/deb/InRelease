@@ -1,0 +1,37 @@
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
+
+Date: Wed, 14 May 2025 20:50:24 +0000
+MD5Sum:
+ 987d1c283810846a26adb8da80ea2184             5725 Packages
+ 1d9c0b5835fbdd5f0634d4fca7a9dbc3             1723 Packages.gz
+ 9f6a7cb00ed79fbffb3d2700e8433b77               38 Release
+SHA1:
+ 3bd4d43235f1c712e7efe8b7a7c4c5ae6c2a9955             5725 Packages
+ 3008ed9fba41bbe22e216f1434b69b75ed88b5e7             1723 Packages.gz
+ 92c63da4142cef630032d8ff993fbb08a10c0a0b               38 Release
+SHA256:
+ 891a8758f8f660e5885004b80ded3c0c32891f8a26baa3cc4840fcc6f586ca10             5725 Packages
+ 2559c29fa423362599966b908103ee2704606b299c0a419b3a77722bf89de711             1723 Packages.gz
+ a74fe4309e0dc42cc72d49b25308f97450ad5333583dbd1b125fb6c14005f28e               38 Release
+SHA512:
+ 6ae3a6e5c0e8deeacb532160c09b74c72ca61e53de182110f7cb18d3a859a6eb46f7f1f62e2e46c21187f1e409bfffb3b4fe524d90edc005aa40cd992e41b359             5725 Packages
+ 2ddeb6025d02b37e02080c61b147c21cd20c8ddc33e8b5ef986daa21d243e6d6e46ff2ddfb5fd759a873be17c5b13d5a3a8b0c81a9b6acc856024710722e7aae             1723 Packages.gz
+ a061a60996510adb8e986813ad8ccf3c983a695131d33a19b16e9d064e3b71a446b35dc41e7b2f07f85f8c5d835a52b20cadc913be8ad81a6c6e0975348b82bc               38 Release
+-----BEGIN PGP SIGNATURE-----
+
+iQJZBAEBCgBDFiEET4mMzDxL82g2xa7Aa9cIQRtcMhYFAmglAhElHGdyZWdAZXBp
+Yy1icmVha2Zhc3QtcHJvZHVjdGlvbnMudGVjaAAKCRBr1whBG1wyFjNmD/oDlLmJ
+y82FsFNG+SO8+KmsOHzotDZerdQgqeFlYtqgFqN5EBgQ/gEVQMA36ab+hXhs4VWp
+MNfnnXuMBYleIUaFIEXrVMAzXjeQLmJO5fFwlwQA1awDGowsov4XRMJUk5EugvoV
+UbXlgRPCe5JccBuBxkBzbfHdyJHyBK9V5w2rc4Vw9yyoJP7vfxnAxDsw4FgcrTnv
+YGRgZpxPaWnufZg8P3ISBX7NTBnQ/yR3UM8hPB6CVxnD95GR4ro/+favtFVZCgGp
+e3hvBSGxLDJjDelCs/GuG6Wip6EABdagsXQZLFydTdIgcmeE9mz/oFjWGXRG3GIL
+RLT7FfpSyvnVP+ZqH1ZogMY61R1JVgJRmHFWVjrAB2CebrOVOB49lDZ28fBaJKrE
+gBmg+B+7uvrIRe1vp+Lirq9p47InkkjY2cgIkOhnSdgRIbmyax2FHqb8mxe2epOA
+8xdMQc2LSrYa38HQBtbL5VJQ+dzX+OntQa7bD/Lfnjh9VqdKentt8fIQcwG98mKv
+zKlp2AHWwdsZ7DqrQ39NDB2AgXoDfA69y6UO/V99U/f6Inpeh3JeHH882OXe3Eks
+9MQ/XvRKsk6Av7gcPnaBi0TrJ1HfW+aAgG4ztikNB6f7w+AeIwqrfC/ML4bZsS9s
+DvONd06LaMGufCEQBAQ9s+hclDX8zGD4Byndkw==
+=6AUa
+-----END PGP SIGNATURE-----
