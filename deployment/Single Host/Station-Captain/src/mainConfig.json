@@ -5,8 +5,9 @@
 		"dataDir": "#{system.systemDataDir}/oqm",
 		"automaticContainerPruneFrequency": "monthly",
 		"defaultUi": {
+			"custom": false,
 			"type": "core",
-			"name": "depot",
+			"name": "base-station",
 			"path": "/"
 		}
 	},
