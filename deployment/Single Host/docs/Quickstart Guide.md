@@ -22,6 +22,6 @@ Steps:
 4. Run the main script command: `sudo oqm-captain`
     - The first run should prompt you to go through a setup wizard to get you going. It is recommended to do go through it.
     - Installation should be complete once this finishes. You can exit the script.
-5. You can navigate to your computer's ip or domain from a web browser to access the Open QuarterMaster tool.
+5. You can navigate to your computer's ip or domain from a web browser to access the Open QuarterMaster system.
     - Tip: the `oqm-captain` tool lists your ip under `Info / Status`/`Host / Base OS`
     - Tip: if installed on a system with a GUI (Ubuntu desktop for instance), you will have app shortcuts available to you now. Look for "OQM"!

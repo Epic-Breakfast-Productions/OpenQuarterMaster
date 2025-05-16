@@ -1,0 +1,20 @@
+{
+	"packageName":"oqm-infra-homepage",
+	"version":"1.0.0",
+	"description":"Homepage instance for Open QuarterMaster.",
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/homepage",
+	"configs": [],
+	"dependencies": {
+		"deb": ", oqm-manager-station+captain (>= 2.7.0), oqm-infra-traefik (>= 1.0.3), python3-docker, python3-watchdog"
+	},
+	"configFiles":{
+	},
+	"files": {
+		"/usr/share/applications/oqm-homepage.desktop": "oqm-homepage.desktop",
+		"/etc/oqm/static/infra/homepage/setup-homepage-config": "setup-homepage-config.py",
+		"/etc/oqm/serviceConfig/infra/homepage/settings.yaml.j2": "config/settings.yaml.j2",
+		"/etc/oqm/serviceConfig/infra/homepage/bookmarks.yaml.j2": "config/bookmarks.yaml.j2",
+		"/etc/oqm/serviceConfig/infra/homepage/services.yaml.j2": "config/services.yaml.j2",
+		"/etc/oqm/serviceConfig/infra/homepage/widgets.yaml.j2": "config/widgets.yaml.j2"
+	}
+}
