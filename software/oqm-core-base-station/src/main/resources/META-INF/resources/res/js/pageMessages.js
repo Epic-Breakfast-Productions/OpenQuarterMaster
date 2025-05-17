@@ -34,7 +34,7 @@ const PageMessages = {
 		}
 
 		if(heading != null){
-			headingObj.append($('<span class=""></span>').text(heading));
+			headingObj.append($('<span class="alert-heading-text"></span>').text(heading));
 		}
 		output = output.append(headingObj);
 		output = output.append($('<span class="message"></span>').text(message));
@@ -78,14 +78,16 @@ const PageMessages = {
 };
 
 if(UriUtils.getParams.has("message")){
-    var type = (UriUtils.getParams.has("messageType") ? UriUtils.getParams.get("messageType") : "info");
-    var heading = (UriUtils.getParams.has("messageHeading") ? UriUtils.getParams.get("messageHeading") : null)
+    let type = (UriUtils.getParams.has("messageType") ? UriUtils.getParams.get("messageType") : "info");
+    let heading = (UriUtils.getParams.has("messageHeading") ? UriUtils.getParams.get("messageHeading") : null)
     PageMessages.addMessage(type, UriUtils.getParams.get("message"), heading, null);
 
     UriUtils.getParams.delete("message");
     UriUtils.getParams.delete("messageType");
     UriUtils.getParams.delete("messageHeading");
 
-    var newQuery = UriUtils.getParams.toString();
+    let newQuery = UriUtils.getParams.toString();
     window.history.replaceState({}, document.title, window.location.href.split('?')[0] + (newQuery? '?' + newQuery : ''));
 }
+console.log("Done processing page messages.");
+Main.processStop();

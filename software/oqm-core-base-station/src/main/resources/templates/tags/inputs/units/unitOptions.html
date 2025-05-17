@@ -4,6 +4,4 @@ Template for the options for a select input for units.
 Ingests:
 - units - list of units
     !}
-{#for unit in units}
-	<option value="{unit.get("string").asText()}" data-symbol="{unit.get("symbol").asText()}">{unit.get("name").asText()} ({unit.get("symbol").asText()})</option>
-{/for}
+{#for unit in units}<option value="{unit.get("string").asText()}" data-symbol="{unit.get("symbol").asText()}">{unit.get("name").asText()} ({unit.get("symbol").asText()})</option>{/for}

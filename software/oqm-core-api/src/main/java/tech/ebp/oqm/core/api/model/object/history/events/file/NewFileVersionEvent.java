@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.core.api.model.object.history.EventType;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
@@ -13,6 +14,7 @@ import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @BsonDiscriminator
+@SuperBuilder(toBuilder = true)
 public class NewFileVersionEvent extends ObjectHistoryEvent {
 	public static final int CUR_SCHEMA_VERSION = 1;
 	
