@@ -1,0 +1,22 @@
+# Service file for running the watcher for updating homepage configuration.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+
+[Unit]
+Description=Homepage config watcher for Open Quartermaster.
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/homepage
+After=docker.service
+Wants=network-online.target
+Requires=docker.socket
+Requires=oqm-infra-homepage.service
+After=oqm-infra-homepage.service
+
+[Service]
+Type=simple
+Restart=always
+TimeoutSec=5m
+ExecStart=/bin/bash -c "/etc/oqm/static/infra/homepage/setup-homepage-config --monitor-changes"
+
+[Install]
+WantedBy=multi-user.target

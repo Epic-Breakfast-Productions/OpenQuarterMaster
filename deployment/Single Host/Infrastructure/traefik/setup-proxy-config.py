@@ -40,7 +40,7 @@ def updateTraefikConfig():
           "hostname": mainCM.getConfigVal("system.hostname"),
           "alternateSans": mainCM.getConfigVal("cert.additionalExternalSANs")
         },
-        "defaultPath": "/" + mainCM.getConfigVal("system.defaultUi.type") + "/" + mainCM.getConfigVal("system.defaultUi.name") + mainCM.getConfigVal("system.defaultUi.path"),
+        "defaultPath": False,
         "services": [],
         "certs": {
             "rootCa": TRAEFIK_CONTAINER_CERT_LOCATION + "rootCert.crt",
@@ -54,6 +54,9 @@ def updateTraefikConfig():
             ]
         }
     }
+
+    if mainCM.getConfigVal("system.defaultUi.custom"):
+        templateData["defaultPath"] = "/" + mainCM.getConfigVal("system.defaultUi.type") + "/" + mainCM.getConfigVal("system.defaultUi.name") + mainCM.getConfigVal("system.defaultUi.path")
 
     if mainCM.getConfigVal("cert.provided.enabled"):
         templateData["certs"]["certList"].append({

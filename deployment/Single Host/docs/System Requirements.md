@@ -21,8 +21,8 @@ In addition to these requirements, please look through the "Gotchas" section on 
 ## Hardware Requirements:
 
 - 4gb of RAM absolute testing minimum, 8gb recommended for real usage minimum. Based on:
-  - Minimum memory usage is around 1.5GiB, with up to 2.5GiB at startup
-  - The above stats are for minimum usage, no traffic. Need some headroom for rest of OS and under load.
+  - Minimum memory usage is around 2GiB, with up to 2.5GiB at startup
+  - The above stats are for minimum usage, no real traffic. Need some headroom for rest of OS and under load.
 - CPU Requirements
     - 2 cores on headless server, 4 cores on a host with a desktop
     - One of the following architectures:
