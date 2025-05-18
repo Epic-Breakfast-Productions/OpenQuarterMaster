@@ -45,20 +45,41 @@ argParser = argparse.ArgumentParser(
 )
 g = argParser.add_mutually_exclusive_group()
 g.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
-# g.add_argument('-vvvv', '--verbose', dest="verbose", action="store_false", help="Tells the script to log output verbosely to the console") # TODO:: fix
-g.add_argument('--take-snapshot', dest="takeSnapshot", help="Takes a snapshot. Will pause and restart services.", choices=["manual", "scheduled", "preemptive"])
-g.add_argument('--prune-container-resources', dest="pruneContainerResources", action="store_true", help="Prunes all unused container resources. Roughly equivalent to running both `docker system prune --volumes` and `docker image prune -a`")
-g.add_argument('--ensure-container-setup', dest="ensureContainerSetup", action="store_true", help="Ensures all container based resources (i.e, network) are setup and ready.")
-g.add_argument('--package-logs', dest="packageLogs", action="store_true", help="Packages service logs for debugging.")
-g.add_argument('--regen-certs', dest="regenCerts", action="store_true", help="Regenerates the system certs based on configuration.")
-g.add_argument('--ensure-certs-present', dest="ensureCerts", action="store_true", help="Ensures that certs are present and usable by the system.")
-g.add_argument('--write-internal-certs', dest="writeInternalCerts", nargs=2, help="Writes certs for an internal service to use. Two arguments; first to name the service (the domain name to access the service), and second the directory to place the new certs.")
-# argcomplete.autocomplete(argParser)
-args = argParser.parse_args()
 
-# TODO:: use subparsers for actions;
-# list_parser = subparsers.add_parser("list", parents=[parent_parser], help="List files in a directory")
-# list_parser.set_defaults(func=list_files)
+subparsers = argParser.add_subparsers(dest="command", help="Subcommands")
+
+# TODO:: in following, update function references
+
+snapshot_parser = subparsers.add_parser("take-snapshot", help="Triggers a snapshot.")
+snapshot_parser.add_argument(dest="mode", help="What is triggering the snapshot. Defaults to 'manual'.", choices=["manual", "scheduled", "preemptive"], default="manual", nargs='?')
+snapshot_parser.set_defaults(func=lambda funcArgs: print("In the thing: ", funcArgs))
+
+prune_parser = subparsers.add_parser("prune-container-resources", help="Prunes all unused container resources. Roughly equivalent to running both `docker system prune --volumes` and `docker image prune -a`")
+prune_parser.set_defaults(func=lambda funcArgs: print("In the thing: ", funcArgs))
+
+ecs_parser = subparsers.add_parser("ensure-container-setup", help="Ensures all container based resources (i.e, network) are setup and ready.")
+ecs_parser.set_defaults(func=lambda funcArgs: print("In the thing: ", funcArgs))
+
+logs_parser = subparsers.add_parser("package-logs", help="Packages service logs for debugging.")
+logs_parser.set_defaults(func=lambda funcArgs: print("In the thing: ", funcArgs))
+
+rc_parser = subparsers.add_parser("regen-certs", help="Regenerates the system certs based on configuration.")
+rc_parser.set_defaults(func=lambda funcArgs: print("In the thing: ", funcArgs))
+
+ecp_parser = subparsers.add_parser("ensure-certs-present", help="Ensures that certs are present and usable by the system.")
+ecp_parser.set_defaults(func=lambda funcArgs: print("In the thing: ", funcArgs))
+
+ecp_parser = subparsers.add_parser("write-internal-certs", help="Writes certs for an internal service to use.")
+ecp_parser.add_argument(dest="service", help="The name of the service (the domain name to access the service).")
+ecp_parser.add_argument(dest="destination", help="The directory to place the new certs.")
+ecp_parser.set_defaults(func=lambda funcArgs: print("In the thing: ", funcArgs))
+
+
+# g.add_argument('-vvvv', '--verbose', dest="verbose", action="store_false", help="Tells the script to log output verbosely to the console") # TODO:: fix
+
+# argcomplete.autocomplete(argParser)
+
+args = argParser.parse_args()
 
 # print(str(args))
 if args.v:
@@ -69,44 +90,50 @@ if not os.geteuid() == 0:
     print("\n\nPlease run this script as root. ( sudo oqm-captain )\n")
     exit(1)
 
-if args.takeSnapshot:
-    trigger = SnapshotTrigger[args.takeSnapshot]
-    success, message = SnapshotUtils.performSnapshot(trigger)
-    if not success:
-        print("FAILED to create snapshot: " + message, file=sys.stderr)
-        exit(2)
-elif args.pruneContainerResources:
-    ContainerUtils.pruneContainerResources()
-elif args.ensureContainerSetup:
-    ContainerUtils.ensureSharedDockerResources()
-elif args.packageLogs:
-    result, message = LogManagement.packageLogs()
-    if not result:
-        print("Failed to package logs: " + message)
-        exit(3)
-    print(message)
-elif args.regenCerts:
-    result, message = CertsUtils.regenCerts()
-    if not result:
-        print("Failed to generate certs: " + message)
-        exit(4)
-    print(message)
-elif args.ensureCerts:
-    result, message, written = CertsUtils.ensureCoreCerts()
-    if not result:
-        print("Failed to validate certs: " + message)
-        exit(5)
-    print(message)
-elif args.writeInternalCerts:
-    result, message = CertsUtils.generateInternalCert(
-        args.writeInternalCerts[0],
-        args.writeInternalCerts[1]
-    )
-    if not result:
-        print("Failed to write certs for internal service: " + message)
-        exit(6)
-    print(message)
+if hasattr(args, 'func'):
+    args.func(args)
 else:
     UserInteraction.ui.startUserInteraction()
+
+#
+# if args.takeSnapshot:
+#     trigger = SnapshotTrigger[args.takeSnapshot]
+#     success, message = SnapshotUtils.performSnapshot(trigger)
+#     if not success:
+#         print("FAILED to create snapshot: " + message, file=sys.stderr)
+#         exit(2)
+# elif args.pruneContainerResources:
+#     ContainerUtils.pruneContainerResources()
+# elif args.ensureContainerSetup:
+#     ContainerUtils.ensureSharedDockerResources()
+# elif args.packageLogs:
+#     result, message = LogManagement.packageLogs()
+#     if not result:
+#         print("Failed to package logs: " + message)
+#         exit(3)
+#     print(message)
+# elif args.regenCerts:
+#     result, message = CertsUtils.regenCerts()
+#     if not result:
+#         print("Failed to generate certs: " + message)
+#         exit(4)
+#     print(message)
+# elif args.ensureCerts:
+#     result, message, written = CertsUtils.ensureCoreCerts()
+#     if not result:
+#         print("Failed to validate certs: " + message)
+#         exit(5)
+#     print(message)
+# elif args.writeInternalCerts:
+#     result, message = CertsUtils.generateInternalCert(
+#         args.writeInternalCerts[0],
+#         args.writeInternalCerts[1]
+#     )
+#     if not result:
+#         print("Failed to write certs for internal service: " + message)
+#         exit(6)
+#     print(message)
+# else:
+#     UserInteraction.ui.startUserInteraction()
 
 log.info("==== END OF OQM-CAPTAIN SCRIPT ====")
