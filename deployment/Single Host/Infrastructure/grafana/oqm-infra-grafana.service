@@ -17,7 +17,7 @@ Requires=docker.socket
 [Service]
 Type=simple
 Restart=always
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
+ExecStartPre=/bin/bash -c "oqm-captain ensure-container-setup"
 # TODO:: rework to match others
 ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm-infra-grafana 2> /dev/null || /usr/bin/docker run \
                                                                                               --name oqm-infra-grafana \

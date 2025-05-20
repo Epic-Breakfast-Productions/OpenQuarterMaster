@@ -17,7 +17,7 @@ Requires=docker.socket
 Type=simple
 Restart=always
 
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm-infra-otel || echo 'Could not stop otel container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm-infra-otel || echo 'Could not remove otel container'"
 
