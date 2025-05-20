@@ -21,8 +21,8 @@ Environment="IMAGE_NAME=ghcr.io/gethomepage/homepage"
 Environment="IMAGE_VERSION=v1.2"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/homepage/env.list"
 
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
+ExecStartPre=/bin/bash -c "oqm-captain certs ensure-system-present"
 
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/homepage/config/"
 

@@ -16,6 +16,19 @@ from LogUtils import *
 class LogManagement:
     log = LogUtils.setupLogger("LogManagement")
 
+    @classmethod
+    def setupArgParser(cls, subparsers):
+        logs_parser = subparsers.add_parser("package-logs", help="Packages service logs for debugging.")
+        logs_parser.set_defaults(func=LogManagement.packageLogsFromArgs)
+
+    @classmethod
+    def packageLogsFromArgs(cls, args):
+        result, message = cls.packageLogs()
+        if not result:
+            print("Failed to package logs: " + message)
+            exit(3)
+        print(message)
+
     @staticmethod
     def packageServiceLogs(service: str, compilingDir: str):
         outFileName = compilingDir + "/10-" + service + ".log"

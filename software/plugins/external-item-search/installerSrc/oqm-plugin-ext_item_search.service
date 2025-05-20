@@ -25,12 +25,12 @@ Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/plugin/external-item-search
 Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/plugin/external-item-search/user-config.list"
 Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/plugin/external-item-search/user-config.list"
 
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
+ExecStartPre=/bin/bash -c "oqm-captain certs ensure-system-present"
 # Ensure previous runs gone
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop ext item search container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove ext item search container'"
-ExecStartPre=/bin/bash -c "oqm-captain --write-internal-certs $CONTAINER_NAME /etc/oqm/serviceConfig/plugin/external-item-search/files/"
+ExecStartPre=/bin/bash -c "oqm-captain certs write-internal $CONTAINER_NAME /etc/oqm/serviceConfig/plugin/external-item-search/files/"
 
 # Create filled out configuration
 #ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/core/api/uiEntry.json > /etc/oqm/ui.d/core-api.json"
