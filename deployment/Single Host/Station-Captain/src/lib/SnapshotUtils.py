@@ -29,6 +29,23 @@ class SnapshotUtils:
     CRON_NAME = "take-snapshot"
     SNAPSHOT_FILE_TEMPLATE = SnapshotSharedUtils.SNAPSHOT_FILE_PREFIX + "{}-{}"
 
+    @classmethod
+    def setupArgParser(cls, subparsers):
+        snapshotSubparser = subparsers.add_parser("snapshot", aliases=["snap"], help="Snapshot related commands")
+        snapshotSubparsers = snapshotSubparser.add_subparsers(dest="containerCommand")
+
+        snapshot_parser = snapshotSubparsers.add_parser("take-snapshot", help="Triggers a snapshot.")
+        snapshot_parser.add_argument(dest="trigger", help="What is triggering the snapshot. Defaults to 'manual'.", choices=["manual", "scheduled", "preemptive"], default="manual", nargs='?')
+        snapshot_parser.set_defaults(func=SnapshotUtils.snapshotFromArgs)
+
+    @classmethod
+    def snapshotFromArgs(cls, args):
+        trigger = SnapshotTrigger[args.trigger]
+        success, message = SnapshotUtils.performSnapshot(trigger)
+        if not success:
+            print("FAILED to create snapshot: " + message, file=sys.stderr)
+            exit(2)
+
     @staticmethod
     def performSnapshot(snapshotTrigger: SnapshotTrigger) -> (bool, str):
         """
@@ -261,7 +278,7 @@ class SnapshotUtils:
     def enableAutomatic():
         CronUtils.enableCron(
             SnapshotUtils.CRON_NAME,
-            "oqm-captain --take-snapshot " + SnapshotTrigger.scheduled.name,
+            "oqm-captain snapshot take-snapshot " + SnapshotTrigger.scheduled.name,
             CronFrequency[mainCM.getConfigVal("snapshots.frequency")]
         )
 

@@ -1,5 +1,7 @@
 import ipaddress
 import shutil
+from argparse import ArgumentParser
+
 from cryptography.hazmat.backends import default_backend
 from cryptography.hazmat.primitives._serialization import BestAvailableEncryption
 from cryptography.hazmat.primitives.asymmetric.rsa import RSAPrivateKey
@@ -31,6 +33,52 @@ class CertsUtils:
     """
     log = LogUtils.setupLogger("CertsUtils")
     AUTO_REGEN_CERTS_CRON_NAME = "autoRegenCerts"
+
+    @classmethod
+    def setupArgParser(cls, subparsers):
+        certsParser = subparsers.add_parser("certs", help="Commands for managing certs.")
+        certsSubparsers = certsParser.add_subparsers(dest="certsSubcommand")
+
+        rc_parser = certsSubparsers.add_parser("regen", help="Regenerates the system certs based on configuration.")
+        rc_parser.set_defaults(func=cls.regenCertsFromArgs)
+
+        ecp_parser = certsSubparsers.add_parser("ensure-system-present", help="Ensures that the system certs are present and usable by the system.")
+        ecp_parser.set_defaults(func=cls.ensureCertsFromArgs)
+
+        ecp_parser = certsSubparsers.add_parser("write-internal", help="Writes certs for an internal service to use.")
+        ecp_parser.add_argument(dest="service", help="The name of the service (the domain name to access the service).")
+        ecp_parser.add_argument(dest="destination", help="The directory to place the new certs.")
+        ecp_parser.set_defaults(func=cls.writeInternalCertsFromArgs)
+
+
+
+    @classmethod
+    def regenCertsFromArgs(cls, args):
+        result, message = CertsUtils.regenCerts()
+        if not result:
+            print("Failed to generate certs: " + message)
+            exit(4)
+        print(message)
+
+    @classmethod
+    def ensureCertsFromArgs(cls, args):
+        result, message, written = CertsUtils.ensureCoreCerts()
+        if not result:
+            print("Failed to validate certs: " + message)
+            exit(5)
+        print(message)
+
+    @classmethod
+    def writeInternalCertsFromArgs(cls, args):
+        result, message = CertsUtils.generateInternalCert(
+            args.service,
+            args.destination
+        )
+        if not result:
+            print("Failed to write certs for internal service: " + message)
+            exit(6)
+        print(message)
+
 
     @staticmethod
     def newPrivateKey() -> RSAPrivateKey:
@@ -174,7 +222,7 @@ class CertsUtils:
         """
         CronUtils.enableCron(
             CertsUtils.AUTO_REGEN_CERTS_CRON_NAME,
-            "oqm-captain --regen-certs",
+            "oqm-captain certs regen",
             CronFrequency.monthly
         )
 
