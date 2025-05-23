@@ -12,6 +12,9 @@ from ConfigManager import *
 class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:
         super().setUp()
+        if os.path.exists(TEST_DATA_DIR):
+            shutil.rmtree(TEST_DATA_DIR)
+        os.makedirs(TEST_DATA_DIR)
         os.makedirs(TEST_CONFIG_ADDENDUM_DIR, exist_ok=True)
         with open(TEST_MAIN_CONFIG, 'x') as stream:
             stream.write('''
