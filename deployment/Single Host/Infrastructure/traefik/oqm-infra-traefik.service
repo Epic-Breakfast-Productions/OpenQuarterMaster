@@ -22,8 +22,8 @@ Environment="IMAGE_VERSION=3"
 Environment="DATA_DIR=/data/oqm/traefik"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/traefik/env.list"
 
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
+ExecStartPre=/bin/bash -c "oqm-captain certs ensure-system-present"
 
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/infra/traefik/certs/"
 ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.systemExternalSelfCertKey)\" /tmp/oqm/serviceConfig/infra/traefik/certs/privateKey.pem"

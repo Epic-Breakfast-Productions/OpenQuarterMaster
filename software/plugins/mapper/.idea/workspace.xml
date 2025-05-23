@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="8a9139ce-ea96-4324-aa7f-2a6dd3ea8368" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../../deployment/Single Host/tests/src/test/java/stationCaptainTest/testResources/snhConnector/SnhConnector.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../../deployment/Single Host/tests/src/test/java/stationCaptainTest/testResources/snhConnector/SnhConnector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../oqm-core-base-station/installerSrc/installerProperties.json" beforeDir="false" afterPath="$PROJECT_DIR$/../../oqm-core-base-station/installerSrc/installerProperties.json" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/../../.." value="459-fr-finish-reverse-proxy-setup" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../../.." />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;GregJohnStewart&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster.git&quot;,
+    &quot;accountId&quot;: &quot;68900fd6-cedc-4eeb-9973-461acca7a8c7&quot;
+  }
+}</component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHomeTypeForPersistence" value="WRAPPER" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
+  <component name="ProjectId" id="2sDYI75O63ow0v0dfUGAc6mUtga" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Maven.mapper [io.quarkus.platform:quarkus-maven-plugin:3.17.8:dev].executor&quot;: &quot;Run&quot;,
+    &quot;Maven.mapper [quarkus:dev].executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;dev.766-fr-new-plugin--mapping&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/gstewart/gitRepos/OpenQuarterMaster/software/plugins/mapper&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.pluginManager&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  }
+}</component>
+  <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/src/main/resources/META-INF/resources/res/lib" />
+      <recent name="$PROJECT_DIR$/src/main/resources/META-INF" />
+    </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="tech.ebp.oqm.plugin.lifecycle" />
+    </key>
+  </component>
+  <component name="RunManager" selected="Maven.mapper [quarkus:dev]">
+    <configuration name="mapper [quarkus:dev]" type="MavenRunConfiguration" factoryName="Maven">
+      <MavenSettings>
+        <option name="myGeneralSettings" />
+        <option name="myRunnerSettings" />
+        <option name="myRunnerParameters">
+          <MavenRunnerParameters>
+            <option name="cmdOptions" />
+            <option name="profiles">
+              <set />
+            </option>
+            <option name="goals">
+              <list>
+                <option value="quarkus:dev" />
+              </list>
+            </option>
+            <option name="multimoduleDir" />
+            <option name="pomFileName" value="pom.xml" />
+            <option name="profilesMap">
+              <map />
+            </option>
+            <option name="projectsCmdOptionValues">
+              <list />
+            </option>
+            <option name="resolveToWorkspace" value="false" />
+            <option name="workingDirPath" value="$PROJECT_DIR$" />
+          </MavenRunnerParameters>
+        </option>
+      </MavenSettings>
+      <method v="2" />
+    </configuration>
+    <configuration name="mapper" type="QuarkusRunConfigurationType" factoryName="Quarkus" nameIsGenerated="true">
+      <module name="mapper" />
+      <QsMavenRunConfiguration>
+        <MavenSettings>
+          <option name="myGeneralSettings" />
+          <option name="myRunnerSettings" />
+          <option name="myRunnerParameters">
+            <MavenRunnerParameters>
+              <option name="cmdOptions" />
+              <option name="profiles">
+                <set />
+              </option>
+              <option name="goals">
+                <list>
+                  <option value="quarkus:dev" />
+                </list>
+              </option>
+              <option name="multimoduleDir" />
+              <option name="pomFileName" value="pom.xml" />
+              <option name="profilesMap">
+                <map />
+              </option>
+              <option name="projectsCmdOptionValues">
+                <list />
+              </option>
+              <option name="resolveToWorkspace" value="false" />
+              <option name="workingDirPath" value="$PROJECT_DIR$" />
+            </MavenRunnerParameters>
+          </option>
+        </MavenSettings>
+        <targetMavenLocalRepo />
+        <emulateTerminal>true</emulateTerminal>
+        <profile>dev</profile>
+      </QsMavenRunConfiguration>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SharedIndexes">
+    <attachedChunks>
+      <set>
+        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23726.103" />
+        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23726.103" />
+      </set>
+    </attachedChunks>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8a9139ce-ea96-4324-aa7f-2a6dd3ea8368" name="Changes" comment="" />
+      <created>1737991529217</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1737991529217</updated>
+      <workItem from="1737991530233" duration="135000" />
+      <workItem from="1737993352508" duration="12427000" />
+      <workItem from="1738102774067" duration="612000" />
+      <workItem from="1738104424480" duration="5010000" />
+      <workItem from="1738187047058" duration="1090000" />
+    </task>
+    <task id="LOCAL-00001" summary="Plugin - Mapper - Added gitignore">
+      <option name="closed" value="true" />
+      <created>1737991603986</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1737991603986</updated>
+    </task>
+    <task id="LOCAL-00002" summary="Plugin - Mapper - Initial dump of project files">
+      <option name="closed" value="true" />
+      <created>1737991655673</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1737991655673</updated>
+    </task>
+    <task id="LOCAL-00003" summary="Plugin - Mapper - Initial dump of project files">
+      <option name="closed" value="true" />
+      <created>1738195756817</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1738195756817</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_CODE_SMELLS_BEFORE_PROJECT_COMMIT" value="false" />
+    <option name="CHECK_NEW_TODO" value="false" />
+    <MESSAGE value="Plugin - Mapper - Added gitignore" />
+    <MESSAGE value="Plugin - Mapper - Initial dump of project files" />
+    <option name="LAST_COMMIT_MESSAGE" value="Plugin - Mapper - Initial dump of project files" />
+  </component>
+</project>

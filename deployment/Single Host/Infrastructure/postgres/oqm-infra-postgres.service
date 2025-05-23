@@ -25,7 +25,7 @@ Environment="IMAGE_VERSION=15"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/postgres/env.list"
 Environment="DATA_DIR=/db/postgres"
 
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop postgres container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove postgres container'"

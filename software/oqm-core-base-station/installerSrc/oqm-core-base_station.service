@@ -30,12 +30,12 @@ Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/core/base+station/base-stat
 Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/core/base+station/user-config.list"
 Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/core/base+station/user-config.list"
 
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
+ExecStartPre=/bin/bash -c "oqm-captain certs ensure-system-present"
 # Ensure previous runs gone
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
-ExecStartPre=/bin/bash -c "oqm-captain --write-internal-certs $CONTAINER_NAME /etc/oqm/serviceConfig/core/base+station/files/"
+ExecStartPre=/bin/bash -c "oqm-captain certs write-internal $CONTAINER_NAME /etc/oqm/serviceConfig/core/base+station/files/"
 
 # Create filled out configuration
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/base+station/"

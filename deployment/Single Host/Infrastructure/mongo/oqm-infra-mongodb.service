@@ -23,7 +23,7 @@ Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"
 Environment="DATA_DIR=/db/mongo"
 
 ExecStartPre=/bin/bash -c "echo data dir: $(oqm-config -g 'system.dataDir')$DATA_DIR"
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
 #ExecStartPre=/bin/bash -c "/usr/bin/docker container inspect oqm_mongo 2> /dev/null || "
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop mongo container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove mongo container'"
