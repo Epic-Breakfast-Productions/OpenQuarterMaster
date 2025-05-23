@@ -21,6 +21,8 @@ import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.media.ImageGet;
 import tech.ebp.oqm.core.api.model.rest.media.file.FileAttachmentGet;
@@ -28,19 +30,14 @@ import tech.ebp.oqm.core.api.model.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.core.api.model.rest.dataImportExport.DbImportResult;
 import tech.ebp.oqm.core.api.model.rest.dataImportExport.EntityImportResult;
 import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
-import tech.ebp.oqm.core.api.model.rest.search.ItemCategorySearch;
-import tech.ebp.oqm.core.api.model.rest.search.FileAttachmentSearch;
-import tech.ebp.oqm.core.api.model.rest.search.ImageSearch;
-import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
-import tech.ebp.oqm.core.api.model.rest.search.ItemCheckoutSearch;
-import tech.ebp.oqm.core.api.model.rest.search.ItemListSearch;
-import tech.ebp.oqm.core.api.model.rest.search.StorageBlockSearch;
+import tech.ebp.oqm.core.api.model.rest.search.*;
 import tech.ebp.oqm.core.api.service.importExport.exporting.DataImportExportUtils;
 import tech.ebp.oqm.core.api.service.importExport.importing.importer.*;
 import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.*;
 import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
 import tech.ebp.oqm.core.api.service.mongo.file.FileAttachmentService;
+import tech.ebp.oqm.core.api.service.mongo.transactions.AppliedTransactionService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 
@@ -122,6 +119,12 @@ public class DataImportService {
 	InventoryItemService inventoryItemService;
 
 	@Inject
+	StoredService storedService;
+
+	@Inject
+	AppliedTransactionService appliedTransactionService;
+
+	@Inject
 	ItemListService itemListService;
 
 	@Inject
@@ -140,6 +143,8 @@ public class DataImportService {
 	private HasParentImporterHistoried<ItemCategory, ItemCategorySearch> itemCategoryImporter;
 	private HasParentImporterHistoried<StorageBlock, StorageBlockSearch> storageBlockImporter;
 	private GenericImporterHistoried<InventoryItem, InventoryItemSearch> itemImporter;
+	private GenericImporterHistoried<Stored, StoredSearch> storedImporter;
+	private GenericImporter<AppliedTransaction, AppliedTransactionSearch> appliedTransactionImporter;
 	private GenericImporterHistoried<ItemList, ItemListSearch> itemListImporter;
 	private GenericImporterHistoried<ItemCheckout, ItemCheckoutSearch> itemCheckoutImporter;
 
@@ -150,6 +155,8 @@ public class DataImportService {
 		this.fileImporter = new GenericFileImporter<>(this.fileAttachmentService);
 		this.imageImporter = new GenericFileImporter<>(this.imageService);
 		this.itemImporter = new GenericImporterHistoried<>(this.inventoryItemService);
+		this.storedImporter = new GenericImporterHistoried<>(this.storedService);
+		this.appliedTransactionImporter = new GenericImporter<>(this.appliedTransactionService);
 		this.itemListImporter = new GenericImporterHistoried<>(this.itemListService);
 		this.itemCheckoutImporter = new GenericImporterHistoried<>(this.itemCheckoutService);
 	}
@@ -296,8 +303,10 @@ public class DataImportService {
 							dbResultBuilder.numItemCategories(this.itemCategoryImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
 							dbResultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
 							dbResultBuilder.numInventoryItems(this.itemImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+							dbResultBuilder.numStored(this.storedImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+							dbResultBuilder.numTransactions(this.appliedTransactionImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
 							dbResultBuilder.numItemLists(this.itemListImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-							dbResultBuilder.numItemLists(this.itemCheckoutImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+							dbResultBuilder.numItemCheckouts(this.itemCheckoutImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
 						} catch (IOException e) {
 							throw new DataImportException("Failed to read in database " + finalCurDb.getName(), e);
 						}

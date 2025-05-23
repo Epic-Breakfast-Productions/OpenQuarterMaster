@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.service.notification;
 
+import com.mongodb.session.ClientSession;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.smallrye.reactive.messaging.annotations.Broadcast;
 import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
@@ -16,6 +17,9 @@ import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.OnOverflow;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemProcessResults;
+import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -41,7 +45,6 @@ public class HistoryEventNotificationService {
 	@Channel(INTERNAL_EVENT_CHANNEL)
 	@OnOverflow(value = OnOverflow.Strategy.DROP)
 	Emitter<EventNotificationWrapper> internalEventEmitter;
-
 
 	@Inject
 	@Broadcast

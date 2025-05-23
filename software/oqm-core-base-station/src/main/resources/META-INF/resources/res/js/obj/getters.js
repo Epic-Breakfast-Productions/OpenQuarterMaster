@@ -2,7 +2,7 @@
 const Getters = {
 	InventoryItem: {
 		get(itemId, doneFunc) {
-			console.log("Getting name for inventory item \"" + itemId + "\"");
+			console.log("Getting inventory item \"" + itemId + "\"");
 			return Rest.call({
 				spinnerContainer: null,
 				url: Rest.passRoot + "/inventory/item/" + itemId,
@@ -22,13 +22,85 @@ const Getters = {
 				}
 			});
 		}
+	},
+	StoredItem: {
+		getStoredForItem: async function(itemId, doneFunc = function(){}){
+			//TODO:: handle paging
+			return Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/inventory/item/" + itemId + "/stored",
+				done: function(storedSearchResults){
+					doneFunc(storedSearchResults);
+				}
+			});
+		},
+		getStoredForItemInBlock: async function(itemId, blockId, doneFunc = function(){}){
+			//TODO:: handle paging
+			return Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/inventory/item/" + itemId + "/block/" + blockId + "/stored",
+				done: function(storedSearchResults){
+					doneFunc(storedSearchResults);
+				}
+			});
+		},
+		getSingleStoredForItemInBlock: async function(itemId, blockId, doneFunc = function(){}){
+			return Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/inventory/item/" + itemId + "/block/" + blockId + "/stored",
+				done: function(storedSearchResults){
+					if(storedSearchResults.numResults === 0){
+						throw new Error("No results where expected one.");
+					}
+					if(storedSearchResults.numResults > 1){
+						throw new Error("More than one result. Expected one.");
+					}
+					doneFunc(storedSearchResults.results[0]);
+				}
+			});
+		},
+		getSingleStoredForItem: async function(itemId, doneFunc = function(){}){
+			return Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/inventory/item/" + itemId + "/stored",
+				done: function(storedSearchResults){
+					if(storedSearchResults.numResults === 0){
+						throw new Error("No results where expected one.");
+					}
+					if(storedSearchResults.numResults > 1){
+						throw new Error("More than one result. Expected one.");
+					}
+					doneFunc(storedSearchResults.results[0]);
+				}
+			});
+		},
+		getLabelForStored: async function(stored, doneFunc = function(){}){
+			let storedLabel = stored["storageBlock-labelText"];
+
+			StoredTypeUtils.runForType(
+				stored,
+				function(){
+					storedLabel += " - " + stored.labelText;
+				},
+				function (){
+					//TODO:: better
+					storedLabel += " " + stored.labelText
+				}
+			);
+			await doneFunc(storedLabel);
+			return storedLabel;
+		},
+		getStored: async function(itemId, storedId, doneFunc = function(){}){
+			return Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/inventory/item/" + itemId + "/stored/" + storedId,
+				done: function(itemStored){
+					doneFunc(itemStored);
+				}
+			});
+		},
 	}
 }
-
-async function getStorageBlock(blockId){
-	//TODO
-}
-
 
 async function getStorageBlockItemData(blockId) {
 	console.log("Getting item data for storage block \"" + blockId + "\"");
@@ -55,6 +127,7 @@ async function getStorageBlockChildrenData(blockId) {
 }
 
 function getStorageBlockLabel(blockId, doneFunc) {
+	//TODO:: cache called ids
 	console.log("Getting label for storage block \"" + blockId + "\"");
 	return Rest.call({
 		spinnerContainer: null,

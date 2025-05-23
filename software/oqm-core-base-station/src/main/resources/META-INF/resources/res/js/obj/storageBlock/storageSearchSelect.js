@@ -17,6 +17,7 @@ const StorageSearchSelect = {
 
 StorageSearchSelect.storageSearchSelectForm.on("submit", function (event) {
 	event.preventDefault();
+	Main.processStart();
 	console.log("Submitting storage block search form.");
 
 	let searchParams = new URLSearchParams(new FormData(event.target));
@@ -40,6 +41,7 @@ StorageSearchSelect.storageSearchSelectForm.on("submit", function (event) {
 		done: function (data) {
 			console.log("Got data!");
 			StorageSearchSelect.storageSearchSelectResults.html(data);
+			Main.processStop();
 		}
 	});
 });

@@ -26,3 +26,5 @@ const Dselect = {
 		Dselect.setupDselect(selectJq[0]);
 	}
 };
+Dselect.setupPageDselects();
+Main.processStop();
