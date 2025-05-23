@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
-    id "io.freefair.lombok" version "8.1.0"
+    id "io.freefair.lombok" version "8.4"
 }
 
 repositories {
@@ -35,7 +35,7 @@ dependencies {
     testImplementation 'io.rest-assured:rest-assured'
 
 
-    testImplementation 'net.datafaker:datafaker:2.0.1'
+    testImplementation 'net.datafaker:datafaker:2.3.0'
 }
 
 group 'com.ebp.openQuarterMaster'

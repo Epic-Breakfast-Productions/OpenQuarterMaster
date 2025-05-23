@@ -1,0 +1,7 @@
+{
+	"type": "core",
+	"name": "depot",
+	"internalBaseUriConfig": "core.depot.internalBaseUri",
+	"preservePath": true,
+	"stripPrefixes": true
+}

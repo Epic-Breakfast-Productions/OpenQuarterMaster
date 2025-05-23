@@ -1,0 +1,191 @@
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Items' page='items'}
+{!{@java.util.Map allowedUnitsMap}!}
+{#styleSheets}
+    <link rel="stylesheet" href="{rootPrefix}/lib/Croppie-2.6.4/croppie.css"/>
+{/styleSheets}
+{#pageContent}
+<div class="row">
+    <div class="col d-grid gap-2">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditItemModal"
+                onclick="ItemAddEdit.setupAddEditForAdd();">{#icons/add}{/icons/add} Add Item
+        </button>
+    </div>
+    <div class="col d-grid gap-2">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemFromFileModal">{#icons/addFile}{/icons/addFile} Add Item(s) from file
+        </button>
+    </div>
+    <!--
+    <div class="col d-grid gap-2">
+        <button type="button" class="btn btn-info">{#icons/view}{/icons/view} Item stats</button>
+    </div>
+    -->
+</div>
+<br/>
+<div class="row">
+    <div class="col accordion" id="searchAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="searchHeader">
+                <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+                        aria-controls="searchCollapse">
+                    {#icons/search}{/icons/search}
+                    Search Fields
+                </button>
+            </h2>
+            <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+                 aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+                <div class="accordion-body">
+                    {#search/item/itemSearchForm id='mainPageSearch' rootPrefix=rootPrefix}
+                    {/search/item/itemSearchForm}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col table-responsive">
+        <table class=" table table-bordered table-striped table-hover table-sm">
+            {#search/item/itemSearchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' rootPrefix=rootPrefix}
+            {/search/item/itemSearchResults}
+        </table>
+    </div>
+</div>
+{#search/image/imageSelectFormInputHidden}
+{/search/image/imageSelectFormInputHidden}
+{/pageContent}
+{#modals}
+    {#objView/itemViewModal currency=currency  rootPrefix=rootPrefix}
+        {#footerButtons}
+            <button type="button" id="itemViewEditButton" class="btn btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" >
+                {#icons/edit}{/icons/edit}
+                Edit Item
+            </button>
+        {/footerButtons}
+    {/objView/itemViewModal}
+	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency}{/itemAddEditModal}
+	{#itemStoredAddSubTransferModal}{/itemStoredAddSubTransferModal}
+{#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
+    {#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}
+    <div class="row">
+        <div class="col" id="addItemFromFileFormMessages">
+        </div>
+    </div>
+    <!-- TODO:: point to docs on how to do this -->
+    <div class="row">
+        <div class="col">
+            <form id="addItemFromFileForm">
+                <div class="col-12 mb-3">
+                    <label for="importBulkFileInput" class="form-label">
+                        <a href="{rootPrefix}/api/passthrough/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
+                        or {#icons/fileJson}{/icons/fileJson} JSON file:
+                    </label>
+                    <input class="form-control" type="file" id="addFromFileInput" name="file" accept="text/csv,application/json" required>
+                </div>
+            </form>
+        </div>
+    </div>
+{/modal}
+{#search/storage/searchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix}
+{/search/storage/searchSelectModal}
+{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix}
+{/search/image/imageSearchSelectModal}
+{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal" rootPrefix=rootPrefix}
+{/itemCheckout/itemCheckoutModal}
+{#CodeScannerModal}{/CodeScannerModal}
+	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal"}
+	{/fileAttachment/FileAttachmentSearchSelectModal}
+	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal'}
+	{/fileAttachment/FileAttachmentViewModal}
+{/modals}
+
+{#scripts}
+    <script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageAddFromSelect.js"></script>
+    <script src="{rootPrefix}/res/js/search.js"></script>
+    <script src="{rootPrefix}/res/js/other.js"></script>
+    <script src="{rootPrefix}/res/js/historySearch.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objView.js"></script>
+    <script src="{rootPrefix}/res/js/storedTypeUtils.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/units.js"></script>
+    <script src="{rootPrefix}/res/js/obj/getters.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
+    <script src="{rootPrefix}/res/js/carousel.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemStoredAddSubTrans.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/storageBlockTree.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCategoryView.js"></script>
+    <script src="{rootPrefix}/res/js/textCopy.js"></script>
+    <script src="{rootPrefix}/res/js/item/extItemSearch.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemAddEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/storedView.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/storedEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemView.js"></script>
+    <script src="{rootPrefix}/res/js/CodeScanning.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckout.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
+    <script src="{rootPrefix}/res/js/pageComponents.js"></script>
+{/scripts}
+{#pageScript}
+<script>
+const STORAGE_CLASS = "storageBlock";
+
+var keywordInputTemplate = $('#keywordInputTemplate');
+var attInputTemplate = $('#attInputTemplate');
+var imageInputTemplate = $('#imageInputTemplate');
+
+
+var addFromFileInput = $("#addFromFileInput")[0];
+var addItemFromFileFormMessages = $("#addItemFromFileFormMessages");
+
+$("#addItemFromFileForm").submit(function (e){
+    e.preventDefault();
+    
+    let formData = new FormData();
+    let file = addFromFileInput.files[0];
+    
+    formData.append("fileName", file.name);
+    formData.append("file", file);
+    
+    Rest.call({
+        url: Rest.passRoot + '/inventory/item',
+        method: "post",
+        data: formData,
+        done: function (data){
+            console.log("Successfully added items.");
+            PageMessages.reloadPageWithMessage("Added item(s) successfully!", "success", "Success!");
+        },
+        failMessagesDiv: addItemFromFileFormMessages
+    });
+});
+
+function removeItem(itemId){
+    if(!confirm("Are you sure you want to delete this item? This cannot be undone.")){
+        return;
+    }
+    console.log("Removing item " + itemId);
+    
+    Rest.call({
+        url: Rest.passRoot + "/inventory/item/" + itemId,
+        method: "DELETE",
+        done: function(data) {
+            console.log("Response from remove request: " + JSON.stringify(data));
+            PageMessages.reloadPageWithMessage("Removed item successfully!", "success", "Success!");
+        },
+        fail: function(data) {
+            console.warn("Bad response from remove attempt: " + JSON.stringify(data));
+            PageMessages.addMessageToDiv(PageMessages.mainMessageDiv, "danger", "Failed to remove item.", "Failed", null);
+        }
+    });
+}
+
+
+</script>
+{/pageScript}
+{/include}

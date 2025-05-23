@@ -4,7 +4,6 @@
   <component name="GradleSettings">
     <option name="linkedExternalProjectsSettings">
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/software/drivers/open-qm-driver-server" />
         <option name="gradleJvm" value="corretto-17" />
         <option name="modules">
@@ -14,7 +13,6 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/software/libs/open-qm-core" />
         <option name="modules">
           <set>
@@ -23,7 +21,6 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/software/libs/open-qm-moduleDriver" />
         <option name="gradleJvm" value="corretto-17" />
         <option name="modules">
@@ -33,7 +30,6 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/software/open-qm-base-station" />
         <option name="gradleJvm" value="corretto-18" />
         <option name="modules">
@@ -43,7 +39,6 @@
         </option>
       </GradleProjectSettings>
       <GradleProjectSettings>
-        <option name="distributionType" value="DEFAULT_WRAPPED" />
         <option name="externalProjectPath" value="$PROJECT_DIR$/software/plugins/open-qm-plugin-demo" />
         <option name="gradleJvm" value="corretto-17" />
         <option name="modules">

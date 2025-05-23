@@ -1,0 +1,42 @@
+# Service file for running an instance of OpenTelemetry.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  Otel tags: https://hub.docker.com/r/otel/opentelemetry-collector/tags
+#
+# https://github.com/open-telemetry/opentelemetry-demo/blob/main/docker-compose.yml#L630
+
+[Unit]
+Description=Otel server for Open Quartermaster. Version ${version}, using opentelemetry-collector tagged to 0.72.0.
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/otel
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=simple
+Restart=always
+
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm-infra-otel || echo 'Could not stop otel container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm-infra-otel || echo 'Could not remove otel container'"
+
+ExecStart=/bin/bash -c "/usr/bin/docker container inspect oqm_infra_otel 2> /dev/null || \
+                       /usr/bin/docker run \
+                           --name oqm-infra-otel \
+                           -p 1888:1888 \
+                           -p 8888:8888 \
+                           -p 8889:8889 \
+                           -p 13133:13133 \
+                           -p 4317:4317 \
+                           -p 4318:4318 \
+                           -p 55679:55679 \
+                           -v /etc/oqm/infra/otel/otel-collector-config.yaml:/etc/otelcol/config.yaml \
+                           --add-host host.docker.internal:host-gateway \
+                           otel/opentelemetry-collector:0.72.0"
+
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm-infra-otel || echo 'Could not stop otel container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm-infra-otel || echo 'Could not remove otel container'"
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,32 @@
+quarkus:
+  application:
+    name: ${service.nameShort} - V${service.apiVersion} - TEST
+  log:
+    level: DEBUG
+  smallrye-openapi:
+    info-title: Open QuarterMaster Base Station API (TEST)
+  http:
+    port: 8081
+  oidc:
+    client-id: oqm-app
+    credentials:
+      secret: "**********"
+  #      auth-server-url: http://localhost:8115/realms/oqm
+  keycloak:
+    devservices:
+      realm-path: "dev/oqm-realm.json"
+
+oqm.core.api:
+  caching:
+    oqmDatabase:
+      refreshFrequencyEvery: "5m"
+
+runningInfo:
+  depotUri: "Hello World"
+service:
+  runBy:
+    name: The Developers
+    email: dev@devlopment.dev
+    phone: 111-222-3333
+    website: http://devlopment.dev
+    logo: ../../../../dev/developers.jpeg

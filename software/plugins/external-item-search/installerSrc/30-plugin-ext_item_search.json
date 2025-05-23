@@ -1,0 +1,13 @@
+{
+	"plugin": {
+		"externalItemSearch": {
+			"internalHost": "oqm-plugin-ext-item-search",
+			"internalHttpPort": 80,
+			"internalHttpsPort": 443,
+			"internalBaseUri": "http://#{plugin.externalItemSearch.internalHost}:#{plugin.externalItemSearch.internalHttpPort}",
+			"apiKeys": {
+
+			}
+		}
+	}
+}

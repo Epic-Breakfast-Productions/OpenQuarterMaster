@@ -1,0 +1,9 @@
+{
+	"type": "Core",
+	"order": 0,
+	"name": "Base Station",
+	"description": "The Main UI for Open QuarterMaster. If you are unsure where to start, start here!",
+	"urlConfigKey": "core.baseStation.externalBaseUri",
+	"icon": "/core/api/core-api.svg",
+	"monitorEndpoint": "/q/health"
+}

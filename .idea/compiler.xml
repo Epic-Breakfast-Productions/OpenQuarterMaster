@@ -11,58 +11,10 @@
       <profile name="Gradle Imported" enabled="true">
         <outputRelativeToContentRoot value="true" />
         <processorPath useClasspath="false">
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.26/8f8cf0372abf564913e9796623aac4c8ea44025a/lombok-1.18.26.jar" />
+          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.28/a2ff5da8bcd8b1b26f36b806ced63213362c6dcc/lombok-1.18.28.jar" />
         </processorPath>
-        <module name="open-qm-base-station.quarkus-generated-sources" />
-        <module name="open-qm-base-station.native-test" />
-        <module name="open-qm-base-station.test" />
-        <module name="open-qm-base-station.integrationTest" />
-        <module name="open-qm-base-station.quarkus-test-generated-sources" />
-      </profile>
-      <profile name="Gradle Imported" enabled="true">
-        <outputRelativeToContentRoot value="true" />
-        <processorPath useClasspath="false">
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.quarkus/quarkus-panache-common/2.16.1.Final/3717390ba5d51ea20c9af3ceb9a1d36d3421c2f5/quarkus-panache-common-2.16.1.Final.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.projectlombok/lombok/1.18.26/8f8cf0372abf564913e9796623aac4c8ea44025a/lombok-1.18.26.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.quarkus/quarkus-arc/2.16.1.Final/b66e57abf58884db6f7c645165fdb8767c8088a1/quarkus-arc-2.16.1.Final.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.quarkus/quarkus-core/2.16.1.Final/9925bc4c09f5005954ad9d5205139395588bfec2/quarkus-core-2.16.1.Final.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.quarkus.arc/arc/2.16.1.Final/25ea3ad2655405f3957704e9a261c698cb2acb0d/arc-2.16.1.Final.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/jakarta.enterprise/jakarta.enterprise.cdi-api/2.0.2/58f497f362cd19c2f8842d75c491d270f0600e7f/jakarta.enterprise.cdi-api-2.0.2.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/jakarta.interceptor/jakarta.interceptor-api/1.2.5/20cbde692c555692ca835fb6ecb4a8c95acbe6e0/jakarta.interceptor-api-1.2.5.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/jakarta.annotation/jakarta.annotation-api/1.3.5/59eb84ee0d616332ff44aba065f3888cf002cd2d/jakarta.annotation-api-1.3.5.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/jakarta.inject/jakarta.inject-api/1.0/93164437046e06b4876e069b8e7a321a02f10a2d/jakarta.inject-api-1.0.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.quarkus/quarkus-ide-launcher/2.16.1.Final/5630c815a247340fb1c92d36cc44ece6626314e6/quarkus-ide-launcher-2.16.1.Final.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.quarkus/quarkus-development-mode-spi/2.16.1.Final/d7ac2c179e339d9dae5ec3aa8d50090ec52b2aa1/quarkus-development-mode-spi-2.16.1.Final.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.smallrye.config/smallrye-config/2.13.1/9fdbf15b568f1584526ebe5958a621a45300fa48/smallrye-config-2.13.1.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jboss.threads/jboss-threads/3.4.3.Final/2433a04e5a0f8982454a2bbe2700ee272a3a71c2/jboss-threads-3.4.3.Final.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.quarkus/quarkus-bootstrap-runner/2.16.1.Final/42c40c78630aa06fa7f7d62dabb9e9ed86e12957/quarkus-bootstrap-runner-2.16.1.Final.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.smallrye.config/smallrye-config-core/2.13.1/286b5000243f218502385d4a239dd850de370482/smallrye-config-core-2.13.1.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.smallrye.common/smallrye-common-expression/1.13.2/3b4b12bdad13241d8c1a439aaeecdc271601ed34/smallrye-common-expression-1.13.2.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.smallrye.common/smallrye-common-function/1.13.2/781d80272140a6382c2d54f02b3fc61337179558/smallrye-common-function-1.13.2.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.smallrye.common/smallrye-common-constraint/1.13.2/d7fc54a47185ed2f2063f0aee79f827b3ef31135/smallrye-common-constraint-1.13.2.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.smallrye.config/smallrye-config-common/2.13.1/b5788b7a7b5528c07dff86e51ccbb2096a2fb4e4/smallrye-config-common-2.13.1.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jboss.logging/jboss-logging/3.5.0.Final/c19307cc11f28f5e2679347e633a3294d865334d/jboss-logging-3.5.0.Final.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jboss.logmanager/jboss-logmanager-embedded/1.0.11/932c894378d603b78abb364d17ddd113f7122a90/jboss-logmanager-embedded-1.0.11.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jboss.logging/jboss-logging-annotations/2.2.1.Final/ee3db82d956ee22c4f1f2df9c611e048e79a4a43/jboss-logging-annotations-2.2.1.Final.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.slf4j/slf4j-api/1.7.36/6c62681a2f655b49963a5983b8b0950a6120ae14/slf4j-api-1.7.36.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jboss.slf4j/slf4j-jboss-logmanager/1.2.0.Final/baff8ae78011e6859e127a5cb6f16332a056fd93/slf4j-jboss-logmanager-1.2.0.Final.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.graalvm.sdk/graal-sdk/22.3.0/83179e3310a2ece87266923fede5ef7355c68c9a/graal-sdk-22.3.0.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.wildfly.common/wildfly-common/1.5.4.Final-format-001/d600b29d51306b30b29e7de64f6fedf61beb1808/wildfly-common-1.5.4.Final-format-001.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.quarkus/quarkus-fs-util/0.0.9/af43a8b4da2a2c9119e5280929887445847597a0/quarkus-fs-util-0.0.9.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.microprofile.context-propagation/microprofile-context-propagation-api/1.2/e8efc0f2ab4ec6b31bd8474a4a4d834965e4e8e9/microprofile-context-propagation-api-1.2.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/jakarta.el/jakarta.el-api/3.0.3/f311ab94bb1d4380690a53d737226a6b879dd4f1/jakarta.el-api-3.0.3.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.smallrye.common/smallrye-common-io/1.13.2/e462aeaf4c02e34c251ebf1788d04067f6ddae09/smallrye-common-io-1.13.2.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.github.crac/org-crac/0.1.3/78ca3679ec8ff707c18b17885ef589467780c486/org-crac-0.1.3.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/jakarta.ejb/jakarta.ejb-api/3.2.6/3c52a831bfe8118a27ed393234f1d1d3baa50a7c/jakarta.ejb-api-3.2.6.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/jakarta.transaction/jakarta.transaction-api/1.3.3/c4179d48720a1e87202115fbed6089bdc4195405/jakarta.transaction-api-1.3.3.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.smallrye.reactive/mutiny/1.8.0/95bf80a457215aa4f7cef024f88576a6efb22f5c/mutiny-1.8.0.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.eclipse.microprofile.config/microprofile-config-api/2.0.1/26fc0aba41ac450ddf86c8d72d58635e89b84feb/microprofile-config-api-2.0.1.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.smallrye.common/smallrye-common-annotation/1.13.2/44ad4ebb37b159c4303f787c1a5320fa7e58f5f9/smallrye-common-annotation-1.13.2.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.smallrye.common/smallrye-common-classloader/1.13.2/7b2d6bb2f608dd77974926cbd09d920233eeb611/smallrye-common-classloader-1.13.2.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.ow2.asm/asm/9.4/b4e0e2d2e023aa317b7cfcfc916377ea348e07d1/asm-9.4.jar" />
-          <entry name="$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.reactivestreams/reactive-streams/1.0.4/3864a1320d97d7b045f729a326e1e077661f31b7/reactive-streams-1.0.4.jar" />
-        </processorPath>
-        <module name="open-qm-base-station.main" />
+        <module name="open-qm-lib-moduleDriver.main" />
+        <module name="open-qm-lib-moduleDriver.test" />
       </profile>
     </annotationProcessing>
   </component>

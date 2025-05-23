@@ -69,6 +69,123 @@
         "test",
         "userTesting"
       ]
+    },
+    {
+      "login": "kyleclarktech",
+      "name": "Kyle Clark",
+      "avatar_url": "https://avatars.githubusercontent.com/u/86199883?v=4",
+      "profile": "https://github.com/kyleclarktech",
+      "contributions": [
+        "content",
+        "ideas",
+        "mentoring",
+        "review",
+        "security",
+        "test",
+        "userTesting"
+      ]
+    },
+    {
+      "login": "DanielKrejska",
+      "name": "DanielKrejska",
+      "avatar_url": "https://avatars.githubusercontent.com/u/44409727?v=4",
+      "profile": "https://github.com/DanielKrejska",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "LouisBarbier",
+      "name": "LouisBarbier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/116147989?v=4",
+      "profile": "https://github.com/LouisBarbier",
+      "contributions": [
+        "content",
+        "projectManagement"
+      ]
+    },
+    {
+      "login": "BrendanAndrews",
+      "name": "Brendan Andrews",
+      "avatar_url": "https://avatars.githubusercontent.com/u/113378507?v=4",
+      "profile": "https://github.com/BrendanAndrews",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Spitzer-Tech",
+      "name": "Spitzer-Tech",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37207444?v=4",
+      "profile": "https://github.com/Spitzer-Tech",
+      "contributions": [
+        "bug",
+        "design",
+        "example",
+        "financial",
+        "test",
+        "userTesting",
+        "ideas"
+      ]
+    },
+    {
+      "login": "steve-dill",
+      "name": "steve-dill",
+      "avatar_url": "https://avatars.githubusercontent.com/u/175041555?v=4",
+      "profile": "https://github.com/steve-dill",
+      "contributions": [
+        "bug",
+        "code",
+        "ideas",
+        "infra",
+        "mentoring",
+        "tool",
+        "userTesting",
+        "maintenance"
+      ]
+    },
+    {
+      "login": "mulliar22",
+      "name": "mulliar22",
+      "avatar_url": "https://avatars.githubusercontent.com/u/168582625?v=4",
+      "profile": "https://github.com/mulliar22",
+      "contributions": [
+        "code",
+        "data",
+        "doc",
+        "example",
+        "plugin",
+        "research"
+      ]
+    },
+    {
+      "login": "mallom21",
+      "name": "mallom21",
+      "avatar_url": "https://avatars.githubusercontent.com/u/113387289?v=4",
+      "profile": "https://github.com/mallom21",
+      "contributions": [
+        "code",
+        "data",
+        "doc",
+        "example",
+        "plugin",
+        "research",
+        "projectManagement"
+      ]
+    },
+    {
+      "login": "Coletrane315",
+      "name": "Coletrane315",
+      "avatar_url": "https://avatars.githubusercontent.com/u/52933325?v=4",
+      "profile": "https://github.com/Coletrane315",
+      "contributions": [
+        "code",
+        "data",
+        "doc",
+        "example",
+        "plugin",
+        "research"
+      ]
     }
   ],
   "contributorsPerLine": 7,
@@ -77,5 +194,6 @@
   "repoType": "github",
   "repoHost": "https://github.com",
   "skipCi": true,
-  "commitConvention": "angular"
+  "commitConvention": "angular",
+  "commitType": "docs"
 }

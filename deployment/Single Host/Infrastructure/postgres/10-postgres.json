@@ -1,0 +1,10 @@
+{
+	"infra": {
+		"postgres": {
+			"host": "oqm-infra-postgres",
+			"port": "5432",
+			"adminUser": "oqm_admin",
+			"adminPass": "<secret>"
+		}
+	}
+}

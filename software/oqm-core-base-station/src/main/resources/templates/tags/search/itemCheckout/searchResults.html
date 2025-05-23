@@ -1,0 +1,133 @@
+{!{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.baseStation.model.object.storage.checkout.ItemCheckout> searchResults}!}
+{!{@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}!}
+{!
+  Template to show storage search results. Gives the contents of a table, but not the main table tag
+
+  Ingests:
+  - actionType - the action to take. "full" or "select"
+  - storageService - the service to get storage blocks
+  - searchResults
+  - searchFormId - the id of the search form controlling the results
+  - inputIdPrepend - the prepend for the id of the inputs to set the data of
+  - otherModalId - the id of the other modal to open when selected
+
+  if `actionType` is "select", callback will be "selectStorageBlock('<block name>', '<block id>', '<inputIdPrepend>')" on the select button
+!}
+  <thead>
+  <tr>
+    <td colspan="8" class="text-center">
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
+    </td>
+  </tr>
+  <tr>
+    {#if showItem}<th scope="col">{#icons/item}{/icons/item} Item</th>{/if}
+    <th scope="col" style="width: 75px;">Status</th>
+    <th scope="col">Amount</th>
+    <th scope="col">{#icons/storageBlock}{/icons/storageBlock} From</th>
+    <th scope="col">For</th>
+    <th scope="col">By</th>
+    <th scope="col">Due Back</th>
+    <th scope="col" style="width: 125px;">Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  {#if searchResults.get("empty").asBoolean()}
+  <tr>
+    <td colspan="8" class="text-center">
+      <h2>
+        No Checkouts Found
+      </h2>
+      <p>
+        Checkout an item on the {#links/inventoryItems}{/links/inventoryItems} page!
+      </p>
+    </td>
+  </tr>
+  {#else}
+  {#for result in searchResults.get("results")}
+  	{#let id=result.get("id").asText()}
+  <tr class="align-middle">
+    {#if showItem}
+    <td>
+      {#links/inventoryItem inventoryItem=result.get("item").asText() itemName=result.get("item-name").asText()}{/links/inventoryItem}
+    </td>
+    {/if}
+      <td class="table-{#if result.get("stillCheckedOut").asBoolean()}active{#else}success{/if}">
+      {#if result.get("stillCheckedOut").asBoolean()}
+        {#icons/checkout}{/icons/checkout} Out
+      {#else}
+        {#icons/checkin}{/icons/checkin} In
+      {/if}
+      </td>
+    <td>
+      {#if result.get("checkedOut").get("storedType").asText() == "AMOUNT"}
+        {#amountDisplay amount=result.get("checkedOut").get("amount")}{/amountDisplay}
+      {#else}
+        1
+      {/if}
+    </td>
+    <td>
+      {#links/storageBlock id=result.get("checkedOutFrom").asText() label=result.get("checkedOutFrom-labelText").asText()}{/links/storageBlock}
+    </td>
+    <td>
+      {#let checkedOutFor=result.get("checkedOutFor") }
+      {#when checkedOutFor.get("type").asText()}
+      {#is "OQM_ENTITY"}
+        {#interactingEntityRef entityRef=result.get("checkedOutFor").get("entityRef")}{/interactingEntityRef}
+      {#is "EXT_SYS_USER"}
+        {checkedOutFor.get("name")} /
+        {checkedOutFor.get("externalId")}
+      {/when}
+      {/let}
+    </td>
+    <td>
+      {#interactingEntityRef entityRef=result.get("creatorRef")}{/interactingEntityRef}
+    </td>
+    <td>
+      {#let dueBack=result.get("dueBack").asText()}
+        {#if dueBack == 'null'}
+          N/A
+        {#else}
+          {cdi:DateTimeService.formatForUi(dueBack)}
+        {/if}
+      {/let}
+    </td>
+    {#if actionType == 'full'}
+    <td>
+      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemCheckoutViewModal" onclick="ItemCheckoutView.setupView('{id}');">
+        {#icons/view}{/icons/view}
+      </button>
+      {#if result.get("stillCheckedOut").asBoolean()}
+      <button type="button" class="btn btn-sm btn-warning" title="Checkin" data-bs-toggle="modal" data-bs-target="#itemCheckinModal" onclick="ItemCheckin.setupCheckinForm('{id}');">
+        {#icons/checkin}{/icons/checkin}
+      </button>
+      {/if}
+      <button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeItemCheckout('{id}');">
+        {#icons/remove}{/icons/remove}
+      </button>
+    </td>
+    {#else if actionType == 'select'}
+    <td class="d-grid gap-2">
+      <button type="button" class="btn btn-sm btn-success" title="Select"
+              data-bs-toggle="modal" data-bs-target="#{otherModalId}"
+              onclick="">
+        {#icons/select}{/icons/select} Select
+      </button>
+    </td>
+    {#else if actionType == 'viewCheckin'}
+    <td>
+      {#links/itemCheckoutButton id=result.get("id").asText()}{/links/itemCheckoutButton}
+      <a href="/itemCheckout?checkin={result.get("id").asText()}" class="btn btn-sm btn-warning" title="Checkin">{#icons/checkin}{/icons/checkin}</a>
+    </td>
+    {/if}
+  </tr>
+  	{/let}
+  {/for}
+  {/if}
+  </tbody>
+  <tfoot>
+  <tr>
+    <td colspan="8" class="text-center">
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
+    </td>
+  </tr>
+  </tfoot>

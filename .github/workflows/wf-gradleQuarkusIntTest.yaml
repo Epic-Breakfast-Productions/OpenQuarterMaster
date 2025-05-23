@@ -1,0 +1,39 @@
+name: WF - Gradle Quarkus Int Test
+on:
+  workflow_call:
+    inputs:
+      path:
+        required: true
+        type: string
+      containerBased:
+        required: true
+        type: string
+
+jobs:
+  quarkusIntTest:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./.github/actions/wf-setup
+      - uses: gradle/gradle-build-action@v2
+        with:
+          arguments: quarkusIntTest -x test -Pquarkus.container-image.build=${{ inputs.containerBased }}
+          build-root-directory: ${{ inputs.path }}
+      - name: Archive Test Report
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+        uses: actions/upload-artifact@v4
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: "Integration Test Report (Container ${{ inputs.containerBased }})"
+          path: "${{ inputs.path }}/build/reports/tests/quarkusIntTest"
+      # https://github.com/marketplace/actions/test-reporter
+      - name: "Integration Test Report (Container: ${{ inputs.containerBased }})"
+        uses: dorny/test-reporter@v1
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: "Integration Test Report (Container: ${{ inputs.containerBased }})"            # Name of the check run which will be created
+          path: "${{ inputs.path }}/build/test-results/quarkusIntTest/*.xml"    # Path to test results
+          reporter: java-junit        # Format of test results

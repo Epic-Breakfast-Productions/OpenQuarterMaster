@@ -1,0 +1,66 @@
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title="Item Checkout" page='itemCheckout'}
+{#pageStyle}
+
+{/pageStyle}
+{#pageContent}
+<div class="row">
+	<div class="col accordion" id="searchAccordion">
+		<div class="accordion-item">
+			<h2 class="accordion-header" id="searchHeader">
+			<button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+				data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+				aria-controls="searchCollapse">
+				{#icons/search}{/icons/search} Search Fields
+			</button>
+			</h2>
+			<div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+						 aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+				<div class="accordion-body">
+					{#search/itemCheckout/searchForm id='mainPageSearch' rootPrefix=rootPrefix}
+					{/search/itemCheckout/searchForm}
+				</div>
+			</div>
+		</div>
+	</div>
+</div>
+<div class="row">
+	<div class="col table-responsive">
+		<table class=" table table-bordered table-striped table-hover table-sm">
+			{#search/itemCheckout/searchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' showItem=true rootPrefix=rootPrefix}
+			{/search/itemCheckout/searchResults}
+		</table>
+	</div>
+</div>
+
+
+{/pageContent}
+{#modals}
+	{#search/storage/searchSelectModal otherModalId="" rootPrefix=rootPrefix}
+	{/search/storage/searchSelectModal}
+	{#itemCheckout/viewModal}
+	{/itemCheckout/viewModal}
+	{#search/item/itemSearchSelectModal otherModalId="" rootPrefix=rootPrefix}
+	{/search/item/itemSearchSelectModal}
+	{#itemCheckout/itemCheckinModal}
+	{/itemCheckout/itemCheckinModal}
+{/modals}
+{#scripts}
+<script src="{rootPrefix}/res/js/entityRef.js"></script>
+<script src="{rootPrefix}/res/js/carousel.js"></script>
+<script src="{rootPrefix}/res/js/search.js"></script>
+<script src="{rootPrefix}/res/js/textCopy.js"></script>
+<script src="{rootPrefix}/res/js/obj/getters.js"></script>
+<script src="{rootPrefix}/res/js/historySearch.js"></script>
+<script src="{rootPrefix}/res/js/obj/objView.js"></script>
+<script src="{rootPrefix}/res/js/obj/item/storedView.js"></script>
+<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckin.js"></script>
+<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
+<script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
+<script src="{rootPrefix}/res/js/obj/item/itemSearchSelect.js"></script>
+<script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+{/scripts}
+{#pageScript}
+    <script>
+    </script>
+{/pageScript}
+{/include}

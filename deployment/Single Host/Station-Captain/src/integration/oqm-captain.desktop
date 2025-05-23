@@ -1,0 +1,24 @@
+[Desktop Entry]
+##  The name of the application ##
+Name=Station Captain - OQM
+GenericName=Station Captain - OQM
+ 
+## A comment which act as a tooltip ##
+Comment=Management utility to manage an installation of Open QuarterMaster
+ 
+## The executable of the application with optional args ##
+## You can state full path too ##
+Exec=sudo oqm-captain
+ 
+## State the name of the icon that will be used to display this entry ##
+Icon=/etc/oqm/static/media/sc/oqm-sc-icon.svg
+ 
+## Is it a terminal app? For example htop will be set as Terminal=True ##
+## Then default terminal app will be used to open the 'htop' ##
+Terminal=true
+ 
+##  The type as listed  ##
+Type=Application
+ 
+## States the categories in which this entry should be shown menu ##
+Categories=System;

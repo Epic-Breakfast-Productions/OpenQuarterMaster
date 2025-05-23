@@ -1,0 +1,11 @@
+{
+	"infra": {
+		"mongodb": {
+			"host": "oqm-infra-mongo",
+			"port": "27017",
+			"adminUser": "oqm_admin",
+			"adminPass": "<secret>",
+			"keyFileContent": "<secret>"
+		}
+	}
+}
