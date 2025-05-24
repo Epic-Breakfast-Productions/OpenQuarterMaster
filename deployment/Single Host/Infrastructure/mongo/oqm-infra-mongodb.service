@@ -17,7 +17,7 @@ Type=simple
 Restart=always
 TimeoutSec=10m
 Environment="CONTAINER_NAME=oqm-infra-mongo"
-Environment="IMAGE_NAME=mongo"
+Environment="IMAGE_NAME=docker.io/mongo"
 Environment="IMAGE_VERSION=7"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/mongodb/env.list"
 Environment="DATA_DIR=/db/mongo"
