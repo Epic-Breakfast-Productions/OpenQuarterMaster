@@ -8,7 +8,7 @@
 #
 
 [Unit]
-Description=Postgres server for Open Quartermaster. Version ${version}, using Postgres tagged to "17".
+Description=Postgres server for Open Quartermaster. Version ${version}, using Postgres tagged to "15".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/postgresql
 After=docker.service
 Wants=network-online.target docker.socket
@@ -20,7 +20,7 @@ Restart=always
 TimeoutSec=10m
 Environment="CONTAINER_NAME=oqm-infra-postgres"
 Environment="IMAGE_NAME=docker.io/postgres"
-Environment="IMAGE_VERSION=17"
+Environment="IMAGE_VERSION=15"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/postgres/env.list"
 Environment="DATA_DIR=/db/postgres"
 

@@ -915,10 +915,10 @@ Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
 Depends: docker.io, oqm-manager-station+captain (>= 2.2.0), oqm-manager-station+captain (>= 2.8.0)
 Filename: ./oqm-infra-postgres_1.2.2_all.deb
-Size: 3216
-MD5sum: 65f65dbd031952340132e5fcf633fee8
-SHA1: 51b3d6eb9248d21e7a1cdc6429250d8e67d78b0a
-SHA256: 64774f64fcea8570255af578000dcc3b5c59d7eab8af7b00c6ad9692d8bab17f
+Size: 3226
+MD5sum: a8e712740b37e020bbc8a94d801d0da4
+SHA1: ed8aec48910486a49128e7b600f83fc22f1db0cb
+SHA256: 038dc3d2db30acddddbed3bd4f7c16044364cead69c1f158b8b71f02d5495479
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/postgresql
 Description: Postgresql instance for Open QuarterMaster.
