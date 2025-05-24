@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '2.1.7'
+version '2.1.8'
 
 repositories {
 	mavenCentral()
@@ -28,7 +28,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-mongodb-panache'
 	implementation 'io.quarkus:quarkus-hibernate-validator'
 	implementation 'io.quarkus:quarkus-elytron-security'
-	implementation 'io.quarkus:quarkus-container-image-jib'
+	implementation 'io.quarkus:quarkus-container-image-docker'
 	implementation 'io.quarkus:quarkus-rest-client'
 	implementation 'io.quarkus:quarkus-rest-client-jackson'
 	implementation 'io.quarkus:quarkus-mailer'
