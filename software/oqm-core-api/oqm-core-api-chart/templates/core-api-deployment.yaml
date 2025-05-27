@@ -1,21 +1,31 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: oqm-core-api-deployment
   labels:
-    app: oqm-core-api
+    app: {{ .Release.Name }}-oqm-core-api
+  name: {{ .Release.Name }}-oqm-core-api
 spec:
-  replicas: {{ .Values.replicaCount }}
+  replicas: {{ .Values.service.core.api.replicaCount }}
   selector:
     matchLabels:
-      app: oqm-core-api
+      app: {{ .Release.Name }}-oqm-core-api
   template:
     metadata:
       labels:
-        app: oqm-core-api
+        app: {{ .Release.Name }}-oqm-core-api
     spec:
       containers:
-      - name: oqm-core-api
-        image: docker.io/ebprod/oqm-core-api
-        ports:
-        - containerPort: 80
+        - image: "docker.io/ebprod/oqm-core-api:{{ .Values.service.core.api.image.tag }}"
+          name: {{ .Release.Name }}-oqm-core-api
+          resources: {}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+          # TODO:: health, liveliness check
+          # TODO:: configMap
+          # TODO:: mongo connection
+          # TODO:: kafka connection
