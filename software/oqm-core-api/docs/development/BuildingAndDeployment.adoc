@@ -9,6 +9,96 @@ link:README.md[Back]
 
 == Building
 
+=== Prerequisites
+
+* Java 21 (OpenJDK or Oracle JDK)
+* Gradle 8.5+
+* Docker (for building container images)
+* Native Image (optional, for native builds)
+
+=== Building with Gradle
+
+==== JVM Build
+
+To build the application for JVM:
+
+[source,bash]
+----
+./gradlew build
+----
+
+This creates a JAR file in `build/libs/`.
+
+==== Native Build
+
+To build a native executable (requires GraalVM):
+
+[source,bash]
+----
+./gradlew build -Dquarkus.native.enabled=true
+----
+
+Note: Native builds require significant memory and CPU resources.
+
+==== Running Development Mode
+
+For hot-reload development:
+
+[source,bash]
+----
+./gradlew quarkusDev
+----
+
+The application will be available at http://localhost:8080
+
+=== Building Docker Images
+
+==== JVM Docker Image
+
+[source,bash]
+----
+./gradlew build
+docker build -f src/main/docker/Dockerfile.jvm -t oqm-core-api:latest .
+----
+
+==== Native Docker Image
+
+[source,bash]
+----
+./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true
+docker build -f src/main/docker/Dockerfile.native -t oqm-core-api:latest .
+----
+
+=== Building Installers
+
+To create system packages (DEB, RPM):
+
+[source,bash]
+----
+./makeInstallers.sh
+----
+
+This script:
+- Builds the application
+- Creates Docker images
+- Generates system packages in `build/installers/`
+
+=== Testing
+
+==== Unit Tests
+
+[source,bash]
+----
+./gradlew test
+----
+
+==== Integration Tests
+
+[source,bash]
+----
+./gradlew integrationTest
+----
+
 == Deployment
 
 === Configuration
@@ -316,13 +406,11 @@ https://smallrye.io/smallrye-reactive-messaging/3.22.1/
 
 See the subsections for further configuration of specific connectors.
 
-Currently, just AMQP/ Artemis is supported. Please make a Feature Request ticket to have us also include one of the following:
+The system uses Kafka (RedPanda implementation) for messaging. Configuration details:
 
- - Apache Kafka
- - RabbitMQ
- - Apache Camel
- - JMS
- - MQTT
+ - Kafka/RedPanda is the primary message broker
+ - Supports event streaming for inventory updates
+ - Handles plugin communication
 
 Connectors:
 
@@ -348,30 +436,30 @@ These configs must specifically be set when deployed for the messages to reach t
 | The route where item add events go.
 |===
 
-===== Artemis AMQP Configuration
+===== Kafka Configuration
 
 |===
 | Config | Default | Examples | Explain
 
-| amqp-host
-|
-| `localhost`
-| The host of the Artemis instance to connect to
+| kafka.bootstrap.servers
+| localhost:9092
+| `localhost:9092`
+| The Kafka broker addresses
 
-| amqp-port
-| `5672`
-|
-| The port of the Artemis instance to connect to
+| kafka.security.protocol
+| PLAINTEXT
+| PLAINTEXT, SSL, SASL_PLAINTEXT, SASL_SSL
+| Security protocol for Kafka
 
-| amqp-username
-|
-| `username`
-| The username used to connect to the Artemis instance.
+| kafka.client.id
+| oqm-core-api
+| `oqm-core-api`
+| Client identifier for Kafka connections
 
-| amqp-password
-|
-| `password`
-| The password used to connect to the Artemis instance.
+| kafka.group.id
+| oqm-group
+| `oqm-group`
+| Consumer group ID for Kafka
 |===
 
 ==== Other
