@@ -400,7 +400,7 @@ Note: As a service admin, goto the "Service Admin" page to send a test email to 
 
 ==== Messaging
 
-For information on setting up your specific messaging settings, see https://quarkus.io/guides/amqp-reference#configuring-the-amqp-broker-access
+For information on setting up your specific messaging settings, see https://quarkus.io/guides/kafka
 
 https://smallrye.io/smallrye-reactive-messaging/3.22.1/
 
@@ -418,9 +418,9 @@ Connectors:
 | Config | Default | Examples | Explain
 
 | messaging.connector
-|
-| `smallrye-amqp` (Artemis)
-| The connector to use for a messaging broker. Currently just support the
+| smallrye-kafka
+| `smallrye-kafka`
+| The connector to use for a messaging broker. Uses Kafka/RedPanda for event streaming
 |===
 
 ===== Routes Produced To
