@@ -22,7 +22,7 @@ We are very much in development still, so check back often! We are also acceptin
 
 ## Quick Links
 
- - For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single%20Host)
+ - For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single Host)
  - To see all the ways you can deploy OQM for yourself, see [Deployment](deployment/)
 
 ## How it works
@@ -40,13 +40,13 @@ System_Boundary(b1, "Deployment Environment- Local computer/server, Kubernetes")
 
   Boundary(boundaryInfra, "Infrastructure Components") {
     SystemDb(mongo, "MongoDB")
-    SystemDb(amq, "AMQ")
+    SystemDb(kafka, "Kafka (RedPanda)")
     System(jaeger, "Jaeger")
   }
   
   Boundary(boundaryPlugins, "Plugins") {
     System(pluginPoc, "Point of Sale (Planned)", "Standard POS functions")
-    System(pluginStorage, "Interactive and Modular Storage (Planned)", "A system that intractis with physical storage medims to help convey placement of items.")
+    System(pluginStorage, "Interactive and Modular Storage (Planned)", "A system that interacts with physical storage mediums to help convey placement of items.")
   }
 }
 
@@ -59,7 +59,7 @@ To cover specific use-cases, we have what we call [Plugins](software/plugins). T
 
 In the theme of flexibility, the system is designed to be run in many different environments. It is just as home on the cloud as well as something as small as a [Raspberry Pi](https://www.raspberrypi.com/). This is accomplished using containers, segmenting each software component, ensuring flexibility and ease of management.
 
-To get started on your own hardware, please see [Single Host Deployment](deployment/Single%20Host)
+To get started on your own hardware, please see [Single Host Deployment](deployment/Single Host)
 
 ## On Privacy
 
