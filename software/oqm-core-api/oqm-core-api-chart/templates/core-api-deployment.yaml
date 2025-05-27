@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: oqm-core-api-deployment
+  labels:
+    app: oqm-core-api
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: oqm-core-api
+  template:
+    metadata:
+      labels:
+        app: oqm-core-api
+    spec:
+      containers:
+      - name: oqm-core-api
+        image: docker.io/ebprod/oqm-core-api
+        ports:
+        - containerPort: 80
