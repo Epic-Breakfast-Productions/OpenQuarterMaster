@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.api.service.notification;
 
-import com.mongodb.session.ClientSession;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.smallrye.reactive.messaging.annotations.Broadcast;
 import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
@@ -17,9 +16,6 @@ import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.OnOverflow;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemProcessResults;
-import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -34,7 +30,10 @@ public class HistoryEventNotificationService {
 	public static final String TOPIC_PREPEND = "oqm-core-";
 	public static final String ALL_EVENT_TOPIC_LABEL = "all-events";
 	public static final String ALL_EVENT_TOPIC = TOPIC_PREPEND + ALL_EVENT_TOPIC_LABEL;
-
+	
+	@ConfigProperty(name = "mp.messaging.outgoing.events-outgoing.enabled", defaultValue = "false")
+	Boolean outgoingServersEnabled;
+	
 	@ConfigProperty(name = "mp.messaging.outgoing.events-outgoing.bootstrap.servers")
 	Optional<String> outgoingServers;
 	@ConfigProperty(name = "kafka.bootstrap.servers")
@@ -47,13 +46,10 @@ public class HistoryEventNotificationService {
 	Emitter<EventNotificationWrapper> internalEventEmitter;
 
 	@Inject
-	@Broadcast
-	@Channel(OUTGOING_EVENT_CHANNEL)
-	@OnOverflow(value = OnOverflow.Strategy.DROP)
-	Emitter<EventNotificationWrapper> outgoingEventEmitter;
+	OutgoingNotificationService outgoingEventService;
 
-	private boolean haveOutgoingServers() {
-		return outgoingServers.isPresent() || kafkaServers.isPresent();
+	private boolean outgoingEnabled() {
+		return this.outgoingServersEnabled && this.outgoingServers.isPresent() || this.kafkaServers.isPresent();
 	}
 
 	/**
@@ -62,7 +58,7 @@ public class HistoryEventNotificationService {
 	@WithSpan
 	@Incoming(INTERNAL_EVENT_CHANNEL)
 	void sendEventOutgoing(EventNotificationWrapper notificationWrapper) {
-		if (!this.haveOutgoingServers()) {
+		if (!this.outgoingEnabled()) {
 			log.info("NOT Sending event to external channels (no outgoing servers configured): {}/{}", notificationWrapper.getClass().getSimpleName(),
 				notificationWrapper.getEvent().getId());
 			return;
@@ -72,7 +68,7 @@ public class HistoryEventNotificationService {
 			Headers headers = new RecordHeaders()
 				.add("database", notificationWrapper.getDatabase().toHexString().getBytes())
 				.add("object", notificationWrapper.getObjectName().getBytes());
-			this.outgoingEventEmitter.send(
+			this.outgoingEventService.sendEvent(
 				Message.of(notificationWrapper)
 					.addMetadata(
 						OutgoingKafkaRecordMetadata.<String>builder()

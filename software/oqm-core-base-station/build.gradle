@@ -10,6 +10,8 @@ version '1.6.0-DEV'
 repositories {
     mavenCentral()
     mavenLocal()
+    //allow pulling snapshots for oqm core api lib
+    maven({url= "https://central.sonatype.com/repository/maven-snapshots/"})
 }
 
 dependencies {
@@ -22,7 +24,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-oidc'
     implementation 'io.quarkus:quarkus-config-yaml'
     implementation 'io.quarkus:quarkus-smallrye-health'
-    implementation 'io.quarkus:quarkus-container-image-jib'
+    implementation 'io.quarkus:quarkus-container-image-docker'
     implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
     implementation 'io.quarkus:quarkus-opentelemetry'

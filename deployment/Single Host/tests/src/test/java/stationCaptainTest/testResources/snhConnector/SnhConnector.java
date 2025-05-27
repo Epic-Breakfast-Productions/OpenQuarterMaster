@@ -126,6 +126,7 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 //					CommandResult.from(new ProcessBuilder("../../../software/oqm-depot/makeSnhInstallers.sh")).assertSuccess("Build Depot Installers");
 					CommandResult.from(new ProcessBuilder("../../../software/oqm-core-api/makeInstallers.sh")).assertSuccess("Build Base Station Installers");
 					CommandResult.from(new ProcessBuilder("../../../software/oqm-core-base-station/makeInstallers.sh")).assertSuccess("Build Base Station Installers");
+					CommandResult.from(new ProcessBuilder("../../../software/plugins/external-item-search/makeInstallers.sh")).assertSuccess("Build External Item Search Installers");
 					log.info("Done building installers.");
 				} catch(IOException | InterruptedException e) {
 					throw new RuntimeException(e);
@@ -136,6 +137,7 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 				installers.addAll(List.of(new File("../../../software/oqm-core-api/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 //				installers.addAll(List.of(new File("../../../software/oqm-depot/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				installers.addAll(List.of(new File("../../../software/oqm-core-base-station/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../../../software/plugins/external-item-search/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				log.info("Installers to add to host: {}", installers);
 				
 				this.runCommand("mkdir", "-p", "/tmp/oqm-installers/").assertSuccess("List uploaded installers.");

@@ -125,6 +125,7 @@ mp:
   messaging:
     outgoing:
       events-outgoing:
+        enabled: true
         connector: smallrye-kafka
         broadcast: true
         value:

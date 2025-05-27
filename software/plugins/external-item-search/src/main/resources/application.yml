@@ -42,6 +42,9 @@ productLookup:
       apiKey: " "
 
 quarkus:
+  container-image:
+    name: oqm-plugin-ext_item_search
+    group: ebprod
   http:
     port: 80
     ssl-port: 443
