@@ -2,8 +2,8 @@
 
 This postgresql instance is currently used by all services that need OIDC and token access. Examples:
 
- - [Base Station](../../open-qm-base-station)
- - [Plugins](../../plugins)
+ - [Base Station](../../../../software/oqm-core-base-station)
+ - [Plugins](../../../../software/plugins)
 
 The flow of this is as follows:
 

@@ -4,4 +4,4 @@
 
 This is where common libraries exist for OpenQuarterMaster.
 
-- For the Core library, see [open-qm-core](open-qm-core)
+- For the Core library, see [oqm-core](open-qm-core)
