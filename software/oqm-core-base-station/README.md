@@ -1,96 +1,123 @@
 # oqm-core-base-station
 
-TODOS for database:
+![Docker Image Version](https://img.shields.io/docker/v/ebprod/oqm-core-base-station?label=Docker%20Image)
 
- - handle oqm db selected not present
- - make utility to handle case of no databases available to user
+The Base Station is the web-based user interface for Open QuarterMaster, providing an intuitive frontend for inventory management operations.
 
+## Overview
 
+OQM Base Station is a Quarkus-based web application that serves as the primary user interface for interacting with the OQM Core API. It provides:
 
+- **Inventory Management**: Add, edit, and track items in your inventory
+- **Storage Organization**: Manage storage locations and organize items
+- **Search & Filtering**: Quickly find items with powerful search capabilities
+- **User Management**: Handle user accounts and permissions (when using external auth)
+- **Plugin Integration**: Access additional functionality provided by installed plugins
+- **Responsive Design**: Works on desktop and mobile devices
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+## Prerequisites
 
-If you want to learn more about Quarkus, please visit its website: https://quarkus.io/ .
+- Java 21 (OpenJDK or Oracle JDK)
+- Gradle 8.5+
+- Running instance of [oqm-core-api](../oqm-core-api)
+- (Optional) Docker for containerized deployment
 
-## Running the application in dev mode
+## Quick Start
 
-You can run your application in dev mode that enables live coding using:
-```shell script
+### Development Mode
+
+Run the application with hot-reload enabled:
+
+```bash
 ./gradlew quarkusDev
 ```
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at http://localhost:8080/q/dev/.
+The application will be available at http://localhost:8081
 
-## Packaging and running the application
+> **Note**: The Quarkus Dev UI is available at http://localhost:8081/q/dev/
 
-The application can be packaged using:
-```shell script
+### Configuration
+
+Key configuration properties (set via environment variables or `application.yml`):
+
+```yaml
+# Core API connection
+service.coreApi.url: http://localhost:8080
+
+# Authentication mode
+service.authMode: EXTERNAL  # or SELF
+
+# External auth (Keycloak)
+service.externalAuth.url: http://localhost:8090
+service.externalAuth.realm: oqm
+service.externalAuth.clientId: oqm-base-station
+```
+
+See the [full configuration guide](docs/README.md) for all available options.
+
+## Building
+
+### JVM Build
+
+```bash
 ./gradlew build
 ```
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
 
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
+### Native Build
 
-If you want to build an _über-jar_, execute the following command:
-```shell script
-./gradlew build -Dquarkus.package.type=uber-jar
+```bash
+./gradlew build -Dquarkus.native.enabled=true
 ```
 
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
+### Docker Image
 
-## Creating a native executable
-
-You can create a native executable using: 
-```shell script
-./gradlew build -Dquarkus.package.type=native
+```bash
+docker build -f src/main/docker/Dockerfile.jvm -t oqm-core-base-station:latest .
 ```
 
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using: 
-```shell script
-./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
+### System Packages
+
+Create DEB/RPM packages:
+
+```bash
+./makeInstallers.sh
 ```
 
-You can then execute your native executable with: `./build/oqm-core-base-station-1.0.0-SNAPSHOT-runner`
+## Features
 
-If you want to learn more about building native executables, please consult https://quarkus.io/guides/gradle-tooling.
+- **Item Management**: Create, update, and track inventory items with detailed metadata
+- **Barcode Support**: Scan barcodes to quickly add or find items
+- **Image Management**: Attach images to items and storage locations
+- **Expiry Tracking**: Monitor expiration dates and get notifications
+- **History Tracking**: View complete history of item movements and changes
+- **Export/Import**: Export inventory data in various formats
+- **Custom Attributes**: Add custom fields to items for your specific needs
 
-## Related Guides
+## Architecture
 
-- RESTEasy Reactive's REST Client ([guide](https://quarkus.io/guides/rest-client-reactive)): Call REST services reactively
-- RESTEasy Reactive ([guide](https://quarkus.io/guides/resteasy-reactive)): A Jakarta REST implementation utilizing build time processing and Vert.x. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- YAML Configuration ([guide](https://quarkus.io/guides/config-yaml)): Use YAML to configure your Quarkus application
-- SmallRye Health ([guide](https://quarkus.io/guides/smallrye-health)): Monitor service health
-- Hibernate Validator ([guide](https://quarkus.io/guides/validation)): Validate object properties (field, getter) and method parameters for your beans (REST, CDI, Jakarta Persistence)
-- SmallRye OpenAPI ([guide](https://quarkus.io/guides/openapi-swaggerui)): Document your REST APIs with OpenAPI - comes with Swagger UI
-- OpenID Connect ([guide](https://quarkus.io/guides/security-openid-connect)): Verify Bearer access tokens and authenticate users with Authorization Code Flow
-- OpenTelemetry ([guide](https://quarkus.io/guides/opentelemetry)): Use OpenTelemetry to trace services
-- OpenID Connect Token Propagation ([guide](https://quarkus.io/guides/security-openid-connect-client)): Use Jakarta REST Client filter to propagate the incoming Bearer access token or token acquired from Authorization Code Flow as HTTP Authorization Bearer token
+Base Station is built with:
+- **Quarkus**: Supersonic Subatomic Java Framework
+- **Qute**: Type-safe templating engine
+- **RESTEasy Reactive**: Reactive REST client for API communication
+- **OpenID Connect**: For authentication with Keycloak
+- **Bootstrap**: Responsive UI framework
 
-## Provided Code
+## Documentation
 
-### YAML Config
+- [Development Guide](docs/README.md)
+- [User Guide](docs/User Guide.adoc)
+- [Authentication Setup](docs/usersAndAuth.md)
+- [Main Project Documentation](../../README.md)
 
-Configure your application with YAML
+## TODOs
 
-[Related guide section...](https://quarkus.io/guides/config-reference#configuration-examples)
+- Handle case when OQM database is not present
+- Implement database availability utility
+- Add offline mode support
+- Improve mobile UI experience
 
-The Quarkus application configuration is located in `src/main/resources/application.yml`.
+## Support
 
-### RESTEasy Reactive
-
-Easily start your Reactive RESTful Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
-
-### RESTEasy Reactive Qute
-
-Create your web page using Quarkus RESTEasy Reactive & Qute
-
-[Related guide section...](https://quarkus.io/guides/qute#type-safe-templates)
-
-### SmallRye Health
-
-Monitor your application's health using SmallRye Health
-
-[Related guide section...](https://quarkus.io/guides/smallrye-health)
+- [GitHub Issues](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/issues)
+- [Discord Community](https://discord.gg/cpcVh6SyNn)
+- [Project Website](https://openquartermaster.com)
