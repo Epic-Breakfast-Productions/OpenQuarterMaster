@@ -6,8 +6,8 @@ This is the documentation for running OQM on a single host:
 
 General operation & Setup:
 
- - [Quickstart Guide](Quickstart%20Guide.md)
- - [System Requirements](System%20Requirements.md)
+ - [Quickstart Guide](Quickstart Guide.md)
+ - [System Requirements](System Requirements.md)
  - [Gotchas, FAQ, & Troubleshooting](tgf.md)
 
 In depth:

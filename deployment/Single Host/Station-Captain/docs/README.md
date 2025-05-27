@@ -4,10 +4,10 @@
 
 Documentation pages:
 
- - [User Guide](User%20Guide.adoc)
- - [Admin Guide](Admin%20Guide.md)
+ - [User Guide](User Guide.adoc)
+ - [Admin Guide](Admin Guide.md)
 
 See also:
 
- - [Setting up Kiosk Mode](../../docs/guides/Kiosk%20Mode.md)
- - [Quickstart Guide](../../docs/Quickstart%20Guide.md)
+ - [Setting up Kiosk Mode](../../docs/guides/Kiosk Mode.md)
+ - [Quickstart Guide](../../docs/Quickstart Guide.md)
