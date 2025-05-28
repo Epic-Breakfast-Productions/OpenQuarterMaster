@@ -10,8 +10,6 @@ version '3.0.0-DEV'
 repositories {
 	mavenCentral()
 	mavenLocal()
-	//for getting OQM Library snapshot versions
-	maven({url= "https://s01.oss.sonatype.org/content/repositories/snapshots/"})
 }
 
 dependencies {
