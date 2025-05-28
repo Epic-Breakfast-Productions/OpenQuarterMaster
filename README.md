@@ -22,7 +22,7 @@ We are very much in development still, so check back often! We are also acceptin
 
 ## Quick Links
 
- - For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single Host)
+ - For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single%20Host)
  - To see all the ways you can deploy OQM for yourself, see [Deployment](deployment/)
 
 ## How it works
@@ -59,7 +59,7 @@ To cover specific use-cases, we have what we call [Plugins](software/plugins). T
 
 In the theme of flexibility, the system is designed to be run in many different environments. It is just as home on the cloud as well as something as small as a [Raspberry Pi](https://www.raspberrypi.com/). This is accomplished using containers, segmenting each software component, ensuring flexibility and ease of management.
 
-To get started on your own hardware, please see [Single Host Deployment](deployment/Single Host)
+To get started on your own hardware, please see [Single Host Deployment](deployment/Single%20Host)
 
 ## On Privacy
 

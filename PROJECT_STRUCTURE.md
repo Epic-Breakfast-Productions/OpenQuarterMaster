@@ -83,15 +83,6 @@ Project media resources:
 - **`/tests`** - Integration and system tests
 - Build scripts and repository maintenance tools
 
-## Technology Stack
-
-- **Language**: Java 21
-- **Framework**: Quarkus 3.21.4+
-- **Database**: MongoDB with Panache
-- **Messaging**: Kafka (RedPanda)
-- **Authentication**: Keycloak
-- **Container**: Red Hat UBI9 with OpenJDK 21
-- **Build Tool**: Gradle 8.5+
 
 ## Key Files
 

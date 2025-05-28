@@ -1,6 +1,6 @@
 # oqm-core-base-station
 
-![Docker Image Version](https://img.shields.io/docker/v/ebprod/oqm-core-base-station?label=Docker%20Image)
+![Docker Image Version](https://img.shields.io/docker/v/ebprod/oqm-core-base_station?label=Docker%20Image)
 
 The Base Station is the web-based user interface for Open QuarterMaster, providing an intuitive frontend for inventory management operations.
 
@@ -20,7 +20,7 @@ OQM Base Station is a Quarkus-based web application that serves as the primary u
 - Java 21 (OpenJDK or Oracle JDK)
 - Gradle 8.5+
 - Running instance of [oqm-core-api](../oqm-core-api)
-- (Optional) Docker for containerized deployment
+- Docker for containerized deployment
 
 ## Quick Start
 
