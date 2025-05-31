@@ -3,7 +3,7 @@
 	<label id="{id}-label" class="mb-2">{#icons/stored /} <span id="{id}-labelText">{labelText.or("Stored")}</span></label>
 	<div class="input-group input-group-lg itemStoredSearchInputGroup" id="{id}-inputGroup">
 		<input type="hidden" id="{id}-itemStoredInputItemId" name="item">
-		<input type="hidden" id="{id}-itemStoredInputId" name="itemStored">
+		<input type="hidden" id="{id}-itemStoredInputId" name="itemStored" {#if onchange??}onchange="{onchange}"{/if}>
 		<button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#itemStoredSearchSelectModal" id="{id}-itemStoredInputSearchButton" onclick="ItemStoredSearchSelect.setupItemStoredSearchModal(this);">{#icons/search}{/icons/search}</button>
 		<input type="text" class="form-control" id="{id}-itemStoredInputLabel" placeholder="Item Stored" name="itemStoredLabel" aria-describedby="{id}-itemNameInput-help" readonly>
 		<button class="btn btn-outline-secondary clearButton" type="button" id="{id}-itemStoredInputClearButton" onclick="ItemStoredSearchSelect.clearSearchInput($(this));">{#icons/remove}{/icons/remove}</button>

@@ -44,13 +44,19 @@ const Getters = {
 				}
 			});
 		},
-		getSingleStoredForItemInBlock: async function(itemId, blockId, doneFunc = function(){}){
+		getSingleStoredForItemInBlock: async function(itemId, blockId, doneFunc = function(){}, ifNone = null){
 			return Rest.call({
 				method: "GET",
 				url: Rest.passRoot + "/inventory/item/" + itemId + "/block/" + blockId + "/stored",
 				done: function(storedSearchResults){
 					if(storedSearchResults.numResults === 0){
-						throw new Error("No results where expected one.");
+						if(ifNone != null){
+							console.log("No results where expected one. Calling specified handler.")
+							ifNone();
+							return;
+						} else {
+							throw new Error("No results where expected one.");
+						}
 					}
 					if(storedSearchResults.numResults > 1){
 						throw new Error("More than one result. Expected one.");
@@ -59,13 +65,18 @@ const Getters = {
 				}
 			});
 		},
-		getSingleStoredForItem: async function(itemId, doneFunc = function(){}){
+		getSingleStoredForItem: async function(itemId, doneFunc = function(){}, ifNone = null){
 			return Rest.call({
 				method: "GET",
 				url: Rest.passRoot + "/inventory/item/" + itemId + "/stored",
 				done: function(storedSearchResults){
 					if(storedSearchResults.numResults === 0){
-						throw new Error("No results where expected one.");
+						if(ifNone != null){
+							console.log("No results where expected one. Calling specified handler.")
+							ifNone();
+						} else {
+							throw new Error("No results where expected one.");
+						}
 					}
 					if(storedSearchResults.numResults > 1){
 						throw new Error("More than one result. Expected one.");

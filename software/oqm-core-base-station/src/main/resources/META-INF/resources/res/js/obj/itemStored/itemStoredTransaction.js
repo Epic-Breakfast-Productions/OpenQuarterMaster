@@ -591,9 +591,11 @@ const ItemStoredTransaction = {
 
 			//populate inputs that are used
 			if (typeSelect) {
+				console.debug("Showing type select");
 				ItemStoredTransaction.Transfer.transactionTypeContainer.show();
 			}
 			if (fromBlock) {
+				console.debug("Showing from block");
 				ItemStoredTransaction.Transfer.fromBlockContainer.show();
 				item.storageBlocks.forEach(function (blockId) {
 					let newBlockOption = $('<option></option>');
@@ -607,9 +609,11 @@ const ItemStoredTransaction = {
 
 			}
 			if (fromStored) {
+				console.debug("Showing from stored");
 				ItemStoredTransaction.Transfer.fromStoredContainer.show();
 			}
 			if (amount) {
+				console.debug("Showing amount");
 				ItemStoredTransaction.Transfer.amountInputContainer.show();
 
 				promises.push(
@@ -619,6 +623,7 @@ const ItemStoredTransaction = {
 				);
 			}
 			if (toBlock) {
+				console.debug("Showing to block");
 				ItemStoredTransaction.Transfer.toBlockContainer.show();
 				item.storageBlocks.forEach(function (blockId) {
 					let newBlockOption = $('<option></option>');
@@ -628,15 +633,24 @@ const ItemStoredTransaction = {
 					}));
 					ItemStoredTransaction.Transfer.toBlockSelect.append(newBlockOption);
 				});
-				if(fromBlock){
-					ItemStoredTransaction.Transfer.updateToBlock(ItemStoredTransaction.Transfer.fromBlockSelect.val());
-				}
 			}
 			if (toStored) {
+				console.debug("Showing toStored");
 				ItemStoredTransaction.Transfer.toStoredContainer.show();
 			}
 
-			Promise.all(promises);
+			await Promise.all(promises);
+
+			if (fromBlock && toBlock) {
+				console.debug("Updating toBlock to ensure valid.");
+				ItemStoredTransaction.Transfer.updateToBlock(ItemStoredTransaction.Transfer.fromBlockSelect.val());
+			} else {
+				console.debug("Not updating toBlock to ensure valid");
+			}
+			if (amount) {
+				ItemStoredTransaction.Transfer.updateAmount();
+			}
+
 			//TODO:: make & run update to block to not select same block as is selected in from
 
 			ItemStoredTransaction.Transfer.updateForm();
@@ -646,6 +660,7 @@ const ItemStoredTransaction = {
 		 * Updates visibility of fields, selected/disabled in dropdowns based on what is selected
 		 */
 		updateForm() {
+			console.log("Updating form.")
 			if (ItemStoredTransaction.Transfer.transactionTypeContainer.is(":visible")) {
 				console.debug("Type input was visible!");
 
@@ -660,6 +675,7 @@ const ItemStoredTransaction = {
 			//TODO:: enable/disable "to" options based on "from" selections
 		},
 		updateToBlock(selectedBlockId = null) {
+			//TODO:: update for from stored
 			if (ItemStoredTransaction.Transfer.toBlockSelect.is(":visible")) {
 				console.debug("Updating availability of to block options. Block to make unavailable: ", selectedBlockId);
 				ItemStoredTransaction.Transfer.toBlockSelect.find("option").each(function (i, option) {
@@ -670,6 +686,73 @@ const ItemStoredTransaction = {
 					let toDisable = ItemStoredTransaction.Transfer.toBlockSelect.find("option[value=" + selectedBlockId + "]");
 					toDisable.prop("disabled", true);
 					toDisable.prop("selected", false);
+				}
+			}
+		},
+		/**
+		 * Updates the amount input to the value of what is present in the stored selected.
+		 */
+		updateAmount: async function (item = null, stored = null, storageBlockId = null) {
+			if (ItemStoredTransaction.Transfer.amountInputContainer.is(":visible")) {
+				console.log("Updating amounts");
+
+				if (item == null) {
+					item = ItemStoredTransaction.Transfer.itemIdInput.val();
+				}
+				if (typeof item === 'string' || item instanceof String) {
+					Getters.InventoryItem.get(item, function (itemData) {
+						ItemStoredTransaction.Transfer.updateAmount(itemData, stored, storageBlockId);
+					});
+					return;
+				}
+
+				if (stored != null) {
+					console.log("Stored specified: ", stored)
+					if (stored === -1) {
+						stored = null;
+					} else {
+						if (typeof stored === 'string' || stored instanceof String) {
+							await Getters.StoredItem.getStored(stored, function (storedData) {
+								stored = storedData;
+							});
+						}
+					}
+					console.log("final stored for amount input generation: ", stored)
+					StoredFormInput.getAmountInputs(item, stored, true, true).then(function (inputs) {
+						ItemStoredTransaction.Transfer.amountInputs.html(inputs);
+						ItemStoredTransaction.Transfer.updateAllAmount();
+					});
+				} else {//find stored
+					console.log("Stored not specified. Gleaning from form.")
+					if (storageBlockId == null && ItemStoredTransaction.Transfer.fromBlockSelect.is(":visible")) {
+						storageBlockId = ItemStoredTransaction.Transfer.fromBlockSelect.val();
+						console.debug("Got storage block id from form: ", storageBlockId);
+					}
+					if (stored == null && ItemStoredTransaction.Transfer.fromStoredStoredIdInput.is(":visible")) {
+						console.debug("Getting stored id from form.");
+						stored = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
+					}
+
+					if (stored != null && storageBlockId) {
+						console.log("No stored or storage block id could be identified.");
+						return;
+					}
+
+					if (stored != null) {
+						ItemStoredTransaction.Transfer.updateAmount(item, stored, storageBlockId);
+						return;
+					}
+					if (storageBlockId != null) {
+						Getters.StoredItem.getSingleStoredForItemInBlock(item.id, storageBlockId, function (storedData) {
+								ItemStoredTransaction.Transfer.updateAmount(item, storedData, storageBlockId);
+							},
+							function () {
+								ItemStoredTransaction.Transfer.updateAmount(item, -1, storageBlockId)
+							}
+						);
+						return;
+					}
+					throw new Error("Should not be able to get here.");
 				}
 			}
 		},
