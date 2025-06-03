@@ -648,7 +648,7 @@ const ItemStoredTransaction = {
 				console.debug("Not updating toBlock to ensure valid");
 			}
 			if (amount) {
-				ItemStoredTransaction.Transfer.updateAmount();
+				ItemStoredTransaction.Transfer.updateAmount(null, null, null, true);
 			}
 
 			//TODO:: make & run update to block to not select same block as is selected in from
@@ -692,8 +692,8 @@ const ItemStoredTransaction = {
 		/**
 		 * Updates the amount input to the value of what is present in the stored selected.
 		 */
-		updateAmount: async function (item = null, stored = null, storageBlockId = null) {
-			if (ItemStoredTransaction.Transfer.amountInputContainer.is(":visible")) {
+		updateAmount: async function (item = null, stored = null, storageBlockId = null, force = false) {
+			if (force || ItemStoredTransaction.Transfer.amountInputContainer.is(":visible")) {
 				console.log("Updating amounts");
 
 				if (item == null) {
@@ -754,6 +754,8 @@ const ItemStoredTransaction = {
 					}
 					throw new Error("Should not be able to get here.");
 				}
+			} else {
+				console.debug("Amounts not visible; not updating.");
 			}
 		},
 		updateAllAmount() {
