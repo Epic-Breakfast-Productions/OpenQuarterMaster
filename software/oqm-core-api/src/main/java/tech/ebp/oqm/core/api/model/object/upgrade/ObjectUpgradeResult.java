@@ -22,6 +22,10 @@ public class ObjectUpgradeResult<T extends Versionable> {
 	private int oldVersion;
 
 	public boolean wasUpgraded(){
-		return this.getOldVersion() < upgradedObject.getSchemaVersion();
+		return this.getOldVersion() < this.getUpgradedObject().getSchemaVersion();
+	}
+	
+	public int getNumVersionsBumped(){
+		return this.getUpgradedObject().getSchemaVersion() - this.getOldVersion();
 	}
 }

@@ -5,6 +5,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.testUtils.BasicTest;
 import tech.ebp.oqm.core.api.testResources.data.TestVersionableObject;
+import tech.ebp.oqm.core.api.testResources.upgrader.TestVersion2Bumper;
+import tech.ebp.oqm.core.api.testResources.upgrader.TestVersion3Bumper;
 
 import java.util.TreeSet;
 
@@ -13,35 +15,6 @@ import static org.junit.Assert.assertThrows;
 
 @Slf4j
 public class ObjectSchemaVersionBumperTest extends BasicTest {
-	
-	public static class TestVersion2Bumper extends ObjectSchemaVersionBumper<TestVersionableObject> {
-		
-		protected TestVersion2Bumper() {
-			super(2);
-		}
-		
-		@Override
-		protected ObjectNode bumpObjectSchema(ObjectNode oldObj) {
-			oldObj.put("foo", 2);
-			oldObj.put("bar", "2");
-			
-			return oldObj;
-		}
-	}
-	
-	public static class TestVersion3Bumper extends ObjectSchemaVersionBumper<TestVersionableObject> {
-		
-		protected TestVersion3Bumper() {
-			super(3);
-		}
-		
-		@Override
-		protected ObjectNode bumpObjectSchema(ObjectNode oldObj) {
-			oldObj.put("bar", Integer.parseInt(oldObj.get("bar").asText()));
-			
-			return oldObj;
-		}
-	}
 	
 	private final TestVersion2Bumper bumper2 = new TestVersion2Bumper();
 	private final TestVersion3Bumper bumper3 = new TestVersion3Bumper();

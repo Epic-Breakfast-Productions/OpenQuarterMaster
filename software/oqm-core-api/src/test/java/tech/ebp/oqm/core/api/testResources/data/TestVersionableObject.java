@@ -8,10 +8,11 @@ public class TestVersionableObject implements Versionable {
 	
 	@Override
 	public int getSchemaVersion() {
-		return 3;
+		return 4;
 	}
 	
 	private String name;
 	private int foo;
 	private int bar;
+	private int baz;
 }

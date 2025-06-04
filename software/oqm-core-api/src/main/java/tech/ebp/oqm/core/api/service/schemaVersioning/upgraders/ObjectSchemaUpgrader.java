@@ -106,7 +106,7 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 		sw.stop();
 
 		resultBuilder.upgradedObject(upgradedObj);
-		resultBuilder.timeTaken(Duration.ofMillis(sw.getTime()));
+		resultBuilder.timeTaken(sw.getDuration());
 
 		return resultBuilder.build();
 	}
