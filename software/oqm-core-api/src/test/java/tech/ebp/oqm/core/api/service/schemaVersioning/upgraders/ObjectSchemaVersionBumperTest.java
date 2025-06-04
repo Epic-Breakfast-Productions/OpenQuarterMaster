@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.api.service.schemaVersioning.upgraders;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.core.api.model.object.upgrade.SingleUpgradeResult;
 import tech.ebp.oqm.core.api.model.testUtils.BasicTest;
 import tech.ebp.oqm.core.api.testResources.data.TestVersionableObject;
 import tech.ebp.oqm.core.api.testResources.upgrader.TestVersion2Bumper;
@@ -10,8 +11,10 @@ import tech.ebp.oqm.core.api.testResources.upgrader.TestVersion3Bumper;
 
 import java.util.TreeSet;
 
-import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 public class ObjectSchemaVersionBumperTest extends BasicTest {
@@ -39,11 +42,15 @@ public class ObjectSchemaVersionBumperTest extends BasicTest {
 		oldObj.put(ObjectSchemaVersionBumper.SCHEMA_VERSION_FIELD, 1);
 		oldObj.put("name", "test");
 		
-		ObjectNode oldObj2 = this.bumper2.bumpObject(oldObj);
+		SingleUpgradeResult result = this.bumper2.bumpObject(oldObj);
+		ObjectNode oldObj2 = result.getUpgradedObject();
 		assertEquals(2, oldObj2.get(ObjectSchemaVersionBumper.SCHEMA_VERSION_FIELD).asInt());
+		assertTrue(result.hasCreatedObjects());
 		
-		ObjectNode oldObj3 = this.bumper3.bumpObject(oldObj2);
+		result = this.bumper3.bumpObject(oldObj2);
+		ObjectNode oldObj3 = result.getUpgradedObject();
 		assertEquals(3, oldObj3.get(ObjectSchemaVersionBumper.SCHEMA_VERSION_FIELD).asInt());
+		assertFalse(result.hasCreatedObjects());
 	}
 	
 	@Test

@@ -2,7 +2,6 @@ package tech.ebp.oqm.core.api.service.schemaVersioning.upgraders;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -14,8 +13,9 @@ import tech.ebp.oqm.core.api.exception.VersionBumperListIncontiguousException;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.Versionable;
 import tech.ebp.oqm.core.api.model.object.upgrade.ObjectUpgradeResult;
+import tech.ebp.oqm.core.api.model.object.upgrade.SingleUpgradeResult;
+import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeCreatedObjectsResults;
 
-import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -87,16 +87,25 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 		int curVersion = oldObj.get("schemaVersion").asInt(1);
 		ObjectUpgradeResult.Builder<T> resultBuilder = ObjectUpgradeResult.builder();
 		resultBuilder.oldVersion(curVersion);
+		UpgradeCreatedObjectsResults upgradeCreatedObjects = new UpgradeCreatedObjectsResults();
+		resultBuilder.upgradeCreatedObjects(upgradeCreatedObjects);
 
 		ObjectNode upgradedJson = oldObj.deepCopy();
 
+		//Iterate and process upgrades for each necessary bump
 		StopWatch sw = StopWatch.createStarted();
 		Iterator<ObjectSchemaVersionBumper<T>> it = getBumperIteratorAtVersion(curVersion);
 		while (it.hasNext()){
 			ObjectSchemaVersionBumper<T> curBumper = it.next();
 
-			upgradedJson = curBumper.bumpObject(upgradedJson);
+			//Process bump
+			SingleUpgradeResult upgradeResult = curBumper.bumpObject(upgradedJson);
+			upgradedJson = upgradeResult.getUpgradedObject();
+			
+			//Process created objects during the bump
+			upgradeCreatedObjects.addAll(upgradeResult.getCreatedObjects());
 		}
+		// Get end result object from resulting bumped json
 		T upgradedObj = null;
 		try {
 			upgradedObj = ObjectUtils.OBJECT_MAPPER.treeToValue(upgradedJson, this.objClass);

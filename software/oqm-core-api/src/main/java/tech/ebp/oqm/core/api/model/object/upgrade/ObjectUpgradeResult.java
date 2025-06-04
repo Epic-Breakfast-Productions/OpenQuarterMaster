@@ -20,6 +20,10 @@ public class ObjectUpgradeResult<T extends Versionable> {
 	private Duration timeTaken;
 
 	private int oldVersion;
+	
+	@NotNull
+	@NonNull
+	private UpgradeCreatedObjectsResults upgradeCreatedObjects;
 
 	public boolean wasUpgraded(){
 		return this.getOldVersion() < this.getUpgradedObject().getSchemaVersion();
@@ -27,5 +31,10 @@ public class ObjectUpgradeResult<T extends Versionable> {
 	
 	public int getNumVersionsBumped(){
 		return this.getUpgradedObject().getSchemaVersion() - this.getOldVersion();
+	}
+	
+	public boolean hasUpgradedCreatedObjects(){
+		//TODO:: consider values?
+		return this.getUpgradeCreatedObjects().isEmpty();
 	}
 }

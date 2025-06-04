@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Getter;
 import tech.ebp.oqm.core.api.model.object.Versionable;
+import tech.ebp.oqm.core.api.model.object.upgrade.SingleUpgradeResult;
 
 /**
  * Abstract class to take an object from the next lower version to the version noted by {@link #bumperTo}
@@ -42,7 +43,7 @@ public abstract class ObjectSchemaVersionBumper<T extends Versionable> implement
 	 *
 	 * @return The updated object
 	 */
-	public ObjectNode bumpObject(ObjectNode oldObj) {
+	public SingleUpgradeResult bumpObject(ObjectNode oldObj) {
 		if(!oldObj.has(SCHEMA_VERSION_FIELD)) {
 			throw new IllegalArgumentException("Object given must have schema version field.");
 		}
@@ -52,9 +53,9 @@ public abstract class ObjectSchemaVersionBumper<T extends Versionable> implement
 			);
 		}
 		
-		oldObj = this.bumpObjectSchema(oldObj);
-		oldObj = this.bumpSchemaVersion(oldObj);
-		return oldObj;
+		SingleUpgradeResult result = this.bumpObjectSchema(oldObj);
+		this.bumpSchemaVersion(result.getUpgradedObject());
+		return result;
 	}
 	
 	/**
@@ -64,7 +65,7 @@ public abstract class ObjectSchemaVersionBumper<T extends Versionable> implement
 	 *
 	 * @return The updated object
 	 */
-	protected abstract ObjectNode bumpObjectSchema(ObjectNode oldObj);
+	protected abstract SingleUpgradeResult bumpObjectSchema(ObjectNode oldObj);
 	
 	/**
 	 * Use this to set the new schema version for upgraded objects.

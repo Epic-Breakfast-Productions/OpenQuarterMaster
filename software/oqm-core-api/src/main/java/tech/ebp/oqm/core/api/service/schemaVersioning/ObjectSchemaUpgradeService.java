@@ -20,6 +20,7 @@ import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.ObjectUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.OqmDbUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
+import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeOverallCreatedObjectsResults;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
@@ -89,6 +90,8 @@ public class ObjectSchemaUpgradeService {
 		ObjectSchemaUpgrader<T> objectVersionBumper = this.getInstanceForClass(objectClass);
 		CollectionUpgradeResult.Builder outputBuilder = CollectionUpgradeResult.builder()
 			.collectionName(documentCollection.getNamespace().getCollectionName());
+		UpgradeOverallCreatedObjectsResults createdObjectResults = new UpgradeOverallCreatedObjectsResults();
+		outputBuilder.createdObjects(createdObjectResults);
 
 		StopWatch sw = StopWatch.createStarted();
 		long numUpdated = 0;
@@ -102,11 +105,18 @@ public class ObjectSchemaUpgradeService {
 
 					if (result.wasUpgraded()) {
 						numUpdated++;
+						
+						if(result.hasUpgradedCreatedObjects()) {
+							//TODO:: persist created objects.
+							createdObjectResults.addAll(result.getUpgradeCreatedObjects());
+						}
+						
 						typedCollection.findOneAndReplace(
 							cs,
 							eq("id", result.getUpgradedObject().getId()),
 							result.getUpgradedObject()
 						);
+						//TODO:: add upgrade event, if applicable
 					}
 				}
 			} catch (JsonProcessingException e) {
