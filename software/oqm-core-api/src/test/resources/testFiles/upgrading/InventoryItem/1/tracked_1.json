@@ -1,0 +1,73 @@
+{
+	"id": "683fce0b57d4bf214978f5d7",
+	"attributes": {},
+	"keywords": [],
+	"imageIds": [],
+	"name": "Test item 3",
+	"description": "",
+	"barcode": "",
+	"categories": [],
+	"storageMap": {
+		"683149f38d98ce4f7f8a5820": {
+			"notificationStatus": {
+				"lowStock": false
+			},
+			"total": {
+				"unit": {
+					"string": "units",
+					"name": "Units",
+					"symbol": "units"
+				},
+				"scale": "ABSOLUTE",
+				"value": 1
+			},
+			"numExpired": 0,
+			"numExpiryWarned": 0,
+			"stored": {
+				"1234": {
+					"id": "a001e2a4-c3e2-4b4b-870e-8d0adf97c961",
+					"barcode": "",
+					"expires": null,
+					"notificationStatus": {
+						"expired": false,
+						"expiredWarning": false
+					},
+					"condition": null,
+					"conditionNotes": "",
+					"imageIds": [],
+					"attributes": {},
+					"keywords": [],
+					"identifier": "1234",
+					"identifyingDetails": "",
+					"value": null,
+					"storedType": "TRACKED",
+					"labelText": "1234"
+				}
+			},
+			"numStored": 1
+		}
+	},
+	"attachedFiles": [],
+	"total": {
+		"unit": {
+			"string": "units",
+			"name": "Units",
+			"symbol": "units"
+		},
+		"scale": "ABSOLUTE",
+		"value": 1
+	},
+	"valueOfStored": 0,
+	"notificationStatus": {
+		"lowStock": false
+	},
+	"expiryWarningThreshold": 0,
+	"lowStockThreshold": null,
+	"numLowStock": 0,
+	"numExpired": 0,
+	"numExpiryWarn": 0,
+	"trackedItemIdentifierName": "UID",
+	"defaultValue": 0,
+	"schemaVersion": 1,
+	"storageType": "TRACKED"
+}

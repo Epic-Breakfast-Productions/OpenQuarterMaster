@@ -1,0 +1,88 @@
+{
+	"id": "683fcdd357d4bf214978f5d5",
+	"attributes": {},
+	"keywords": [],
+	"imageIds": [],
+	"name": "Test item 2",
+	"description": "",
+	"barcode": "",
+	"categories": [],
+	"storageMap": {
+		"683149f38d98ce4f7f8a5820": {
+			"notificationStatus": {
+				"lowStock": false
+			},
+			"total": {
+				"unit": {
+					"string": "units",
+					"name": "Units",
+					"symbol": "units"
+				},
+				"scale": "ABSOLUTE",
+				"value": 5
+			},
+			"numExpired": 0,
+			"numExpiryWarned": 0,
+			"parentUnit": {
+				"string": "units",
+				"name": "Units",
+				"symbol": "units"
+			},
+			"stored": [
+				{
+					"id": "1a19aab0-e695-42ad-a021-592c55c3c793",
+					"barcode": "",
+					"expires": null,
+					"notificationStatus": {
+						"expired": false,
+						"expiredWarning": false
+					},
+					"condition": null,
+					"conditionNotes": "",
+					"imageIds": [],
+					"attributes": {},
+					"keywords": [],
+					"amount": {
+						"unit": {
+							"string": "units",
+							"name": "Units",
+							"symbol": "units"
+						},
+						"scale": "ABSOLUTE",
+						"value": 5
+					},
+					"storedType": "AMOUNT",
+					"labelText": "5 units"
+				}
+			],
+			"numStored": 1
+		}
+	},
+	"attachedFiles": [],
+	"total": {
+		"unit": {
+			"string": "units",
+			"name": "Units",
+			"symbol": "units"
+		},
+		"scale": "ABSOLUTE",
+		"value": 5
+	},
+	"valueOfStored": 0,
+	"notificationStatus": {
+		"lowStock": false
+	},
+	"expiryWarningThreshold": 0,
+	"lowStockThreshold": null,
+	"numLowStock": 0,
+	"numExpired": 0,
+	"numExpiryWarn": 0,
+	"unit": {
+		"string": "units",
+		"name": "Units",
+		"symbol": "units"
+	},
+	"valuePerUnit": 0,
+	"schemaVersion": 1,
+	"storageType": "AMOUNT_LIST"
+}
