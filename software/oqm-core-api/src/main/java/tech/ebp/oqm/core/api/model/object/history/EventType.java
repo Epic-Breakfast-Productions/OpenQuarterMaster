@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.model.object.history;
 
 public enum EventType {
+	SCHEMA_UPGRADE,
 	CREATE,
 	RECREATE,
 	UPDATE,

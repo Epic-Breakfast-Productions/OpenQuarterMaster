@@ -18,6 +18,7 @@ import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetailType;
 import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.DeleteEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.ReCreateEvent;
+import tech.ebp.oqm.core.api.model.object.history.events.SchemaUpgradeEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.file.NewFileVersionEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.ItemLowStockEvent;
@@ -45,6 +46,7 @@ import java.util.Map;
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
 )
 @JsonSubTypes({
+	@JsonSubTypes.Type(value = SchemaUpgradeEvent.class, name = "SCHEMA_UPGRADE"),
 	@JsonSubTypes.Type(value = CreateEvent.class, name = "CREATE"),
 	@JsonSubTypes.Type(value = ReCreateEvent.class, name = "RECREATE"),
 	@JsonSubTypes.Type(value = UpdateEvent.class, name = "UPDATE"),
