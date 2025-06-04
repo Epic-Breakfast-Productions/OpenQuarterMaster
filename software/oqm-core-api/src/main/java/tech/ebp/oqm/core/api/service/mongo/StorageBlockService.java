@@ -63,14 +63,14 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		if(newObject){
 			long count = this.count(oqmDbIdOrName, clientSession, parentFilter);
 			if(count > 0){
-				throw new DbModValidationException("");
+				throw new DbModValidationException("Already have a storage block with the same label, location, and parent present.");
 			}
 		} else {
 			List<StorageBlock> results = this.list(oqmDbIdOrName, clientSession, parentFilter, null, null);
 			
 			if(!results.isEmpty()){
 				if(results.size() > 1 || !results.get(0).getId().equals(storageBlock.getId())){
-					throw new DbModValidationException("");
+					throw new DbModValidationException("Already have a storage block with the same label, location, and parent present.");
 				}
 			}
 		}

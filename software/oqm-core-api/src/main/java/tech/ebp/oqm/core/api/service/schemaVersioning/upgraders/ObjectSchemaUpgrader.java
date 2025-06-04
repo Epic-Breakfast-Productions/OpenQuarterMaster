@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.api.service.schemaVersioning.upgraders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
@@ -82,12 +83,12 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 	}
 
 
-	public ObjectUpgradeResult<T> upgrade(JsonNode oldObj){
+	public ObjectUpgradeResult<T> upgrade(ObjectNode oldObj){
 		int curVersion = oldObj.get("schemaVersion").asInt(1);
 		ObjectUpgradeResult.Builder<T> resultBuilder = ObjectUpgradeResult.builder();
 		resultBuilder.oldVersion(curVersion);
 
-		JsonNode upgradedJson = oldObj.deepCopy();
+		ObjectNode upgradedJson = oldObj.deepCopy();
 
 		StopWatch sw = StopWatch.createStarted();
 		Iterator<ObjectSchemaVersionBumper<T>> it = getBumperIteratorAtVersion(curVersion);
@@ -112,7 +113,7 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 
 	public ObjectUpgradeResult<T> upgrade(Document oldObj) throws JsonProcessingException {
 		return this.upgrade(
-			ObjectUtils.OBJECT_MAPPER.readTree(
+			(ObjectNode) ObjectUtils.OBJECT_MAPPER.readTree(
 				oldObj.toJson(
 					JsonWriterSettings.builder()
 						.build()
