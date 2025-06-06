@@ -6,14 +6,21 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.AccessLevel;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.Document;
+import org.bson.types.ObjectId;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.exception.ClassUpgraderNotFoundException;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.Versionable;
+import tech.ebp.oqm.core.api.model.object.history.details.FromSchemaUpgradeDetail;
+import tech.ebp.oqm.core.api.model.object.history.events.SchemaUpgradeEvent;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
@@ -23,7 +30,9 @@ import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeOverallCreatedObjectsResults;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
+import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
 import tech.ebp.oqm.core.api.service.mongo.MongoObjectService;
+import tech.ebp.oqm.core.api.service.mongo.MongoService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectSchemaUpgrader;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.inventoryItem.InventoryItemSchemaUpgrader;
@@ -53,13 +62,23 @@ public class ObjectSchemaUpgradeService {
 	private List<List<MongoDbAwareService<?, ?, ?>>> dbAwareUpgradeGroups;
 	private TotalUpgradeResult startupUpgradeResult = null;
 	
+	@Getter(AccessLevel.PRIVATE)
+	CoreApiInteractingEntity coreApiInteractingEntity;
+	
+	@ConfigProperty(name = "quarkus.uuid")
+	String instanceUuid;
 	
 	@Inject
 	public ObjectSchemaUpgradeService(
+		CoreApiInteractingEntity coreApiInteractingEntity,
+		@ConfigProperty(name = "quarkus.uuid")
+		String instanceUuid,
 		OqmDatabaseService oqmDatabaseService,
 		StorageBlockService storageBlockService,
 		InventoryItemService inventoryItemService
 	) {
+		this.coreApiInteractingEntity = coreApiInteractingEntity;
+		this.instanceUuid = instanceUuid;
 		this.oqmDatabaseService = oqmDatabaseService;
 		
 		//This insertion order here is the order of which these are each processed.
@@ -116,6 +135,7 @@ public class ObjectSchemaUpgradeService {
 	 * @throws ClassUpgraderNotFoundException
 	 */
 	private <T extends MainObject> CollectionUpgradeResult upgradeOqmCollection(
+		String upgradeId,
 		ClientSession cs,
 		String oqmDbId,
 		MongoCollection<Document> documentCollection,
@@ -140,20 +160,40 @@ public class ObjectSchemaUpgradeService {
 					
 					if (result.wasUpgraded()) {
 						numUpdated++;
-						
+						SchemaUpgradeEvent schemaUpgradeEvent = SchemaUpgradeEvent.builder()
+																	.upgradeId(upgradeId)
+																	.id(new ObjectId())
+																	.fromVersion(result.getOldVersion())
+																	.toVersion(result.getUpgradedObject().getSchemaVersion())
+																	.build();
 						if (result.hasUpgradedCreatedObjects()) {
 							//persist created objects.
+							FromSchemaUpgradeDetail detail = new FromSchemaUpgradeDetail(
+								upgradeId,
+								objectClass.getSimpleName(),
+								result.getUpgradedObject().getId(),
+								schemaUpgradeEvent.getObjectId()
+							);
 							result.getUpgradeCreatedObjects()
 								.forEach((newObjClass, newObjects)->{
 									MongoDbAwareService<?, ?, ?> service = this.oqmDbServices.get(newObjClass);
 									
-									//TODO:: what about historied?
-									if (service instanceof MongoObjectService<?, ?, ?>) {
+									List<?> createdObjs = newObjects.stream()
+															  .map((no)->this.upgraderMap.get(newObjClass).upgrade(no).getUpgradedObject())
+															  .toList();
+									if (service instanceof MongoHistoriedObjectService<?, ?, ?>) {
+										((MongoHistoriedObjectService) service).addBulk(
+											oqmDbId,
+											cs,
+											createdObjs,
+											this.getCoreApiInteractingEntity(),
+											detail
+										);
+									} else if (service instanceof MongoObjectService<?, ?, ?>) {
 										((MongoObjectService) service).addBulk(
 											oqmDbId,
-											newObjects.stream()
-												.map((no)->this.upgraderMap.get(newObjClass).upgrade(no).getUpgradedObject())
-												.toList()
+											cs,
+											createdObjs
 										);
 									}
 								});
@@ -166,7 +206,18 @@ public class ObjectSchemaUpgradeService {
 							eq("id", result.getUpgradedObject().getId()),
 							result.getUpgradedObject()
 						);
-						//TODO:: add upgrade event, if applicable
+						//add upgrade event, if applicable
+						MongoDbAwareService<?, ?, ?> objService = this.oqmDbServices.get(objectClass);
+						if (objService instanceof MongoHistoriedObjectService<?, ?, ?>) {
+							((MongoHistoriedObjectService<?, ?, ?>) objService).getHistoryService()
+								.addHistoryFor(
+									oqmDbId,
+									cs,
+									result.getUpgradedObject().getId(),
+									this.getCoreApiInteractingEntity(),
+									schemaUpgradeEvent
+								);
+						}
 					}
 				}
 			} catch(JsonProcessingException e) {
@@ -192,12 +243,13 @@ public class ObjectSchemaUpgradeService {
 	 * @return
 	 * @throws ClassUpgraderNotFoundException
 	 */
-	private <T extends MainObject> CollectionUpgradeResult upgradeOqmCollection(ClientSession dbCs, OqmMongoDatabase oqmDb, MongoDbAwareService<T, ?, ?> service)
+	private <T extends MainObject> CollectionUpgradeResult upgradeOqmCollection(String upgradeId, ClientSession dbCs, OqmMongoDatabase oqmDb, MongoDbAwareService<T, ?, ?> service)
 		throws ClassUpgraderNotFoundException {
 		log.info("Updating schema of oqm database service {} in ", service.getClass());
 		String oqmDbId = oqmDb.getId().toHexString();
 		//TODO:: hande upgrading history
 		CollectionUpgradeResult result = this.upgradeOqmCollection(
+			upgradeId,
 			dbCs,
 			oqmDbId,
 			service.getDocumentCollection(oqmDbId),
@@ -218,7 +270,7 @@ public class ObjectSchemaUpgradeService {
 	 *
 	 * @return The result of the upgrades.
 	 */
-	private OqmDbUpgradeResult upgradeOqmDb(OqmMongoDatabase oqmDb) {
+	private OqmDbUpgradeResult upgradeOqmDb(String upgradeId, OqmMongoDatabase oqmDb) {
 		log.info("Updating schema of oqm database: {}", oqmDb);
 		OqmDbUpgradeResult.Builder outputBuilder = OqmDbUpgradeResult.builder()
 													   .dbName(oqmDb.getName());
@@ -237,7 +289,7 @@ public class ObjectSchemaUpgradeService {
 					ClientSession finalCs = cs;
 					futures.add(
 						CompletableFuture.supplyAsync(()->{
-							return upgradeOqmCollection(finalCs, oqmDb, curService);
+							return upgradeOqmCollection(upgradeId, finalCs, oqmDb, curService);
 						})
 					);
 				}
@@ -275,9 +327,13 @@ public class ObjectSchemaUpgradeService {
 		if (this.upgradeRan()) {
 			return Optional.empty();
 		}
-		log.info("Upgrading the schema held in the Database.");
+		final String upgradeId = UUID.randomUUID().toString();
+		log.info("Upgrading the schema held in the Database. Id: {}", upgradeId);
 		
-		TotalUpgradeResult.Builder totalResultBuilder = TotalUpgradeResult.builder();
+		
+		TotalUpgradeResult.Builder totalResultBuilder = TotalUpgradeResult.builder()
+															.id(upgradeId)
+															.instanceId(this.instanceUuid);
 		StopWatch totalTime = StopWatch.createStarted();
 		
 		//TODO:: migrate top levels
@@ -286,18 +342,19 @@ public class ObjectSchemaUpgradeService {
 		List<CompletableFuture<OqmDbUpgradeResult>> resultMap = new ArrayList<>();
 		for (OqmMongoDatabase curDb : this.oqmDatabaseService.listIterator()) {
 			resultMap.add(CompletableFuture.supplyAsync(()->{
-					return upgradeOqmDb(curDb);
+					return upgradeOqmDb(upgradeId, curDb);
 				})
 			);
 		}
-		totalResultBuilder.dbUpgradeResults(resultMap.stream().map((CompletableFuture<OqmDbUpgradeResult> future)->{
-				try {
-					return future.get();
-				} catch(Throwable e) {
-					throw new UpgradeFailedException("Failed to upgrade data in database.", e);
-				}
-			})
-												.toList());
+		totalResultBuilder.dbUpgradeResults(
+			resultMap.stream().map((CompletableFuture<OqmDbUpgradeResult> future)->{
+					try {
+						return future.get();
+					} catch(Throwable e) {
+						throw new UpgradeFailedException("Failed to upgrade data in database.", e);
+					}
+				})
+				.toList());
 		totalTime.stop();
 		totalResultBuilder.timeTaken(Duration.of(totalTime.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS));
 		

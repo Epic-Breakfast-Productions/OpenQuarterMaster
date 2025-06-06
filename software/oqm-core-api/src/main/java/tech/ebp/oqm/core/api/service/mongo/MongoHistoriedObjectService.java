@@ -34,6 +34,7 @@ import tech.ebp.oqm.core.api.service.mongo.exception.DbDeletedException;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
+import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.util.*;
@@ -231,30 +232,41 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		return this.add(oqmDbIdOrName, object, null);
 	}
 	
+	
+	@WithSpan
+	public List<ObjectId> addBulk(String oqmDbIdOrName, ClientSession session, @NonNull @Valid List<T> objects, InteractingEntity entity, HistoryDetail ... details) {
+		if (!this.allowNullEntityForCreate) {
+			assertNotNullEntity(entity);
+		}
+		
+		List<ObjectId> output;
+		try(
+			MongoSessionWrapper sessionWrapper = new MongoSessionWrapper(session, this)
+			){
+			output = sessionWrapper.runTransaction(()->{
+				List<ObjectId> ids = super.addBulk(oqmDbIdOrName, sessionWrapper.getClientSession(), objects);
+				
+				for(T object : objects) {
+					this.getHistoryService().objectCreated(
+						oqmDbIdOrName,
+						session,
+						object,
+						entity,
+						details
+					);
+				}
+				return ids;
+			});
+		} catch(Exception e) {
+			throw new RuntimeException(e);
+		}
+		
+		return output;
+	}
+	
 	@WithSpan
 	public List<ObjectId> addBulk(String oqmDbIdOrName, List<T> objects, InteractingEntity entity) {
-		try (
-			ClientSession session = this.getNewClientSession(false);
-		) {
-			return session.withTransaction(
-				()->{
-					List<ObjectId> output = new ArrayList<>(objects.size());
-					
-					for (T cur : objects) {
-						try {
-							output.add(add(oqmDbIdOrName, session, cur, entity));
-						} catch(Throwable e) {
-							session.abortTransaction();
-							throw e;
-						}
-					}
-					
-					session.commitTransaction();
-					return output;
-				},
-				getDefaultTransactionOptions()
-			);
-		}
+		return this.addBulk(oqmDbIdOrName, null, objects, entity);
 	}
 	
 	/**

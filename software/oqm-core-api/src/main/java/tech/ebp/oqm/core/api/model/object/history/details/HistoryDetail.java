@@ -23,6 +23,7 @@ import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 	@JsonSubTypes.Type(value = FieldsAffectedHistoryDetail.class, name = "FIELDS_AFFECTED"),
 	@JsonSubTypes.Type(value = ItemTransactionDetail.class, name = "ITEM_TRANSACTION"),
 	@JsonSubTypes.Type(value = NoteHistoryDetail.class, name = "NOTE"),
+	@JsonSubTypes.Type(value = FromSchemaUpgradeDetail.class, name = "FROM_SCHEMA_UPGRADE"),
 })
 public abstract class HistoryDetail {
 

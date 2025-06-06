@@ -15,6 +15,7 @@ public class MongoSessionWrapper implements Closeable {
 
 	@NonNull
 	private ClientSession clientSession;
+	/** If the client session was originally provided. */
 	private boolean provided;
 
 	public MongoSessionWrapper(@Nullable ClientSession csOptional, @NonNull MongoService<?, ?, ?> service) {
