@@ -430,7 +430,7 @@ public class ObjectSchemaUpgradeService {
 				})
 				.toList());
 		totalTime.stop();
-		totalResultBuilder.timeTaken(Duration.of(totalTime.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS));
+		totalResultBuilder.timeTaken(totalTime.getDuration());
 		
 		log.info("DONE upgrading the schema held in the Database.");
 		this.startupUpgradeResult = totalResultBuilder.build();
