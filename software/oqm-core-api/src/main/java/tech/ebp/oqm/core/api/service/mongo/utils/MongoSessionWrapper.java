@@ -3,11 +3,13 @@ package tech.ebp.oqm.core.api.service.mongo.utils;
 import com.mongodb.client.ClientSession;
 import jakarta.annotation.Nullable;
 import lombok.*;
+import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.core.api.service.mongo.MongoService;
 
 import java.io.Closeable;
 import java.util.concurrent.Callable;
 
+@Slf4j
 @Data
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 @Setter(AccessLevel.PRIVATE)
@@ -60,7 +62,10 @@ public class MongoSessionWrapper implements Closeable {
 		try {
 			output = runnable.call();
 		} catch (Exception e) {
-			this.clientSession.abortTransaction();
+			log.warn("Error executing transaction", e);
+			if(commit) {
+				this.clientSession.abortTransaction();
+			}
 			throw e;
 		}
 		if (commit) {

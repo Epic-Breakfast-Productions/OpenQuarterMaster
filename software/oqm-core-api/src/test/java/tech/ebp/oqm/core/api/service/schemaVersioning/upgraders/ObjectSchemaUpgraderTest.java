@@ -13,10 +13,7 @@ import tech.ebp.oqm.core.api.testResources.upgrader.TestVersion2Bumper;
 import tech.ebp.oqm.core.api.testResources.upgrader.TestVersion3Bumper;
 import tech.ebp.oqm.core.api.testResources.upgrader.TestVersion4Bumper;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 public class ObjectSchemaUpgraderTest extends BasicTest {
@@ -71,6 +68,24 @@ public class ObjectSchemaUpgraderTest extends BasicTest {
 		assertEquals(2, result.getOldVersion());
 		assertNotNull(result.getTimeTaken());
 		assertEquals(2, result.getNumVersionsBumped());
+	}
+	
+	@Test
+	public void testUpgradeJsonFrom4(){
+		TestObjectSchemaUpgrader upgrader = new TestObjectSchemaUpgrader();
+		
+		ObjectNode oldObj = OBJECT_MAPPER.createObjectNode();
+		oldObj.put(ObjectSchemaVersionBumper.SCHEMA_VERSION_FIELD, 4);
+		oldObj.put("name", "test");
+		
+		ObjectUpgradeResult<TestVersionableObject> result = upgrader.upgrade(oldObj);
+		
+		log.info("Upgrade result: {}", result);
+		
+		assertFalse(result.wasUpgraded());
+		assertEquals(4, result.getOldVersion());
+		assertNotNull(result.getTimeTaken());
+		assertEquals(0, result.getNumVersionsBumped());
 	}
 	
 	@Test

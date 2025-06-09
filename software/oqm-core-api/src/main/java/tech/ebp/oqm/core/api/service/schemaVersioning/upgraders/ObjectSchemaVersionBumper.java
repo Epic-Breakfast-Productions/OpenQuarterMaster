@@ -1,10 +1,16 @@
 package tech.ebp.oqm.core.api.service.schemaVersioning.upgraders;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Getter;
+import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
 import tech.ebp.oqm.core.api.model.object.Versionable;
 import tech.ebp.oqm.core.api.model.object.upgrade.SingleUpgradeResult;
+
+import javax.measure.Quantity;
+
+import static tech.ebp.oqm.core.api.model.object.ObjectUtils.OBJECT_MAPPER;
 
 /**
  * Abstract class to take an object from the next lower version to the version noted by {@link #bumperTo}
@@ -32,6 +38,26 @@ public abstract class ObjectSchemaVersionBumper<T extends Versionable> implement
 	 */
 	public int getBumperFrom() {
 		return this.getBumperTo() - 1;
+	}
+	
+	protected JsonNode stringToConvertedTree(
+		ObjectNode json,
+		String field,
+		Class<?> convertedType
+	) {
+		if(json.has(field) && json.get(field).isTextual()) {
+			try {
+				json.set(
+					field,
+					OBJECT_MAPPER.valueToTree(
+						OBJECT_MAPPER.readValue(json.get(field).asText(), convertedType)
+					)
+				);
+			} catch(JsonProcessingException e) {
+				throw new UpgradeFailedException(e);
+			}
+		}
+		return json;
 	}
 	
 	/**

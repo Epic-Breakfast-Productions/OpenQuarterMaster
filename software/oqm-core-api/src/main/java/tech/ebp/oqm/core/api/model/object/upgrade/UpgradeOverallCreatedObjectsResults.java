@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.model.object.upgrade;
 
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import tech.ebp.oqm.core.api.model.object.MainObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -25,7 +26,7 @@ public class UpgradeOverallCreatedObjectsResults extends HashMap<Class<?>, Long>
 		super(initialCapacity, loadFactor);
 	}
 	
-	public void addAll(Map<Class<?>, List<ObjectNode>> upgradeCreatedObjects) {
+	public void addAll(Map<Class<? extends MainObject>, List<ObjectNode>> upgradeCreatedObjects) {
 		upgradeCreatedObjects.forEach((key, value)->{
 			this.put(
 				key,

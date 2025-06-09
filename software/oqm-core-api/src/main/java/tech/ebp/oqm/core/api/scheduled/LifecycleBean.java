@@ -101,13 +101,15 @@ public class LifecycleBean {
 		//ensures we can write to temp dir
 		this.tempFileService.getTempDir("test", "dir");
 		// Upgrade the db schema
+		//TODO:: mutex lock on this, wait until done upgrading
+		//TODO:: create flag service to check if things initted right. Setup filter to check this flag to reject requests until setup done.
 		Optional<TotalUpgradeResult> schemaUpgradeResult = this.objectSchemaUpgradeService.updateSchema();
 		if(schemaUpgradeResult.isEmpty()){
 			log.warn("Did not upgrade schema at start.");
 		} else {
 			log.info("Schema upgrade result: {}", schemaUpgradeResult.get());
+			//TODO:: rescan inv update stats
 		}
-
 	}
 	
 	void onStop(

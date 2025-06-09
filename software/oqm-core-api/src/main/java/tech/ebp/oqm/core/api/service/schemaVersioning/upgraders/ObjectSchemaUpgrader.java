@@ -105,6 +105,7 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 			//Process created objects during the bump
 			upgradeCreatedObjects.addAll(upgradeResult.getCreatedObjects());
 		}
+		log.debug("Upgraded object: {}", upgradedJson);
 		// Get end result object from resulting bumped json
 		T upgradedObj = null;
 		try {
@@ -120,15 +121,21 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 		return resultBuilder.build();
 	}
 
-	public ObjectUpgradeResult<T> upgrade(Document oldObj) throws JsonProcessingException {
-		return this.upgrade(
-			(ObjectNode) ObjectUtils.OBJECT_MAPPER.readTree(
-				oldObj.toJson(
-					JsonWriterSettings.builder()
-						.build()
-				)
+	public ObjectUpgradeResult<T> upgrade(Document oldObjDoc) throws JsonProcessingException {
+		ObjectNode oldObj = (ObjectNode) ObjectUtils.OBJECT_MAPPER.readTree(
+			oldObjDoc.toJson(
+				JsonWriterSettings.builder()
+					.build()
 			)
 		);
+		
+		if(oldObj.has("_id")) {
+			oldObj.put("id", oldObj.get("_id").get("$oid").asText());
+			oldObj.remove("_id");
+		}
+		oldObj.remove("storedType_mongo");
+		
+		return this.upgrade(oldObj);
 	}
 
 	public boolean upgradesAvailable(){

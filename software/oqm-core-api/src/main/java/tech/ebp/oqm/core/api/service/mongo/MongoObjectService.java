@@ -464,7 +464,9 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 				
 				for (T cur : objects) {
 					try {
-						output.add(add(oqmDbIdOrName, w.getClientSession(), cur));
+						output.add(
+							add(oqmDbIdOrName, w.getClientSession(), cur)
+						);
 					} catch(Throwable e) {
 						w.getClientSession().abortTransaction();
 						throw e;

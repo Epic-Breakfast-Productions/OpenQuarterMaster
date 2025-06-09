@@ -86,7 +86,10 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	@NotNull
 	@lombok.Builder.Default
 	private ZonedDateTime timestamp = ZonedDateTime.now();
-
+	
+	/**
+	 *
+	 */
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
