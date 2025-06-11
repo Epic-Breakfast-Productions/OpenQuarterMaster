@@ -14,11 +14,11 @@ Please make sure your hostname is all lowercase letters: https://opensource.com/
 
 ### Trying to run on VirtualBox
 
-Unfortunately, the underlying virtualization engine used by VirtualBox does not include the AVX x86 extension required by Mongodb. This makes it impossible to run OQM on a host virtualized within Virtualbox. More information can be found on the [System Requirements](System%20Requirements.md) page.
+Unfortunately, the underlying virtualization engine used by VirtualBox does not include the AVX x86 extension required by Mongodb. This makes it impossible to run OQM on a host virtualized within Virtualbox. More information can be found on the [System Requirements](System Requirements.md) page.
 
 ### Getting going on smaller hardware, slower internet
 
-While the minimum spec'ed hardware listed in our [System Requirements](System%20Requirements.md) page manages to run the OQM system quite well once its up, getting the system up and runnig can prove a heavy task.
+While the minimum spec'ed hardware listed in our [System Requirements](System Requirements.md) page manages to run the OQM system quite well once its up, getting the system up and runnig can prove a heavy task.
 
 In short, the initialization of every component is the heaviest aspect of running the system. It requires a decent internet connection at first run, and a fair bit of cpu. This can lead, on smaller machines, a slow start which in turn can lead to reported errors and failures to get started or installed due to timeouts.
 

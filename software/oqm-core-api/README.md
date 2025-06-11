@@ -1,4 +1,4 @@
-# open-qm-base-station
+# oqm-core-api
 
 ![Docker Image Version](https://img.shields.io/docker/v/ebprod/oqm-core-api?label=Docker%20Image)
 
@@ -9,11 +9,11 @@ Additional docs can be found in the [docs](docs/README.md) folder, along with at
 
 ## TL;DR getting started:
 
-More detail in [this guide](docs/Development%20Getting%20Started.md)
+More detail in [this guide](docs/development/DevelopmentGettingStarted.md)
 
 Prerequisites:
 
- 1. Java runtime and dev kit version 11 (official or open is fine)
+ 1. Java runtime and dev kit version 21 (official or open is fine)
  2. Docker (podman might also work, with some tweaks)
 
 ### Common Commands

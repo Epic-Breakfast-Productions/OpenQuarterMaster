@@ -31,7 +31,7 @@ Or, if you don't have GraalVM installed, you can run the native executable build
 ./gradlew build -Dquarkus.package.type=native -Dquarkus.native.container-build=true
 ```
 
-You can then execute your native executable with: `./build/open-qm-base-station-0.0.1-runner`
+You can then execute your native executable with: `./build/oqm-core-api-0.0.1-runner`
 
 If you want to learn more about building native executables, please consult https://quarkus.io/guides/gradle-tooling.
 

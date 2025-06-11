@@ -8,7 +8,7 @@ This software installs and manages an instance of Open QuarterMaster. It is desi
 
 Note: this is not a tool meant for a distributed cloud environment such as Kubernetes. This sets up the Open QuarterMaster system on a single computer/node.
 
-[System Requirements](System%20Requirements.md)
+[System Requirements](System Requirements.md)
 
 Having issues? Check out the [Gotchas, FAQ, & Troubleshooting](tgf.md) page. The "gotchas" section would be a great readthrough to ensure you get up an running quickly!
 

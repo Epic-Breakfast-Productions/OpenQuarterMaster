@@ -6,7 +6,7 @@
 
 ## Plugin Repositories
 
-A Repository is a method for plugin distribution. It is described by a "`repo.json`" that tells the station captain what plugins exist for what versions of the [base station](../open-qm-base-station).
+A Repository is a method for plugin distribution. It is described by a "`repo.json`" that tells the station captain what plugins exist for what versions of the [base station](../oqm-core-base-station).
 
 ### File Schema:
 
