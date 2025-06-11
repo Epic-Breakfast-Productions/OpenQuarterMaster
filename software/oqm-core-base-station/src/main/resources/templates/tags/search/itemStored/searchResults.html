@@ -13,7 +13,7 @@
 
   if `actionType` is "select", callback will be "selectItem('<item name>', '<item id>', '<inputIdPrepend>')" on the select button
 !}
-  {#let showAmount=(searchResults.get("inventoryItem").get("storageType").asText().equals("BULK") || searchResults.get("inventoryItem").get("storageType").asText().equals("AMOUNT_LIST")) }
+  {#let showAmount=(inventoryItem.get("storageType").asText().equals("BULK") || inventoryItem.get("storageType").asText().equals("AMOUNT_LIST")) }
   <thead>
   <tr>
     <td colspan="100" class="text-center searchResultsContainer">
