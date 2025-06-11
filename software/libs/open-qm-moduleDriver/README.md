@@ -1,9 +1,5 @@
-# Open QuarterMaster Core Library
-
-
-THIS PARTICULAR PROJECT IS DEAD
-
-It is slated for removal. It is only here as a reference until we finish a couple of other small tasks. Please ignore this project
+# Open QuarterMaster Module Driver Library (Archived)
+This library is archived and no longer maintained. It is kept for reference only and may be removed in the future.
 
 
 ## TODOS:

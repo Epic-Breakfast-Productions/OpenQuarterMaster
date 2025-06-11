@@ -24,6 +24,7 @@ We are very much in development still, so check back often! We are also acceptin
 
  - For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single%20Host)
  - To see all the ways you can deploy OQM for yourself, see [Deployment](deployment/)
+  - Archived components: [open-qm-core](software/libs/open-qm-core) and [open-qm-moduleDriver](software/libs/open-qm-moduleDriver). See [ARCHIVED_COMPONENTS.md](ARCHIVED_COMPONENTS.md) for details.
 
 ## How it works
 
