@@ -470,7 +470,8 @@ const ItemStoredTransaction = {
 		form: $("#itemStoredTransactionTransferForm"),
 
 		itemInputContainer: $("#itemStoredTransactionTransferFormItemInputContainer"),
-		itemInputClearButton: $("#itemStoredTransactionTransferFormItemInputContainer.clearButton"),
+		itemSearchIdInput: $("#itemStoredTransactionTransferFormItem-itemInputId"),
+		itemInputClearButton: $("#itemStoredTransactionTransferFormItem-itemInputClearButton"),
 
 		itemInfoContainer: $("#itemStoredTransactionTransferItemInfoContainer"),
 		itemInfoItemName: $("#itemStoredTransactionTransferItemInfoItemName"),
@@ -498,9 +499,9 @@ const ItemStoredTransaction = {
 		toStoredItemIdInput: $("#itemStoredTransactionTransferFormToItemStored-itemStoredInputItemId"),
 		toStoredIdInput: $("#itemStoredTransactionTransferFormToItemStored-itemStoredInputId"),
 
-		resetForm: function () {
+		resetForm: function (triggerItemIdChange = true) {
 			ItemStoredTransaction.Transfer.itemInputContainer.hide();
-			ItemSearchSelect.clearSearchInput(ItemStoredTransaction.Transfer.itemInputClearButton);
+			ItemSearchSelect.clearSearchInput(ItemStoredTransaction.Transfer.itemInputClearButton, triggerItemIdChange);
 
 			ItemStoredTransaction.Transfer.itemInfoContainer.hide();
 			ItemStoredTransaction.Transfer.itemInfoItemName.text("");
@@ -526,17 +527,21 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Transfer.toStoredContainer.hide();
 			ItemStoredSearchSelect.resetSearchInput(ItemStoredTransaction.Transfer.toStoredSelect);
 		},
-		setupForm: async function (item, stored, buttonElement) {
+		setupForm: async function (item, stored, buttonElement = null) {
 			Main.processStart();
-			ModalHelpers.setReturnModal(this.modal, buttonElement);
-			ItemStoredTransaction.Transfer.resetForm();
-			if (item == null) {
+			if(buttonElement == null) {
+				ModalHelpers.setReturnModal(this.modal, buttonElement);
+			}
+			ItemStoredTransaction.Transfer.resetForm(false);
+			if (item == null && stored == null) {
+				console.log("No item given.")
 				ItemStoredTransaction.Transfer.itemInputContainer.show();
 				Main.processStop();
 				return;
 			}
 
 			if (typeof item === "string" || (item instanceof String)) {
+				console.log("Got item id")
 				return Getters.InventoryItem.get(item, function (itemData) {
 					ItemStoredTransaction.Transfer.setupForm(itemData, stored, buttonElement);
 					Main.processStop();
@@ -544,6 +549,7 @@ const ItemStoredTransaction = {
 			}
 
 			if (typeof stored === "string" || (stored instanceof String)) {
+				console.log("Got stored id")
 				return Getters.StoredItem.getStored(item.id, stored, function (storedData) {
 					ItemStoredTransaction.Transfer.setupForm(item, storedData, buttonElement);
 					Main.processStop();
@@ -643,7 +649,7 @@ const ItemStoredTransaction = {
 
 			if (fromBlock && toBlock) {
 				console.debug("Updating toBlock to ensure valid.");
-				ItemStoredTransaction.Transfer.updateToBlock(ItemStoredTransaction.Transfer.fromBlockSelect.val());
+				ItemStoredTransaction.Transfer.updateToBlock(ItemStoredTransaction.Transfer.fromBlockSelect.val(), true);
 			} else {
 				console.debug("Not updating toBlock to ensure valid");
 			}
@@ -674,9 +680,9 @@ const ItemStoredTransaction = {
 			//TODO:: max amount of amount based on from if amount visible
 			//TODO:: enable/disable "to" options based on "from" selections
 		},
-		updateToBlock(selectedBlockId = null) {
+		updateToBlock(selectedBlockId = null, force = false) {
 			//TODO:: update for from stored
-			if (ItemStoredTransaction.Transfer.toBlockSelect.is(":visible")) {
+			if (force || ItemStoredTransaction.Transfer.toBlockSelect.is(":visible")) {
 				console.debug("Updating availability of to block options. Block to make unavailable: ", selectedBlockId);
 				ItemStoredTransaction.Transfer.toBlockSelect.find("option").each(function (i, option) {
 					$(option).prop("disabled", false);
@@ -701,7 +707,7 @@ const ItemStoredTransaction = {
 				}
 				if (typeof item === 'string' || item instanceof String) {
 					Getters.InventoryItem.get(item, function (itemData) {
-						ItemStoredTransaction.Transfer.updateAmount(itemData, stored, storageBlockId);
+						ItemStoredTransaction.Transfer.updateAmount(itemData, stored, storageBlockId, force);
 					});
 					return;
 				}
@@ -739,15 +745,15 @@ const ItemStoredTransaction = {
 					}
 
 					if (stored != null) {
-						ItemStoredTransaction.Transfer.updateAmount(item, stored, storageBlockId);
+						ItemStoredTransaction.Transfer.updateAmount(item, stored, storageBlockId, force);
 						return;
 					}
 					if (storageBlockId != null) {
 						Getters.StoredItem.getSingleStoredForItemInBlock(item.id, storageBlockId, function (storedData) {
-								ItemStoredTransaction.Transfer.updateAmount(item, storedData, storageBlockId);
+								ItemStoredTransaction.Transfer.updateAmount(item, storedData, storageBlockId, force);
 							},
 							function () {
-								ItemStoredTransaction.Transfer.updateAmount(item, -1, storageBlockId)
+								ItemStoredTransaction.Transfer.updateAmount(item, -1, storageBlockId, force)
 							}
 						);
 						return;
@@ -817,6 +823,7 @@ ItemStoredTransaction.Add.itemIdInput.on("change", function () {
 	ItemStoredTransaction.Add.setupForm(itemId);
 });
 
+/** Update form after selecting a new stored object from stored select */
 ItemStoredTransaction.Transfer.fromStoredStoredIdInput.on("change", function () {
 	let itemId = ItemStoredTransaction.Transfer.fromStoredItemIdInput.val();
 	let itemStoredId = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
@@ -839,4 +846,13 @@ ItemStoredTransaction.Transfer.fromStoredStoredIdInput.on("change", function () 
 		});
 	}
 });
+ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function (){
+	console.log("Selected new item.");
+	let item = ItemStoredTransaction.Transfer.itemSearchIdInput.val();
+
+	if(item != null) {
+		ItemStoredTransaction.Transfer.setupForm(item);
+	}
+});
+
 ItemStoredTransaction.Transfer.form.on("submit", ItemStoredTransaction.Transfer.submitFormHandler);
