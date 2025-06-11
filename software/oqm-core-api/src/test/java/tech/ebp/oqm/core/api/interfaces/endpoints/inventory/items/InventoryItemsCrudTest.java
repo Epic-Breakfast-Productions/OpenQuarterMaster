@@ -168,18 +168,31 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		//TODO:: check history
 	}
 	
-	@Test
-	public void testUpdateTrackedItem() throws JsonProcessingException {
-		User user = this.getTestUserService().getTestUser();
-		TrackedItem item = (TrackedItem) new TrackedItem()
-											 .setTrackedItemIdentifierName("id")
-											 .setName(FAKER.commerce().productName());
-		item.add(ObjectId.get(), new TrackedStored("1"));
-		ObjectId returned = create(user, item);
-		
-		ObjectNode updateData = ObjectUtils.OBJECT_MAPPER.createObjectNode();
-		updateData.put("name", FAKER.commerce().productName());
-	}
+        @Test
+        public void testUpdateTrackedItem() throws JsonProcessingException {
+                User user = this.getTestUserService().getTestUser();
+                TrackedItem item = (TrackedItem) new TrackedItem()
+
+.setTrackedItemIdentifierName("id")
+
+.setName(FAKER.commerce().productName());
+                item.add(ObjectId.get(), new TrackedStored("1"));
+                ObjectId returned = create(user, item);
+
+                ObjectNode updateData = ObjectUtils.OBJECT_MAPPER.createObjectNode();
+                String newName = FAKER.commerce().productName();
+                updateData.put("name", newName);
+
+                InventoryItem updated = update(user, updateData, returned);
+
+                assertNotNull(updated);
+                assertEquals(newName, updated.getName());
+                assertEquals(returned, updated.getId());
+
+                InventoryItem persisted = inventoryItemService.get(DEFAULT_TEST_DB_NAME, returned);
+                assertNotNull(persisted);
+                assertEquals(newName, persisted.getName());
+        }
 
 
 	//TODO:: 708 move to new service
