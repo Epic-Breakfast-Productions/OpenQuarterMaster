@@ -39,9 +39,10 @@ Sources:
 
 
 ## Ubuntu
-
-TODO
+Install the `chromium-browser` package and create a kiosk start script
+similar to the Raspberry Pi instructions.  Enable the script to launch
+after login via your desktop's autostart mechanism.
 
 ## Fedora
-
-TODO
+Install `chromium` and the `matchbox-window-manager` package.  Configure
+a minimal X session that starts the browser in kiosk mode on boot.

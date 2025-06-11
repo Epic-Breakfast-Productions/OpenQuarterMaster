@@ -10,6 +10,16 @@ This service primarily publishes messages on the history queues. This occurs any
 
 The data sent is the history event object that was recorded for the action. The topic the message is published to is specific to the object type.
 
-TODO:: review and include example topics
+Topics follow the pattern `oqm-core-<database-id>-<object>-<event>`.
+For example `oqm-core-12345-InventoryItem-ADD`. Each event is also published on `oqm-core-all-events`.
 
 ## Configuration
+
+Messaging is disabled by default. Enable it by providing the Kafka server address and turning on the outgoing channel:
+
+```properties
+mp.messaging.outgoing.events-outgoing.enabled=true
+mp.messaging.outgoing.events-outgoing.bootstrap.servers=OUTSIDE://localhost:9092
+```
+
+`events-outgoing` matches the channel used by the service. Adjust the server address for your deployment.
