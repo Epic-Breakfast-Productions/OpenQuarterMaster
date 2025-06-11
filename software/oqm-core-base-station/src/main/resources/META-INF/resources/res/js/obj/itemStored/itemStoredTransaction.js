@@ -485,7 +485,8 @@ const ItemStoredTransaction = {
 		fromBlockSelect: $("#itemStoredTransactionTransferFormFromBlockSelect"),
 		fromStoredContainer: $("#itemStoredTransactionTransferFormFromStoredContainer"),
 		fromStoredSelect: $("#itemStoredTransactionTransferFormFromItemStored-inputGroup"),
-		fromStoredItemIdInput: $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputItemId"),
+		fromStoredItemIdInput:   $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputItemId"),
+		fromStoredBlockIdInput:   $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputBlockId"),
 		fromStoredStoredIdInput: $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputId"),
 
 		amountInputContainer: $("#itemStoredTransactionTransferFormAmountContainer"),
@@ -562,8 +563,8 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Transfer.itemInfoItemName.text(item.name);
 			ItemStoredTransaction.Transfer.itemInfoContainer.show();
 
-			ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.fromStoredSelect, item, stored);
-			ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.toStoredSelect, item);
+			promises.push(ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.fromStoredSelect, item, stored));
+			promises.push(ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.toStoredSelect, item));
 
 			let typeSelect = false;
 			let fromBlock = false;
@@ -647,9 +648,16 @@ const ItemStoredTransaction = {
 
 			await Promise.all(promises);
 
-			if (fromBlock && toBlock) {
+			if (toBlock) {
 				console.debug("Updating toBlock to ensure valid.");
-				ItemStoredTransaction.Transfer.updateToBlock(ItemStoredTransaction.Transfer.fromBlockSelect.val(), true);
+				let blockId;
+				if(fromStored){
+					blockId = ItemStoredTransaction.Transfer.fromStoredBlockIdInput.val();
+				}
+				if(fromBlock){
+					blockId = ItemStoredTransaction.Transfer.fromBlockSelect.val()
+				}
+				ItemStoredTransaction.Transfer.updateToBlock(blockId, true);
 			} else {
 				console.debug("Not updating toBlock to ensure valid");
 			}
@@ -688,11 +696,13 @@ const ItemStoredTransaction = {
 					$(option).prop("disabled", false);
 				});
 
-				if (selectedBlockId != null) {
+				if (selectedBlockId != null && selectedBlockId) {
 					let toDisable = ItemStoredTransaction.Transfer.toBlockSelect.find("option[value=" + selectedBlockId + "]");
 					toDisable.prop("disabled", true);
 					toDisable.prop("selected", false);
 				}
+			} else {
+				console.debug("ToBlock not visible; not updating.");
 			}
 		},
 		/**
@@ -824,28 +834,31 @@ ItemStoredTransaction.Add.itemIdInput.on("change", function () {
 });
 
 /** Update form after selecting a new stored object from stored select */
-ItemStoredTransaction.Transfer.fromStoredStoredIdInput.on("change", function () {
-	let itemId = ItemStoredTransaction.Transfer.fromStoredItemIdInput.val();
-	let itemStoredId = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
-	console.log("Updating item stored form data ", itemStoredId);
+// ItemStoredTransaction.Transfer.fromStoredStoredIdInput.on("change", function () {
+// 	let itemId = ItemStoredTransaction.Transfer.fromStoredItemIdInput.val();
+// 	let itemStoredId = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
+// 	console.log("Updating item stored form data ", itemStoredId);
+//
+// 	if (itemId != null && itemStoredId != null) {
+// 		Getters.InventoryItem.get(itemId, function (item) {
+// 			if(ItemStoredTransaction.Transfer.amountInputContainer.is(":visible")) {
+// 				if (itemStoredId != null) {
+// 					Getters.StoredItem.getStored(itemId, itemStoredId, function (stored) {
+// 						StoredFormInput.getAmountInputs(item, stored, true, true).then(function (inputs) {
+// 							ItemStoredTransaction.Transfer.amountInputs.html(inputs);
+// 						});
+// 						//TODO:: update stored info?
+// 					});
+// 				} else {
+// 					StoredFormInput.getAmountInputs(item, null, true, true).then(function (inputs) {
+// 						ItemStoredTransaction.Transfer.amountInputs.html(inputs);
+// 					});
+// 				}
+// 			}
+// 		});
+// 	}
+// });
 
-	if (itemId != null && itemStoredId != null) {
-		Getters.InventoryItem.get(itemId, function (item) {
-			if (itemStoredId != null) {
-				Getters.StoredItem.getStored(itemId, itemStoredId, function (stored) {
-					StoredFormInput.getAmountInputs(item, stored, true, true).then(function (inputs) {
-						ItemStoredTransaction.Transfer.amountInputs.html(inputs);
-					});
-					//TODO:: update stored info?
-				});
-			} else {
-				StoredFormInput.getAmountInputs(item, null, true, true).then(function (inputs) {
-					ItemStoredTransaction.Transfer.amountInputs.html(inputs);
-				});
-			}
-		});
-	}
-});
 ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function (){
 	console.log("Selected new item.");
 	let item = ItemStoredTransaction.Transfer.itemSearchIdInput.val();

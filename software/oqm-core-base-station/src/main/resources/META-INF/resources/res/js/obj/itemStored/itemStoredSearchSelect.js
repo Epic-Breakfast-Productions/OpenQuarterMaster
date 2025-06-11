@@ -11,6 +11,9 @@ ItemStoredSearchSelect = {
 	getItemIdInput(storedItemInputGroupJq){
 		return storedItemInputGroupJq.find("input[name=item]");
 	},
+	getBlockIdInput(storedItemInputGroupJq){
+		return storedItemInputGroupJq.find("input[name=block]");
+	},
 	getIdInput(storedItemInputGroupJq){
 		return storedItemInputGroupJq.find("input[name=itemStored]")
 	},
@@ -23,16 +26,18 @@ ItemStoredSearchSelect = {
 	disableInputs(storedItemInputGroupJq){
 		storedItemInputGroupJq.find("button").attr("disabled", true);
 	},
-	selectStoredItem(storedLabel, storedItemId, inputGroupId, trigger = true) {
+	selectStoredItem(storedLabel, storageBlock, storedItemId, inputGroupId, trigger = true) {
 		console.log("Selected stored item: " + storedItemId + " - " + storedLabel);
 		let inputGroup = $("#" + inputGroupId);
 		let storedLabelJq = ItemStoredSearchSelect.getLabelInput(inputGroup);
+		ItemStoredSearchSelect.getBlockIdInput(inputGroup).val(storageBlock);
 
 		if (storedLabel == null) {
 			Getters.StoredItem.getStored(
 				"",
 				storedItemId,
 				function (storedData) {
+
 					storedLabelJq.val(storedData.labelText);
 				}
 			);
@@ -75,7 +80,8 @@ ItemStoredSearchSelect = {
 		ItemStoredSearchSelect.clearSearchInput(itemStoredInputGroupJq.find(".clearButton"), false);
 
 		// clearButtPushed.siblings("input[name=itemName]").val("");
-		itemStoredInputGroupJq.find("input[name=item]").val("");
+		ItemStoredSearchSelect.getItemIdInput(itemStoredInputGroupJq).val("");
+		ItemStoredSearchSelect.getBlockIdInput(itemStoredInputGroupJq).val("");
 		ItemStoredSearchSelect.enableInputs(itemStoredInputGroupJq);
 	},
 	/**
@@ -83,7 +89,7 @@ ItemStoredSearchSelect = {
 	 * @param storedItemInputGroupJq
 	 * @param item
 	 */
-	setupInputs(storedItemInputGroupJq, item, stored = null) {
+	setupInputs: async function(storedItemInputGroupJq, item, stored = null) {
 		ItemStoredSearchSelect.resetSearchInput(storedItemInputGroupJq);
 		if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
 			item = item.id;
@@ -94,10 +100,12 @@ ItemStoredSearchSelect = {
 			let id = "";
 			if (typeof stored === 'object' && !Array.isArray(stored)) {
 				id = stored.id;
+				ItemStoredSearchSelect.getBlockIdInput(storedItemInputGroupJq).val(stored.storageBlock);
 				ItemStoredSearchSelect.getLabelInput(storedItemInputGroupJq).val(stored.labelText);
 			} else {
 				id = stored;
 				Getters.StoredItem.getStored(item, stored, function(storedData) {
+					ItemStoredSearchSelect.getBlockIdInput(storedItemInputGroupJq).val(storedData.storageBlock);
 					ItemStoredSearchSelect.getLabelInput(storedItemInputGroupJq).val(storedData.labelText);
 				});
 			}
