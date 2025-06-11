@@ -10,7 +10,8 @@
 
 #### Resources and further reading:
 
- - TODO
+ - [MongoDB Kubernetes Operator](https://github.com/mongodb/mongodb-kubernetes-operator)
+ - [Helm Chart on Artifact Hub](https://artifacthub.io/packages/helm/community-operator/mongodb)
 
 ## TODOS:
 
