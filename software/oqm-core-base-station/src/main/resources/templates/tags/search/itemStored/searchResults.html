@@ -74,7 +74,7 @@
 		<button type="button" class="btn btn-sm btn-info me-1" title="View" onclick="StoredView.toggleViewResultTableRow(this, '{result.get("item").asText()}', '{id}');">
 			{#icons/view}{/icons/view}
 		</button>
-      <button type="button" class="btn btn-sm btn-warning me-1" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
+      <button type="button" class="btn btn-sm btn-warning me-1" title="Edit" data-bs-toggle="modal" data-bs-target="#itemStoredEditModal" onclick="ItemStoredEdit.setupEditForm(this, '{result.get("item").asText()}', '{id}');">
         {#icons/edit}{/icons/edit}
       </button>
       {#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false storedId=id itemId=itemId /}
