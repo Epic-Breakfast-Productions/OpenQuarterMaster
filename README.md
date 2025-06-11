@@ -22,8 +22,9 @@ We are very much in development still, so check back often! We are also acceptin
 
 ## Quick Links
 
- - For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single%20Host)
- - To see all the ways you can deploy OQM for yourself, see [Deployment](deployment/)
+- For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single%20Host)
+- To see all the ways you can deploy OQM for yourself, see [Deployment](deployment/)
+- For building the software from source, see [Build and Setup](software/docs/Build_and_Setup.md)
 
 ## How it works
 
