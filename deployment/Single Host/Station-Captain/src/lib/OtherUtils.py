@@ -17,4 +17,6 @@ class OtherUtils:
         """
         if units is None:
             units = [' bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB']
+        if not units:
+            return f"{numBytes}B"
         return str(numBytes) + units[0] if numBytes < 1024 else OtherUtils.human_size(numBytes >> 10, units[1:])
