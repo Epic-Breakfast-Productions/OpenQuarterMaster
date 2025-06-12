@@ -682,31 +682,40 @@ const ItemStoredTransaction = {
 				console.debug("Not updating toBlock to ensure valid");
 			}
 			if (amount) {
-				ItemStoredTransaction.Transfer.updateAmount(null, null, null, true);
+				await ItemStoredTransaction.Transfer.updateAmount(null, null, null, true);
+			}
+			if(typeSelect){
+				ItemStoredTransaction.Transfer.typeChanged();
 			}
 
 			//TODO:: make & run update to block to not select same block as is selected in from
-
-			ItemStoredTransaction.Transfer.updateForm();
 			Main.processStop();
 		},
 		/**
 		 * Updates visibility of fields, selected/disabled in dropdowns based on what is selected
 		 */
-		updateForm() {
+		typeChanged() {
 			console.log("Updating form.")
 			if (ItemStoredTransaction.Transfer.transactionTypeContainer.is(":visible")) {
-				console.debug("Type input was visible!");
+				let type = ItemStoredTransaction.Transfer.transactionTypeInput.val();
 
-				//TODO:: if amount
-
-				//TODO:: if whole
+				switch (type){
+					case "TRANSFER_WHOLE":
+						ItemStoredTransaction.Transfer.amountInputContainer.hide();
+						ItemStoredTransaction.Transfer.toBlockContainer.show();
+						ItemStoredTransaction.Transfer.toStoredContainer.hide();
+						ItemStoredTransaction.Transfer.updateToBlock();
+						break;
+					case "TRANSFER_AMOUNT":
+						ItemStoredTransaction.Transfer.amountInputContainer.show();
+						ItemStoredTransaction.Transfer.toBlockContainer.hide();
+						ItemStoredTransaction.Transfer.toStoredContainer.show();
+						ItemStoredTransaction.Transfer.updateAmount();
+						break;
+					default:
+						throw new Error("Invalid value for transfer type: " + type);
+				}
 			}
-
-			//TODO visibility based on type if type is visible
-			//TODO:: enabledness of amount if checked and visible
-			//TODO:: max amount of amount based on from if amount visible
-			//TODO:: enable/disable "to" options based on "from" selections
 		},
 		updateToBlock(selectedBlockId = null, force = false) {
 			//TODO:: update for from stored
@@ -748,7 +757,7 @@ const ItemStoredTransaction = {
 						stored = null;
 					} else {
 						if (typeof stored === 'string' || stored instanceof String) {
-							await Getters.StoredItem.getStored(stored, function (storedData) {
+							await Getters.StoredItem.getStored(item.id, stored, function (storedData) {
 								stored = storedData;
 							});
 						}
@@ -759,17 +768,23 @@ const ItemStoredTransaction = {
 						ItemStoredTransaction.Transfer.updateAllAmount();
 					});
 				} else {//find stored
-					console.log("Stored not specified. Gleaning from form.")
+					console.log("Stored not specified. Gleaning from form.");
 					if (storageBlockId == null && ItemStoredTransaction.Transfer.fromBlockSelect.is(":visible")) {
 						storageBlockId = ItemStoredTransaction.Transfer.fromBlockSelect.val();
-						console.debug("Got storage block id from form: ", storageBlockId);
+						console.debug("Got storage block id from block select: ", storageBlockId);
+					}
+					if (storageBlockId == null && ItemStoredTransaction.Transfer.fromStoredBlockIdInput.is(":visible")) {
+						storageBlockId = ItemStoredTransaction.Transfer.fromStoredBlockIdInput.val();
+						console.debug("Got storage block id from stored select: ", storageBlockId);
 					}
 					if (stored == null && ItemStoredTransaction.Transfer.fromStoredStoredIdInput.is(":visible")) {
-						console.debug("Getting stored id from form.");
 						stored = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
+						console.debug("Got stored id from form: ", stored);
 					}
 
-					if (stored != null && storageBlockId) {
+					console.log("Stored/ Block: ", stored, storageBlockId);
+
+					if (!stored && !storageBlockId) {
 						console.log("No stored or storage block id could be identified.");
 						return;
 					}
@@ -854,32 +869,6 @@ ItemStoredTransaction.Add.itemIdInput.on("change", function () {
 	console.log("Got item for add transaction form. Setting up: ", itemId);
 	ItemStoredTransaction.Add.setupForm(itemId);
 });
-
-/** Update form after selecting a new stored object from stored select */
-// ItemStoredTransaction.Transfer.fromStoredStoredIdInput.on("change", function () {
-// 	let itemId = ItemStoredTransaction.Transfer.fromStoredItemIdInput.val();
-// 	let itemStoredId = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
-// 	console.log("Updating item stored form data ", itemStoredId);
-//
-// 	if (itemId != null && itemStoredId != null) {
-// 		Getters.InventoryItem.get(itemId, function (item) {
-// 			if(ItemStoredTransaction.Transfer.amountInputContainer.is(":visible")) {
-// 				if (itemStoredId != null) {
-// 					Getters.StoredItem.getStored(itemId, itemStoredId, function (stored) {
-// 						StoredFormInput.getAmountInputs(item, stored, true, true).then(function (inputs) {
-// 							ItemStoredTransaction.Transfer.amountInputs.html(inputs);
-// 						});
-// 						//TODO:: update stored info?
-// 					});
-// 				} else {
-// 					StoredFormInput.getAmountInputs(item, null, true, true).then(function (inputs) {
-// 						ItemStoredTransaction.Transfer.amountInputs.html(inputs);
-// 					});
-// 				}
-// 			}
-// 		});
-// 	}
-// });
 
 ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function () {
 	console.log("Selected new item.");
