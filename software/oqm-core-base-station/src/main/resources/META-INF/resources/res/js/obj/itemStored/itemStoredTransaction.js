@@ -485,8 +485,8 @@ const ItemStoredTransaction = {
 		fromBlockSelect: $("#itemStoredTransactionTransferFormFromBlockSelect"),
 		fromStoredContainer: $("#itemStoredTransactionTransferFormFromStoredContainer"),
 		fromStoredSelect: $("#itemStoredTransactionTransferFormFromItemStored-inputGroup"),
-		fromStoredItemIdInput:   $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputItemId"),
-		fromStoredBlockIdInput:   $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputBlockId"),
+		fromStoredItemIdInput: $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputItemId"),
+		fromStoredBlockIdInput: $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputBlockId"),
 		fromStoredStoredIdInput: $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputId"),
 
 		amountInputContainer: $("#itemStoredTransactionTransferFormAmountContainer"),
@@ -530,7 +530,7 @@ const ItemStoredTransaction = {
 		},
 		setupForm: async function (item, stored, buttonElement = null) {
 			Main.processStart();
-			if(buttonElement == null) {
+			if (buttonElement == null) {
 				ModalHelpers.setReturnModal(this.modal, buttonElement);
 			}
 			ItemStoredTransaction.Transfer.resetForm(false);
@@ -648,13 +648,33 @@ const ItemStoredTransaction = {
 
 			await Promise.all(promises);
 
+			if(fromBlock){
+				if(item.storageType === "UNIQUE_SINGLE"){
+					console.log("Preventing selection of current block used.");
+
+					await Getters.StoredItem.getSingleStoredForItem(
+						item.id,
+						function (storedInItem){
+							ItemStoredTransaction.Transfer.fromBlockSelect.find("option").each(function(i, option){
+								let optionJq = $(option);
+								if(optionJq.val() !== storedInItem.storageBlock){
+									optionJq.prop("disabled", true);
+									optionJq.prop("selected", false);
+								}
+							});
+						}
+					);
+
+				}
+			}
+
 			if (toBlock) {
 				console.debug("Updating toBlock to ensure valid.");
 				let blockId;
-				if(fromStored){
+				if (fromStored) {
 					blockId = ItemStoredTransaction.Transfer.fromStoredBlockIdInput.val();
 				}
-				if(fromBlock){
+				if (fromBlock) {
 					blockId = ItemStoredTransaction.Transfer.fromBlockSelect.val()
 				}
 				ItemStoredTransaction.Transfer.updateToBlock(blockId, true);
@@ -805,7 +825,9 @@ const ItemStoredTransaction = {
 			}
 
 			if (ItemStoredTransaction.Transfer.fromStoredContainer.is(":visible")) {
-				transaction['fromStored'] = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
+				transaction[
+					transaction['transactionType'] === "TRANSFER_WHOLE" ? 'storedToTransfer' : 'fromStored'
+					] = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
 			}
 
 			if (ItemStoredTransaction.Transfer.toBlockContainer.is(":visible")) {
@@ -859,11 +881,11 @@ ItemStoredTransaction.Add.itemIdInput.on("change", function () {
 // 	}
 // });
 
-ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function (){
+ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function () {
 	console.log("Selected new item.");
 	let item = ItemStoredTransaction.Transfer.itemSearchIdInput.val();
 
-	if(item != null) {
+	if (item != null) {
 		ItemStoredTransaction.Transfer.setupForm(item);
 	}
 });
