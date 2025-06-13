@@ -44,7 +44,6 @@
 					<span id="itemStoredTransactionTransferFormTypeInputHelpDisabledNote"></span>
 				</div>
 			</div>
-		
 			<div class="col" id="itemStoredTransactionTransferFormFromBlockContainer">
 				<label for="itemStoredTransactionTransferFormFromBlockSelect" class="form-label">From {#icons/storageBlock /} Storage Block</label>
 				<select class="form-select form-select-lg" id="itemStoredTransactionTransferFormFromBlockSelect" onchange="ItemStoredTransaction.Transfer.updateToBlock($(this).val());ItemStoredTransaction.Transfer.updateAmount(null, null, $(this).val(), true);"></select>

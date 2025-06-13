@@ -685,7 +685,7 @@ const ItemStoredTransaction = {
 				await ItemStoredTransaction.Transfer.updateAmount(null, null, null, true);
 			}
 			if(typeSelect){
-				ItemStoredTransaction.Transfer.typeChanged();
+				ItemStoredTransaction.Transfer.typeChanged(true);
 			}
 
 			//TODO:: make & run update to block to not select same block as is selected in from
@@ -694,10 +694,10 @@ const ItemStoredTransaction = {
 		/**
 		 * Updates visibility of fields, selected/disabled in dropdowns based on what is selected
 		 */
-		typeChanged() {
-			console.log("Updating form.")
-			if (ItemStoredTransaction.Transfer.transactionTypeContainer.is(":visible")) {
+		typeChanged(force = false) {
+			if (force || ItemStoredTransaction.Transfer.transactionTypeContainer.is(":visible")) {
 				let type = ItemStoredTransaction.Transfer.transactionTypeInput.val();
+				console.log("Transaction type changed: ", type);
 
 				switch (type){
 					case "TRANSFER_WHOLE":
@@ -850,7 +850,7 @@ const ItemStoredTransaction = {
 			}
 
 			if (ItemStoredTransaction.Transfer.toStoredContainer.is(":visible")) {
-				transaction['toBlock'] = ItemStoredTransaction.Transfer.toStoredIdInput.val();
+				transaction['toStored'] = ItemStoredTransaction.Transfer.toStoredIdInput.val();
 			}
 
 			console.log("Built transaction object: ", transaction);
