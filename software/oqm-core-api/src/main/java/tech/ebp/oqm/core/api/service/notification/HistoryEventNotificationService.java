@@ -44,7 +44,7 @@ public class HistoryEventNotificationService {
 	@Channel(INTERNAL_EVENT_CHANNEL)
 	@OnOverflow(value = OnOverflow.Strategy.DROP)
 	Emitter<EventNotificationWrapper> internalEventEmitter;
-	
+
 	@Inject
 	OutgoingNotificationService outgoingEventService;
 

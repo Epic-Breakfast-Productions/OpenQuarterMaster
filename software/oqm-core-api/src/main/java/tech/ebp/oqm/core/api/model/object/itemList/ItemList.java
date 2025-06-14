@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AllArgsConstructor
+@SuperBuilder(toBuilder = true)
 public class ItemList extends AttKeywordMainObject {
 	public static final int CUR_SCHEMA_VERSION = 1;
 	
@@ -40,6 +42,7 @@ public class ItemList extends AttKeywordMainObject {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String description = "";
 	
 	/**
@@ -49,11 +52,13 @@ public class ItemList extends AttKeywordMainObject {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private Map<ObjectId, List<@NonNull ItemListAction>> itemActions = new HashMap<>();
 	
 	/**
 	 * If this list was applied or not.
 	 */
+	@lombok.Builder.Default
 	private boolean applied = false;
 	
 	/**

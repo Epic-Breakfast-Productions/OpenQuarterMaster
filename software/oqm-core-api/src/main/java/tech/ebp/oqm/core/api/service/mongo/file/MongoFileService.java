@@ -27,6 +27,7 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.FileMainObject;
 import tech.ebp.oqm.core.api.model.object.media.FileHashes;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
+import tech.ebp.oqm.core.api.model.rest.management.CollectionClearResult;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.MongoObjectService;
@@ -380,7 +381,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	}
 	
 	@Override
-	public long clear(String dbIdOrName, ClientSession session) {
+	public CollectionClearResult clear(String dbIdOrName, ClientSession session) {
 		this.getGridFSBucket(dbIdOrName).find().forEach((GridFSFile file)->{
 			this.getGridFSBucket(dbIdOrName).delete(session, file.getId());
 		});
