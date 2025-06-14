@@ -704,7 +704,7 @@ const ItemStoredTransaction = {
 						ItemStoredTransaction.Transfer.amountInputContainer.hide();
 						ItemStoredTransaction.Transfer.toBlockContainer.show();
 						ItemStoredTransaction.Transfer.toStoredContainer.hide();
-						ItemStoredTransaction.Transfer.updateToBlock();
+						ItemStoredTransaction.Transfer.updateToBlock(ItemStoredTransaction.Transfer.fromStoredBlockIdInput.val());
 						break;
 					case "TRANSFER_AMOUNT":
 						ItemStoredTransaction.Transfer.amountInputContainer.show();
