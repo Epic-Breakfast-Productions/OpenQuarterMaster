@@ -18,7 +18,7 @@ public class CheckinLossTransaction extends CheckinTransaction<ReturnPartCheckin
 
 
 	@Override
-	public TransactionType getTransactionType() {
+	public TransactionType getType() {
 		return TransactionType.CHECKIN_LOSS;
 	}
 

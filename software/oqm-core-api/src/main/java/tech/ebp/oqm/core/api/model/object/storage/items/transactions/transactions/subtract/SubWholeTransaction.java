@@ -21,7 +21,7 @@ public class SubWholeTransaction extends SubtractTransaction {
 	private ObjectId toSubtract;
 
 	@Override
-	public TransactionType getTransactionType() {
+	public TransactionType getType() {
 		return TransactionType.SUBTRACT_WHOLE;
 	}
 

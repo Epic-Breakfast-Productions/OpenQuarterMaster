@@ -16,6 +16,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinFullTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.set.SetAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferAmountTransaction;
@@ -26,7 +27,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 @NoArgsConstructor
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "transactionType"
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
 )
 @JsonSubTypes(value = {
 	@JsonSubTypes.Type(value = AddAmountTransaction.class, name = "ADD_AMOUNT"),
@@ -36,6 +37,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 	@JsonSubTypes.Type(value = CheckinLossTransaction.class, name = "CHECKIN_LOSS"),
 	@JsonSubTypes.Type(value = CheckoutAmountTransaction.class, name = "CHECKOUT_AMOUNT"),
 	@JsonSubTypes.Type(value = CheckoutWholeTransaction.class, name = "CHECKOUT_WHOLE"),
+	@JsonSubTypes.Type(value = SetAmountTransaction.class, name = "SET_AMOUNT"),
 	@JsonSubTypes.Type(value = SubAmountTransaction.class, name = "SUBTRACT_AMOUNT"),
 	@JsonSubTypes.Type(value = SubWholeTransaction.class, name = "SUBTRACT_WHOLE"),
 	@JsonSubTypes.Type(value = TransferAmountTransaction.class, name = "TRANSFER_AMOUNT"),
@@ -51,6 +53,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 	CheckinLossTransaction.class,
 	CheckoutAmountTransaction.class,
 	CheckoutWholeTransaction.class,
+	SetAmountTransaction.class,
 	SubAmountTransaction.class,
 	SubWholeTransaction.class,
 	TransferAmountTransaction.class,
@@ -58,6 +61,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 })
 public abstract class ItemStoredTransaction implements Versionable {
 
-	public abstract TransactionType getTransactionType();
+	public abstract TransactionType getType();
 
 }

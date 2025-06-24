@@ -35,7 +35,7 @@ public class CheckoutAmountTransaction extends CheckoutTransaction {
 
 
 	@Override
-	public TransactionType getTransactionType() {
+	public TransactionType getType() {
 		return TransactionType.CHECKOUT_AMOUNT;
 	}
 

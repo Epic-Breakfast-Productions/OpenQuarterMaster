@@ -108,7 +108,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 	) throws Exception {
 		try (MongoSessionWrapper csw = new MongoSessionWrapper(cs, this)) {
 			return csw.runTransaction(()->{
-				log.info("Applying {} transaction ", itemStoredTransaction.getTransactionType());
+				log.info("Applying {} transaction ", itemStoredTransaction.getType());
 				log.debug("Transaction: {}", itemStoredTransaction);
 				final ObjectId appliedTransactionId = new ObjectId();
 				HistoryDetail[] historyDetails;
@@ -127,7 +127,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				
 				
 				//noinspection rawtypes
-				TransactionApplier applier = this.getAppliers().get(itemStoredTransaction.getTransactionType());
+				TransactionApplier applier = this.getAppliers().get(itemStoredTransaction.getType());
 				if (applier == null) {
 					throw new IllegalArgumentException("Invalid or unsupported transaction type given.");
 				}

@@ -441,7 +441,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.build();
 
 		ValidationException e = assertThrows(ValidationException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
-		assertEquals("Storage block " + badBlockId + " not used to hold this item.", e.getMessage());
+		assertEquals("Storage block " + badBlockId + " not used to hold this item ("+item.getId().toHexString()+").", e.getMessage());
 	}
 
 	@Test
@@ -2134,7 +2134,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.build();
 
 		ValidationException e = assertThrows(ValidationException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
-		assertEquals("Storage block " + badBlockId + " not used to hold this item.", e.getMessage());
+		assertEquals("Storage block " + badBlockId + " not used to hold this item ("+item.getId()+").", e.getMessage());
 	}
 
 	@Test

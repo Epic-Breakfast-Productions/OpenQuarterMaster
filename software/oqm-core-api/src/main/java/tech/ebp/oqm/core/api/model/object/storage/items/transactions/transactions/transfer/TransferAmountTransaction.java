@@ -50,7 +50,7 @@ public class TransferAmountTransaction extends TransferTransaction {
 	private ObjectId toStored;
 	
 	@Override
-	public TransactionType getTransactionType() {
+	public TransactionType getType() {
 		return TransactionType.TRANSFER_AMOUNT;
 	}
 	

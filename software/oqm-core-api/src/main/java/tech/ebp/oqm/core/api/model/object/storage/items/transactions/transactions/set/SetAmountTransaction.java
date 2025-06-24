@@ -4,7 +4,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 
 import javax.measure.Quantity;
@@ -24,7 +23,7 @@ public class SetAmountTransaction extends SetTransaction {
 	private Quantity<?> amount;
 
 	@Override
-	public TransactionType getTransactionType() {
+	public TransactionType getType() {
 		return TransactionType.SET_AMOUNT;
 	}
 

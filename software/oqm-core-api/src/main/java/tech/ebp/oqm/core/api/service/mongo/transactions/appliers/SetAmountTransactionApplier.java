@@ -70,7 +70,7 @@ public class SetAmountTransactionApplier extends TransactionApplier<SetAmountTra
 					throw new IllegalArgumentException("Must specify a stored to set the amount of.");
 				} else {
 					stored = (AmountStored) this.getStoredService().get(oqmDbIdOrName, cs, transaction.getStored());
-					if (!stored.getStorageBlock().equals(transaction.getBlock())) {
+					if (transaction.getBlock() != null && !stored.getStorageBlock().equals(transaction.getBlock())) {
 						throw new IllegalArgumentException("To Stored given does not exist in block.");
 					}
 				}

@@ -15,7 +15,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @NoArgsConstructor
 public class CheckinPartTransaction extends CheckinTransaction<ReturnPartCheckinDetails> {
 	@Override
-	public TransactionType getTransactionType() {
+	public TransactionType getType() {
 		return TransactionType.CHECKIN_PART;
 	}
 

@@ -29,7 +29,7 @@ public class SubAmountTransaction extends SubtractTransaction {
 	private Quantity<?> amount;
 
 	@Override
-	public TransactionType getTransactionType() {
+	public TransactionType getType() {
 		return TransactionType.SUBTRACT_AMOUNT;
 	}
 

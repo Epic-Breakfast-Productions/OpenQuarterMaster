@@ -33,7 +33,7 @@ public class AddAmountTransaction extends AddTransaction {
 	private Quantity<?> amount;
 
 	@Override
-	public TransactionType getTransactionType() {
+	public TransactionType getType() {
 		return TransactionType.ADD_AMOUNT;
 	}
 

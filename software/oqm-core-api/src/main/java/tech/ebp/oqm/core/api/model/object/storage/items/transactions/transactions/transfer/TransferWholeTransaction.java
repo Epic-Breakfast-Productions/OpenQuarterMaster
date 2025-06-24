@@ -18,7 +18,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @NoArgsConstructor
 public class TransferWholeTransaction extends TransferTransaction {
 	@Override
-	public TransactionType getTransactionType() {
+	public TransactionType getType() {
 		return TransactionType.TRANSFER_WHOLE;
 	}
 

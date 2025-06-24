@@ -92,7 +92,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 		
 		if (!item.getStorageBlocks().contains(newOrChangedObject.getStorageBlock())) {
-			throw new ValidationException("Storage block " + newOrChangedObject.getStorageBlock().toHexString() + " not used to hold this item.");
+			throw new ValidationException("Storage block " + newOrChangedObject.getStorageBlock().toHexString() + " not used to hold this item ("+item.getId()+").");
 		}
 		
 		if (item.getStorageType().storedType != newOrChangedObject.getType()) {
@@ -157,9 +157,16 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	}
 	
 	public <T extends Stored> SearchResult<T> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
-		SearchResult<T> result = (SearchResult<T>) this.search(oqmDbIdOrName, cs, new StoredSearch()
-																					  .setInventoryItemId(itemId == null ? null : itemId.toHexString())
-																					  .setStorageBlockId(storageBlockId == null ? null : storageBlockId.toHexString()));
+		StoredSearch search = new StoredSearch()
+			.setInventoryItemId(itemId == null ? null : itemId.toHexString())
+			.setStorageBlockId(storageBlockId == null ? null : storageBlockId.toHexString());
+		
+		//noinspection unchecked
+		SearchResult<T> result = (SearchResult<T>) this.search(
+			oqmDbIdOrName,
+			cs,
+			search
+		);
 		
 		if (result.isEmpty()) {
 			throw new DbNotFoundException("No stored currently stored in this block (" + storageBlockId + ") under this item (" + itemId + ").", this.clazz);

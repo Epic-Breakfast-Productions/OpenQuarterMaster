@@ -22,7 +22,7 @@ public class CheckinFullTransaction extends CheckinTransaction<ReturnFullCheckin
 	private ObjectId toStored;
 
 	@Override
-	public TransactionType getTransactionType() {
+	public TransactionType getType() {
 		return TransactionType.CHECKIN_FULL;
 	}
 

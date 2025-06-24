@@ -26,7 +26,7 @@ public class AddWholeTransaction extends AddTransaction {
 	private Stored toAdd;
 
 	@Override
-	public TransactionType getTransactionType() {
+	public TransactionType getType() {
 		return TransactionType.ADD_WHOLE;
 	}
 

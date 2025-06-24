@@ -76,7 +76,6 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 			filters.add(eq("storageBlock", new ObjectId(this.getStorageBlockIdFromQuery())));
 		}
 		
-		//TODO::item
 		//TODO:: redo these
 //		if (this.hasValue(this.getItemBarcode())) {
 //			filters.add(

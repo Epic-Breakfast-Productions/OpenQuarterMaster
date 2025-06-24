@@ -23,7 +23,7 @@ public class CheckoutWholeTransaction extends CheckoutTransaction {
 
 
 	@Override
-	public TransactionType getTransactionType() {
+	public TransactionType getType() {
 		return TransactionType.CHECKOUT_WHOLE;
 	}
 
