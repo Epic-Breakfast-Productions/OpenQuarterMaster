@@ -71,7 +71,6 @@ const ItemStoredTransaction = {
 			return output;
 		},
 		getSubtractTransactionButton: function (itemId = null, storedId = null) {
-			//TODO:: update onclick
 			let output = $(
 				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
 				Icons.subtractTransaction + ' Subtract' +
@@ -80,7 +79,6 @@ const ItemStoredTransaction = {
 			return output;
 		},
 		getCheckinTransactionButton: function (itemId = null, storedId = null) {
-			//TODO:: update onclick
 			let output = $(
 				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
 				Icons.checkinTransaction + ' Checkin' +
@@ -89,7 +87,6 @@ const ItemStoredTransaction = {
 			return output;
 		},
 		getCheckoutTransactionButton: function (itemId = null, storedId = null) {
-			//TODO:: update onclick
 			let output = $(
 				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
 				Icons.checkoutTransaction + ' Checkout' +
@@ -98,7 +95,6 @@ const ItemStoredTransaction = {
 			return output;
 		},
 		getTransferTransactionButton: function (itemId = null, storedId = null) {
-			//TODO:: update onclick
 			let output = $(
 				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
 				Icons.transferTransaction + ' Transfer' +
@@ -107,7 +103,6 @@ const ItemStoredTransaction = {
 			return output;
 		},
 		getSetTransactionButton: function (itemId = null, storedId = null) {
-			//TODO:: update onclick
 			let output = $(
 				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
 				Icons.setTransaction + ' Set Amount' +
@@ -357,7 +352,7 @@ const ItemStoredTransaction = {
 			console.log("Submitting Add Transaction form");
 
 			let data = {
-				transactionType: this.typeInput.val(),
+				type: this.typeInput.val(),
 			}
 
 			//determine "to" value
@@ -370,7 +365,7 @@ const ItemStoredTransaction = {
 				data.toBlock = this.toBlockInput.val();
 			}
 
-			switch (data.transactionType) {
+			switch (data.type) {
 				case "ADD_AMOUNT":
 					console.debug("Amount fields present.");
 					data.amount = UnitUtils.getQuantityFromInputs(this.inputsContainer);
@@ -434,17 +429,210 @@ const ItemStoredTransaction = {
 		messages: $("#itemStoredTransactionSetMessages"),
 		form: $("#itemStoredTransactionSetForm"),
 
-		storedIdInput: $("#itemStoredTransactionSetFormStoredIdInput"),
+		itemSelectContainer: $("#itemStoredTransactionSetFormItemInputContainer"),
+		itemIdInput: $("#itemStoredTransactionSetFormItemIdInput"),
+		itemName: $("#itemStoredTransactionSetItemInfoItemName"),
+		setTypeInput: $("#itemStoredTransactionSetFormItemSetType"),
 
+		blockContainer: $("#itemStoredTransactionSetFormBlockContainer"),
+		blockSelect: $("#itemStoredTransactionSetFormBlockSelect"),
 
-		resetForm() {
-			//TODO
+		storedContainer: $("#itemStoredTransactionSetFormStoredContainer"),
+		storedItemIdInput: $("#itemStoredTransactionSetFormItemStored-itemStoredInputItemId"),
+		storedIdInput: $("#itemStoredTransactionSetFormItemStored-itemStoredInputId"),
+		storedItemBlockIdInput: $("#itemStoredTransactionSetFormItemStored-itemStoredInputBlockId"),
+		storedSelect: $("#itemStoredTransactionSetFormItemStored-inputGroup"),
+
+		amountInputs: $("#itemStoredTransactionSetFormAmountContainer"),
+
+		failNotAmountType() {
+			PageMessages.addMessageToDiv(
+				ItemStoredTransaction.Set.messages,
+				"danger",
+				"Cannot set the amount of an item with no amount.",
+				"Invalid Item Type"
+			);
+			Main.processStop();
 		},
-		setupForm(itemId, storedId, buttonElement) {
-			console.log("Setting up item stored set transaction form for item", itemId);
-			ModalHelpers.setReturnModal(this.modal, buttonElement);
+		resetForm() {
+			ItemStoredTransaction.Set.messages.text("");
+			ItemStoredTransaction.Set.itemSelectContainer.hide();
+			ItemStoredTransaction.Set.itemIdInput.val("");
+			ItemStoredTransaction.Set.itemName.text("");
+			ItemStoredTransaction.Set.setTypeInput.val("");
+
+			ItemStoredTransaction.Set.blockContainer.hide();
+			ItemStoredTransaction.Set.blockSelect.text("");
+
+			ItemStoredTransaction.Set.storedContainer.hide();
+
+			ItemStoredTransaction.Set.amountInputs.text("");
+			ItemSearchSelect.clearSearchInput(ItemStoredTransaction.Set.storedSelect, false);
+
+		},
+		setupForm: async function (item, stored, buttonElement) {
+			Main.processStart();
+			if (buttonElement != null) {
+				ModalHelpers.setReturnModal(this.modal, buttonElement);
+			}
 			this.resetForm();
-			//TODO
+
+			if (item == null && stored == null) {
+				console.log("No item given.");
+				ItemStoredTransaction.Set.itemSelectContainer.show();
+				Main.processStop();
+				return;
+			}
+
+			if (typeof item === "string" || (item instanceof String)) {
+				console.log("Got item id")
+				return Getters.InventoryItem.get(item, function (itemData) {
+					ItemStoredTransaction.Set.setupForm(itemData, stored, buttonElement);
+					Main.processStop();
+				});
+			}
+
+			if (typeof stored === "string" || (stored instanceof String)) {
+				console.log("Got stored id")
+				return Getters.StoredItem.getStored(item.id, stored, function (storedData) {
+					ItemStoredTransaction.Set.setupForm(item, storedData, buttonElement);
+					Main.processStop();
+				});
+			}
+			console.log("Setting up stored set form for stored item/stored: ", item, stored);
+
+			ItemStoredTransaction.Set.itemName.text(item.name);
+			ItemStoredTransaction.Set.itemIdInput.val(item.id);
+
+			let promises = [];
+
+			StorageTypeUtils.runForType(
+				item,
+				function () {
+					ItemStoredTransaction.Set.setTypeInput.val("block");
+					ItemStoredTransaction.Set.blockContainer.show();
+					item.storageBlocks.forEach(function (blockId) {
+						let newBlockOption = $('<option></option>');
+						newBlockOption.val(blockId);
+						if(stored && stored.storageBlock === blockId){
+							newBlockOption.attr("selected", true);
+						}
+						promises.push(getStorageBlockLabel(blockId, function (blockLabel) {
+							newBlockOption.text(blockLabel);
+						}));
+						ItemStoredTransaction.Set.blockSelect.append(newBlockOption);
+					});
+				},
+				function () {
+					ItemStoredTransaction.Set.setTypeInput.val("stored");
+					promises.push(ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Set.storedSelect, item, stored));
+					ItemStoredTransaction.Set.storedContainer.show();
+				},
+				ItemStoredTransaction.Set.failNotAmountType,
+				ItemStoredTransaction.Set.failNotAmountType
+			);
+			if (promises) {
+				await Promise.all(promises);
+			}
+
+			ItemStoredTransaction.Set.updateAmounts();
+
+			Main.processStop();
+		},
+		updateAmounts: async function(item = null, stored = null, storageBlockId = null) {
+			console.log("Updating amounts");
+
+			if (item == null) {
+				item = ItemStoredTransaction.Set.itemIdInput.val();
+			}
+			if (typeof item === 'string' || item instanceof String) {
+				Getters.InventoryItem.get(item, function (itemData) {
+					ItemStoredTransaction.Set.updateAmounts(itemData, stored, storageBlockId);
+				});
+				return;
+			}
+
+			if (stored != null) {
+				console.log("Stored specified: ", stored)
+				if (stored === -1) {
+					stored = null;
+				} else {
+					if (typeof stored === 'string' || stored instanceof String) {
+						await Getters.StoredItem.getStored(item.id, stored, function (storedData) {
+							stored = storedData;
+						});
+					}
+				}
+				console.log("final stored for amount input generation: ", stored)
+				StoredFormInput.getAmountInputs(item, stored, true, false).then(function (inputs) {
+					ItemStoredTransaction.Set.amountInputs.html(inputs);
+				});
+			} else {//find stored
+				console.log("Stored not specified. Gleaning from form.");
+				let type = ItemStoredTransaction.Set.setTypeInput.val();
+
+				if (storageBlockId == null && type === "block") {
+					storageBlockId = ItemStoredTransaction.Set.blockSelect.val();
+					console.debug("Got storage block id from block select: ", storageBlockId);
+				}
+				if (storageBlockId == null && type === "stored") {
+					storageBlockId = ItemStoredTransaction.Set.storedItemBlockIdInput.val();
+					console.debug("Got storage block id from stored select: ", storageBlockId);
+				}
+				if (stored == null && type === "stored") {
+					stored = ItemStoredTransaction.Set.storedIdInput.val();
+					console.debug("Got stored id from form: ", stored);
+				}
+
+				console.log("Stored/ Block: ", stored, storageBlockId);
+
+				if (!stored && !storageBlockId) {
+					console.log("No stored or storage block id could be identified.");
+					return;
+				}
+
+				if (stored != null) {
+					ItemStoredTransaction.Set.updateAmounts(item, stored, storageBlockId);
+					return;
+				}
+				if (storageBlockId != null) {
+					Getters.StoredItem.getSingleStoredForItemInBlock(item.id, storageBlockId, function (storedData) {
+							ItemStoredTransaction.Set.updateAmounts(item, storedData, storageBlockId);
+						},
+						function () {
+							ItemStoredTransaction.Set.updateAmounts(item, -1, storageBlockId)
+						}
+					);
+					return;
+				}
+				throw new Error("Should not be able to get here.");
+			}
+		},
+		submitFormHandler: async function (event) {
+			event.preventDefault();
+			let transaction = {
+				type: "SET_AMOUNT",
+				amount: UnitUtils.getQuantityFromInputs(ItemStoredTransaction.Set.amountInputs)
+			};
+
+			let type = ItemStoredTransaction.Set.setTypeInput.val();
+
+			switch (type){
+				case "block":
+					transaction["block"] = ItemStoredTransaction.Set.blockSelect.val();
+					break;
+				case "stored":
+					transaction["stored"] = ItemStoredTransaction.Set.storedIdInput.val();
+					break;
+			}
+
+
+			console.log("Built Set transaction object: ", transaction);
+			await ItemStoredTransaction.submitTransaction(
+				ItemStoredTransaction.Set.itemIdInput.val(),
+				transaction,
+				ItemStoredTransaction.Set.modal
+			);
 		}
 	},
 	Subtract: {
@@ -508,7 +696,6 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Transfer.itemInfoItemName.text("");
 
 			ItemStoredTransaction.Transfer.storedInfoContainer.hide();
-			//TODO
 
 			ItemStoredTransaction.Transfer.messages.text("");
 			ItemStoredTransaction.Transfer.itemIdInput.val("");
@@ -530,7 +717,7 @@ const ItemStoredTransaction = {
 		},
 		setupForm: async function (item, stored, buttonElement = null) {
 			Main.processStart();
-			if (buttonElement == null) {
+			if (buttonElement != null) {
 				ModalHelpers.setReturnModal(this.modal, buttonElement);
 			}
 			ItemStoredTransaction.Transfer.resetForm(false);
@@ -609,7 +796,6 @@ const ItemStoredTransaction = {
 					newBlockOption.val(blockId);
 					promises.push(getStorageBlockLabel(blockId, function (blockLabel) {
 						newBlockOption.text(blockLabel);
-						//TODO:: select from block if stored given
 					}));
 					ItemStoredTransaction.Transfer.fromBlockSelect.append(newBlockOption);
 				});
@@ -648,16 +834,16 @@ const ItemStoredTransaction = {
 
 			await Promise.all(promises);
 
-			if(fromBlock){
-				if(item.storageType === "UNIQUE_SINGLE"){
+			if (fromBlock) {
+				if (item.storageType === "UNIQUE_SINGLE") {
 					console.log("Preventing selection of current block used.");
 
 					await Getters.StoredItem.getSingleStoredForItem(
 						item.id,
-						function (storedInItem){
-							ItemStoredTransaction.Transfer.fromBlockSelect.find("option").each(function(i, option){
+						function (storedInItem) {
+							ItemStoredTransaction.Transfer.fromBlockSelect.find("option").each(function (i, option) {
 								let optionJq = $(option);
-								if(optionJq.val() !== storedInItem.storageBlock){
+								if (optionJq.val() !== storedInItem.storageBlock) {
 									optionJq.prop("disabled", true);
 									optionJq.prop("selected", false);
 								}
@@ -684,7 +870,7 @@ const ItemStoredTransaction = {
 			if (amount) {
 				await ItemStoredTransaction.Transfer.updateAmount(null, null, null, true);
 			}
-			if(typeSelect){
+			if (typeSelect) {
 				ItemStoredTransaction.Transfer.typeChanged(true);
 			}
 
@@ -699,7 +885,7 @@ const ItemStoredTransaction = {
 				let type = ItemStoredTransaction.Transfer.transactionTypeInput.val();
 				console.log("Transaction type changed: ", type);
 
-				switch (type){
+				switch (type) {
 					case "TRANSFER_WHOLE":
 						ItemStoredTransaction.Transfer.amountInputContainer.hide();
 						ItemStoredTransaction.Transfer.toBlockContainer.show();
@@ -825,14 +1011,14 @@ const ItemStoredTransaction = {
 			//TODO:: fill out transaction
 
 			if (ItemStoredTransaction.Transfer.amountInputContainer.is(":visible")) {
-				transaction['transactionType'] = "TRANSFER_AMOUNT";
+				transaction['type'] = "TRANSFER_AMOUNT";
 				if (ItemStoredTransaction.Transfer.amountTransferAllInput.is(":checked")) {
 					transaction['all'] = true;
 				} else {
 					transaction['amount'] = UnitUtils.getQuantityFromInputs(ItemStoredTransaction.Transfer.amountInputs);
 				}
 			} else {
-				transaction['transactionType'] = "TRANSFER_WHOLE";
+				transaction['type'] = "TRANSFER_WHOLE";
 			}
 
 			if (ItemStoredTransaction.Transfer.fromBlockContainer.is(":visible")) {
@@ -841,7 +1027,7 @@ const ItemStoredTransaction = {
 
 			if (ItemStoredTransaction.Transfer.fromStoredContainer.is(":visible")) {
 				transaction[
-					transaction['transactionType'] === "TRANSFER_WHOLE" ? 'storedToTransfer' : 'fromStored'
+					transaction['type'] === "TRANSFER_WHOLE" ? 'storedToTransfer' : 'fromStored'
 					] = ItemStoredTransaction.Transfer.fromStoredStoredIdInput.val();
 			}
 
@@ -853,7 +1039,7 @@ const ItemStoredTransaction = {
 				transaction['toStored'] = ItemStoredTransaction.Transfer.toStoredIdInput.val();
 			}
 
-			console.log("Built transaction object: ", transaction);
+			console.log("Built transfer transaction object: ", transaction);
 			await ItemStoredTransaction.submitTransaction(
 				ItemStoredTransaction.Transfer.itemIdInput.val(),
 				transaction,
@@ -870,6 +1056,9 @@ ItemStoredTransaction.Add.itemIdInput.on("change", function () {
 	ItemStoredTransaction.Add.setupForm(itemId);
 });
 
+ItemStoredTransaction.Set.form.on("submit", ItemStoredTransaction.Set.submitFormHandler);
+
+ItemStoredTransaction.Transfer.form.on("submit", ItemStoredTransaction.Transfer.submitFormHandler);
 ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function () {
 	console.log("Selected new item.");
 	let item = ItemStoredTransaction.Transfer.itemSearchIdInput.val();
@@ -878,5 +1067,3 @@ ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function () {
 		ItemStoredTransaction.Transfer.setupForm(item);
 	}
 });
-
-ItemStoredTransaction.Transfer.form.on("submit", ItemStoredTransaction.Transfer.submitFormHandler);

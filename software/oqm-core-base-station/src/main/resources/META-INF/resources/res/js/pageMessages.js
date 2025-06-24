@@ -2,7 +2,7 @@
 const PageMessages = {
 	mainMessageDiv: $("#messageDiv"),
 	alertIdCount: 0,
-	buildMessageDiv(type, message, heading, id, infoContent) {
+	buildMessageDiv(type, message, heading, id, infoContent = null) {
 
 		if(id != null){
 			id = 'id="'+id+'"'
@@ -42,11 +42,11 @@ const PageMessages = {
 
 		return output;
 	},
-	addMessageToDiv(jqueryObj, type, message, heading, id, infoContent){
+	addMessageToDiv(jqueryObj, type, message, heading, id, infoContent = null){
 		let messageDiv = PageMessages.buildMessageDiv(type, message, heading, id, infoContent);
 		messageDiv.appendTo(jqueryObj.get(0));
 	},
-	addMessage(type, message, heading, id, infoContent){
+	addMessage(type, message, heading, id, infoContent = null){
 		PageMessages.addMessageToDiv(PageMessages.mainMessageDiv, type, message, heading, id, infoContent);
 	},
 	getMessageQuery(message, type, heading){
