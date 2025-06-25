@@ -26,7 +26,7 @@ public class TransferAmountTransaction extends TransferTransaction {
 	/**
 	 * Flag to specify to transfer all of what is in the source to the destination.
 	 * <p>
-	 * Only specify "true" if {@link TransferAmountTransaction#amount}
+	 * Only specify "true" if {@link TransferAmountTransaction#amount} is null.
 	 */
 	private boolean all = false;
 	

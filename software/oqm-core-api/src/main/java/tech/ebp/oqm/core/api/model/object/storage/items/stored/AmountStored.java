@@ -63,7 +63,7 @@ public class AmountStored extends Stored {
 	 * @throws NotEnoughStoredException
 	 */
 	public AmountStored subtract(Quantity amount) throws NotEnoughStoredException {
-		@SuppressWarnings("rawtypes")
+		@SuppressWarnings({"rawtypes", "unchecked"})
 		Quantity result = this.getAmount().subtract(amount);
 		
 		if (result.getValue().doubleValue() < 0.0) {

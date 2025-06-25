@@ -14,6 +14,7 @@ import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.units.indriya.quantity.Quantities;
 
+import javax.measure.Quantity;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -62,10 +63,29 @@ public class SubtractAmountTransactionApplier extends TransactionApplier<SubAmou
 		if (!stored.getStorageBlock().equals(transaction.getFromBlock())) {
 			throw new IllegalArgumentException("Stored retrieved not in specified block.");
 		}
-		stored.subtract(transaction.getAmount());
+		if(
+			(transaction.getAmount() == null && !transaction.isAll()) ||
+			(transaction.getAmount() != null && transaction.isAll())
+		){
+			throw new IllegalArgumentException("Transaction must specify either to subtract an amount or all amount present.");
+		}
+		
+		Quantity toSubtract = null;
+		
+		if(transaction.getAmount() != null) {
+			toSubtract = transaction.getAmount();
+		}
+		if(transaction.isAll()) {
+			toSubtract = stored.getAmount();
+		}
+		
+		if(toSubtract == null){
+			throw new IllegalStateException("Cannot subtract an amount from a null value. Should not get here.");
+		}
+		
+		stored.subtract(toSubtract);
 
 		affectedStored.add(stored);
 		this.getStoredService().update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
-
 	}
 }
