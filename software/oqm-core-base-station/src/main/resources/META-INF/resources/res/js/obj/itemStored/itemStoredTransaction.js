@@ -11,14 +11,12 @@ const ItemStoredTransaction = {
 			url: Rest.passRoot + "/inventory/item/" + itemId + "/stored/transact",
 			data: transaction,
 			done: function (appliedTransaction) {
+				console.log("Successfully applied transaction: ", appliedTransaction);
 				PageMessages.reloadPageWithMessage("Transaction Successful!", "success", "Success!");
 			}
 		});
 	},
 	ModalButtons: {
-		getTransactionSelectButton: function () {
-			//TODO
-		},
 		getTransactionSelectDropdown: async function (
 			item = null,
 			stored = null,
@@ -60,54 +58,6 @@ const ItemStoredTransaction = {
 				}
 			});
 
-			return output;
-		},
-		getAddTransactionButton: function (itemId = null, storedId = null) {
-			let output = $(
-				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
-				Icons.addTransaction + ' Add' +
-				'</button>'
-			);
-			return output;
-		},
-		getSubtractTransactionButton: function (itemId = null, storedId = null) {
-			let output = $(
-				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
-				Icons.subtractTransaction + ' Subtract' +
-				'</button>'
-			);
-			return output;
-		},
-		getCheckinTransactionButton: function (itemId = null, storedId = null) {
-			let output = $(
-				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
-				Icons.checkinTransaction + ' Checkin' +
-				'</button>'
-			);
-			return output;
-		},
-		getCheckoutTransactionButton: function (itemId = null, storedId = null) {
-			let output = $(
-				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
-				Icons.checkoutTransaction + ' Checkout' +
-				'</button>'
-			);
-			return output;
-		},
-		getTransferTransactionButton: function (itemId = null, storedId = null) {
-			let output = $(
-				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
-				Icons.transferTransaction + ' Transfer' +
-				'</button>'
-			);
-			return output;
-		},
-		getSetTransactionButton: function (itemId = null, storedId = null) {
-			let output = $(
-				'<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" onclick="ItemStoredTransaction.Add.setupForm(' + itemId + ', ' + storedId + ', this);">' +
-				Icons.setTransaction + ' Set Amount' +
-				'</button>'
-			);
 			return output;
 		}
 	},
@@ -640,16 +590,135 @@ const ItemStoredTransaction = {
 		messages: $("#itemStoredTransactionSubtractMessages"),
 		form: $("#itemStoredTransactionSubtractForm"),
 
-		storedIdInput: $("#itemStoredTransactionSubtractFormStoredIdInput"),
+		itemSearchContainer: $("#itemStoredTransactionSubtractFormItemInputContainer"),
+		itemSearchIdInput: $("#itemStoredTransactionSubtractFormItem-itemInputId"),
+
+		itemInfoContainer: $("#itemStoredTransactionSubtractItemInfoContainer"),
+		itemInfoName: $("#itemStoredTransactionSubtractItemInfoItemName"),
+
+		itemIdInput: $("#itemStoredTransactionSubtractFormItemIdInput"),
+
+		typeInputContainer: $("#itemStoredTransactionSubtractFormTypeInputContainer"),
+		typeSelect: $("#itemStoredTransactionSubtractFormTypeInput"),
+
+		fromBlockContainer: $("#itemStoredTransactionSubtractFormFromBlockContainer"),
+		fromBlockSelect: $("#itemStoredTransactionSubtractFormFromBlockSelect"),
+
+		fromStoredContainer: $("#itemStoredTransactionSubtractFormFromStoredContainer"),
+		fromStoredInputGroup: $("#itemStoredTransactionSubtractFormFromItemStored-inputGroup"),
+		fromStoredItemIdInput: $("#itemStoredTransactionSubtractFormFromItemStored-itemStoredInputItemId"),
+		fromStoredBlockIdInput: $("#itemStoredTransactionSubtractFormFromItemStored-itemStoredInputBlockId"),
+		fromStoredStoredIdInput: $("#itemStoredTransactionSubtractFormFromItemStored-itemStoredInputId"),
+
+		amountContainer: $("#itemStoredTransactionSubtractFormAmountContainer"),
+		amountInputsContainer: $("#itemStoredTransactionSubtractFormAmountInputs"),
 
 		resetForm() {
-			//TODO
+			ItemStoredTransaction.Subtract.form.trigger("reset");
+			ItemStoredTransaction.Subtract.messages.text("");
+
+			ItemStoredTransaction.Subtract.itemSearchContainer.hide();
+			ItemSearchSelect.clearSearchInput(ItemStoredTransaction.Subtract.itemSearchContainer, false);
+
+			ItemStoredTransaction.Subtract.itemInfoContainer.hide();
+			ItemStoredTransaction.Subtract.itemInfoName.text("");
+
+			ItemStoredTransaction.Subtract.itemIdInput.val("");
+
+			ItemStoredTransaction.Subtract.typeInputContainer.hide();
+
+			ItemStoredTransaction.Subtract.fromBlockContainer.hide();
+			ItemStoredTransaction.Subtract.fromBlockSelect.text("");
+
+			ItemStoredTransaction.Subtract.fromStoredContainer.hide();
+			ItemStoredSearchSelect.resetSearchInput(ItemStoredTransaction.Subtract.fromStoredInputGroup);
+
+			ItemStoredTransaction.Subtract.amountContainer.hide();
+			ItemStoredTransaction.Subtract.amountInputsContainer.text("");
 		},
-		setupForm(itemId, storedId, buttonElement) {
-			console.log("Setting up item stored subtract transaction form for item", itemId);
-			ModalHelpers.setReturnModal(this.modal, buttonElement);
-			this.resetForm();
-			//TODO
+		setupForm(item, stored, buttonElement) {
+			Main.processStart();
+			if (buttonElement != null) {
+				ModalHelpers.setReturnModal(this.modal, buttonElement);
+			}
+			ItemStoredTransaction.Subtract.resetForm(false);
+			if (item == null && stored == null) {
+				console.log("No item given.")
+				ItemStoredTransaction.Subtract.itemSearchContainer.show();
+				Main.processStop();
+				return;
+			}
+
+			if (typeof item === "string" || (item instanceof String)) {
+				console.log("Got item id")
+				return Getters.InventoryItem.get(item, function (itemData) {
+					ItemStoredTransaction.Subtract.setupForm(itemData, stored, buttonElement);
+					Main.processStop();
+				});
+			}
+
+			if (typeof stored === "string" || (stored instanceof String)) {
+				console.log("Got stored id")
+				return Getters.StoredItem.getStored(item.id, stored, function (storedData) {
+					ItemStoredTransaction.Subtract.setupForm(item, storedData, buttonElement);
+					Main.processStop();
+				});
+			}
+			console.log("Setting up stored subtract form for stored item/stored: ", item, stored);
+			let promises = [];
+
+			ItemStoredTransaction.Transfer.itemIdInput.val(item.id);
+			ItemStoredTransaction.Transfer.itemInfoItemName.text(item.name);
+			ItemStoredTransaction.Transfer.itemInfoContainer.show();
+
+			promises.push(ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.fromStoredSelect, item, stored));
+			promises.push(ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.toStoredSelect, item));
+
+			let typeSelect = false;
+			let fromBlock = false;
+			let fromStored = false;
+			let amount = true;
+
+			StorageTypeUtils.runForType(
+				item,
+				function () {
+					fromBlock = true;
+					amount = true;
+				},
+				function () {
+					typeSelect = true;
+					fromStored = true;
+					amount = true;
+				},
+				function () {
+					fromStored = true;
+				},
+				function () {
+					fromStored = true;
+				}
+			);
+
+			if (typeSelect) {
+				console.debug("Showing type select");
+				ItemStoredTransaction.Subtract.typeInputContainer.show();
+			}
+			if (fromBlock) {
+				console.debug("Showing from block");
+				ItemStoredTransaction.Subtract.fromBlockContainer.show();
+				item.storageBlocks.forEach(function (blockId) {
+					let newBlockOption = $('<option></option>');
+					newBlockOption.val(blockId);
+					promises.push(getStorageBlockLabel(blockId, function (blockLabel) {
+						newBlockOption.text(blockLabel);
+					}));
+					ItemStoredTransaction.Subtract.fromBlockSelect.append(newBlockOption);
+				});
+			}
+
+		},
+		submitFormHandler(event){
+			event.preventDefault();
+			console.log("Building and submitting subtract transaction.");
 		}
 	},
 	Transfer: {
@@ -799,7 +868,6 @@ const ItemStoredTransaction = {
 					}));
 					ItemStoredTransaction.Transfer.fromBlockSelect.append(newBlockOption);
 				});
-
 			}
 			if (fromStored) {
 				console.debug("Showing from stored");
@@ -1057,6 +1125,16 @@ ItemStoredTransaction.Add.itemIdInput.on("change", function () {
 });
 
 ItemStoredTransaction.Set.form.on("submit", ItemStoredTransaction.Set.submitFormHandler);
+
+ItemStoredTransaction.Subtract.form.on("submit", ItemStoredTransaction.Subtract.submitFormHandler);
+ItemStoredTransaction.Subtract.itemSearchIdInput.on("change", function () {
+	console.log("Selected new item.");
+	let item = ItemStoredTransaction.Transfer.itemSearchIdInput.val();
+
+	if (item != null) {
+		ItemStoredTransaction.Transfer.setupForm(item);
+	}
+});
 
 ItemStoredTransaction.Transfer.form.on("submit", ItemStoredTransaction.Transfer.submitFormHandler);
 ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function () {

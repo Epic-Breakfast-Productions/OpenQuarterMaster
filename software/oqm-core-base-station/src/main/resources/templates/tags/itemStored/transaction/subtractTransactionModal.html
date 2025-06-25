@@ -10,9 +10,50 @@
 	<div class="row">
 		<div class="col messages" id="itemStoredTransactionSubtractMessages"></div>
 	</div>
+	
+	<div class="mb-3" id="itemStoredTransactionSubtractFormItemInputContainer">
+		<label for=itemStoredTransactionSubtractFormItem-itemInputSearchButton" class="form-label h3">{#icons/item}{/icons/item} Item:</label>
+		{#inputs/item/itemSelectInput id="itemStoredTransactionSubtractFormItem" /}
+	</div>
+	<div id="itemStoredTransactionSubtractItemInfoContainer">
+		<h3>
+			{#icons/item /} <span id="itemStoredTransactionSubtractItemInfoItemName"></span>
+		</h3>
+	</div>
+	<hr />
 
 	<form id='itemStoredTransactionSubtractForm'>
-		<input type="hidden" name="itemId" id="itemStoredTransactionSubtractFormStoredIdInput" value=""/>
-		{!TODO!}
+		<input type="hidden" name="itemId" id="itemStoredTransactionSubtractFormItemIdInput" value=""/>
+		
+		<div class="row">
+			<div class="col" id="itemStoredTransactionSubtractFormTypeInputContainer">
+				<label for="itemStoredTransactionSubtractFormTypeInput" class="form-label">Type</label>
+				<select class="form-select" id="itemStoredTransactionSubtractFormTypeInput" onchange="ItemStoredTransaction.Subtract.typeChanged();" aria-describedby="itemStoredTransactionSubtractFormTypeInputHelp">
+					<option value="SUBTRACT_WHOLE">Whole Stored</option>
+					<option value="SUBTRACT_AMOUNT">Amount</option>
+				</select>
+				<div id="itemStoredTransactionSubtractFormTypeInputHelp" class="form-text">
+					The type of subtracting we are doing. <br />
+					<span id="itemStoredTransactionSubtractFormTypeInputHelpDisabledNote"></span>
+				</div>
+			</div>
+			<div class="col" id="itemStoredTransactionSubtractFormFromBlockContainer">
+				<label for="itemStoredTransactionSubtractFormFromBlockSelect" class="form-label">From {#icons/storageBlock /} Storage Block</label>
+				<select class="form-select form-select-lg" id="itemStoredTransactionSubtractFormFromBlockSelect" onchange="ItemStoredTransaction.Subtract.updateToBlock($(this).val());ItemStoredTransaction.Subtract.updateAmount(null, null, $(this).val(), true);"></select>
+			</div>
+			<div class="col" id="itemStoredTransactionSubtractFormFromStoredContainer">
+				{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionSubtractFormFromItemStored" onchange="ItemStoredTransaction.Subtract.updateToBlock(ItemStoredSearchSelect.getBlockIdInput($(this).parent()).val(), true);ItemStoredTransaction.Subtract.updateAmount(ItemStoredSearchSelect.getItemIdInput($(this).parent()).val(), ItemStoredSearchSelect.getIdInput($(this).parent()).val(), ItemStoredSearchSelect.getBlockIdInput($(this).parent()).val(), true);" /}
+			</div>
+		</div>
+		<div class="row mt-3" id="itemStoredTransactionSubtractFormAmountContainer">
+			<div class="col" id="itemStoredTransactionSubtractFormAmountInputs">
+			</div>
+			<div class="col my-auto">
+				<div class="form-check form-control-lg">
+					<input class="form-check-input" type="checkbox" value="" id="itemStoredTransactionSubtractFormAmountSubtractAllInput" onchange="ItemStoredTransaction.Subtract.updateAllAmount();">
+					<label class="form-check-label" for="itemStoredTransactionSubtractFormAmountSubtractAllInput">Subtract All</label>
+				</div>
+			</div>
+		</div>
 	</form>
 {/modal}
