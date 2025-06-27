@@ -43,7 +43,9 @@ const StorageTypeUtils = {
 	) {
 		//If item data, get from data
 		if (typeof storedType !== "string" && !(storedType instanceof String)) {
+			console.debug("Getting storage type from item: ", storedType);
 			storedType = storedType.storageType;
+			console.debug("Got storage type from item: ", storedType);
 		}
 
 		if (storedType === "BULK") {

@@ -612,6 +612,7 @@ const ItemStoredTransaction = {
 
 		amountContainer: $("#itemStoredTransactionSubtractFormAmountContainer"),
 		amountInputsContainer: $("#itemStoredTransactionSubtractFormAmountInputs"),
+		amountSubtractAllInput: $("#itemStoredTransactionSubtractFormAmountSubtractAllInput"),
 
 		resetForm() {
 			ItemStoredTransaction.Subtract.form.trigger("reset");
@@ -636,7 +637,7 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Subtract.amountContainer.hide();
 			ItemStoredTransaction.Subtract.amountInputsContainer.text("");
 		},
-		setupForm(item, stored, buttonElement) {
+		setupForm: async function(item, stored, buttonElement) {
 			Main.processStart();
 			if (buttonElement != null) {
 				ModalHelpers.setReturnModal(this.modal, buttonElement);
@@ -667,17 +668,16 @@ const ItemStoredTransaction = {
 			console.log("Setting up stored subtract form for stored item/stored: ", item, stored);
 			let promises = [];
 
-			ItemStoredTransaction.Transfer.itemIdInput.val(item.id);
-			ItemStoredTransaction.Transfer.itemInfoItemName.text(item.name);
-			ItemStoredTransaction.Transfer.itemInfoContainer.show();
+			ItemStoredTransaction.Subtract.itemIdInput.val(item.id);
+			ItemStoredTransaction.Subtract.itemInfoName.text(item.name);
+			ItemStoredTransaction.Subtract.itemInfoContainer.show();
 
-			promises.push(ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.fromStoredSelect, item, stored));
-			promises.push(ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Transfer.toStoredSelect, item));
+			promises.push(ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Subtract.fromStoredInputGroup, item, stored));
 
 			let typeSelect = false;
 			let fromBlock = false;
 			let fromStored = false;
-			let amount = true;
+			let amount = false;
 
 			StorageTypeUtils.runForType(
 				item,
@@ -701,6 +701,7 @@ const ItemStoredTransaction = {
 			if (typeSelect) {
 				console.debug("Showing type select");
 				ItemStoredTransaction.Subtract.typeInputContainer.show();
+
 			}
 			if (fromBlock) {
 				console.debug("Showing from block");
@@ -714,11 +715,168 @@ const ItemStoredTransaction = {
 					ItemStoredTransaction.Subtract.fromBlockSelect.append(newBlockOption);
 				});
 			}
+			if(fromStored){
+				console.debug("Showing from stored");
+				ItemStoredTransaction.Subtract.fromStoredContainer.show();
+				promises.push(ItemStoredSearchSelect.setupInputs(
+					ItemStoredTransaction.Subtract.fromStoredInputGroup,
+					item,
+					stored
+				));
+			}
+			if(amount){
+				console.debug("Showing amount inputs");
+				ItemStoredTransaction.Subtract.amountContainer.show();
+			}
 
+			await Promise.all(promises);
+
+			if(typeSelect){
+				ItemStoredTransaction.Subtract.typeUpdated(true);
+			}
+			if(amount) {
+				ItemStoredTransaction.Subtract.updateAmount(item, stored, null, true);
+			}
+
+			Main.processStop();
 		},
-		submitFormHandler(event){
+		typeUpdated(force = false){
+			if(force || ItemStoredTransaction.Subtract.typeSelect.is(":visible")){
+				console.log("Updating inputs based on selected subtract type.");
+
+				let newType = ItemStoredTransaction.Subtract.typeSelect.val();
+				switch (newType){
+					case("SUBTRACT_WHOLE"):
+						ItemStoredTransaction.Subtract.amountContainer.hide();
+						// ItemStoredTransaction.Subtract.fromStoredContainer.show();
+						// ItemStoredTransaction.Subtract.fromBlockContainer.hide();
+						break;
+					case("SUBTRACT_AMOUNT"):
+						ItemStoredTransaction.Subtract.amountContainer.show();
+						// ItemStoredTransaction.Subtract.fromStoredContainer.hide();
+						// ItemStoredTransaction.Subtract.fromBlockContainer.show();
+						ItemStoredTransaction.Subtract.updateAmount(null, null, null, true);
+						break;
+				}
+			}
+		},
+		updateAmount: async function (item = null, stored = null, storageBlockId = null, force = false) {
+			if (force || ItemStoredTransaction.Subtract.amountInputsContainer.is(":visible")) {
+				console.log("Updating amounts");
+
+				if (item == null) {
+					item = ItemStoredTransaction.Subtract.itemIdInput.val();
+					console.debug("Got item id from form: ", item)
+				}
+				if (typeof item === 'string' || item instanceof String) {
+					Getters.InventoryItem.get(item, function (itemData) {
+						ItemStoredTransaction.Subtract.updateAmount(itemData, stored, storageBlockId, force);
+					});
+					return;
+				}
+
+				if (stored != null) {
+					console.log("Stored specified: ", stored)
+					if (stored === -1) {
+						stored = null;
+					} else {
+						if (typeof stored === 'string' || stored instanceof String) {
+							await Getters.StoredItem.getStored(item.id, stored, function (storedData) {
+								stored = storedData;
+							});
+						}
+					}
+					console.log("final stored for amount input generation: ", stored)
+					StoredFormInput.getAmountInputs(item, stored, true, true).then(function (inputs) {
+						ItemStoredTransaction.Subtract.amountInputsContainer.html(inputs);
+						ItemStoredTransaction.Subtract.updateAllAmount();
+					});
+				} else {//find stored
+					console.log("Stored not specified. Gleaning from form.");
+					if (storageBlockId == null && ItemStoredTransaction.Subtract.fromBlockSelect.is(":visible")) {
+						storageBlockId = ItemStoredTransaction.Subtract.fromBlockSelect.val();
+						console.debug("Got storage block id from block select: ", storageBlockId);
+					}
+					if (storageBlockId == null && ItemStoredTransaction.Subtract.fromStoredBlockIdInput.is(":visible")) {
+						storageBlockId = ItemStoredTransaction.Subtract.fromStoredBlockIdInput.val();
+						console.debug("Got storage block id from stored select: ", storageBlockId);
+					}
+					if (stored == null && ItemStoredTransaction.Subtract.fromStoredStoredIdInput.is(":visible")) {
+						stored = ItemStoredTransaction.Subtract.fromStoredStoredIdInput.val();
+						console.debug("Got stored id from form: ", stored);
+					}
+
+					console.log("Stored/ Block: ", stored, storageBlockId);
+
+					if (!stored && !storageBlockId) {
+						console.log("No stored or storage block id could be identified.");
+						StoredFormInput.getAmountInputs(item, null, true, true).then(function (inputs) {
+							ItemStoredTransaction.Subtract.amountInputsContainer.html(inputs);
+							ItemStoredTransaction.Subtract.updateAllAmount();
+						});
+						return;
+					}
+
+					if (stored != null) {
+						ItemStoredTransaction.Subtract.updateAmount(item, stored, storageBlockId, force);
+						return;
+					}
+					if (storageBlockId != null) {
+						Getters.StoredItem.getSingleStoredForItemInBlock(item.id, storageBlockId, function (storedData) {
+								ItemStoredTransaction.Subtract.updateAmount(item, storedData, storageBlockId, force);
+							},
+							function () {
+								ItemStoredTransaction.Subtract.updateAmount(item, -1, storageBlockId, force)
+							}
+						);
+						return;
+					}
+					throw new Error("Should not be able to get here.");
+				}
+			} else {
+				console.debug("Amounts not visible; not updating.");
+			}
+		},
+		updateAllAmount(){
+			let inputs = ItemStoredTransaction.Subtract.amountInputsContainer.find("input, select");
+			if (ItemStoredTransaction.Subtract.amountSubtractAllInput.is(":checked")) {
+				inputs.prop("disabled", true);
+			} else {
+				inputs.prop("disabled", false);
+			}
+		},
+		submitFormHandler: async function(event){
 			event.preventDefault();
 			console.log("Building and submitting subtract transaction.");
+			let transaction = {};
+
+			if (ItemStoredTransaction.Subtract.amountInputsContainer.is(":visible")) {
+				transaction['type'] = "SUBTRACT_AMOUNT";
+				if (ItemStoredTransaction.Subtract.amountSubtractAllInput.is(":checked")) {
+					transaction['all'] = true;
+				} else {
+					transaction['amount'] = UnitUtils.getQuantityFromInputs(ItemStoredTransaction.Subtract.amountInputsContainer);
+				}
+			} else {
+				transaction['type'] = "SUBTRACT_WHOLE";
+			}
+
+			if (ItemStoredTransaction.Subtract.fromBlockContainer.is(":visible")) {
+				transaction['fromBlock'] = ItemStoredTransaction.Subtract.fromBlockSelect.val();
+			}
+
+			if (ItemStoredTransaction.Subtract.fromStoredContainer.is(":visible")) {
+				transaction[
+					transaction['type'] === "SUBTRACT_AMOUNT" ? 'fromStored' : 'toSubtract'
+					] = ItemStoredTransaction.Subtract.fromStoredStoredIdInput.val();
+			}
+
+			console.log("Built subtract transaction object: ", transaction);
+			await ItemStoredTransaction.submitTransaction(
+				ItemStoredTransaction.Subtract.itemIdInput.val(),
+				transaction,
+				ItemStoredTransaction.Subtract.modal
+			);
 		}
 	},
 	Transfer: {
