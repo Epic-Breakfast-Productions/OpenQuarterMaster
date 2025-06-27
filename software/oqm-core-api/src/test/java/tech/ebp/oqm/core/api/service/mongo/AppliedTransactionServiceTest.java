@@ -2644,7 +2644,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.fromBlock(item.getStorageBlocks().getFirst())
 			.build();
 		IllegalArgumentException e = assertThrows(IllegalArgumentException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
-		assertEquals("Could not find Stored with id null", e.getMessage());
+		assertEquals("Must specify the stored item we are subtracting from.", e.getMessage());
 	}
 
 	//TODO:: any more?

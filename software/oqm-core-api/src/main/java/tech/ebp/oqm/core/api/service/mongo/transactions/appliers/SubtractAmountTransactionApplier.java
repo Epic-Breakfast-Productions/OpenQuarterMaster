@@ -43,9 +43,20 @@ public class SubtractAmountTransactionApplier extends TransactionApplier<SubAmou
 		AmountStored stored;
 		switch (inventoryItem.getStorageType()) {
 			case BULK -> {
-				stored = this.getStoredService().getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transaction.getFromBlock(), AmountStored.class);
+				if(transaction.getFromBlock() != null){
+					stored = this.getStoredService().getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transaction.getFromBlock(), AmountStored.class);
+				} else if (transaction.getFromStored() != null){
+					stored = (AmountStored) this.getStoredService().get(oqmDbIdOrName, cs, transaction.getFromStored());
+				} else {
+					throw new IllegalArgumentException("Must specify where the subtraction is happening, either the storage block or stored.");
+				}
+				
 			}
 			case AMOUNT_LIST -> {
+				if(transaction.getFromStored() == null){
+					throw new IllegalArgumentException("Must specify the stored item we are subtracting from.");
+				}
+				
 				stored = (AmountStored) this.getStoredService().get(oqmDbIdOrName, cs, transaction.getFromStored());
 			}
 			default -> {
@@ -60,7 +71,7 @@ public class SubtractAmountTransactionApplier extends TransactionApplier<SubAmou
 		if (transaction.getFromStored() != null && !stored.getId().equals(transaction.getFromStored())) {
 			throw new IllegalArgumentException("Stored id in transaction not the id of stored found.");
 		}
-		if (!stored.getStorageBlock().equals(transaction.getFromBlock())) {
+		if (transaction.getFromBlock() != null && !stored.getStorageBlock().equals(transaction.getFromBlock())) {
 			throw new IllegalArgumentException("Stored retrieved not in specified block.");
 		}
 		if(

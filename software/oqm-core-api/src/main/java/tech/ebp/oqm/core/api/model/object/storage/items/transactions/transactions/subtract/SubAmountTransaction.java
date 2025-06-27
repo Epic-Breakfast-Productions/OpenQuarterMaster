@@ -16,7 +16,11 @@ import javax.measure.Quantity;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 public class SubAmountTransaction extends SubtractTransaction {
-
+	
+	/**
+	 * The storage block we are subracting from
+	 */
+	private ObjectId fromBlock;
 	/**
 	 * If the specific storage block we are adding to.
 	 */

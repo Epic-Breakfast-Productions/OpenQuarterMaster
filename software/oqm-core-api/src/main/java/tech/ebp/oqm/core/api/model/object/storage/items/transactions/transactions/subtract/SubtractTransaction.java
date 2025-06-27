@@ -13,10 +13,4 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredT
 @NoArgsConstructor
 public abstract class SubtractTransaction extends ItemStoredTransaction {
 
-	/**
-	 * The storage block we are subracting from
-	 */
-	@NotNull
-	@NonNull
-	private ObjectId fromBlock;
 }
