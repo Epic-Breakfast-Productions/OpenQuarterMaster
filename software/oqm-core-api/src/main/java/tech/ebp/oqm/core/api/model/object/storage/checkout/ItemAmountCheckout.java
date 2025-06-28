@@ -22,7 +22,7 @@ public class ItemAmountCheckout extends ItemCheckout<Quantity<?>> {
 //	private boolean wholeCheckout = false;
 
 	@Override
-	public CheckoutType getCheckoutType(){
+	public CheckoutType getType(){
 		return CheckoutType.AMOUNT;
 	}
 

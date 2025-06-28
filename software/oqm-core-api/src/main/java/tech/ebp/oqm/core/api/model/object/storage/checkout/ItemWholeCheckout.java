@@ -20,7 +20,7 @@ public class ItemWholeCheckout extends ItemCheckout<Stored> {
 	public static final int CUR_SCHEMA_VERSION = 2;
 
 	@Override
-	public CheckoutType getCheckoutType(){
+	public CheckoutType getType(){
 		return CheckoutType.WHOLE;
 	}
 

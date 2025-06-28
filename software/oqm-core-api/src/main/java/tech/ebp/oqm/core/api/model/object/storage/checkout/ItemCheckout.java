@@ -24,7 +24,7 @@ import java.time.ZonedDateTime;
 @SuperBuilder(toBuilder = true)
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "checkoutType"
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
 )
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = ItemAmountCheckout.class, name = "AMOUNT"),
@@ -35,7 +35,7 @@ public abstract class ItemCheckout <T> extends AttKeywordMainObject {
 	public static final int CUR_SCHEMA_VERSION = 2;
 
 	@ToString.Include
-	public abstract CheckoutType getCheckoutType();
+	public abstract CheckoutType getType();
 	
 	/**
 	 * When these item(s) were checked out

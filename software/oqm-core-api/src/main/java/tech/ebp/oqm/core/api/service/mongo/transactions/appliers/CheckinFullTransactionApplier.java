@@ -50,7 +50,7 @@ public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<
 		if (!inventoryItem.getId().equals(checkout.getItem())) {
 			throw new IllegalArgumentException("Checkout is not associated with the item.");
 		}
-		switch (checkout.getCheckoutType()) {
+		switch (checkout.getType()) {
 			case AMOUNT -> {
 				ItemAmountCheckout iac = (ItemAmountCheckout) checkout;
 
