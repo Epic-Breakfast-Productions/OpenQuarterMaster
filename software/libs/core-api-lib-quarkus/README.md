@@ -39,4 +39,11 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
 
 - Add more endpoints
 - Add method to supply import data for devservice
-- 
+
+## Deployment
+
+https://central.sonatype.org/publish/publish-portal-maven/
+
+`./mvnw deploy`
+
+

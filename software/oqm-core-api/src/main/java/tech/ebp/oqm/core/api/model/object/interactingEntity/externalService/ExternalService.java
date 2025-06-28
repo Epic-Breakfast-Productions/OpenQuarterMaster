@@ -11,8 +11,8 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.core.api.model.rest.externalService.ExternalServiceSetupRequest;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidServiceRole;
 
 import java.util.HashSet;
@@ -23,6 +23,7 @@ import java.util.Set;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder(toBuilder = true)
 public abstract class ExternalService extends InteractingEntity {
 	
 	@NonNull
@@ -34,6 +35,7 @@ public abstract class ExternalService extends InteractingEntity {
 	@NonNull
 	@NotNull
 	@NotBlank
+	@lombok.Builder.Default
 	private String description = "";
 	
 	@NonNull
@@ -54,6 +56,7 @@ public abstract class ExternalService extends InteractingEntity {
 	 */
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private Set<@ValidServiceRole String> roles = new HashSet<>();
 	
 	/**
@@ -70,22 +73,6 @@ public abstract class ExternalService extends InteractingEntity {
 	@Override
 	public String getEmail() {
 		return this.getDeveloperEmail();
-	}
-	
-	public boolean changedGiven(ExternalServiceSetupRequest newServiceIn) {
-		if (!this.getName().equals(newServiceIn.getName())) {
-			return true;
-		}
-		if (!this.getDescription().equals(newServiceIn.getDescription())) {
-			return true;
-		}
-		if (!this.getDeveloperEmail().equals(newServiceIn.getDeveloperEmail())) {
-			return true;
-		}
-		if (!this.getDeveloperName().equals(newServiceIn.getDeveloperName())) {
-			return true;
-		}
-		return false;
 	}
 	
 	//TODO:: do a updater from

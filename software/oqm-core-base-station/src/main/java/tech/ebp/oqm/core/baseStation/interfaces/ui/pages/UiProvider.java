@@ -1,7 +1,5 @@
 package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.api.trace.Span;
 import io.quarkus.qute.Template;
@@ -14,7 +12,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.ConfigProvider;
 import tech.ebp.oqm.core.baseStation.interfaces.RestInterface;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.SearchObject;
 
@@ -54,6 +51,7 @@ public abstract class UiProvider extends RestInterface {
 		return template
 				   .data("rootPrefix", this.getRootPrefix())
 				   .data("userInfo", this.getUserInfo())
+				   .data("userToken", this.getUserTokenStr())
 				   .data("oqmDbs", this.getOqmDatabases())
 				   .data("selectedOqmDb", this.getSelectedDb())
 				   .data("traceId", this.span.getSpanContext().getTraceId())

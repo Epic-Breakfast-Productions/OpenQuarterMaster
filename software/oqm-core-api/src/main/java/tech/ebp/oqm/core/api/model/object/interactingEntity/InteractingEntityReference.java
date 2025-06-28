@@ -28,6 +28,6 @@ public class InteractingEntityReference {
 	private InteractingEntityType type;
 	
 	public InteractingEntityReference(InteractingEntity entity) {
-		this(entity.getId(), entity.getName(), entity.getInteractingEntityType());
+		this(entity.getId(), entity.getName(), entity.getType());
 	}
 }

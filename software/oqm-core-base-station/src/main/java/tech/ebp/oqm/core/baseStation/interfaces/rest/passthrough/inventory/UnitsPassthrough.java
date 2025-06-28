@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.baseStation.interfaces.rest.passthrough.inventory;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
@@ -125,5 +126,30 @@ public class UnitsPassthrough extends PassthroughProvider {
 		ObjectNode ncur
 	) {
 		return this.getOqmCoreApiClient().unitCreateCustomUnit(this.getBearerHeaderStr(), ncur);
+	}
+	
+	@PUT
+	@Path("convert")
+	@Operation(
+		summary = "Converts quantit(ies)."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Object added.",
+		content = @Content(
+			mediaType = "application/json"
+		)
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Uni<String> convert(
+		JsonNode convertRequest
+	) {
+		return this.getOqmCoreApiClient().unitConvertQuantity(convertRequest);
 	}
 }

@@ -1,0 +1,76 @@
+{#modal id='itemStoredTransactionTransfer' size='xl' title='Transfer Item Stored'}
+	{#titleIcon}
+		{#icons/transactionTransfer /}
+	{/titleIcon}
+	{#footerButtons}
+	<button type="submit" id="itemStoredTransactionTransferFormSubmitButton" class="btn btn-success" form="itemStoredTransactionTransferForm">
+		{#icons/transactionTransfer /} Transfer Item Stored
+	</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col messages" id="itemStoredTransactionTransferMessages"></div>
+	</div>
+	<div class="mb-3" id="itemStoredTransactionTransferFormItemInputContainer">
+		<label for=itemStoredTransactionTransferFormItem-itemInputSearchButton" class="form-label h3">{#icons/item}{/icons/item} Item:</label>
+		{#inputs/item/itemSelectInput id="itemStoredTransactionTransferFormItem" /}
+	</div>
+	<div id="itemStoredTransactionTransferItemInfoContainer">
+		<h3>
+			{#icons/item /} <span id="itemStoredTransactionTransferItemInfoItemName"></span>
+		</h3>
+	</div>
+	<div id="itemStoredTransactionTransferInfoContainer">
+		<h2>
+			{#icons/stored /} <span id="itemStoredTransactionTransferInfoStoredLabel"></span>
+		</h2>
+		<h4>
+			Stored in {#icons/storageBlock /} <span id="itemStoredTransactionTransferInfoBlockLabel"></span>
+		</h4>
+	</div>
+	<hr />
+
+	<form id='itemStoredTransactionTransferForm'>
+		<input type="hidden" name="itemId" id="itemStoredTransactionTransferFormItemIdInput" value=""/>
+		
+		<div class="row">
+			<div class="col" id="itemStoredTransactionTransferFormTypeInputContainer">
+				<label for="itemStoredTransactionTransferFormTypeInput" class="form-label">Type</label>
+				<select class="form-select" id="itemStoredTransactionTransferFormTypeInput" onchange="ItemStoredTransaction.Transfer.typeChanged();" aria-describedby="itemStoredTransactionTransferFormTypeInputHelp">
+					<option value="TRANSFER_WHOLE">Whole Stored</option>
+					<option value="TRANSFER_AMOUNT">Amount</option>
+				</select>
+				<div id="itemStoredTransactionTransferFormTypeInputHelp" class="form-text">
+					The type of transferring we are doing. <br />
+					<span id="itemStoredTransactionTransferFormTypeInputHelpDisabledNote"></span>
+				</div>
+			</div>
+			<div class="col" id="itemStoredTransactionTransferFormFromBlockContainer">
+				<label for="itemStoredTransactionTransferFormFromBlockSelect" class="form-label">From {#icons/storageBlock /} Storage Block</label>
+				<select class="form-select form-select-lg" id="itemStoredTransactionTransferFormFromBlockSelect" onchange="ItemStoredTransaction.Transfer.updateToBlock($(this).val());ItemStoredTransaction.Transfer.updateAmount(null, null, $(this).val(), true);"></select>
+			</div>
+			<div class="col" id="itemStoredTransactionTransferFormFromStoredContainer">
+				{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionTransferFormFromItemStored" onchange="ItemStoredTransaction.Transfer.updateToBlock(ItemStoredSearchSelect.getBlockIdInput($(this).parent()).val(), true);ItemStoredTransaction.Transfer.updateAmount(ItemStoredSearchSelect.getItemIdInput($(this).parent()).val(), ItemStoredSearchSelect.getIdInput($(this).parent()).val(), ItemStoredSearchSelect.getBlockIdInput($(this).parent()).val(), true);" /}
+			</div>
+		</div>
+		<div class="row mt-3" id="itemStoredTransactionTransferFormAmountContainer">
+			<div class="col" id="itemStoredTransactionTransferFormAmountInputs">
+			</div>
+			<div class="col my-auto">
+				<div class="form-check form-control-lg">
+					<input class="form-check-input" type="checkbox" value="" id="itemStoredTransactionTransferFormAmountTransferAllInput" onchange="ItemStoredTransaction.Transfer.updateAllAmount();">
+					<label class="form-check-label" for="itemStoredTransactionTransferFormAmountTransferAllInput">Transfer All</label>
+				</div>
+			</div>
+		</div>
+		<div class="row mt-3">
+			<div class="col" id="itemStoredTransactionTransferFormToBlockContainer">
+				<label for="itemStoredTransactionTransferFormToBlockSelect" class="form-label">To {#icons/storageBlock /} Storage Block</label>
+				<select class="form-select form-select-lg" id="itemStoredTransactionTransferFormToBlockSelect" required></select>
+			</div>
+			<div class="col" id="itemStoredTransactionTransferFormToStoredContainer">
+				{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionTransferFormToItemStored" labelText='To Stored'/}
+			</div>
+		</div>
+		
+	</form>
+{/modal}

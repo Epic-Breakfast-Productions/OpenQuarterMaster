@@ -14,5 +14,8 @@ public class CollectionUpgradeResult {
 
 	private String collectionName;
 	private long numObjectsUpgraded;
+	private long numObjectsNotUpgraded;
 	private Duration timeTaken;
+	@lombok.Builder.Default
+	private UpgradeOverallCreatedObjectsResults createdObjects = new UpgradeOverallCreatedObjectsResults();
 }

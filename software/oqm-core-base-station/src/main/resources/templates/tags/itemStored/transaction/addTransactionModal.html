@@ -1,0 +1,91 @@
+{#modal id='itemStoredTransactionAdd' size='xl' title='Add Item Stored'}
+	{#titleIcon}
+		{#icons/transactionAdd}{/icons/transactionAdd}
+	{/titleIcon}
+	{#footerButtons}
+	<button type="submit" id="itemStoredTransactionAddFormSubmitButton" class="btn btn-success" form="itemStoredTransactionAddForm">
+		{#icons/add}{/icons/add} Add Item Stored
+	</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col messages" id="itemStoredTransactionAddMessages"></div>
+	</div>
+
+	<form id='itemStoredTransactionAddForm'>
+		<input type="hidden" name="itemId" id="itemStoredTransactionAddFormStoredIdInput" value=""/>
+		<div class="row">
+			<div class="col">
+				<div class="mb-3" id="itemStoredTransactionAddFormItemInputContainer">
+					<label for=itemStoredTransactionAddFormItem-itemInputSearchButton" class="form-label h3">{#icons/item}{/icons/item} Item:</label>
+					{#inputs/item/itemSelectInput id="itemStoredTransactionAddFormItem" /}
+				</div>
+				<div class="mb-3" id="itemStoredTransactionAddFormItemDisplayContainer">
+					<h3>
+						{#icons/item}{/icons/item} Item: <span id="itemStoredTransactionAddFormItemDisplayName"></span>
+					</h3>
+				</div>
+
+				<div class="row">
+					<div class="col mb-3"  id="itemStoredTransactionAddFormTypeInputContainer">
+						<label for="itemStoredTransactionAddFormTypeInput" class="form-label">Type</label>
+						<select class="form-select" id="itemStoredTransactionAddFormTypeInput" onchange="ItemStoredTransaction.Add.updateInputs();" aria-describedby="itemStoredTransactionAddFormTypeInputHelp">
+							<option value="ADD_WHOLE">Whole Stored</option>
+							<option value="ADD_AMOUNT">Amount</option>
+						</select>
+						<div id="itemStoredTransactionAddFormTypeInputHelp" class="form-text">
+							The type of adding we are doing. <br />
+							<span id="itemStoredTransactionAddFormTypeInputHelpDisabledNote"></span>
+						</div>
+					</div>
+
+					<div class="col mb-3" id="itemStoredTransactionAddFormToBlockInputContainer">
+						<div class="card">
+							<div class="card-header">
+								<div class="d-grid gap-2">
+									<input class="btn-check" type="radio" name="toInput" id="itemStoredTransactionAddFormToBlockRadio" style="" onchange="ItemStoredTransaction.Add.updateInputs();" required>
+									<label class="btn" for="itemStoredTransactionAddFormToBlockRadio">
+										To {#icons/storageBlock}{/icons/storageBlock} Block
+									</label>
+								</div>
+							</div>
+							<div class="card-body">
+								<div>
+									{!<label for="itemStoredTransactionAddFormToBlockInput" class="form-label">To Block</label>!}
+									<select class="form-select" id="itemStoredTransactionAddFormToBlockInput">
+									</select>
+								</div>
+							</div>
+							<div class="card-footer text-body-secondary">
+						        Select this to add to a storage block.
+						    </div>
+						</div>
+					</div>
+
+					<div class="col mb-3" id="itemStoredTransactionAddFormToStoredInputContainer">
+					{!TODO:: move to stored searchSelect!}
+						<div class="card">
+							<div class="card-header">
+								<div class="d-grid gap-2">
+									<input class="btn-check" type="radio" name="toInput" id="itemStoredTransactionAddFormToStoredRadio" onchange="ItemStoredTransaction.Add.updateInputs();" required>
+									<label class="btn" for="itemStoredTransactionAddFormToStoredRadio">
+										To {#icons/stored}{/icons/stored} Stored
+									</label>
+								</div>
+							</div>
+							<div class="card-body">
+								<select class="form-select" id="itemStoredTransactionAddFormToStoredInput">
+								</select>
+							</div>
+							<div class="card-footer text-body-secondary">
+						        Select this to add to an existent stored item.
+						    </div>
+						</div>
+					</div>
+				</div>
+
+				<div id="itemStoredTransactionAddFormInputsContainer">
+				</div>
+			</div>
+		</div>
+	</form>
+{/modal}
