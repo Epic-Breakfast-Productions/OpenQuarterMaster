@@ -25,7 +25,7 @@ import java.util.Set;
 @Slf4j
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "interactingEntityType"
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
 )
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = User.class, name = "USER"),
@@ -49,7 +49,7 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 	
 	public abstract String getEmail();
 	
-	public abstract InteractingEntityType getInteractingEntityType();
+	public abstract InteractingEntityType getType();
 	
 	public abstract Set<String> getRoles();
 	

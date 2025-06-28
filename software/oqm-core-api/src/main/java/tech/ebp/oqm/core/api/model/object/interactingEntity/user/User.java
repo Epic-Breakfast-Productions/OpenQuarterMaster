@@ -64,7 +64,7 @@ public class User extends InteractingEntity {
 	private Set<@ValidUserRole String> roles = new HashSet<>();
 	
 	@Override
-	public InteractingEntityType getInteractingEntityType() {
+	public InteractingEntityType getType() {
 		return InteractingEntityType.USER;
 	}
 	

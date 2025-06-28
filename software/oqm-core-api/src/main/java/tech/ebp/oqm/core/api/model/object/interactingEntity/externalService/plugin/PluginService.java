@@ -45,7 +45,7 @@ public class PluginService extends ExternalService {
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Override
-	public InteractingEntityType getInteractingEntityType() {
+	public InteractingEntityType getType() {
 		return InteractingEntityType.SERVICE_PLUGIN;
 	}
 	
