@@ -110,6 +110,28 @@ const Getters = {
 				}
 			});
 		},
+	},
+	InteractingEntities: {
+		getEntities: async function({type=null, doneFunc = function(){}}){
+			let result = [];
+
+			let params = new URLSearchParams();
+			if(type !== null){
+				params.set("type", type);
+			}
+
+			Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/interacting-entity?" + params.toString(),
+				done: function(entitiesSearchResult){
+					console.log("Got interacting entities: ", entitiesSearchResult);
+					result = entitiesSearchResult.results;
+					doneFunc(entitiesSearchResult.results);
+				}
+			});
+
+			return result;
+		}
 	}
 }
 

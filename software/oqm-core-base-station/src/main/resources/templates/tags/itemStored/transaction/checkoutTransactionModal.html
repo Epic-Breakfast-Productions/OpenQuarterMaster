@@ -22,91 +22,92 @@
 	</div>
 	<hr />
 
-	<form id='itemStoredTransactionCheckoutForm'>
-		<input type="hidden" name="itemId" id="itemStoredTransactionCheckoutFormItemIdInput" value=""/>
-		
-		<div class="row">
-			<div class="col" id="itemStoredTransactionCheckoutFormTypeInputContainer">
-				<label for="itemStoredTransactionCheckoutFormTypeInput" class="form-label">Type</label>
-				<select class="form-select" id="itemStoredTransactionCheckoutFormTypeInput" onchange="ItemStoredTransaction.Subtract.typeUpdated();" aria-describedby="itemStoredTransactionSubtractFormTypeInputHelp">
-					<option value="SUBTRACT_WHOLE">Whole Stored</option>
-					<option value="SUBTRACT_AMOUNT">Amount</option>
-				</select>
-				<div id="itemStoredTransactionCheckoutFormTypeInputHelp" class="form-text">
-					The type of subtracting we are doing. <br />
-					<span id="itemStoredTransactionCheckoutFormTypeInputHelpDisabledNote"></span>
+	<div id="itemStoredTransactionCheckoutFormContainer">
+		<form id='itemStoredTransactionCheckoutForm'>
+			<input type="hidden" name="itemId" id="itemStoredTransactionCheckoutFormItemIdInput" value=""/>
+			
+			<div class="row">
+				<div class="col" id="itemStoredTransactionCheckoutFormTypeInputContainer">
+					<label for="itemStoredTransactionCheckoutFormTypeInput" class="form-label">Type</label>
+					<select class="form-select" id="itemStoredTransactionCheckoutFormTypeInput" onchange="ItemStoredTransaction.Checkout.typeUpdated();" aria-describedby="itemStoredTransactionSubtractFormTypeInputHelp">
+						<option value="SUBTRACT_WHOLE">Whole Stored</option>
+						<option value="SUBTRACT_AMOUNT">Amount</option>
+					</select>
+					<div id="itemStoredTransactionCheckoutFormTypeInputHelp" class="form-text">
+						The type of subtracting we are doing. <br />
+						<span id="itemStoredTransactionCheckoutFormTypeInputHelpDisabledNote"></span>
+					</div>
+				</div>
+				<div class="col" id="itemStoredTransactionCheckoutFormFromBlockContainer">
+					<label for="itemStoredTransactionCheckoutFormBlockSelect" class="form-label">From {#icons/storageBlock /} Storage Block</label>
+					<select class="form-select form-select-lg" id="itemStoredTransactionCheckoutFormFromBlockSelect" onchange="ItemStoredTransaction.Checkout.updateAmount(null, null, $(this).val(), true);"></select>
+				</div>
+				<div class="col" id="itemStoredTransactionCheckoutFormFromStoredContainer">
+					{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionCheckoutFormFromItemStored" onchange="ItemStoredTransaction.Checkout.updateAmount(ItemStoredSearchSelect.getItemIdInput($(this).parent()).val(), ItemStoredSearchSelect.getIdInput($(this).parent()).val(), ItemStoredSearchSelect.getBlockIdInput($(this).parent()).val(), true);" /}
 				</div>
 			</div>
-			<div class="col" id="itemStoredTransactionCheckoutFormFromBlockContainer">
-				<label for="itemStoredTransactionCheckoutFormBlockSelect" class="form-label">From {#icons/storageBlock /} Storage Block</label>
-				<select class="form-select form-select-lg" id="itemStoredTransactionCheckoutFormFromBlockSelect" onchange="ItemStoredTransaction.Subtract.updateAmount(null, null, $(this).val(), true);"></select>
-			</div>
-			<div class="col" id="itemStoredTransactionCheckoutFormFromStoredContainer">
-				{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionCheckoutFormFromItemStored" onchange="ItemStoredTransaction.Subtract.updateAmount(ItemStoredSearchSelect.getItemIdInput($(this).parent()).val(), ItemStoredSearchSelect.getIdInput($(this).parent()).val(), ItemStoredSearchSelect.getBlockIdInput($(this).parent()).val(), true);" /}
-			</div>
-		</div>
-		<div class="row mt-3" id="itemStoredTransactionCheckoutFormAmountContainer">
-			<div class="col" id="itemStoredTransactionCheckoutFormAmountInputs">
-			</div>
-			<div class="col my-auto">
-				<div class="form-check form-control-lg">
-					<input class="form-check-input" type="checkbox" value="" id="itemStoredTransactionCheckoutFormAmountAllInput" onchange="ItemStoredTransaction.Subtract.updateAllAmount();">
-					<label class="form-check-label" for="itemStoredTransactionCheckoutFormAmountAllInput">Checkout All</label>
+			<div class="row mt-3" id="itemStoredTransactionCheckoutFormAmountContainer">
+				<div class="col" id="itemStoredTransactionCheckoutFormAmountInputs">
+				</div>
+				<div class="col my-auto">
+					<div class="form-check form-control-lg">
+						<input class="form-check-input" type="checkbox" value="" id="itemStoredTransactionCheckoutFormAmountAllInput" onchange="ItemStoredTransaction.Checkout.updateAllAmount();">
+						<label class="form-check-label" for="itemStoredTransactionCheckoutFormAmountAllInput">Checkout All</label>
+					</div>
 				</div>
 			</div>
-		</div>
-		<hr />
-		<div class="row mt-3">
-			<div class="col">
-				
-				<div class="row mb-3">
-					<div class="col">
-						<label class="form-label" for="itemStoredTransactionCheckoutFormForSelectInput">For Who:</label>
-						<select class="form-select" id="itemStoredTransactionCheckoutFormForSelectInput" onchange="" aria-describedby="itemStoredTransactionCheckoutFormForSelectInputHelp">
-							<option value="self" selected>Yourself</option>
-							<option value="otherOqmUser">Another OQM User</option>
-							<option value="extUser">External Entity</option>
-						</select>
-						<div id="itemStoredTransactionCheckoutFormForSelectInputHelp" class="form-text">
-							Who this action is being done by or for. Who the item is being given to.
+			<hr />
+			<div class="row mt-3">
+				<div class="col">
+					
+					<div class="row mb-3">
+						<div class="col">
+							<label class="form-label" for="itemStoredTransactionCheckoutFormForSelectInput">For Who:</label>
+							<select class="form-select" id="itemStoredTransactionCheckoutFormForSelectInput" onchange="ItemStoredTransaction.Checkout.updateForWho();" aria-describedby="itemStoredTransactionCheckoutFormForSelectInputHelp">
+								<option value="self" selected>Yourself</option>
+								<option value="otherOqmUser">Another OQM User</option>
+								<option value="extUser">External Entity</option>
+							</select>
+							<div id="itemStoredTransactionCheckoutFormForSelectInputHelp" class="form-text">
+								Who this action is being done by or for. Who the item is being given to.
+							</div>
+						</div>
+						<div class="col" id="itemStoredTransactionCheckoutFormForUserContainer">
+							<label class="form-label" for="itemStoredTransactionCheckoutFormForUserInput">Select a user:</label>
+							<select class="form-select" id="itemStoredTransactionCheckoutFormForUserInput"></select>
+						</div>
+						<div class="col" id="itemStoredTransactionCheckoutFormForExtUserContainer">
+							<div class="mb-3">
+								<label class="form-label" for="itemStoredTransactionCheckoutFormForExtUserNameInput">External User Name:</label>
+								<textarea class="form-control" id="itemStoredTransactionCheckoutFormForExtUserNameInput" rows="1"></textarea>
+							</div>
+							<div class="">
+								<label class="form-label" for="itemStoredTransactionCheckoutFormForExtUserIdInput">External User Id:</label>
+								<input type="text" class="form-control" id="itemStoredTransactionCheckoutFormForExtUserIdInput">
+							</div>
 						</div>
 					</div>
-					<div class="col" id="itemStoredTransactionCheckoutFormForUserContainer">
-						<label class="form-label" for="itemStoredTransactionCheckoutFormForUserInput">Select a user:</label>
-						<!-- TODO:: use d/select instead -->
-						<textarea class="form-control" id="itemStoredTransactionCheckoutFormForUserInput" rows="1"></textarea>
-					</div>
-					<div class="col" id="itemStoredTransactionCheckoutFormForExtUserContainer">
-						<div class="mb-3">
-							<label class="form-label" for="itemStoredTransactionCheckoutFormForExtUserNameInput">External User Name:</label>
-							<textarea class="form-control" id="itemStoredTransactionCheckoutFormForExtUserNameInput" rows="1"></textarea>
-						</div>
-						<div class="">
-							<label class="form-label" for="itemStoredTransactionCheckoutFormForExtUserIdInput">External User Id:</label>
-							<input type="text" class="form-control" id="itemStoredTransactionCheckoutFormForExtUserIdInput">
+					
+					
+					
+					<div class="mb-3">
+						<label class="form-label" for="itemStoredTransactionCheckoutFormDueBackInput">Due Back:</label>
+						<input type="datetime-local" id="itemStoredTransactionCheckoutFormDueBackInput" class="form-control datetimeInputFuture" aria-describedby="itemStoredTransactionCheckoutFormDueBackInputHelp">
+						<div id="itemStoredTransactionCheckoutFormDueBackInputHelp" class="form-text">
+							Leave blank for no due date
 						</div>
 					</div>
-				</div>
-				
-				
-				
-				<div class="mb-3">
-					<label class="form-label" for="itemStoredTransactionCheckoutFormDueBackInput">Due Back:</label>
-					<input type="datetime-local" id="itemStoredTransactionCheckoutFormDueBackInput" class="form-control datetimeInputFuture" aria-describedby="itemStoredTransactionCheckoutFormDueBackInputHelp">
-					<div id="itemStoredTransactionCheckoutFormDueBackInputHelp" class="form-text">
-						Leave blank for no due date
+					
+					<div class="mb-3">
+						<label for="itemStoredTransactionCheckoutFormReasonInput" class="form-label">Reason</label>
+						<input type="text" class="form-control" id="itemStoredTransactionCheckoutFormReasonInput" placeholder="Reason">
 					</div>
-				</div>
-				
-				<div class="mb-3">
-					<label for="itemStoredTransactionCheckoutFormReasonInput" class="form-label">Reason</label>
-					<input type="text" class="form-control" id="itemStoredTransactionCheckoutFormReasonInput" placeholder="Reason">
-				</div>
-				<div class="mb-3">
-					<label for="itemStoredTransactionCheckoutFormDetailDetailInput" class="form-label">Details</label>
-					<textarea class="form-control" id="itemStoredTransactionCheckoutFormDetailDetailInput" rows="3"></textarea>
+					<div class="mb-3">
+						<label for="itemStoredTransactionCheckoutFormDetailDetailInput" class="form-label">Notes</label>
+						<textarea class="form-control" id="itemStoredTransactionCheckoutFormDetailDetailInput" rows="3"></textarea>
+					</div>
 				</div>
 			</div>
-		</div>
-	</form>
+		</form>
+	</div>
 {/modal}

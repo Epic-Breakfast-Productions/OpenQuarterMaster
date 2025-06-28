@@ -183,7 +183,7 @@ Ingests:
 				<li class="nav-item dropstart">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 						{#icons/user}{/icons/user}
-						<span id="userNameDisplay">{userInfo.getName()}</span></a>
+						<span id="userNameDisplay" data-userId="{userInfo.getId()}">{userInfo.getName()}</span></a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="{rootPrefix}/you" id="youLink">
 							{#icons/you}{/icons/you} You

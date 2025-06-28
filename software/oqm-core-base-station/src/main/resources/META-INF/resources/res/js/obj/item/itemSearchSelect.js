@@ -19,6 +19,7 @@ const ItemSearchSelect = {
 		ItemSearchSelect.itemSearchSelectForm.submit();
 	},
 	clearSearchInput(clearButtPushed, trigger = true){
+		//TODO:: update to be okay with container or button pushed
 		clearButtPushed.siblings("input[name=itemName]").val("");
 		clearButtPushed.siblings("input[name=item]").val("");
 		if(trigger) {
