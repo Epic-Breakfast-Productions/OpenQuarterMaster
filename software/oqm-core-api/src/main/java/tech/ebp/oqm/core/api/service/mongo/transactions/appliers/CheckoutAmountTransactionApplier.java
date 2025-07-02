@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo.transactions.appliers;
 
 import com.mongodb.client.ClientSession;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
@@ -20,6 +21,7 @@ import javax.measure.Quantity;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
+@Slf4j
 public class CheckoutAmountTransactionApplier extends CheckinOutTransactionApplier<CheckoutAmountTransaction> {
 	
 	public CheckoutAmountTransactionApplier(StoredService storedService, ItemCheckoutService itemCheckoutService) {
@@ -89,7 +91,8 @@ public class CheckoutAmountTransactionApplier extends CheckinOutTransactionAppli
 		ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
 															.item(inventoryItem.getId())
 															.checkoutDetails(transaction.getCheckoutDetails())
-															.fromStoredId(stored.getId())
+															.fromStored(stored.getId())
+															.fromBlock(stored.getStorageBlock())
 															.checkedOut(amount)
 															.checkOutTransaction(appliedTransactionId);
 		

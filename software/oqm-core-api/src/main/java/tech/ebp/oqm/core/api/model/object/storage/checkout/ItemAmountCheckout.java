@@ -18,7 +18,8 @@ import javax.measure.Quantity;
 public class ItemAmountCheckout extends ItemCheckout<Quantity<?>> {
 	public static final int CUR_SCHEMA_VERSION = 2;
 
-	private ObjectId fromStoredId;
+	private ObjectId fromStored;
+	private ObjectId fromBlock;
 //	private boolean wholeCheckout = false;
 
 	@Override

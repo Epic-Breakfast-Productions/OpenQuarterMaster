@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.model.object.storage.checkout;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
 
@@ -18,6 +19,10 @@ import javax.measure.Quantity;
 @SuperBuilder(toBuilder = true)
 public class ItemWholeCheckout extends ItemCheckout<Stored> {
 	public static final int CUR_SCHEMA_VERSION = 2;
+	
+	public ObjectId getFromBlock() {
+		return this.getCheckedOut().getStorageBlock();
+	}
 
 	@Override
 	public CheckoutType getType(){

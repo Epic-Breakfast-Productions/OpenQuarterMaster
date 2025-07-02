@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import lombok.Getter;
@@ -83,7 +84,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public ObjectId transact(ItemStoredTransaction transaction) throws Exception {
+	public ObjectId transact(@Valid ItemStoredTransaction transaction) throws Exception {
 		return this.appliedTransactionService.apply(this.getOqmDbIdOrName(), null, this.getInventoryItem(), transaction, this.getInteractingEntity());
 	}
 

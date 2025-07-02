@@ -37,6 +37,9 @@ public abstract class ItemCheckout <T> extends AttKeywordMainObject {
 	@ToString.Include
 	public abstract CheckoutType getType();
 	
+	@ToString.Include
+	public abstract ObjectId getFromBlock();
+	
 	/**
 	 * When these item(s) were checked out
 	 */

@@ -1358,7 +1358,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 
-		assertEquals(initialStoredId, resultingCheckout.getFromStoredId());
+		assertEquals(initialStoredId, resultingCheckout.getFromStored());
 		assertEquals(details, resultingCheckout.getCheckoutDetails());
 		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckOutTransaction());
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), resultingCheckout.getCheckedOut());
@@ -1421,7 +1421,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 
-		assertEquals(initialStoredId, resultingCheckout.getFromStoredId());
+		assertEquals(initialStoredId, resultingCheckout.getFromStored());
 		assertEquals(details, resultingCheckout.getCheckoutDetails());
 		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckOutTransaction());
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), resultingCheckout.getCheckedOut());
@@ -1484,7 +1484,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 
-		assertEquals(initialStoredId, resultingCheckout.getFromStoredId());
+		assertEquals(initialStoredId, resultingCheckout.getFromStored());
 		assertEquals(details, resultingCheckout.getCheckoutDetails());
 		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckOutTransaction());
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), resultingCheckout.getCheckedOut());
