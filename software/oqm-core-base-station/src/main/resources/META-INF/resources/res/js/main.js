@@ -70,7 +70,7 @@ const Main = {
 }
 
 const UserUtils = {
-	userId: $("#userNameDisplay").prop("data-userId")
+	userId: $("#userNameDisplay").data("userid")
 }
 
 console.log("===== New Page Loading =====");

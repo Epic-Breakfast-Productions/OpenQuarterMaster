@@ -23,7 +23,9 @@
     {#if showItem}<th scope="col">{#icons/item}{/icons/item} Item</th>{/if}
     <th scope="col" style="width: 75px;">Status</th>
     <th scope="col">Amount</th>
-    <th scope="col">{#icons/storageBlock}{/icons/storageBlock} From</th>
+    <th scope="col">
+		{#icons/storageBlock}{/icons/storageBlock} From
+	</th>
     <th scope="col">For</th>
     <th scope="col">By</th>
     <th scope="col">Due Back</th>
@@ -59,20 +61,21 @@
       {/if}
       </td>
     <td>
-      {#if result.get("checkedOut").get("storedType").asText() == "AMOUNT"}
-        {#amountDisplay amount=result.get("checkedOut").get("amount")}{/amountDisplay}
+      {#if result.get("type").asText() == "AMOUNT"}
+        {#amountDisplay amount=result.get("checkedOut")}{/amountDisplay}
       {#else}
         1
       {/if}
     </td>
     <td>
-      {#links/storageBlock id=result.get("checkedOutFrom").asText() label=result.get("checkedOutFrom-labelText").asText()}{/links/storageBlock}
+      {#links/storageBlock id=result.get("fromBlock").asText() label=result.get("fromBlock-labelText").asText()}{/links/storageBlock}
+		{!TODO:: if have fromStored, show that !}
     </td>
     <td>
-      {#let checkedOutFor=result.get("checkedOutFor") }
+      {#let checkedOutFor=result.get("checkoutDetails").get("checkedOutFor") }
       {#when checkedOutFor.get("type").asText()}
       {#is "OQM_ENTITY"}
-        {#interactingEntityRef entityRef=result.get("checkedOutFor").get("entityRef")}{/interactingEntityRef}
+        {#interactingEntityRef entityRef=checkedOutFor.get("entityRef")}{/interactingEntityRef}
       {#is "EXT_SYS_USER"}
         {checkedOutFor.get("name")} /
         {checkedOutFor.get("externalId")}
@@ -83,11 +86,11 @@
       {#interactingEntityRef entityRef=result.get("creatorRef")}{/interactingEntityRef}
     </td>
     <td>
-      {#let dueBack=result.get("dueBack").asText()}
-        {#if dueBack == 'null'}
+      {#let dueBack=result.get("checkoutDetails").get("dueBack")}
+        {#if dueBack == null}
           N/A
         {#else}
-          {cdi:DateTimeService.formatForUi(dueBack)}
+          {cdi:DateTimeService.formatForUi(dueBack.asText())}
         {/if}
       {/let}
     </td>
