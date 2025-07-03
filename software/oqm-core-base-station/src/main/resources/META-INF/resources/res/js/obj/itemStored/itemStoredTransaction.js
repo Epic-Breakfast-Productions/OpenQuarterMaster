@@ -1632,41 +1632,50 @@ const ItemStoredTransaction = {
 	}
 };
 
-ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitFormHandler);
-ItemStoredTransaction.Add.itemIdInput.on("change", function () {
-	let itemId = ItemStoredTransaction.Add.itemIdInput.val();
-	console.log("Got item for add transaction form. Setting up: ", itemId);
-	ItemStoredTransaction.Add.setupForm(itemId);
-});
+if(ItemStoredTransaction.Add.form) {
+	ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitFormHandler);
+	ItemStoredTransaction.Add.itemIdInput.on("change", function () {
+		let itemId = ItemStoredTransaction.Add.itemIdInput.val();
+		console.log("Got item for add transaction form. Setting up: ", itemId);
+		ItemStoredTransaction.Add.setupForm(itemId);
+	});
+}
 
-ItemStoredTransaction.Checkout.form.on("submit", ItemStoredTransaction.Checkout.submitFormHandler);
-ItemStoredTransaction.Checkout.itemSearchIdInput.on("change", function () {
-	console.log("Selected new item.");
-	let item = ItemStoredTransaction.Checkout.itemSearchIdInput.val();
+if(ItemStoredTransaction.Checkout.form) {
+	ItemStoredTransaction.Checkout.form.on("submit", ItemStoredTransaction.Checkout.submitFormHandler);
+	ItemStoredTransaction.Checkout.itemSearchIdInput.on("change", function () {
+		console.log("Selected new item.");
+		let item = ItemStoredTransaction.Checkout.itemSearchIdInput.val();
+		if (item != null) {
+			ItemStoredTransaction.Checkout.setupForm(item);
+		}
+	});
+}
 
-	if (item != null) {
-		ItemStoredTransaction.Checkout.setupForm(item);
-	}
-});
+if(ItemStoredTransaction.Set.form) {
+	ItemStoredTransaction.Set.form.on("submit", ItemStoredTransaction.Set.submitFormHandler);
+}
 
-ItemStoredTransaction.Set.form.on("submit", ItemStoredTransaction.Set.submitFormHandler);
+if(ItemStoredTransaction.Subtract.form) {
+	ItemStoredTransaction.Subtract.form.on("submit", ItemStoredTransaction.Subtract.submitFormHandler);
+	ItemStoredTransaction.Subtract.itemSearchIdInput.on("change", function () {
+		console.log("Selected new item.");
+		let item = ItemStoredTransaction.Subtract.itemSearchIdInput.val();
 
-ItemStoredTransaction.Subtract.form.on("submit", ItemStoredTransaction.Subtract.submitFormHandler);
-ItemStoredTransaction.Subtract.itemSearchIdInput.on("change", function () {
-	console.log("Selected new item.");
-	let item = ItemStoredTransaction.Subtract.itemSearchIdInput.val();
+		if (item != null) {
+			ItemStoredTransaction.Subtract.setupForm(item);
+		}
+	});
+}
 
-	if (item != null) {
-		ItemStoredTransaction.Subtract.setupForm(item);
-	}
-});
+if(ItemStoredTransaction.Transfer.form) {
+	ItemStoredTransaction.Transfer.form.on("submit", ItemStoredTransaction.Transfer.submitFormHandler);
+	ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function () {
+		console.log("Selected new item.");
+		let item = ItemStoredTransaction.Transfer.itemSearchIdInput.val();
 
-ItemStoredTransaction.Transfer.form.on("submit", ItemStoredTransaction.Transfer.submitFormHandler);
-ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function () {
-	console.log("Selected new item.");
-	let item = ItemStoredTransaction.Transfer.itemSearchIdInput.val();
-
-	if (item != null) {
-		ItemStoredTransaction.Transfer.setupForm(item);
-	}
-});
+		if (item != null) {
+			ItemStoredTransaction.Transfer.setupForm(item);
+		}
+	});
+}

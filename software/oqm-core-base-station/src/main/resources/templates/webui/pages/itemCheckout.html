@@ -41,8 +41,8 @@
 	{/itemCheckout/viewModal}
 	{#search/item/itemSearchSelectModal otherModalId="" rootPrefix=rootPrefix}
 	{/search/item/itemSearchSelectModal}
-	{#itemCheckout/itemCheckinModal}
-	{/itemCheckout/itemCheckinModal}
+	{#itemStored/transaction/checkinTransactionModal /}
+	
 {/modals}
 {#scripts}
 <script src="{rootPrefix}/res/js/entityRef.js"></script>
@@ -52,12 +52,13 @@
 <script src="{rootPrefix}/res/js/obj/getters.js"></script>
 <script src="{rootPrefix}/res/js/historySearch.js"></script>
 <script src="{rootPrefix}/res/js/obj/objView.js"></script>
-<script src="{rootPrefix}/META-INF/resources/res/js/obj/itemStored/storedView.js"></script>
-<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckin.js"></script>
+	<script src="{rootPrefix}/res/js/obj/units.js"></script>
+<script src="{rootPrefix}/res/js/obj/itemStored/storedView.js"></script>
 <script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
 <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
 <script src="{rootPrefix}/res/js/obj/item/itemSearchSelect.js"></script>
 <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredTransaction.js"></script>
 {/scripts}
 {#pageScript}
     <script>
