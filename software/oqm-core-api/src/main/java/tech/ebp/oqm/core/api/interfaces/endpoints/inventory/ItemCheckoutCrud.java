@@ -21,12 +21,8 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemCheckout;
-import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.CheckInDetails;
-import tech.ebp.oqm.core.api.model.object.storage.checkout.checkoutFor.CheckoutForOqmEntity;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
-import tech.ebp.oqm.core.api.model.rest.storage.itemCheckout.ItemCheckoutRequest;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
@@ -45,98 +41,19 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	
 	@Getter
 	Class<ItemCheckout> objectClass =  ItemCheckout.class;
-	
-	@POST
-	@Operation(
-		summary = "Checks out an item."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@RolesAllowed({Roles.INVENTORY_EDIT, Roles.INVENTORY_CHECKOUT})//TODO:: add checkout role to test keycloak
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public ObjectId create(
-		@Valid ItemCheckoutRequest itemCheckoutRequest
-	) {
-		InteractingEntity entity = this.getInteractingEntity();
-		
-		if(itemCheckoutRequest.getCheckedOutFor() == null){
-			itemCheckoutRequest.setCheckedOutFor(
-				new CheckoutForOqmEntity(entity)
-			);
-		}
-		
-		return this.getObjectService().checkoutItem(this.getOqmDbIdOrName(), itemCheckoutRequest, entity);
-	}
-	
-	@PUT
-	@Path("{id}/checkin")
-	@Operation(
-		summary = "Checks in an item."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@RolesAllowed({Roles.INVENTORY_EDIT, Roles.INVENTORY_CHECKOUT})//TODO:: add checkout role to test keycloak
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public ItemCheckout checkin(
-		@PathParam("id") String id,
-		@Valid CheckInDetails checkInDetails
-	) {
-		return this.getObjectService().checkinItem(this.getOqmDbIdOrName(), new ObjectId(id), checkInDetails, this.getInteractingEntity());
-	}
-	
+
 	@GET
 	@Operation(
 		summary = "Gets a list of checkouts, using search parameters."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.OBJECT,
-					implementation = SearchResult.class
-				)
-			)
-		},
-		headers = {
-			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
-		}
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
-	public Response search(
+	public SearchResult<ItemCheckout> search(
 		@BeanParam ItemCheckoutSearch itemCheckoutSearch
 	) {
 		return super.search(itemCheckoutSearch);

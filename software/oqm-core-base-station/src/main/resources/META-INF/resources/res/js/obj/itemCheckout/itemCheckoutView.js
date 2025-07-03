@@ -85,8 +85,9 @@ const ItemCheckoutView = {
 			url: Rest.passRoot + "/inventory/item-checkout/" + itemCheckoutId,
 			method: "GET",
 			async: false,
-			failMessagesDiv: ItemCheckin.messages,
+			failMessagesDiv: ItemCheckoutView.messages,
 			done: function (checkoutData) {
+				console.log("Setting up view for checkout: ", checkoutData);
 				let promises = [];
 
 				//TODO:: get create history event for checkout to show who checked out, enabled by #332
@@ -94,7 +95,7 @@ const ItemCheckoutView = {
 					url: Rest.passRoot + "/inventory/item-checkout/" + itemCheckoutId + "/history?eventType=CREATE",
 					method: "GET",
 					async: false,
-					failMessagesDiv: ItemCheckin.messages,
+					failMessagesDiv: ItemCheckoutView.messages,
 					done: function (checkoutData) {
 						console.log("Checkout history for creates: ", checkoutData);
 						EntityRef.getEntityRef(checkoutData.results[0].entity, function(entityRefHtml){
@@ -103,10 +104,10 @@ const ItemCheckoutView = {
 					}
 				}))
 
-				switch (checkoutData.checkedOutFor.type){
+				switch (checkoutData.checkoutDetails.checkedOutFor.type){
 					case "OQM_ENTITY":
 						EntityRef.getEntityRef(
-							checkoutData.checkedOutFor.entity,
+							checkoutData.checkoutDetails.checkedOutFor.entity,
 							function(refHtml){
 								ItemCheckoutView.checkedOutForLabel.append(refHtml);
 							}
@@ -115,13 +116,13 @@ const ItemCheckoutView = {
 					case "EXT_SYS_USER":
 						ItemCheckoutView.checkedOutForLabel.append(
 							$("<h6>Id:</h6>"),
-							$("<p></p>").text(checkoutData.checkedOutFor.externalId)
+							$("<p></p>").text(checkoutData.checkoutDetails.checkedOutFor.externalId)
 						);
 
 						if(checkoutData.checkedOutFor.name){
 							ItemCheckoutView.checkedOutForLabel.append(
 								$("<h6>Name:</h6>"),
-								$("<p></p>").text(checkoutData.checkedOutFor.name)
+								$("<p></p>").text(checkoutData.checkoutDetails.checkedOutFor.name)
 							);
 						}
 						break;
@@ -164,7 +165,7 @@ const ItemCheckoutView = {
 					url: Rest.passRoot + "/inventory/item/" + checkoutData.item,
 					method: "GET",
 					async: false,
-					failMessagesDiv: ItemCheckin.messages,
+					failMessagesDiv: ItemCheckoutView.messages,
 					done: function (itemData) {
 						ItemCheckoutView.itemName.append(
 							Links.getItemViewLink(checkoutData.item, itemData.name)
@@ -172,22 +173,33 @@ const ItemCheckoutView = {
 					}
 				}));
 
-				getStorageBlockLabel(checkoutData.checkedOutFrom, function (label){
+				getStorageBlockLabel(checkoutData.fromBlock, function (label){
 					ItemCheckoutView.checkedOutFrom.append(
-						Links.getStorageViewLink(checkoutData.checkedOutFrom, label)
+						Links.getStorageViewLink(checkoutData.fromBlock, label)
 					);
 				});
-				ItemCheckoutView.checkedOut.append(
-					StoredView.getStoredViewContent(
-						checkoutData.checkedOut,
-						checkoutData.item,
-						checkoutData.checkedOutFrom,
-						false,
-						false,
-						false,
-						true
-					)
-				);
+
+				switch(checkoutData.type){
+					case "AMOUNT":
+						ItemCheckoutView.checkedOut.append(
+							UnitUtils.quantityToDisplayStr(checkoutData.checkedOut)
+						);
+						break;
+					case "WHOLE":
+						ItemCheckoutView.checkedOut.append(
+							StoredView.getStoredViewContent(
+								checkoutData.checkedOut,
+								checkoutData.item,
+								checkoutData.fromBlock,
+								false,
+								false,
+								false,
+								true
+							)
+						);
+						break;
+				}
+
 
 				if(!checkoutData.stillCheckedOut){
 					Carousel.processImagedObjectImages(checkoutData.checkInDetails, ItemCheckoutView.checkinDetailsCarousel);
@@ -205,7 +217,7 @@ const ItemCheckoutView = {
 							ItemCheckoutView.checkinDetailsTypeContainer.addClass("bg-success");
 							ItemCheckoutView.checkinDetailsType.text("Returned");
 
-							getStorageBlockLabel(checkoutData.checkedOutFrom, function (label){
+							getStorageBlockLabel(checkoutData.fromBlock, function (label){
 								ItemCheckoutView.checkinDetailsCheckedInto.append(
 									Links.getStorageViewLink(checkoutData.checkInDetails.storageBlockCheckedInto, label)
 								);
@@ -228,7 +240,7 @@ const ItemCheckoutView = {
 						url: Rest.passRoot + "/inventory/item-checkout/" + itemCheckoutId + "/history?eventType=ITEM_CHECKIN",
 						method: "GET",
 						async: false,
-						failMessagesDiv: ItemCheckin.messages,
+						failMessagesDiv: ItemCheckoutView.messages,
 						done: function (checkoutData) {
 							console.log("Checkout history for checkins: ", checkoutData);
 							EntityRef.getEntityRef(checkoutData.results[0].entity, function(entityRefHtml){

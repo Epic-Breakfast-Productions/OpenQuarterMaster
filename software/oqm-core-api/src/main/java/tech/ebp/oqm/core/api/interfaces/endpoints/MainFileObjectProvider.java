@@ -223,6 +223,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 			this.getOqmDbIdOrName(),
 			this.getFileService().getFileObjectService().update(
 				this.getOqmDbIdOrName(),
+				null,
 				id,
 				updates,
 				this.getInteractingEntity()
@@ -336,6 +337,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 			fileContentsGet.getContents()
 		);
 		response.header(HttpHeaders.CONTENT_TYPE, fileContentsGet.getMetadata().getMimeType());
+		//TODO:: update filename with new extension from conversion
 		response.header("Content-Disposition", "attachment;filename=" + fileContentsGet.getMetadata().getOrigName());
 		response.header("hash-md5", fileContentsGet.getMetadata().getHashes().getMd5());
 		response.header("hash-sha1", fileContentsGet.getMetadata().getHashes().getSha1());

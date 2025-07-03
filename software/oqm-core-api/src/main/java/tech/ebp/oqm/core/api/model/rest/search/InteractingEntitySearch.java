@@ -6,10 +6,13 @@ import lombok.Setter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchUtils;
 
 import java.util.List;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
 import static com.mongodb.client.model.Filters.regex;
 
 @ToString(callSuper = true)
@@ -17,9 +20,7 @@ import static com.mongodb.client.model.Filters.regex;
 @Getter
 public class InteractingEntitySearch extends SearchKeyAttObject<InteractingEntity> {
 	@QueryParam("name") String name;
-
-	//TODO:: object specific fields, add to bson filter list
-	
+	@QueryParam("type") List<InteractingEntityType> types;
 	
 	@Override
 	public List<Bson> getSearchFilters() {
@@ -27,6 +28,13 @@ public class InteractingEntitySearch extends SearchKeyAttObject<InteractingEntit
 		
 		if (name != null && !name.isBlank()) {
 			output.add(regex("name", SearchUtils.getSearchTermPattern(name)));
+		}
+		if(types != null && !types.isEmpty()) {
+			output.add(
+				or(
+					types.stream().map(type->eq("type", type)).toList()
+				)
+			);
 		}
 		
 		return output;

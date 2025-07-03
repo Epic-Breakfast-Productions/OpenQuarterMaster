@@ -39,78 +39,27 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 class MongoHistoriedObjectServiceNoKafkaTest extends RunningServerTest {
 	
 	@Inject
-	OqmDatabaseService
-		oqmDatabaseService;
-	
-	@Inject
-	TestMongoHistoriedService
-		testMongoService;
-	
-	@Inject
-	InteractingEntityService
-		interactingEntityService;
+	TestMongoHistoriedService testMongoService;
 	
 	@Test
 	public void testEmptyHistory() {
-		assertEquals(
-			0,
-			testMongoService.getHistoryService()
-				.count(
-					DEFAULT_TEST_DB_NAME)
-		);
+		assertEquals(0, testMongoService.getHistoryService().count(DEFAULT_TEST_DB_NAME));
 	}
 	
 	@Test
-	public void testAdd()
-		throws JsonProcessingException {
-		User
-			testUser =
-			this.getTestUserService()
-				.getTestUser();
-		this.interactingEntityService.add(
-			testUser);
+	public void testAdd() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser();
 		
-		ObjectId
-			objectId =
-			this.testMongoService.add(
-				DEFAULT_TEST_DB_NAME,
-				new TestMainObject(
-					FAKER.lorem()
-						.paragraph()),
-				testUser
-			);
+		ObjectId objectId = this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.lorem().paragraph()), testUser);
 		
-		assertEquals(
-			1,
-			this.testMongoService.getHistoryService()
-				.count(
-					DEFAULT_TEST_DB_NAME)
-		);
-		List<ObjectHistoryEvent>
-			events =
-			this.testMongoService.getHistoryFor(
-				DEFAULT_TEST_DB_NAME,
-				objectId
-			);
-		assertEquals(
-			1,
-			events.size()
-		);
+		assertEquals(1, this.testMongoService.getHistoryService().count(DEFAULT_TEST_DB_NAME));
+		List<ObjectHistoryEvent> events = this.testMongoService.getHistoryFor(DEFAULT_TEST_DB_NAME, objectId);
+		assertEquals(1, events.size());
 		
-		CreateEvent
-			createEvent =
-			(CreateEvent) events.get(
-				0);
+		CreateEvent createEvent = (CreateEvent) events.get(0);
 		
-		assertEquals(
-			objectId,
-			createEvent.getObjectId()
-		);
-		assertNotNull(
-			createEvent.getEntity());
-		assertEquals(
-			testUser.getId(),
-			createEvent.getEntity()
-		);
+		assertEquals(objectId, createEvent.getObjectId());
+		assertNotNull(createEvent.getEntity());
+		assertEquals(testUser.getId(), createEvent.getEntity());
 	}
 }

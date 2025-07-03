@@ -51,7 +51,7 @@ public class CoreApiInteractingEntity extends InteractingEntity {
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Override
-	public InteractingEntityType getInteractingEntityType() {
+	public InteractingEntityType getType() {
 		return InteractingEntityType.CORE_API;
 	}
 

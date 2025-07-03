@@ -183,7 +183,7 @@ Ingests:
 				<li class="nav-item dropstart">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 						{#icons/user}{/icons/user}
-						<span id="userNameDisplay">{userInfo.getName()}</span></a>
+						<span id="userNameDisplay" data-userId="{userInfo.getId()}">{userInfo.getName()}</span></a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item" href="{rootPrefix}/you" id="youLink">
 							{#icons/you}{/icons/you} You
@@ -204,6 +204,9 @@ Ingests:
 						{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Admin
 					</a>
 					{/if}
+					<button class="btn-link dropdown-item" id="copyJwtButton" data-token="{userToken}" onclick="navigator.clipboard.writeText(this.dataset.token);">
+						{#icons/copy}{/icons/copy} Copy Token
+					</button>
 					<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="{rootPrefix}{config:['quarkus.oidc.logout.path']}" id="logoutButton">
 							{#icons/icon icon='door-closed'}{/icons/icon} Logout
@@ -372,6 +375,7 @@ Ingests:
 <script src="{rootPrefix}/lib/spin.js/spin.umd.js"></script>
 <script src="{rootPrefix}/lib/dselect/1.0.4/dist/js/dselect.js"></script>
 <script src="{rootPrefix}/res/js/constants.js"></script>
+<script src="{rootPrefix}/res/js/main.js"></script>
 <script src="{rootPrefix}/res/js/spinnerHelpers.js"></script>
 <script src="{rootPrefix}/res/js/getParamUtils.js"></script>
 <script src="{rootPrefix}/res/js/pageMessages.js"></script>
@@ -379,15 +383,10 @@ Ingests:
 <script src="{rootPrefix}/res/js/rest.js"></script>
 <script src="{rootPrefix}/res/js/timeHelpers.js"></script>
 <script src="{rootPrefix}/res/js/OqmDb.js"></script>
-<script src="{rootPrefix}/res/js/main.js"></script>
 <script src="{rootPrefix}/res/js/icons.js"></script>
 <script src="{rootPrefix}/res/js/links.js"></script>
 <script>
-	var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
-	var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
-		return new bootstrap.Popover(popoverTriggerEl)
-	});
-	Dselect.setupPageDselects();
+
 </script>
 {#insert scripts}{/}
 {!

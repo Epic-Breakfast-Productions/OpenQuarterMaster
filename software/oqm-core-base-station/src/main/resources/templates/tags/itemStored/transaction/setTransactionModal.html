@@ -1,0 +1,42 @@
+{#modal id='itemStoredTransactionSet' size='xl' title='Set Item Stored Amount'}
+	{#titleIcon}
+		{#icons/transactionTransfer /}
+	{/titleIcon}
+	{#footerButtons}
+	<button type="submit" id="itemStoredTransactionSetFormSubmitButton" class="btn btn-success" form="itemStoredTransactionSetForm">
+		{#icons/transactionSet /} Set Item Stored Amount
+	</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col messages" id="itemStoredTransactionSetMessages"></div>
+	</div>
+	
+	<div class="mb-3" id="itemStoredTransactionSetFormItemInputContainer">
+		<label for=itemStoredTransactionSetFormItem-itemInputSearchButton" class="form-label h3">{#icons/item}{/icons/item} Item:</label>
+		{#inputs/item/itemSelectInput id="itemStoredTransactionSetFormItem" /}
+	</div>
+	<div id="itemStoredTransactionSetItemInfoContainer">
+		<h3>
+			{#icons/item /} <span id="itemStoredTransactionSetItemInfoItemName"></span>
+		</h3>
+	</div>
+
+	<form id='itemStoredTransactionSetForm'>
+		<input type="hidden" name="itemId" id="itemStoredTransactionSetFormItemIdInput" value=""/>
+		<input type="hidden" id="itemStoredTransactionSetFormItemSetType" value=""/>
+		
+		<div class="row">
+			<div class="col" id="itemStoredTransactionSetFormBlockContainer">
+				<label for="itemStoredTransactionSetFormBlockSelect" class="form-label">{#icons/storageBlock /} Storage Block</label>
+				<select class="form-select form-select-lg" id="itemStoredTransactionSetFormBlockSelect" onchange="ItemStoredTransaction.Set.updateAmounts();"></select>
+			</div>
+			<div class="col" id="itemStoredTransactionSetFormStoredContainer">
+				{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionSetFormItemStored" onchange="ItemStoredTransaction.Set.updateAmounts();" /}
+			</div>
+		</div>
+		<div class="row mt-3">
+			<div class="col" id="itemStoredTransactionSetFormAmountContainer">
+			</div>
+		</div>
+	</form>
+{/modal}
