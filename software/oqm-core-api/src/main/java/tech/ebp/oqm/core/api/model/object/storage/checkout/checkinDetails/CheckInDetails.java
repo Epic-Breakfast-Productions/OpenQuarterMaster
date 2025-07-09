@@ -60,6 +60,14 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	List<@NonNull ObjectId> imageIds = new ArrayList<>();
 	
 	/**
+	 * List of files related to the checkin.
+	 */
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	List<@NonNull ObjectId> fileIds = new ArrayList<>();
+	
+	/**
 	 * Attributes this object might have, usable for any purpose.
 	 */
 	@NotNull
