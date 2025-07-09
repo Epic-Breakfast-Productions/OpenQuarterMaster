@@ -1,0 +1,50 @@
+{#modal id='itemStoredTransactionCheckin' size='xl' title='Checkin Item Stored'}
+	{#titleIcon}
+		{#icons/transactionCheckin /}
+	{/titleIcon}
+	{#footerButtons}
+	<button type="submit" id="itemStoredTransactionCheckinFormSubmitButton" class="btn btn-success" form="itemStoredTransactionCheckinForm">
+		{#icons/transactionCheckin /} Checkin
+	</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col messages" id="itemStoredTransactionCheckinMessages"></div>
+	</div>
+
+	<form id='itemStoredTransactionCheckinForm'>
+		
+		<div class="mb-3">
+			<label for="itemStoredTransactionCheckinFormNotesInput" class="form-label">Notes</label>
+			<textarea class="form-control" id="itemStoredTransactionCheckinFormNotesInput" rows="3"></textarea>
+		</div>
+		
+		{#search/image/imageSelectFormInput}
+		{/search/image/imageSelectFormInput}
+		{#fileAttachment/fileAttachmentSelectFormInput}
+		{/fileAttachment/fileAttachmentSelectFormInput}
+		
+		<div class="row">
+			<div class="col">
+				{#inputs/keywordInput}
+				{/inputs/keywordInput}
+			</div>
+			<div class="col">
+				{#inputs/attInput}
+				{/inputs/attInput}
+			</div>
+		</div>
+		
+		<hr />
+		<div class="row mt-3">
+			<div class="col" id="itemStoredTransactionCheckinFormToBlockContainer">
+				<label for="itemStoredTransactionCheckinFormToBlockSelect" class="form-label">To {#icons/storageBlock /} Storage Block</label>
+				<select class="form-select form-select-lg" id="itemStoredTransactionCheckinFormToBlockSelect" required></select>
+			</div>
+			<div class="col" id="itemStoredTransactionCheckinFormToStoredContainer">
+				{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionCheckinFormToItemStored" labelText='To Stored'/}
+			</div>
+		</div>
+		
+		
+	</form>
+{/modal}

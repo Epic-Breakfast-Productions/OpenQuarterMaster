@@ -1,0 +1,62 @@
+{
+	"_id": {
+		"$oid": "683fcdd357d4bf214978f5d5"
+	},
+	"storedType_mongo": "tech.ebp.oqm.core.api.model.object.storage.items.ListAmountItem",
+	"attachedFiles": [],
+	"attributes": {},
+	"barcode": "",
+	"categories": [],
+	"description": "",
+	"expiryWarningThreshold": "0.0",
+	"imageIds": [],
+	"keywords": [],
+	"name": "Test item 2",
+	"notificationStatus": {
+		"lowStock": false
+	},
+	"numExpired": 0,
+	"numExpiryWarn": 0,
+	"numLowStock": 0,
+	"schemaVersion": 1,
+	"storageMap": {
+		"683149f38d98ce4f7f8a5820": {
+			"empty": false,
+			"notificationStatus": {
+				"lowStock": false
+			},
+			"numExpired": 0,
+			"numExpiryWarned": 0,
+			"numStored": 1,
+			"parentUnit": "{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"}",
+			"stored": [
+				{
+					"_id": "1a19aab0-e695-42ad-a021-592c55c3c793",
+					"_t": "tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored",
+					"amount": "{\"unit\":{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"},\"scale\":\"ABSOLUTE\",\"value\":5}",
+					"attributes": {},
+					"barcode": "",
+					"conditionNotes": "",
+					"imageIds": [],
+					"keywords": [],
+					"labelText": "5 units",
+					"notificationStatus": {
+						"expired": false,
+						"expiredWarning": false
+					},
+					"storedType": "AMOUNT"
+				}
+			],
+			"total": "{\"unit\":{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"},\"scale\":\"ABSOLUTE\",\"value\":5}"
+		}
+	},
+	"storageType": "AMOUNT_LIST",
+	"total": "{\"unit\":{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"},\"scale\":\"ABSOLUTE\",\"value\":5}",
+	"unit": "{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"}",
+	"valueOfStored": {
+		"$numberDecimal": "0.0"
+	},
+	"valuePerUnit": {
+		"$numberDecimal": "0"
+	}
+}

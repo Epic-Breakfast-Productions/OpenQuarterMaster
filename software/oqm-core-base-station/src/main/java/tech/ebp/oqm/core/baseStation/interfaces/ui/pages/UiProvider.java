@@ -1,7 +1,5 @@
 package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.api.trace.Span;
 import io.quarkus.qute.Template;
@@ -14,8 +12,8 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.ConfigProvider;
 import tech.ebp.oqm.core.baseStation.interfaces.RestInterface;
+import tech.ebp.oqm.core.baseStation.model.UserInfo;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.SearchObject;
 
 import java.util.*;
@@ -54,6 +52,7 @@ public abstract class UiProvider extends RestInterface {
 		return template
 				   .data("rootPrefix", this.getRootPrefix())
 				   .data("userInfo", this.getUserInfo())
+				   .data("userToken", this.getUserTokenStr())
 				   .data("oqmDbs", this.getOqmDatabases())
 				   .data("selectedOqmDb", this.getSelectedDb())
 				   .data("traceId", this.span.getSpanContext().getTraceId())
@@ -65,19 +64,28 @@ public abstract class UiProvider extends RestInterface {
 	}
 	
 	protected Uni<Response> getUni(TemplateInstance pageTemplate, Map<String, Uni> uniMap) {
+		Uni<Object> userInfoUni = this.getOqmCoreApiClient().interactingEntityGetSelf(this.getBearerHeaderStr())
+										.map((ObjectNode userInfoJs)->{
+											return getUserInfo().setId(userInfoJs.get("id").toString().replaceAll("\"", ""));
+										});
 		if(uniMap.isEmpty()){
-			return Uni.createFrom().item(Response.ok(
-				pageTemplate,
-				MediaType.TEXT_HTML_TYPE
-			).build());
+			return userInfoUni.map((info)->{
+				return Response.ok(
+					pageTemplate,
+					MediaType.TEXT_HTML_TYPE
+				).build();
+			});
 		}
 		TreeSet<String> keys = new TreeSet<>(uniMap.keySet());
 		
 		UniJoin.Builder<Object> uniJoinBuilder = Uni.join().builder();
 		
+		
 		for(String key : keys){
 			uniJoinBuilder.add(uniMap.get(key));
 		}
+		// add after others, to ensure we get it done.
+		uniJoinBuilder.add(userInfoUni);
 		
 		return uniJoinBuilder.joinAll()
 				   .andCollectFailures()

@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.api.service.mongo.utils.codecs;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.inject.Singleton;
 import org.bson.BsonReader;
+import org.bson.BsonType;
 import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
@@ -20,7 +21,7 @@ public class DurationCodec implements Codec<Duration> {
 		try {
 			return ObjectUtils.OBJECT_MAPPER.readValue(bsonReader.readString(), this.getEncoderClass());
 		} catch(JsonProcessingException e) {
-			throw new RuntimeException("Failed to decode ZonedDateTime field.", e);
+			throw new RuntimeException("Failed to decode Duration field.", e);
 		}
 	}
 	
@@ -29,7 +30,7 @@ public class DurationCodec implements Codec<Duration> {
 		try {
 			bsonWriter.writeString(ObjectUtils.OBJECT_MAPPER.writeValueAsString(zonedDateTime));
 		} catch(JsonProcessingException e) {
-			throw new RuntimeException("Failed to encode ZonedDateTime field.", e);
+			throw new RuntimeException("Failed to encode Duration field.", e);
 		}
 	}
 	

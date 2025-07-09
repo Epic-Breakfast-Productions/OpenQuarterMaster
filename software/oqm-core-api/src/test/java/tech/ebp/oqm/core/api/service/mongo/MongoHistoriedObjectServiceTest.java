@@ -55,7 +55,6 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 	@Test
 	public void testAdd() throws JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
-		this.interactingEntityService.add(testUser);
 		
 		ObjectId objectId = this.testMongoService.add(
 			DEFAULT_TEST_DB_NAME,

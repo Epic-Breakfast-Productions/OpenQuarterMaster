@@ -8,6 +8,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.jwt.Claims;
@@ -24,7 +25,7 @@ import java.util.Set;
 @Slf4j
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "interactingEntityType"
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
 )
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = User.class, name = "USER"),
@@ -38,6 +39,7 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder(toBuilder = true)
 public abstract class InteractingEntity extends AttKeywordMainObject {
 	
 	private String idFromAuthProvider;
@@ -47,7 +49,7 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 	
 	public abstract String getEmail();
 	
-	public abstract InteractingEntityType getInteractingEntityType();
+	public abstract InteractingEntityType getType();
 	
 	public abstract Set<String> getRoles();
 	

@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.rest.unit.custom.NewCustomUnitRequest;
 
@@ -16,6 +17,7 @@ import tech.ebp.oqm.core.api.model.rest.unit.custom.NewCustomUnitRequest;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder(toBuilder = true)
 public class CustomUnitEntry extends MainObject {
 	public static final int CUR_SCHEMA_VERSION = 1;
 	

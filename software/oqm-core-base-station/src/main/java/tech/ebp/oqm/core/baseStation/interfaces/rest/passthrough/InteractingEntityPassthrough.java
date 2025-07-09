@@ -7,6 +7,7 @@ import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
@@ -18,6 +19,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InteractingEntitySearch;
 
 @Slf4j
 @Path(PassthroughProvider.PASSTHROUGH_API_ROOT + "/interacting-entity")
@@ -31,7 +33,14 @@ public class InteractingEntityPassthrough extends PassthroughProvider {
 	@Inject
 	@Location("tags/interactingEntityRef.html")
 	Template historyTemplate;
-
+	
+	@GET
+	public Uni<ObjectNode> searchEntities(
+		@BeanParam InteractingEntitySearch search
+	) {
+		return this.getOqmCoreApiClient().interactingEntitySearch(this.getBearerHeaderStr(), search);
+	}
+	
 	@GET
 	@Path("/{id}")
 	public Uni<ObjectNode> getInteractingEntity(
