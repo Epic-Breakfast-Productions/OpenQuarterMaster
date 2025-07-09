@@ -349,13 +349,42 @@ const ItemStoredTransaction = {
 		messages: $("#itemStoredTransactionCheckinMessages"),
 		form: $("#itemStoredTransactionCheckinForm"),
 
-		resetForm() {
+		notesInput: $("#itemStoredTransactionCheckinFormNotesInput"),
 
+		toBlockContainer: $("#itemStoredTransactionCheckinFormToBlockContainer"),
+		toBlockInput: $("#itemStoredTransactionCheckinFormToBlockSelect"),
+
+		toStoredContainer: $("#itemStoredTransactionCheckinFormToStoredContainer"),
+		toStoredInputGroup: $("#itemStoredTransactionCheckinFormToItemStored-inputGroup"),
+
+		imageSelect: $("#itemStoredTransactionCheckinForm.imagesSelected"),
+		fileSelect: $("#itemStoredTransactionCheckinForm.fileAttachmentSelectInputTable"),
+		keywordInputs: $("#itemStoredTransactionCheckinForm.keywordInputDiv"),
+		attInputs: $("#itemStoredTransactionCheckinForm.attInputDiv"),
+
+		resetForm() {
+			ItemStoredTransaction.Checkin.form.trigger("reset");
+
+			ItemStoredTransaction.Checkin.notesInput.val("");
+
+			ItemStoredTransaction.Checkin.toBlockContainer.hide();
+			ItemStoredTransaction.Checkin.toBlockInput.html("");
+
+			ItemStoredTransaction.Checkin.toStoredContainer.hide();
+			ItemStoredSearchSelect.resetSearchInput()
+
+			ItemStoredTransaction.Checkin.imageSelect.text("");
+			ItemStoredTransaction.Checkin.keywordInputs.text("");
+			ItemStoredTransaction.Checkin.attInputs.text("");
 		},
-		setupForm(itemId, storedId, buttonElement) {
-			console.log("Setting up item stored checkin transaction form for item", itemId);
+		setupForm: async function(checkoutId, buttonElement) {
+			console.log("Setting up item stored checkin transaction form for checkin ", checkoutId);
 			ModalHelpers.setReturnModal(this.modal, buttonElement);
 			this.resetForm();
+			let checkinData = null;
+			let item = null;
+
+
 			//TODO
 		}
 	},

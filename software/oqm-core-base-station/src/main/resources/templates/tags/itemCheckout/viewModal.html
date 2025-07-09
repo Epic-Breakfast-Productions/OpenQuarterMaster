@@ -1,7 +1,7 @@
 {#modal id='itemCheckoutView' size='xl' title='Item Checkout View'}
     {#titleIcon}{#icons/transactionCheckout}{/icons/transactionCheckout}{/titleIcon}
     {#footerButtons}
-    <button type="button" class="btn btn-success" id="itemCheckoutViewCheckinButton" data-bs-toggle="modal" data-bs-target="#itemCheckinModal">
+    <button type="button" class="btn btn-success btn-lg" id="itemCheckoutViewCheckinButton" data-checkoutId="" onclick="ItemStoredTransaction.Checkin.setupForm($(this).data('checkoutId'), this);" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionCheckinModal">
         {#icons/transactionCheckin}{/icons/transactionCheckin} Checkin
     </button>
     {/footerButtons}

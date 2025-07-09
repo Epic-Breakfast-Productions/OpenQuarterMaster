@@ -145,6 +145,7 @@ const ItemCheckoutView = {
 				}
 
 				if(checkoutData.stillCheckedOut){
+					ItemCheckoutView.checkinButton.data("checkoutId", itemCheckoutId);
 					ItemCheckoutView.checkinButton.show();
 					ItemCheckoutView.statusLabel.html(Icons.itemCheckout + " Out");
 				} else {
@@ -258,9 +259,6 @@ const ItemCheckoutView = {
 	}
 };
 
-ItemCheckoutView.checkinButton.on("click", function (e){
-	ItemCheckin.setupCheckinForm(ItemCheckoutView.viewId.text());
-});
 
 ItemCheckoutView.itemCheckoutViewModal[0].addEventListener("hidden.bs.modal", function () {
 	UriUtils.removeParam("view");

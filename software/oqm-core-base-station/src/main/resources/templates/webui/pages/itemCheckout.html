@@ -35,13 +35,14 @@
 
 {/pageContent}
 {#modals}
-	{#search/storage/searchSelectModal otherModalId="" rootPrefix=rootPrefix}
-	{/search/storage/searchSelectModal}
-	{#itemCheckout/viewModal}
-	{/itemCheckout/viewModal}
-	{#search/item/itemSearchSelectModal otherModalId="" rootPrefix=rootPrefix}
-	{/search/item/itemSearchSelectModal}
+	{#search/storage/searchSelectModal otherModalId="" rootPrefix=rootPrefix /}
+	{#itemCheckout/viewModal /}
+	{#search/item/itemSearchSelectModal otherModalId="" rootPrefix=rootPrefix /}
 	{#itemStored/transaction/checkinTransactionModal /}
+	{#search/itemStored/itemStoredSearchSelectModal rootPrefix=rootPrefix /}
+	{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
+	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal" /}
+	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal' /}
 	
 {/modals}
 {#scripts}
@@ -53,12 +54,14 @@
 <script src="{rootPrefix}/res/js/historySearch.js"></script>
 <script src="{rootPrefix}/res/js/obj/objView.js"></script>
 	<script src="{rootPrefix}/res/js/obj/units.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearchSelect.js"></script>
 <script src="{rootPrefix}/res/js/obj/itemStored/storedView.js"></script>
 <script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
 <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
 <script src="{rootPrefix}/res/js/obj/item/itemSearchSelect.js"></script>
 <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
 	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredTransaction.js"></script>
+	<script src="{rootPrefix}/res/js/modalHelpers.js"></script>
 {/scripts}
 {#pageScript}
     <script>
