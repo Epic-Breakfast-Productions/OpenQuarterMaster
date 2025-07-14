@@ -10,6 +10,7 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordContaining;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.CheckInType;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.checkedInBy.CheckedInBy;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -82,4 +83,8 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	@NonNull
 	@lombok.Builder.Default
 	private List<@NotBlank String> keywords = new ArrayList<>();
+	
+	@NotNull
+	@NonNull
+	private CheckedInBy checkedInBy;
 }

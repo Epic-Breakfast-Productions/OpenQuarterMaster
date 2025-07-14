@@ -27,6 +27,7 @@ import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemAmountCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemWholeCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.ReturnFullCheckinDetails;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.checkedInBy.CheckedInByOqmEntity;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkoutFor.CheckoutForOqmEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
@@ -776,7 +777,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
-		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).build();
+		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).checkedInBy(CheckedInByOqmEntity.builder().entity(entity.getId()).build()).build();
 		ItemStoredTransaction preApplyTransaction = CheckinFullTransaction.builder()
 			.checkoutId(checkoutId)
 			.toBlock(blockId)
@@ -846,7 +847,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
-		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).build();
+		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).checkedInBy(CheckedInByOqmEntity.builder().entity(entity.getId()).build()).build();
 		ItemStoredTransaction preApplyTransaction = CheckinFullTransaction.builder()
 			.checkoutId(checkoutId)
 			.toBlock(newBlockId)
@@ -913,7 +914,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
-		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).build();
+		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).checkedInBy(CheckedInByOqmEntity.builder().entity(entity.getId()).build()).build();
 		ItemStoredTransaction preApplyTransaction = CheckinFullTransaction.builder()
 			.checkoutId(checkoutId)
 			.toStored(initialStored.getId())
@@ -980,7 +981,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
-		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).build();
+		ReturnFullCheckinDetails details =
+			ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).checkedInBy(CheckedInByOqmEntity.builder().entity(entity.getId()).build()).build();
 		ItemStoredTransaction preApplyTransaction = CheckinFullTransaction.builder()
 			.checkoutId(checkoutId)
 			.toStored(initialStored.getId())
@@ -1047,7 +1049,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
-		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).build();
+		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).checkedInBy(CheckedInByOqmEntity.builder().entity(entity.getId()).build()).build();
 		ItemStoredTransaction preApplyTransaction = CheckinFullTransaction.builder()
 			.checkoutId(checkoutId)
 			.toBlock(blockId)
@@ -1113,7 +1115,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
-		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).build();
+		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).checkedInBy(CheckedInByOqmEntity.builder().entity(entity.getId()).build()).build();
 		ItemStoredTransaction preApplyTransaction = CheckinFullTransaction.builder()
 			.checkoutId(checkoutId)
 			.toBlock(blockId)
@@ -1178,7 +1180,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
-		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).build();
+		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).checkedInBy(CheckedInByOqmEntity.builder().entity(entity.getId()).build()).build();
 		ItemStoredTransaction preApplyTransaction = CheckinFullTransaction.builder()
 			.checkoutId(checkoutId)
 			.toBlock(blockId)
@@ -1242,7 +1244,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
-		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).build();
+		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).checkedInBy(CheckedInByOqmEntity.builder().entity(entity.getId()).build()).build();
 		ItemStoredTransaction preApplyTransaction = CheckinFullTransaction.builder()
 			.checkoutId(checkoutId)
 			.toBlock(blockId)

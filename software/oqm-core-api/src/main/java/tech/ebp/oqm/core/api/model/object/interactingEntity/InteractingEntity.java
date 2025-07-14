@@ -22,6 +22,11 @@ import tech.ebp.oqm.core.api.service.JwtUtils;
 
 import java.util.Set;
 
+/**
+ * Class responsible for describing entities that interact with this system.
+ * <p>
+ * TODO:: make tolerant to not all fields being specified for users; #868
+ */
 @Slf4j
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
@@ -55,11 +60,11 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 	
 	public abstract boolean updateFrom(JsonWebToken jwt);
 	
-	public static InteractingEntity createEntity(JsonWebToken jwt){
+	public static InteractingEntity createEntity(JsonWebToken jwt) {
 		InteractingEntity newEntity;
 		
 		//TODO:: support services better. Probably should setup keycloak to set some of these values.
-		if(((String)jwt.getClaim(Claims.upn)).startsWith("service-account-")){
+		if (((String) jwt.getClaim(Claims.upn)).startsWith("service-account-")) {
 			GeneralService newService = new GeneralService();
 			
 			newService.setName(jwt.getClaim(Claims.upn));
@@ -83,7 +88,7 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 		return newEntity;
 	}
 	
-	public static InteractingEntity createEntity(SecurityContext context){
+	public static InteractingEntity createEntity(SecurityContext context) {
 		User newUser = new User();
 		newUser.setName(context.getUserPrincipal().getName());
 		
