@@ -63,9 +63,8 @@ const Rest = {
 			async = true,
 			crossDomain = false,
 			returnType = "json",
-			done,
-			fail = function () {
-			},
+			done = function(){},
+			fail = function() {},
 			failMessagesDiv = null,
 			failNoResponse = null,
 			failNoResponseCheckStatus = true,

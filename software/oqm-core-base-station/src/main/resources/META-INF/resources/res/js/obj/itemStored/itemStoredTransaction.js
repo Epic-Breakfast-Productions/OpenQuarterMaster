@@ -349,6 +349,9 @@ const ItemStoredTransaction = {
 		messages: $("#itemStoredTransactionCheckinMessages"),
 		form: $("#itemStoredTransactionCheckinForm"),
 
+		checkoutSearchContainer: $("#itemStoredTransactionCheckinCheckoutSearchContainer"),
+		checkoutDetailsContainer: $("#itemStoredTransactionCheckinCheckoutDetailsContainer"),
+
 		notesInput: $("#itemStoredTransactionCheckinFormNotesInput"),
 
 		toBlockContainer: $("#itemStoredTransactionCheckinFormToBlockContainer"),
@@ -365,6 +368,9 @@ const ItemStoredTransaction = {
 		resetForm() {
 			ItemStoredTransaction.Checkin.form.trigger("reset");
 
+			ItemStoredTransaction.Checkin.checkoutSearchContainer.hide();
+			ItemStoredTransaction.Checkin.checkoutDetailsContainer.hide();
+
 			ItemStoredTransaction.Checkin.notesInput.val("");
 
 			ItemStoredTransaction.Checkin.toBlockContainer.hide();
@@ -377,14 +383,32 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Checkin.keywordInputs.text("");
 			ItemStoredTransaction.Checkin.attInputs.text("");
 		},
-		setupForm: async function(checkoutId, buttonElement) {
-			console.log("Setting up item stored checkin transaction form for checkin ", checkoutId);
+		setupForm: async function(checkout, buttonElement) {
+			console.log("Setting up item stored checkin transaction form for checkin ", checkout);
 			ModalHelpers.setReturnModal(this.modal, buttonElement);
 			this.resetForm();
-			let checkinData = null;
+
+			if(checkout == null){
+				console.log("No checkout given. Enabling search.");
+				ItemStoredTransaction.Checkin.checkoutSearchContainer.show();
+				return;
+			}
+
+			if (typeof checkout === "string" || (checkout instanceof String)) {
+				checkout = await Getters.Checkout.get(checkout);
+			}
+
+			if(!checkout.stillCheckedOut){
+				PageMessages.addMessageToDiv(ItemStoredTransaction.Checkin.messages, "danger", "This has already been checked in.");
+			}
+
 			let item = null;
+			await Getters.InventoryItem.get(checkout.item, function(itemData){
+				item = itemData;
+			});
 
 
+			console.log("Setting up item checkin form for: ", checkout, item);
 			//TODO
 		}
 	},
@@ -463,10 +487,10 @@ const ItemStoredTransaction = {
 		},
 		setupForm: async function (item, stored, buttonElement) {
 			Main.processStart();
-			if (buttonElement != null) {
-				ModalHelpers.setReturnModal(this.modal, buttonElement);
-			}
 			ItemStoredTransaction.Checkout.resetForm();
+			if (buttonElement != null) {
+				ModalHelpers.setReturnModal(ItemStoredTransaction.Checkout.modal, buttonElement);
+			}
 			if (item == null && stored == null) {
 				console.log("No item given.")
 				ItemStoredTransaction.Checkout.itemSearchContainer.show();

@@ -65,38 +65,37 @@
             </button>
         {/footerButtons}
     {/objView/itemViewModal}
-	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency}{/itemAddEditModal}
-	{#itemStoredAddSubTransferModal}{/itemStoredAddSubTransferModal}
-{#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
-    {#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}
-    <div class="row">
-        <div class="col" id="addItemFromFileFormMessages">
-        </div>
-    </div>
-    <!-- TODO:: point to docs on how to do this -->
-    <div class="row">
-        <div class="col">
-            <form id="addItemFromFileForm">
-                <div class="col-12 mb-3">
-                    <label for="importBulkFileInput" class="form-label">
-                        <a href="{rootPrefix}/api/passthrough/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
-                        or {#icons/fileJson}{/icons/fileJson} JSON file:
-                    </label>
-                    <input class="form-control" type="file" id="addFromFileInput" name="file" accept="text/csv,application/json" required>
-                </div>
-            </form>
-        </div>
-    </div>
-{/modal}
-{#search/storage/searchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
-{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
-{#search/item/itemSearchSelectModal rootPrefix=rootPrefix /}
-{#search/itemStored/itemStoredSearchSelectModal rootPrefix=rootPrefix /}
-{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal" rootPrefix=rootPrefix /}
-{#itemStored/itemStoredViewModal rootPrefix=rootPrefix /}
-{#itemStored/itemStoredEditModal rootPrefix=rootPrefix /}
-{#itemStored/transaction/allTransactionModals /}
-{#CodeScannerModal /}
+	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency /}
+	{#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
+		{#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}
+		<div class="row">
+			<div class="col" id="addItemFromFileFormMessages">
+			</div>
+		</div>
+		<!-- TODO:: point to docs on how to do this -->
+		<div class="row">
+			<div class="col">
+				<form id="addItemFromFileForm">
+					<div class="col-12 mb-3">
+						<label for="importBulkFileInput" class="form-label">
+							<a href="{rootPrefix}/api/passthrough/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
+							or {#icons/fileJson}{/icons/fileJson} JSON file:
+						</label>
+						<input class="form-control" type="file" id="addFromFileInput" name="file" accept="text/csv,application/json" required>
+					</div>
+				</form>
+			</div>
+		</div>
+	{/modal}
+	{#search/storage/searchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
+	{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
+	{#search/item/itemSearchSelectModal rootPrefix=rootPrefix /}
+	{#search/itemStored/itemStoredSearchSelectModal rootPrefix=rootPrefix /}
+	{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal" rootPrefix=rootPrefix /}
+	{#itemStored/itemStoredViewModal rootPrefix=rootPrefix /}
+	{#itemStored/itemStoredEditModal rootPrefix=rootPrefix /}
+	{#itemStored/transaction/allTransactionModals /}
+	{#CodeScannerModal /}
 	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal" /}
 	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal' /}
 {/modals}

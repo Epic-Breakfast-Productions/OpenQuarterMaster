@@ -111,6 +111,21 @@ const Getters = {
 			});
 		},
 	},
+	Checkout: {
+		getCheckout: async function(checkoutId, doneFunc = function(){}){
+			let output = null;
+
+			await Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/inventory/itemCheckout/" + checkoutId,
+				done: function(checkout){
+					output = checkout
+					doneFunc(checkout);
+				}
+			});
+			return output;
+		}
+	},
 	InteractingEntities: {
 		getEntities: async function({type=null, doneFunc = function(){}}){
 			let result = [];

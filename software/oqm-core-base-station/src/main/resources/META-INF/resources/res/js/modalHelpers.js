@@ -22,7 +22,7 @@ const ModalHelpers = {
 	 */
 	setReturnModal: function(destModalJq, returnModal = null){
 		//ensure using jquery object
-		if(returnModal == null){
+		if(returnModal === undefined || returnModal == null){
 			this.clearModalReturn(destModalJq);
 			return;
 		} else if(typeof returnModal === "string" || returnModal instanceof String || returnModal instanceof Element){
@@ -33,13 +33,13 @@ const ModalHelpers = {
 		//get modal parent, if applicable
 		returnModal = ModalHelpers.getModalOfElement(returnModal);
 
-		if(returnModal == null){
+		if(returnModal === undefined || returnModal == null || returnModal.length === 0){
 			this.clearModalReturn(destModalJq);
 			return;
 		}
 
 		let returnModalId = returnModal.prop("id");
-		console.log("Setting modal to return to ", returnModalId);
+		console.log("Setting modal to return to ", returnModalId, returnModal);
 
 		destModalJq.attr("data-bs-otherModalId", returnModalId);
 

@@ -7,9 +7,21 @@
 		{#icons/transactionCheckin /} Checkin
 	</button>
 	{/footerButtons}
+	
 	<div class="row">
 		<div class="col messages" id="itemStoredTransactionCheckinMessages"></div>
 	</div>
+
+	<div class="row" id="itemStoredTransactionCheckinCheckoutSearchContainer">
+		<div class="col">
+		<!-- foo -->
+			{#itemCheckout/itemCheckoutSelectInput id="itemStoredTransactionCheckinFormCheckoutSearch" /}
+			<!-- done with search input -->
+		</div>
+	</div>
+
+	<div id="itemStoredTransactionCheckinCheckoutDetailsContainer"></div>
+	<hr />
 
 	<form id='itemStoredTransactionCheckinForm'>
 		
@@ -18,19 +30,15 @@
 			<textarea class="form-control" id="itemStoredTransactionCheckinFormNotesInput" rows="3"></textarea>
 		</div>
 		
-		{#search/image/imageSelectFormInput}
-		{/search/image/imageSelectFormInput}
-		{#fileAttachment/fileAttachmentSelectFormInput}
-		{/fileAttachment/fileAttachmentSelectFormInput}
+		{#search/image/imageSelectFormInput /}
+		{#fileAttachment/fileAttachmentSelectFormInput /}
 		
 		<div class="row">
 			<div class="col">
-				{#inputs/keywordInput}
-				{/inputs/keywordInput}
+				{#inputs/keywordInput /}
 			</div>
 			<div class="col">
-				{#inputs/attInput}
-				{/inputs/attInput}
+				{#inputs/attInput /}
 			</div>
 		</div>
 		
@@ -44,7 +52,5 @@
 				{#inputs/itemStored/itemStoredSelectInput id="itemStoredTransactionCheckinFormToItemStored" labelText='To Stored'/}
 			</div>
 		</div>
-		
-		
 	</form>
 {/modal}
