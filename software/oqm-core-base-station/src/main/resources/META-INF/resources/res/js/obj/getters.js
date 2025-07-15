@@ -117,7 +117,7 @@ const Getters = {
 
 			await Rest.call({
 				method: "GET",
-				url: Rest.passRoot + "/inventory/itemCheckout/" + checkoutId,
+				url: Rest.passRoot + "/inventory/item-checkout/" + checkoutId,
 				done: function(checkout){
 					output = checkout
 					doneFunc(checkout);

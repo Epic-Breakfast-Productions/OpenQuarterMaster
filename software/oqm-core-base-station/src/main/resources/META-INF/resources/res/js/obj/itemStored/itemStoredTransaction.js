@@ -350,7 +350,18 @@ const ItemStoredTransaction = {
 		form: $("#itemStoredTransactionCheckinForm"),
 
 		checkoutSearchContainer: $("#itemStoredTransactionCheckinCheckoutSearchContainer"),
+		checkoutSearchInputGroup: $("#itemStoredTransactionCheckinFormCheckoutSearch-inputGroup"),
 		checkoutDetailsContainer: $("#itemStoredTransactionCheckinCheckoutDetailsContainer"),
+
+		byWhoSelect: $("#itemStoredTransactionCheckinFormByWhoSelectInput"),
+		byOriginalContainer: $("#itemStoredTransactionCheckinFormByOriginalContainer"),
+		byOriginalContent: $("#itemStoredTransactionCheckinFormByOriginalContent"),
+		byUserContainer: $("#itemStoredTransactionCheckinFormByUserContainer"),
+		byUserInput: $("#itemStoredTransactionCheckinFormByUserInput"),
+		byExtContainer: $("#itemStoredTransactionCheckinFormByExtUserContainer"),
+		byExtNameInput: $("#itemStoredTransactionCheckinFormByExtUserNameInput"),
+		byExtIdInput: $("#itemStoredTransactionCheckinFormByExtUserIdInput"),
+
 
 		notesInput: $("#itemStoredTransactionCheckinFormNotesInput"),
 
@@ -370,6 +381,19 @@ const ItemStoredTransaction = {
 
 			ItemStoredTransaction.Checkin.checkoutSearchContainer.hide();
 			ItemStoredTransaction.Checkin.checkoutDetailsContainer.hide();
+			ItemStoredTransaction.Checkin.checkoutDetailsContainer.html("");
+
+
+			ItemStoredTransaction.Checkin.byOriginalContainer.hide();
+			ItemStoredTransaction.Checkin.byOriginalContent.text("");
+
+			ItemStoredTransaction.Checkin.byUserContainer.hide();
+			// ItemStoredTransaction.Checkin.byUserInput
+
+			ItemStoredTransaction.Checkin.byExtContainer.hide();
+			ItemStoredTransaction.Checkin.byExtNameInput.val("");
+			ItemStoredTransaction.Checkin.byExtIdInput.val("");
+
 
 			ItemStoredTransaction.Checkin.notesInput.val("");
 
@@ -377,7 +401,7 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Checkin.toBlockInput.html("");
 
 			ItemStoredTransaction.Checkin.toStoredContainer.hide();
-			ItemStoredSearchSelect.resetSearchInput()
+			ItemCheckoutSearchSelect.resetSearchInput(ItemStoredTransaction.Checkin.checkoutSearchInputGroup);
 
 			ItemStoredTransaction.Checkin.imageSelect.text("");
 			ItemStoredTransaction.Checkin.keywordInputs.text("");
@@ -395,7 +419,7 @@ const ItemStoredTransaction = {
 			}
 
 			if (typeof checkout === "string" || (checkout instanceof String)) {
-				checkout = await Getters.Checkout.get(checkout);
+				checkout = await Getters.Checkout.getCheckout(checkout);
 			}
 
 			if(!checkout.stillCheckedOut){
@@ -409,7 +433,61 @@ const ItemStoredTransaction = {
 
 
 			console.log("Setting up item checkin form for: ", checkout, item);
-			//TODO
+
+			let itemCheckoutDisplay = ItemCheckoutView.getCheckoutDisplay(checkout);
+
+
+			if(ItemStoredTransaction.Checkin.byUserInput.empty()) {
+				Getters.InteractingEntities.getEntities({
+					type: "USER",
+					doneFunc: function (users) {
+						users.forEach(function (user) {
+							let newOp = $('<option></option>');
+							newOp.text(user.username + " / " + user.name);
+							newOp.val(user.id);
+							ItemStoredTransaction.Checkin.byUserInput.append(newOp);
+						});
+					}
+				});
+			}
+
+			ItemStoredTransaction.Checkin.checkoutDetailsContainer.append(await itemCheckoutDisplay);
+			ItemStoredTransaction.Checkin.updateCheckedInBy();
+			ItemStoredTransaction.Checkin.checkoutDetailsContainer.show();
+		},
+		updateCheckedInBy(){
+			let checkedInBySelectVal = ItemStoredTransaction.Checkin.byWhoSelect.val();
+
+			ItemStoredTransaction.Checkin.byOriginalContainer.hide();
+			ItemStoredTransaction.Checkin.byUserContainer.hide();
+			ItemStoredTransaction.Checkin.byExtContainer.hide();
+
+			switch(checkedInBySelectVal){
+				case "originalFor":
+					ItemStoredTransaction.Checkin.byOriginalContainer.show();
+					ItemStoredTransaction.Checkin.byOriginalContent.html(
+						ItemStoredTransaction.Checkin.checkoutDetailsContainer.find(".itemCheckoutViewCheckedOutForLabel").clone()
+					);
+					break;
+				case "originalBy":
+					ItemStoredTransaction.Checkin.byOriginalContainer.show();
+					ItemStoredTransaction.Checkin.byOriginalContent.html(
+						ItemStoredTransaction.Checkin.checkoutDetailsContainer.find(".itemCheckoutViewCheckedOutByLabel").clone()
+					);
+					break;
+				case "self":
+					break;
+				case "otherOqmUser":
+					ItemStoredTransaction.Checkin.byUserContainer.show();
+					break;
+				case "extUser":
+					ItemStoredTransaction.Checkin.byExtContainer.show();
+					break;
+			}
+		},
+		submitForm: async function (e) {
+			e.preventDefault();
+			console.log("Submitting Checkin form");
 		}
 	},
 	Checkout: {

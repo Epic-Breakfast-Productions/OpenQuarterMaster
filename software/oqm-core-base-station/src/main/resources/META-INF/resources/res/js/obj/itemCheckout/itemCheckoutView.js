@@ -6,6 +6,31 @@ const ItemCheckoutView = {
 	checkinButton: $("#itemCheckoutViewCheckinButton"),
 	history: $("#itemCheckoutViewHistoryAccordionCollapse"),
 
+	getCheckoutForDisplay(checkedOutFor, addingToJq){
+		switch (checkedOutFor.type) {
+			case "OQM_ENTITY":
+				EntityRef.getEntityRef(
+					checkedOutFor.entity,
+					function (refHtml) {
+						addingToJq.append(refHtml);
+					}
+				);
+				break;
+			case "EXT_SYS_USER":
+				addingToJq.append(
+					$("<h6>Id:</h6>"),
+					$("<p></p>").text(checkedOutFor.externalId)
+				);
+
+				if (checkedOutFor.name) {
+					addingToJq.append(
+						$("<h6>Name:</h6>"),
+						$("<p></p>").text(checkedOutFor.name)
+					);
+				}
+				break;
+		}
+	},
 	getCheckoutDisplay(itemCheckoutData) {
 		let output = $(`
 	<div class="itemCheckoutViewContainer">
@@ -206,29 +231,7 @@ const ItemCheckoutView = {
 			}
 		}))
 
-		switch (itemCheckoutData.checkoutDetails.checkedOutFor.type) {
-			case "OQM_ENTITY":
-				EntityRef.getEntityRef(
-					itemCheckoutData.checkoutDetails.checkedOutFor.entity,
-					function (refHtml) {
-						output.find(".itemCheckoutViewCheckedOutForLabel").append(refHtml);
-					}
-				);
-				break;
-			case "EXT_SYS_USER":
-				output.find(".itemCheckoutViewCheckedOutForLabel").append(
-					$("<h6>Id:</h6>"),
-					$("<p></p>").text(itemCheckoutData.checkoutDetails.checkedOutFor.externalId)
-				);
-
-				if (itemCheckoutData.checkedOutFor.name) {
-					ItemCheckoutView.checkedOutForLabel.append(
-						$("<h6>Name:</h6>"),
-						$("<p></p>").text(itemCheckoutData.checkoutDetails.checkedOutFor.name)
-					);
-				}
-				break;
-		}
+		ItemCheckoutView.getCheckoutForDisplay(itemCheckoutData.checkoutDetails.checkedOutFor, output.find(".itemCheckoutViewCheckedOutForLabel"))
 
 		promises.push(
 			KeywordAttUtils.Keywords.getNewDisplay(itemCheckoutData.keywords)
@@ -339,8 +342,6 @@ const ItemCheckoutView = {
 						output.find(".itemCheckoutViewCheckinDetailsAttsSection").append(attDisplay)
 					})
 			);
-
-
 
 			if (itemCheckoutData.checkInDetails.notes) {
 				output.find(".itemCheckoutViewCheckinDetailsNotes").text(itemCheckoutData.checkInDetails.notes);

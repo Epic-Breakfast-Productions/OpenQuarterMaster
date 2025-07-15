@@ -25,6 +25,54 @@
 
 	<form id='itemStoredTransactionCheckinForm'>
 		
+		
+		<div class="row mb-3">
+			<div class="col">
+				<label class="form-label" for="itemStoredTransactionCheckinFormByWhoSelectInput">Checked in by Who:</label>
+				<select class="form-select" id="itemStoredTransactionCheckinFormByWhoSelectInput" onchange="ItemStoredTransaction.Checkin.updateCheckedInBy();" aria-describedby="itemStoredTransactionCheckinFormByWhoSelectInputHelp">
+					<option value="originalFor" selected>Original For</option>
+					<option value="originalBy">Original By</option>
+					<option value="self">Yourself</option>
+					<option value="otherOqmUser">Another OQM User</option>
+					<option value="extUser">External Entity</option>
+				</select>
+				<div id="itemStoredTransactionCheckinFormByWhoSelectInputHelp" class="form-text">
+					Who is returning the checked out item(s).
+				</div>
+			</div>
+			<div class="col" id="itemStoredTransactionCheckinFormByOriginalContainer">
+				<h3>
+					This will mark as checked in by:
+				</h3>
+				<div id="itemStoredTransactionCheckinFormByOriginalContent"></div>
+			</div>
+			<div class="col" id="itemStoredTransactionCheckinFormByUserContainer">
+				<label class="form-label" for="itemStoredTransactionCheckinFormByUserInput">Select a user:</label>
+				<select class="form-select" id="itemStoredTransactionCheckinFormByUserInput"></select>
+			</div>
+			<div class="col" id="itemStoredTransactionCheckinFormByExtUserContainer">
+				<div class="mb-3">
+					<label class="form-label" for="itemStoredTransactionCheckinFormByExtUserNameInput">External User Name:</label>
+					<textarea class="form-control" id="itemStoredTransactionCheckinFormByExtUserNameInput" rows="1"></textarea>
+				</div>
+				<div class="">
+					<label class="form-label" for="itemStoredTransactionCheckinFormByExtUserIdInput">External User Id:</label>
+					<input type="text" class="form-control" id="itemStoredTransactionCheckinFormByExtUserIdInput">
+				</div>
+			</div>
+		</div>
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		<div class="mb-3">
 			<label for="itemStoredTransactionCheckinFormNotesInput" class="form-label">Notes</label>
 			<textarea class="form-control" id="itemStoredTransactionCheckinFormNotesInput" rows="3"></textarea>
