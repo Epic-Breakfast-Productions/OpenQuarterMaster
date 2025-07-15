@@ -9,14 +9,17 @@ import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordContaining;
+import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.CheckInType;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.checkedInBy.CheckedInBy;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -32,7 +35,7 @@ import java.util.Map;
 })
 @BsonDiscriminator
 @SuperBuilder(toBuilder = true)
-public abstract class CheckInDetails implements AttKeywordContaining {
+public abstract class CheckInDetails implements AttKeywordContaining, FileAttachmentContaining {
 	
 	public abstract CheckInType getCheckinType();
 	
@@ -66,7 +69,7 @@ public abstract class CheckInDetails implements AttKeywordContaining {
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
-	List<@NonNull ObjectId> fileIds = new ArrayList<>();
+	Set<@NonNull ObjectId> attachedFiles = new HashSet<>();
 	
 	/**
 	 * Attributes this object might have, usable for any purpose.
