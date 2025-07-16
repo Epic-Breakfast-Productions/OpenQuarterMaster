@@ -18,7 +18,7 @@ import tech.ebp.oqm.core.api.model.object.storage.checkout.CheckInType;
 public class ReturnFullCheckinDetails extends CheckInDetails {
 	
 	@Override
-	public CheckInType getCheckinType() {
+	public CheckInType getType() {
 		return CheckInType.RETURN_FULL;
 	}
 }

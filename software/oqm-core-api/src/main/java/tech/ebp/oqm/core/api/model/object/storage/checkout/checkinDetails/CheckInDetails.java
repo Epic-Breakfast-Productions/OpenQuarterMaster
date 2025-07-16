@@ -26,7 +26,7 @@ import java.util.Set;
 @NoArgsConstructor
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "checkinType"
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
 )
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = ReturnFullCheckinDetails.class, name = "RETURN_FULL"),
@@ -37,7 +37,7 @@ import java.util.Set;
 @SuperBuilder(toBuilder = true)
 public abstract class CheckInDetails implements AttKeywordContaining, FileAttachmentContaining {
 	
-	public abstract CheckInType getCheckinType();
+	public abstract CheckInType getType();
 	
 	/**
 	 * Notes about the checkin

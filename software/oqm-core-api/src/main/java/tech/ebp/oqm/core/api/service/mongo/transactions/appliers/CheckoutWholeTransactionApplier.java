@@ -20,16 +20,16 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class CheckoutWholeTransactionApplier extends CheckinOutTransactionApplier<CheckoutWholeTransaction> {
-
+	
 	public CheckoutWholeTransactionApplier(StoredService storedService, ItemCheckoutService itemCheckoutService) {
 		super(storedService, itemCheckoutService);
 	}
-
+	
 	@Override
 	public TransactionType getTransactionType() {
 		return TransactionType.CHECKOUT_WHOLE;
 	}
-
+	
 	@Override
 	public void apply(
 		String oqmDbIdOrName,
@@ -42,17 +42,18 @@ public class CheckoutWholeTransactionApplier extends CheckinOutTransactionApplie
 		ClientSession cs
 	) {
 		Stored storedCheckingOut = this.getStoredService().get(oqmDbIdOrName, transaction.getToCheckout());
-
+		
 		if (!inventoryItem.getId().equals(storedCheckingOut.getItem())) {
 			throw new IllegalArgumentException("Stored is not associated with the item.");
 		}
-
+		
 		ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemWholeCheckout.builder()
-			.checkoutDetails(transaction.getCheckoutDetails())
-			.checkOutTransaction(appliedTransactionId)
-			.item(inventoryItem.getId())
-			.checkedOut(storedCheckingOut);
-
+															.checkedOutByEntity(interactingEntity.getId())
+															.checkoutDetails(transaction.getCheckoutDetails())
+															.checkOutTransaction(appliedTransactionId)
+															.item(inventoryItem.getId())
+															.checkedOut(storedCheckingOut);
+		
 		this.getStoredService().remove(oqmDbIdOrName, cs, storedCheckingOut.getId(), interactingEntity, historyDetails);
 		this.getItemCheckoutService().add(oqmDbIdOrName, cs, checkoutBuilder.build(), interactingEntity);
 		affectedStored.add(storedCheckingOut);

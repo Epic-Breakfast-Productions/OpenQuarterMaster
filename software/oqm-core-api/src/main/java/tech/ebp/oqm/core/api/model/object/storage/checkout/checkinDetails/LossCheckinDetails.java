@@ -23,7 +23,7 @@ public class LossCheckinDetails extends CheckInDetails {
 	public String reason;
 	
 	@Override
-	public CheckInType getCheckinType() {
+	public CheckInType getType() {
 		return CheckInType.LOSS;
 	}
 }
