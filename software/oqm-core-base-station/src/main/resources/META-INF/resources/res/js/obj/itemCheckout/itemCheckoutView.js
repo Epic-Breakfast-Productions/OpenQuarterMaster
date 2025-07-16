@@ -6,10 +6,10 @@ const ItemCheckoutView = {
 	checkinButton: $("#itemCheckoutViewCheckinButton"),
 	history: $("#itemCheckoutViewHistoryAccordionCollapse"),
 
-	getCheckoutForDisplay(checkedOutFor, addingToJq){
+	getCheckoutForDisplay: async function (checkedOutFor, addingToJq) {
 		switch (checkedOutFor.type) {
 			case "OQM_ENTITY":
-				EntityRef.getEntityRef(
+				await EntityRef.getEntityRef(
 					checkedOutFor.entity,
 					function (refHtml) {
 						addingToJq.append(refHtml);
@@ -137,7 +137,7 @@ const ItemCheckoutView = {
 			<div class="card col-12">
 				<div class="card-body">
 					<h3 class="card-title">
-						`+Icons.checkinTransaction+` Checkin Details:
+						` + Icons.checkinTransaction + ` Checkin Details:
 					</h3>
 					<div class="row">
 	<!--					TODO:: -->
@@ -216,32 +216,25 @@ const ItemCheckoutView = {
 
 		let promises = [];
 
-		//TODO:: get create history event for checkout to show who checked out, enabled by #332
-		//TODO:: replace with new field
-		promises.push(Rest.call({
-			url: Rest.passRoot + "/inventory/item-checkout/" + itemCheckoutData.id + "/history?eventType=CREATE",
-			method: "GET",
-			async: false,
-			failMessagesDiv: ItemCheckoutView.messages,
-			done: function (checkoutData) {
-				console.log("Checkout history for creates: ", checkoutData);
-				EntityRef.getEntityRef(checkoutData.results[0].entity, function (entityRefHtml) {
-					output.find(".itemCheckoutViewCheckedOutByLabel").html(entityRefHtml);
-				});
-			}
-		}))
+		promises.push(
+			EntityRef.getEntityRef(itemCheckoutData.checkedOutByEntity, function (entityRefHtml) {
+				output.find(".itemCheckoutViewCheckedOutByLabel").html(entityRefHtml);
+			})
+		);
 
-		ItemCheckoutView.getCheckoutForDisplay(itemCheckoutData.checkoutDetails.checkedOutFor, output.find(".itemCheckoutViewCheckedOutForLabel"))
+		promises.push(
+			ItemCheckoutView.getCheckoutForDisplay(itemCheckoutData.checkoutDetails.checkedOutFor, output.find(".itemCheckoutViewCheckedOutForLabel"))
+		);
 
 		promises.push(
 			KeywordAttUtils.Keywords.getNewDisplay(itemCheckoutData.keywords)
-				.then(function(keywordDisplay){
+				.then(function (keywordDisplay) {
 					output.find(".itemCheckoutViewKeywords").append(keywordDisplay)
 				})
 		);
 		promises.push(
 			KeywordAttUtils.Attributes.getNewDisplay(itemCheckoutData.attributes)
-				.then(function(attDisplay){
+				.then(function (attDisplay) {
 					output.find(".itemCheckoutViewAttributes").append(attDisplay)
 				})
 		);
@@ -332,13 +325,13 @@ const ItemCheckoutView = {
 
 			promises.push(
 				KeywordAttUtils.Keywords.getNewDisplay(itemCheckoutData.checkInDetails.keywords)
-					.then(function(keywordDisplay){
+					.then(function (keywordDisplay) {
 						output.find(".itemCheckoutViewCheckinDetailsKeywordsSection").append(keywordDisplay)
 					})
 			);
 			promises.push(
 				KeywordAttUtils.Attributes.getNewDisplay(itemCheckoutData.checkInDetails.attributes)
-					.then(function(attDisplay){
+					.then(function (attDisplay) {
 						output.find(".itemCheckoutViewCheckinDetailsAttsSection").append(attDisplay)
 					})
 			);

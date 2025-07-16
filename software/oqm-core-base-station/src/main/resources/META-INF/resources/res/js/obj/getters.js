@@ -1,7 +1,7 @@
 
 const Getters = {
 	InventoryItem: {
-		get(itemId, doneFunc) {
+		get(itemId, doneFunc = function () {}) {
 			console.log("Getting inventory item \"" + itemId + "\"");
 			return Rest.call({
 				spinnerContainer: null,

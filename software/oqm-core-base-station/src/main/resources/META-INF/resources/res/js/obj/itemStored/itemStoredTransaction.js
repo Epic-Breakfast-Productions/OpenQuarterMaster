@@ -349,6 +349,8 @@ const ItemStoredTransaction = {
 		messages: $("#itemStoredTransactionCheckinMessages"),
 		form: $("#itemStoredTransactionCheckinForm"),
 
+		checkoutIdInput: $("#itemStoredTransactionCheckinFormCheckoutIdInput"),
+
 		checkoutSearchContainer: $("#itemStoredTransactionCheckinCheckoutSearchContainer"),
 		checkoutSearchInputGroup: $("#itemStoredTransactionCheckinFormCheckoutSearch-inputGroup"),
 		checkoutDetailsContainer: $("#itemStoredTransactionCheckinCheckoutDetailsContainer"),
@@ -362,8 +364,13 @@ const ItemStoredTransaction = {
 		byExtNameInput: $("#itemStoredTransactionCheckinFormByExtUserNameInput"),
 		byExtIdInput: $("#itemStoredTransactionCheckinFormByExtUserIdInput"),
 
-
 		notesInput: $("#itemStoredTransactionCheckinFormNotesInput"),
+
+		toSelectContainer: $("#itemStoredTransactionCheckinFormToSelectContainer"),
+		toSelectInput: $("#itemStoredTransactionCheckinFormToSelectInput"),
+
+		toOrigDescContainer: $("#itemStoredTransactionCheckinFormToOriginalDescContainer"),
+		toOrigDesc: $("#itemStoredTransactionCheckinFormToOriginalDesc"),
 
 		toBlockContainer: $("#itemStoredTransactionCheckinFormToBlockContainer"),
 		toBlockInput: $("#itemStoredTransactionCheckinFormToBlockSelect"),
@@ -378,6 +385,9 @@ const ItemStoredTransaction = {
 
 		resetForm() {
 			ItemStoredTransaction.Checkin.form.trigger("reset");
+			ItemCheckoutSearchSelect.resetSearchInput(ItemStoredTransaction.Checkin.checkoutSearchInputGroup);
+
+			ItemStoredTransaction.Checkin.checkoutIdInput.val("");
 
 			ItemStoredTransaction.Checkin.checkoutSearchContainer.hide();
 			ItemStoredTransaction.Checkin.checkoutDetailsContainer.hide();
@@ -397,22 +407,28 @@ const ItemStoredTransaction = {
 
 			ItemStoredTransaction.Checkin.notesInput.val("");
 
+			ItemStoredTransaction.Checkin.toSelectInput.find("option").prop("disabled", true);
+
+			ItemStoredTransaction.Checkin.toOrigDescContainer.hide();
+			ItemStoredTransaction.Checkin.toOrigDesc.text("");
+
 			ItemStoredTransaction.Checkin.toBlockContainer.hide();
 			ItemStoredTransaction.Checkin.toBlockInput.html("");
 
 			ItemStoredTransaction.Checkin.toStoredContainer.hide();
-			ItemCheckoutSearchSelect.resetSearchInput(ItemStoredTransaction.Checkin.checkoutSearchInputGroup);
+			ItemStoredSearchSelect.resetSearchInput(ItemStoredTransaction.Checkin.toStoredInputGroup);
 
 			ItemStoredTransaction.Checkin.imageSelect.text("");
 			ItemStoredTransaction.Checkin.keywordInputs.text("");
 			ItemStoredTransaction.Checkin.attInputs.text("");
+
 		},
-		setupForm: async function(checkout, buttonElement) {
+		setupForm: async function (checkout, buttonElement) {
 			console.log("Setting up item stored checkin transaction form for checkin ", checkout);
 			ModalHelpers.setReturnModal(this.modal, buttonElement);
 			this.resetForm();
 
-			if(checkout == null){
+			if (checkout == null) {
 				console.log("No checkout given. Enabling search.");
 				ItemStoredTransaction.Checkin.checkoutSearchContainer.show();
 				return;
@@ -422,22 +438,24 @@ const ItemStoredTransaction = {
 				checkout = await Getters.Checkout.getCheckout(checkout);
 			}
 
-			if(!checkout.stillCheckedOut){
+			if (!checkout.stillCheckedOut) {
 				PageMessages.addMessageToDiv(ItemStoredTransaction.Checkin.messages, "danger", "This has already been checked in.");
 			}
 
 			let item = null;
-			await Getters.InventoryItem.get(checkout.item, function(itemData){
+			await Getters.InventoryItem.get(checkout.item, function (itemData) {
 				item = itemData;
 			});
 
 
 			console.log("Setting up item checkin form for: ", checkout, item);
 
+			ItemStoredTransaction.Checkin.checkoutIdInput.val(checkout.id);
+
 			let itemCheckoutDisplay = ItemCheckoutView.getCheckoutDisplay(checkout);
 
 
-			if(ItemStoredTransaction.Checkin.byUserInput.empty()) {
+			if (ItemStoredTransaction.Checkin.byUserInput.empty()) {
 				Getters.InteractingEntities.getEntities({
 					type: "USER",
 					doneFunc: function (users) {
@@ -451,18 +469,71 @@ const ItemStoredTransaction = {
 				});
 			}
 
+			item.storageBlocks.forEach(function (blockId) {
+				let newBlockOption = $('<option></option>');
+				newBlockOption.val(blockId);
+				getStorageBlockLabel(blockId, function (blockLabel) {
+					newBlockOption.text(blockLabel);
+				});
+				ItemStoredTransaction.Checkin.toBlockInput.append(newBlockOption);
+			});
+
+			let toBlock = function () {
+				let blockOption = ItemStoredTransaction.Checkin.toSelectInput.find("option[value='block']");
+				blockOption.prop("disabled", false);
+			}
+			StorageTypeUtils.runForType(
+				item,
+				toBlock,
+				function () {
+					ItemStoredTransaction.Checkin.toBlockContainer.show();
+					ItemStoredTransaction.Checkin.toStoredContainer.show();
+					ItemStoredTransaction.Checkin.toSelectInput.find("option[value='block']").prop("disabled", false);
+					ItemStoredTransaction.Checkin.toSelectInput.find("option[value='stored']").prop("disabled", false);
+				},
+				toBlock,
+				toBlock
+			);
+
+			let originalOption = ItemStoredTransaction.Checkin.toSelectInput.find("option[value='original']");
+			let blockOriginal = function () {
+				if (item.storageBlocks.includes(checkout.fromBlock)) {
+					originalOption.prop("disabled", false);
+					getStorageBlockLabel(checkout.fromBlock, function (blockLabel) {
+						ItemStoredTransaction.Checkin.toOrigDesc.html(
+							Links.getStorageViewLink(checkout.fromBlock, blockLabel)
+						);
+					});
+				}
+			}
+
+			StorageTypeUtils.runForType(
+				item,
+				blockOriginal,
+				function () {
+					//TODO:: check if stored still exists
+					//TODO:: enable option
+					//TODO:: populate desc
+				},
+				blockOriginal,
+				blockOriginal
+			);
+
+			ItemStoredTransaction.Checkin.toSelectInput.find("option:not(:disabled)").first().prop("selected", true);
+
 			ItemStoredTransaction.Checkin.checkoutDetailsContainer.append(await itemCheckoutDisplay);
 			ItemStoredTransaction.Checkin.updateCheckedInBy();
+			ItemStoredTransaction.Checkin.intoChanged();
 			ItemStoredTransaction.Checkin.checkoutDetailsContainer.show();
 		},
-		updateCheckedInBy(){
+		updateCheckedInBy() {
 			let checkedInBySelectVal = ItemStoredTransaction.Checkin.byWhoSelect.val();
 
 			ItemStoredTransaction.Checkin.byOriginalContainer.hide();
 			ItemStoredTransaction.Checkin.byUserContainer.hide();
 			ItemStoredTransaction.Checkin.byExtContainer.hide();
 
-			switch(checkedInBySelectVal){
+			switch (checkedInBySelectVal) {
 				case "originalFor":
 					ItemStoredTransaction.Checkin.byOriginalContainer.show();
 					ItemStoredTransaction.Checkin.byOriginalContent.html(
@@ -485,9 +556,129 @@ const ItemStoredTransaction = {
 					break;
 			}
 		},
-		submitForm: async function (e) {
+		intoChanged() {
+			ItemStoredTransaction.Checkin.toOrigDescContainer.hide();
+			ItemStoredTransaction.Checkin.toBlockContainer.hide();
+			ItemStoredTransaction.Checkin.toStoredContainer.hide();
+
+			switch (ItemStoredTransaction.Checkin.toSelectInput.val()) {
+				case "original":
+					ItemStoredTransaction.Checkin.toOrigDescContainer.show();
+					break;
+				case "block":
+					ItemStoredTransaction.Checkin.toBlockContainer.show();
+					break;
+				case "stored":
+					ItemStoredTransaction.Checkin.toStoredContainer.show();
+					break;
+			}
+		},
+		submitFormHandler: async function (e) {
 			e.preventDefault();
 			console.log("Submitting Checkin form");
+
+			await Getters.Checkout.getCheckout(ItemStoredTransaction.Checkin.checkoutIdInput.val(), async function (checkoutData) {
+				let item = Getters.InventoryItem.get(checkoutData.item);
+				let transactionData = {
+					type: "CHECKIN_FULL",
+					checkoutId: checkoutData.id,
+					details: {
+						type: "RETURN_FULL",
+						notes: ItemStoredTransaction.Checkin.notesInput.val(),
+						imageIds: [],
+						attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(
+							ItemStoredTransaction.Checkin.fileSelect
+						),
+						keywords: [],
+						attributes: {}
+					}
+				};
+				KeywordAttEdit.addKeywordAttData(
+					transactionData.details,
+					ItemStoredTransaction.Checkin.keywordInputs,
+					ItemStoredTransaction.Checkin.attInputs
+				);
+				addImagesToData(transactionData.details, ItemStoredTransaction.Checkin.imageSelect);
+
+				switch (ItemStoredTransaction.Checkin.byWhoSelect.val()) {
+					case "originalFor":
+						let originalFor = checkoutData.checkoutDetails.checkedOutFor;
+
+						switch (originalFor.type) {
+							case "OQM_USER":
+								transactionData.details.checkedInBy = {
+									type: "OQM_USER",
+									entity: originalFor.entity
+								}
+								break;
+							case "EXT_SYS_USER":
+								transactionData.details.checkedInBy = {
+									type: "EXT_SYS_USER",
+									externalId: originalFor.externalId,
+									name: originalFor.name
+								}
+								break;
+						}
+						break;
+					case "originalBy":
+						transactionData.details.checkedInBy = {
+							type: "OQM_USER",
+							entity: itemCheckoutData.checkedOutByEntity
+						}
+						break;
+					case "self":
+						transactionData.details.checkedInBy = {
+							type: "OQM_USER",
+							entity: UserUtils.userId
+						}
+						break;
+					case "otherOqmUser":
+						transactionData.details.checkedInBy = {
+							type: "OQM_USER",
+							entity: ItemStoredTransaction.Checkin.byUserInput.val()
+						}
+						break;
+					case "extUser":
+						transactionData.details.checkedInBy = {
+							type: "EXT_SYS_USER",
+							externalId: ItemStoredTransaction.Checkin.byExtIdInput.val(),
+							name:  ItemStoredTransaction.Checkin.byExtNameInput.val()
+						}
+						break;
+				}
+
+				switch (ItemStoredTransaction.Checkin.toSelectInput.val()) {
+					case "original":
+						let blockOriginal = function () {
+							transactionData.toBlock = checkoutData.fromBlock;
+						};
+						StorageTypeUtils.runForType(
+							await item,
+							blockOriginal,
+							function () {
+								//TODO:: check if stored still exists
+								//TODO:: enable option
+								//TODO:: populate desc
+							},
+							blockOriginal,
+							blockOriginal
+						);
+						break;
+					case "block":
+						transactionData.toBlock = ItemStoredTransaction.Checkin.toBlockInput.val();
+						break;
+					case "stored":
+						//TODO
+						break;
+				}
+
+				console.log("Submitting checkin transaction: ", transactionData);
+				await ItemStoredTransaction.submitTransaction(
+					checkoutData.item,
+					transactionData,
+					ItemStoredTransaction.Checkin.modal
+				);
+			});
 		}
 	},
 	Checkout: {
@@ -600,7 +791,7 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Checkout.itemInfoName.text(item.name);
 			ItemStoredTransaction.Checkout.itemInfoContainer.show();
 
-			if(ItemStoredTransaction.Checkout.forUserSelect.empty()) {
+			if (ItemStoredTransaction.Checkout.forUserSelect.empty()) {
 				Getters.InteractingEntities.getEntities({
 					type: "USER",
 					doneFunc: function (users) {
@@ -809,15 +1000,13 @@ const ItemStoredTransaction = {
 
 			let transaction = {
 				checkoutDetails: {
-					checkedOutFor: {
-
-					},
+					checkedOutFor: {},
 					dueBack: ItemStoredTransaction.Checkout.dueBackInput.val(),
 					reason: ItemStoredTransaction.Checkout.reasonInput.val(),
 					notes: ItemStoredTransaction.Checkout.detailsInput.val()
 				}
 			};
-			switch (ItemStoredTransaction.Checkout.forWhomSelect.val()){
+			switch (ItemStoredTransaction.Checkout.forWhomSelect.val()) {
 				case "self":
 					transaction.checkoutDetails.checkedOutFor["type"] = "OQM_ENTITY";
 					transaction.checkoutDetails.checkedOutFor["entity"] = UserUtils.userId;
@@ -1763,7 +1952,7 @@ const ItemStoredTransaction = {
 	}
 };
 
-if(ItemStoredTransaction.Add.form) {
+if (ItemStoredTransaction.Add.form) {
 	ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitFormHandler);
 	ItemStoredTransaction.Add.itemIdInput.on("change", function () {
 		let itemId = ItemStoredTransaction.Add.itemIdInput.val();
@@ -1772,7 +1961,7 @@ if(ItemStoredTransaction.Add.form) {
 	});
 }
 
-if(ItemStoredTransaction.Checkout.form) {
+if (ItemStoredTransaction.Checkout.form) {
 	ItemStoredTransaction.Checkout.form.on("submit", ItemStoredTransaction.Checkout.submitFormHandler);
 	ItemStoredTransaction.Checkout.itemSearchIdInput.on("change", function () {
 		console.log("Selected new item.");
@@ -1783,11 +1972,11 @@ if(ItemStoredTransaction.Checkout.form) {
 	});
 }
 
-if(ItemStoredTransaction.Set.form) {
+if (ItemStoredTransaction.Set.form) {
 	ItemStoredTransaction.Set.form.on("submit", ItemStoredTransaction.Set.submitFormHandler);
 }
 
-if(ItemStoredTransaction.Subtract.form) {
+if (ItemStoredTransaction.Subtract.form) {
 	ItemStoredTransaction.Subtract.form.on("submit", ItemStoredTransaction.Subtract.submitFormHandler);
 	ItemStoredTransaction.Subtract.itemSearchIdInput.on("change", function () {
 		console.log("Selected new item.");
@@ -1799,7 +1988,7 @@ if(ItemStoredTransaction.Subtract.form) {
 	});
 }
 
-if(ItemStoredTransaction.Transfer.form) {
+if (ItemStoredTransaction.Transfer.form) {
 	ItemStoredTransaction.Transfer.form.on("submit", ItemStoredTransaction.Transfer.submitFormHandler);
 	ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function () {
 		console.log("Selected new item.");
@@ -1809,4 +1998,8 @@ if(ItemStoredTransaction.Transfer.form) {
 			ItemStoredTransaction.Transfer.setupForm(item);
 		}
 	});
+}
+
+if (ItemStoredTransaction.Checkin.form) {
+	ItemStoredTransaction.Checkin.form.on("submit", ItemStoredTransaction.Checkin.submitFormHandler);
 }

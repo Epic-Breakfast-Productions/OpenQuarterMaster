@@ -24,7 +24,7 @@
 	<hr />
 
 	<form id='itemStoredTransactionCheckinForm'>
-		
+		<input type="hidden" name="checkoutId" id="itemStoredTransactionCheckinFormCheckoutIdInput" value=""/>
 		
 		<div class="row mb-3">
 			<div class="col">
@@ -41,9 +41,9 @@
 				</div>
 			</div>
 			<div class="col" id="itemStoredTransactionCheckinFormByOriginalContainer">
-				<h3>
+				<p class="h5">
 					This will mark as checked in by:
-				</h3>
+				</p>
 				<div id="itemStoredTransactionCheckinFormByOriginalContent"></div>
 			</div>
 			<div class="col" id="itemStoredTransactionCheckinFormByUserContainer">
@@ -61,17 +61,6 @@
 				</div>
 			</div>
 		</div>
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
 		
 		<div class="mb-3">
 			<label for="itemStoredTransactionCheckinFormNotesInput" class="form-label">Notes</label>
@@ -91,6 +80,23 @@
 		</div>
 		
 		<hr />
+		<div class="mt-3" id="itemStoredTransactionCheckinFormToSelectContainer">
+			<label for="itemStoredTransactionCheckinFormToSelectInput">Into:</label>
+			<select class="form-select" aria-label="Into Input" id="itemStoredTransactionCheckinFormToSelectInput" aria-describedby="itemStoredTransactionCheckinFormToSelectInputHelp" onchange="ItemStoredTransaction.Checkin.intoChanged();" required>
+				<option value="original">Original Placement</option>
+				<option value="block">Storage Block</option>
+				<option value="stored">Stored Item</option>
+			</select>
+			<div id="itemStoredTransactionCheckinFormToSelectInputHelp" class="form-text">
+			
+			</div>
+		</div>
+		<div id="itemStoredTransactionCheckinFormToOriginalDescContainer" class="mt-3">
+			<p class="h5">
+				This will place the item in:
+			</p>
+			<p id="itemStoredTransactionCheckinFormToOriginalDesc"></p>
+		</div>
 		<div class="row mt-3">
 			<div class="col" id="itemStoredTransactionCheckinFormToBlockContainer">
 				<label for="itemStoredTransactionCheckinFormToBlockSelect" class="form-label">To {#icons/storageBlock /} Storage Block</label>

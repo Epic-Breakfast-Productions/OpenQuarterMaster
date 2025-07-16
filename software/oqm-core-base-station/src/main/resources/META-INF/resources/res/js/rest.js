@@ -63,7 +63,9 @@ const Rest = {
 			async = true,
 			crossDomain = false,
 			returnType = "json",
-			done = function(){},
+			done = function(){
+				console.debug("No actions specified.");
+			},
 			fail = function() {},
 			failMessagesDiv = null,
 			failNoResponse = null,
