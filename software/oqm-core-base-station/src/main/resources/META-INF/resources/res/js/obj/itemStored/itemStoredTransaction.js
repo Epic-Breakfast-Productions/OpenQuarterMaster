@@ -377,6 +377,7 @@ const ItemStoredTransaction = {
 
 		toStoredContainer: $("#itemStoredTransactionCheckinFormToStoredContainer"),
 		toStoredInputGroup: $("#itemStoredTransactionCheckinFormToItemStored-inputGroup"),
+		toStoredIdInput: $("#itemStoredTransactionCheckinFormToItemStored-itemStoredInputId"),
 
 		imageSelect: $("#itemStoredTransactionCheckinForm.imagesSelected"),
 		fileSelect: $("#itemStoredTransactionCheckinForm.fileAttachmentSelectInputTable"),
@@ -447,7 +448,6 @@ const ItemStoredTransaction = {
 				item = itemData;
 			});
 
-
 			console.log("Setting up item checkin form for: ", checkout, item);
 
 			ItemStoredTransaction.Checkin.checkoutIdInput.val(checkout.id);
@@ -478,22 +478,30 @@ const ItemStoredTransaction = {
 				ItemStoredTransaction.Checkin.toBlockInput.append(newBlockOption);
 			});
 
+
 			let toBlock = function () {
-				let blockOption = ItemStoredTransaction.Checkin.toSelectInput.find("option[value='block']");
-				blockOption.prop("disabled", false);
+				ItemStoredTransaction.Checkin.toSelectInput.find("option[value='block']").prop("disabled", false);
 			}
-			StorageTypeUtils.runForType(
-				item,
-				toBlock,
+
+			CheckoutTypeUtils.runForType(
+				checkout,
 				function () {
-					ItemStoredTransaction.Checkin.toBlockContainer.show();
-					ItemStoredTransaction.Checkin.toStoredContainer.show();
-					ItemStoredTransaction.Checkin.toSelectInput.find("option[value='block']").prop("disabled", false);
-					ItemStoredTransaction.Checkin.toSelectInput.find("option[value='stored']").prop("disabled", false);
+					StorageTypeUtils.runForType(
+						item,
+						toBlock,
+						function () {
+							ItemStoredTransaction.Checkin.toSelectInput.find("option[value='block']").prop("disabled", false);
+							ItemStoredTransaction.Checkin.toSelectInput.find("option[value='stored']").prop("disabled", false);
+						},
+						toBlock,
+						toBlock
+					);
 				},
-				toBlock,
-				toBlock
+				function () {
+					toBlock();
+				}
 			);
+
 
 			let originalOption = ItemStoredTransaction.Checkin.toSelectInput.find("option[value='original']");
 			let blockOriginal = function () {
@@ -507,15 +515,29 @@ const ItemStoredTransaction = {
 				}
 			}
 
-			StorageTypeUtils.runForType(
-				item,
-				blockOriginal,
-				function () {
-					//TODO:: check if stored still exists
-					//TODO:: enable option
-					//TODO:: populate desc
+			await CheckoutTypeUtils.runForType(
+				checkout,
+				async function () {
+					await StorageTypeUtils.runForType(
+						item,
+						blockOriginal,
+						async function () {
+							try {
+								await Getters.StoredItem.getStored(item.id, checkout.fromStored, function (storedItem) {
+									originalOption.prop("disabled", false);
+									ItemStoredTransaction.Checkin.toOrigDesc.text(
+										storedItem.labelText
+									);
+									//TODO:: more stored details (block)
+								});
+							} catch (e) {
+								console.log("Original stored no longer present.")
+							}
+						},
+						blockOriginal,
+						blockOriginal
+					);
 				},
-				blockOriginal,
 				blockOriginal
 			);
 
@@ -642,7 +664,7 @@ const ItemStoredTransaction = {
 						transactionData.details.checkedInBy = {
 							type: "EXT_SYS_USER",
 							externalId: ItemStoredTransaction.Checkin.byExtIdInput.val(),
-							name:  ItemStoredTransaction.Checkin.byExtNameInput.val()
+							name: ItemStoredTransaction.Checkin.byExtNameInput.val()
 						}
 						break;
 				}
@@ -652,15 +674,19 @@ const ItemStoredTransaction = {
 						let blockOriginal = function () {
 							transactionData.toBlock = checkoutData.fromBlock;
 						};
-						StorageTypeUtils.runForType(
-							await item,
-							blockOriginal,
-							function () {
-								//TODO:: check if stored still exists
-								//TODO:: enable option
-								//TODO:: populate desc
+						await CheckoutTypeUtils.runForType(
+							checkoutData,
+							async function () {
+								StorageTypeUtils.runForType(
+									await item,
+									blockOriginal,
+									async function () {
+										transactionData.toStored = checkoutData.fromStored;
+									},
+									blockOriginal,
+									blockOriginal
+								);
 							},
-							blockOriginal,
 							blockOriginal
 						);
 						break;
@@ -668,7 +694,7 @@ const ItemStoredTransaction = {
 						transactionData.toBlock = ItemStoredTransaction.Checkin.toBlockInput.val();
 						break;
 					case "stored":
-						//TODO
+						transactionData.toStored = ItemStoredTransaction.Checkin.toStoredIdInput.val();
 						break;
 				}
 

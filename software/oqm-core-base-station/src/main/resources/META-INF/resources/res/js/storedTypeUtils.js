@@ -107,3 +107,37 @@ const StorageTypeUtils = {
 		console.warn("item storage type not mappable to stored type: ", itemStorageType);
 	}
 };
+
+const CheckoutTypeUtils = {
+	types: ["AMOUNT", "WHOLE"],
+	typeFromCheckout(checkout) {
+		return checkout.type;
+	},
+	runForType(
+		type,
+		whenAmount,
+		whenWhole,
+	) {
+		if (typeof type !== "string" && !(type instanceof String)) {
+			console.debug("Getting checkout type from checkout: ", type);
+			type = CheckoutTypeUtils.typeFromCheckout(type);
+			console.debug("Got storage type from item: ", type);
+		}
+
+		switch (type) {
+			case "AMOUNT":
+				if (whenAmount !== null) {
+					return whenAmount();
+				}
+				break;
+			case "WHOLE":
+				if (whenWhole !== null) {
+					return whenWhole();
+				}
+				break;
+			default:
+				console.warn("Storage type was not valid; ", storedType);
+				break;
+		}
+	}
+}
