@@ -56,16 +56,7 @@ public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<
 
 				AmountStored amountStored;
 				if (transaction.getToStored() != null) {
-					try {
-						amountStored = this.getStoredService().getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transaction.getToBlock(), AmountStored.class);
-					} catch (DbNotFoundException e) {
-						amountStored = AmountStored.builder()
-							.item(inventoryItem.getId())
-							.storageBlock(transaction.getToBlock())
-							.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
-							.build();
-						this.getStoredService().add(oqmDbIdOrName, cs, amountStored, interactingEntity);
-					}
+					amountStored = (AmountStored) this.getStoredService().get(oqmDbIdOrName, cs, transaction.getToStored());
 				} else if (transaction.getToBlock() != null) {
 					switch (inventoryItem.getStorageType()) {
 						case BULK -> {
