@@ -27,7 +27,7 @@ ItemCheckoutSearchSelect = {
 	disableInputs(storedItemInputGroupJq){
 		storedItemInputGroupJq.find("button").attr("disabled", true);
 	},
-	selectStoredItem(storedLabel, storageBlock, storedItemId, inputGroupId, trigger = true) {
+	selectCheckout(storedLabel, storageBlock, storedItemId, inputGroupId, trigger = true) {
 		console.log("Selected stored item: " + storedItemId + " - " + storedLabel);
 		let inputGroup = $("#" + inputGroupId);
 		let storedLabelJq = ItemStoredSearchSelect.getLabelInput(inputGroup);
@@ -53,7 +53,7 @@ ItemCheckoutSearchSelect = {
 		}
 	},
 
-	setupItemStoredSearchModal(buttonPressed) {
+	setupItemCheckoutSearchModal(buttonPressed) {
 		console.log("setting up itemStoredSearchModal");
 		ModalHelpers.setReturnModal(ItemStoredSearchSelect.modal, buttonPressed);
 		let inputGroup = $(buttonPressed).parent();

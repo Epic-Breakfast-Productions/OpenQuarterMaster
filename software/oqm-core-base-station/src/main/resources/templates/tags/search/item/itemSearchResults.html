@@ -70,7 +70,7 @@
       <button type="button" class="btn btn-sm btn-warning me-1" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
         {#icons/edit}{/icons/edit}
       </button>
-      {#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false itemId=id /}
+      {#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false itemId=id checkinButton=false /}
       <button type="button" class="btn btn-sm btn-danger me-1" title="Remove"
               onclick="removeItem('{id}');">{#icons/remove}{/icons/remove}</button>
     {#else if actionType == 'select'}

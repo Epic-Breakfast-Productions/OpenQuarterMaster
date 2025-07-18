@@ -101,7 +101,7 @@
 			{#icons/view}{/icons/view}
 		</button>
 		{#if result.get("stillCheckedOut").asBoolean()}
-		<button type="button" class="btn btn-sm btn-warning" title="Checkin" data-bs-toggle="modal" data-bs-target="#itemCheckinModal" onclick="ItemCheckin.setupCheckinForm('{id}');">
+		<button type="button" class="btn btn-sm btn-warning" title="Checkin" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionCheckinModal" onclick="ItemStoredTransaction.Checkin.setupForm('{id}', this);">
 			{#icons/transactionCheckin}{/icons/transactionCheckin}
 		</button>
 		{/if}
@@ -120,8 +120,11 @@
 	{#else if actionType == 'viewCheckin'}
 	<td>
 		{#links/itemCheckoutButton id = result.get("id").asText()}{/links/itemCheckoutButton}
-		
-		<a href="/itemCheckout?checkin={result.get("id").asText()}" class="btn btn-sm btn-warning" title="Checkin">{#icons/transactionCheckin}{/icons/transactionCheckin}</a>
+		{#if result.get("stillCheckedOut").asBoolean()}
+		<button type="button" class="btn btn-sm btn-warning" title="Checkin" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionCheckinModal" onclick="ItemStoredTransaction.Checkin.setupForm('{id}', this);">
+			{#icons/transactionCheckin}{/icons/transactionCheckin}
+		</button>
+		{/if}
 	</td>
 	{/if}
 </tr>

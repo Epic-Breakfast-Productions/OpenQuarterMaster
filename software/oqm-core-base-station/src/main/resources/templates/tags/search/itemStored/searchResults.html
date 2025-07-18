@@ -77,7 +77,7 @@
       <button type="button" class="btn btn-sm btn-warning me-1" title="Edit" data-bs-toggle="modal" data-bs-target="#itemStoredEditModal" onclick="ItemStoredEdit.setupEditForm(this, '{result.get("item").asText()}', '{id}');">
         {#icons/edit}{/icons/edit}
       </button>
-      {#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false storedId=id itemId=itemId /}
+      {#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false storedId=id itemId=itemId checkinButton=false /}
       {!<button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{id}');">!}
         {!{#icons/addSubTrans}{/icons/addSubTrans}!}
       {!</button>!}

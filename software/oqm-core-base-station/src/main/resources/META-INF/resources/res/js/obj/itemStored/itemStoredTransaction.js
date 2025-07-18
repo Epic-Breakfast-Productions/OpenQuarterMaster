@@ -349,6 +349,8 @@ const ItemStoredTransaction = {
 		messages: $("#itemStoredTransactionCheckinMessages"),
 		form: $("#itemStoredTransactionCheckinForm"),
 
+		formContainer: $("#itemStoredTransactionCheckinFormContainer"),
+
 		checkoutIdInput: $("#itemStoredTransactionCheckinFormCheckoutIdInput"),
 
 		checkoutSearchContainer: $("#itemStoredTransactionCheckinCheckoutSearchContainer"),
@@ -393,6 +395,7 @@ const ItemStoredTransaction = {
 			ItemStoredTransaction.Checkin.checkoutSearchContainer.hide();
 			ItemStoredTransaction.Checkin.checkoutDetailsContainer.hide();
 			ItemStoredTransaction.Checkin.checkoutDetailsContainer.html("");
+			ItemStoredTransaction.Checkin.formContainer.hide();
 
 
 			ItemStoredTransaction.Checkin.byOriginalContainer.hide();
@@ -450,6 +453,7 @@ const ItemStoredTransaction = {
 
 			console.log("Setting up item checkin form for: ", checkout, item);
 
+			ItemStoredTransaction.Checkin.formContainer.show();
 			ItemStoredTransaction.Checkin.checkoutIdInput.val(checkout.id);
 
 			let itemCheckoutDisplay = ItemCheckoutView.getCheckoutDisplay(checkout);
@@ -469,6 +473,7 @@ const ItemStoredTransaction = {
 				});
 			}
 
+			//Setup Storage blocks in select
 			item.storageBlocks.forEach(function (blockId) {
 				let newBlockOption = $('<option></option>');
 				newBlockOption.val(blockId);
@@ -478,7 +483,7 @@ const ItemStoredTransaction = {
 				ItemStoredTransaction.Checkin.toBlockInput.append(newBlockOption);
 			});
 
-
+			//Enable options based on checkout/item
 			let toBlock = function () {
 				ItemStoredTransaction.Checkin.toSelectInput.find("option[value='block']").prop("disabled", false);
 			}
@@ -492,6 +497,7 @@ const ItemStoredTransaction = {
 						function () {
 							ItemStoredTransaction.Checkin.toSelectInput.find("option[value='block']").prop("disabled", false);
 							ItemStoredTransaction.Checkin.toSelectInput.find("option[value='stored']").prop("disabled", false);
+							ItemStoredSearchSelect.setupInputs(ItemStoredTransaction.Checkin.toStoredInputGroup, item);
 						},
 						toBlock,
 						toBlock

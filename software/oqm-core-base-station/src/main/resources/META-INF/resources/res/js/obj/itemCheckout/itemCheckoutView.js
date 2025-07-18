@@ -1,6 +1,6 @@
 const ItemCheckoutView = {
 	itemCheckoutViewModal: $("#itemCheckoutViewModal"),
-	viewBsModal: new bootstrap.Modal($("#itemCheckoutViewModal"), {}),
+	viewBsModal: $("#itemCheckoutViewModal").length ? new bootstrap.Modal($("#itemCheckoutViewModal"), {}) : null,
 	messages: $("#itemCheckoutViewMessages"),
 	content: $("#itemCheckoutViewContent"),
 	checkinButton: $("#itemCheckoutViewCheckinButton"),
@@ -144,10 +144,10 @@ const ItemCheckoutView = {
 						<!-- {#carousel id='itemCheckoutViewCheckinDetailsCarousel' carouselCss='col'}{/carousel}-->
 						<div class="col">
 							<div class="row">
-								<div class="card col-sm-12 col-md-6" id="itemCheckoutViewCheckinDetailsTypeContainer">
+								<div class="card col-sm-12 col-md-6 itemCheckoutViewCheckinDetailsTypeContainer">
 									<div class="card-body">
 										<h5 class="card-title">Checkin Type:</h5>
-										<p id="itemCheckoutViewCheckinDetailsType" class="">
+										<p class="itemCheckoutViewCheckinDetailsType">
 										</p>
 									</div>
 								</div>
@@ -184,11 +184,11 @@ const ItemCheckoutView = {
 							</div>
 						</div>
 					</div>
-					<div class="row" id="itemCheckoutViewCheckinDetailsNotesContainer">
+					<div class="row itemCheckoutViewCheckinDetailsNotesContainer">
 						<div class="card col-12">
 							<div class="card-body">
 								<h5 class="card-title">Notes:</h5>
-								<p id="itemCheckoutViewCheckinDetailsNotes" class="">
+								<p class="itemCheckoutViewCheckinDetailsNotes">
 								</p>
 							</div>
 						</div>
@@ -300,12 +300,9 @@ const ItemCheckoutView = {
 				output.find(".itemCheckoutViewCheckedOut").append(
 					StoredView.getStoredViewContent(
 						itemCheckoutData.checkedOut,
-						itemCheckoutData.item,
-						itemCheckoutData.fromBlock,
-						false,
-						false,
-						false,
-						true
+						{
+							includeEditButton: false
+						}
 					)
 				);
 				break;
@@ -342,8 +339,9 @@ const ItemCheckoutView = {
 				output.find(".itemCheckoutViewCheckinDetailsNotesContainer").hide();
 			}
 
-			switch (itemCheckoutData.checkInDetails.checkinType) {
-				case "RETURN":
+			console.debug("Checkin type: ", itemCheckoutData.checkInDetails.type);
+			switch (itemCheckoutData.checkInDetails.type) {
+				case "RETURN_FULL":
 					output.find(".itemCheckoutViewCheckinDetailsLossReasonContainer").hide();
 					output.find(".itemCheckoutViewCheckinDetailsTypeContainer").addClass("bg-success");
 					output.find(".itemCheckoutViewCheckinDetailsType").text("Returned");
@@ -355,6 +353,7 @@ const ItemCheckoutView = {
 					});
 
 					break;
+					//TODO:: return part
 				case "LOSS":
 					output.find(".itemCheckoutViewCheckinDetailsCheckedInto").hide();
 
@@ -366,6 +365,9 @@ const ItemCheckoutView = {
 					}
 					break;
 			}
+
+			//checked in by
+
 		}
 
 		Promise.all(promises);
@@ -407,13 +409,13 @@ const ItemCheckoutView = {
 	}
 };
 
+if (ItemCheckoutView.itemCheckoutViewModal.length) {
+	ItemCheckoutView.itemCheckoutViewModal[0].addEventListener("hidden.bs.modal", function () {
+		UriUtils.removeParam("view");
+	});
+}
 
-ItemCheckoutView.itemCheckoutViewModal[0].addEventListener("hidden.bs.modal", function () {
-	UriUtils.removeParam("view");
-});
-
-if (UriUtils.getParams.has("view")
-) {
+if (UriUtils.getParams.has("view")) {
 	ItemCheckoutView.setupView(UriUtils.getParams.get("view"));
 	ItemCheckoutView.viewBsModal.show();
 }

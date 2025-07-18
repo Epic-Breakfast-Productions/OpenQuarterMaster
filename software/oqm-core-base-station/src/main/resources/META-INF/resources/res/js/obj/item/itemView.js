@@ -257,16 +257,14 @@ const ItemView = {
 
 							if (itemData.stats.storageBlockStats[blockId].numStored) {
 								promises.push(
-									Getters.StoredItem.getSingleStoredForItemInBlock(itemId, blockId, async function (stored) {
-										ItemView.addStoredBlockViewAccordionItem(
-											itemData,
-											blockId,
-											"itemViewStoredBulkAccordion",
-											ItemView.getMultiStoredInBlockView(itemData, blockId)
-										).then(function (newAccordItem) {
-											ItemView.storedMultiByBlockAccordion.append(newAccordItem);
-											newAccordItem.find(".pagingSearchForm").submit();
-										});
+									ItemView.addStoredBlockViewAccordionItem(
+										itemData,
+										blockId,
+										"itemViewStoredBulkAccordion",
+										ItemView.getMultiStoredInBlockView(itemData, blockId)
+									).then(function (newAccordItem) {
+										ItemView.storedMultiByBlockAccordion.append(newAccordItem);
+										newAccordItem.find(".pagingSearchForm").submit();
 									})
 								);
 							} else {
