@@ -37,7 +37,7 @@
     </h2>
     {#if actionType == 'full'}
     <div class="col d-grid gap-2">
-      <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
+      <button type="button" class="btn btn-success btn-lg noResultsAddButton" data-bs-toggle="modal"
               data-bs-target="#addEditModal" onclick="setupAddEditForAdd();">
         {#icons/add}{/icons/add} Add Storage Block
       </button>
@@ -54,7 +54,7 @@
       <img src="{rootPrefix}/api/passthrough/media/image/for/storageBlock/{id}" class="searchResultImage" alt="Image for {label}">
     {/if}
   </td>
-  <td>{label}</td>
+  <td class="blockSearchResultLabel">{label}</td>
   <td>{result.get("location").asText()}</td>
   <td>
     {#if result.get("hasParent").asBoolean()}
@@ -64,7 +64,7 @@
   <td></td>
   {#if actionType == 'full'}
   <td>
-    <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#storageBlockViewModal" onclick="setupView('{id}');">
+    <button type="button" class="btn btn-sm btn-info viewButton" title="View" data-bs-toggle="modal" data-bs-target="#storageBlockViewModal" onclick="setupView('{id}');">
       {#icons/view}{/icons/view}
     </button>
     <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditModal" onclick="setupAddEditForEdit('{id}');">
@@ -75,7 +75,7 @@
     </button>
     {#else if actionType == 'select'}
   <td class="d-grid gap-2">
-    <button type="button" class="btn btn-sm btn-success" title="Select {label}"
+    <button type="button" class="btn btn-sm btn-success blockSearchSelectButton" title="Select {label}"
             data-bs-toggle="modal" data-bs-target="#{otherModalId}"
             onclick="StorageSearchSelect.selectStorageBlock('{label}', '{id}', '{inputIdPrepend}');">
       {#icons/select}{/icons/select} Select

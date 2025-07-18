@@ -1,0 +1,17 @@
+<div class="mb-3 col">
+	<label id="{id}-label" class="mb-2">
+		{#icons/transactionCheckout /} <span id="{id}-labelText">{labelText.or("Item Checkout")}</span>
+	</label>
+	<div class="input-group input-group-lg itemCheckoutSearchInputGroup" id="{id}-inputGroup">
+		<input type="hidden" id="{id}-itemCheckoutInputItemId" name="item">
+		<input type="hidden" id="{id}-itemCheckoutInputId" name="itemCheckout" {#if onchange??}onchange="{onchange}"{/if}>
+		<button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#itemCheckoutSearchSelectModal" id="{id}-itemCheckoutInputSearchButton" onclick="ItemCheckoutSearchSelect.setupItemCheckoutSearchModal(this);">
+			{#icons/search}{/icons/search}
+		</button>
+		<input type="text" class="form-control" id="{id}-itemCheckoutInputLabel" placeholder="Checkout" name="itemCheckoutLabel" aria-describedby="{id}-itemNameInput-help" readonly>
+		<button class="btn btn-outline-secondary clearButton" type="button" id="{id}-itemCheckoutInputClearButton" onclick="ItemCheckoutSearchSelect.clearSearchInput($(this));">
+			{#icons/remove}{/icons/remove}
+		</button>
+	</div>
+	<div id="{id}-itemCheckoutNameInput-help" class="form-text"></div>
+</div>

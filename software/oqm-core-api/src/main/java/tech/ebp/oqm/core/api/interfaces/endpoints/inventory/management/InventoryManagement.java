@@ -20,17 +20,21 @@ import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.model.rest.dataImportExport.DataImportResult;
 import tech.ebp.oqm.core.api.model.rest.dataImportExport.ImportBundleFileBody;
+import tech.ebp.oqm.core.api.model.rest.management.DbClearResult;
 import tech.ebp.oqm.core.api.scheduled.ExpiryProcessor;
 import tech.ebp.oqm.core.api.service.importExport.exporting.DatabaseExportService;
 import tech.ebp.oqm.core.api.service.importExport.importing.DataImportService;
 import tech.ebp.oqm.core.api.service.importExport.exporting.DataExportOptions;
 import tech.ebp.oqm.core.api.service.mongo.DatabaseManagementService;
+import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
+import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -148,7 +152,7 @@ public class InventoryManagement extends EndpointProvider {
 	
 	@Blocking
 	@DELETE
-	@Path("/db/{oqmDbIdOrName}/clearDb")
+	@Path("/db/clear/{oqmDbIdOrName}")
 	@Operation(
 		summary = "Manually triggers the process to clear the database."
 	)
@@ -162,11 +166,40 @@ public class InventoryManagement extends EndpointProvider {
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
-	public Map<String, Long> clearDatabase(
+	public DbClearResult clearDatabase(
 		@PathParam("oqmDbIdOrName")
 		String oqmDbIdOrName
-	) {
-		return this.dbms.clearDb(oqmDbIdOrName, this.getInteractingEntity());
+	) throws Exception {
+		try (MongoSessionWrapper csw = new MongoSessionWrapper(null, this.getInteractingEntityService())) {
+			return csw.runTransaction(() -> {
+				return this.dbms.clearDb(csw.getClientSession(), oqmDbIdOrName, this.getInteractingEntity());
+			});
+		} catch (Exception e) {
+			log.error("Failed to apply transaction: ", e);
+			throw e;
+		}
+	}
+
+
+	@Blocking
+	@DELETE
+	@Path("/db/clearAllDbs")
+	@Operation(
+		summary = "Manually triggers the process to clear the database."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Process triggered."
+	)
+	@APIResponse(
+		responseCode = "400",
+		description = "Bad request given. Data given could not pass validation.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@RolesAllowed(Roles.INVENTORY_ADMIN)
+	public List<DbClearResult> clearAllDatabases(
+	) throws Exception {
+		return this.dbms.clearAllDbs(this.getInteractingEntity());
 	}
 
 	@Blocking

@@ -5,6 +5,7 @@ import lombok.*;
 import tech.ebp.oqm.core.api.model.object.Versionable;
 
 import java.time.Duration;
+import java.util.List;
 
 @Data
 @Setter(AccessLevel.PRIVATE)
@@ -20,8 +21,21 @@ public class ObjectUpgradeResult<T extends Versionable> {
 	private Duration timeTaken;
 
 	private int oldVersion;
+	
+	@NotNull
+	@NonNull
+	private UpgradeCreatedObjectsResults upgradeCreatedObjects;
 
 	public boolean wasUpgraded(){
-		return this.getOldVersion() < upgradedObject.getSchemaVersion();
+		return this.getOldVersion() < this.getUpgradedObject().getSchemaVersion();
+	}
+	
+	public int getNumVersionsBumped(){
+		return this.getUpgradedObject().getSchemaVersion() - this.getOldVersion();
+	}
+	
+	public boolean hasUpgradedCreatedObjects(){
+		return !this.getUpgradeCreatedObjects().isEmpty() &&
+			   !this.getUpgradeCreatedObjects().values().stream().allMatch(List::isEmpty);
 	}
 }

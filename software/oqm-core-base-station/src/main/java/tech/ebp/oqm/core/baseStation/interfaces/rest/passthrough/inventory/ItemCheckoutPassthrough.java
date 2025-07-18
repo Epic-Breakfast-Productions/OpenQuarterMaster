@@ -40,56 +40,6 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	@Inject
 	SearchResultTweak searchResultTweak;
 
-	@POST
-	@Operation(
-		summary = "Checks out an item."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json"
-		)
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<String> create(
-		ObjectNode itemCheckoutRequest
-	) {
-		return this.getOqmCoreApiClient().itemCheckoutCreate(this.getBearerHeaderStr(), this.getSelectedDb(), itemCheckoutRequest);
-	}
-
-	@PUT
-	@Path("{id}/checkin")
-	@Operation(
-		summary = "Checks in an item."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json"
-		)
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> checkin(
-		@PathParam("id") String id,
-		ObjectNode checkInDetails
-	) {
-		return this.getOqmCoreApiClient().itemCheckoutCheckin(this.getBearerHeaderStr(), this.getSelectedDb(), id, checkInDetails);
-	}
-
 	@GET
 	@Operation(
 		summary = "Gets a list of storage blocks, using search parameters."
@@ -119,7 +69,7 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 	) {
 		return this.processSearchResults(
 			this.getOqmCoreApiClient().itemCheckoutSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemCheckoutSearch)
-				.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "checkedOutFrom", this.getBearerHeaderStr()))
+				.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "fromBlock", this.getBearerHeaderStr()))
 				.call(results -> searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
 				.call(results -> searchResultTweak.addCreatedByInteractingEntityRefToCheckoutSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr()))
 				.call(results -> searchResultTweak.addInteractingEntityRefToCheckoutSearchResult(results, this.getBearerHeaderStr()))
@@ -201,40 +151,6 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		ObjectNode updates
 	) {
 		return this.getOqmCoreApiClient().itemCheckoutUpdate(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates);
-	}
-
-	@DELETE
-	@Path("{id}")
-	@Operation(
-		summary = "Deletes a particular ItemCheckout."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object deleted.",
-		content = @Content(
-			mediaType = "application/json"
-		)
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "Bad request given, could not find object at given id.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@APIResponse(
-		responseCode = "410",
-		description = "Object requested has already been deleted.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No object found to delete.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> delete(
-		@PathParam("id") String id
-	) {
-		return this.getOqmCoreApiClient().itemCheckoutDelete(this.getBearerHeaderStr(), this.getSelectedDb(), id);
 	}
 
 	//<editor-fold desc="History">

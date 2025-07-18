@@ -63,11 +63,11 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 			.entity(searchResult)
 			.build();
 	}
-	
+
 	@GET
-	@Path("{entityId}")
+	@Path("/self")
 	@Operation(
-		summary = "Gets an interacting entity."
+		summary = "Gets your interacting entity object."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -75,8 +75,33 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = InventoryItem.class
+				implementation = InteractingEntity.class
+			)
+		)
+	)
+	@APIResponse(
+		responseCode = "404",
+		description = "No item found to get.",
+		content = @Content(mediaType = "text/plain")
+	)
+	@Authenticated
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getSelf() {
+		return Response.ok(this.getInteractingEntity()).build();
+	}
+	
+	@GET
+	@Path("{entityId}")
+	@Operation(
+		summary = "Gets an interacting entity reference."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Item added.",
+		content = @Content(
+			mediaType = "application/json",
+			schema = @Schema(
+				implementation = InteractingEntity.class
 			)
 		)
 	)
@@ -106,14 +131,13 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = InventoryItem.class
+				implementation = InteractingEntityReference.class
 			)
 		)
 	)
 	@APIResponse(
 		responseCode = "404",
-		description = "No item found to get.",
+		description = "No entity found to get.",
 		content = @Content(mediaType = "text/plain")
 	)
 	@Authenticated
