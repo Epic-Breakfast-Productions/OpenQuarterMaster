@@ -201,16 +201,6 @@ public interface OqmCoreApiClientService {
 		ObjectNode item
 	);
 
-//	@POST
-//	@Path(INV_ITEM_ROOT_ENDPOINT)
-//	@Consumes(MediaType.MULTIPART_FORM_DATA)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	Uni<ArrayNode> invItemImportData(
-//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-//		@BeanParam ImportBundleFileBody body
-//	);
-
 	@Path(INV_ITEM_ROOT_ENDPOINT + "/stats")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
