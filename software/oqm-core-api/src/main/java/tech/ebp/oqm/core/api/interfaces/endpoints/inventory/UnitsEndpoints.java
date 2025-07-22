@@ -73,7 +73,7 @@ public class UnitsEndpoints extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Map<UnitCategory, Set<Unit<?>>> getUnits() {
-		log.info("Getting valid unit list.");
+		log.debug("Getting valid unit list.");
 		return UnitUtils.UNIT_CATEGORY_MAP;
 	}
 	
@@ -96,7 +96,7 @@ public class UnitsEndpoints extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public ValidUnitDimension[] getUnitDimensions() {
-		log.info("Getting valid unit list.");
+		log.debug("Getting valid unit list.");
 		return ValidUnitDimension.values();
 	}
 	
@@ -141,7 +141,7 @@ public class UnitsEndpoints extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Map<Unit<?>, Set<Unit<?>>> getUnitCompatibleMap() {
-		log.info("Getting unit set with lists of compatible units.");
+		log.debug("Getting unit set with lists of compatible units.");
 		return UnitUtils.UNIT_COMPATIBILITY_MAP;
 	}
 	
@@ -166,7 +166,7 @@ public class UnitsEndpoints extends EndpointProvider {
 	public Response getUnitCompatible(
 		@PathParam("unit") String unitString
 	) {
-		log.info("Getting unit set with lists of compatible units.");
+		log.debug("Getting unit set with lists of compatible units.");
 		Unit<?> unit;
 		try {
 			unit = UnitUtils.unitFromString(unitString);
@@ -240,7 +240,7 @@ public class UnitsEndpoints extends EndpointProvider {
 		return this.customUnitService.search(search);
 	}
 	
-	Quantity<?> convert(@Valid ConvertRequest request){
+	private static Quantity<?> convert(@Valid ConvertRequest request){
 		//noinspection unchecked
 		return request.getQuantity().to(request.getNewUnit());
 	}
@@ -270,16 +270,17 @@ public class UnitsEndpoints extends EndpointProvider {
 	public Response convert(
 		JsonNode convertRequestJson
 	) {
+		//TODO:: wrap in a good exception for invalid conversions?
 		Object output = null;
 		if(convertRequestJson.isObject()){
 			ConvertRequest convertRequest = this.objectMapper.convertValue(convertRequestJson, ConvertRequest.class);
-			output = this.convert(convertRequest);
+			output = convert(convertRequest);
 		} else if(convertRequestJson.isArray()){
 			List<Quantity<?>> out = new ArrayList<>(convertRequestJson.size());
 			//TODO:: contemplate if OBJECT_MAPPER.readValue(response.extract().body().asString(), new TypeReference<List<Quantities>>() { }) is better
 			for(JsonNode curConvertRequestJson : (ArrayNode)convertRequestJson){
 				ConvertRequest convertRequest = this.objectMapper.convertValue(curConvertRequestJson, ConvertRequest.class);
-				out.add(this.convert(convertRequest));
+				out.add(convert(convertRequest));
 			}
 			output = out;
 		}

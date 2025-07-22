@@ -56,11 +56,6 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	@Getter
 	Class<Stored> objectClass = Stored.class;
 
-//	@PostConstruct
-//	public void setup(){
-//		this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
-//	}
-
 	@GET
 	@Operation(
 		summary = "Searches all of an item's stored entries."
@@ -150,7 +145,6 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 		@PathParam("storedItemId") String id,
 		ObjectNode updates
 	) {
-		//TODO:: disallow amounts
 		return super.update(id, updates);
 	}
 	

@@ -64,11 +64,6 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 		return inventoryItem;
 	}
 
-//	@PostConstruct
-//	public void setup(){
-//		this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
-//	}
-
 	@GET
 	@Operation(
 		summary = "Searches all of an item's stored entries."
@@ -158,7 +153,6 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 		@PathParam("storedItemId") String id,
 		ObjectNode updates
 	) {
-		//TODO:: disallow amounts
 		return super.update(id, updates);
 	}
 	
