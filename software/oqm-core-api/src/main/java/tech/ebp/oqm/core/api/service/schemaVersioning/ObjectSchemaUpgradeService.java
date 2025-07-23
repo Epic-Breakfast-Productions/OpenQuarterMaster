@@ -25,6 +25,7 @@ import tech.ebp.oqm.core.api.model.object.Versionable;
 import tech.ebp.oqm.core.api.model.object.history.details.FromSchemaUpgradeDetail;
 import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.SchemaUpgradeEvent;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
@@ -34,6 +35,7 @@ import tech.ebp.oqm.core.api.model.object.upgrade.OqmDbUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeCreatedObjectsResults;
 import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeOverallCreatedObjectsResults;
+import tech.ebp.oqm.core.api.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
@@ -41,7 +43,9 @@ import tech.ebp.oqm.core.api.service.mongo.MongoObjectService;
 import tech.ebp.oqm.core.api.service.mongo.MongoService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
+import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectSchemaUpgrader;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.interactingEntity.InteractingEntitySchemaUpgrader;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.inventoryItem.InventoryItemSchemaUpgrader;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.storageBlock.StorageBlockSchemaUpgrader;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.stored.StoredSchemaUpgrader;
@@ -65,6 +69,8 @@ public class ObjectSchemaUpgradeService {
 	/** The main oqm database service. */
 	private OqmDatabaseService oqmDatabaseService;
 	/** Map of classes to their corresponding oqm mongo db service, for easy access. */
+	private Map<Class<? extends MainObject>, TopLevelMongoService<? extends MainObject, ?, ?>> topLevelServices;
+	/** Map of classes to their corresponding oqm mongo db service, for easy access. */
 	private Map<Class<? extends MainObject>, MongoDbAwareService<? extends MainObject, ?, ?>> oqmDbServices;
 	/** Data structure for easy grouping of services that can/ should have their schema updated at the same time, and those groups in order. */
 	private List<List<MongoDbAwareService<? extends MainObject, ?, ?>>> dbAwareUpgradeGroups;
@@ -82,6 +88,7 @@ public class ObjectSchemaUpgradeService {
 		@ConfigProperty(name = "quarkus.uuid")
 		String instanceUuid,
 		OqmDatabaseService oqmDatabaseService,
+		InteractingEntityService interactingEntityService,
 		StorageBlockService storageBlockService,
 		InventoryItemService inventoryItemService,
 		StoredService storedService
@@ -89,6 +96,9 @@ public class ObjectSchemaUpgradeService {
 		this.coreApiInteractingEntity = coreApiInteractingEntity;
 		this.instanceUuid = instanceUuid;
 		this.oqmDatabaseService = oqmDatabaseService;
+		
+		this.topLevelServices = new LinkedHashMap<>();
+		this.topLevelServices.put(interactingEntityService.getClazz(), interactingEntityService);
 		
 		//This insertion order here is the order of which these are each processed.
 		//TODO:: populate rest of oqmDbServices
@@ -107,6 +117,7 @@ public class ObjectSchemaUpgradeService {
 		);
 		
 		this.upgraderMap = Map.of(
+			InteractingEntity.class, new InteractingEntitySchemaUpgrader(),
 			StorageBlock.class, new StorageBlockSchemaUpgrader(),
 			InventoryItem.class, new InventoryItemSchemaUpgrader(),
 			Stored.class, new StoredSchemaUpgrader()
