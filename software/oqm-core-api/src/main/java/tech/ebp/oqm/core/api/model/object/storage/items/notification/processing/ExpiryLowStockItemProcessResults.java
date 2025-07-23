@@ -1,7 +1,11 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.notification.processing;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.history.events.item.ItemExpiryLowStockEvent;
 

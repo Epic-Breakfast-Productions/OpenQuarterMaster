@@ -1,6 +1,10 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.notification.processing;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 
 @Data

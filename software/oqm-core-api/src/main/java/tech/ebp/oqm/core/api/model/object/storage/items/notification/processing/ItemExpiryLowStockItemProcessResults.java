@@ -2,7 +2,11 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.notification.processing;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.history.events.item.ItemExpiryLowStockEvent;
 
@@ -35,11 +39,9 @@ public class ItemExpiryLowStockItemProcessResults implements ItemProcessResults 
 
 	@Override
 	public List<ItemExpiryLowStockEvent> getEvents(ObjectId transactionId) {
-		//TODO:: add the item level low stock
 		return this.getResults().values()
 			.stream()
 			.flatMap(curResultList->{
-				//TODO:: add storage block level low stock
 				return curResultList.stream().flatMap(curResult->{
 					return curResult.getEvents(this.getItemId(), transactionId).stream();
 				});

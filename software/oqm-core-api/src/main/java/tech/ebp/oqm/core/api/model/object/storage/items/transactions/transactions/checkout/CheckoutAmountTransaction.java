@@ -1,15 +1,18 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubAmountTransaction;
 
 import javax.measure.Quantity;
 
+/**
+ * Transaction to checkout an amount of item stored.
+ */
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Data
@@ -39,6 +42,7 @@ public class CheckoutAmountTransaction extends CheckoutTransaction {
 	 * <p>
 	 * Only specify "true" if {@link CheckoutAmountTransaction#amount} is null.
 	 */
+	@lombok.Builder.Default
 	private boolean all = false;
 
 

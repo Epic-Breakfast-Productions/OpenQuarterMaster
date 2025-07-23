@@ -105,6 +105,12 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			}
 		}
 		
+		if (item.getStorageType().storedType == StoredType.AMOUNT && ((AmountStored) newOrChangedObject).getLowStockThreshold() != null) {
+			if (!item.getUnit().isCompatible(((AmountStored) newOrChangedObject).getLowStockThreshold().getUnit())) {
+				throw new ValidationException("Unit of low stock threshold must be compatible with item's unit.");
+			}
+		}
+		
 		if (item.getStorageType() == BULK || item.getStorageType() == UNIQUE_SINGLE) {
 			SearchResult<Stored> inBlock = this.search(
 				oqmDbIdOrName,

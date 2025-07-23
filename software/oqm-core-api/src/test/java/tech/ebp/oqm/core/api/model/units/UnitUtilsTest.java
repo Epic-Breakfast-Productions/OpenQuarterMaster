@@ -162,6 +162,22 @@ class UnitUtilsTest extends BasicTest {
 		}
 	}
 	
+	private static Stream<Arguments> quantityCompareArgs(){
+		return Stream.of(
+			Arguments.of(null, null, false),
+			Arguments.of(Quantities.getQuantity(2, OqmProvidedUnits.UNIT), Quantities.getQuantity(3, OqmProvidedUnits.UNIT), false),
+			Arguments.of(Quantities.getQuantity(2, OqmProvidedUnits.UNIT), Quantities.getQuantity(2, OqmProvidedUnits.UNIT), true),
+			Arguments.of(Quantities.getQuantity(1, LibUnits.UnitProxies.KILOGRAM), Quantities.getQuantity(1001, LibUnits.UnitProxies.GRAM), false),
+			Arguments.of(Quantities.getQuantity(1, LibUnits.UnitProxies.KILOGRAM), Quantities.getQuantity(1000, LibUnits.UnitProxies.GRAM), true)
+		);
+	}
+	
+	@ParameterizedTest
+	@MethodSource("quantityCompareArgs")
+	public <T extends Quantity<T>> void testUnderThreshold(Quantity<T> threshold, Quantity<T> amount, boolean expected) {
+		assertEquals(expected, UnitUtils.underThreshold(threshold, amount));
+	}
+	
 	//	@ParameterizedTest
 	//	@MethodSource("unitsAsArgs")
 	//	public void testFormat(Unit<?> unit) {
@@ -184,20 +200,4 @@ class UnitUtilsTest extends BasicTest {
 	//
 	//        log.info("Deserialized unit: {}, name=\"{}\", symbol=\"{}\", dimension=\"{}\"", deserialized, deserialized.getName(), deserialized.getSymbol(), deserialized.getDimension());
 	//    }
-
-	private static Stream<Arguments> quantityCompareArgs(){
-		return Stream.of(
-			Arguments.of(null, null, false),
-			Arguments.of(Quantities.getQuantity(2, OqmProvidedUnits.UNIT), Quantities.getQuantity(3, OqmProvidedUnits.UNIT), false),
-			Arguments.of(Quantities.getQuantity(2, OqmProvidedUnits.UNIT), Quantities.getQuantity(2, OqmProvidedUnits.UNIT), true),
-			Arguments.of(Quantities.getQuantity(1, LibUnits.UnitProxies.KILOGRAM), Quantities.getQuantity(1001, LibUnits.UnitProxies.GRAM), false),
-			Arguments.of(Quantities.getQuantity(1, LibUnits.UnitProxies.KILOGRAM), Quantities.getQuantity(1000, LibUnits.UnitProxies.GRAM), true)
-		);
-	}
-
-	@ParameterizedTest
-	@MethodSource("quantityCompareArgs")
-	public <T extends Quantity<T>> void testUnderThreshold(Quantity<T> threshold, Quantity<T> amount, boolean expected) {
-		assertEquals(expected, UnitUtils.underThreshold(threshold, amount));
-	}
 }

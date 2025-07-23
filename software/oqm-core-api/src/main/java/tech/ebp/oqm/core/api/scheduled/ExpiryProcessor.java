@@ -51,6 +51,7 @@ public class ExpiryProcessor {
 		//TODO:: multithread
 		log.info("Start processing all held items for newly expired stored.");
 		for(DbCacheEntry curEntry : this.oqmDatabaseService.getDatabases()){
+			log.info("Processing expiry or warning events for {}", curEntry.getDbName());
 			long result = this.storedService.scanForExpired(curEntry.getDbName());
 			log.info("Processed {} expiry or warning events for {}", result, curEntry.getDbName());
 		}

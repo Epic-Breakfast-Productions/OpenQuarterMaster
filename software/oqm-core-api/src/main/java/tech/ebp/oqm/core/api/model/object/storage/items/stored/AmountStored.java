@@ -1,7 +1,12 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.stored;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidQuantity;
@@ -33,7 +38,6 @@ public class AmountStored extends Stored {
 	 * The threshold of low stock for the entire object.
 	 * <p>
 	 * Null for no threshold, Quantity with compatible unit to set the threshold.
-	 * TODO:: validate unit is compatible with main unit
 	 */
 	@lombok.Builder.Default
 	private Quantity<?> lowStockThreshold = null;

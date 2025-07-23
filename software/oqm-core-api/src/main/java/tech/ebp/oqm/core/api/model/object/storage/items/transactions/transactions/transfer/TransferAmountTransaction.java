@@ -1,14 +1,18 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 
 import javax.measure.Quantity;
 
+/**
+ * Transaction to transfer an amount from one stored to another.
+ */
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Data
@@ -28,6 +32,7 @@ public class TransferAmountTransaction extends TransferTransaction {
 	 * <p>
 	 * Only specify "true" if {@link TransferAmountTransaction#amount} is null.
 	 */
+	@lombok.Builder.Default
 	private boolean all = false;
 	
 	/**
@@ -44,6 +49,7 @@ public class TransferAmountTransaction extends TransferTransaction {
 	 * If applicable, the storage block we are putting the amount into. Used for BULK items.
 	 */
 	private ObjectId toBlock;
+	
 	/**
 	 * If applicable, the specific stored item we are transferring to. Used for AMOUNT_LIST
 	 */

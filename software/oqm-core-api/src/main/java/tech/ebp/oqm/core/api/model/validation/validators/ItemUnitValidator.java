@@ -17,12 +17,16 @@ public class ItemUnitValidator extends Validator<ValidItemUnit, InventoryItem> {
 	public boolean isValid(InventoryItem item, ConstraintValidatorContext constraintValidatorContext) {
 		List<String> errs = new ArrayList<>();
 		
+		Unit<?> unit = item.getUnit();
 		switch (item.getStorageType().storedType){
 			case AMOUNT -> {
-				//nothing to do
+				//this might be redundant (we can't deserialize a unit not in this list), but can't hurt
+				if(!UnitUtils.UNIT_LIST.contains(unit)){
+					errs.add("Invalid unit: " + unit.toString() + " not applicable for item storage. Must use unit in the unit list.");
+				}
 			}
 			case UNIQUE -> {
-				if(!OqmProvidedUnits.UNIT.isCompatible(item.getUnit())){
+				if(!OqmProvidedUnits.UNIT.isCompatible(unit)){
 					errs.add("Items using unique type must use unit that is compatible with the unit 'unit'.");
 				}
 			}

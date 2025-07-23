@@ -4,7 +4,6 @@ package tech.ebp.oqm.core.api.model.object.upgrade;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;

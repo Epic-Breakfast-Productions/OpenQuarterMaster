@@ -22,7 +22,7 @@ import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.or;
 
 /**
- * TODO:: rework
+ *
  */
 @Named("ItemCheckoutService")
 @Slf4j

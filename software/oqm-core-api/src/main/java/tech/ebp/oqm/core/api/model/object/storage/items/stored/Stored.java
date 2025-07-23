@@ -7,7 +7,12 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
@@ -16,8 +21,10 @@ import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.StoredNotificationStatus;
 
 import java.time.LocalDateTime;
-import java.util.*;
-import java.util.function.Predicate;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * Describes an item stored in the system.
@@ -104,10 +111,6 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 
 	@lombok.Builder.Default
 	private Set<ObjectId> attachedFiles = new HashSet<>();
-
-	public static Predicate<Stored> getHasIdPredicate(UUID storedId) {
-		return (Stored stored) -> stored.getId().equals(storedId);
-	}
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public abstract String getLabelText();

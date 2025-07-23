@@ -1,9 +1,10 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.stored.stats;
 
-import lombok.*;
-import tech.units.indriya.quantity.Quantities;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
-import javax.measure.Quantity;
 import javax.measure.Unit;
 
 @Data

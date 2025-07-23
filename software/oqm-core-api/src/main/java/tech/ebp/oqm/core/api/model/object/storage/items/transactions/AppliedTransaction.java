@@ -1,13 +1,16 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemPostTransactionProcessResults;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.StoredStats;
 
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
@@ -60,7 +63,10 @@ public class AppliedTransaction extends AttKeywordMainObject {
 	@NotNull
 	@NonNull
 	private ItemStoredTransaction transaction;
-
+	
+	/**
+	 * The results from applying the transaction.
+	 */
 	@NonNull
 	@NotNull
 	private ItemPostTransactionProcessResults postApplyResults;

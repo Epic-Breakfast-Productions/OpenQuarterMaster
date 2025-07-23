@@ -2,15 +2,16 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.notification.processing;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.history.events.item.ItemExpiryLowStockEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.ItemLowStockEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiryWarningEvent;
-import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.core.api.service.mongo.InteractingEntityService;
 
 import java.util.ArrayList;
 import java.util.List;

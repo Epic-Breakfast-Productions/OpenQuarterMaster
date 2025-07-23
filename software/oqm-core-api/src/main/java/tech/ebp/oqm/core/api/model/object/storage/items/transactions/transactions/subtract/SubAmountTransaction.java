@@ -1,15 +1,18 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract;
 
-import jakarta.validation.constraints.NotNull;
-import lombok.*;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferAmountTransaction;
 
 import javax.measure.Quantity;
 
+/**
+ * Transaction to subtract an amount from an item stored.
+ */
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Data
@@ -18,14 +21,15 @@ import javax.measure.Quantity;
 public class SubAmountTransaction extends SubtractTransaction {
 	
 	/**
-	 * The storage block we are subracting from
+	 * The storage block we are subtracting from
 	 */
 	private ObjectId fromBlock;
+	
 	/**
 	 * If the specific storage block we are adding to.
 	 */
 	private ObjectId fromStored;
-
+	
 	/**
 	 * The amount we are subtracting from.
 	 * <p>
@@ -38,13 +42,14 @@ public class SubAmountTransaction extends SubtractTransaction {
 	 * <p>
 	 * Only specify "true" if {@link SubAmountTransaction#amount} is null.
 	 */
+	@lombok.Builder.Default
 	private boolean all = false;
-
+	
 	@Override
 	public TransactionType getType() {
 		return TransactionType.SUBTRACT_AMOUNT;
 	}
-
+	
 	@Override
 	public int getSchemaVersion() {
 		return 1;
