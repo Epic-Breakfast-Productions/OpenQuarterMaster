@@ -16,11 +16,15 @@ This component runs an instance of MongoDb for the OQM system.
 
  - Show users:
 
-   `docker exec oqm_infra_mongo mongo admin -u "$(sudo oqm-config -g 'infra.mongodb.adminUser')" -p "$(sudo oqm-config -g 'infra.mongodb.adminPass')" --eval "db.getUsers()"`
+   `docker exec oqm-infra-mongo mongosh -u "$(sudo oqm-config -g 'infra.mongodb.adminUser')" -p "$(sudo oqm-config -g 'infra.mongodb.adminPass')" --eval "db.getUsers()"`
 
  - Show databases:
    
-   `docker exec oqm_infra_mongo mongo admin -u "$(sudo oqm-config -g 'infra.mongodb.adminUser')" -p "$(sudo oqm-config -g 'infra.mongodb.adminPass')" --eval "db.getMongo().getDBNames()"`
+   `sudo docker exec oqm-infra-mongo mongosh -u "$(sudo oqm-config -g 'infra.mongodb.adminUser')" -p "$(sudo oqm-config -g 'infra.mongodb.adminPass')" --eval "db.getMongo().getDBNames()"`
+
+ - Show collections in database:
+   
+   `sudo docker exec oqm-infra-mongo mongosh -u "$(sudo oqm-config -g 'infra.mongodb.adminUser')" -p "$(sudo oqm-config -g 'infra.mongodb.adminPass')" --eval "use oqmCoreApiMain" --eval "db.getCollectionNames()"`
 
  - Dump collection data to json:
 
