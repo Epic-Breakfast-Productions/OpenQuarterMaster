@@ -23,7 +23,6 @@ import java.util.List;
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
 public class PluginService extends ExternalService {
-	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@NonNull
 	@NotNull
@@ -53,10 +52,5 @@ public class PluginService extends ExternalService {
 	public boolean updateFrom(JsonWebToken jwt) {
 		//TODO
 		return false;
-	}
-
-	@Override
-	public int getSchemaVersion() {
-		return CUR_SCHEMA_VERSION;
 	}
 }

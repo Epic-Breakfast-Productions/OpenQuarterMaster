@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import org.bson.Document;
 import org.bson.json.JsonWriterSettings;
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
 import tech.ebp.oqm.core.api.exception.VersionBumperListIncontiguousException;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
@@ -81,20 +82,48 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 
 		return bumpers.iterator();
 	}
-
+	
+	/**
+	 * Performs minor tweaks to the resulting upgraded object json.
+	 *
+	 * @param oldObj The upgraded object json we are working with
+	 * @return oldObj
+	 */
+	protected ObjectNode adjustUpgradedObj(ObjectNode oldObj){
+		if(oldObj.has("_t")) {
+			oldObj.remove("_t");
+		}
+		return oldObj;
+	}
+	
+	private ObjectId getObjectId(ObjectNode oldObj){
+		if(oldObj.has("id")) {
+			return new ObjectId(oldObj.get("id").asText());
+		}
+		if(oldObj.has("_id")) {
+			return new ObjectId(oldObj.get("_id").asText());
+		}
+		throw new IllegalArgumentException(
+			"Object given must have id field or _id field."
+		);
+	}
 
 	public ObjectUpgradeResult<T> upgrade(ObjectNode oldObj){
 		int curVersion = oldObj.get("schemaVersion").asInt(1);
 		ObjectUpgradeResult.Builder<T> resultBuilder = ObjectUpgradeResult.builder();
+		resultBuilder.objectId(this.getObjectId(oldObj));
 		resultBuilder.oldVersion(curVersion);
 		UpgradeCreatedObjectsResults upgradeCreatedObjects = new UpgradeCreatedObjectsResults();
 		resultBuilder.upgradeCreatedObjects(upgradeCreatedObjects);
 
 		ObjectNode upgradedJson = oldObj.deepCopy();
+		
+		log.debug("Initial object: {}", upgradedJson);
 
 		//Iterate and process upgrades for each necessary bump
 		StopWatch sw = StopWatch.createStarted();
 		Iterator<ObjectSchemaVersionBumper<T>> it = getBumperIteratorAtVersion(curVersion);
+		boolean delObj = false;
 		while (it.hasNext()){
 			ObjectSchemaVersionBumper<T> curBumper = it.next();
 
@@ -104,18 +133,35 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 			
 			//Process created objects during the bump
 			upgradeCreatedObjects.addAll(upgradeResult.getCreatedObjects());
+			
+			if(upgradeResult.isDelObj()){
+				log.debug("Object was deleted during upgrade to schema version {}", curBumper.getBumperTo());
+				delObj = true;
+				resultBuilder.delObj(true);
+				break;
+			}
 		}
+		
+		this.adjustUpgradedObj(upgradedJson);
+		
 		log.debug("Upgraded object: {}", upgradedJson);
-		// Get end result object from resulting bumped json
-		T upgradedObj = null;
-		try {
-			upgradedObj = ObjectUtils.OBJECT_MAPPER.treeToValue(upgradedJson, this.objClass);
-		} catch(JsonProcessingException e) {
-			throw new UpgradeFailedException(e, this.getObjClass());
+		
+		if(delObj){
+			resultBuilder.upgradedObject(Optional.empty());
+		} else {
+			// Get end result object from resulting bumped json
+			T upgradedObj = null;
+			try {
+				upgradedObj = ObjectUtils.OBJECT_MAPPER.treeToValue(upgradedJson, this.objClass);
+			} catch(JsonProcessingException e) {
+				log.error("Failed to deserialize upgraded object of class {}: {}", this.objClass, upgradedJson.toPrettyString(), e);
+				throw new UpgradeFailedException(e, this.getObjClass());
+			}
+			log.debug("Object successfully deserialized: {}", upgradedObj);
+			resultBuilder.upgradedObject(Optional.of(upgradedObj));
 		}
 		sw.stop();
-
-		resultBuilder.upgradedObject(upgradedObj);
+		
 		resultBuilder.timeTaken(sw.getDuration());
 
 		return resultBuilder.build();

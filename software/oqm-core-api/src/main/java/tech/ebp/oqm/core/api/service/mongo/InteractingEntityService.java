@@ -18,7 +18,6 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.rest.search.InteractingEntitySearch;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
@@ -94,7 +93,7 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	}
 
 	public InteractingEntity get(ObjectId id) {
-		return this.getCollection().find(eq("_id", id)).limit(1).first();
+		return this.getTypedCollection().find(eq("_id", id)).limit(1).first();
 	}
 
 	public InteractingEntity get(String id) {
@@ -102,11 +101,11 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	}
 
 	public ObjectId add(@Valid InteractingEntity entity) {
-		return this.getCollection().insertOne(entity).getInsertedId().asObjectId().getValue();
+		return this.getTypedCollection().insertOne(entity).getInsertedId().asObjectId().getValue();
 	}
 
 	protected void update(InteractingEntity entity) {
-		this.getCollection().findOneAndReplace(eq("_id", entity.getId()), entity);
+		this.getTypedCollection().findOneAndReplace(eq("_id", entity.getId()), entity);
 	}
 
 	/**

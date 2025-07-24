@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
@@ -34,6 +35,7 @@ public class InvItemBumper2 extends ObjectSchemaVersionBumper<InventoryItem> {
 		oldStored.remove("id");
 		oldStored.remove("_id");
 		oldStored.remove("_t");
+		oldStored.put("id", new ObjectId().toHexString());
 		oldStored.put("item", itemId);
 		oldStored.put("storageBlock", storageBlock);
 		oldStored.put(SCHEMA_VERSION_FIELD, 1);

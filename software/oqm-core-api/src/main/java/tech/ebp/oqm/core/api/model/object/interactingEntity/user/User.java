@@ -32,7 +32,6 @@ import java.util.Set;
 @SuperBuilder(toBuilder = true)
 @BsonDiscriminator
 public class User extends InteractingEntity {
-	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@NonNull
 	@NotNull
@@ -88,10 +87,5 @@ public class User extends InteractingEntity {
 		}
 		
 		return updated;
-	}
-
-	@Override
-	public int getSchemaVersion() {
-		return CUR_SCHEMA_VERSION;
 	}
 }

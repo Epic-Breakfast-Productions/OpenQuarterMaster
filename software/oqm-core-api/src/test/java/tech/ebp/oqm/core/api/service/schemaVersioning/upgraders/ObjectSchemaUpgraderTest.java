@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.exception.VersionBumperListIncontiguousException;
 import tech.ebp.oqm.core.api.model.object.upgrade.ObjectUpgradeResult;
@@ -34,11 +35,14 @@ public class ObjectSchemaUpgraderTest extends BasicTest {
 		}
 	}
 	
+	//TODO:: id equivalence test
+	
 	@Test
 	public void testUpgradeJsonFrom1(){
 		TestObjectSchemaUpgrader upgrader = new TestObjectSchemaUpgrader();
 		
 		ObjectNode oldObj = OBJECT_MAPPER.createObjectNode();
+		oldObj.put("id", new ObjectId().toHexString());
 		oldObj.put(ObjectSchemaVersionBumper.SCHEMA_VERSION_FIELD, 1);
 		oldObj.put("name", "test");
 		
@@ -57,6 +61,7 @@ public class ObjectSchemaUpgraderTest extends BasicTest {
 		TestObjectSchemaUpgrader upgrader = new TestObjectSchemaUpgrader();
 		
 		ObjectNode oldObj = OBJECT_MAPPER.createObjectNode();
+		oldObj.put("id", new ObjectId().toHexString());
 		oldObj.put(ObjectSchemaVersionBumper.SCHEMA_VERSION_FIELD, 2);
 		oldObj.put("name", "test");
 		
@@ -75,6 +80,7 @@ public class ObjectSchemaUpgraderTest extends BasicTest {
 		TestObjectSchemaUpgrader upgrader = new TestObjectSchemaUpgrader();
 		
 		ObjectNode oldObj = OBJECT_MAPPER.createObjectNode();
+		oldObj.put("id", new ObjectId().toHexString());
 		oldObj.put(ObjectSchemaVersionBumper.SCHEMA_VERSION_FIELD, 4);
 		oldObj.put("name", "test");
 		
@@ -93,6 +99,7 @@ public class ObjectSchemaUpgraderTest extends BasicTest {
 		TestObjectSchemaUpgrader upgrader = new TestObjectSchemaUpgrader();
 		
 		ObjectNode oldObjJson = OBJECT_MAPPER.createObjectNode();
+		oldObjJson.put("id", new ObjectId().toHexString());
 		oldObjJson.put(ObjectSchemaVersionBumper.SCHEMA_VERSION_FIELD, 1);
 		oldObjJson.put("name", "test");
 		

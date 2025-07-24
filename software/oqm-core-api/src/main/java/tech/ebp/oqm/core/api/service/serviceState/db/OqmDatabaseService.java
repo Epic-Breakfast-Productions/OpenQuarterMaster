@@ -56,7 +56,7 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 	@PostConstruct
 	public void setup() {
 
-		if (this.getCollection().countDocuments() == 0) {
+		if (this.getTypedCollection().countDocuments() == 0) {
 			// create a default database in case none exist
 			log.info("At startup, no oqm databases existed.");
 
@@ -77,25 +77,11 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 	}
 
 	/**
-	 * Gets the collection for this service.
-	 * <p>
-	 * Sets up the collection object if not initialized yet.
-	 *
-	 * @return The Mongo collection for this service.
-	 */
-	protected MongoCollection<OqmMongoDatabase> getCollection() {
-		if (this.collection == null) {
-			this.collection = this.getMongoDatabase().getCollection(OqmMongoDatabase.class.getSimpleName(), OqmMongoDatabase.class);
-		}
-		return this.collection;
-	}
-
-	/**
 	 * Forces a refresh of the cache of OQM databases.
 	 */
 	public void refreshCache() {
 		log.info("Refreshing cache of databases.");
-		this.setDatabaseCache(new DbCache(this.getMongoClient(), this.getCollection().find(), this.getDatabaseCache()));
+		this.setDatabaseCache(new DbCache(this.getMongoClient(), this.getTypedCollection().find(), this.getDatabaseCache()));
 	}
 
 	/**
@@ -157,13 +143,13 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 	 */
 	public ObjectId addOqmDatabase(@Valid OqmMongoDatabase newDatabase) throws IllegalArgumentException {
 		//TODO:: add logic to validator
-		boolean dbNameExists = !this.getCollection().find(Filters.eq("name", newDatabase.getName())).into(new ArrayList<>()).isEmpty();
+		boolean dbNameExists = !this.getTypedCollection().find(Filters.eq("name", newDatabase.getName())).into(new ArrayList<>()).isEmpty();
 		if (dbNameExists) {
 			//TODO:: better exception
 			throw new IllegalArgumentException("Database with name \"" + newDatabase.getName() + "\" already exists.");
 		}
 		log.info("Creating new database {}", newDatabase.getDisplayName());
-		newDatabase.setId(this.getCollection().insertOne(newDatabase).getInsertedId().asObjectId().getValue());
+		newDatabase.setId(this.getTypedCollection().insertOne(newDatabase).getInsertedId().asObjectId().getValue());
 
 		log.info("Created new database, id: {}", newDatabase.getId());
 		this.refreshCache();

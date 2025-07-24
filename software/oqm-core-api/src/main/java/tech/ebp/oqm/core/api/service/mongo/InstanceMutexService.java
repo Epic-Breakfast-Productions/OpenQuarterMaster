@@ -9,8 +9,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.BsonDocument;
-import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.exception.MutexWaitTimeoutException;
@@ -27,7 +25,6 @@ import java.time.temporal.ChronoUnit;
 import java.time.temporal.TemporalAmount;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 import static com.mongodb.client.model.Filters.*;
@@ -62,13 +59,13 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 	}
 
 	private void clearDuplicateMutexes(String mutexId) {
-		List<InstanceMutex> mutexes = this.getCollection().find(eq("mutexId", mutexId)).into(new ArrayList<>());
+		List<InstanceMutex> mutexes = this.getTypedCollection().find(eq("mutexId", mutexId)).into(new ArrayList<>());
 		if (mutexes.size() > 1) {
 			log.info("Multiple mutex objects for {} detected ({} total mutexes). Deleting extra.", mutexId, mutexes.size());
 			mutexes.removeFirst();
 
 			for (InstanceMutex mutex : mutexes) {
-				this.getCollection().deleteOne(eq("_id", mutex.getId()));
+				this.getTypedCollection().deleteOne(eq("_id", mutex.getId()));
 			}
 		}
 	}
@@ -80,7 +77,7 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 	 */
 	public void register(String mutexId) {
 		// Verify if exists
-		List<InstanceMutex> existingMutexes = this.getCollection().find(eq("mutexId", mutexId)).into(new ArrayList<>());
+		List<InstanceMutex> existingMutexes = this.getTypedCollection().find(eq("mutexId", mutexId)).into(new ArrayList<>());
 
 		log.info("Existent mutexes: {}", existingMutexes);
 
@@ -89,7 +86,7 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 			InstanceMutex newMutex = new InstanceMutex(mutexId);
 			log.info("Creating new mutex {}", newMutex);
 
-			UpdateResult result = this.getCollection().updateOne(
+			UpdateResult result = this.getTypedCollection().updateOne(
 				eq("mutexId", mutexId),
 				Updates.set("mutexId", mutexId),
 				new UpdateOptions().upsert(true)
@@ -126,7 +123,7 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 		this.clearDuplicateMutexes(mutexId);
 
 		// try an update
-		InstanceMutex old = this.getCollection().findOneAndUpdate(
+		InstanceMutex old = this.getTypedCollection().findOneAndUpdate(
 			and(
 				mutexIdEquals,
 				or(
@@ -151,13 +148,13 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 		} else {
 			log.info("Failed to reserve Mutex {} for {}", mutexId, identity);
 
-			InstanceMutex lockedMutex = this.getCollection().find(mutexIdEquals).first();
+			InstanceMutex lockedMutex = this.getTypedCollection().find(mutexIdEquals).first();
 			log.debug("Locked mutex: {}", lockedMutex);
 
 			if (lockedMutex == null) {
 				log.warn("No mutex found. It needs to be registered first.");
 			} else if (lockedMutex.getTakenAt() != null && ZonedDateTime.now().isAfter(lockedMutex.getTakenAt().plus(this.lockExpire))) {
-				this.getCollection().findOneAndUpdate(mutexIdEquals, Updates.set("taken", false));
+				this.getTypedCollection().findOneAndUpdate(mutexIdEquals, Updates.set("taken", false));
 				log.warn("Unlocked mutex that appeared deadlocked: {}", mutexId);
 			} else {
 				log.debug("Was locked. returning.");
@@ -180,7 +177,7 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 	public void free(@NonNull String mutexId, Optional<String> additionalIdentity) {
 		String identity = this.getIdentity(additionalIdentity);
 
-		InstanceMutex mutex = this.getCollection().findOneAndUpdate(
+		InstanceMutex mutex = this.getTypedCollection().findOneAndUpdate(
 			and(
 				eq("mutexId", mutexId),
 				eq("taken", true),

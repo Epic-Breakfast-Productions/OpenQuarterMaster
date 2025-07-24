@@ -1,27 +1,34 @@
 package tech.ebp.oqm.core.api.model.object.upgrade;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NonNull;
 import lombok.Setter;
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.Versionable;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 
 @Data
 @Setter(AccessLevel.PRIVATE)
 @Builder
 public class ObjectUpgradeResult<T extends Versionable> {
 	
+	@NonNull
+	@NotNull
+	private ObjectId objectId;
+	
 	/**
 	 * The object that was upgraded.
 	 */
 	@NotNull
 	@NonNull
-	private T upgradedObject;
+	private Optional<T> upgradedObject;
 	
 	/**
 	 * The time it took to upgrade
@@ -43,12 +50,21 @@ public class ObjectUpgradeResult<T extends Versionable> {
 	private UpgradeCreatedObjectsResults upgradeCreatedObjects;
 	
 	/**
+	 * If we are to just delete the object.
+	 */
+	@lombok.Builder.Default
+	private boolean delObj = false;
+	
+	/**
 	 * If the object was actually upgraded.
 	 *
 	 * @return If the object was actually upgraded.
 	 */
 	public boolean wasUpgraded() {
-		return this.getOldVersion() < this.getUpgradedObject().getSchemaVersion();
+		if(this.getUpgradedObject().isEmpty()){
+			return false;
+		}
+		return this.getOldVersion() < this.getUpgradedObject().get().getSchemaVersion();
 	}
 	
 	/**
@@ -57,7 +73,10 @@ public class ObjectUpgradeResult<T extends Versionable> {
 	 * @return the number of versions that were bumped to get to the latest.
 	 */
 	public int getNumVersionsBumped() {
-		return this.getUpgradedObject().getSchemaVersion() - this.getOldVersion();
+		if(this.getUpgradedObject().isEmpty()){
+			return 0;
+		}
+		return this.getUpgradedObject().get().getSchemaVersion() - this.getOldVersion();
 	}
 	
 	/**

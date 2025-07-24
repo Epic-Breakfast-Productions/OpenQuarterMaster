@@ -47,6 +47,8 @@ import java.util.Set;
 @SuperBuilder(toBuilder = true)
 public abstract class InteractingEntity extends AttKeywordMainObject {
 	
+	public static final int CUR_SCHEMA_VERSION = 2;
+	
 	private String idFromAuthProvider;
 	private String authProvider;
 	
@@ -96,4 +98,8 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 		return newUser;
 	}
 	
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
+	}
 }

@@ -15,14 +15,17 @@ public class SingleUpgradeResult {
 	/**
 	 * The object that was upgraded.
 	 */
-	ObjectNode upgradedObject;
+	private ObjectNode upgradedObject;
 	
 	/**
-	 * Objects created from upgrading the obejct.
+	 * Objects created from upgrading the object.
 	 */
 	@NonNull
 	@lombok.Builder.Default
-	UpgradeCreatedObjectsResults createdObjects = new UpgradeCreatedObjectsResults();
+	private UpgradeCreatedObjectsResults createdObjects = new UpgradeCreatedObjectsResults();
+	
+	@lombok.Builder.Default
+	private boolean delObj = false;
 	
 	/**
 	 * Determines if there were any created objects as a result of upgrading.

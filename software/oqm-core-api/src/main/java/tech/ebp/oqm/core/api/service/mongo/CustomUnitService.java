@@ -90,9 +90,9 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 
 		ObjectId id = null;
 		if(cs == null){
-			id = this.getCollection().insertOne(entry).getInsertedId().asObjectId().getValue();
+			id = this.getTypedCollection().insertOne(entry).getInsertedId().asObjectId().getValue();
 		} else {
-			id = this.getCollection().insertOne(cs, entry).getInsertedId().asObjectId().getValue();
+			id = this.getTypedCollection().insertOne(cs, entry).getInsertedId().asObjectId().getValue();
 		}
 		entry.setId(id);
 
@@ -112,6 +112,6 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 	}
 
 	public void removeAll(){
-		this.getCollection().deleteMany(new BsonDocument());
+		this.getTypedCollection().deleteMany(new BsonDocument());
 	}
 }
