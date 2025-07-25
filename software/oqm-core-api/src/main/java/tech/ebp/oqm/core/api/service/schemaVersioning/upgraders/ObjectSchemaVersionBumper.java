@@ -70,6 +70,7 @@ public abstract class ObjectSchemaVersionBumper<T extends Versionable> implement
 	 * @return The updated object
 	 */
 	public SingleUpgradeResult bumpObject(ObjectNode oldObj) {
+//		log.debug("Bumping object from version {} to version {}", oldObj.get(SCHEMA_VERSION_FIELD).asInt(), this.getBumperTo());
 		if(!oldObj.has(SCHEMA_VERSION_FIELD)) {
 			throw new IllegalArgumentException("Object given must have schema version field.");
 		}

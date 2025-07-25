@@ -17,7 +17,9 @@ import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
+import tech.ebp.oqm.core.api.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
+import tech.ebp.oqm.core.api.service.mongo.MongoService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
@@ -41,6 +43,9 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 @Slf4j
 @QuarkusTest
 public class ObjectSchemaUpgradeServiceTest extends RunningServerTest {
+	
+	@Inject
+	InteractingEntityService interactingEntityService;
 	
 	@Inject
 	StorageBlockService storageBlockService;
@@ -81,23 +86,13 @@ public class ObjectSchemaUpgradeServiceTest extends RunningServerTest {
 		}
 	}
 	
-	@ParameterizedTest
-	@MethodSource("tests")
-	public void testSchemaService(Path caseDir) throws IOException {
-		log.info("Running test with case directory: {}", caseDir);
-		ObjectNode caseDetails = (ObjectNode) OBJECT_MAPPER.readTree(caseDir.resolve("case.json").toFile());
-		log.debug("Case details: {}", caseDetails);
-		
-		this.createExistingObjects((ObjectNode) caseDetails.get("existing"));
-		Path oldInvItemsDir = caseDir.resolve("InventoryItem");
-		
+	protected long loadDocuments(Path entriesDir, MongoCollection<Document> docCollection) throws IOException {
 		AtomicLong countExpected = new AtomicLong();
 		
-		if (Files.exists(oldInvItemsDir)) {
-			log.info("Loading old invItems into collection.");
-			MongoCollection<Document> itemDocCollection = this.inventoryItemService.getDocumentCollection(DEFAULT_TEST_DB_NAME);
+		if (Files.exists(entriesDir)) {
+			log.info("Loading old objects into collection from {}", entriesDir);
 			
-			try (Stream<Path> files = Files.list(oldInvItemsDir)) {
+			try (Stream<Path> files = Files.list(entriesDir)) {
 				files.filter(Files::isRegularFile)
 					.filter((path)->path.getFileName().toString().endsWith(".json"))
 					.map(Path::toUri)
@@ -109,16 +104,30 @@ public class ObjectSchemaUpgradeServiceTest extends RunningServerTest {
 						}
 					})
 					.map(Document::parse)
-					.forEach(item->{
+					.forEach(oldObj->{
 						countExpected.getAndIncrement();
-						log.info("Inserting old item: {}", item);
-						InsertOneResult result = itemDocCollection.insertOne(item);
+						log.info("Inserting old object: {}", oldObj);
+						InsertOneResult result = docCollection.insertOne(oldObj);
 						
 						result.wasAcknowledged();
 					});
 			}
-			log.info("Created {} old items.", itemDocCollection.countDocuments());
+			log.info("Created {} old items.", docCollection.countDocuments());
 		}
+		return countExpected.get();
+	}
+	
+	@ParameterizedTest
+	@MethodSource("tests")
+	public void testSchemaService(Path caseDir) throws IOException {
+		log.info("Running test with case directory: {}", caseDir);
+		ObjectNode caseDetails = (ObjectNode) OBJECT_MAPPER.readTree(caseDir.resolve("case.json").toFile());
+		log.debug("Case details: {}", caseDetails);
+		
+		this.createExistingObjects((ObjectNode) caseDetails.get("existing"));
+		
+		long intEntCountExpected = this.loadDocuments(caseDir.resolve("InteractingEntity"), this.interactingEntityService.getDocumentCollection());
+		long invItemCountExpected = this.loadDocuments(caseDir.resolve("InventoryItem"), this.inventoryItemService.getDocumentCollection(DEFAULT_TEST_DB_NAME));
 		
 		log.info("Performing upgrade.");
 		Optional<TotalUpgradeResult> resultOptional = this.objectSchemaUpgradeService.updateSchema(true);
@@ -128,8 +137,4 @@ public class ObjectSchemaUpgradeServiceTest extends RunningServerTest {
 		TotalUpgradeResult result = resultOptional.get();
 		log.info("Upgrade result: {}", result);
 	}
-	
-	//TODO:: parameterized test reading in each json and testing individually
-	
-	
 }

@@ -77,8 +77,8 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 			bumpers.removeFirst();
 		}
 
-		this.bumperListCacheMap.put(curObjVersion, bumpers);
-		bumpers = this.getBumperFromCache(curObjVersion);
+		this.bumperListCacheMap.put(curVersionTo, bumpers);
+		bumpers = this.getBumperFromCache(curVersionTo);
 
 		return bumpers.iterator();
 	}
@@ -118,7 +118,7 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 
 		ObjectNode upgradedJson = oldObj.deepCopy();
 		
-		log.debug("Initial object: {}", upgradedJson);
+		log.debug("Initial object (version {}): {}", curVersion, upgradedJson);
 
 		//Iterate and process upgrades for each necessary bump
 		StopWatch sw = StopWatch.createStarted();
