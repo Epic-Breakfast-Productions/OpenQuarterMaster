@@ -158,4 +158,9 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	public InteractingEntity get(ObjectHistoryEvent e) {
 		return this.get(e.getEntity());
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return InteractingEntity.CUR_SCHEMA_VERSION;
+	}
 }

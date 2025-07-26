@@ -4,14 +4,15 @@ import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
 import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 
 import java.time.Duration;
 
 @Data
 @Setter(AccessLevel.PRIVATE)
-@Builder
+@SuperBuilder(toBuilder = true)
 public class CollectionUpgradeResult {
-
+	
 	private String collectionName;
 	private long numObjectsUpgraded;
 	private long numObjectsNotUpgraded;

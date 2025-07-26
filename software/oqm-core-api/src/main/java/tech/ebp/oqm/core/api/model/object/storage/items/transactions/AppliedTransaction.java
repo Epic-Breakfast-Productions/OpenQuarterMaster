@@ -22,9 +22,11 @@ import java.util.LinkedHashSet;
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
 public class AppliedTransaction extends AttKeywordMainObject {
+	public static final int CUR_SCHEMA_VERSION = 1;
+	
 	@Override
 	public int getSchemaVersion() {
-		return 1;
+		return CUR_SCHEMA_VERSION;
 	}
 
 	/**

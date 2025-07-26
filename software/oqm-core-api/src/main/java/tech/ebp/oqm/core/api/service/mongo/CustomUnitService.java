@@ -114,4 +114,9 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 	public void removeAll(){
 		this.getTypedCollection().deleteMany(new BsonDocument());
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return CustomUnitEntry.CUR_SCHEMA_VERSION;
+	}
 }

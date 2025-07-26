@@ -46,6 +46,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @BsonDiscriminator
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
+	public static final int CUR_SCHEMA_VERSION = 1;
 
 	public abstract StoredType getType();
 
@@ -114,4 +115,10 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public abstract String getLabelText();
+	
+	
+	@Override
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
+	}
 }

@@ -16,4 +16,9 @@ public class TestMongoHistoriedFileService extends MongoHistoriedFileService<Tes
 	public TestMainFileObjectGet fileObjToGet(String dbNameOrId, TestMainFileObject obj) {
 		return TestMainFileObjectGet.fromTestFileObject(obj, this.getRevisions(dbNameOrId, obj.getId()));
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return TestMainFileObject.CUR_SCHEMA_VERSION;
+	}
 }

@@ -242,4 +242,9 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 
 		return objsWithRefs;
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return InventoryItem.CUR_SCHEMA_VERSION;
+	}
 }

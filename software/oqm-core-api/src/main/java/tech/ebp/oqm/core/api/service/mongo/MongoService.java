@@ -28,9 +28,8 @@ import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
  */
 @Slf4j
 public abstract class MongoService<T extends MainObject, S extends SearchObject<T>, V extends CollectionStats> {
-
-
-	//TODO:: move to constructor/inject?
+	
+	//TODO:: move to constructor/inject? Remove?
 	protected static final Validator VALIDATOR;
 
 	static {
@@ -106,4 +105,6 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	public MongoService(Class<T> clazz) {
 		this.clazz = clazz;
 	}
+	
+	public abstract int getCurrentSchemaVersion();
 }

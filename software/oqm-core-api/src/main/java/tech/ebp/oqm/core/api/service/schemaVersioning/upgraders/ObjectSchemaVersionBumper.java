@@ -40,6 +40,15 @@ public abstract class ObjectSchemaVersionBumper<T extends Versionable> implement
 		return this.getBumperTo() - 1;
 	}
 	
+
+	
+	/**
+	 *
+	 * @param json
+	 * @param field
+	 * @param convertedType
+	 * @return
+	 */
 	protected JsonNode stringToConvertedTree(
 		ObjectNode json,
 		String field,

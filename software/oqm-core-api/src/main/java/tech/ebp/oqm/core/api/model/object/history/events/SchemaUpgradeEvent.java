@@ -22,8 +22,6 @@ import static tech.ebp.oqm.core.api.model.object.history.EventType.SCHEMA_UPGRAD
 @SuperBuilder(toBuilder = true)
 public class SchemaUpgradeEvent extends ObjectHistoryEvent {
 	
-	public static final int CUR_SCHEMA_VERSION = 1;
-	
 	private String upgradeId;
 	private int fromVersion;
 	private int toVersion;
@@ -40,10 +38,5 @@ public class SchemaUpgradeEvent extends ObjectHistoryEvent {
 	@Override
 	public EventType getType() {
 		return SCHEMA_UPGRADE;
-	}
-	
-	@Override
-	public int getSchemaVersion() {
-		return CUR_SCHEMA_VERSION;
 	}
 }

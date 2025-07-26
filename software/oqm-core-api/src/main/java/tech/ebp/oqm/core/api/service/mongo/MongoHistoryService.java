@@ -270,5 +270,9 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 			//TODO:: this
 			.build();
 	}
-
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return ObjectHistoryEvent.CUR_SCHEMA_VERSION;
+	}
 }

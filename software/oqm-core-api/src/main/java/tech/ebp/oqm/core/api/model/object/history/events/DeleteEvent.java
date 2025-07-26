@@ -22,7 +22,6 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @BsonDiscriminator
 @SuperBuilder(toBuilder = true)
 public class DeleteEvent extends ObjectHistoryEvent {
-	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	public DeleteEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
@@ -35,10 +34,5 @@ public class DeleteEvent extends ObjectHistoryEvent {
 	@Override
 	public EventType getType() {
 		return EventType.DELETE;
-	}
-
-	@Override
-	public int getSchemaVersion() {
-		return CUR_SCHEMA_VERSION;
 	}
 }

@@ -180,4 +180,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 	public CollectionStats getStats(String oqmDbIdOrName) {
 		return null;//TODO
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return AppliedTransaction.CUR_SCHEMA_VERSION;
+	}
 }

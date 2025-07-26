@@ -159,4 +159,9 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 		
 		return objsWithRefs;
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return Image.CUR_SCHEMA_VERSION;
+	}
 }

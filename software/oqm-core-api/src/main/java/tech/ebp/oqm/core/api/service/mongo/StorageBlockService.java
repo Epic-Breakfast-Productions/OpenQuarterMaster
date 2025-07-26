@@ -189,4 +189,9 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		
 		return objsWithRefs;
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return StorageBlock.CUR_SCHEMA_VERSION;
+	}
 }

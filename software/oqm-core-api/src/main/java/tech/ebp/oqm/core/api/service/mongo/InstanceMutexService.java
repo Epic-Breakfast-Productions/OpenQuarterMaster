@@ -200,7 +200,12 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 	public void free(@NonNull String mutexId) {
 		this.free(mutexId, Optional.empty());
 	}
-
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return InstanceMutex.CUR_SCHEMA_VERSION;
+	}
+	
 	/**
 	 * Class to enable usage in a try-with-resources.
 	 * <p>

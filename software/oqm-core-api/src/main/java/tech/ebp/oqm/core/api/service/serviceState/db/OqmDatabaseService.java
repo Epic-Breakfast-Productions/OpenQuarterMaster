@@ -181,4 +181,9 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 
 		return true;
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return OqmMongoDatabase.CUR_SCHEMA_VERSION;
+	}
 }

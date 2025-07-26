@@ -19,7 +19,6 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @BsonDiscriminator
 @SuperBuilder(toBuilder = true)
 public class ItemLowStockEvent extends ItemExpiryLowStockEvent {
-	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	public ItemLowStockEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
@@ -41,8 +40,4 @@ public class ItemLowStockEvent extends ItemExpiryLowStockEvent {
 		return EventType.ITEM_LOW_STOCK;
 	}
 
-	@Override
-	public int getSchemaVersion() {
-		return CUR_SCHEMA_VERSION;
-	}
 }

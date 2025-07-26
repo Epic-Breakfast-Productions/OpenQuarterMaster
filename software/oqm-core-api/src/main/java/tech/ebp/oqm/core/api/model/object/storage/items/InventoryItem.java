@@ -37,6 +37,7 @@ import java.util.Set;
 @SuperBuilder(toBuilder = true)
 @ValidItemUnit
 public class InventoryItem extends ImagedMainObject implements FileAttachmentContaining {
+	public static final int CUR_SCHEMA_VERSION = 2;
 
 	/**
 	 * The name of this inventory item
@@ -143,6 +144,6 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 
 	@Override
 	public int getSchemaVersion() {
-		return 2;
+		return CUR_SCHEMA_VERSION;
 	}
 }

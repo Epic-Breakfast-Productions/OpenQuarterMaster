@@ -65,6 +65,7 @@ import java.util.Map;
 @BsonDiscriminator
 @SuperBuilder(toBuilder = true)
 public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
+	public static final int CUR_SCHEMA_VERSION = 2;
 	
 	/**
 	 * The id of the object this history is for
@@ -110,5 +111,9 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	public ObjectHistoryEvent setEntity(ObjectId interactingEntityId){
 		this.entity = interactingEntityId;
 		return this;
+	}
+	
+	public int getSchemaVersion() {
+		return CUR_SCHEMA_VERSION;
 	}
 }

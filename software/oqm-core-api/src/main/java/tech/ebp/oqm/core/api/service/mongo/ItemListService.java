@@ -72,4 +72,8 @@ public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemL
 		return this.updateAction(oqmDbIdOrName, new ObjectId(listId), new ObjectId(itemId), index, updateJson, entity);
 	}
 	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return ItemList.CUR_SCHEMA_VERSION;
+	}
 }

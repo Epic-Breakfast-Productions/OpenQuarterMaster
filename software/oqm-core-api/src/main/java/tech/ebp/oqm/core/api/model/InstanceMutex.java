@@ -13,9 +13,11 @@ import java.time.ZonedDateTime;
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
 public class InstanceMutex extends MainObject {
+	public static final int CUR_SCHEMA_VERSION = 1;
+	
 	@Override
 	public int getSchemaVersion() {
-		return 0;
+		return CUR_SCHEMA_VERSION;
 	}
 
 	public InstanceMutex(String mutexId){

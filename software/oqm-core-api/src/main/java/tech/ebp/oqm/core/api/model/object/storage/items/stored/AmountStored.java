@@ -90,9 +90,4 @@ public class AmountStored extends Stored {
 		
 		return sb.toString();
 	}
-
-	@Override
-	public int getSchemaVersion() {
-		return 1;
-	}
 }

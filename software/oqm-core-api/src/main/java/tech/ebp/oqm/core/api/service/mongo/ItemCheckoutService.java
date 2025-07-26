@@ -87,4 +87,9 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		).map(MainObject::getId).into(list);
 		return list;
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return ItemCheckout.CUR_SCHEMA_VERSION;
+	}
 }

@@ -127,6 +127,7 @@ public class ObjectSchemaUpgradeServiceTest extends RunningServerTest {
 		this.createExistingObjects((ObjectNode) caseDetails.get("existing"));
 		
 		long intEntCountExpected = this.loadDocuments(caseDir.resolve("InteractingEntity"), this.interactingEntityService.getDocumentCollection());
+		long historyEventCountExpected = this.loadDocuments(caseDir.resolve("HistoryEvent"), this.inventoryItemService.getHistoryService().getDocumentCollection(DEFAULT_TEST_DB_NAME));
 		long invItemCountExpected = this.loadDocuments(caseDir.resolve("InventoryItem"), this.inventoryItemService.getDocumentCollection(DEFAULT_TEST_DB_NAME));
 		
 		log.info("Performing upgrade.");

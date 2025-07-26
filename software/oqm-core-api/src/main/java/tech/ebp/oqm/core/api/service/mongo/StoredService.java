@@ -521,5 +521,10 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 	}
 	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return Stored.CUR_SCHEMA_VERSION;
+	}
+	
 	//TODO:: get referencing....
 }

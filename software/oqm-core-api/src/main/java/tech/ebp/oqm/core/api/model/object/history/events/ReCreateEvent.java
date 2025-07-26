@@ -22,7 +22,6 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @BsonDiscriminator
 @SuperBuilder(toBuilder = true)
 public class ReCreateEvent extends ObjectHistoryEvent {
-	public static final int CUR_SCHEMA_VERSION = 1;
 
 	public ReCreateEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
@@ -35,10 +34,5 @@ public class ReCreateEvent extends ObjectHistoryEvent {
 	@Override
 	public EventType getType() {
 		return EventType.RECREATE;
-	}
-
-	@Override
-	public int getSchemaVersion() {
-		return CUR_SCHEMA_VERSION;
 	}
 }

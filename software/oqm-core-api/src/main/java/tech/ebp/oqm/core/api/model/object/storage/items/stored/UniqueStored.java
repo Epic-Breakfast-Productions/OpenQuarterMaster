@@ -21,9 +21,4 @@ public class UniqueStored extends Stored {
 		//TODO:: something better
 		return this.getId().toHexString();
 	}
-	
-	@Override
-	public int getSchemaVersion() {
-		return 1;
-	}
 }
