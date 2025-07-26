@@ -19,6 +19,7 @@ import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
+import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.core.api.service.mongo.MongoService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
@@ -52,6 +53,9 @@ public class ObjectSchemaUpgradeServiceTest extends RunningServerTest {
 	
 	@Inject
 	InventoryItemService inventoryItemService;
+	
+	@Inject
+	ItemCheckoutService itemCheckoutService;
 	
 	@Inject
 	CoreApiInteractingEntity coreApiInteractingEntity;
@@ -112,7 +116,7 @@ public class ObjectSchemaUpgradeServiceTest extends RunningServerTest {
 						result.wasAcknowledged();
 					});
 			}
-			log.info("Created {} old items.", docCollection.countDocuments());
+			log.info("Created {} old objects.", docCollection.countDocuments());
 		}
 		return countExpected.get();
 	}
@@ -129,6 +133,7 @@ public class ObjectSchemaUpgradeServiceTest extends RunningServerTest {
 		long intEntCountExpected = this.loadDocuments(caseDir.resolve("InteractingEntity"), this.interactingEntityService.getDocumentCollection());
 		long historyEventCountExpected = this.loadDocuments(caseDir.resolve("HistoryEvent"), this.inventoryItemService.getHistoryService().getDocumentCollection(DEFAULT_TEST_DB_NAME));
 		long invItemCountExpected = this.loadDocuments(caseDir.resolve("InventoryItem"), this.inventoryItemService.getDocumentCollection(DEFAULT_TEST_DB_NAME));
+		long itemCheckoutCountExpected = this.loadDocuments(caseDir.resolve("ItemCheckout"), this.itemCheckoutService.getDocumentCollection(DEFAULT_TEST_DB_NAME));
 		
 		log.info("Performing upgrade.");
 		Optional<TotalUpgradeResult> resultOptional = this.objectSchemaUpgradeService.updateSchema(true);

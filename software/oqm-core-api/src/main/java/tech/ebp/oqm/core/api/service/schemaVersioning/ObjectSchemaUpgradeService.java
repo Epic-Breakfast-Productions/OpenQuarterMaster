@@ -27,6 +27,7 @@ import tech.ebp.oqm.core.api.model.object.history.details.FromSchemaUpgradeDetai
 import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.SchemaUpgradeEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
@@ -40,6 +41,7 @@ import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeOverallCreatedObjectsRe
 import tech.ebp.oqm.core.api.service.mongo.*;
 import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectSchemaUpgrader;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.checkout.CheckoutSchemaUpgrader;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.historyEvent.HistoryEventSchemaUpgrader;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.interactingEntity.InteractingEntitySchemaUpgrader;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.inventoryItem.InventoryItemSchemaUpgrader;
@@ -54,6 +56,8 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.lt;
@@ -90,37 +94,65 @@ public class ObjectSchemaUpgradeService {
 		InteractingEntityService interactingEntityService,
 		StorageBlockService storageBlockService,
 		InventoryItemService inventoryItemService,
-		StoredService storedService
+		StoredService storedService,
+		ItemCheckoutService itemCheckoutService
 	) {
 		this.coreApiInteractingEntity = coreApiInteractingEntity;
 		this.instanceUuid = instanceUuid;
 		this.oqmDatabaseService = oqmDatabaseService;
 		
 		this.topLevelServices = new LinkedHashMap<>();
-		this.topLevelServices.put(interactingEntityService.getClazz(), interactingEntityService);
+		Stream.of(
+			interactingEntityService
+		).forEachOrdered((service)->{
+			this.topLevelServices.put(service.getClazz(), service);
+		});
 		
 		//This insertion order here is the order of which these are each processed.
-		//TODO:: populate rest of oqmDbServices
-		this.oqmDbServices = new LinkedHashMap<>();
-		this.oqmDbServices.put(storageBlockService.getClazz(), storageBlockService);
-		this.oqmDbServices.put(inventoryItemService.getClazz(), inventoryItemService);
-		this.oqmDbServices.put(storedService.getClazz(), storedService);
-		
 		this.dbAwareUpgradeGroups = List.of(
 			List.of(
 				storageBlockService
 			),
 			List.of(
 				inventoryItemService
+			),
+			List.of(
+				storedService,
+				itemCheckoutService
 			)
 		);
+		this.oqmDbServices = this.dbAwareUpgradeGroups
+								 .stream()
+								 .flatMap(List::stream)
+								 .reduce(
+									 new HashMap<>(),
+									 (map, element)->{
+										 map.put(element.getClazz(), element);
+										 return map;
+									 },
+									 (map1, map2)->{
+										 map1.putAll(map2);
+										 return map1;
+									 }
+								 );
 		
-		this.upgraderMap = Map.of(
-			ObjectHistoryEvent.class, new HistoryEventSchemaUpgrader(),
-			InteractingEntity.class, new InteractingEntitySchemaUpgrader(),
-			StorageBlock.class, new StorageBlockSchemaUpgrader(),
-			InventoryItem.class, new InventoryItemSchemaUpgrader(),
-			Stored.class, new StoredSchemaUpgrader()
+		this.upgraderMap = Stream.of(
+			new HistoryEventSchemaUpgrader(),
+			new InteractingEntitySchemaUpgrader(),
+			new StorageBlockSchemaUpgrader(),
+			new InventoryItemSchemaUpgrader(),
+			new StoredSchemaUpgrader(),
+			new CheckoutSchemaUpgrader()
+		).reduce(
+			new HashMap<>(),
+			(map, element)->{
+				map.put(element.getObjClass(), element);
+				return map;
+			},
+			(map1, map2)->{
+				map1.putAll(map2);
+				return map1;
+			}
 		);
 	}
 	
@@ -371,7 +403,7 @@ public class ObjectSchemaUpgradeService {
 		});
 		
 		Optional<CompletableFuture<CollectionUpgradeResult>> histCollOp = Optional.empty();
-		if(historiedService) {
+		if (historiedService) {
 			log.info("Service is historied, processing history events.");
 			histCollOp = Optional.of(
 				CompletableFuture.supplyAsync(()->{
@@ -392,8 +424,8 @@ public class ObjectSchemaUpgradeService {
 		
 		collectionFuture.get();
 		
-		if(histCollOp.isPresent()) {
-			((HistoriedCollectionUpgradeResult.Builder<?,?>)outputBuilder).historyCollectionUpgradeResult(histCollOp.get().get());
+		if (histCollOp.isPresent()) {
+			((HistoriedCollectionUpgradeResult.Builder<?, ?>) outputBuilder).historyCollectionUpgradeResult(histCollOp.get().get());
 		}
 		
 		log.info("DONE Updating schema of oqm database service {} in ", service.getClass());
