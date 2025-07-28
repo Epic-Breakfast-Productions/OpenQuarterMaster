@@ -31,7 +31,7 @@ public class InvItemBumper2 extends ObjectSchemaVersionBumper<InventoryItem> {
 		super(2);
 	}
 	
-	private ObjectNode adjustStored(String itemId, ObjectNode oldStored, String storageBlock) {
+	public ObjectNode adjustStored(String itemId, ObjectNode oldStored, String storageBlock) {
 		oldStored.remove("id");
 		oldStored.remove("_id");
 		oldStored.remove("_t");
@@ -55,6 +55,9 @@ public class InvItemBumper2 extends ObjectSchemaVersionBumper<InventoryItem> {
 			oldStored.remove("identifier");
 		}
 		oldStored.remove("identifyingDetails");
+		if("TRACKED".equals(oldStored.get("type").asText())){
+			oldStored.put("type", "UNIQUE");
+		}
 		
 		return oldStored;
 	}
@@ -141,7 +144,6 @@ public class InvItemBumper2 extends ObjectSchemaVersionBumper<InventoryItem> {
 					ObjectNode storedMap = (ObjectNode) underBlock.get("stored");
 					if (storedMap != null) {
 						storedMap.forEach((JsonNode newStored)->{
-							((ObjectNode) newStored).put("storedType", "UNIQUE");
 							newStoredList.add(adjustStored(itemId, (ObjectNode) newStored, curBlock));
 						});
 					}

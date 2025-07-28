@@ -116,6 +116,7 @@ public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<
 
 		checkout.setCheckInDetails(transaction.getDetails());
 		checkout.setCheckInTransaction(appliedTransactionId);
+		checkout.setCheckedInByEntity(interactingEntity.getId());
 		this.getItemCheckoutService().update(oqmDbIdOrName, cs, checkout, interactingEntity, historyDetails);
 	}
 }

@@ -73,7 +73,7 @@ public class LifecycleBean {
 	
 	private void startLogAnnounce(){
 		this.startDateTime = ZonedDateTime.now();
-		log.info("Open QuarterMaster Web Server starting.");
+		log.info("Open QuarterMaster Core API Server starting.");
 		//		log.info("Base URL: {}", this.serverUrlService.getBaseServerUrl());
 		//		log.debug("Version: {}", this.serverVersion);
 		//		log.debug("build time: {}", this.buildTime);

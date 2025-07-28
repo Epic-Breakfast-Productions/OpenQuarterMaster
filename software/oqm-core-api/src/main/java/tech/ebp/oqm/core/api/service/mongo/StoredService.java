@@ -391,7 +391,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		//TODO:: separate thread to get these stats
 		
 		//process expiry and low stock for affected stored
-		ItemExpiryLowStockItemProcessResults results = new ItemExpiryLowStockItemProcessResults().setItemId(item.getId());
+		ItemExpiryLowStockItemProcessResults results = new ItemExpiryLowStockItemProcessResults().setItem                       (item.getId());
 		{
 			FindIterable<Stored> storedInItem = this.listIterator(
 				oqmDbIdOrName, cs, new StoredSearch()

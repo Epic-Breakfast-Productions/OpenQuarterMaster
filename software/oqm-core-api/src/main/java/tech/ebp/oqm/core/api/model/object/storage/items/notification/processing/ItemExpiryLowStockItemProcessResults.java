@@ -23,7 +23,7 @@ public class ItemExpiryLowStockItemProcessResults implements ItemProcessResults 
 
 	@NonNull
 	@NotNull
-	private ObjectId itemId;
+	private ObjectId item;
 
 	@NotNull
 	@lombok.Builder.Default
@@ -43,7 +43,7 @@ public class ItemExpiryLowStockItemProcessResults implements ItemProcessResults 
 			.stream()
 			.flatMap(curResultList->{
 				return curResultList.stream().flatMap(curResult->{
-					return curResult.getEvents(this.getItemId(), transactionId).stream();
+					return curResult.getEvents(this.getItem(), transactionId).stream();
 				});
 			})
 			.collect(Collectors.toList());

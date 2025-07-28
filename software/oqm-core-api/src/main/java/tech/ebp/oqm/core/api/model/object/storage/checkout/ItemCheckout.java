@@ -78,6 +78,11 @@ public abstract class ItemCheckout <T> extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	private ObjectId checkedOutByEntity;
+	
+	/**
+	 * Which OQM entity did the checking in
+	 */
+	private ObjectId checkedInByEntity;
 
 	@NotNull
 	@NonNull

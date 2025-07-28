@@ -39,8 +39,10 @@ import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeCreatedObjectsResults;
 import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeOverallCreatedObjectsResults;
 import tech.ebp.oqm.core.api.service.mongo.*;
+import tech.ebp.oqm.core.api.service.mongo.transactions.AppliedTransactionService;
 import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectSchemaUpgrader;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.appliedTransaction.AppliedTransactionSchemaUpgrader;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.checkout.CheckoutSchemaUpgrader;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.historyEvent.HistoryEventSchemaUpgrader;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.interactingEntity.InteractingEntitySchemaUpgrader;
@@ -95,7 +97,8 @@ public class ObjectSchemaUpgradeService {
 		StorageBlockService storageBlockService,
 		InventoryItemService inventoryItemService,
 		StoredService storedService,
-		ItemCheckoutService itemCheckoutService
+		ItemCheckoutService itemCheckoutService,
+		AppliedTransactionService appliedTransactionService
 	) {
 		this.coreApiInteractingEntity = coreApiInteractingEntity;
 		this.instanceUuid = instanceUuid;
@@ -118,7 +121,8 @@ public class ObjectSchemaUpgradeService {
 			),
 			List.of(
 				storedService,
-				itemCheckoutService
+				itemCheckoutService,
+				appliedTransactionService
 			)
 		);
 		this.oqmDbServices = this.dbAwareUpgradeGroups
@@ -142,7 +146,8 @@ public class ObjectSchemaUpgradeService {
 			new StorageBlockSchemaUpgrader(),
 			new InventoryItemSchemaUpgrader(),
 			new StoredSchemaUpgrader(),
-			new CheckoutSchemaUpgrader()
+			new CheckoutSchemaUpgrader(),
+			new AppliedTransactionSchemaUpgrader()
 		).reduce(
 			new HashMap<>(),
 			(map, element)->{
