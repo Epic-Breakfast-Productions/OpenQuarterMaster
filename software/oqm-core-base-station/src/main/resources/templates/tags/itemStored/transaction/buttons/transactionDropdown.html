@@ -33,7 +33,7 @@
 				</button>
 			</li>
 			{/if}
-			{#if checkinButton.or(true)}
+			{#if checkinButton.or(false)}
 			<li>
 				<button class="dropdown-item transactDropdownCheckin" type="button" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionCheckinModal" onclick="ItemStoredTransaction.Checkin.setupForm({#if itemId}'{itemId}'{#else}null{/if}, {#if storedId}'{storedId}'{#else}null{/if}, this);">
 					{#icons/transactionCheckin /} Checkin

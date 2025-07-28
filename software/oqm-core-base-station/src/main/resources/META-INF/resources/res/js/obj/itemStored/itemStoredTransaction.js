@@ -26,7 +26,7 @@ const ItemStoredTransaction = {
 				showSubtractTransaction = true,
 				showTransferTransaction = true,
 				showCheckinTransaction = true,
-				showCheckoutTransaction = true,
+				showCheckoutTransaction = false,
 				showSetTransaction = true,
 			}
 		) {
