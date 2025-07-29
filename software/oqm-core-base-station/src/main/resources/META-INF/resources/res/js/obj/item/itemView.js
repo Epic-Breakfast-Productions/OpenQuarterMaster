@@ -12,6 +12,7 @@ const ItemView = {
 	storedNonePresentNoStorageContainer: $("#itemViewStoredNonePresentNoStorageContainer"),
 
 	storedMultiByBlockAccordion: $("#itemViewStoredMultiByBlockAccordion"),
+	storedMultiAddStoredButton: $("#itemViewStoredMultiAddStoredButton"),
 	storedMultiNoneStoredInBlock: $("#itemViewStoredMultiNonePresentBlocksList"),
 	storedMultiNumStoredDisplay: $("#itemViewStoredMultiNumStoredDisplay"),
 	storedMultiNumBlocksDisplay: $("#itemViewStoredMultiBlockNum"),
@@ -246,6 +247,9 @@ const ItemView = {
 						console.log(itemData.stats.numStored + " stored.");
 						ItemView.storedMultiNumStoredDisplay.text(itemData.stats.numStored);
 						ItemView.storedMultiNumBlocksDisplay.text(itemData.storageBlocks.length);
+
+						ItemView.storedMultiAddStoredButton.on("click", function(){ItemStoredTransaction.Add.setupForm(itemData.id, null, this)});
+
 						ItemView.storedMultiContainer.show();
 
 						ItemView.allStoredSearchFormItemInputName.val(itemData.name);

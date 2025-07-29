@@ -113,7 +113,9 @@
                 {#icons/storageBlocks}{/icons/storageBlocks} <span id="itemViewStoredMultiNumStoredDisplay"></span> stored across <span id="itemViewStoredMultiBlockNum"></span> storage blocks:
             </h4>
             <div class="mb-2">
-                <button class="btn btn-success">+ Add Stored Item</button>
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" id="itemViewStoredMultiAddStoredButton">
+                    + Add Stored Item
+                </button>
             </div>
             <ul class="nav nav-tabs" id="itemViewStoredViewTab" role="tablist">
               <li class="nav-item" role="presentation">
