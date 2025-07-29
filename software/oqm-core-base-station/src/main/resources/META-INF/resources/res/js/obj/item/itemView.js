@@ -162,7 +162,7 @@ const ItemView = {
 		return newAccordItem;
 	},
 	getStoredInBlockSearch: function (itemId, blockId) {
-		let accordId = "itemViewStoredIn"+blockId+"SearchAccordion";
+		let accordId = "itemViewStoredIn" + blockId + "SearchAccordion";
 		let accordHeaderId = accordId + "Header";
 		let accordCollapseId = accordId + "Collapse";
 		let searchResultsId = accordId + "SearchResults";
@@ -172,30 +172,30 @@ const ItemView = {
 		output.find("#itemViewAllStoredSearchResults").empty();
 		output = $(
 			output.html()
-			.replaceAll("itemViewAllStoredSearchResults", searchResultsId)
-			.replaceAll("itemViewAllStoredSearchAccordion", accordId)
-			.replaceAll("itemViewAllStoredSearchAccordionFieldsHeader", accordHeaderId)
-			.replaceAll("itemViewAllStoredSearchAccordionFieldsCollapse", accordCollapseId)
-			.replaceAll("itemViewAllStoredSearchResults", searchResultsId)
-			.replaceAll("itemViewAllStoredSearchForm", searchFormId)
+				.replaceAll("itemViewAllStoredSearchResults", searchResultsId)
+				.replaceAll("itemViewAllStoredSearchAccordion", accordId)
+				.replaceAll("itemViewAllStoredSearchAccordionFieldsHeader", accordHeaderId)
+				.replaceAll("itemViewAllStoredSearchAccordionFieldsCollapse", accordCollapseId)
+				.replaceAll("itemViewAllStoredSearchResults", searchResultsId)
+				.replaceAll("itemViewAllStoredSearchForm", searchFormId)
 		);
 		output.find(".spinner").remove();//race condition; sometimes catch the spinner
-		output.find("#"+searchFormId+"-storageBlockInputId").val(blockId);
-		output.find("#"+searchFormId+"-storageBlockInputName").val(blockId);
-		output.find("#"+searchFormId+"-storageBlockInputName").prop("disabled", true);
-		output.find("#"+searchFormId+"-storageBlockInputName").prop("readonly", true);
-		output.find("#"+searchFormId+"-storageBlockInputSearchButton").prop("disabled", true);
-		output.find("#"+searchFormId+"-storageBlockInputSearchButton").prop("readonly", true);
-		output.find("#"+searchFormId+"-storageBlockInputClearButton").prop("disabled", true);
-		output.find("#"+searchFormId+"-storageBlockInputClearButton").prop("readonly", true);
+		output.find("#" + searchFormId + "-storageBlockInputId").val(blockId);
+		output.find("#" + searchFormId + "-storageBlockInputName").val(blockId);
+		output.find("#" + searchFormId + "-storageBlockInputName").prop("disabled", true);
+		output.find("#" + searchFormId + "-storageBlockInputName").prop("readonly", true);
+		output.find("#" + searchFormId + "-storageBlockInputSearchButton").prop("disabled", true);
+		output.find("#" + searchFormId + "-storageBlockInputSearchButton").prop("readonly", true);
+		output.find("#" + searchFormId + "-storageBlockInputClearButton").prop("disabled", true);
+		output.find("#" + searchFormId + "-storageBlockInputClearButton").prop("readonly", true);
 
-		getStorageBlockLabel(blockId, function(blockLabel){
-			output.find("#"+searchFormId+"-storageBlockInputName").val(blockLabel);
+		getStorageBlockLabel(blockId, function (blockLabel) {
+			output.find("#" + searchFormId + "-storageBlockInputName").val(blockLabel);
 		});
 
 		return output;
 	},
-	getMultiStoredInBlockView: function(itemData, blockId){
+	getMultiStoredInBlockView: function (itemData, blockId) {
 		let output = $('<div></div>');
 
 		let dataRow = $('<div class="d-flex mb-5"></div>');
@@ -243,18 +243,27 @@ const ItemView = {
 				if (itemData.stats.numStored) {
 					ItemView.storedBulkNumStoredDisplay.text(itemData.stats.numStored);
 					ItemView.storedBulkBlockNum.text(itemData.storageBlocks.length);
+
 					let multiDisplay = function () {
 						console.log(itemData.stats.numStored + " stored.");
 						ItemView.storedMultiNumStoredDisplay.text(itemData.stats.numStored);
 						ItemView.storedMultiNumBlocksDisplay.text(itemData.storageBlocks.length);
 
-						ItemView.storedMultiAddStoredButton.on("click", function(){ItemStoredTransaction.Add.setupForm(itemData.id, null, this)});
+						ItemView.storedMultiAddStoredButton.on("click", function () {
+							ItemStoredTransaction.Add.setupForm(itemData.id, null, this)
+						});
 
 						ItemView.storedMultiContainer.show();
 
 						ItemView.allStoredSearchFormItemInputName.val(itemData.name);
 						ItemView.allStoredSearchFormItemInputId.val(itemId);
-						ItemView.allStoredSearchForm.submit();
+						setTimeout(
+							function () {
+								ItemView.allStoredSearchForm.submit();
+							},
+							1000
+						);
+
 
 						itemData.storageBlocks.forEach(function (blockId) {
 							console.debug("Displaying block: ", blockId);
@@ -268,7 +277,12 @@ const ItemView = {
 										ItemView.getMultiStoredInBlockView(itemData, blockId)
 									).then(function (newAccordItem) {
 										ItemView.storedMultiByBlockAccordion.append(newAccordItem);
-										newAccordItem.find(".pagingSearchForm").submit();
+										setTimeout(
+											function () {
+												newAccordItem.find(".pagingSearchForm").submit();
+											},
+											1000
+										);
 									})
 								);
 							} else {
@@ -327,11 +341,11 @@ const ItemView = {
 								let promises = [];
 								let storageLabel = $('<h3>Stored in: <span class="uniqueItemStoredInLabel"></span></h3><p class="uniqueItemStoredAlsoInContainer">Also found in: <span class="uniqueItemStoredAlsoInLabel"></span></p>');
 
-								itemData.storageBlocks.forEach(function(curBlock){
+								itemData.storageBlocks.forEach(function (curBlock) {
 									promises.push(getStorageBlockLabel(curBlock, function (labelText) {
 										let newLink = Links.getStorageViewLink(curBlock, labelText);
 
-										if(curBlock === stored.storageBlock){
+										if (curBlock === stored.storageBlock) {
 											storageLabel.find(".uniqueItemStoredInLabel").append(newLink);
 										} else {
 											storageLabel.find(".uniqueItemStoredAlsoInLabel").append(newLink);
@@ -343,13 +357,13 @@ const ItemView = {
 
 								ItemView.storedSingleContainer.append(
 									StoredView.getStoredViewContent(
-									stored,
-									{
-										includeBlockLink: false
-									})
+										stored,
+										{
+											includeBlockLink: false
+										})
 								);
 								await Promise.all(promises);
-								if(!storageLabel.find(".uniqueItemStoredAlsoInLabel").children().length){
+								if (!storageLabel.find(".uniqueItemStoredAlsoInLabel").children().length) {
 									storageLabel.find(".uniqueItemStoredAlsoInContainer").remove();
 								}
 								ItemView.storedSingleContainer.show();
