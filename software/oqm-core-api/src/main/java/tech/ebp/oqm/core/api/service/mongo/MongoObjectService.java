@@ -14,6 +14,7 @@ import com.mongodb.client.result.InsertOneResult;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
@@ -23,21 +24,18 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
+import tech.ebp.oqm.core.api.model.rest.management.CollectionClearResult;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeletedException;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
+import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.and;
@@ -45,6 +43,9 @@ import static com.mongodb.client.model.Filters.eq;
 
 @Slf4j
 public abstract class MongoObjectService<T extends MainObject, S extends SearchObject<T>, X extends CollectionStats> extends MongoDbAwareService<T, S, X> {
+	
+	@Getter
+	private Set<String> disallowedUpdateFields = new HashSet<>();
 	
 	protected MongoObjectService(String collectionName, Class<T> clazz) {
 		super(collectionName, clazz);
@@ -122,14 +123,16 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	public FindIterable<T> listIterator(String oqmDbIdOrName) {
 		return this.listIterator(oqmDbIdOrName, null, null, null, null);
 	}
+	
 	public FindIterable<T> listIterator(String oqmDbIdOrName, ClientSession cs) {
 		return this.listIterator(oqmDbIdOrName, cs, null, null, null);
 	}
+	
 	public FindIterable<T> listIterator(ObjectId dbId, ClientSession cs) {
 		return this.listIterator(dbId.toHexString(), cs);
 	}
 	
-	public FindIterable<T> listIterator(String oqmDbIdOrName, @NonNull S searchObject) {
+	public FindIterable<T> listIterator(String oqmDbIdOrName, ClientSession cs, @NonNull S searchObject) {
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 		
 		List<Bson> filters = searchObject.getSearchFilters();
@@ -138,10 +141,15 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		
 		return this.listIterator(
 			oqmDbIdOrName,
+			cs,
 			filter,
 			searchObject.getSortBson(),
 			searchObject.getPagingOptions()
 		);
+	}
+	
+	public FindIterable<T> listIterator(String oqmDbIdOrName, @NonNull S searchObject) {
+		return this.listIterator(oqmDbIdOrName, null, searchObject);
 	}
 	
 	/**
@@ -190,7 +198,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 * @return The search results for the search given
 	 */
 	@WithSpan
-	public SearchResult<T> search(String oqmDbIdOrName, @NonNull S searchObject) {
+	public SearchResult<T> search(String oqmDbIdOrName, ClientSession cs, @NonNull S searchObject) {
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 		
 		List<Bson> filters = searchObject.getSearchFilters();
@@ -200,6 +208,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		
 		List<T> list = this.list(
 			oqmDbIdOrName,
+			cs,
 			filter,
 			searchObject.getSortBson(),
 			pagingOptions
@@ -211,6 +220,10 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 			!filters.isEmpty(),
 			pagingOptions
 		);
+	}
+	
+	public SearchResult<T> search(String oqmDbIdOrName, @NonNull S searchObject) {
+		return this.search(oqmDbIdOrName, null, searchObject);
 	}
 	
 	@Deprecated
@@ -336,18 +349,31 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 *
 	 * @return The updated object.
 	 */
-	public T update(String oqmDbIdOrName, ObjectId id, ObjectNode updateJson) throws DbNotFoundException, DbDeletedException {
+	public T update(String oqmDbIdOrName, ClientSession cs, ObjectId id, ObjectNode updateJson) throws DbNotFoundException {
 		if (updateJson.has("id") && !id.toHexString().equals(updateJson.get("id").asText())) {
 			throw new IllegalArgumentException("Not allowed to update id of an object.");
 		}
 		
 		T object = this.get(oqmDbIdOrName, id);
+		ObjectNode origJsonObj = this.getObjectMapper().valueToTree(object);
+		
+		Iterator<String> updatingFields = updateJson.fieldNames();
+		while (updatingFields.hasNext()) {
+			String updatingField = updatingFields.next();
+			if (this.getDisallowedUpdateFields().contains(updatingField)) {
+				//TODO:: support sub-fields
+				if (!origJsonObj.get(updatingField).equals(
+					updateJson.get(updatingField)
+				)) {
+					throw new IllegalArgumentException("Not allowed to update field '" + updatingField + "' of an " + this.getClazz().getSimpleName());
+				}
+			}
+		}
 		
 		ObjectReader reader = this.getObjectMapper()
 								  .readerForUpdating(object)
 								  .with(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
 		try {
-			//TODO:: enable different types, for InventoryItem (fails to deal with the abstract type)
 			reader.readValue(updateJson, object.getClass());
 		} catch(IOException e) {
 			throw new IllegalArgumentException("Unable to update with data given: " + e.getMessage(), e);
@@ -360,9 +386,14 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 												   .map(ConstraintViolation::getMessage)
 												   .collect(Collectors.joining(", ")));
 		}
-		this.ensureObjectValid(oqmDbIdOrName, false, object, null);//TODO:: add client session
+		this.ensureObjectValid(oqmDbIdOrName, false, object, cs);
 		
-		this.getTypedCollection(oqmDbIdOrName).findOneAndReplace(eq("_id", id), object);
+		if (cs == null) {
+			this.getTypedCollection(oqmDbIdOrName).findOneAndReplace(eq("_id", id), object);
+		} else {
+			this.getTypedCollection(oqmDbIdOrName).findOneAndReplace(cs, eq("_id", id), object);
+		}
+		
 		return object;
 	}
 	
@@ -374,8 +405,8 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 *
 	 * @return The updated object.
 	 */
-	public T update(String oqmDbIdOrName, String id, ObjectNode updateJson) {
-		return this.update(oqmDbIdOrName, new ObjectId(id), updateJson);
+	public T update(String oqmDbIdOrName, ClientSession cs, String id, ObjectNode updateJson) {
+		return this.update(oqmDbIdOrName, cs, new ObjectId(id), updateJson);
 	}
 	
 	public T update(String oqmDbIdOrName, ClientSession clientSession, @Valid T object) throws DbNotFoundException {
@@ -424,45 +455,56 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		return this.add(oqmDbIdOrName, null, object);
 	}
 	
-	public List<ObjectId> addBulk(String oqmDbIdOrName, @NonNull List<@Valid @NonNull T> objects) {
+	public List<ObjectId> addBulk(String oqmDbIdOrName, ClientSession clientSession, @NonNull List<@Valid @NonNull T> objects) {
+		List<ObjectId> output = new ArrayList<>(objects.size());
 		try (
-			ClientSession session = this.getNewClientSession();
+			MongoSessionWrapper w = new MongoSessionWrapper(clientSession, this);
 		) {
-			return session.withTransaction(()->{
-				List<ObjectId> output = new ArrayList<>(objects.size());
+			w.runTransaction(()->{
 				
 				for (T cur : objects) {
 					try {
-						output.add(add(oqmDbIdOrName, session, cur));
+						output.add(
+							add(oqmDbIdOrName, w.getClientSession(), cur)
+						);
 					} catch(Throwable e) {
-						session.abortTransaction();
+						w.getClientSession().abortTransaction();
 						throw e;
 					}
 				}
 				
-				session.commitTransaction();
+				w.getClientSession().commitTransaction();
 				return output;
-			}, this.getDefaultTransactionOptions());
+			});
+		} catch(Exception e) {
+			throw new RuntimeException(e);
 		}
+		return output;
+	}
+	
+	public List<ObjectId> addBulk(String oqmDbIdOrName, @NonNull List<@Valid @NonNull T> objects) {
+		return this.addBulk(oqmDbIdOrName, null, objects);
 	}
 	
 	/**
 	 * Extend this to provide validation of removal objects; checking dependencies, etc.
+	 *
 	 * @param clientSession The client session, null if none
 	 * @param objectToRemove The object being removed
 	 */
-	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession clientSession, T objectToRemove){
+	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession clientSession, T objectToRemove) {
 		return new HashMap<>();
 	}
 	
 	/**
 	 * Asserts that the given object is not referenced by any other object.
+	 *
 	 * @param clientSession The client session, null if none
 	 * @param objectToRemove The object being removed
 	 */
-	protected void assertNotReferenced(String oqmDbIdOrName, ClientSession clientSession, T objectToRemove){
+	protected void assertNotReferenced(String oqmDbIdOrName, ClientSession clientSession, T objectToRemove) {
 		Map<String, Set<ObjectId>> objsWithRefs = this.getReferencingObjects(oqmDbIdOrName, clientSession, objectToRemove);
-		if(!objsWithRefs.isEmpty()){
+		if (!objsWithRefs.isEmpty()) {
 			throw new DbDeleteRelationalException(objectToRemove, objsWithRefs);
 		}
 	}
@@ -527,8 +569,11 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	@Override
-	public long clear(String oqmDbIdOrName, @NonNull ClientSession session) {
-		return this.getTypedCollection(oqmDbIdOrName).deleteMany(new BsonDocument()).getDeletedCount();
+	public CollectionClearResult clear(String oqmDbIdOrName, @NonNull ClientSession session) {
+		return CollectionClearResult.builder()
+				   .collectionName(this.getCollectionName())
+				   .numRecordsDeleted(this.getTypedCollection(oqmDbIdOrName).deleteMany(new BsonDocument()).getDeletedCount())
+				   .build();
 	}
 	
 	/**

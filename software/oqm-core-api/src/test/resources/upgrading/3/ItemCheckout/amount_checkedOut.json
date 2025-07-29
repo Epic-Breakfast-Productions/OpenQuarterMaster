@@ -1,0 +1,39 @@
+{
+	"_id": {
+		"$oid": "687f044898a4ba733c4f39f7"
+	},
+	"attributes": {},
+	"checkedOut": {
+		"_id": "1a19aab0-e695-42ad-a021-592c55c3c793",
+		"_t": "tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored",
+		"amount": "{\"unit\":{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"},\"scale\":\"ABSOLUTE\",\"value\":3}",
+		"attributes": {},
+		"imageIds": [],
+		"keywords": [],
+		"labelText": "3 units",
+		"notificationStatus": {
+			"expired": false,
+			"expiredWarning": false
+		},
+		"storedType": "AMOUNT"
+	},
+	"checkedOutFor": {
+		"_t": "tech.ebp.oqm.core.api.model.object.storage.checkout.checkoutFor.CheckoutForOqmEntity",
+		"entity": {
+			"$oid": "683149e18d98ce4f7f8a581f"
+		},
+		"type": "OQM_ENTITY"
+	},
+	"checkedOutFrom": {
+		"$oid": "683149f38d98ce4f7f8a5820"
+	},
+	"checkoutDate": "\"2025-07-22T03:23:52.658012384Z[UTC]\"",
+	"item": {
+		"$oid": "683fcdd357d4bf214978f5d5"
+	},
+	"keywords": [],
+	"notes": "dedfe",
+	"reason": "sasadsd",
+	"schemaVersion": 1,
+	"stillCheckedOut": true
+}

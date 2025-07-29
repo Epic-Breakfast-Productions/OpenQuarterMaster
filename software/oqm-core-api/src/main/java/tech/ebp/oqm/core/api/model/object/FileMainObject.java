@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
 
@@ -24,6 +25,7 @@ import java.util.Map;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder(toBuilder = true)
 public class FileMainObject
 	extends AttKeywordMainObject
 {
@@ -46,12 +48,14 @@ public class FileMainObject
 	@NotNull
 	@NonNull
 	@Size(max = 500)
+	@lombok.Builder.Default
 	private String description = "";
 	
 	@NotNull
 	@NonNull
 	@NotBlank
 	@Size(max = 500)
+	@lombok.Builder.Default
 	private String source = "user";
 	
 	public boolean updateFrom(FileUploadBody newUpload){

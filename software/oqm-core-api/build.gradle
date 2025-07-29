@@ -2,16 +2,16 @@ plugins {
 	id 'java'
 	id 'io.quarkus'
 	id "io.freefair.lombok" version "8.14"
+	id 'org.cyclonedx.bom' version '2.3.1'
+	id("org.spdx.sbom") version "0.9.0"
 }
 
 group 'com.ebp.openQuarterMaster'
-version '2.1.8'
+version '3.0.0-DEV'
 
 repositories {
 	mavenCentral()
 	mavenLocal()
-	//for getting OQM Library snapshot versions
-	maven({url= "https://s01.oss.sonatype.org/content/repositories/snapshots/"})
 }
 
 dependencies {
@@ -97,6 +97,67 @@ test {
 		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
 	)
 	testLogging.showStandardStreams = true
+}
+
+// https://github.com/CycloneDX/cyclonedx-gradle-plugin
+cyclonedxBom {
+	// includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration), regex is supported
+	includeConfigs = ["runtimeClasspath"]
+
+	// skipConfigs is a list of configuration names to exclude when generating the BOM, regex is supported
+	skipConfigs = ["compileClasspath", "testCompileClasspath"]
+
+	// skipProjects is a list of project names to exclude when generating the BOM
+//	skipProjects = [rootProject.name, "yourTestSubProject"]
+
+	// Specified the type of project being built. Defaults to 'library'
+	projectType = "application"
+	// Specified the version of the CycloneDX specification to use. Defaults to '1.6'
+	schemaVersion = "1.6"
+	// Boms destination directory. Defaults to 'build/reports'
+	destination = file("build/reports")
+	// The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
+	outputName = "${project.name}-sbom-cyclonedx"
+	// The file format generated, can be xml, json or all for generating both. Defaults to 'all'
+	outputFormat = "all"
+	// Include BOM Serial Number. Defaults to 'true'
+	includeBomSerialNumber = true
+	// Include License Text. Defaults to 'true'
+	includeLicenseText = false
+	// Include resolution of full metadata for components including licenses. Defaults to 'true'
+	includeMetadataResolution = true
+	// Attempt to include the build-system URL by reading environment variables from common CI system such as GitHub Actions, GitLab CI, Drone, Jenkins, Travis CI, and Circle CI. Defaults to 'false'
+	includeBuildSystem = true
+	// if includeBuildSystem is true, the given environment variables will be used to construct the build-system URL that will be included in the BOM. The dollar sign and curly braces (e.g. `${NAME}`) are required to specify an environment variable. Optional, defaults to `null`.
+	buildSystemEnvironmentVariable = '${CUSTOM_CI_URL}/jobs/${CUSTOM_JOB_ID}'
+	// Override component version. Defaults to the project version
+//	componentVersion = "2.0.0"
+	// Override component name. Defaults to the project name
+//	componentName = "my-component"
+}
+
+// https://github.com/spdx/spdx-gradle-plugin
+spdxSbom {
+	targets {
+		// create a target named "release",
+		// this is used for the task name (spdxSbomForRelease)
+		// and output file (release.spdx.json)
+
+		create("release") {
+			outputFile.set(layout.buildDirectory.file("reports/${project.name}-sbom-spdx.json"))
+			document {
+//				name.set("my spdx document")
+			}
+		}
+	}
+}
+
+tasks.register('generateSbom'){
+	dependsOn tasks.cyclonedxBom
+	dependsOn tasks.spdxSbom
+	doLast {
+		println "Finished writing sboms."
+	}
 }
 
 /**

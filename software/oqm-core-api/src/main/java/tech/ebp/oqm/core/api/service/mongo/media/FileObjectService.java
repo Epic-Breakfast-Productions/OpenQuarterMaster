@@ -41,4 +41,9 @@ public class FileObjectService<T extends FileMainObject, S extends FileSearchObj
 		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
 				   .build();
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return FileMainObject.CUR_SCHEMA_VERSION;
+	}
 }
