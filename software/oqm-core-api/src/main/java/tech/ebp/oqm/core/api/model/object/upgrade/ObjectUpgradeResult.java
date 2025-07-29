@@ -17,7 +17,7 @@ import java.util.Optional;
 @Data
 @Setter(AccessLevel.PRIVATE)
 @Builder
-public class ObjectUpgradeResult<T extends Versionable> {
+public class ObjectUpgradeResult<T extends Versionable> implements WasUpgraded {
 	
 	@NonNull
 	@NotNull

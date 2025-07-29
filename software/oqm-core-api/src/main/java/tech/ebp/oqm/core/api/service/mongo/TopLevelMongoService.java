@@ -12,6 +12,7 @@ import org.bson.Document;
 import org.bson.conversions.Bson;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
+import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
@@ -200,4 +201,8 @@ public abstract class TopLevelMongoService<T extends MainObject, S extends Searc
 				   .size(this.getTypedCollection().countDocuments())
 				   .build();
 	}
+	
+	public void runPostUpgrade(ClientSession cs, CollectionUpgradeResult upgradeResult) {
+		//nothing to do.
+	};
 }

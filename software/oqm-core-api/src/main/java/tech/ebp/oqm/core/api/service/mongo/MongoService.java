@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.ClientSessionOptions;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.TransactionOptions;
@@ -18,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
+import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
+import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 
 /**

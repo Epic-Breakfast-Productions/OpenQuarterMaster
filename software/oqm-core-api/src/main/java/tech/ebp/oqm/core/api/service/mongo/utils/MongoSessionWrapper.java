@@ -8,6 +8,7 @@ import tech.ebp.oqm.core.api.service.mongo.MongoService;
 
 import java.io.Closeable;
 import java.util.concurrent.Callable;
+import java.util.function.Consumer;
 
 @Slf4j
 @Data
@@ -34,13 +35,13 @@ public class MongoSessionWrapper implements Closeable {
 		this(service.getNewClientSession(), false);
 	}
 
-	public void runTransaction(boolean commit, Runnable runnable) {
+	public void runTransaction(boolean commit, Consumer<ClientSession> runnable) {
 		if (!this.clientSession.hasActiveTransaction()) {
 			this.clientSession.startTransaction();
 		}
 
 		try {
-			runnable.run();
+			runnable.accept(this.clientSession);
 		} catch (Exception e) {
 			this.clientSession.abortTransaction();
 			throw e;
@@ -50,7 +51,7 @@ public class MongoSessionWrapper implements Closeable {
 		}
 	}
 
-	public void runTransaction(Runnable runnable) {
+	public void runTransaction(Consumer<ClientSession> runnable) {
 		this.runTransaction(!this.provided, runnable);
 	}
 

@@ -18,4 +18,9 @@ import java.time.Duration;
 public class HistoriedCollectionUpgradeResult extends CollectionUpgradeResult {
 	
 	private CollectionUpgradeResult historyCollectionUpgradeResult;
+	
+	@Override
+	public boolean wasUpgraded(){
+		return super.wasUpgraded() || this.getHistoryCollectionUpgradeResult().wasUpgraded();
+	}
 }
