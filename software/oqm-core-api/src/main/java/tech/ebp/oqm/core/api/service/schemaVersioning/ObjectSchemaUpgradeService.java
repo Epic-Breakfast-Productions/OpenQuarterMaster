@@ -166,7 +166,7 @@ public class ObjectSchemaUpgradeService {
 	}
 	
 	public boolean upgradeRan() {
-		return this.startupUpgradeResult == null;
+		return this.startupUpgradeResult != null;
 	}
 	
 	

@@ -110,6 +110,7 @@ public class LifecycleBean {
 			log.info("Schema upgrade result: {}", schemaUpgradeResult.get());
 			//TODO:: rescan inv update stats
 		}
+		log.info("Done with initial startup tasks.");
 	}
 	
 	void onStop(
