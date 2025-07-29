@@ -27,7 +27,7 @@ import java.util.Map;
  */
 @Slf4j
 public class HasParentImporterHistoried<T extends MainObject & HasParent, S extends SearchObject<T>>
-	extends HistoriedObjectImporter<T, S, MongoHistoriedObjectService<T, S, ?>> {
+	extends ObjectImporter<T, S, MongoHistoriedObjectService<T, S, ?>> {
 	
 	public HasParentImporterHistoried(MongoHistoriedObjectService<T, S, ?> mongoService) {
 		super(mongoService);

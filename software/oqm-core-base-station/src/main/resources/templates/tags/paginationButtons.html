@@ -1,5 +1,6 @@
 {!{@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}!}
 {!
+TODO:: don't create millions of pages when they exist
 Inputs:
 - searchFormId; the id of the search form to reference
 - pagingOptions: the options for paging
@@ -9,7 +10,7 @@ Inputs:
 {#if !searchResults.get("empty").asBoolean() }
 <nav aria-label="Search Pagination">
 	{#let isOnFirstPage=pagingCalculations.get("onFirstPage").asBoolean() isOnLastPage=pagingCalculations.get("onLastPage").asBoolean() currentPage=pagingCalculations.get("curPage").asInt()}
-    <ul class="pagination justify-content-center mb-0">
+    <ul class="pagination pagination-sm justify-content-center mb-0">
         <li class="page-item {#if isOnFirstPage}disabled{/if}">
             <button type="button" class="btn-link page-link" title="First page" onclick="Search.paginationClick('{searchFormId}', 1);" {#if isOnFirstPage}disabled{/if}>{#icons/icon icon='chevron-bar-left'}{/icons/icon}</button>
         </li>

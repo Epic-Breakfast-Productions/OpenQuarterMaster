@@ -5,5 +5,5 @@ package tech.ebp.oqm.core.api.model.object.storage.items.stored;
  */
 public enum StoredType {
 	AMOUNT,
-	TRACKED;
+	UNIQUE;
 }
