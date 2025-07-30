@@ -4,6 +4,7 @@ import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
+import io.smallrye.mutiny.Uni;
 
 /**
  * https://github.com/quarkusio/quarkus/blob/main/extensions/mongodb-client/runtime/src/main/java/io/quarkus/mongodb/runtime/MongodbConfig.java
@@ -29,11 +30,24 @@ public interface OqmCoreApiConfig {
 		 */
 		OqmDatabaseConfig oqmDatabase();
 		
+		/**
+		 * Cache config for the list of OQM Units.
+		 * @return
+		 */
+		UnitConfig unit();
+		
 		interface OqmDatabaseConfig{
 			/**
 			 * The frequency of which to refresh the cache of oqm databases.
 			 */
 			@WithDefault("30s")
+			String refreshFrequencyEvery();
+		}
+		interface UnitConfig{
+			/**
+			 * The frequency of which to refresh the cache of oqm databases.
+			 */
+			@WithDefault("1m")
 			String refreshFrequencyEvery();
 		}
 	}

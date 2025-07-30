@@ -5,12 +5,8 @@ import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.DeleteEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.file.NewFileVersionEvent;
-import tech.ebp.oqm.core.api.model.object.history.events.item.ItemAddEvent;
-import tech.ebp.oqm.core.api.model.object.history.events.item.ItemSubEvent;
-import tech.ebp.oqm.core.api.model.object.history.events.item.ItemTransferEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiredEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.item.expiry.ItemExpiryWarningEvent;
-import tech.ebp.oqm.core.api.model.object.history.events.user.UserLoginEvent;
 import tech.ebp.oqm.core.api.model.testUtils.ObjectSerializationTest;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -59,63 +55,26 @@ class HistoryEventSerializationTest extends ObjectSerializationTest<ObjectHistor
 					//update
 					Arguments.of(new UpdateEvent()),
 					Arguments.of(new UpdateEvent()
-									 .setDescription(FAKER.lorem().paragraph())
 									 .setEntity(ObjectId.get())
 					),
 					//			Arguments.of(UpdateEvent.builder().updateJson(getRandJsonNode()).build()),
 					//delete
 					Arguments.of(new DeleteEvent()),
 					Arguments.of(new DeleteEvent()
-									 .setDescription(FAKER.lorem().paragraph())
 									 .setEntity(ObjectId.get())
 					),
-					//login
-					Arguments.of(new UserLoginEvent()),
-					Arguments.of(new UserLoginEvent().setEntity(ObjectId.get())),
 					//item expired
-					Arguments.of(new ItemExpiredEvent().setStorageBlockId(ObjectId.get())),
+					Arguments.of(new ItemExpiredEvent()),
 					Arguments.of(
 						new ItemExpiredEvent()
-							.setIndex(5)
 							.setEntity(ObjectId.get())
 					),
-					Arguments.of(new ItemExpiryWarningEvent().setStorageBlockId(ObjectId.get())),
+					Arguments.of(new ItemExpiryWarningEvent()),
 					Arguments.of(new ItemExpiryWarningEvent()
-									 .setStorageBlockId(ObjectId.get())
-									 .setIndex(5)
 									 .setEntity(ObjectId.get())
 					),
 					//item low stock
-					
-					//item add
-					Arguments.of(new ItemAddEvent().setStorageBlockId(ObjectId.get()).setQuantity(testQuantity)),
-					Arguments.of(
-						new ItemAddEvent()
-							.setStorageBlockId(ObjectId.get())
-							.setQuantity(testQuantity)
-							.setDescription((FAKER.lorem().paragraph())
-							)
-					),
-					//item sub
-					Arguments.of(new ItemSubEvent().setStorageBlockId(ObjectId.get()).setQuantity(testQuantity)),
-					Arguments.of(new ItemSubEvent()
-									 .setStorageBlockId(ObjectId.get())
-									 .setQuantity(testQuantity)
-									 .setDescription(FAKER.lorem().paragraph())
-					),
-					//item transfer
-					Arguments.of(new ItemTransferEvent()
-									 .setStorageBlockToId(ObjectId.get())
-									 .setStorageBlockFromId(ObjectId.get())
-									 .setQuantity(testQuantity)
-					),
-					Arguments.of(new ItemTransferEvent()
-									 .setStorageBlockToId(ObjectId.get())
-									 .setStorageBlockFromId(ObjectId.get())
-									 .setQuantity(testQuantity)
-									 .setDescription(FAKER.lorem().paragraph())
-					),
-					
+
 					//File Update
 					Arguments.of(new NewFileVersionEvent())
 				),

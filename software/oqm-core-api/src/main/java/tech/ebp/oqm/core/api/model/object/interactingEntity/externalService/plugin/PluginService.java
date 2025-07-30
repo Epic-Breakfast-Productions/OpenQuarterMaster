@@ -8,11 +8,10 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.ExternalService;
-import tech.ebp.oqm.core.api.model.rest.externalService.ExternalServiceSetupRequest;
-import tech.ebp.oqm.core.api.model.rest.externalService.PluginServiceSetupRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,15 +21,17 @@ import java.util.List;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder(toBuilder = true)
 public class PluginService extends ExternalService {
-	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	List<Plugin> enabledPageComponents = new ArrayList<>();
 	
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	List<Plugin> disabledPageComponents = new ArrayList<>();
 	
 	public List<Plugin> getAllPlugins() {
@@ -43,7 +44,7 @@ public class PluginService extends ExternalService {
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Override
-	public InteractingEntityType getInteractingEntityType() {
+	public InteractingEntityType getType() {
 		return InteractingEntityType.SERVICE_PLUGIN;
 	}
 	
@@ -51,33 +52,5 @@ public class PluginService extends ExternalService {
 	public boolean updateFrom(JsonWebToken jwt) {
 		//TODO
 		return false;
-	}
-	
-	@Override
-	public boolean changedGiven(ExternalServiceSetupRequest newServiceIn) {
-		if (super.changedGiven(newServiceIn)) {
-			return true;
-		}
-		PluginServiceSetupRequest pluginServiceSetupRequest = (PluginServiceSetupRequest) newServiceIn;
-		
-		List<Plugin> allPlugins = this.getAllPlugins();
-		
-		if (
-			allPlugins.size() != pluginServiceSetupRequest.getPageComponents().size()
-		) {
-			return true;
-		}
-		for (Plugin cur : pluginServiceSetupRequest.getPageComponents()) {
-			if (!allPlugins.contains(cur)) {
-				return true;
-			}
-		}
-		
-		return false;
-	}
-
-	@Override
-	public int getSchemaVersion() {
-		return CUR_SCHEMA_VERSION;
 	}
 }
