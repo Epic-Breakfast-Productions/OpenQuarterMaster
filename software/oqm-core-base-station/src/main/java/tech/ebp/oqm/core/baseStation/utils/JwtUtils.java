@@ -1,15 +1,19 @@
 package tech.ebp.oqm.core.baseStation.utils;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.json.Json;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.core.baseStation.model.UserInfo;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 
 import java.util.Set;
 
+@ApplicationScoped
 public class JwtUtils {
 	
-	public static String getId(JsonWebToken jwt){
+	public static String getAuthId(JsonWebToken jwt){
 		return jwt.getClaim(Claims.sub);
 	}
 	public static String getName(JsonWebToken jwt){
@@ -27,7 +31,7 @@ public class JwtUtils {
 	
 	public static UserInfo getUserInfo(JsonWebToken jwt){
 		return UserInfo.builder()
-				   .id(getId(jwt))
+				   .authId(getAuthId(jwt))
 				   .name(getName(jwt))
 				   .username(getUserName(jwt))
 				   .email(getEmail(jwt))

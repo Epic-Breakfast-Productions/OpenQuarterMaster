@@ -1,4 +1,10 @@
-{#modal id='addEditItem' size='xl' title='Item add/edit' submitForm='addEditItemForm' submitDismiss=false}
+{#modal id='addEditItem' size='xl' title='Item add/edit' submitDismiss=false}
+    {#footerButtons}
+    <button class="btn btn-success" id="addEditItemFormSubmitButton" type="submit" form="addEditItemForm">
+        Submit
+    </button>
+    {/footerButtons}
+
     <div class="row">
         <div class="col" id="addEditItemFormMessages">
         </div>
@@ -88,6 +94,21 @@
                     </div>
                 </div>
                 <div class="mb-3 row">
+                    <label for="addEditItemStorageTypeInput" class="col-sm-2 col-form-label">Storage Type</label>
+                    <div class="col-sm-10">
+                        <select class="form-select form-select-lg" id="addEditItemStorageTypeInput" data-current="BULK" onchange="ItemAddEdit.addEditStoredTypeInputChanged()" aria-describedby="addEditItemStorageTypeHelp">
+                            <option value="BULK" selected>Bulk</option>
+                            <option value="AMOUNT_LIST">Amount List</option>
+                            <option value="UNIQUE_MULTI">Unique - Multi</option>
+                            <option value="UNIQUE_SINGLE">Unique - Single</option>
+                        </select>
+                        <div id="addEditItemStorageTypeHelp" class="form-text">
+                            For details on each type of storage, see <a href="/help#items" target="_blank">{#icons/help}{/icons/help} Help</a><br />
+                            This cannot be changed after item creation.
+                        </div>
+                    </div>
+                </div>
+                <div class="mb-3 row">
                     <label for="addEditItemDescriptionInput" class="col-sm-2 col-form-label">Description</label>
                     <div class="col-sm-10">
                         <textarea class="form-control" id="addEditItemDescriptionInput" placeholder="Description"></textarea>
@@ -99,27 +120,11 @@
                         {#inputs/barcodeInput id='addEditItemBarcodeInput'}{/inputs/barcodeInput}
                     </div>
                 </div>
-                <div class="mb-3 row">
-                    <label for="addEditItemStorageTypeInput" class="col-sm-2 col-form-label">Stored Type</label>
-                    <div class="col-sm-10">
-                        <select class="form-select" id="addEditItemStorageTypeInput" data-current="AMOUNT_SIMPLE" onchange="ItemAddEdit.addEditStoredTypeInputChanged()">
-                            <option value="AMOUNT_SIMPLE" title="hello world" selected>Amount</option>
-                            <option value="AMOUNT_LIST">Amount List</option>
-                            <option value="TRACKED">Tracked</option>
-                        </select>
-                    </div>
-                </div>
-                <div class="mb-3 row" id="addEditItemTrackedItemIdentifierNameRow" style="display: none;">
-                    <label for="addEditItemIdentifyingAttInput" class="col-sm-2 col-form-label">Identifying Attribute</label>
-                    <div class="col-sm-10">
-                        <input type="text" class="form-control" id="addEditItemIdentifyingAttInput" placeholder="Identifying Attribute" required>
-                    </div>
-                </div>
                 <!-- TODO:: default value -->
                 <div class="mb-3 row" id="addEditItemUnitNameRow">
                     <label for="addEditItemUnitInput" class="col-sm-2 col-form-label">Unit</label>
                     <div class="col-sm-10">
-                        <select class="form-select dselect-select" id="addEditItemUnitInput" onchange="ItemAddEdit.handleItemUnitChange();">
+                        <select class="form-select dselect-select" id="addEditItemUnitInput">
                             {#inputs/units/unitOptionsGroups allUnitMap=allUnitMap}
                             {/inputs/units/unitOptionsGroups}
                         </select>
@@ -132,15 +137,15 @@
                         {/inputs/categoryInput}
                     </div>
                 </div>
-                <div class="mb-3 row" id="addEditItemPricePerUnitNameRow">
-                    <label for="addEditItemPricePerUnitInput" class="col-sm-2 col-form-label">Price Per Unit</label>
-                    <div class="col-sm-10">
-                        <div class="input-group">
-                            <span class="input-group-text" id="addon-wrapping">{currency.getSymbol()}</span>
-                            <input type="number" min="0.00" step="any" class="form-control" id="addEditItemPricePerUnitInput" placeholder="Price Per Unit" required>
-                        </div>
-                    </div>
-                </div>
+                {!<div class="mb-3 row" id="addEditItemPricePerUnitNameRow">!}
+                    {!<label for="addEditItemPricePerUnitInput" class="col-sm-2 col-form-label">Price Per Unit</label>!}
+                    {!<div class="col-sm-10">!}
+                        {!<div class="input-group">!}
+                            {!<span class="input-group-text" id="addon-wrapping">{currency.getSymbol()}</span>!}
+                            {!<input type="number" min="0.00" step="any" class="form-control" id="addEditItemPricePerUnitInput" placeholder="Price Per Unit" required>!}
+                        {!</div>!}
+                    {!</div>!}
+                {!</div>!}
                 <div class="mb-3 row" id="addEditItemExpiryWarningThresholdRow">
                     <label for="addEditItemExpiryWarningThresholdInput" class="col-sm-2 col-form-label">Expiry Warning Threshold</label>
                     <div class="col-sm-10">
@@ -175,6 +180,23 @@
                     </div>
                 </div>
                 <hr />
+                <div class="mb-3 row">
+                    <div class="col-sm-2 col-form-label">
+                        Associated Storage
+                    </div>
+                    <div class="col-sm-10">
+                        <div class="row mt-2" id="addEditItemAssociatedStorageInputContainer">
+                        </div>
+                        <div class="col d-grid gap-2 mt-3">
+                            <button type="button" class="btn btn-sm btn-success mt-2" id="addEditItemAssociatedStorageAddButton" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.storageSearchSelectForm.submit();">
+                                {#icons/add}{/icons/add} Add Associated Storage
+                            </button>
+                            <div class="form-text">
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {!<div class="mb-3 row">!} {!TODO:: 460 !}
                     {!<label class="col-sm-2 col-form-label">Not Stored</label>!}
                     {!<div class="col-sm-10">!}
@@ -191,20 +213,20 @@
 						{!</div>!}
                     {!</div>!}
                 {!</div>!}
-                <hr />
-                <div class="mb-3 row">
-                    <div class="col-sm-2 col-form-label">Stored</div>
-                    <div class="col-sm-10">
-                        <div class="accordion mt-2" id="addEditItemStoredContainer">
-                
-                        </div>
-                        <div class="col d-grid gap-2 mt-3">
-                            <button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.storageSearchSelectForm.submit();">
-                                {#icons/add}{/icons/add} Add Associated Storage
-                            </button>
-                        </div>
-                    </div>
-                </div>
+                {!<hr />!}
+                {!<div class="mb-3 row">!}
+                    {!<div class="col-sm-2 col-form-label">Stored</div>!}
+                    {!<div class="col-sm-10">!}
+                        {!<div class="accordion mt-2" id="addEditItemStoredContainer">!}
+                {!!}
+                        {!</div>!}
+                        {!<div class="col d-grid gap-2 mt-3">!}
+                            {!<button type="button" class="btn btn-sm btn-success mt-2" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.storageSearchSelectForm.submit();">!}
+                                {!{#icons/add}{/icons/add} Add Associated Storage!}
+                            {!</button>!}
+                        {!</div>!}
+                    {!</div>!}
+                {!</div>!}
                 <hr />
                 {#search/image/imageSelectFormInput}
                 {/search/image/imageSelectFormInput}

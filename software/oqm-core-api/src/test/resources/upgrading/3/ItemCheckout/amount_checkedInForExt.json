@@ -1,0 +1,52 @@
+{
+	"_id": {
+		"$oid": "687f146a98b4ba733c4f39fb"
+	},
+	"attributes": {},
+	"checkInDetails": {
+		"_t": "tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.ReturnCheckin",
+		"attributes": {},
+		"checkinDateTime": "\"2025-07-21T23:27:00-04:00\"",
+		"checkinType": "RETURN",
+		"imageIds": [],
+		"keywords": [],
+		"notes": "fear343",
+		"storageBlockCheckedInto": {
+			"$oid": "683152b76260b642ff66d1ea"
+		}
+	},
+	"checkedOut": {
+		"_id": "8e5f9ef5-ae68-48a0-b1b7-3a674c07a6c5",
+		"_t": "tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored",
+		"amount": "{\"unit\":{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"},\"scale\":\"ABSOLUTE\",\"value\":5}",
+		"attributes": {},
+		"barcode": "",
+		"conditionNotes": "",
+		"imageIds": [],
+		"keywords": [],
+		"labelText": "5 units",
+		"notificationStatus": {
+			"expired": false,
+			"expiredWarning": false
+		},
+		"storedType": "AMOUNT"
+	},
+	"checkedOutFor": {
+		"_t": "tech.ebp.oqm.core.api.model.object.storage.checkout.checkoutFor.CheckoutForExtUser",
+		"externalId": "3333",
+		"name": "232",
+		"type": "EXT_SYS_USER"
+	},
+	"checkedOutFrom": {
+		"$oid": "683152b76260b642ff66d1ea"
+	},
+	"checkoutDate": "\"2025-07-22T03:24:26.468072808Z[UTC]\"",
+	"item": {
+		"$oid": "6835eaec9212b27e82cfbf98"
+	},
+	"keywords": [],
+	"notes": "ewdsd",
+	"reason": "sde334",
+	"schemaVersion": 1,
+	"stillCheckedOut": false
+}

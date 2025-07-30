@@ -22,10 +22,10 @@
   <tr>
     <th scope="col" class="searchResultImageCol">Image</th>
     <th scope="col">Name</th>
-    <th scope="col">Stored Type</th>
+    <th scope="col">Storage Type</th>
     <th scope="col">Total</th>
-    <th scope="col"># Blocks used</th>
-    <th scope="col" width="150px">Actions</th>
+    <th scope="col"># {#icons/storageBlocks}{/icons/storageBlocks}</th>
+    <th scope="col" style="width: 175px;">Actions</th>
   </tr>
   </thead>
   <tbody>
@@ -37,7 +37,7 @@
       </h2>
       {#if actionType == 'full'}
       <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
+        <button type="button" class="btn btn-success btn-lg noResultsAddButton" data-bs-toggle="modal"
                 data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForAdd();">
           {#icons/add}{/icons/add} Add Item
         </button>
@@ -54,22 +54,24 @@
       <img src="{rootPrefix}/api/passthrough/media/image/for/item/{id}" class="searchResultImage">
       {/if}
     </td>
-    <td>{name}</td>
+    <td class="itemResultsName">{name}</td>
     <td>{cdi:EnumFormattingService.formatEnum(result.get("storageType").asText())}</td>
-    <td>{#amountDisplay amount=result.get("total")}{/amountDisplay}</td>
-    <td>{result.get("storageMap").size()}</td>
-    {#if actionType == 'full'}
     <td>
-      <button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
+      {#amountDisplay amount=result.get("stats").get("total")}{/amountDisplay}
+    </td>
+    <td>
+      {result.get("storageBlocks").size()}
+    </td>
+    {#if actionType == 'full'}
+    <td class="d-flex flex-row">
+      <button type="button" class="btn btn-sm btn-info viewButton me-1" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
         {#icons/view}{/icons/view}
       </button>
-      <button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
+      <button type="button" class="btn btn-sm btn-warning me-1" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
         {#icons/edit}{/icons/edit}
       </button>
-      <button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{id}');">
-        {#icons/addSubTrans}{/icons/addSubTrans}
-      </button>
-      <button type="button" class="btn btn-sm btn-danger" title="Remove"
+      {#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false itemId=id checkinButton=false /}
+      <button type="button" class="btn btn-sm btn-danger me-1" title="Remove"
               onclick="removeItem('{id}');">{#icons/remove}{/icons/remove}</button>
     {#else if actionType == 'select'}
     <td class="d-grid gap-2">

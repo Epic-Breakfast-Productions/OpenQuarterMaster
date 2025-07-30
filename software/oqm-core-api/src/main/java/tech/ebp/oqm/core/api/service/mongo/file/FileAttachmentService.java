@@ -54,4 +54,9 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 		
 		return objsWithRefs;
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return FileAttachment.CUR_SCHEMA_VERSION;
+	}
 }

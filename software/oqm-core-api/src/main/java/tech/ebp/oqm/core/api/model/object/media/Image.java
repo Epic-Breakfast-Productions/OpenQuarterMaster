@@ -3,11 +3,11 @@ package tech.ebp.oqm.core.api.model.object.media;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileMainObject;
 
@@ -20,7 +20,7 @@ import java.util.Map;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Builder(builderClassName = "Builder")
+@SuperBuilder(toBuilder = true)
 public class Image extends FileMainObject {
 	
 	public Image(
