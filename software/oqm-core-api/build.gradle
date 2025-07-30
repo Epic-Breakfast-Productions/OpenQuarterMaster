@@ -45,14 +45,14 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
 	//     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
-	implementation 'tech.units:indriya:2.2.2'
+	implementation 'tech.units:indriya:2.2.3'
 	implementation 'systems.uom:systems-common:2.2'
 	// https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
 	implementation 'tech.uom.lib:uom-lib-jackson:2.1'
 
 	implementation 'org.apache.commons:commons-lang3:3.18.0'
 	implementation 'org.apache.commons:commons-compress:1.27.1'
-	implementation 'org.apache.commons:commons-csv:1.14.0'
+	implementation 'org.apache.commons:commons-csv:1.14.1'
 	implementation 'org.apache.commons:commons-io:1.3.2'
 	implementation 'commons-codec:commons-codec:1.18.0'
 	implementation 'org.apache.tika:tika-core:3.2.1'
@@ -65,7 +65,7 @@ dependencies {
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
 	testImplementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	testImplementation 'io.quarkus:quarkus-test-kafka-companion'
-	testImplementation 'net.datafaker:datafaker:2.4.3'
+	testImplementation 'net.datafaker:datafaker:2.4.4'
 	testImplementation 'org.assertj:assertj-core:3.27.3'
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
 }
