@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import java.util.Map;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder(toBuilder = true)
 public abstract class AttKeywordMainObject
 	extends MainObject
 	//	implements AttKeywordContaining
@@ -36,6 +38,7 @@ public abstract class AttKeywordMainObject
 	 */
 	@NotNull
 	@NonNull
+	@lombok.Builder.Default
 	private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
 	
 	/**
@@ -43,6 +46,7 @@ public abstract class AttKeywordMainObject
 	 */
 	@NotNull
 	@NonNull
+	@lombok.Builder.Default
 	private List<@NotBlank String> keywords = new ArrayList<>();
 	
 }

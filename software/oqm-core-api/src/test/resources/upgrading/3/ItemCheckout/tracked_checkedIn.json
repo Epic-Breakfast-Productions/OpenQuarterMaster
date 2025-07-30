@@ -1,0 +1,54 @@
+{
+	"_id": {
+		"$oid": "687ef985af357d5c0a599113"
+	},
+	"attributes": {},
+	"checkInDetails": {
+		"_t": "tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.ReturnCheckin",
+		"attributes": {},
+		"checkinDateTime": "\"2025-07-21T23:27:00-04:00\"",
+		"checkinType": "RETURN",
+		"imageIds": [],
+		"keywords": [],
+		"notes": "czxcczx",
+		"storageBlockCheckedInto": {
+			"$oid": "683149f38d98ce4f7f8a5820"
+		}
+	},
+	"checkedOut": {
+		"_id": "a001e2a4-c3e2-4b4b-870e-8d0adf97c961",
+		"_t": "tech.ebp.oqm.core.api.model.object.storage.items.stored.TrackedStored",
+		"attributes": {},
+		"barcode": "",
+		"conditionNotes": "",
+		"identifier": "1234",
+		"identifyingDetails": "",
+		"imageIds": [],
+		"keywords": [],
+		"labelText": "1234",
+		"notificationStatus": {
+			"expired": false,
+			"expiredWarning": false
+		},
+		"storedType": "TRACKED"
+	},
+	"checkedOutFor": {
+		"_t": "tech.ebp.oqm.core.api.model.object.storage.checkout.checkoutFor.CheckoutForOqmEntity",
+		"entity": {
+			"$oid": "683149e18d98ce4f7f8a581f"
+		},
+		"type": "OQM_ENTITY"
+	},
+	"checkedOutFrom": {
+		"$oid": "683149f38d98ce4f7f8a5820"
+	},
+	"checkoutDate": "\"2025-07-22T02:37:57.996904575Z[UTC]\"",
+	"item": {
+		"$oid": "683fce0b57d4bf214978f5d7"
+	},
+	"keywords": [],
+	"notes": "4534",
+	"reason": "3345",
+	"schemaVersion": 1,
+	"stillCheckedOut": false
+}

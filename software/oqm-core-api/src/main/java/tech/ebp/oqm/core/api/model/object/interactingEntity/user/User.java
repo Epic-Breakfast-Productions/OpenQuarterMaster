@@ -5,12 +5,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
@@ -29,10 +29,9 @@ import java.util.Set;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Builder(builderClassName = "Builder")
+@SuperBuilder(toBuilder = true)
 @BsonDiscriminator
 public class User extends InteractingEntity {
-	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	@NonNull
 	@NotNull
@@ -55,15 +54,15 @@ public class User extends InteractingEntity {
 	@NotNull
 	@lombok.Builder.Default
 	private NotificationSettings notificationSettings = new NotificationSettings();
-	
+
+
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
 	private Set<@ValidUserRole String> roles = new HashSet<>();
 	
-	public static User.Builder builder() {
-		return new User.Builder();
-	}
-	
 	@Override
-	public InteractingEntityType getInteractingEntityType() {
+	public InteractingEntityType getType() {
 		return InteractingEntityType.USER;
 	}
 	
@@ -88,10 +87,5 @@ public class User extends InteractingEntity {
 		}
 		
 		return updated;
-	}
-
-	@Override
-	public int getSchemaVersion() {
-		return CUR_SCHEMA_VERSION;
 	}
 }
