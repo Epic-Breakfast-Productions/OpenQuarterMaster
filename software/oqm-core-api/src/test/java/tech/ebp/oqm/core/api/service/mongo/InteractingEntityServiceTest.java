@@ -39,7 +39,7 @@ public class InteractingEntityServiceTest extends RunningServerTest {
 
 	@Test
 	public void ensureTest(){
-		User testUser = TestUserService.getInstance().getTestUser(true);
+		User testUser = TestUserService.getInstance().getTestUser(true, false);
 
 		SearchResult<InteractingEntity> entityResult = this.interactingEntityService.search(new InteractingEntitySearch().setName(testUser.getName()));
 		log.debug("Initial entity state: {}", entityResult);
@@ -68,7 +68,7 @@ public class InteractingEntityServiceTest extends RunningServerTest {
 
 	@Test
 	public void ensureMultiThreadedTest(){
-		User testUser = TestUserService.getInstance().getTestUser(true);
+		User testUser = TestUserService.getInstance().getTestUser(true, false);
 
 		SearchResult<InteractingEntity> entityResult = this.interactingEntityService.search(new InteractingEntitySearch().setName(testUser.getName()));
 		log.debug("Initial entity state: {}", entityResult);

@@ -20,6 +20,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.RestInterface;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
+import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 
 import java.util.ArrayList;
@@ -57,6 +58,10 @@ public class DocumentGettingEndpoints extends
 	@Inject
 	StorageBlockService
 		storageBlockService;
+	
+	@Inject
+	ItemCheckoutService
+		itemCheckoutService;
 	
 	@SneakyThrows
 	private ObjectNode docToObjNode(
@@ -96,6 +101,22 @@ public class DocumentGettingEndpoints extends
 		MongoCollection<Document>
 			itemDocs =
 			this.inventoryItemService.getDocumentCollection(
+				this.getOqmDbIdOrName());
+		
+		return Response.ok(
+				this.dumpToJson(
+					itemDocs.find().into(new ArrayList<>())
+				)
+			)
+				   .build();
+	}
+	
+	@GET
+	@Path("checkout/doc")
+	public Response dumpCheckoutDocs() {
+		MongoCollection<Document>
+			itemDocs =
+			this.itemCheckoutService.getDocumentCollection(
 				this.getOqmDbIdOrName());
 		
 		return Response.ok(
