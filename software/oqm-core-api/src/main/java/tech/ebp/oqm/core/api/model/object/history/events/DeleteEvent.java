@@ -4,11 +4,12 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.MainObject;
-import tech.ebp.oqm.core.api.model.object.history.DescriptiveEvent;
 import tech.ebp.oqm.core.api.model.object.history.EventType;
+import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 
 /**
@@ -18,10 +19,9 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-//@SuperBuilder
 @BsonDiscriminator
-public class DeleteEvent extends DescriptiveEvent {
-	public static final int CUR_SCHEMA_VERSION = 1;
+@SuperBuilder(toBuilder = true)
+public class DeleteEvent extends ObjectHistoryEvent {
 	
 	public DeleteEvent(ObjectId objectId, InteractingEntity entity) {
 		super(objectId, entity);
@@ -34,10 +34,5 @@ public class DeleteEvent extends DescriptiveEvent {
 	@Override
 	public EventType getType() {
 		return EventType.DELETE;
-	}
-
-	@Override
-	public int getSchemaVersion() {
-		return CUR_SCHEMA_VERSION;
 	}
 }
