@@ -33,6 +33,14 @@ updates:
     labels:
       - "area-dependencies"
       - "project-baseStation"
+  - package-ecosystem: "docker"
+    directory: "/software/oqm-core-api/src/main/docker"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "area-dependencies"
+      - "project-baseStation"
 
   # Base Station
   - package-ecosystem: "gradle"
