@@ -1,16 +1,35 @@
 package tech.ebp.oqm.core.baseStation.testResources.testClasses;
 
+import io.opentelemetry.api.trace.StatusCode;
+import io.quarkus.test.common.http.TestHTTPResource;
+import io.restassured.http.ContentType;
+import io.restassured.http.Header;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
+import tech.ebp.oqm.core.baseStation.interfaces.rest.passthrough.PassthroughProvider;
+import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUser;
+import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUserService;
+
+import java.net.URL;
+
+import static io.restassured.RestAssured.given;
 
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
 public abstract class RunningServerTest extends WebServerTest {
+
+	@Getter
+	@TestHTTPResource("/")
+	URL index;
+
+	@Getter
+	private final TestUserService testUserService = TestUserService.getInstance();
 
 	@BeforeEach
 	public void beforeEach(TestInfo testInfo){
@@ -40,6 +59,22 @@ public abstract class RunningServerTest extends WebServerTest {
 //			} else {
 //				MongoTestConnector.getInstance().clearDb();
 //			}
+
+		TestUser user = this.getTestUserService().getTestUser();
+
+		if(user.getJwt() != null){
+			log.info("JWT found, clearing database: {}", this.index.toString() + "api/passthrough/manage/db/clearAllDbs");
+			log.info("JWT: {}", user.getJwt());
+			// this.index.toString() + PassthroughProvider.PASSTHROUGH_API_ROOT + "/manage/db/clearAllDbs
+			given()
+				.when()
+				.header(new Header("Authorization", "Bearer " + user.getJwt()))
+				.accept(ContentType.JSON)
+				.delete(this.index.toString() + "api/passthrough/manage/db/clearAllDbs")
+				.then()
+				.statusCode(200)
+			;
+		}
 
 		log.info("Completed after step.");
 	}

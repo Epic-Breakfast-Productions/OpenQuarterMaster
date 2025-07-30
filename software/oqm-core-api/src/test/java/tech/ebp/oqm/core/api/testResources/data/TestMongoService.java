@@ -24,4 +24,9 @@ public class TestMongoService extends MongoObjectService<TestMainObject, TestMai
 		return super.addBaseStats(dbIdOrName, CollectionStats.builder())
 				   .build();
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return 1;
+	}
 }
