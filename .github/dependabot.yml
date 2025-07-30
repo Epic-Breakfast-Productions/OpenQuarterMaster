@@ -15,6 +15,7 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly"
+      day: "tuesday"
     labels:
       - "area-dependencies"
       - "project-baseStation"
@@ -23,6 +24,7 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly"
+      day: "tuesday"
     labels:
       - "area-dependencies"
       - "project-baseStation"
@@ -33,6 +35,7 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly"
+      day: "tuesday"
     labels:
       - "area-dependencies"
       - "project-baseStation"
@@ -43,6 +46,7 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly"
+      day: "tuesday"
     labels:
       - "area-dependencies"
       - "project-stationCaptain"
@@ -56,6 +60,7 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly"
+      day: "tuesday"
     labels:
       - "area-dependencies"
 
@@ -69,6 +74,7 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly"
+      day: "tuesday"
     labels:
       - "area-dependencies"
   # Mss Controller
@@ -77,6 +83,7 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly"
+      day: "tuesday"
     labels:
       - "area-dependencies"
 
