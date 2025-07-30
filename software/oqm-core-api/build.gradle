@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '3.0.0-DEV'
+version '3.0.0'
 
 repositories {
 	mavenCentral()
@@ -45,7 +45,7 @@ dependencies {
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
 	//     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
-	implementation 'tech.units:indriya:2.2.2'
+	implementation 'tech.units:indriya:2.2.3'
 	implementation 'systems.uom:systems-common:2.2'
 	// https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
 	implementation 'tech.uom.lib:uom-lib-jackson:2.1'
