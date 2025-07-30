@@ -6,6 +6,7 @@ import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
@@ -27,7 +28,7 @@ import java.util.Optional;
 @Tags({@Tag(name = "UI", description = "UI endpoints")})
 @PermitAll
 @Produces(MediaType.TEXT_HTML)
-@ApplicationScoped
+@RequestScoped
 public class IndexUi {
 
 	//TODO: determine if we want to do this

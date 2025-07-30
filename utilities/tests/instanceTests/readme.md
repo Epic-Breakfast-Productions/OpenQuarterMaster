@@ -7,16 +7,29 @@ To run the tests:
 Configue the run with a `config.json` in this directory:
 
 ```yaml
-setupConfig:
-  type: "EXISTING"
-  host: oqm-install-test.local
-  user: gstewart
-  password: 1!Letmein
-  installTypeConfig:
-    type: "REPO"
-#    repoBranch: "test-dev"
-cleanupAfter: true 
+instance:
+  hostname: "<ip or host>"
+  clientId: test-client
+  clientSecret: <secret>
+  database: "test"
+cleanupAfter: false
 ```
+
+Also add the test client to the running instance:
+
+```json
+{
+    "clientName": "test-client",
+    "displayName": "Test Client",
+    "description": "Client for test purposes",
+    "roles": {}
+}
+```
+
+After adding this client file, run the following to get the secret (and add it to your config):
+
+`sudo oqm-config -g infra.keycloak.clientSecrets.test-client`
+
 
 ## Good commands to remember:
 

@@ -46,14 +46,22 @@ argParser = argparse.ArgumentParser(
 g = argParser.add_mutually_exclusive_group()
 g.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
 # g.add_argument('-vvvv', '--verbose', dest="verbose", action="store_false", help="Tells the script to log output verbosely to the console") # TODO:: fix
-g.add_argument('--take-snapshot', dest="takeSnapshot", help="Takes a snapshot. Will pause and restart services.", choices=["manual", "scheduled", "preemptive"])
-g.add_argument('--prune-container-resources', dest="pruneContainerResources", action="store_true", help="Prunes all unused container resources. Roughly equivalent to running both `docker system prune --volumes` and `docker image prune -a`")
-g.add_argument('--ensure-container-setup', dest="ensureContainerSetup", action="store_true", help="Ensures all container based resources (i.e, network) are setup and ready.")
-g.add_argument('--package-logs', dest="packageLogs", action="store_true", help="Packages service logs for debugging.")
-g.add_argument('--regen-certs', dest="regenCerts", action="store_true", help="Regenerates the system certs based on configuration.")
-g.add_argument('--ensure-certs-present', dest="ensureCerts", action="store_true", help="Ensures that certs are present and usable by the system.")
-g.add_argument('--write-internal-certs', dest="writeInternalCerts", nargs=2, help="Writes certs for an internal service to use. Two arguments; first to name the service (the domain name to access the service), and second the directory to place the new certs.")
+
+subparsers = argParser.add_subparsers(dest="command", help="Subcommands")
+
+SnapshotUtils.setupArgParser(subparsers)
+ContainerUtils.setupArgParser(subparsers)
+LogManagement.setupArgParser(subparsers)
+CertsUtils.setupArgParser(subparsers)
+
+# TODO:: registration and subscription utility
+# TODO:: plugin utilities
+
+# TODO:: command to handle all init service setup; container, certs...
+
+
 # argcomplete.autocomplete(argParser)
+
 args = argParser.parse_args()
 
 # print(str(args))
@@ -65,43 +73,8 @@ if not os.geteuid() == 0:
     print("\n\nPlease run this script as root. ( sudo oqm-captain )\n")
     exit(1)
 
-if args.takeSnapshot:
-    trigger = SnapshotTrigger[args.takeSnapshot]
-    success, message = SnapshotUtils.performSnapshot(trigger)
-    if not success:
-        print("FAILED to create snapshot: " + message, file=sys.stderr)
-        exit(2)
-elif args.pruneContainerResources:
-    ContainerUtils.pruneContainerResources()
-elif args.ensureContainerSetup:
-    ContainerUtils.ensureSharedDockerResources()
-elif args.packageLogs:
-    result, message = LogManagement.packageLogs()
-    if not result:
-        print("Failed to package logs: " + message)
-        exit(3)
-    print(message)
-elif args.regenCerts:
-    result, message = CertsUtils.regenCerts()
-    if not result:
-        print("Failed to generate certs: " + message)
-        exit(4)
-    print(message)
-elif args.ensureCerts:
-    result, message, written = CertsUtils.ensureCoreCerts()
-    if not result:
-        print("Failed to validate certs: " + message)
-        exit(5)
-    print(message)
-elif args.writeInternalCerts:
-    result, message = CertsUtils.generateInternalCert(
-        args.writeInternalCerts[0],
-        args.writeInternalCerts[1]
-    )
-    if not result:
-        print("Failed to write certs for internal service: " + message)
-        exit(6)
-    print(message)
+if hasattr(args, 'func'):
+    args.func(args)
 else:
     UserInteraction.ui.startUserInteraction()
 

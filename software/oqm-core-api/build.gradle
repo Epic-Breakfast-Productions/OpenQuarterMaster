@@ -1,36 +1,36 @@
 plugins {
 	id 'java'
 	id 'io.quarkus'
-	id "io.freefair.lombok" version "8.13.1"
+	id "io.freefair.lombok" version "8.14"
+	id 'org.cyclonedx.bom' version '2.3.1'
+	id("org.spdx.sbom") version "0.9.0"
 }
 
 group 'com.ebp.openQuarterMaster'
-version '2.1.6'
+version '3.0.0-DEV'
 
 repositories {
 	mavenCentral()
 	mavenLocal()
-	//for getting OQM Library snapshot versions
-	maven({url= "https://s01.oss.sonatype.org/content/repositories/snapshots/"})
 }
 
 dependencies {
 	implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-	implementation 'io.quarkus:quarkus-resteasy-reactive'
-	implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
-	implementation 'io.quarkus:quarkus-resteasy-reactive-qute'
+	implementation 'io.quarkus:quarkus-rest'
+	implementation 'io.quarkus:quarkus-rest-jackson'
+	implementation 'io.quarkus:quarkus-rest-qute'
 	implementation 'io.quarkus:quarkus-smallrye-openapi'
 	implementation 'io.quarkus:quarkus-smallrye-health'
-	implementation 'io.quarkus:quarkus-smallrye-reactive-messaging-kafka'
+	implementation 'io.quarkus:quarkus-messaging-kafka'
 	implementation 'io.quarkus:quarkus-opentelemetry'
 	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-qute'
 	implementation 'io.quarkus:quarkus-mongodb-panache'
 	implementation 'io.quarkus:quarkus-hibernate-validator'
 	implementation 'io.quarkus:quarkus-elytron-security'
-	implementation 'io.quarkus:quarkus-container-image-jib'
-	implementation 'io.quarkus:quarkus-rest-client-reactive'
-	implementation 'io.quarkus:quarkus-rest-client-reactive-jackson'
+	implementation 'io.quarkus:quarkus-container-image-docker'
+	implementation 'io.quarkus:quarkus-rest-client'
+	implementation 'io.quarkus:quarkus-rest-client-jackson'
 	implementation 'io.quarkus:quarkus-mailer'
 	implementation 'io.quarkus:quarkus-scheduler'
 	implementation 'io.quarkus:quarkus-smallrye-jwt'
@@ -46,16 +46,16 @@ dependencies {
 	// https://mvnrepository.com/artifact/tech.units/indriya
 	//     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
 	implementation 'tech.units:indriya:2.2.2'
-	implementation 'systems.uom:systems-common:2.1'
+	implementation 'systems.uom:systems-common:2.2'
 	// https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
 	implementation 'tech.uom.lib:uom-lib-jackson:2.1'
 
-	implementation 'org.apache.commons:commons-lang3:3.17.0'
+	implementation 'org.apache.commons:commons-lang3:3.18.0'
 	implementation 'org.apache.commons:commons-compress:1.27.1'
 	implementation 'org.apache.commons:commons-csv:1.14.0'
 	implementation 'org.apache.commons:commons-io:1.3.2'
 	implementation 'commons-codec:commons-codec:1.18.0'
-	implementation 'org.apache.tika:tika-core:3.1.0'
+	implementation 'org.apache.tika:tika-core:3.2.1'
 
 	/*
 	Test Dependencies
@@ -65,7 +65,7 @@ dependencies {
 	testImplementation group: 'io.rest-assured', name: 'rest-assured'
 	testImplementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	testImplementation 'io.quarkus:quarkus-test-kafka-companion'
-	testImplementation 'net.datafaker:datafaker:2.4.2'
+	testImplementation 'net.datafaker:datafaker:2.4.3'
 	testImplementation 'org.assertj:assertj-core:3.27.3'
 	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
 }
@@ -97,6 +97,67 @@ test {
 		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
 	)
 	testLogging.showStandardStreams = true
+}
+
+// https://github.com/CycloneDX/cyclonedx-gradle-plugin
+cyclonedxBom {
+	// includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration), regex is supported
+	includeConfigs = ["runtimeClasspath"]
+
+	// skipConfigs is a list of configuration names to exclude when generating the BOM, regex is supported
+	skipConfigs = ["compileClasspath", "testCompileClasspath"]
+
+	// skipProjects is a list of project names to exclude when generating the BOM
+//	skipProjects = [rootProject.name, "yourTestSubProject"]
+
+	// Specified the type of project being built. Defaults to 'library'
+	projectType = "application"
+	// Specified the version of the CycloneDX specification to use. Defaults to '1.6'
+	schemaVersion = "1.6"
+	// Boms destination directory. Defaults to 'build/reports'
+	destination = file("build/reports")
+	// The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
+	outputName = "${project.name}-sbom-cyclonedx"
+	// The file format generated, can be xml, json or all for generating both. Defaults to 'all'
+	outputFormat = "all"
+	// Include BOM Serial Number. Defaults to 'true'
+	includeBomSerialNumber = true
+	// Include License Text. Defaults to 'true'
+	includeLicenseText = false
+	// Include resolution of full metadata for components including licenses. Defaults to 'true'
+	includeMetadataResolution = true
+	// Attempt to include the build-system URL by reading environment variables from common CI system such as GitHub Actions, GitLab CI, Drone, Jenkins, Travis CI, and Circle CI. Defaults to 'false'
+	includeBuildSystem = true
+	// if includeBuildSystem is true, the given environment variables will be used to construct the build-system URL that will be included in the BOM. The dollar sign and curly braces (e.g. `${NAME}`) are required to specify an environment variable. Optional, defaults to `null`.
+	buildSystemEnvironmentVariable = '${CUSTOM_CI_URL}/jobs/${CUSTOM_JOB_ID}'
+	// Override component version. Defaults to the project version
+//	componentVersion = "2.0.0"
+	// Override component name. Defaults to the project name
+//	componentName = "my-component"
+}
+
+// https://github.com/spdx/spdx-gradle-plugin
+spdxSbom {
+	targets {
+		// create a target named "release",
+		// this is used for the task name (spdxSbomForRelease)
+		// and output file (release.spdx.json)
+
+		create("release") {
+			outputFile.set(layout.buildDirectory.file("reports/${project.name}-sbom-spdx.json"))
+			document {
+//				name.set("my spdx document")
+			}
+		}
+	}
+}
+
+tasks.register('generateSbom'){
+	dependsOn tasks.cyclonedxBom
+	dependsOn tasks.spdxSbom
+	doLast {
+		println "Finished writing sboms."
+	}
 }
 
 /**

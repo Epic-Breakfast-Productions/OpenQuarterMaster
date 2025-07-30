@@ -11,9 +11,16 @@ import java.util.List;
 @Data
 @Setter(AccessLevel.PRIVATE)
 @Builder
-public class OqmDbUpgradeResult {
+public class OqmDbUpgradeResult implements WasUpgraded {
 
 	private String dbName;
 	private Duration timeTaken;
 	private List<CollectionUpgradeResult> collectionUpgradeResults;
+	
+	@Override
+	public boolean wasUpgraded() {
+		return this.getCollectionUpgradeResults()
+				   .stream()
+				   .anyMatch(CollectionUpgradeResult::wasUpgraded);
+	}
 }

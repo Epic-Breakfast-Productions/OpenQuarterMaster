@@ -1,11 +1,11 @@
 plugins {
     id 'java'
     id 'io.quarkus'
-    id "io.freefair.lombok" version "8.12.1"
+    id "io.freefair.lombok" version "8.13.1"
 }
 
 group 'tech.ebp.openQuarterMaster'
-version '1.0.2'
+version '1.0.3'
 
 repositories {
     mavenCentral()
@@ -25,11 +25,11 @@ dependencies {
     implementation 'io.quarkus:quarkus-smallrye-health'
     implementation 'io.quarkus:quarkus-micrometer'
     implementation 'io.quarkus:quarkus-hibernate-validator'
-    implementation 'io.quarkus:quarkus-container-image-jib'
+    implementation 'io.quarkus:quarkus-container-image-docker'
     implementation 'io.quarkus:quarkus-arc'
 
-    implementation group: 'org.jsoup', name: 'jsoup', version: '1.18.3'
-    implementation 'io.quarkiverse.wiremock:quarkus-wiremock:1.4.1'
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.20.1'
+    implementation 'io.quarkiverse.wiremock:quarkus-wiremock:1.5.0'
 
 
     testImplementation 'io.quarkus:quarkus-junit5'

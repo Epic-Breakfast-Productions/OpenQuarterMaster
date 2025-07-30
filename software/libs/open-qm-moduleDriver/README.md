@@ -1,5 +1,11 @@
 # Open QuarterMaster Core Library
 
+
+THIS PARTICULAR PROJECT IS DEAD
+
+It is slated for removal. It is only here as a reference until we finish a couple of other small tasks. Please ignore this project
+
+
 ## TODOS:
 
 - Get deployable to Maven Central
