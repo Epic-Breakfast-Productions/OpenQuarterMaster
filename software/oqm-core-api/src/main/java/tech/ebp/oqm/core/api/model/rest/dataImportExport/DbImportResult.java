@@ -20,5 +20,11 @@ public class DbImportResult {
 	@lombok.Builder.Default
 	private long numInventoryItems = 0;
 	@lombok.Builder.Default
+	private long numStored = 0;
+	@lombok.Builder.Default
+	private long numTransactions = 0;
+	@lombok.Builder.Default
 	private long numItemLists = 0;
+	@lombok.Builder.Default
+	private long numItemCheckouts = 0;
 }

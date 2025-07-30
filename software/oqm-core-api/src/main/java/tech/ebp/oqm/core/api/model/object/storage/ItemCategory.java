@@ -10,6 +10,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.HasParent;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
@@ -24,6 +25,7 @@ import java.awt.*;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AllArgsConstructor
+@SuperBuilder(toBuilder = true)
 public class ItemCategory extends ImagedMainObject implements HasParent {
 	public static final int CUR_SCHEMA_VERSION = 1;
 	
@@ -35,10 +37,13 @@ public class ItemCategory extends ImagedMainObject implements HasParent {
 	
 	@NonNull
 	@NotNull
+	@lombok.Builder.Default
 	private String description = "";
-	
+
+	@lombok.Builder.Default
 	private Color color = null;
-	
+
+	@lombok.Builder.Default
 	private ObjectId parent = null;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)

@@ -17,6 +17,7 @@ public class Constants {
 	public static final String UNIT_ROOT_ENDPOINT = ROOT_API_ENDPOINT_V1 + "/unit";
 	public static final String STORAGE_BLOCK_ROOT_ENDPOINT = INV_DB_ROOT_ENDPOINT + "/inventory/storage-block";
 	public static final String INV_ITEM_ROOT_ENDPOINT = INV_DB_ROOT_ENDPOINT + "/inventory/item";
+	public static final String INV_ITEM_STORED_ROOT_ENDPOINT = INV_DB_ROOT_ENDPOINT + "/inventory/item/stored";
 	public static final String ITEM_CAT_ROOT_ENDPOINT = INV_DB_ROOT_ENDPOINT + "/inventory/item-category";
 	public static final String ITEM_CHECKOUT_ROOT_ENDPOINT = INV_DB_ROOT_ENDPOINT + "/inventory/item-checkout";
 	public static final String MEDIA_ROOT_ENDPOINT = INV_DB_ROOT_ENDPOINT + "/media";
