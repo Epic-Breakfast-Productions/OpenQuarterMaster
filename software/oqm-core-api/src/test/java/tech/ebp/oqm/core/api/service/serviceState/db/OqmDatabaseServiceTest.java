@@ -1,24 +1,16 @@
 package tech.ebp.oqm.core.api.service.serviceState.db;
 
-import com.google.common.base.Stopwatch;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.Arguments;
-import org.junit.jupiter.params.provider.MethodSource;
-import tech.ebp.oqm.core.api.service.PasswordService;
 import tech.ebp.oqm.core.api.testResources.testClasses.WebServerTest;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import static com.mongodb.client.model.Filters.eq;
 import static org.junit.jupiter.api.Assertions.*;
@@ -51,7 +43,7 @@ class OqmDatabaseServiceTest extends WebServerTest {
 		assertNotNull(newDatabaseId);
 
 		//test in list
-		OqmMongoDatabase databaseFromDb = databaseService.getCollection().find(eq("_id", newDatabaseId)).first();
+		OqmMongoDatabase databaseFromDb = databaseService.getTypedCollection().find(eq("_id", newDatabaseId)).first();
 
 		assertNotNull(databaseFromDb);
 		assertEquals(newDatabaseNew, databaseFromDb);

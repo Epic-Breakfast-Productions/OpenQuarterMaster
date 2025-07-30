@@ -10,9 +10,13 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 public class NotificationSettings {
-	
+
+	@lombok.Builder.Default
 	private boolean login = true;
-	
+
+	@lombok.Builder.Default
 	private boolean expiry = true;
+
+	@lombok.Builder.Default
 	private boolean expiryWarning = true;
 }
