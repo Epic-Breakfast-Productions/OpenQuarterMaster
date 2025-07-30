@@ -6,10 +6,7 @@ import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.ListAmountItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.SimpleAmountItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.TrackedItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.StorageType;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 
 import java.io.IOException;
@@ -26,7 +23,7 @@ public class InvItemCsvConverter {
 	public static final String[] CSV_HEADERS = {"name", "description", "storageType", "unit", "valuePerUnit", "barcode", "trackedItemId",  "storageBlock"};
 	public static final Character COMMENT_CHAR = '#';
 	
-	public List<InventoryItem<?, ?, ?>> csvIsToItems(InputStream is) throws IOException {
+	public List<InventoryItem> csvIsToItems(InputStream is) throws IOException {
 		throw new IllegalStateException("Not implemented yet");
 		//TODO:: 708 move to plugin
 //		List<InventoryItem<?, ?, ?>> output = new ArrayList<>();

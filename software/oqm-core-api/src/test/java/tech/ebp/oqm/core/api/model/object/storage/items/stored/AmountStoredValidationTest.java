@@ -5,6 +5,7 @@ import tech.ebp.oqm.core.api.model.testUtils.ObjectValidationTest;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.params.provider.Arguments;
 import tech.units.indriya.AbstractUnit;
+import tech.units.indriya.quantity.Quantities;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -16,15 +17,10 @@ class AmountStoredValidationTest extends ObjectValidationTest<AmountStored> {
 	
 	public static Stream<Arguments> getValid() {
 		return Stream.of(
-			Arguments.of(new AmountStored(OqmProvidedUnits.UNIT)),
-			Arguments.of(
-				new AmountStored(5, OqmProvidedUnits.UNIT)
-					.setCondition(50)
-					.setConditionNotes(FAKER.lorem().paragraph())
-					.setAttributes(Map.of("hello", "world"))
-					.setExpires(LocalDateTime.now())
-					.setKeywords(List.of("hello", "world"))
-					.setImageIds(List.of(ObjectId.get()))
+			Arguments.of(AmountStored.builder()
+				.item(new ObjectId())
+				.amount(Quantities.getQuantity(0, OqmProvidedUnits.UNIT))
+				.build()
 			)
 		);
 	}
@@ -32,19 +28,30 @@ class AmountStoredValidationTest extends ObjectValidationTest<AmountStored> {
 	public static Stream<Arguments> getInvalid() {
 		return Stream.of(
 			Arguments.of(
-				new AmountStored(OqmProvidedUnits.UNIT).setCondition(-1),
+				AmountStored.builder()
+					.item(new ObjectId())
+					.amount(Quantities.getQuantity(0, OqmProvidedUnits.UNIT))
+					.condition(-1)
+					.build(),
 				new HashMap<>() {{
 					put("condition", "must be greater than or equal to 0");
 				}}
 			),
 			Arguments.of(
-				new AmountStored(OqmProvidedUnits.UNIT).setCondition(101),
+				AmountStored.builder()
+					.item(new ObjectId())
+					.amount(Quantities.getQuantity(0, OqmProvidedUnits.UNIT))
+					.condition(101)
+					.build(),
 				new HashMap<>() {{
 					put("condition", "must be less than or equal to 100");
 				}}
 			),
 			Arguments.of(
-				new AmountStored(0.0, AbstractUnit.ONE),
+				AmountStored.builder()
+					.item(new ObjectId())
+					.amount(Quantities.getQuantity(0, AbstractUnit.ONE))
+					.build(),
 				new HashMap<>() {{
 					put("amount", "Invalid unit. \"one\" not applicable for item storage.");
 				}}
