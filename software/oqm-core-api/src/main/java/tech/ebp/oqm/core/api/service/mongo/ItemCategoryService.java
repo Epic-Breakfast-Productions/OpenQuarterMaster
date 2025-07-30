@@ -97,4 +97,9 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 		
 		return objsWithRefs;
 	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return ItemCategory.CUR_SCHEMA_VERSION;
+	}
 }

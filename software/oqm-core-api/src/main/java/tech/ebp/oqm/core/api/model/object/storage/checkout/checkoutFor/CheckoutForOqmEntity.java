@@ -7,6 +7,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 
@@ -15,6 +16,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
+@SuperBuilder(toBuilder = true)
 public class CheckoutForOqmEntity extends CheckoutFor {
 	
 	@NonNull
