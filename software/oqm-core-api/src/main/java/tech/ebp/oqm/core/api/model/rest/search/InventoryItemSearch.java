@@ -56,7 +56,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 		if(this.hasValue(this.getInStorageBlocks())){
 			filters.add(or(
 				this.getInStorageBlocks().stream().map((ObjectId storageBlockId) -> {
-					return exists("storageMap." + storageBlockId.toHexString());
+					return in("storageBlocks", storageBlockId);
 				}).toList()
 			));
 		}
