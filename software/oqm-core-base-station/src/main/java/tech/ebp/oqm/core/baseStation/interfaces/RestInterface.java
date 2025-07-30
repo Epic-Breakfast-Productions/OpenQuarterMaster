@@ -18,10 +18,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.interfaces.ui.pages.UiProvider;
 import tech.ebp.oqm.core.baseStation.model.UserInfo;
 import tech.ebp.oqm.core.baseStation.utils.JwtUtils;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmDatabaseService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 
 import java.util.Optional;
 
@@ -61,6 +63,10 @@ public abstract class RestInterface {
 	@Getter
 	@HeaderParam("x-forwarded-prefix")
 	Optional<String> forwardedPrefix;
+	
+	@Getter
+	@RestClient
+	OqmCoreApiClientService oqmCoreApiClient;
 
 	protected String getRootPrefix(){
 		return this.forwardedPrefix.orElse("");

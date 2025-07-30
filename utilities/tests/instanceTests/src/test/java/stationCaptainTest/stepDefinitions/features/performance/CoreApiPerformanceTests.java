@@ -107,7 +107,7 @@ public class CoreApiPerformanceTests extends BaseStepDefinitions {
 		AttachUtils.attach(performanceTestResult, "Performance Test Results", this.getScenario());
 		
 		for(PerformanceTestResult curResult : performanceTestResult){
-			assertEquals(0, curResult.getNumErrors());
+			assertEquals(0, curResult.getNumErrors(), "Had errors in the results.");
 		}
 	}
 	
