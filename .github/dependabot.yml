@@ -62,6 +62,19 @@ updates:
       - "area-dependencies"
       - "project-stationCaptain"
 #
+# Libraries
+#
+
+  # Core API Lib Quarkus
+  - package-ecosystem: "gradle"
+    directory: "/software/libs/core-api-lib-quarkus"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"
+    labels:
+      - "area-dependencies"
+
+#
 # Plugins
 #
 
