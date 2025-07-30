@@ -6,17 +6,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
-import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
-import tech.ebp.oqm.core.api.service.mongo.ItemCategoryService;
-import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
+import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
+import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.testResources.data.ItemCategoryTestObjectCreator;
-import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
-import tech.ebp.oqm.core.api.model.object.storage.items.SimpleAmountItem;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 
 import jakarta.inject.Inject;
@@ -113,9 +111,16 @@ class ItemCategoryServiceTest extends MongoHistoriedServiceTest<ItemCategory, It
 			expectedRefs.put(this.itemCategoryService.getClazz().getSimpleName(), new TreeSet<>(List.of(catId)));
 			
 			//Inventory item, basic
-			this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, new SimpleAmountItem().setName(FAKER.name().name()).setCategories(List.of(ObjectId.get())), testUser);
-			
-			SimpleAmountItem sai = (SimpleAmountItem) new SimpleAmountItem().setName(FAKER.name().name());
+			this.inventoryItemService.add(
+				DEFAULT_TEST_DB_NAME,
+				InventoryItem.builder()
+					.storageType(StorageType.BULK)
+					.name(FAKER.name().name())
+					.build(),
+				testUser
+			);
+
+			InventoryItem sai = InventoryItem.builder().name(FAKER.name().name()).storageType(StorageType.BULK).unit(OqmProvidedUnits.UNIT).build();
 			sai.setCategories(List.of(itemCategory.getId()));
 			ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, sai, testUser);
 			expectedRefs.put(this.inventoryItemService.getClazz().getSimpleName(), new TreeSet<>(List.of(itemId)));

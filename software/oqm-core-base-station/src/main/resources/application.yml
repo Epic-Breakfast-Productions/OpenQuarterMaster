@@ -64,6 +64,9 @@ ui:
   itemCheckout:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  itemsStored:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
 
 quarkus:
   application:
@@ -118,7 +121,7 @@ quarkus:
       enabled: true
   qute:
   oidc:
-    application-type: web_app
+    application-type: hybrid
     token-state-manager:
       split-tokens: true
     logout:
@@ -176,6 +179,8 @@ smallrye:
       credentials:
         secret: "**********"
     #      auth-server-url: http://localhost:8115/realms/oqm
+    oqmCoreApi:
+      refreshDbCacheFrequency: "30m"
 
   runningInfo:
     depotUri: "Hello World"
@@ -186,4 +191,4 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-    refreshDbCacheFrequency: "5m"
+
