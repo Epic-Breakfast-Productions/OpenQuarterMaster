@@ -24,8 +24,11 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("itemCategories") List<ObjectId> categories;
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
 	@QueryParam("hasExpired") Boolean hasExpired;
+	@QueryParam("hasNoExpired") Boolean hasNoExpired;
 	@QueryParam("hasExpiryWarn") Boolean hasExpiryWarn;
+	@QueryParam("hasNoExpiryWarn") Boolean hasNoExpiryWarn;
 	@QueryParam("hasLowStock") Boolean hasLowStock;
+	@QueryParam("hasNoLowStock") Boolean hasNoLowStock;
 	
 	//TODO:: object specific fields, add to bson filter list
 	
@@ -61,46 +64,46 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 			));
 		}
 		if(this.hasValue(this.getHasExpired())){
-			filters.add(
-				(this.getHasExpired()?
-					 ne(
-						 "numExpired",
-						 0
-					 ) :
-					 eq(
-						 "numExpired",
-						 0
-					 )
-				)
-			);
+			if(this.getHasExpired()){
+				filters.add(
+					gt("stats.numExpired", 0)
+				);
+			}
+		}
+		if(this.hasValue(this.getHasNoExpired())){
+			if(this.getHasNoExpired()){
+				filters.add(
+					eq("stats.numExpired", 0)
+				);
+			}
 		}
 		if(this.hasValue(this.getHasExpiryWarn())){
-			filters.add(
-				(this.getHasExpiryWarn()?
-					 ne(
-						 "numExpiryWarn",
-						 0
-					 ) :
-					 eq(
-						 "numExpiryWarn",
-						 0
-					 )
-				)
-			);
+			if(this.getHasExpiryWarn()){
+				filters.add(
+					gt("stats.numExpiryWarn", 0)
+				);
+			}
+		}
+		if(this.hasValue(this.getHasNoExpiryWarn())){
+			if(this.getHasNoExpiryWarn()){
+				filters.add(
+					eq("stats.numExpiryWarn", 0)
+				);
+			}
 		}
 		if(this.hasValue(this.getHasLowStock())){
-			filters.add(
-				(this.getHasLowStock()?
-					 ne(
-						 "numLowStock",
-						 0
-					 ) :
-					 eq(
-						 "numLowStock",
-						 0
-					 )
-				)
-			);
+			if(this.getHasLowStock()){
+				filters.add(
+					gt("stats.numLowStock", 0)
+				);
+			}
+		}
+		if(this.hasValue(this.getHasNoLowStock())){
+			if(this.getHasNoLowStock()){
+				filters.add(
+					eq("stats.numLowStock", 0)
+				);
+			}
 		}
 		
 		return filters;
