@@ -54,7 +54,7 @@ public class HealthSteps extends BaseStepDefinitions {
 	public void theResultOfTheHealthcheckShowsIsRunning(String serviceName) throws IOException {
 		HttpResponse<String> httpResponse = (HttpResponse<String>) this.getContext().getData().get("healthResponse");
 		
-		log.debug("scenario: {}", this.getScenario());
+		log.debug("http response: {}", httpResponse);
 		
 		AttachUtils.attach(httpResponse, "Health Check Response", this.getScenario());
 		

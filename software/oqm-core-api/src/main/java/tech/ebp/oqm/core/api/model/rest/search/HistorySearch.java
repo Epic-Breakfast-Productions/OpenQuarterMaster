@@ -33,14 +33,16 @@ public class HistorySearch extends SearchObject<ObjectHistoryEvent> {
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 		
-		filters.add(
-			eq(
-				"objectId",
-				this.getObjectId()
-			)
-		);
+		if(this.getObjectId() != null) {
+			filters.add(
+				eq(
+					"objectId",
+					this.getObjectId()
+				)
+			);
+		}
 		
-		if (eventTypes != null && !this.getEventTypes().isEmpty()) {
+		if (this.getEventTypes() != null && !this.getEventTypes().isEmpty()) {
 			filters.add(
 				or(
 					this.getEventTypes().stream().map(
@@ -49,7 +51,6 @@ public class HistorySearch extends SearchObject<ObjectHistoryEvent> {
 				)
 			);
 		}
-		
 		
 		return filters;
 	}

@@ -1,0 +1,20 @@
+{
+	"_id": {
+		"$oid": "687ef986af347d5c0a599105"
+	},
+	"_t": "tech.ebp.oqm.core.api.model.object.history.events.item.ItemCheckoutEvent",
+	"attributes": {},
+	"entity": {
+		"$oid": "683149e18d98ce4f7f8a581f"
+	},
+	"itemCheckoutId": {
+		"$oid": "687ef985af347d5c0a599103"
+	},
+	"keywords": [],
+	"objectId": {
+		"$oid": "683fce0b57d4bf214978f5d7"
+	},
+	"schemaVersion": 1,
+	"timestamp": "\"2025-07-22T02:37:58.04181435Z[UTC]\"",
+	"type": "ITEM_CHECKOUT"
+}

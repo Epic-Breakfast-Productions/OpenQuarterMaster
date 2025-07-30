@@ -28,7 +28,7 @@ public final class AttachUtils {
 		scenario.attach(response.statusCode()+"", "text/plain", title + " - status");
 		scenario.attach(response.headers().toString(), "text/plain", title + " - headers");
 		
-		String mimeType = response.headers().firstValue("content-type").get();
+		String mimeType = response.headers().firstValue("content-type").orElse("text/plain");
 		mimeType = mimeType.replace(" ", "");
 		mimeType = mimeType.split(";")[0];
 		

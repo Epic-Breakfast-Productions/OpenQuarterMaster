@@ -1,0 +1,42 @@
+{
+	"_id": {
+		"$oid": "687f045898a4ba733c4f39fa"
+	},
+	"_t": "tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent",
+	"attributes": {},
+	"description": "",
+	"entity": {
+		"$oid": "683149e18d98ce4f7f8a581f"
+	},
+	"fieldsUpdated": [
+		"name",
+		"description",
+		"barcode",
+		"storageType",
+		"expiryWarningThreshold",
+		"lowStockThreshold",
+		"categories",
+		"storageMap.683152b76260b642ff66d1ea.stored.storedType",
+		"storageMap.683152b76260b642ff66d1ea.stored.amount.unit.string",
+		"storageMap.683152b76260b642ff66d1ea.stored.amount.scale",
+		"storageMap.683152b76260b642ff66d1ea.stored.amount.value",
+		"storageMap.683152b76260b642ff66d1ea.stored.barcode",
+		"storageMap.683152b76260b642ff66d1ea.stored.condition",
+		"storageMap.683152b76260b642ff66d1ea.stored.conditionNotes",
+		"storageMap.683152b76260b642ff66d1ea.stored.expires",
+		"storageMap.683152b76260b642ff66d1ea.stored.keywords",
+		"storageMap.683152b76260b642ff66d1ea.stored.imageIds",
+		"attachedFiles",
+		"unit.string",
+		"valuePerUnit",
+		"keywords",
+		"imageIds"
+	],
+	"keywords": [],
+	"objectId": {
+		"$oid": "6835eaec9212b27e82cfbf98"
+	},
+	"schemaVersion": 1,
+	"timestamp": "\"2025-07-22T03:24:08.593816995Z[UTC]\"",
+	"type": "UPDATE"
+}

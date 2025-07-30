@@ -39,7 +39,7 @@
     {#let id=result.get("id").asText()}
       <tr class="align-middle">
         <td>
-          {#icons/interactingEntityType type=result.get("interactingEntityType").asText()}{/icons/interactingEntityType}
+          {#icons/interactingEntityType type=result.get("type").asText()}{/icons/interactingEntityType}
         </td>
         <td>{result.get("name").asText()}</td>
         {#if actionType == 'view'}
