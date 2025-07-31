@@ -1,0 +1,7 @@
+service:
+  core:
+    depot:
+#      imageTag:
+      service:
+        httpPort: 80
+        httpsPort: 443
