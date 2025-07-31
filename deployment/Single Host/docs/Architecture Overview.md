@@ -54,7 +54,7 @@ Listed here are the directories the system uses to facilitate running:
 | /etc/oqm/proxyConfig.d/  | Files used to configure the nginx proxy. More information available [here](../Infrastructure/nginx)                                          |
 | /etc/oqm/serviceConfig/  | Files for particular services to configure themselves. A mix of templates and full files used to set services up.                            |
 | /etc/oqm/snapshots/      | Scripts for facilitating taking snapshots. Intended to be the utilities specific to move the appropriate files during a snapshot or restore. |
-| /etc/oqm/ui.d/           | Files for relaying to [Depot](../../../software/oqm-depot) what front-end ui's exist to interact with. More info in that service.            |
+| /etc/oqm/ui.d/           | Files for relaying to [Depot](../../../software/core/oqm-depot) what front-end ui's exist to interact with. More info in that service.            |
 
 ## Management
 

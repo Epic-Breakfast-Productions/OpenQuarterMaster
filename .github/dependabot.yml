@@ -11,7 +11,7 @@ updates:
 
   # Core API
   - package-ecosystem: "gradle"
-    directory: "/software/oqm-core-api"
+    directory: "/software/core/oqm-core-api"
     target-branch: "dev"
     schedule:
       interval: "weekly"
@@ -20,7 +20,7 @@ updates:
       - "area-dependencies"
       - "project-baseStation"
   - package-ecosystem: "docker"
-    directory: "/software/oqm-core-api/src/main/docker"
+    directory: "/software/core/oqm-core-api/src/main/docker"
     target-branch: "dev"
     schedule:
       interval: "weekly"
@@ -31,7 +31,7 @@ updates:
 
   # Base Station
   - package-ecosystem: "gradle"
-    directory: "/software/oqm-core-base-station"
+    directory: "/software/core/oqm-core-base-station"
     target-branch: "dev"
     schedule:
       interval: "weekly"
