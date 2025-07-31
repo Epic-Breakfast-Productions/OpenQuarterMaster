@@ -41,7 +41,7 @@
 				</p>
 				<div class="row">
 					<div class="col">
-						{#storageBlock/blockTree parentBlocks=parentBlocks}{/storageBlock/blockTree}
+						{#storageBlock/blockTree parentBlocks=parentBlocks rootPrefix=rootPrefix}{/storageBlock/blockTree}
 					</div>
 				</div>
 			</div>
@@ -104,9 +104,9 @@
 		</div>
 	{/pageContent}
 	{#scripts}
-		<script src="/res/js/obj/getters.js"></script>
-		<script src="/res/js/obj/units.js"></script>
-		<script src="/res/js/pageComponents.js"></script>
+		<script src="{rootPrefix}/res/js/obj/getters.js"></script>
+		<script src="{rootPrefix}/res/js/obj/units.js"></script>
+		<script src="{rootPrefix}/res/js/pageComponents.js"></script>
 	{/scripts}
 	{#pageScript}
 		<script>
@@ -132,16 +132,21 @@
 						'</h2>'+
 						'<div id="'+accordItemCollapseId+'" class="accordion-collapse collapse" aria-labelledby="'+accordItemHeaderId+'" data-bs-parent="#'+accordId+'">'+
 						'<div class="accordion-body" id="'+accordItemContentId+'">'+
-						'Loading...'+//TODO
+						'Loading...'+
 						'</div>'+
 						'</div>'+
 						'</div>');
 
 					let accordButt = curAccord.find(".accordion-button");
+					let blockStats = invItem.stats.storageBlockStats[parentId];
+					let blockTotal = invItem.stats.storageBlockStats[parentId] == null?
+						UnitUtils.getQuantityObj(0, invItem.unit) :
+						blockStats.total
+					;
 
 					accordButt.append(
 						$('<img class="accordion-thumb" src="'+Rest.passRoot+'/media/image/for/item/'+invItem.id+'" alt="">'),
-						$('<span></span>').text(invItem.name + " - " + UnitUtils.quantityToDisplayStr(invItem.storageMap[parentId].total))
+						$('<span></span>').text(invItem.name + " - " + UnitUtils.quantityToDisplayStr(blockTotal))
 					);
 					
 					accordion = accordion.append(curAccord);

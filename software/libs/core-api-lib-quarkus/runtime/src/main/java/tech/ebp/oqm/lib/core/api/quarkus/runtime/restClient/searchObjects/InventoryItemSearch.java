@@ -20,6 +20,9 @@ public class InventoryItemSearch extends SearchKeyAttObject {
 	@QueryParam("itemCategories") List<String> categories;
 	@QueryParam("inStorageBlock") List<String> inStorageBlocks;
 	@QueryParam("hasExpired") Boolean hasExpired;
+	@QueryParam("hasNoExpired") Boolean hasNoExpired;
 	@QueryParam("hasExpiryWarn") Boolean hasExpiryWarn;
+	@QueryParam("hasNoExpiryWarn") Boolean hasNoExpiryWarn;
 	@QueryParam("hasLowStock") Boolean hasLowStock;
+	@QueryParam("hasNoLowStock") Boolean hasNoLowStock;
 }

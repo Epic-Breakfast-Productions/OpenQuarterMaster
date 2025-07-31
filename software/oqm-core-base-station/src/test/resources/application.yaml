@@ -7,11 +7,6 @@ quarkus:
     info-title: Open QuarterMaster Base Station API (TEST)
   http:
     port: 8081
-  oqmCoreApi:
-    refreshDbCacheFrequency: "5m"
-    devservice:
-      certPath: dev/devTest-cert-cert.pem
-      certKeyPath: dev/devTest-cert-key.pem
   oidc:
     client-id: oqm-app
     credentials:
@@ -19,16 +14,12 @@ quarkus:
   #      auth-server-url: http://localhost:8115/realms/oqm
   keycloak:
     devservices:
-      # Required to export realm
-      start-command: "start-dev --http-enabled=true --hostname-strict=false --hostname-strict-https=false --https-certificate-file=/opt/keycloak/certs/devTest-cert-cert.pem --https-certificate-key-file=/opt/keycloak/certs/devTest-cert-key.pem"
       realm-path: "dev/oqm-realm.json"
-      realm-name: "oqm"
-      resource-aliases:
-        systemCert: dev/devTest-cert-cert.pem
-        systemCertKey: dev/devTest-cert-key.pem
-      resource-mappings:
-        systemCert: /opt/keycloak/certs/devTest-cert-cert.pem
-        systemCertKey: /opt/keycloak/certs/devTest-cert-key.pem
+
+oqm.core.api:
+  caching:
+    oqmDatabase:
+      refreshFrequencyEvery: "5m"
 
 runningInfo:
   depotUri: "Hello World"

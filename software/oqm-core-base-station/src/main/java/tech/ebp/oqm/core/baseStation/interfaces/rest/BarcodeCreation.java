@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.baseStation.interfaces.rest;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -31,7 +32,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientServ
 @Path("/api/media/code")
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
 @RolesAllowed(Roles.INVENTORY_VIEW)
-@ApplicationScoped
+@RequestScoped
 public class BarcodeCreation extends ApiProvider {
 	
 	@Inject
@@ -41,7 +42,7 @@ public class BarcodeCreation extends ApiProvider {
 	
 	@ConfigProperty(name = "runningInfo.baseUrl")
 	String selfBaseUrl;
-	@ConfigProperty(name = "quarkus.oqmCoreApi.coreApiBaseUri")
+	@ConfigProperty(name = "oqm.core.api.baseUri")
 	String apiUri;
 	
 	private Response getBarcodeResponse(

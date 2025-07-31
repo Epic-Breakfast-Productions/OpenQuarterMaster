@@ -16,6 +16,7 @@ After=docker.service
 Wants=network-online.target
 Requires=docker.socket
 Requires=oqm-infra-keycloak.service
+After=oqm-infra-keycloak.service
 
 [Service]
 Type=simple

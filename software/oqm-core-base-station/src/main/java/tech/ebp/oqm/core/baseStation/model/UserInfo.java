@@ -8,11 +8,13 @@ import lombok.NoArgsConstructor;
 import java.util.Set;
 
 @Data
-@Builder
+@Builder(toBuilder = true)
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfo {
+	
 	private String id;
+	private String authId;
 	private String name;
 	private String username;
 	private String email;

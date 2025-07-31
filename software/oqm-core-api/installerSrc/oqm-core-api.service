@@ -14,7 +14,9 @@ Wants=oqm-infra-kafka.service
 Wants=oqm-infra-kafka_red_panda.service
 Requires=docker.socket
 Requires=oqm-infra-mongodb.service
+After=oqm-infra-mongodb.service
 Requires=oqm-infra-keycloak.service
+After=oqm-infra-keycloak.service
 
 [Service]
 Type=simple
@@ -29,18 +31,16 @@ Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/core/api/core-api-config.li
 Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/core/api/user-config.list"
 Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/core/api/user-config.list"
 
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
-ExecStartPre=/bin/bash -c "oqm-captain --ensure-certs-present"
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
+ExecStartPre=/bin/bash -c "oqm-captain certs ensure-system-present"
 # Ensure previous runs gone
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop core api container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove core api container'"
 ExecStartPre=/bin/bash -c "/etc/oqm/accountScripts/mongo-assert-account.sh -u \"$(oqm-config -g 'core.api.mongodb.user')\" -p \"$(oqm-config -g 'core.api.mongodb.pass')\" -d \"$(oqm-config -g 'core.api.mongodb.database')\""
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.privateKey)\" /etc/oqm/serviceConfig/core/api/files/privateKey.pem"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.systemCert)\" /etc/oqm/serviceConfig/core/api/files/publicCert.pem"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.certs.keystore)\" /etc/oqm/serviceConfig/core/api/files/keystore.p12"
+ExecStartPre=/bin/bash -c "oqm-captain certs write-internal $CONTAINER_NAME /etc/oqm/serviceConfig/core/api/files/"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.CARootCert)\" /etc/oqm/serviceConfig/core/api/files/systemCA.crt"
 
 # Create filled out configuration
-ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t /etc/oqm/static/core/api/uiEntry.json > /etc/oqm/ui.d/core-api.json"
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/api/"
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"
@@ -52,11 +52,10 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --network=oqm-internal \
-                                        -p $(oqm-config -g core.api.httpPort):80 \
-                                        -p $(oqm-config -g core.api.httpsPort):443 \
                                         -v /etc/oqm/serviceConfig/core/api/files:/etc/oqm/serviceConfig/core/api/files:ro \
                                         --add-host $(oqm-config -g system.hostname):host-gateway \
                                         --env-file $MAIN_CONFIG_FILE \
+                                        --env-file $USER_CONFIG_FILE \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up
 ExecStartPost=/bin/bash -c "running=\"false\"; \
@@ -75,8 +74,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             done; \
                             "
 ExecStartPost=/bin/bash -c "running=\"false\"; \
-                            hostname=\"$(oqm-config -g system.hostname)\"; \
-                            port=\"$(oqm-config -g core.api.httpsPort)\"; \
+                            healthUri=\"$(oqm-config -g core.api.internalBaseUri)/q/health\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
@@ -84,7 +82,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                hcGet=\"$(/usr/bin/curl \"https://$hostname:$port/q/health\")\"; \
+                                hcGet=\"$(docker run --rm --name oqm-core-api-hc --network=oqm-internal docker.io/curlimages/curl:latest $healthUri -k)\"; \
                                 echo \"Health check get: $hcGet\"; \
                                 status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
                                 echo \"Status: $status\"; \

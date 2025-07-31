@@ -5,9 +5,9 @@ from ServiceUtils import *
 import docker
 from LogUtils import *
 
-log = LogUtils.setupLogger(__name__)
 
 class OtherUtils:
+    log = LogUtils.setupLogger("OtherUtils")
 
     @staticmethod
     def human_size(numBytes: int, units=None):
@@ -16,5 +16,7 @@ class OtherUtils:
         https://stackoverflow.com/questions/1094841/get-human-readable-version-of-file-size
         """
         if units is None:
-            units = [' bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB']
+            units = ['B', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB']
+        if not units:
+            return f"{numBytes}B"
         return str(numBytes) + units[0] if numBytes < 1024 else OtherUtils.human_size(numBytes >> 10, units[1:])

@@ -3,12 +3,14 @@ package tech.ebp.oqm.core.baseStation.interfaces;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.opentelemetry.api.trace.Span;
 import io.quarkus.oidc.IdToken;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.groups.UniJoin;
 import jakarta.annotation.PostConstruct;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.CookieParam;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.SecurityContext;
 import lombok.AccessLevel;
@@ -16,10 +18,14 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.interfaces.ui.pages.UiProvider;
 import tech.ebp.oqm.core.baseStation.model.UserInfo;
 import tech.ebp.oqm.core.baseStation.utils.JwtUtils;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmDatabaseService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
+
+import java.util.Optional;
 
 @Slf4j
 @NoArgsConstructor
@@ -53,6 +59,18 @@ public abstract class RestInterface {
 
 	@Getter(AccessLevel.PROTECTED)
 	ArrayNode oqmDatabases;
+
+	@Getter
+	@HeaderParam("x-forwarded-prefix")
+	Optional<String> forwardedPrefix;
+	
+	@Getter
+	@RestClient
+	OqmCoreApiClientService oqmCoreApiClient;
+
+	protected String getRootPrefix(){
+		return this.forwardedPrefix.orElse("");
+	}
 
 	protected boolean hasIdToken() {
 		return this.getIdToken() != null &&

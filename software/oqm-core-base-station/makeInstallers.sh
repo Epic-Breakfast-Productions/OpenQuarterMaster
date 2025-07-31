@@ -39,14 +39,15 @@ mkdir -p "$buildDir"
 mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
-mkdir -p "$buildDir/$debDir/etc/oqm/static/core/base-station/"
+mkdir -p "$buildDir/$debDir/etc/oqm/static/media/core/base-station/"
 mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
 mkdir -p "$buildDir/$debDir/etc/oqm/config/configs/"
 mkdir -p "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 mkdir -p "$buildDir/$debDir/etc/oqm/kcClients/"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 
-install -m 755 -D "$srcDir/uiEntry.json" "$buildDir/$debDir/etc/oqm/static/core/base-station/"
+install -m 755 -D "$srcDir/core-base-station.svg" "$buildDir/$debDir/etc/oqm/static/media/core/base-station/"
+install -m 755 -D "$srcDir/uiEntry.json" "$buildDir/$debDir/etc/oqm/ui.d/oqm-core-base-station.json"
 install -m 755 -D "$srcDir/base-station-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
 install -m 755 -D "$srcDir/20-baseStation.json" "$buildDir/$debDir/etc/oqm/config/configs/"
 install -m 755 -D "$srcDir/oqm-base-station.desktop" "$buildDir/$debDir/usr/share/applications/"
@@ -97,6 +98,8 @@ if [ ! -f "/etc/oqm/serviceConfig/core/base+station/user-config.list" ]; then
 # Configuration here will override those in base-station-config.list
 # Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/open-qm-base-station/docs/BuildingAndDeployment.adoc
 
+#quarkus.log.level=DEBUG
+#quarkus.oqmCoreAPi.refreshDbCacheFrequency=600s
 
 EOF
 fi
@@ -107,8 +110,6 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postinst"
 #!/bin/bash
 
 systemctl daemon-reload
-# restart proxy after we add config
-#systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 systemctl enable "$serviceFileEscaped"
 systemctl start "$serviceFileEscaped"
 EOT
@@ -139,7 +140,6 @@ if [ $( docker ps -a | grep oqm-core-base_station | wc -l ) -gt 0 ]; then
 else
         echo "Docker container was already gone."
 fi
-#systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postrm"

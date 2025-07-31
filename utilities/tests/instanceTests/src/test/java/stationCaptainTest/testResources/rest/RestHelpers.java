@@ -58,7 +58,7 @@ public class RestHelpers {
 		
 		byte[] postData = "grant_type=client_credentials".getBytes(StandardCharsets.UTF_8);
 		HttpRequest request = HttpRequest.newBuilder()
-								  .uri(ConfigReader.getTestRunConfig().getInstance().getUri(ConfigReader.getTestRunConfig().getInstance().getKeycloakPort(), "/realms/oqm/protocol/openid-connect/token"))
+								  .uri(ConfigReader.getTestRunConfig().getInstance().getUri("/infra/keycloak", "/realms/oqm/protocol/openid-connect/token"))
 								  .header("Authorization", authStr)
 								  .header("Content-Type", "application/x-www-form-urlencoded")
 								  .POST(HttpRequest.BodyPublishers.ofByteArray(postData))

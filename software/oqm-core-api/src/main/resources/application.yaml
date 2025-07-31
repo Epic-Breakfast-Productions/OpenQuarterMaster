@@ -30,7 +30,7 @@ service:
       enabled: true
       height: 500
       width: ${service.image.resizing.height}
-      savedType: "PNG"
+      savedType: "png"
   dbs:
     ifNone:
       create: true
@@ -117,18 +117,19 @@ quarkus:
     from: ${runningInfo.fromEmail}
   reactive-messaging:
     health:
-      enabled: false
+      enabled: true
     metrics:
       enabled: true
 
-#mp:
-#  messaging:
-#    outgoing:
-#      events-outgoing:
-#        connector: smallrye-kafka
-#        broadcast: true
-#        value:
-#          serializer: io.quarkus.kafka.client.serialization.ObjectMapperSerializer
+mp:
+  messaging:
+    outgoing:
+      events-outgoing:
+        enabled: true
+        connector: smallrye-kafka
+        broadcast: true
+        value:
+          serializer: io.quarkus.kafka.client.serialization.ObjectMapperSerializer
 
 smallrye:
   jwt:

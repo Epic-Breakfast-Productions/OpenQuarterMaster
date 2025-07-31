@@ -16,7 +16,7 @@
 			<div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
 						 aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
 				<div class="accordion-body">
-					{#search/itemCheckout/searchForm id='mainPageSearch'}
+					{#search/itemCheckout/searchForm id='mainPageSearch' rootPrefix=rootPrefix}
 					{/search/itemCheckout/searchForm}
 				</div>
 			</div>
@@ -26,7 +26,7 @@
 <div class="row">
 	<div class="col table-responsive">
 		<table class=" table table-bordered table-striped table-hover table-sm">
-			{#search/itemCheckout/searchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' showItem=true}
+			{#search/itemCheckout/searchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' showItem=true rootPrefix=rootPrefix}
 			{/search/itemCheckout/searchResults}
 		</table>
 	</div>
@@ -35,29 +35,39 @@
 
 {/pageContent}
 {#modals}
-	{#search/storage/searchSelectModal otherModalId=""}
-	{/search/storage/searchSelectModal}
-	{#itemCheckout/viewModal}
-	{/itemCheckout/viewModal}
-	{#search/item/itemSearchSelectModal otherModalId=""}
-	{/search/item/itemSearchSelectModal}
-	{#itemCheckout/itemCheckinModal}
-	{/itemCheckout/itemCheckinModal}
+	{#search/storage/searchSelectModal otherModalId="" rootPrefix=rootPrefix /}
+	{#itemCheckout/viewModal /}
+	{#search/item/itemSearchSelectModal otherModalId="" rootPrefix=rootPrefix /}
+	{#itemStored/transaction/checkinTransactionModal /}
+	{#search/itemStored/itemStoredSearchSelectModal rootPrefix=rootPrefix /}
+	{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
+	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal" /}
+	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal' /}
+	
 {/modals}
 {#scripts}
-<script src="/res/js/entityRef.js"></script>
-<script src="/res/js/carousel.js"></script>
-<script src="/res/js/search.js"></script>
-<script src="/res/js/textCopy.js"></script>
-<script src="/res/js/obj/getters.js"></script>
-<script src="/res/js/historySearch.js"></script>
-<script src="/res/js/obj/objView.js"></script>
-<script src="/res/js/obj/item/storedView.js"></script>
-<script src="/res/js/obj/itemCheckout/itemCheckin.js"></script>
-<script src="/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
-<script src="/res/js/obj/objEdit.js"></script>
-<script src="/res/js/obj/item/itemSearchSelect.js"></script>
-<script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+	<script src="{rootPrefix}/res/js/entityRef.js"></script>
+	<script src="{rootPrefix}/res/js/carousel.js"></script>
+	<script src="{rootPrefix}/res/js/search.js"></script>
+	<script src="{rootPrefix}/res/js/textCopy.js"></script>
+	<script src="{rootPrefix}/res/js/obj/getters.js"></script>
+	<script src="{rootPrefix}/res/js/historySearch.js"></script>
+	<script src="{rootPrefix}/res/js/obj/objView.js"></script>
+	<script src="{rootPrefix}/res/js/obj/units.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearchSelect.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutSearchSelect.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
+	<script src="{rootPrefix}/res/js/storedTypeUtils.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemStored/storedView.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
+	<script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
+	<script src="{rootPrefix}/res/js/obj/item/itemSearchSelect.js"></script>
+	<script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredTransaction.js"></script>
+	<script src="{rootPrefix}/res/js/modalHelpers.js"></script>
 {/scripts}
 {#pageScript}
     <script>

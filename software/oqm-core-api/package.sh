@@ -44,13 +44,14 @@ helm package helm/ --app-version $appVersion --version $appVersion -d $buildDir
 mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
-mkdir -p "$buildDir/$debDir/etc/oqm/static/core/api/"
+mkdir -p "$buildDir/$debDir/etc/oqm/static/media/core/api/"
 mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/core/api/"
 mkdir -p "$buildDir/$debDir/etc/oqm/config/configs/"
 mkdir -p "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 
-install -m 755 -D "$srcDir/uiEntry.json" "$buildDir/$debDir/etc/oqm/static/core/api/"
+install -m 755 -D "$srcDir/core-api.svg" "$buildDir/$debDir/etc/oqm/static/media/core/api/core-api.svg"
+install -m 755 -D "$srcDir/uiEntry.json" "$buildDir/$debDir/etc/oqm/ui.d/oqm-core-api.json"
 install -m 755 -D "$srcDir/core-api-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/core/api/"
 install -m 755 -D "$srcDir/20-coreApi.json" "$buildDir/$debDir/etc/oqm/config/configs/"
 install -m 755 -D "$srcDir/core-api-proxy-config.json" "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
@@ -98,6 +99,7 @@ if [ ! -f "/etc/oqm/serviceConfig/core/api/user-config.list" ]; then
 # Configuration here will override those in core-api-config.list
 # Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/oqm-core-api/docs/BuildingAndDeployment.adoc
 
+# quarkus.log.level=DEBUG
 
 EOF
 fi
@@ -139,7 +141,6 @@ if [ $( docker ps -a | grep oqm-core-api | wc -l ) -gt 0 ]; then
 else
         echo "Docker container was already gone."
 fi
-#systemctl restart "open\\x2bquarter\\x2bmaster\\x2dinfra\\x2dnginx.service"
 
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postrm"

@@ -5,6 +5,7 @@ import io.quarkus.scheduler.Scheduled;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperties;
@@ -20,6 +21,7 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * Maybe move to core api extension?
  */
+@Named("OqmDatabaseService")
 @Slf4j
 @ApplicationScoped
 public class OqmDatabaseService {
@@ -50,7 +52,7 @@ public class OqmDatabaseService {
 	}
 
 	//TODO:: instead of this, watch for message? Both?
-	@Scheduled(every = "{quarkus." + Constants.CONFIG_ROOT_NAME + ".refreshDbCacheFrequency}")
+	@Scheduled(every = "{" + Constants.CONFIG_ROOT_NAME + ".caching.oqmDatabase.refreshFrequencyEvery}")
 	public void refreshCache(){
 		if(!enabled){
 			return;

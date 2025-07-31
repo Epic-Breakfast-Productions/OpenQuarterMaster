@@ -1,0 +1,126 @@
+import java.nio.file.Files
+
+plugins {
+	id 'java'
+	id 'io.quarkus'
+}
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+dependencies {
+	implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+	implementation 'io.quarkus:quarkus-rest'
+	implementation 'io.quarkus:quarkus-mongodb-client'
+	implementation 'io.quarkus:quarkus-hibernate-validator'
+	implementation 'io.quarkus:quarkus-qute'
+	implementation 'io.quarkus:quarkus-rest-qute'
+	implementation 'io.quarkus:quarkus-rest-jackson'
+	implementation 'io.quarkus:quarkus-messaging-kafka'
+	implementation 'io.quarkus:quarkus-config-yaml'
+	implementation 'io.quarkus:quarkus-arc'
+	testImplementation 'io.quarkus:quarkus-junit5'
+	testImplementation 'io.rest-assured:rest-assured'
+}
+
+group 'tech.ebp.oqm.plugin'
+version '1.0.0-SNAPSHOT'
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+	project.tasks.build.dependsOn("downloadModels")
+}
+
+test {
+	systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
+compileJava {
+	options.encoding = 'UTF-8'
+	options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+	options.encoding = 'UTF-8'
+}
+
+/**
+ * This task ensures that the required model files are present in the project resources.
+ *
+ * Given these files can be large, we don't want them in source control. But we also don't want to make the end user download them.
+ *
+ * So they are downloaded at build time into the resources directory, but not checked in.
+ */
+class DownloadModelsTask extends DefaultTask {
+	private final models = [
+		resnetV2: new URI("https://www.kaggle.com/api/v1/models/google/resnet-v2/tensorFlow2/152-feature-vector/2/download")
+	]
+	private final java.nio.file.Path destinationDir = java.nio.file.Path.of(project.projectDir.toString(), "/src/main/resources/models/");
+
+	@TaskAction
+	void action() {
+		getLogger().debug("Ensuring models are downloaded.")
+		for (modelName in this.models.keySet()) {
+			getLogger().debug("Ensuring model {} is downloaded.", modelName)
+
+			def modelDir = this.destinationDir.resolve(modelName);
+			def modelSuccessFlag = modelDir.resolve("success");
+
+			if(Files.exists(modelDir) && Files.exists(modelSuccessFlag)){
+				getLogger().debug("Model {} is already downloaded.", modelName)
+				continue;
+			}
+
+			getLogger().info("Model {} needs to be downloaded.", modelName)
+			def modelUrl = this.models[modelName]
+			def modelTar = modelDir.resolve("download.tar.gz")
+			def unpacked = modelDir.resolve("unpacked")
+			try{
+				if(!Files.exists(modelDir)) {
+					Files.createDirectory(modelDir)
+				}
+
+				modelUrl.toURL().withInputStream{ i -> modelTar.toFile().withOutputStream{ it << i }}
+
+				project.copy {
+					from project.tarTree(modelTar.toString())
+					into modelDir.toString()
+				}
+
+				Files.createFile(modelSuccessFlag);
+				getLogger().info("Model {} successfully downloaded.", modelName)
+			} catch (Exception e){
+				getLogger().error("FAILED to download files for model {}: ", modelName, e)
+				throw e;
+			} finally {
+				if(Files.exists(modelTar)){
+					Files.delete(modelTar)
+				}
+			}
+		}
+		getLogger().debug("DONE ensuring models are downloaded.")
+	}
+}
+
+tasks.register("downloadModels", DownloadModelsTask) {
+	group = "build"
+	description = "Downloads models before build to ensure presence."
+}
+build {
+	mustRunAfter("downloadModels")
+}
+
+tasks.build.configure { dependsOn(tasks.downloadModels) }
+
+/**
+ * Used to print the current version of this project.
+ *
+ * Used by the `makeInstallers.sh` script to get the version.
+ */
+tasks.register('printVersion') {
+	doLast {
+		println project.version
+	}
+}

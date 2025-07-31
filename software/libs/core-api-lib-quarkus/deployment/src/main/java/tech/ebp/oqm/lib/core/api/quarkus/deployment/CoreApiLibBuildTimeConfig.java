@@ -1,34 +1,81 @@
 package tech.ebp.oqm.lib.core.api.quarkus.deployment;
 
-import io.quarkus.runtime.annotations.ConfigGroup;
-import io.quarkus.runtime.annotations.ConfigItem;
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 
-import java.io.File;
-import java.util.Optional;
-
-@ConfigRoot(name= Constants.CONFIG_ROOT_NAME, phase= ConfigPhase.BUILD_TIME)
-public class CoreApiLibBuildTimeConfig {
+@ConfigMapping(prefix = Constants.CONFIG_ROOT_NAME, namingStrategy = ConfigMapping.NamingStrategy.VERBATIM)
+@ConfigRoot(phase = ConfigPhase.BUILD_TIME)
+public interface CoreApiLibBuildTimeConfig {
+	
 	/**
-	 * Whether a health check is published in case the smallrye-health extension is present.
+	 * Configuring health options
 	 */
-	@ConfigItem(name = "health.enabled", defaultValue = "true")
-	public boolean healthEnabled;
+	HealthConfig health();
 	
 	/**
 	 * Whether metrics are published in case a metrics extension is present.
 	 */
-	@ConfigItem(name = "metrics.enabled")
-	public boolean metricsEnabled;
+	@WithDefault("true")
+	MetricsConfig metrics();
 	
 	/**
 	 * Config to manage the devservice stood up.
-	 * @return
 	 */
-	@ConfigItem(name="devservice")
-	public CoreApiLibDevserviceConfig devservice;
+	DevserviceConfig devservice();
+	
+	interface HealthConfig {
+		
+		/**
+		 * Whether a health check is published in case the smallrye-health extension is present.
+		 */
+		@WithDefault("true")
+		boolean enabled();
+	}
+	
+	interface MetricsConfig {
+		
+		/**
+		 * Whether a health check is published in case the smallrye-health extension is present.
+		 */
+		@WithDefault("true")
+		boolean enabled();
+	}
+	
+	interface DevserviceConfig {
+		
+		/**
+		 * Enable devservices
+		 */
+		@WithDefault("true")
+		boolean enable();
+		
+		/**
+		 * The version/ tag of the core api container image
+		 */
+		@WithDefault("3.0.0")
+		String coreApiVersion();
+		
+		/**
+		 * Configuration for connecting to keycloak devservice setup by consuming service
+		 */
+		KeycloakConfig keycloak();
+		
+		interface KeycloakConfig{
+			
+			/**
+			 * The port of keycloak to look for
+			 */
+			@WithDefault("${quarkus.keycloak.devservices.port:9328}")
+			Integer port();
+			
+			/**
+			 * Realm we are using in keycloak
+			 */
+			@WithDefault("${quarkus.keycloak.devservices.realm-name:oqm}")
+			String realm();
+		}
+	}
 }

@@ -1,18 +1,21 @@
 {#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Items' page='items'}
 {!{@java.util.Map allowedUnitsMap}!}
 {#styleSheets}
-    <link rel="stylesheet" href="/lib/Croppie-2.6.4/croppie.css"/>
+    <link rel="stylesheet" href="{rootPrefix}/lib/Croppie-2.6.4/croppie.css"/>
 {/styleSheets}
 {#pageContent}
 <div class="row">
     <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditItemModal"
+        <button type="button" id="mainAddButton" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditItemModal"
                 onclick="ItemAddEdit.setupAddEditForAdd();">{#icons/add}{/icons/add} Add Item
         </button>
     </div>
     <div class="col d-grid gap-2">
         <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemFromFileModal">{#icons/addFile}{/icons/addFile} Add Item(s) from file
         </button>
+    </div>
+    <div class="col d-grid gap-2">
+        {#itemStored/transaction/buttons/transactionDropdown dropdownStyles="width:100%;" checkinButton=false /}
     </div>
     <!--
     <div class="col d-grid gap-2">
@@ -35,7 +38,7 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/item/itemSearchForm id='mainPageSearch'}
+                    {#search/item/itemSearchForm id='mainPageSearch' rootPrefix=rootPrefix}
                     {/search/item/itemSearchForm}
                 </div>
             </div>
@@ -43,9 +46,9 @@
     </div>
 </div>
 <div class="row">
-    <div class="col table-responsive">
-        <table class=" table table-bordered table-striped table-hover table-sm">
-            {#search/item/itemSearchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch'}
+    <div class="col">
+        <table id="mainPageSearchResults" class="table table-bordered table-striped table-hover table-sm">
+            {#search/item/itemSearchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' rootPrefix=rootPrefix}
             {/search/item/itemSearchResults}
         </table>
     </div>
@@ -54,7 +57,7 @@
 {/search/image/imageSelectFormInputHidden}
 {/pageContent}
 {#modals}
-    {#objView/itemViewModal currency=currency}
+    {#objView/itemViewModal currency=currency  rootPrefix=rootPrefix}
         {#footerButtons}
             <button type="button" id="itemViewEditButton" class="btn btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" >
                 {#icons/edit}{/icons/edit}
@@ -62,76 +65,85 @@
             </button>
         {/footerButtons}
     {/objView/itemViewModal}
-	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency}{/itemAddEditModal}
-	{#itemStoredAddSubTransferModal}{/itemStoredAddSubTransferModal}
-{#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
-    {#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}
-    <div class="row">
-        <div class="col" id="addItemFromFileFormMessages">
-        </div>
-    </div>
-    <!-- TODO:: point to docs on how to do this -->
-    <div class="row">
-        <div class="col">
-            <form id="addItemFromFileForm">
-                <div class="col-12 mb-3">
-                    <label for="importBulkFileInput" class="form-label">
-                        <a href="/api/passthrough/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
-                        or {#icons/fileJson}{/icons/fileJson} JSON file:
-                    </label>
-                    <input class="form-control" type="file" id="addFromFileInput" name="file" accept="text/csv,application/json" required>
-                </div>
-            </form>
-        </div>
-    </div>
-{/modal}
-{#search/storage/searchSelectModal otherModalId="addEditItemModal"}
-{/search/storage/searchSelectModal}
-{#search/image/imageSearchSelectModal otherModalId="addEditItemModal"}
-{/search/image/imageSearchSelectModal}
-{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal"}
-{/itemCheckout/itemCheckoutModal}
-{#CodeScannerModal}{/CodeScannerModal}
-	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal"}
-	{/fileAttachment/FileAttachmentSearchSelectModal}
-	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal'}
-	{/fileAttachment/FileAttachmentViewModal}
+	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency /}
+	{#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
+		{#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}
+		<div class="row">
+			<div class="col" id="addItemFromFileFormMessages">
+			</div>
+		</div>
+		<!-- TODO:: point to docs on how to do this -->
+		<div class="row">
+			<div class="col">
+				<form id="addItemFromFileForm">
+					<div class="col-12 mb-3">
+						<label for="importBulkFileInput" class="form-label">
+							<a href="{rootPrefix}/api/passthrough/templates/itemsCsv" target="_blank" title="Get CSV Template file">{#icons/fileCsv}{/icons/fileCsv} CSV</a>,
+							or {#icons/fileJson}{/icons/fileJson} JSON file:
+						</label>
+						<input class="form-control" type="file" id="addFromFileInput" name="file" accept="text/csv,application/json" required>
+					</div>
+				</form>
+			</div>
+		</div>
+	{/modal}
+	{#search/storage/searchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
+	{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
+	{#search/item/itemSearchSelectModal rootPrefix=rootPrefix /}
+	{#search/itemStored/itemStoredSearchSelectModal rootPrefix=rootPrefix /}
+	{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal" rootPrefix=rootPrefix /}
+	{#itemStored/itemStoredViewModal rootPrefix=rootPrefix /}
+	{#itemStored/itemStoredEditModal rootPrefix=rootPrefix /}
+	{#itemStored/transaction/allTransactionModals /}
+	{#CodeScannerModal /}
+	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal" /}
+	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal' /}
 {/modals}
 
 {#scripts}
-    <script src="/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-    <script src="/lib/Croppie-2.6.4/croppie.min.js"></script>
-    <script src="/res/js/obj/media/imageAdd.js"></script>
-    <script src="/res/js/obj/media/imageAddFromSelect.js"></script>
-    <script src="/res/js/search.js"></script>
-    <script src="/res/js/other.js"></script>
-    <script src="/res/js/historySearch.js"></script>
-    <script src="/res/js/obj/objEdit.js"></script>
-    <script src="/res/js/obj/objView.js"></script>
-    <script src="/res/js/storedTypeUtils.js"></script>
-    <script src="/res/js/obj/media/imageSearchSelect.js"></script>
-    <script src="/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-    <script src="/res/js/obj/units.js"></script>
-    <script src="/res/js/obj/getters.js"></script>
-    <script src="/res/js/obj/storageBlock/capacities.js"></script>
-    <script src="/res/js/carousel.js"></script>
-    <script src="/res/js/obj/item/itemStoredAddSubTrans.js"></script>
-    <script src="/res/js/obj/storageBlock/storageBlockTree.js"></script>
-    <script src="/res/js/obj/itemCategoryView.js"></script>
-    <script src="/res/js/textCopy.js"></script>
-    <script src="/res/js/item/extItemSearch.js"></script>
-	<script src="/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
-	<script src="/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
-	<script src="/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
-    <script src="/res/js/obj/item/itemAddEdit.js"></script>
-    <script src="/res/js/obj/item/storedView.js"></script>
-    <script src="/res/js/obj/item/storedEdit.js"></script>
-    <script src="/res/js/obj/item/itemView.js"></script>
-    <script src="/res/js/CodeScanning.js"></script>
-    <script src="/res/js/obj/itemCheckout/itemCheckout.js"></script>
-    <script src="/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
-    <script src="/res/js/pageComponents.js"></script>
+    <script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageAddFromSelect.js"></script>
+    <script src="{rootPrefix}/res/js/search.js"></script>
+    <script src="{rootPrefix}/res/js/other.js"></script>
+    <script src="{rootPrefix}/res/js/historySearch.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objView.js"></script>
+    <script src="{rootPrefix}/res/js/storedTypeUtils.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/units.js"></script>
+    <script src="{rootPrefix}/res/js/obj/getters.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
+    <script src="{rootPrefix}/res/js/carousel.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/storageBlockTree.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCategoryView.js"></script>
+    <script src="{rootPrefix}/res/js/textCopy.js"></script>
+    <script src="{rootPrefix}/res/js/item/extItemSearch.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemAddEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemStored/storedView.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemStored/storedFormInput.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemStored/itemStoredEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemView.js"></script>
+    <script src="{rootPrefix}/res/js/CodeScanning.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
+    <script src="{rootPrefix}/res/js/pageComponents.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearch.js"></script>
+	<script src="{rootPrefix}/res/js/modalHelpers.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredTransaction.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
+	<script src="{rootPrefix}/res/js/entityRef.js"></script>
 {/scripts}
+
+
+
 {#pageScript}
 <script>
 const STORAGE_CLASS = "storageBlock";

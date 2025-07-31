@@ -31,9 +31,6 @@ public abstract class PassthroughProvider extends ApiProvider {
 	public static final String PASSTHROUGH_API_ROOT = API_ROOT + "/passthrough";
 	public static final String PASSTHROUGH_API_PLUGIN_ROOT = PASSTHROUGH_API_ROOT + "/plugin";
 
-	@Getter
-	@RestClient
-	OqmCoreApiClientService oqmCoreApiClient;
 	
 	@Getter
 	@Inject
@@ -113,9 +110,10 @@ public abstract class PassthroughProvider extends ApiProvider {
 		if (MediaType.TEXT_HTML.equals(acceptType)) {
 			return searchUni.map(
 				(ObjectNode endResults)->{
-					log.debug("Final result of history search: {}", endResults);
+					log.debug("Final result of search: {}", endResults);
 					return Response.ok(
 						searchResultTemplate
+							.data("rootPrefix", this.getRootPrefix())
 							.data("actionType", actionType)
 							.data("searchFormId", searchFormId)
 							.data("otherModalId", otherModalId)
@@ -126,7 +124,7 @@ public abstract class PassthroughProvider extends ApiProvider {
 				});
 		} else {
 			return searchUni.map((output)->{
-				log.debug("Storage Block search results: {}", output);
+				log.debug("Final result of search: {}", output);
 				return Response.ok(output).build();
 			});
 		}

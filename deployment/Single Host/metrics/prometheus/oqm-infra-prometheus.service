@@ -1,0 +1,29 @@
+# Service file for running an instance of MongoDB.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  Prometheus tags: https://hub.docker.com/r/prom/prometheus/tags
+#
+
+[Unit]
+Description=Prometheus server for Open Quartermaster. Version ${version}, using Prometheus tagged to "v2.39.1".
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/prometheus
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=simple
+Restart=always
+
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 oqm-infra-prometheus || echo 'Could not stop prometheus container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm oqm-infra-prometheus || echo 'Could not remove prometheus container'"
+
+ExecStart=/bin/bash -c "/usr/bin/docker container inspect oqm-infra-prometheus 2> /dev/null || /usr/bin/docker run --name oqm-infra-prometheus -p 8093:9090 -v /etc/oqm/infra/prometheus/prometheus.yaml:/etc/prometheus/prometheus.yml --add-host host.docker.internal:host-gateway prom/prometheus:v2.39.1"
+
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 oqm-infra-prometheus || echo 'Could not stop prometheus container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm oqm-infra-prometheus || echo 'Could not remove prometheus container'"
+
+[Install]
+WantedBy=multi-user.target

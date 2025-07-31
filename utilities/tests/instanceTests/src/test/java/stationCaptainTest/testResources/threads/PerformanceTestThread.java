@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.time.StopWatch;
 import stationCaptainTest.testResources.Utils;
 import stationCaptainTest.testResources.config.ConfigReader;
+import stationCaptainTest.testResources.config.InstanceConnectionConfig;
 import stationCaptainTest.testResources.rest.RestHelpers;
 
 import java.net.http.HttpClient;
@@ -30,10 +31,12 @@ public class PerformanceTestThread implements Callable<PerformanceTestResult> {
 	int threadNum;
 	int numStorageBlocks;
 	int numItems;
+	int numImages;
 	int numUpdates;
 	
 	@Override
 	public PerformanceTestResult call() throws Exception {
+		InstanceConnectionConfig config = ConfigReader.getTestRunConfig().getInstance();
 		PerformanceTestResult.PerformanceTestResultBuilder outputBuilder = PerformanceTestResult.builder().threadNum(this.threadNum);
 		HttpClient client = RestHelpers.NULL_CERT_TRUST_MANAGER_CLIENT_BUILDER.build();
 		long numCalls = 0;
@@ -51,7 +54,7 @@ public class PerformanceTestThread implements Callable<PerformanceTestResult> {
 				newStorageBlockObj.put("label", blockPrefix + i)
 					.put("location", FAKER.address().fullAddress());
 				HttpRequest request = HttpRequest.newBuilder()
-										  .uri(ConfigReader.getTestRunConfig().getInstance().getUri(coreApiPort, "/api/v1/inventory/storage-block"))
+										  .uri(config.getUri("/core/api", "/api/v1/db/"+config.getDatabase()+"/inventory/storage-block"))
 										  .header("Authorization", RestHelpers.getClientCredentialString())
 										  .POST(HttpRequest.BodyPublishers.ofString(newStorageBlockObj.toPrettyString()))
 										  .build();
@@ -75,7 +78,7 @@ public class PerformanceTestThread implements Callable<PerformanceTestResult> {
 				itemObj.put("name", itemPrefix + i);
 				String bodyData = itemObj.toPrettyString();
 				HttpRequest request = HttpRequest.newBuilder()
-										  .uri(ConfigReader.getTestRunConfig().getInstance().getUri(coreApiPort, "/api/v1/inventory/item"))
+										  .uri(ConfigReader.getTestRunConfig().getInstance().getUri("/core/api", "/api/v1/db/"+config.getDatabase()+"/inventory/item"))
 										  .header("Authorization", RestHelpers.getClientCredentialString())
 										  .header("Content-Type", "application/json")
 										  .POST(HttpRequest.BodyPublishers.ofString(bodyData))

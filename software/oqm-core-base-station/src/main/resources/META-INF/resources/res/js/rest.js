@@ -1,8 +1,9 @@
 
 const Rest = {
 	wholeBody: $('body'),
-	apiRoot: "/api",
-	passRoot: "/api/passthrough",
+	apiRoot: Constants.rootPrefix + "/api",
+	passRoot: Constants.rootPrefix + "/api/passthrough",
+	componentRoot: Constants.rootPrefix + "/api/pageComponents",
 	buildErrorMessageFromResponse(response, statusMessage){
 		let output = "";
 
@@ -33,8 +34,8 @@ const Rest = {
 	},
 	/**
 	 *
-	 * @param spinnerContainer
-	 * @param url
+	 * @param spinnerContainer The container to throw the spinner on top of.
+	 * @param url Thr URL of the request
 	 * @param timeout
 	 * @param method
 	 * @param data
@@ -43,7 +44,7 @@ const Rest = {
 	 * @param async If this function should await the ajax promise before returning
 	 * @param crossDomain
 	 * @param returnType
-	 * @param done Required, Function to call when the call is successful
+	 * @param done Required, Function to call when the call is successful. Called with (data, status, xhr)
 	 * @param fail Optional, Function to call when the call fails
 	 * @param failMessagesDiv Null for no auto message display. String Jquery selector or Jquery object otherwise.
 	 * @param failNoResponse
@@ -62,9 +63,10 @@ const Rest = {
 			async = true,
 			crossDomain = false,
 			returnType = "json",
-			done,
-			fail = function () {
+			done = function(){
+				console.debug("No actions specified.");
 			},
+			fail = function() {},
 			failMessagesDiv = null,
 			failNoResponse = null,
 			failNoResponseCheckStatus = true,

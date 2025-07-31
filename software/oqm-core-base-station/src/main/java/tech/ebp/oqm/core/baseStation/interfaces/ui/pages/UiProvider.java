@@ -1,7 +1,5 @@
 package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.api.trace.Span;
 import io.quarkus.qute.Template;
@@ -9,24 +7,31 @@ import io.quarkus.qute.TemplateInstance;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.groups.UniJoin;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.ConfigProvider;
 import tech.ebp.oqm.core.baseStation.interfaces.RestInterface;
+import tech.ebp.oqm.core.baseStation.model.UserInfo;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.SearchObject;
 
-import java.util.Currency;
-import java.util.Iterator;
-import java.util.Map;
-import java.util.TreeSet;
+import java.util.*;
 
 
 @Slf4j
 public abstract class UiProvider extends RestInterface {
+
+	@Getter
+	@HeaderParam("x-forwarded-prefix")
+	Optional<String> forwardedPrefix;
 	
 	@Inject
 	Span span;
+
+	protected String getRootPrefix(){
+		return this.forwardedPrefix.orElse("");
+	}
 	
 	protected int getDefaultPageSize(){
 		return 25;
@@ -45,7 +50,9 @@ public abstract class UiProvider extends RestInterface {
 	
 	protected TemplateInstance setupPageTemplate(Template template) {
 		return template
+				   .data("rootPrefix", this.getRootPrefix())
 				   .data("userInfo", this.getUserInfo())
+				   .data("userToken", this.getUserTokenStr())
 				   .data("oqmDbs", this.getOqmDatabases())
 				   .data("selectedOqmDb", this.getSelectedDb())
 				   .data("traceId", this.span.getSpanContext().getTraceId())
@@ -57,19 +64,28 @@ public abstract class UiProvider extends RestInterface {
 	}
 	
 	protected Uni<Response> getUni(TemplateInstance pageTemplate, Map<String, Uni> uniMap) {
+		Uni<Object> userInfoUni = this.getOqmCoreApiClient().interactingEntityGetSelf(this.getBearerHeaderStr())
+										.map((ObjectNode userInfoJs)->{
+											return getUserInfo().setId(userInfoJs.get("id").toString().replaceAll("\"", ""));
+										});
 		if(uniMap.isEmpty()){
-			return Uni.createFrom().item(Response.ok(
-				pageTemplate,
-				MediaType.TEXT_HTML_TYPE
-			).build());
+			return userInfoUni.map((info)->{
+				return Response.ok(
+					pageTemplate,
+					MediaType.TEXT_HTML_TYPE
+				).build();
+			});
 		}
 		TreeSet<String> keys = new TreeSet<>(uniMap.keySet());
 		
 		UniJoin.Builder<Object> uniJoinBuilder = Uni.join().builder();
 		
+		
 		for(String key : keys){
 			uniJoinBuilder.add(uniMap.get(key));
 		}
+		// add after others, to ensure we get it done.
+		uniJoinBuilder.add(userInfoUni);
 		
 		return uniJoinBuilder.joinAll()
 				   .andCollectFailures()
