@@ -8,7 +8,7 @@ on:
   push:
     branches: [ "**" ]
     paths:
-      - "software/oqm-core-api/**"
+      - "software/core/oqm-core-api/**"
       - ".github/workflows/core-api.yml"
       - ".github/workflows/wf-gradleBuild.yaml"
       - ".github/workflows/wf-gradleUnitTest.yaml"
@@ -17,7 +17,7 @@ on:
   pull_request:
     branches: [ "**" ]
     paths:
-      - "software/oqm-core-api/**"
+      - "software/core/oqm-core-api/**"
       - ".github/workflows/core-api.yml"
       - ".github/workflows/wf-gradleBuild.yaml"
       - ".github/workflows/wf-gradleUnitTest.yaml"
@@ -27,22 +27,22 @@ on:
   workflow_dispatch:
 defaults:
   run:
-    working-directory: "software/oqm-core-api"
+    working-directory: "software/core/oqm-core-api"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
     uses: ./.github/workflows/wf-gradleBuild.yaml
     with:
-      path: "software/oqm-core-api"
+      path: "software/core/oqm-core-api"
   unitTest:
     uses: ./.github/workflows/wf-gradleUnitTest.yaml
     with:
-      path: "software/oqm-core-api"
+      path: "software/core/oqm-core-api"
   intTest:
     uses: ./.github/workflows/wf-gradleQuarkusIntTest.yaml
     strategy:
       matrix:
         containerBased: [ false ] # TODO:: enable true
     with:
-      path: "software/oqm-core-api"
+      path: "software/core/oqm-core-api"
       containerBased: ${{ matrix.containerBased }}

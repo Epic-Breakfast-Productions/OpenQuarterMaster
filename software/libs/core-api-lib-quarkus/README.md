@@ -24,7 +24,7 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
            alice: alice
            bob: bob
          roles:
-         # roles listed in https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/oqm-core-api/src/main/java/tech/ebp/oqm/core/api/model/rest/auth/roles/Roles.java
+         # roles listed in https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/core/oqm-core-api/src/main/java/tech/ebp/oqm/core/api/model/rest/auth/roles/Roles.java
            alice:
             - user
             - inventoryAdmin
