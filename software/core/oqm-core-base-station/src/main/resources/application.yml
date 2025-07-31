@@ -138,7 +138,7 @@ quarkus:
 #        bob: bob
 ##        TODO:: waiting on: https://github.com/quarkusio/quarkus/issues/47581
 #      roles:
-#        # roles listed in https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/oqm-core-api/src/main/java/tech/ebp/oqm/core/api/model/rest/auth/roles/Roles.java
+#        # roles listed in https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/core/oqm-core-api/src/main/java/tech/ebp/oqm/core/api/model/rest/auth/roles/Roles.java
 #        alice:
 #          - user
 #          - inventoryAdmin

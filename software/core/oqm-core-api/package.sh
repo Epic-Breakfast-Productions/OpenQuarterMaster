@@ -18,8 +18,8 @@ cd "$(dirname "$0")" || exit
 srcDir="installerSrc"
 configFile="$srcDir/installerProperties.json"
 buildDir="build/installers"
-
 debDir="oqmCoreAPiDeb"
+appVersion=$(./gradlew -q printVersion)
 
 #
 # Clean
@@ -31,6 +31,11 @@ rm -rf "$buildDir"
 #
 
 mkdir -p "$buildDir"
+
+#
+# Helm build
+#
+helm package helm/ --app-version $appVersion --version $appVersion -d $buildDir
 
 #
 # Debian build
@@ -55,13 +60,13 @@ serviceFile="oqm-core-api.service"
 serviceFileEscaped="$serviceFile" # "$(systemd-escape "$serviceFile")"
 
 cp "$srcDir/$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
-sed -i "s/\${version}/$(./gradlew -q printVersion)/" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
+sed -i "s/\${version}/$appVersion/" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 
 # TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 # https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/control"
 Package: $(cat "$configFile" | jq -r '.packageName')
-Version: $(./gradlew -q printVersion)
+Version: $appVersion
 Section: Open QuarterMaster
 Maintainer: $(cat "$configFile" | jq -r '.maintainer.name')
 Architecture: all
@@ -92,7 +97,7 @@ if [ ! -f "/etc/oqm/serviceConfig/core/api/user-config.list" ]; then
 	cat <<EOF >> "/etc/oqm/serviceConfig/core/api/user-config.list"
 # Add your own config here.
 # Configuration here will override those in core-api-config.list
-# Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/oqm-core-api/docs/BuildingAndDeployment.adoc
+# Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/core/oqm-core-api/docs/BuildingAndDeployment.adoc
 
 # quarkus.log.level=DEBUG
 
