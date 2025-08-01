@@ -37,10 +37,11 @@ atexit.register(handleExit)
 def printVersion():
     print(SCRIPT_TITLE)
 
-def listAll():
+def listAll(args):
     print(json.dumps(mainCM.configData, indent=4))
 
-def get(configToGet):
+def get(args):
+    configToGet = args.key
     try:
         configValue = mainCM.getConfigVal(configToGet)
         if isinstance(configValue, (dict, list)):
@@ -53,7 +54,8 @@ def get(configToGet):
         exit(1)
     print(configValue)
 
-def template(configFileToGet):
+def template(args):
+    configFileToGet = args.templateFile
     configFileToGetPath, configFileToGetFilename = os.path.split(configFileToGet)
 
     environment = jinja2.Environment(loader=FileSystemLoader(configFileToGetPath))
@@ -80,7 +82,12 @@ def template(configFileToGet):
 
     print(output)
 
-def set(configKeyToSet, configValToSet, configFile, secret=False):
+def set(args):
+    configKeyToSet = args.key
+    configValToSet = args.value
+    configFile = args.file
+    secret = args.secret
+
     if secret:
         json = mainCM.setSecretValInFile(
             configKeyToSet=args.setSecret[0],
@@ -96,9 +103,6 @@ def set(configKeyToSet, configValToSet, configFile, secret=False):
     # TODO: error check
     print(json)
 
-def setSecret():
-
-
 # Setup argument parser
 argParser = argparse.ArgumentParser(
     prog="oqm-config",
@@ -108,33 +112,34 @@ argParser = argparse.ArgumentParser(
 g = argParser.add_mutually_exclusive_group()
 g.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
 
+subparsers = argParser.add_subparsers(dest="command", help="Subcommands")
 
+list_parser = subparsers.add_parser("list", aliases=['l'], help="Lists current config.")
+list_parser.set_defaults(func=listAll)
 
-g.add_argument('-l', '--list', dest="l", action="store_true", help="List all available configuration vales")
-g.add_argument('-g', '--get', dest="g", help="Gets a config's value.", nargs=1)
-g.add_argument('-t', '--template', dest="t",
-                       help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
-g.add_argument('-s', '--set', dest="s",
-                       help="Sets a value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
-                       nargs=3)
-g.add_argument('-S', '--setSecret', dest="setSecret",
-                       help="Sets a secret value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
-                       nargs=3)
+get_parser = subparsers.add_parser("get", aliases=['g'], help="Gets a config's value.")
+get_parser.add_argument("key", help="The config key to get.")
+get_parser.set_defaults(func=get)
+
+get_parser = subparsers.add_parser("template", aliases=['t'], help="Fills out a template file with config values. Outputs the result.")
+get_parser.add_argument("templateFile", help="The template file to fill out.")
+get_parser.set_defaults(func=template)
+
+set_parser = subparsers.add_parser("set", aliases=['s'], help="Sets a configuration value.")
+set_parser.add_argument("key", help="The config key to set.")
+set_parser.add_argument("value", help="The value to set.")
+set_parser.add_argument("file", help="The file to modify.")
+set_parser.add_argument('--secret', '-s', action='store_true', help='Specifies this config value is to be stored as a secret.')
+set_parser.set_defaults(func=set)
 
 args = argParser.parse_args()
 
 if args.v:
     printVersion()
-elif args.l:
-    listAll()
-elif args.g:
-    get(args.g[0])
-elif args.t:
-    template(args.t[0])
-elif args.s:
-    set(args.s[0], args.s[1], args.s[2])
-elif args.setSecret:
-    set(args.s[0], args.s[1], args.s[2], True)
+    exit(0)
+
+if hasattr(args, 'func'):
+    args.func(args)
 else:
     print("No input given.")
     argParser.print_help()
