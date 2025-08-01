@@ -106,7 +106,7 @@ def set(args):
 # Setup argument parser
 argParser = argparse.ArgumentParser(
     prog="oqm-config",
-    description="This script is a utility to help manage openQuarterMaster's configuration."
+    description="This script is a utility to help manage Open QuarterMaster's configuration on this host."
 )
 
 g = argParser.add_mutually_exclusive_group()
@@ -114,7 +114,7 @@ g.add_argument('-v', '--version', dest="v", action="store_true", help="Get this 
 
 subparsers = argParser.add_subparsers(dest="command", help="Subcommands")
 
-list_parser = subparsers.add_parser("list", aliases=['l'], help="Lists current config.")
+list_parser = subparsers.add_parser("list", aliases=['l'], help="Lists current config with values. Does not fill out secret values.")
 list_parser.set_defaults(func=listAll)
 
 get_parser = subparsers.add_parser("get", aliases=['g'], help="Gets a config's value.")
@@ -128,7 +128,7 @@ get_parser.set_defaults(func=template)
 set_parser = subparsers.add_parser("set", aliases=['s'], help="Sets a configuration value.")
 set_parser.add_argument("key", help="The config key to set.")
 set_parser.add_argument("value", help="The value to set.")
-set_parser.add_argument("file", help="The file to modify.")
+set_parser.add_argument("file", help="The file in the config directory to modify. Empty to default to \"99-custom.json\".", default="")
 set_parser.add_argument('--secret', '-s', action='store_true', help='Specifies this config value is to be stored as a secret.')
 set_parser.set_defaults(func=set)
 
