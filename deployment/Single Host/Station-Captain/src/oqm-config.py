@@ -34,32 +34,13 @@ def handleExit():
     log.info("==== END OF OQM-CONFIG SCRIPT ====")
 atexit.register(handleExit)
 
-# Setup argument parser
-argParser = argparse.ArgumentParser(
-    prog="oqm-config",
-    description="This script is a utility to help manage openQuarterMaster's configuration."
-)
-g = argParser.add_mutually_exclusive_group()
-g.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
-g.add_argument('-l', '--list', dest="l", action="store_true", help="List all available configuration vales")
-g.add_argument('-g', '--get', dest="g", help="Gets a config's value.", nargs=1)
-g.add_argument('-t', '--template', dest="t",
-                       help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
-g.add_argument('-s', '--set', dest="s",
-                       help="Sets a value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
-                       nargs=3)
-g.add_argument('-S', '--setSecret', dest="setSecret",
-                       help="Sets a secret value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
-                       nargs=3)
-
-args = argParser.parse_args()
-
-if args.v:
+def printVersion():
     print(SCRIPT_TITLE)
-elif args.l:
+
+def listAll():
     print(json.dumps(mainCM.configData, indent=4))
-elif args.g:
-    configToGet = args.g[0]
+
+def get(configToGet):
     try:
         configValue = mainCM.getConfigVal(configToGet)
         if isinstance(configValue, (dict, list)):
@@ -71,8 +52,8 @@ elif args.g:
         print("ERROR: Config key not found: " + configToGet, file=sys.stderr)
         exit(1)
     print(configValue)
-elif args.t:
-    configFileToGet = args.t[0]
+
+def template(configFileToGet):
     configFileToGetPath, configFileToGetFilename = os.path.split(configFileToGet)
 
     environment = jinja2.Environment(loader=FileSystemLoader(configFileToGetPath))
@@ -98,23 +79,62 @@ elif args.t:
         )
 
     print(output)
-elif args.s:
-    json = mainCM.setConfigValInFile(
-        configKeyToSet=args.s[0],
-        configValToSet=args.s[1],
-        configFile=args.s[2]
-    )
-    # TODO: error check
-    print(json)
-elif args.setSecret:
-    json = mainCM.setSecretValInFile(
-        configKeyToSet=args.setSecret[0],
-        configValToSet=args.setSecret[1],
-        configFile=args.setSecret[2]
-    )
+
+def set(configKeyToSet, configValToSet, configFile, secret=False):
+    if secret:
+        json = mainCM.setSecretValInFile(
+            configKeyToSet=args.setSecret[0],
+            configValToSet=args.setSecret[1],
+            configFile=args.setSecret[2]
+        )
+    else:
+        json = mainCM.setConfigValInFile(
+            configKeyToSet=configKeyToSet,
+            configValToSet=configValToSet,
+            configFile=configFile
+        )
     # TODO: error check
     print(json)
 
+def setSecret():
+
+
+# Setup argument parser
+argParser = argparse.ArgumentParser(
+    prog="oqm-config",
+    description="This script is a utility to help manage openQuarterMaster's configuration."
+)
+
+g = argParser.add_mutually_exclusive_group()
+g.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
+
+
+
+g.add_argument('-l', '--list', dest="l", action="store_true", help="List all available configuration vales")
+g.add_argument('-g', '--get', dest="g", help="Gets a config's value.", nargs=1)
+g.add_argument('-t', '--template', dest="t",
+                       help="Supply a file to replace placeholders in. Outputs the result.", nargs=1)
+g.add_argument('-s', '--set', dest="s",
+                       help="Sets a value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
+                       nargs=3)
+g.add_argument('-S', '--setSecret', dest="setSecret",
+                       help="Sets a secret value. First arg is the key, second is the value to set, third is the file to modify (The file in the " + ScriptInfo.CONFIG_VALUES_DIR + " directory)(empty string for default additional file (" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILE + ")).",
+                       nargs=3)
+
+args = argParser.parse_args()
+
+if args.v:
+    printVersion()
+elif args.l:
+    listAll()
+elif args.g:
+    get(args.g[0])
+elif args.t:
+    template(args.t[0])
+elif args.s:
+    set(args.s[0], args.s[1], args.s[2])
+elif args.setSecret:
+    set(args.s[0], args.s[1], args.s[2], True)
 else:
     print("No input given.")
     argParser.print_help()
