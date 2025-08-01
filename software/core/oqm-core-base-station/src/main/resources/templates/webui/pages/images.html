@@ -1,0 +1,336 @@
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Images' page='images'}
+{#styleSheets}
+<link rel="stylesheet" href="{rootPrefix}/lib/Croppie-2.6.4/croppie.css"/>
+{/styleSheets}
+{#pageStyle}
+
+{/pageStyle}
+{#pageContent}
+<div class="row mb-2">
+    <div class="col-6 d-grid gap-2 text-center">
+        <button type="button" class="btn btn-success" data-bs-toggle="modal"
+                data-bs-target="#addEditModal" onclick="setupAddEditForAdd();">
+            {#icons/add}{/icons/add} Add Image
+        </button>
+    </div>
+</div>
+<div class="row">
+    <div class="col accordion" id="searchAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="searchHeader">
+                <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+                        aria-controls="searchCollapse">
+                    {#icons/search}{/icons/search}
+                    Search Fields
+                </button>
+            </h2>
+            <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+                 aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+                <div class="accordion-body">
+                    {#search/image/imageSearchForm id='mainImageSearch' rootPrefix=rootPrefix}
+                    {/search/image/imageSearchForm}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div id="imageSearchresults">
+    {#search/image/imageSearchResults searchResults=searchResults actionType='full' searchFormId='mainImageSearch' rootPrefix=rootPrefix}
+    {/search/image/imageSearchResults}
+</div>
+
+{/pageContent}
+{#modals}
+
+{#modal id='addEdit' title='Add/Edit Image'}
+<div id="addEditFormMessages">
+</div>
+<form id="addEditImageForm">
+    <input type="hidden" id="addEditFormMode" value="">
+    <input type="hidden" id="addEditFormId" value="">
+    {!<div class="mb-3 row">!}
+        {!<label for="addEditTitleInput" class="col-sm-3 col-form-label">Title</label>!}
+        {!<div class="col-sm-9">!}
+            {!<input type="text" class="form-control" id="addEditTitleInput" placeholder="Title" required>!}
+        {!</div>!}
+    {!</div>!}
+    <div class="mb-3">
+        <label for="imageUploadInput" class="form-label">Image File</label>
+        <input class="form-control" type="file" id="imageUploadInput" accept="image/*">
+        <div class="col-md-4 text-center pt-3">
+            <div id="imageUploadCroppieDiv" class="border" style="width:350px;"></div>
+        </div>
+    </div>
+	<div class="mb-3 row">
+		<label for="addEditDescriptionInput" class="col-sm-3 col-form-label">Description</label>
+		<div class="col-sm-9">
+                            <textarea class="form-control" id="addEditDescriptionInput"
+								placeholder="Description"></textarea>
+		</div>
+	</div>
+    {#inputs/keywordInput}
+    {/inputs/keywordInput}
+    {#inputs/attInput}
+    {/inputs/attInput}
+</form>
+<hr />
+<div class="text-end">
+<button type="submit" form="addEditImageForm" class="btn btn-success" id="addEditFormSubmitButton"></button>
+</div>
+{/modal}
+
+{#modal id='view' title='View' size='xl'}
+{#titleIcon}{#icons/image}{/icons/image}{/titleIcon}
+<div class="row">
+    <div class="col-lg-7 text-center">
+        <img class="imageViewImage img-thumbnail" src="">
+    </div>
+    <div class="col-lg-5">
+        <div class="row">
+            <div class="col-lg-8"><img class="imageViewImage img-thumbnail img-75" src=""></div>
+            <div class="col-lg-6"><img class="imageViewImage img-thumbnail img-50" src=""></div>
+            <div class="col-lg-4"><img class="imageViewImage img-thumbnail img-25" src=""></div>
+        </div>
+    </div>
+</div>
+<hr/>
+<div class="row">
+    <div class="col" id="imageViewMessages">
+    </div>
+</div>
+<div class="row" id="viewDescriptionTextSection">
+    <div class="col">
+        <h4>Description:</h4>
+        <p id="viewDescriptionText"></p>
+    </div>
+</div>
+<div class="row">
+    {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
+    {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
+</div>
+<div class="row">
+    {#objView/history/objHistoryView containerId='imageHistory' objectUrl=(rootPrefix + '/api/passthrough/media/image/')}{/objView/history/objHistoryView}
+    
+</div>
+<hr />
+<div class="text-end">
+    <button type="button" class="btn btn-warning" data-bs-dismiss="modal" data-bs-toggle="modal"
+        data-bs-target="#addEditModal" id="imageEditButton">{#icons/edit}{/icons/edit} Edit
+</button>
+<button type="button" class="btn btn-danger" id="imageDeleteButton">{#icons/remove}{/icons/remove} Delete
+</button>
+</div>
+{/modal}
+
+{/modals}
+{#scripts}
+    <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
+    <script src="{rootPrefix}/res/js/search.js"></script>
+    <script src="{rootPrefix}/res/js/historySearch.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objView.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
+{/scripts}
+{#pageScript}
+<script>
+Search.fillInQueryForm($("#mainImageSearch"));
+
+var addEditImageForm = $("#addEditImageForm");
+var addEditModalLabel = $("#addEditModalLabel");
+var addEditModalLabelIcon = $("#addEditModalLabelIcon");
+var addEditFormSubmitButton = $("#addEditFormSubmitButton");
+var addEditFormMessages = $("#addEditFormMessages");
+
+var keywordInputDiv = addEditImageForm.find(".keywordInputDiv");
+var attInputDiv = addEditImageForm.find(".attInputDiv");
+//inputs
+var addEditFormMode = $("#addEditFormMode");
+var addEditFormId = $("#addEditFormId");
+// var addEditTitleInput = $("#addEditTitleInput");
+var addEditDescriptionInput = $("#addEditDescriptionInput");
+var addEditFileInput = $("#imageUploadInput");
+
+//TODO:: figure out proper sizing on small screens
+
+
+function resetAddEdit(){
+    addEditImageForm.trigger("reset");
+    addEditFormMessages.text("");
+    keywordInputDiv.html("");
+    attInputDiv.html("");
+    resetCroppie();
+}
+
+function setupAddEditForAdd(){
+    console.log("Setting up add/edit form for add.");
+    resetAddEdit();
+    addEditModalLabelIcon.html(Icons.add);
+    addEditFormMode.val("add");
+    addEditModalLabel.text("Add Image");
+    addEditFormSubmitButton.html('{#icons/add}{/icons/add} Add Image');
+}
+function setupAddEditForEdit(id){
+    console.log("Setting up add/edit form for edit.");
+    resetAddEdit();
+    addEditModalLabelIcon.html(Icons.edit);
+    addEditFormMode.val("edit");
+    addEditModalLabel.text("Edit Image");
+    addEditFormSubmitButton.html('{#icons/edit}{/icons/edit} Edit Image');
+
+    addEditFormId.val(id);
+
+    Rest.call({
+        url: Rest.apiRoot + "/v1/media/image/" + id,
+        method: "GET",
+        done: function(data) {
+            console.log("Response from create request: " + JSON.stringify(data));
+            // addEditTitleInput.val(data.title);
+            addEditDescriptionInput.text(data.description);
+
+            bindCroppie(Rest.apiRoot + "/v1/media/image/" + id + "/data");
+			
+			KeywordAttEdit.addKeywordInputs(keywordInputDiv, data.keywords);
+			KeywordAttEdit.addAttInputs(attInputDiv, data.attributes);
+        },
+        failMessagesDiv: addEditFormMessages
+    });
+}
+
+addEditImageForm.submit(function (ev) {
+    ev.preventDefault();
+
+    $uploadCrop.croppie('result', {
+		type: 'blob',
+		size: 'original'
+	}).then(async function (imageDataBlob) {
+		console.log("Got image data.");
+		let addEditData = new FormData();
+		
+		addEditData.append("fileName", addEditFileInput[0].files[0].name);
+		addEditData.append("description", addEditDescriptionInput.val());
+		addEditData.append("source", "user");
+		addEditData.append("file", imageDataBlob);//imageDataBlob);
+    
+        console.log("Got image data: ", imageDataBlob);
+    
+        if (addEditFormMode.val() === "add") {
+            console.log("Adding new image.");
+            Rest.call({
+                url: Rest.passRoot + "/media/image",
+                method: "POST",
+                data: addEditData,
+				dataType: false,
+                done: function (data) {
+                    console.log("Response from create request: " + JSON.stringify(data));
+                    PageMessages.reloadPageWithMessage("Created image successfully!", "success", "Success!");
+                },
+                fail: function (data) {
+                    console.warn("Bad response from image add attempt: " + JSON.stringify(data));
+                    PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to do add image: " + data.responseText, "Failed", null);
+                }
+            });
+        } else if (addEditFormMode.val() === "edit") {
+            var id = addEditFormId.val();
+            console.log("Editing image " + id);
+        
+            Rest.call({
+                url: Rest.passRoot + "/media/image/" + id,
+                method: "PUT",
+                data: addEditData,
+                done: function (data) {
+                    console.log("Response from update request: " + JSON.stringify(data));
+                    PageMessages.reloadPageWithMessage("Updated image successfully!", "success", "Success!");
+                },
+                failMessagesDiv: addEditFormMessages
+            });
+        
+        } else {
+            PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
+        }
+    });
+});
+
+
+var viewModalLabel = $('#viewModalLabel');
+var imageViewImages = $('.imageViewImage');
+var imageViewMessages = $('#imageViewMessages');
+var viewDescriptionTextSection = $('#viewDescriptionTextSection');
+var viewDescriptionText = $('#viewDescriptionText');
+var viewKeywordsSection = $('#viewKeywordsSection');
+var viewAttsSection = $('#viewAttsSection');
+var imageDeleteButton = $('#imageDeleteButton');
+var imageEditButton = $('#imageEditButton');
+
+var imageHistoryAccordionCollapse = $('#imageHistoryAccordionCollapse');
+
+function resetView(){
+    imageViewMessages.text("");
+    viewModalLabel.text("");
+    imageViewImages.each(function(cur){
+        cur.src = '';
+    });
+    viewDescriptionTextSection.hide();
+    viewDescriptionText.text("");
+	KeywordAttUtils.clearHideKeywordDisplay(viewKeywordsSection);
+	KeywordAttUtils.clearHideAttDisplay(viewAttsSection);
+    
+    resetHistorySearch(imageHistoryAccordionCollapse);
+
+    imageDeleteButton.off('click');
+}
+
+function setupViewForImage(id){
+    resetView();
+
+    let curUrl = Rest.passRoot + '/media/image/' + id + '/revision/latest/data';
+    imageViewImages.each(function(i, cur){
+        cur.src = curUrl;
+    });
+
+    Rest.call({
+        url: Rest.passRoot + "/media/image/" + id,
+        method: "GET",
+        async: false,
+        done: function(data) {
+            console.log("Response from create request: " + JSON.stringify(data));
+            viewModalLabel.text(data.fileName);
+            if(data.description){
+                console.log("had description");
+                viewDescriptionTextSection.show();
+                viewDescriptionText.text(data.description);
+            }
+			KeywordAttUtils.processKeywordDisplay(viewKeywordsSection, data.keywords);
+			KeywordAttUtils.processAttDisplay(viewAttsSection, data.attributes);
+
+            imageEditButton.click(function(event){
+                setupAddEditForEdit(id);
+            });
+            imageDeleteButton.click(function(event){
+                console.log("Determining if user really wants to delete image.");
+                if(!confirm("Are you sure you want to delete this image?")){
+                    return false;
+                }
+                console.log("Deleting image " + id);
+
+                Rest.call({
+                    url: Rest.passRoot + "/media/image/" + id,
+                    method: "DELETE",
+                    done: function(data) {
+                        console.log("Response from create request: " + JSON.stringify(data));
+                        PageMessages.reloadPageWithMessage("Delete image successfully!", "success", "Success!");
+                    },
+                    failMessagesDiv: imageViewMessages
+                });
+            });
+        },
+        failMessagesDiv: imageViewMessages
+    });
+    
+    setupHistorySearch(imageHistoryAccordionCollapse, id);
+    
+}
+</script>
+{/pageScript}
+
+{/include}

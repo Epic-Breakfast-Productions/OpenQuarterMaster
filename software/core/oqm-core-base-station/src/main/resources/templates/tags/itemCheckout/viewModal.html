@@ -1,0 +1,18 @@
+{#modal id='itemCheckoutView' size='xl' title='Item Checkout View'}
+	{#titleIcon}{#icons/transactionCheckout}{/icons/transactionCheckout}{/titleIcon}
+	{#footerButtons}
+		<button type="button" class="btn btn-success btn-lg" id="itemCheckoutViewCheckinButton" data-checkoutId="" onclick="ItemStoredTransaction.Checkin.setupForm($(this).data('checkoutId'), this);" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionCheckinModal">
+			{#icons/transactionCheckin}{/icons/transactionCheckin} Checkin
+		</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col" id="itemCheckoutViewMessages"></div>
+	</div>
+	<div class="" id="itemCheckoutViewContent"></div>
+	<hr />
+	<div class="row">
+		<div class="col">
+			{#objView/history/objHistoryView containerId='itemCheckoutViewHistory' objectUrl='/api/passthrough/inventory/item-checkout/'}{/objView/history/objHistoryView}
+		</div>
+	</div>
+{/modal}

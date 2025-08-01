@@ -1,0 +1,194 @@
+# https://quarkus.io/guides/config-reference
+service:
+  version: ${quarkus.application.version}
+  apiVersion: 1.0.0
+  nameShort: oqm-core-base-station
+  nameFull: Open Quarter Master Base Station
+  gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
+  # TODO:: move data that doesn't need to be here
+  auth:
+    userSettingsUrl: ${quarkus.oidc.auth-server-url}/account/
+  runBy:
+    name: " "
+    email: " "
+    phone: " "
+    website: " "
+    logo: " "
+    banner: ${service.runBy.logo}
+    motd: >
+      Your privacy is important to the original project. It only creates minor cookies, and that is for the login
+      functionality. The project also only collects what you give it, and it is up to the people running the server to
+      ensure it is handled well. Please contact the folks running the server for more information.
+  item:
+    expiryCheck:
+      cron: 0 0 * ? * * # Every Hour
+  tempDir: "/tmp/oqm-baseStation"
+  dateTimeFormat:
+    default: "MM/dd/YYYY hh:mm:ss a (z)"
+
+# TODO:: move this into `service` config
+runningInfo:
+  protocol: http
+  hostname: localhost
+  port: ${quarkus.http.port}
+  hostnamePort: ${runningInfo.hostname}:${runningInfo.port}
+  baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
+  fromEmail: no-reply@${runningInfo.hostname}
+  depotUri: " "
+  
+ui:
+  defaults:
+    search:
+      defaultPageSize: 25
+  storage:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  image:
+    search:
+      defaultPageSize: 16
+  history:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  interactingEntity:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  itemCategory:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  inventoryItem:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  fileAttachment:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  itemCheckout:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  itemsStored:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+
+quarkus:
+  application:
+    name: ${service.nameShort} - V${service.apiVersion}
+  container-image:
+    name: oqm-core-base_station
+    group: ebprod
+  rest-client:
+    logging:
+      scope: all
+    externalItemSearch: # Leave in for handling the case of not having the plugin available
+      url: " "
+      scope: jakarta.inject.Singleton
+  log:
+    level: DEBUG
+    console:
+      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t]():: %s%e%n"
+  smallrye-health:
+    context-propagation: true
+  # https://quarkus.io/guides/openapi-swaggerui
+  smallrye-openapi:
+    info-title: Open QuarterMaster Base Station API
+    info-version: ${service.apiVersion}
+    info-description: API documentation for the Open QuarterMaster Base Station. Provides all basic functionality. Running on service version ${service.version}
+    #    info-terms-of-service: <url>
+    info-contact-email: greg@epic-breakfast-productions.tech
+    info-contact-name: EBP
+    info-contact-url: ${service.gitLink}
+    info-license-name: GNU General Public License v3.0
+    info-license-url: ${service.gitLink}/blob/main/LICENSE
+    security-scheme: jwt
+    security-scheme-name: JwtAuth
+  swagger-ui:
+    title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
+    theme: flattop
+    footer: With ❤️, EBP
+  http:
+    port: 80
+    ssl-port: 443
+    body:
+      preallocate-body-buffer: true
+    limits:
+      max-body-size: 750M
+      max-form-attribute-size: 750M
+    auth:
+      proactive: false
+      permission:
+        logout:
+          paths: ${quarkus.oidc.logout.path}
+          policy: authenticated
+    access-log:
+      enabled: true
+  qute:
+  oidc:
+    application-type: hybrid
+    token-state-manager:
+      split-tokens: true
+    logout:
+      path: /logout
+      post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
+      
+  keycloak:
+    devservices:
+      port: 9328
+      realm-path: "../../../../dev/oqm-realm.json"
+      realm-name: oqm
+#      users:
+#        alice: alice
+#        bob: bob
+##        TODO:: waiting on: https://github.com/quarkusio/quarkus/issues/47581
+#      roles:
+#        # roles listed in https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/core/oqm-core-api/src/main/java/tech/ebp/oqm/core/api/model/rest/auth/roles/Roles.java
+#        alice:
+#          - user
+#          - inventoryAdmin
+#          - inventoryView
+#          - inventoryEdit
+#          - itemCheckout
+
+
+#  messaging:
+#    outgoing:
+#      items.add:
+#        connector: ${messaging.connector}
+
+smallrye:
+  jwt:
+    always-check-authorization: true
+
+"%dev":
+  quarkus:
+    application:
+      name: ${service.nameShort} - V${service.apiVersion} - DEV
+    log:
+      level: DEBUG
+    opentelemetry:
+      enabled: true
+      tracer:
+        exporter:
+          otlp:
+            endpoint: http://localhost:8096
+    smallrye-openapi:
+      info-title: Open QuarterMaster Base Station API (DEV)
+    http:
+      port: 8080
+      ssl-port: 8443
+    oidc:
+      # TODO:: remove when https://github.com/quarkusio/quarkus/issues/47581
+      client-id: oqm-app
+      credentials:
+        secret: "**********"
+    #      auth-server-url: http://localhost:8115/realms/oqm
+    oqmCoreApi:
+      refreshDbCacheFrequency: "30m"
+
+  runningInfo:
+    depotUri: "Hello World"
+  service:
+    runBy:
+      name: The Developers
+      email: dev@devlopment.dev
+      phone: 111-222-3333
+      website: http://devlopment.dev
+      logo: ../../../../dev/developers.jpeg
+

@@ -1,0 +1,103 @@
+{#modal id='itemCheckout' size='sm' title='Checkout Item'}
+	{#titleIcon}{#icons/transactionCheckout}{/icons/transactionCheckout}{/titleIcon}
+	<div class="row">
+		<div class="col" id="itemCheckoutMessages">
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h5>
+				Item:
+			</h5>
+			<p id="itemCheckoutItemNameLabel">
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<h5>
+				Checking out from:
+			</h5>
+			<p id="itemCheckoutStorageLabelLabel">
+			</p>
+		</div>
+	</div>
+	<div class="row">
+		<div class="col" id="itemCheckoutStoredDetails">
+		</div>
+	</div>
+	<hr />
+	<div class="row">
+		<form class="col" id="itemCheckoutForm">
+			<input type="hidden" id="itemCheckoutFormItemIdInput" value="">
+			<input type="hidden" id="itemCheckoutFormCheckedOutFromIdInput" value="">
+			<input type="hidden" id="itemCheckoutFormToCheckoutInput" value="">
+			<input type="hidden" id="itemCheckoutFormStoredIdInput" value="">
+
+			<div class="mb-3" id="itemCheckoutAmountContainer">
+				<div class="form-check">
+					<input class="form-check-input" type="checkbox" value="" id="itemCheckoutAmountEnableCheck" onchange="ItemCheckout.partialAmountCheckChanged();">
+					<label class="form-check-label" for="itemCheckoutAmountEnableCheck">
+						Partial amount
+					</label>
+				</div>
+				<div class="input-group mt-2 mb-3" id="itemCheckoutAmountInputContainer">
+					<input type="number" class="form-control amountStoredValueInput" name="amountStored" id="itemCheckoutAmountAmountInput" placeholder="Amount to Checkout" value="0.00" min="0.00" step="any" required>
+					<select class="form-select amountStoredUnitInput unitInput" name="amountStoredUnit" id="itemCheckoutAmountUnitInput">
+						<!-- TODO -->
+					</select>
+				</div>
+			</div>
+			
+			<div class="mb-3">
+				<label class="form-label" for="itemCheckoutFormDueBackInput">Due Back:</label>
+				<input type="datetime-local" id="itemCheckoutFormDueBackInput" class="form-control datetimeInputFuture" aria-describedby="itemCheckoutFormDueBackInputHelp">
+				<div id="itemCheckoutFormDueBackInputHelp" class="form-text">
+					Leave blank for no due date
+				</div>
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="itemCheckoutFormForSelectInput">For Who:</label>
+				<select class="form-select" id="itemCheckoutFormForSelectInput" onchange="ItemCheckout.setForView()" aria-describedby="itemCheckoutFormForSelectInputHelp">
+					<option value="self" selected>Yourself</option>
+					<option value="otherOqmUser">Another OQM User</option>
+					<option value="extUser">External Entity</option>
+				</select>
+				<div id="itemCheckoutFormForSelectInputHelp" class="form-text">
+					Who this action is being done by or for. Who the item is being given to.
+				</div>
+			</div>
+			<!-- TODO:: add field for when just stored to specify how much to checkout -->
+			<div class="mb-3" id="itemCheckoutFormForAnotherOqmUserContainer">
+				<label class="form-label" for="itemCheckoutFormForAnotherOqmUserInput">Select a user:</label>
+				<textarea class="form-control" id="itemCheckoutFormForAnotherOqmUserInput" rows="1"></textarea>
+			</div>
+			<div id="itemCheckoutFormForExternalUserContainer">
+				<div class="mb-3">
+					<label class="form-label" for="itemCheckoutFormForExternalUserNameInput">External User Name:</label>
+					<textarea class="form-control" id="itemCheckoutFormForExternalUserNameInput" rows="1"></textarea>
+				</div>
+				<div class="mb-3">
+					<label class="form-label" for="itemCheckoutFormForExternalUserIdInput">External User Id:</label>
+					<input type="text" class="form-control" id="itemCheckoutFormForExternalUserIdInput">
+				</div>
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="itemCheckoutFormReasonInput">Reason</label>
+				<textarea class="form-control" id="itemCheckoutFormReasonInput" rows="2"></textarea>
+			</div>
+			<div class="mb-3">
+				<label class="form-label" for="itemCheckoutFormNotesInput">Notes</label>
+				<textarea class="form-control" id="itemCheckoutFormNotesInput" rows="3"></textarea>
+			</div>
+			{#inputs/keywordInput /}
+			{#inputs/attInput /}
+		</form>
+	</div>
+	
+	{#footerButtons}
+		<div id="itemCheckoutButtonContainer" class="">
+			<button type="submit" form="itemCheckoutForm" class="btn btn-success">{#icons/transactionCheckout}{/icons/transactionCheckout} Checkout</button>
+		</div>
+	{/footerButtons}
+{/modal}

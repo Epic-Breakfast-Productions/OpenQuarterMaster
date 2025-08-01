@@ -1,0 +1,132 @@
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title="Interacting Entities" page='entityView'}
+{#pageStyle}
+
+{/pageStyle}
+{#pageContent}
+    <div class="row">
+        <div class="col accordion" id="searchAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="searchHeader">
+                    <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+                            aria-controls="searchCollapse">
+                        {#icons/search}{/icons/search} Search Fields
+                    </button>
+                </h2>
+                <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+                     aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+                    <div class="accordion-body">
+                        {#search/interactingEntity/searchForm id='mainPageSearch'  rootPrefix=rootPrefix}
+                        {/search/interactingEntity/searchForm}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col table-responsive">
+            <table class=" table table-bordered table-striped table-hover table-sm">
+                {#search/interactingEntity/searchResults searchResults=searchResults actionType='view' searchFormId='mainPageSearch'  rootPrefix=rootPrefix}
+                {/search/interactingEntity/searchResults}
+            </table>
+        </div>
+    </div>
+
+{/pageContent}
+{#modals}
+{#modal id='interactingEntityView' size='xl' title='Interacting Entity View'}
+{#titleIcon}{#icons/interactingEntity}{/icons/interactingEntity}{/titleIcon}
+    <div class="row">
+        <div class="col" id="interactingEntityViewMessages">
+        </div>
+    </div>
+    <dl class="row">
+        <dt class="col-sm-3 col-md-2">Name:</dt>
+        <dd class="col-sm-9 col-md-10 user-select-all" id="viewName"></dd>
+
+        <dt class="col-sm-3 col-md-2">Type:</dt>
+        <dd class="col-sm-9 col-md-10 user-select-all" id="viewType"></dd>
+
+        <dt class="col-sm-3 col-md-2">Email:</dt>
+        <dd class="col-sm-9 col-md-10 user-select-all">
+            <a href="" id="viewEmailLink"></a>
+</dd>
+
+        <dt class="col-sm-3 col-md-2">Roles:</dt>
+        <dd class="col-sm-9 col-md-10" id="viewRoles">
+        {!{#for curRole in entity.getRoles()}!}
+            <span class="user-select-all badge bg-secondary">roles</span>
+        {!{/for}!}
+        </dd>
+    </dl>
+	{! TODO:: user's activity history !}
+	<!-- TODO:: add checked out items -->
+{/modal}
+{/modals}
+{#scripts}
+<script src="{rootPrefix}/res/js/search.js"></script>
+<script src="{rootPrefix}/res/js/entityRef.js"></script>
+<script src="{rootPrefix}/res/js/historySearch.js"></script>
+{/scripts}
+{#pageScript}
+    <script>
+        //$("#userHistoryForm").submit();
+
+        let viewModal = $("#interactingEntityViewModal");
+        let viewModalMessages = $("#interactingEntityViewMessages");
+        let viewName = $("#viewName");
+        let viewType = $("#viewType");
+        let viewEmailLink = $("#viewEmailLink");
+        let viewRoles = $("#viewRoles");
+
+        function resetView(){
+            viewName.text("");
+            viewType.text("");
+            viewEmailLink.text("");
+            viewEmailLink.prop("href", "");
+
+            viewRoles.text("");
+        }
+
+        function setupView(id){
+            console.log("Setting up view for interacting entity: ", id);
+            resetView();
+            UriUtils.addOrReplaceParams("view", id);
+
+            Rest.call({
+                spinnerContainer: viewModal,
+                url: Rest.passRoot +"/interacting-entity/" + id,
+                failMessagesDiv: viewModalMessages,
+                done: async function(data){
+                    viewName.text(data.name);
+
+                    viewEmailLink.text(data.email);
+                    viewEmailLink.prop("href", "mailto:" + data.email);
+                    viewEmailLink.text(data.email);
+
+                    data.roles.forEach(function(role){
+                        let curBadge = $('<span class="user-select-all badge bg-secondary me-1"></span>');
+                        curBadge.text(role);
+                        viewRoles.append(curBadge);
+                    });
+                }
+            });
+
+            EntityRef.getEntityRef(id, function(data){
+                viewType.html(data);
+            });
+        }
+
+        let viewModalBs = new bootstrap.Modal(viewModal, { });
+
+        viewModal[0].addEventListener("hidden.bs.modal", function (){
+            UriUtils.removeParam("view");
+        });
+
+        if(UriUtils.getParams.has("view")){
+            setupView(UriUtils.getParams.get("view"));
+            viewModalBs.show();
+        }
+    </script>
+{/pageScript}
+{/include}

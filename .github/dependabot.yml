@@ -5,41 +5,37 @@
 
 version: 2
 updates:
-  # Lib core
-  # - package-ecosystem: "gradle"
-  #   directory: "/software/libs/open-qm-core"
-  #   target-branch: "dev"
-  #   schedule:
-  #     interval: "weekly"
-  #   labels:
-  #     - "area-dependencies"
-  #     - "project-lib-core"
-  # # Module Driver
-  # - package-ecosystem: "gradle"
-  #   directory: "/software/libs/open-qm-moduleDriver"
-  #   target-branch: "dev"
-  #   schedule:
-  #     interval: "weekly"
-  #   labels:
-  #     - "area-dependencies"
-  #     - "project-lib-moduleDriver"
+#
+# Core components
+#
 
   # Core API
   - package-ecosystem: "gradle"
-    directory: "/software/oqm-core-api"
+    directory: "/software/core/oqm-core-api"
     target-branch: "dev"
     schedule:
       interval: "weekly"
+      day: "tuesday"
+    labels:
+      - "area-dependencies"
+      - "project-baseStation"
+  - package-ecosystem: "docker"
+    directory: "/software/core/oqm-core-api/src/main/docker"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
     labels:
       - "area-dependencies"
       - "project-baseStation"
 
   # Base Station
   - package-ecosystem: "gradle"
-    directory: "/software/oqm-core-base-station"
+    directory: "/software/core/oqm-core-base-station"
     target-branch: "dev"
     schedule:
       interval: "weekly"
+      day: "tuesday"
     labels:
       - "area-dependencies"
       - "project-baseStation"
@@ -50,9 +46,24 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly"
+      day: "tuesday"
     labels:
       - "area-dependencies"
       - "project-stationCaptain"
+#
+# Libraries
+#
+
+  # Core API Lib Quarkus
+  - package-ecosystem: "gradle"
+    directory: "/software/libs/core-api-lib-quarkus"
+    target-branch: "dev"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    labels:
+      - "area-dependencies"
+
 #
 # Plugins
 #
@@ -63,6 +74,7 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly"
+      day: "tuesday"
     labels:
       - "area-dependencies"
   # Mss Controller
@@ -71,6 +83,7 @@ updates:
     target-branch: "dev"
     schedule:
       interval: "weekly"
+      day: "tuesday"
     labels:
       - "area-dependencies"
 

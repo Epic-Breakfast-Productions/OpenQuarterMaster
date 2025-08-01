@@ -1,0 +1,417 @@
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title="Inventory Administration" page='inventoryAdmin'}
+	{#pageStyle}
+
+	{/pageStyle}
+	{#pageContent}
+		<div class="row">
+			<div class="col">
+				<ul class="nav nav-tabs mb-3" id="mainTab" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" id="unitsTab" data-bs-toggle="tab" data-bs-target="#unitsContent" type="button" role="tab" aria-controls="pruningContent" aria-selected="true">Custom Units</button>
+					</li>
+                    <li class="nav-item" role="presentation">
+                        <button class="nav-link" id="databasesTab" data-bs-toggle="tab" data-bs-target="#databasesContent" type="button" role="tab" aria-controls="databasesContent" aria-selected="false">
+                            Databases
+                        </button>
+                    </li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="importExportTab" data-bs-toggle="tab" data-bs-target="#importExportContent" type="button" role="tab" aria-controls="importExportContent" aria-selected="false">Import/Export</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="pruningTab" data-bs-toggle="tab" data-bs-target="#pruningContent" type="button" role="tab" aria-controls="pruningContent" aria-selected="false">Data Pruning</button>
+					</li>
+				</ul>
+				<div class="tab-content" id="mainTabContent">
+					<div class="tab-pane fade show active" id="unitsContent" role="tabpanel" aria-labelledby="unitsTab">
+						<h2>Custom Units</h2>
+						<p>Define custom units here for use in the application.</p>
+						<hr />
+
+						<div class="accordion mb-3" id="addUnitAccordion">
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="addUnitAccordionHeading">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#addUnitAccordionContent" aria-expanded="true" aria-controls="addUnitAccordionContent">
+										{#icons/add}{/icons/add} Add Unit
+									</button>
+								</h2>
+								<div id="addUnitAccordionContent" class="accordion-collapse collapse" aria-labelledby="addUnitAccordionHeading" data-bs-parent="#addUnitAccordion">
+									<div class="accordion-body">
+										<form id="unitAddForm">
+											<div class="row">
+												<div class="col">
+													<label for="unitAddCategoryInput" class="form-label">Category</label>
+													<select class="form-select" id="unitAddCategoryInput" required>
+														{#for curCategory in allUnitMap.fieldNames()}
+															<option value="{curCategory}">{curCategory}</option>
+														{/for}
+													</select>
+												</div>
+												<div class="col">
+													<label for="unitAddNameInput" class="form-label">Name</label>
+													<input type="text" class="form-control" id="unitAddNameInput" required>
+												</div>
+												<div class="col">
+													<label for="unitAddSymbolInput" class="form-label">Symbol</label>
+													<input type="text" class="form-control" id="unitAddSymbolInput" aria-describedby="unitAddSymbolInputHelp" required>
+													<div id="unitAddSymbolInputHelp" class="form-text">We'll never share your email with anyone else.</div>
+												</div>
+												<div class="col">
+													<label for="unitAddTypeInput" class="form-label">Type</label>
+													<select class="form-select" id="unitAddTypeInput" required onchange="newUnitTypeChanged();">
+														<option value="BASE" selected>New Base Unit</option>
+														<option value="DERIVED">Derived Unit</option>
+													</select>
+												</div>
+											</div>
+											<div class="row" id="baseFormInputRow">
+												<div class="col-3">
+													<label for="unitAddBaseDimensionInput" class="form-label">Unit Dimension</label>
+													<select class="form-select" id="unitAddBaseDimensionInput" required>
+														{#for curDimension in unitDimensions}
+															<option value="{curDimension}">{curDimension}</option>
+														{/for}
+													</select>
+												</div>
+											</div>
+											<div class="row" style="display: none;" id="derivedFormInputRow">
+												<div class="col-3">
+													<label for="unitAddDerivedFromInput" class="form-label">Unit Derived From</label>
+													<select class="form-select" id="unitAddDerivedFromInput" required>
+													{#inputs/units/unitOptionsGroups allUnitMap=allUnitMap}
+													{/inputs/units/unitOptionsGroups}
+													</select>
+												</div>
+												<div class="col-3">
+													<label for="unitAddDerivedTypeInput" class="form-label">Derivation Type</label>
+													<select class="form-select" id="unitAddDerivedTypeInput" required>
+														{#for curType in unitDerivisionTypes}
+															<option value="{curType.asText()}">{curType.asText()}</option>
+														{/for}
+													</select>
+												</div>
+												<div class="col-3">
+													<label for="unitAddDerivedValueInput" class="form-label"># of new unit per derived</label>
+													<input type="number" class="form-control" id="unitAddDerivedValueInput" value="0.00" required>
+												</div>
+											</div>
+											<button type="submit" class="btn btn-sm btn-success mt-3">
+												{#icons/add}{/icons/add} Add
+											</button>
+										</form>
+									</div>
+								</div>
+							</div>
+						</div>
+
+						<table class="table table-bordered table-striped table-sm table-hover">
+							<thead>
+							<tr>
+								<th>Unit</th>
+								<th>Unit Category</th>
+								<th>Symbol</th>
+								<th>Actions</th>
+							</tr>
+							</thead>
+							<tbody>
+							{#if customUnits.get("empty").asBoolean()}
+								<tr>
+									<td colspan="4">
+										No Custom units!
+									</td>
+								</tr>
+							{#else}
+								{#for curCustomUnitEntry in customUnits.get("results")}
+									<tr>
+										<td>
+											{curCustomUnitEntry.get("unitCreator").get("name").asText()}
+										</td>
+										<td>{curCustomUnitEntry.get("category").asText()}</td>
+										<td>
+											{curCustomUnitEntry.get("unitCreator").get("symbol").asText()}
+										</td>
+										<td>{! TODO:: actions !}</td>
+									</tr>
+								{/for}
+							{/if}
+							</tbody>
+						</table>
+					</div>
+                    <div class="tab-pane fade" id="databasesContent" role="tabpanel" aria-labelledby="databasesTab">
+                        <h2>Databases</h2>
+
+                        <div class="accordion mb-3" id="addDbAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="addDbAccordionHeading">
+                                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#addDbAccordionContent" aria-expanded="true" aria-controls="addDbAccordionContent">
+                                        {#icons/add}{/icons/add} Add Database
+                                    </button>
+                                </h2>
+                                <div id="addDbAccordionContent" class="accordion-collapse collapse" aria-labelledby="addDbAccordionHeading" data-bs-parent="#addDbAccordion">
+                                    <div class="accordion-body">
+                                        <h5>
+                                            Add Database
+                                        </h5>
+                                        <div id="addDatabaseFormMessages"></div>
+                                        <form id="addDatabaseForm">
+                                            <div class="mb-3">
+                                                <label for="addDatabaseFormNameInput" class="form-label">Name</label>
+                                                <input type="text" class="form-control" id="addDatabaseFormNameInput" placeholder="Name" required>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="addDatabaseFormDisplayNameInput" class="form-label">Display Name</label>
+                                                <input type="text" class="form-control" id="addDatabaseFormDisplayNameInput" placeholder="Display Name">
+                                            </div>
+                                            <div class="mb-3">
+                                                <label for="addDatabaseFormDescriptionInput" class="form-label">Description</label>
+                                                <input type="text" class="form-control" id="addDatabaseFormDescriptionInput" placeholder="Description">
+                                            </div>
+                                            <button type="submit" class="btn btn-success">Add Database</button>
+                                        </form>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <table class="table table-bordered table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Display Name</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                            </thead>
+                            <tbody class="table-group-divider">
+                            {#for curOqmDb in oqmDbs}
+                                {#let curId=curOqmDb.get("id").asText()}
+                                    <tr>
+                                        <td>
+                                            {curOqmDb.get("name").asText()}
+                                        </td>
+                                        <td>
+                                            {curOqmDb.get("displayName").asText()}
+                                        </td>
+                                        <td>
+                                            {curOqmDb.get("description").asText()}
+                                        </td>
+                                        <td>
+
+                                        </td>
+                                    </tr>
+                                {/let}
+                            {/for}
+                        </table>
+                    </div>
+					<div class="tab-pane fade" id="importExportContent" role="tabpanel" aria-labelledby="importExportTab">
+						<h2>Data Import/Export</h2>
+
+						<div class="accordion" id="importExportAccordion">
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="importHeading">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#importCollapse" aria-expanded="false" aria-controls="importCollapse">
+										{#icons/icon icon='cloud-upload'}{/icons/icon}
+										Import
+									</button>
+								</h2>
+								<div id="importCollapse" class="accordion-collapse collapse" aria-labelledby="importHeading" data-bs-parent="#importExportAccordion">
+									<div class="accordion-body">
+										<div class="accordion" id="importAccordion">
+											<div class="accordion-item">
+												<h2 class="accordion-header" id="importBulkHeading">
+													<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#importBulkCollapse" aria-expanded="true" aria-controls="importBulkCollapse">
+														Bulk Import
+													</button>
+												</h2>
+												<div id="importBulkCollapse" class="accordion-collapse collapse show" aria-labelledby="importBulkHeading" data-bs-parent="#importAccordion">
+													<div class="accordion-body">
+														<form id="bulkImportForm">
+															<div id="dataImportMessages">
+															</div>
+															<div class="mb-3">
+																<label for="importBulkFileInput" class="form-label">Exported bundle file:</label>
+																<input class="form-control" type="file" id="importBulkFileInput" name="file">
+															</div>
+															<div class="">
+																<button type="submit" class="btn btn-primary">
+																	{#icons/icon icon='cloud-upload'}{/icons/icon}
+																	Import
+																</button>
+															</div>
+														</form>
+													</div>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="accordion-item">
+								<h2 class="accordion-header" id="exportHeading">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#exportCollapse" aria-expanded="false" aria-controls="exportCollapse">
+										{#icons/icon icon='cloud-download'}{/icons/icon}
+										Export
+									</button>
+								</h2>
+								<div id="exportCollapse" class="accordion-collapse collapse" aria-labelledby="exportHeading" data-bs-parent="#importExportAccordion">
+									<div class="accordion-body">
+										<form target="_blank" method="get" action="{rootPrefix}/api/passthrough/inventory/manage/export">
+											<div class="col-12 mb-2">
+												<div class="form-check form-switch">
+													<input class="form-check-input" type="checkbox" role="switch" id="excludeHistoryCheckbox" name="excludeHistory" value="true">
+													<label class="form-check-label" for="excludeHistoryCheckbox">Exclude History</label>
+												</div>
+											</div>
+											<div class="col-12">
+												<button type="submit" class="btn btn-primary">
+													{#icons/icon icon='cloud-download'}{/icons/icon}
+													Export
+												</button>
+											</div>
+										</form>
+
+									</div>
+								</div>
+							</div>
+
+						</div>
+					</div>
+					<div class="tab-pane fade" id="pruningContent" role="tabpanel" aria-labelledby="pruningTab">
+						<h2>Data Pruning</h2>
+					</div>
+				</div>
+
+			</div>
+		</div>
+	{/pageContent}
+	{#scripts}
+		<script src="{rootPrefix}/res/js/obj/units.js"></script>
+	{/scripts}
+	{#pageScript}
+		<script>
+
+			var importBulkFileInput = $("#importBulkFileInput")[0];
+
+			$("#bulkImportForm").submit(function (e){
+				e.preventDefault();
+
+				let formData = new FormData();
+
+
+				let file = importBulkFileInput.files[0];
+
+				formData.append("fileName", file.name);
+				formData.append("file", file);
+
+				Rest.call({
+					url: Rest.passRoot + '/inventory/manage/import/file/bundle',
+					method: "post",
+					data: formData,
+					failMessagesDiv: $("#dataImportMessages"),
+					done: function (data){
+						console.log("Successfully imported the data.");
+						PageMessages.reloadPageWithMessage("Imported data successfully!", "success", "Success!");
+					}
+					//TODO:: fail message
+				});
+			});
+
+			var unitAddForm = $("#unitAddForm");
+			var unitAddCategoryInput = $("#unitAddCategoryInput");
+			var unitAddNameInput = $("#unitAddNameInput");
+			var unitAddSymbolInput = $("#unitAddSymbolInput");
+			var unitAddTypeInput = $("#unitAddTypeInput");
+
+			var baseFormInputRow = $("#baseFormInputRow");
+			var unitAddBaseDimensionInput = $("#unitAddBaseDimensionInput");
+
+			var derivedFormInputRow = $("#derivedFormInputRow");
+			var unitAddDerivedFromInput = $("#unitAddDerivedFromInput");
+			var unitAddDerivedTypeInput = $("#unitAddDerivedTypeInput");
+			var unitAddDerivedValueInput = $("#unitAddDerivedValueInput");
+
+			function newUnitTypeChanged(){
+				switch (unitAddTypeInput.val()){
+					case "BASE":
+						derivedFormInputRow.hide();
+						baseFormInputRow.show();
+						break;
+					case "DERIVED":
+						derivedFormInputRow.show();
+						baseFormInputRow.hide();
+						break;
+				}
+			}
+
+			//TODO:: handle addUnit form submission
+			unitAddForm.on("submit", function (e){
+				e.preventDefault();
+
+				let newUnitRequest = {
+					unitCategory: unitAddCategoryInput.val(),
+					name: unitAddNameInput.val(),
+					symbol: unitAddSymbolInput.val(),
+					requestType: unitAddTypeInput.val()
+				};
+
+				if(newUnitRequest.requestType === "BASE"){
+					console.log("New base unit (" + unitAddBaseDimensionInput.val() + ")");
+					newUnitRequest.dimension = unitAddBaseDimensionInput.val();
+				} else if (newUnitRequest.requestType === "DERIVED") {
+					console.log("New derived unit");
+					newUnitRequest.baseUnit = UnitUtils.getUnitObj(unitAddDerivedFromInput.val());
+					newUnitRequest.numPerBaseUnit = unitAddDerivedValueInput.val();
+					newUnitRequest.deriveType = unitAddDerivedTypeInput.val();
+				} else {
+					console.error("Was not a recognized type.");
+				}
+
+
+				console.log("New unit request: " + JSON.stringify(newUnitRequest));
+
+				Rest.call({
+					authorization: true,
+					url: Rest.passRoot + "/inventory/unit/custom",
+					method: 'POST',
+					data: newUnitRequest,
+					done: function (data){
+						PageMessages.reloadPageWithMessage("Added custom unit successfully!", "success", "Success!");
+					},
+					fail: function (data){
+					}
+				});
+
+			});
+
+            let addDatabaseFormMessages = $("#addDatabaseFormMessages");
+            let addDatabaseForm = $("#addDatabaseForm");
+            let addDatabaseFormNameInput = $("#addDatabaseFormNameInput");
+            let addDatabaseFormDisplayNameInput = $("#addDatabaseFormDisplayNameInput");
+            let addDatabaseFormDescriptionInput = $("#addDatabaseFormDescriptionInput");
+
+            addDatabaseForm.on("submit", function (e) {
+                e.preventDefault();
+                let addDbData = {
+                    'name': addDatabaseFormNameInput.val(),
+                    'displayName': addDatabaseFormDisplayNameInput.val(),
+                    'description': addDatabaseFormDescriptionInput.val(),
+                };
+
+                console.log("Submitting add database form: ", addDbData);
+
+                Rest.call({
+                    authorization: true,
+                    url: Rest.passRoot + "/manage/db",
+                    method: 'POST',
+                    data: addDbData,
+                    failMessagesDiv: addDatabaseFormMessages,
+                    done: function (data){
+                        PageMessages.reloadPageWithMessage("Added Database successfully!", "success", "Success!");
+                    },
+                    fail: function (data){
+                    }
+                });
+            });
+
+		</script>
+	{/pageScript}
+{/include}

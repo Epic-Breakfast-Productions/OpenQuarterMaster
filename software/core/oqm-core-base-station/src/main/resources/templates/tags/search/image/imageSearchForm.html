@@ -1,0 +1,17 @@
+{!
+Template for the search form for storage blocks
+
+Ingests:
+- id - the id to give the form
+!}
+{!{@tech.ebp.oqm.baseStation.rest.search.ImageSearch searchObject}!}
+{#include tags/search/searchForm id=id action=(rootPrefix + '/images') showKeywords=true showAttributes=true defaultPageSize=config:['ui.image.search.defaultPageSize']}
+{#inputs}
+    <div class="mb-3 col col-3">
+        <label for="{id}-imageNameInput" class="form-label">Image title</label>
+        <input type="text" class="form-control" name="title" id="{id}-imageNameInput"
+               aria-describedby="{id}-imageNameInputHelp">
+        <div id="{id}-imageNameInputHelp" class="form-text">The title of the image to find.</div>
+    </div>
+{/inputs}
+{/include}

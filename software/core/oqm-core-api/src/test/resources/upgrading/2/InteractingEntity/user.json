@@ -1,0 +1,30 @@
+{
+	"_id": {
+		"$oid": "683149e18d98ce4f7f8a581f"
+	},
+	"_t": "tech.ebp.oqm.core.api.model.object.interactingEntity.user.User",
+	"attributes": {},
+	"authProvider": "https://oqm-test-ud-24-04.local/infra/keycloak/realms/oqm",
+	"email": "contact@gjstewart.net",
+	"idFromAuthProvider": "1648ed73-ca85-4228-9f34-a3fcb0716459",
+	"interactingEntityType": "USER",
+	"keywords": [],
+	"name": "Greg Stewart",
+	"notificationSettings": {
+		"expiry": true,
+		"expiryWarning": true,
+		"login": true
+	},
+	"roles": [
+		"default-roles-oqm",
+		"inventoryView",
+		"offline_access",
+		"itemCheckout",
+		"inventoryEdit",
+		"uma_authorization",
+		"inventoryAdmin",
+		"user"
+	],
+	"schemaVersion": 1,
+	"username": "snappawapa"
+}

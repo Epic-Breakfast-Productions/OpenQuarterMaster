@@ -1,0 +1,248 @@
+{#modal id='itemView' size='xl' title='Item View'}
+    {#titleIcon}{#icons/item}{/icons/item}{/titleIcon}
+    <div class="row">
+        <div class="col" id="itemViewMessages"></div>
+    </div>
+<div class="row">
+    {#carousel id='itemViewCarousel' carouselCss='col'}{/carousel}
+    <div class="col">
+        <div class="row">
+            <div class="card col-sm-12 col-md-6">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Storage Type:</h5>
+                    <p id="itemViewStorageType" class="d-inline">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Id:</h5>
+                    <p class="card-text d-inline">
+                        <small>
+                            <span id="itemViewId"></span>{#copyTextButton textContainerId='itemViewId'}{/copyTextButton}
+                        </small>
+                    </p>
+                </div>
+            </div>
+            <div class="card col-12" id="itemViewDescriptionContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Description:</h5>
+                    <div id="itemViewDescription">
+                    </div>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-12 col-lg-6" id="itemViewCategoriesContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Categories:</h5>
+                    <p id="itemViewCategories">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Total Held:</h5>
+                    <p id="itemViewTotal" class="d-inline">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewTotalLowStockThresholdContainer">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Total Low Stock Threshold:</h5>
+                    <p id="itemViewTotalLowStockThreshold" class="d-inline">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Value per Unit <span id="itemViewValPerUnitDefault">(default)</span>:</h5>
+                    <p class="d-inline">
+                        {currency.getSymbol()}<span id="itemViewValPerUnit"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Total Value:</h5>
+                    <p class="d-inline">
+                        {currency.getSymbol()}<span id="itemViewTotalVal"></span>
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewIdentifyingAttContainer">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Identifying Attribute:</h5>
+                    <p id="itemViewIdentifyingAtt" class="d-inline">
+                    </p>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewBarcodeContainer">
+                <div class="card-body">
+                    <h5 class="card-title">Barcode:</h5>
+                    <img src="" id="itemViewBarcode" class="barcodeViewImg" alt="Item Barcode">
+                </div>
+            </div>
+			<div class="card col-sm-12 col-md-6" id="itemViewFilesContainer">
+				<div class="card-body" style="padding: 2px 0;">
+					{#fileAttachment/FileAttachmentObjectView id='itemViewFiles'}
+					{/fileAttachment/FileAttachmentObjectView}
+				</div>
+			</div>
+        </div>
+        <!-- TODO:: add expiry warning duration -->
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col">
+        <div id="itemViewStoredNonePresentContainer">
+            <h4>Nothing Stored</h4>
+            <div id="itemViewStoredNonePresentHasStorageContainer">
+                <button class="btn btn-primary" id="itemViewStoredNonePresentHasStorageAddStoredButton" data-bs-target="#itemStoredTransactionAddModal" data-bs-toggle="modal" onclick="ItemStoredTransaction.Add.setupForm(ItemView.itemViewId.text(), null, this);">+ Add Stored</button>
+                <h5>Available storage blocks:</h5>
+                <p id="itemViewStoredNonePresentBlocksList">
+                </p>
+            </div>
+            <div id="itemViewStoredNonePresentNoStorageContainer">
+                <p>
+                    No storage blocks associated with this item! Add storage by editing this item!
+                </p>
+            </div>
+        </div>
+        <div id="itemViewStoredMultiContainer">
+            <h4>
+                {#icons/storageBlocks}{/icons/storageBlocks} <span id="itemViewStoredMultiNumStoredDisplay"></span> stored across <span id="itemViewStoredMultiBlockNum"></span> storage blocks:
+            </h4>
+            <div class="mb-2">
+                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" id="itemViewStoredMultiAddStoredButton">
+                    + Add Stored Item
+                </button>
+            </div>
+            <ul class="nav nav-tabs" id="itemViewStoredViewTab" role="tablist">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="itemViewStoredViewTabByBlock" data-bs-toggle="tab" data-bs-target="#itemViewStoredViewTabByBlockPane" type="button" role="tab" aria-controls="itemViewStoredViewTabByBlockPane" aria-selected="true">
+                    By Block
+                </button>
+              </li>
+              <li class="nav-item" role="presentation">
+                <button class="nav-link" id="itemViewStoredViewTabAllStored" data-bs-toggle="tab" data-bs-target="#itemViewStoredViewTabAllStoredPane" type="button" role="tab" aria-controls="itemViewStoredViewTabAllStoredPane" aria-selected="false">
+                    All Stored
+                </button>
+              </li>
+            </ul>
+            <div class="tab-content" id="itemViewStoredViewTabContent">
+              <div class="tab-pane fade show active" id="itemViewStoredViewTabByBlockPane" role="tabpanel" aria-labelledby="itemViewStoredViewTabByBlock" tabindex="0">
+                <p id="itemViewStoredMultiNonePresentBlocksList">
+                </p>
+                <div class="accordion" id="itemViewStoredMultiByBlockAccordion">
+                </div>
+              </div>
+              <div class="tab-pane fade" id="itemViewStoredViewTabAllStoredPane" role="tabpanel" aria-labelledby="itemViewStoredViewTabAllStored" tabindex="0">
+                <div class="accordion-body p-0 pt-1" id="itemViewStoredViewTabAllStoredContainer">
+                    <div class="row">
+                        <div class="col accordion" id="itemViewAllStoredSearchAccordion">
+                            <div class="accordion-item">
+                                <h2 class="accordion-header" id="itemViewAllStoredSearchAccordionFieldsHeader">
+                                    <button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#itemViewAllStoredSearchAccordionFieldsCollapse" aria-expanded="false"
+                                        aria-controls="itemViewAllStoredSearchAccordionFieldsCollapse">
+                                        {#icons/search}{/icons/search} Search Fields
+                                    </button>
+                                    </h2>
+                                <div id="itemViewAllStoredSearchAccordionFieldsCollapse" class="accordion-collapse collapse"
+                                     aria-labelledby="itemViewAllStoredSearchAccordionFieldsHeader" data-bs-parent="#itemViewAllStoredSearchAccordion">
+                                    <div class="accordion-body">
+                                        {#search/itemStored/searchForm id='itemViewAllStoredSearchForm' resultsContainer='#itemViewAllStoredSearchResults'}
+                                        {/search/itemStored/searchForm}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col">
+                            <table class=" table table-bordered table-striped table-hover table-sm" id="itemViewAllStoredSearchResults">
+                                {!{#search/itemCheckout/searchResults searchResults=searchResult actionType='full' showItem=false searchFormId='itemViewCheckoutSearchForm' showStillCheckedOut=false}!}
+                                {!{/search/itemCheckout/searchResults}!}
+                            </table>
+                        </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div>
+        <div id="itemViewStoredBulkContainer">
+            <h4>
+                {#icons/storageBlocks}{/icons/storageBlocks} <span id="itemViewStoredBulkNumStoredDisplay"></span> stored across <span id="itemViewStoredBulkBlockNum"></span> storage blocks:
+            </h4>
+            <p id="itemViewStoredBulkNonePresentBlocksList">
+            </p>
+            <div class="accordion" id="itemViewStoredBulkAccordion">
+            </div>
+        </div>
+        <div id="itemViewStoredSingleContainer">
+            <div class="accordion" id="itemViewStoredSingleAccordion">
+            </div>
+        </div>
+    </div>
+</div>
+<div class="itemViewCheckedOutContainer">
+    <hr />
+    <div class="row">
+        <div class="col accordion" id="itemViewCheckedOutAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewCheckedOutAccordionCollapse" aria-expanded="false" aria-controls="itemViewCheckedOutAccordionCollapse">
+                        {#icons/transactionCheckout}{/icons/transactionCheckout} Checked out:
+                    </button>
+                </h2>
+                <div id="itemViewCheckedOutAccordionCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewCheckedOutAccordion">
+                    <div class="accordion-body p-0 pt-1">
+                        <div class="row">
+                            <div class="col accordion" id="itemViewCheckoutSearchAccordion">
+                                <div class="accordion-item">
+                                    <h2 class="accordion-header" id="itemViewCheckoutSearchAccordionFieldsHeader">
+                                    <button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse"
+                                        data-bs-target="#itemViewCheckoutSearchAccordionFieldsCollapse" aria-expanded="false"
+                                        aria-controls="itemViewCheckoutSearchAccordionFieldsCollapse">
+                                        {#icons/search}{/icons/search} Search Fields
+                                    </button>
+                                    </h2>
+                                    <div id="itemViewCheckoutSearchAccordionFieldsCollapse" class="accordion-collapse collapse"
+                                                 aria-labelledby="itemViewCheckoutSearchAccordionFieldsHeader" data-bs-parent="#itemViewCheckoutSearchAccordion">
+                                        <div class="accordion-body">
+                                            {#search/itemCheckout/searchForm id='itemViewCheckoutSearchForm' rootPrefix=rootPrefix}
+                                            {/search/itemCheckout/searchForm}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col">
+                                <table class=" table table-bordered table-striped table-hover table-sm" id="itemViewCheckoutSearchResults">
+                                    {!{#search/itemCheckout/searchResults searchResults=searchResult actionType='full' showItem=false searchFormId='itemViewCheckoutSearchForm' showStillCheckedOut=false}!}
+                                    {!{/search/itemCheckout/searchResults}!}
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            {!<h4></h4><!-- TODO:: search form, set to this specific item. -->!}
+            {!<table class="table table-sm table-bordered table-hover" id="itemViewCheckedOutResultsContainer">!}
+            {!</table>!}
+        </div>
+    </div>
+</div>
+<hr />
+<div class="row">
+    {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
+    {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
+</div>
+<div class="row">
+    <div class="col">
+        {#objView/history/objHistoryView containerId='itemHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item/')}{/objView/history/objHistoryView}
+    </div>
+</div>
+{/modal}

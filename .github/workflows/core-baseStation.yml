@@ -8,34 +8,40 @@ on:
   push:
     branches: [ "**" ]
     paths:
-      - "software/oqm-core-base-station/**"
+      - "software/core/oqm-core-base-station/**"
       - ".github/workflows/core-baseStation.yml"
+      - ".github/workflows/wf-gradleBuild.yaml"
+      - ".github/workflows/wf-gradleUnitTest.yaml"
+      - ".github/workflows/wf-gradleQuarkusIntTest.yaml"
   pull_request:
     branches: [ "**" ]
     paths:
-      - "software/oqm-core-base-station/**"
+      - "software/core/oqm-core-base-station/**"
       - ".github/workflows/core-baseStation.yml"
+      - ".github/workflows/wf-gradleBuild.yaml"
+      - ".github/workflows/wf-gradleUnitTest.yaml"
+      - ".github/workflows/wf-gradleQuarkusIntTest.yaml"
   workflow_call:
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 defaults:
   run:
-    working-directory: "software/oqm-core-base-station"
+    working-directory: "software/core/oqm-core-base-station"
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   build:
     uses: ./.github/workflows/wf-gradleBuild.yaml
     with:
-      path: "software/oqm-core-base-station"
+      path: "software/core/oqm-core-base-station"
   unitTest:
     uses: ./.github/workflows/wf-gradleUnitTest.yaml
     with:
-      path: "software/oqm-core-base-station"
+      path: "software/core/oqm-core-base-station"
   intTest:
     uses: ./.github/workflows/wf-gradleQuarkusIntTest.yaml
     strategy:
       matrix:
         containerBased: [ false ] # TODO:: enable true
     with:
-      path: "software/oqm-core-base-station"
+      path: "software/core/oqm-core-base-station"
       containerBased: ${{ matrix.containerBased }}

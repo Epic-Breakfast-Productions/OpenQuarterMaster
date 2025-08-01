@@ -1,0 +1,30 @@
+---
+title: {{customization.title}}
+description: {{customization.description}}
+color: {{customization.color}}
+favicon: /oqm/media/oqm-icon.svg
+
+layout:
+  tab: Core ({{ services["Core"] | count }})
+
+  {%- for group, serviceList in services.items() %}
+  {%- if serviceList %}
+  {{group}}:
+    tab: {{group}} ({{ serviceList | count }})
+    style: row
+    columns: 2
+    header: false
+  {%- endif %}
+  {%- endfor %}
+  Resources:
+    initiallyCollapsed: false
+
+quicklaunch:
+  searchDescriptions: true
+  hideInternetSearch: true
+  showSearchSuggestions: true
+  hideVisitURL: false
+  provider: {{customization.searchProvider}} # google, duckduckgo, bing, baidu, brave or custom
+
+# Breaks the setup. don't know why.
+disableUpdateCheck: true

@@ -1,0 +1,16 @@
+{
+	"core": {
+		"api": {
+			"internalHost": "oqm-core-api",
+			"internalHttpPort": 80,
+			"internalHttpsPort": 443,
+			"externalBaseUri": "#{infra.traefik.externalRootUri}/core/api",
+			"internalBaseUri": "https://#{core.api.internalHost}:#{core.api.internalHttpsPort}",
+			"mongodb": {
+				"user": "core_api_user",
+				"pass": "<secret>",
+				"database": "oqmCoreApiMain"
+			}
+		}
+	}
+}

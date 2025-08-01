@@ -1,0 +1,54 @@
+{!{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.baseStation.model.object.media.Image> searchResults}!}
+{!{@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}!}
+{!
+  Template to show storage search results. Gives the contents of a table, but not the main table tag
+
+  Ingests:
+  - actionType - the action to take. "full" or "select"
+  - searchResults
+  - searchFormId - the id of the search form controlling the results
+  - inputIdPrepend - the prepend for the id of the inputs to set the data of
+  - otherModalId - the id of the other modal to open when selected
+
+  if `actionType` is "select", callback will be "selectImage('<image name>', '<image id>', '<inputIdPrepend>')" on the select button
+!}
+<div class="row">
+  <div class="col text-center m-1 searchResultsContainer">
+    {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
+  </div>
+</div>
+<div class="row">
+  {#if searchResults.get("empty").asBoolean()}
+  <div class="col d-grid gap-2 text-center">
+    <h2>
+      No Images found.
+    </h2>
+    {#if actionType == 'full'}
+    {! TODO:: make the anchor of the page the id of the image !}
+    <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
+            data-bs-target="#addEditModal" onclick="setupAddEditForAdd();">
+      {#icons/add}{/icons/add} Add Image
+    </button>
+    {/if}
+  </div>
+  {#else}
+  {#for result in searchResults.get("results")}
+	  {#let id=result.get("id").asText() title=result.get("fileName").asText()}
+    <div class="col-md-3 card mb-1 imageSearchResult" data-bs-toggle="modal" {#if actionType == 'select'} data-bs-target="#{otherModalId}" onclick="selectImage('{title}', '{id}');"{#else} data-bs-target="#viewModal" onclick="setupViewForImage('{id}')"{/if}>
+      <img src="{rootPrefix}/api/passthrough/media/image/{id}/revision/latest/data" class="card-img-top img-thumbnail" alt="{title}">
+      <div class="card-body">
+        <h5 class="card-title">{title}</h5>
+        {#if !result.get("description").asText().isBlank() }
+        <p class="card-text">{result.get("description").asText()}</p>
+        {/if}
+      </div>
+    </div>
+	{/let}
+  {/for}
+  {/if}
+</div>
+<div class="row">
+  <div class="col text-center m-1 searchResultsContainer">
+    {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
+  </div>
+</div>

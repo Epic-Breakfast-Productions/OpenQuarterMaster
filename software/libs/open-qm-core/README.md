@@ -1,5 +1,9 @@
 # Open QuarterMaster Core Library
 
+THIS PARTICULAR PROJECT IS DEAD
+
+It is slated for removal. It is only here as a reference until we finish a couple of other small tasks. Please ignore this project
+
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/tech.epic-breakfast-productions.openQuarterMaster.lib/open-qm-lib-core/badge.svg)](https://maven-badges.herokuapp.com/maven-central/tech.epic-breakfast-productions.openQuarterMaster.lib/open-qm-lib-core)
 
 ## TODOS:
