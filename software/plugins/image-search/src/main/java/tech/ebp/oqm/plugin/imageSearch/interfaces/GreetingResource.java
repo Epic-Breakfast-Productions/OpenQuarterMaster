@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.imageSearch;
+package tech.ebp.oqm.plugin.imageSearch.interfaces;
 
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
