@@ -401,6 +401,8 @@ class ConfigManager:
         else:
             configFile = additionalConfigDir + "/" + configFile
 
+        # TODO:: check to ensure in appropriate directory (additionalConfigDir) #414
+
         try:
             if not os.path.isfile(configFile):
                 with open(configFile, 'x') as stream:
