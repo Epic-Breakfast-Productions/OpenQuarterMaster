@@ -36,15 +36,15 @@ ExecStartPre=/bin/bash -c "oqm-captain certs ensure-system-present"
 # Ensure previous runs gone
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop core api container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove core api container'"
-ExecStartPre=/bin/bash -c "/etc/oqm/accountScripts/mongo-assert-account.sh -u \"$(oqm-config -g 'core.api.mongodb.user')\" -p \"$(oqm-config -g 'core.api.mongodb.pass')\" -d \"$(oqm-config -g 'core.api.mongodb.database')\""
+ExecStartPre=/bin/bash -c "/etc/oqm/accountScripts/mongo-assert-account.sh -u \"$(oqm-config g 'core.api.mongodb.user')\" -p \"$(oqm-config g 'core.api.mongodb.pass')\" -d \"$(oqm-config g 'core.api.mongodb.database')\""
 ExecStartPre=/bin/bash -c "oqm-captain certs write-internal $CONTAINER_NAME /etc/oqm/serviceConfig/core/api/files/"
-ExecStartPre=/bin/bash -c "cp \"$(oqm-config -g cert.selfSigned.certs.CARootCert)\" /etc/oqm/serviceConfig/core/api/files/systemCA.crt"
+ExecStartPre=/bin/bash -c "cp \"$(oqm-config g cert.selfSigned.certs.CARootCert)\" /etc/oqm/serviceConfig/core/api/files/systemCA.crt"
 
 # Create filled out configuration
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/api/"
-ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t $USER_CONFIG_FILE_TEMPLATE > $USER_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config t $USER_CONFIG_FILE_TEMPLATE > $USER_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
 
 # Pull image as separate task
@@ -53,7 +53,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --network=oqm-internal \
                                         -v /etc/oqm/serviceConfig/core/api/files:/etc/oqm/serviceConfig/core/api/files:ro \
-                                        --add-host $(oqm-config -g system.hostname):host-gateway \
+                                        --add-host $(oqm-config g system.hostname):host-gateway \
                                         --env-file $MAIN_CONFIG_FILE \
                                         --env-file $USER_CONFIG_FILE \
                                         $IMAGE_NAME:$IMAGE_VERSION"
@@ -74,7 +74,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                             done; \
                             "
 ExecStartPost=/bin/bash -c "running=\"false\"; \
-                            healthUri=\"$(oqm-config -g core.api.internalBaseUri)/q/health\"; \
+                            healthUri=\"$(oqm-config g core.api.internalBaseUri)/q/health\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \

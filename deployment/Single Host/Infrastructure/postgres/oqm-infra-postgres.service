@@ -35,10 +35,10 @@ ExecStartPre=/bin/bash -c "touch $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chown oqm $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "truncate -s 0 $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"POSTGRES_USER=$(oqm-config -g 'infra.postgres.adminUser')\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"POSTGRES_PASSWORD=$(oqm-config -g 'infra.postgres.adminPass')\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config -g 'system.dataDir')$DATA_DIR"
-ExecStartPre=/bin/bash -c "chown -R oqm $(oqm-config -g 'system.dataDir')$DATA_DIR"
+ExecStartPre=/bin/bash -c "printf \"POSTGRES_USER=$(oqm-config g 'infra.postgres.adminUser')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"POSTGRES_PASSWORD=$(oqm-config g 'infra.postgres.adminPass')\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR"
+ExecStartPre=/bin/bash -c "chown -R oqm $(oqm-config g 'system.dataDir')$DATA_DIR"
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --rm \
@@ -46,7 +46,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --name $CONTAINER_NAME \
                                  --network=oqm-internal \
                                  --env-file $ENV_CONFIG_FILE \
-                                 -v $(oqm-config -g 'system.dataDir')$DATA_DIR:/var/lib/postgresql/data/ \
+                                 -v $(oqm-config g 'system.dataDir')$DATA_DIR:/var/lib/postgresql/data/ \
                                  $IMAGE_NAME:$IMAGE_VERSION"
 # determine is running
 ExecStartPost=/bin/bash -c "running=\"false\"; \
@@ -73,7 +73,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     echo \"Container was stopped!\"; \
                                     exit 1; \
                                 fi; \
-                                /usr/bin/docker exec $CONTAINER_NAME psql postgres -U \"$(oqm-config -g 'infra.postgres.adminUser')\" -tXAc \"SELECT 1\"; \
+                                /usr/bin/docker exec $CONTAINER_NAME psql postgres -U \"$(oqm-config g 'infra.postgres.adminUser')\" -tXAc \"SELECT 1\"; \
                                 if [ \"$?\" = \"0\" ]; then \
                                     echo \"Postgres container running and available!\"; \
                                     running=\"true\"; \
