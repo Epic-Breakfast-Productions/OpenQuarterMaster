@@ -1,4 +1,5 @@
 #!/usr/bin/python3
+# PYTHON_ARGCOMPLETE_OK
 #
 # Script to get configuration and replace values
 #
@@ -15,9 +16,13 @@ from ConfigManager import *
 from ScriptInfos import *
 import json
 import argparse
+import argcomplete
 import re
 import jinja2
 import atexit
+import pathlib
+from os import listdir
+from os.path import isfile, join
 
 SCRIPT_TITLE = "Open QuarterMaster Station Config Helper V" + ScriptInfo.SCRIPT_VERSION
 
@@ -39,6 +44,25 @@ def printVersion():
 
 def listAll(args):
     print(json.dumps(mainCM.configData, indent=4))
+
+def listKeysRec(data, list, prevKey = ""):
+    for key in data:
+        fullKey = prevKey + "." + key if prevKey else key
+        list.append(fullKey)
+        if isinstance(data[key], dict):
+            listKeysRec(data[key], list, fullKey)
+
+def listKeys(args, printOut=True):
+    prefix=args.prefix
+
+    keyList=[]
+    listKeysRec(mainCM.configData, keyList)
+
+    keyList = [s for s in keyList if s.startswith(prefix)]
+
+    if printOut:
+        print("\n".join(keyList))
+    return keyList
 
 def get(args):
     configToGet = args.key
@@ -103,6 +127,22 @@ def set(args):
     # TODO: error check
     print(json)
 
+# https://kislyuk.github.io/argcomplete/#specifying-completers
+class ConfigKeyCompleter(object):
+    def __call__(self, prefix, **kwargs):
+        obj = lambda: None
+        obj.prefix = prefix
+        return listKeys(obj, False)
+
+class ConfigFileCompleter(object):
+    def __call__(self, prefix, **kwargs):
+        # list files in config dir
+        output = [f for f in listdir(ScriptInfo.CONFIG_VALUES_DIR) if isfile(join(ScriptInfo.CONFIG_VALUES_DIR, f)) and f.endswith(".json") and f.startswith(prefix)]
+
+        if CONFIG_MNGR_DEFAULT_ADDENDUM_FILENAME not in output:
+            output.append(CONFIG_MNGR_DEFAULT_ADDENDUM_FILENAME)
+        return output
+
 # Setup argument parser
 argParser = argparse.ArgumentParser(
     prog="oqm-config",
@@ -117,21 +157,26 @@ subparsers = argParser.add_subparsers(dest="command", help="Subcommands")
 list_parser = subparsers.add_parser("list", aliases=['l'], help="Lists current config with values. Does not fill out secret values.")
 list_parser.set_defaults(func=listAll)
 
+key_list_parser = subparsers.add_parser("list-keys", aliases=['lk'], help="Lists all config keys.")
+key_list_parser.add_argument("prefix", help="The config key prefix to specify (optional).", nargs="?", default="").completer=ConfigKeyCompleter()
+key_list_parser.set_defaults(func=listKeys)
+
 get_parser = subparsers.add_parser("get", aliases=['g'], help="Gets a config's value.")
-get_parser.add_argument("key", help="The config key to get.")
+get_parser.add_argument("key", help="The config key to get.").completer=ConfigKeyCompleter()
 get_parser.set_defaults(func=get)
 
 get_parser = subparsers.add_parser("template", aliases=['t'], help="Fills out a template file with config values. Outputs the result.")
-get_parser.add_argument("templateFile", help="The template file to fill out.")
+get_parser.add_argument("templateFile", help="The template file to fill out.", type=pathlib.Path)
 get_parser.set_defaults(func=template)
 
 set_parser = subparsers.add_parser("set", aliases=['s'], help="Sets a configuration value.")
-set_parser.add_argument("key", help="The config key to set.")
+set_parser.add_argument("key", help="The config key to set.").completer=ConfigKeyCompleter()
 set_parser.add_argument("value", help="The value to set.")
-set_parser.add_argument("file", help="The file in the config directory to modify. Empty to default to \"99-custom.json\".", default="")
+set_parser.add_argument("file", help="The file in the config directory to modify. Optional. Omit or specify empty to default to \"99-custom.json\".", nargs="?", default="").completer=ConfigFileCompleter()
 set_parser.add_argument('--secret', '-s', action='store_true', help='Specifies this config value is to be stored as a secret.')
 set_parser.set_defaults(func=set)
 
+argcomplete.autocomplete(argParser)
 args = argParser.parse_args()
 
 if args.v:
