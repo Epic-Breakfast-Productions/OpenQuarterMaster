@@ -1,0 +1,10 @@
+{
+	"plugin": {
+		"altFormats": {
+			"internalHost": "oqm-plugin-alt-formats",
+			"internalHttpPort": 80,
+			"internalHttpsPort": 443,
+			"internalBaseUri": "http://#{plugin.altFormats.internalHost}:#{plugin.altFormats.internalHttpPort}",
+		}
+	}
+}
