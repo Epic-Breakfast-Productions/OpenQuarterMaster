@@ -5,3 +5,4 @@ installerBuild
 .pytest_cache
 bin/
 src/lib/__pycache__/
+.idea/
