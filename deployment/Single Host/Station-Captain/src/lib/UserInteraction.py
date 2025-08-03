@@ -35,12 +35,15 @@ class UserInteraction:
         self.dialog.set_background_title(ScriptInfo.SCRIPT_TITLE)
         self.dialog.__setattr__("hfile", "oqm-station-captain-help.txt")
 
-        self.dialog.setup_debug(
-            True,
-            open(LogUtils.logDir + "dialogDebug.log", 'w'),
-            always_flush=True,
-            expand_file_opt=True
-        )
+        try:
+            self.dialog.setup_debug(
+                True,
+                open(LogUtils.logDir + "dialogDebug.log", 'w'),
+                always_flush=True,
+                expand_file_opt=True
+            )
+        except Exception as e:
+            return
 
     @staticmethod
     def clearScreen():
