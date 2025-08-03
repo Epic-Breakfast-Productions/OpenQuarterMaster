@@ -1,7 +1,5 @@
 package tech.ebp.oqm.core.api.scheduled;
 
-import io.quarkus.qute.Location;
-import io.quarkus.qute.Template;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.event.Observes;
