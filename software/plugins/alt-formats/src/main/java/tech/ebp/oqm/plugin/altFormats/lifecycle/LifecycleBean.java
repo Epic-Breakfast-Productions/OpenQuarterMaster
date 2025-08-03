@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.extItemSearch.lifecycle;
+package tech.ebp.oqm.plugin.altFormats.lifecycle;
 
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;

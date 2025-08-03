@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.extItemSearch;
+package tech.ebp.oqm.plugin.altFormats;
 
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.importExport.importing.csv;
+package tech.ebp.oqm.plugin.altFormats.service.csv;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
