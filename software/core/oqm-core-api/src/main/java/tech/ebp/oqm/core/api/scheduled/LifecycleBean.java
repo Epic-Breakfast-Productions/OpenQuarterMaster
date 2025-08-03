@@ -1,7 +1,5 @@
 package tech.ebp.oqm.core.api.scheduled;
 
-import io.quarkus.qute.Location;
-import io.quarkus.qute.Template;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.event.Observes;
@@ -9,6 +7,7 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
@@ -26,9 +25,11 @@ import java.util.TreeMap;
 @Slf4j
 public class LifecycleBean {
 	
-	@Inject
-	@Location("other/StartBannerTemplate")
-	Template startTemplate;
+	@ConfigProperty(name="service.version")
+	String serviceVersion;
+	
+	@ConfigProperty(name="service.apiVersion")
+	String apiVersion;
 	
 	@Inject
 	CustomUnitService customUnitService;
@@ -82,7 +83,46 @@ public class LifecycleBean {
 		//		log.debug("Stats lib version: {}", this.statsVersion);
 		//		log.debug("Web lib version: {}", this.webLibVersion);
 		
-		log.info(this.startTemplate.render());
+		if(log.isInfoEnabled()) {
+			// Image: https://www.text-image.com/convert/ascii.html
+			// Text: https://manytools.org/hacker-tools/ascii-banner/ (Colossal font)
+			log.info("""
+            &&&&
+        &&&&&&&&&&&
+     &&&&&&&    &&&&&&&
+ &&&&&&&           &&&&&&&&            &&&
+&&&&&                  &&&&&        &&&&&&&&&&           .d8888b.
+&&&&                    &&&&    &&&&&&&&&&&&&&&&&       d88P  Y88b
+&&&&                    &&&&   &&&&&&&&&&&&&&&&&&&      888    888
+&&&&                    &&&&   &&&&&&&&&&&&&&&&&&&      888         .d88b.  888d888 .d88b.
+&&&&                    &&&&   &&&&&&&&&&&&&&&&&&&      888        d88""88b 888P"  d8P  Y8b
+&&&&                    &&&&   &&&&&&&&&&&&&&&&&&&      888    888 888  888 888    88888888
+&&&&&                  &&&&&    &&&&&&&&&&&&&&&&&&      Y88b  d88P Y88..88P 888    Y8b.
+ &&&&&&&&          &&&&&&&         &&&&&&&&&&&&          "Y8888P"   "Y88P"  888     "Y8888
+     &&&&&&&&  &&&&&&&&     &BPB&     &&&&&
+         &&&&&&&&&&     &#PY?7!7?YG#
+            &&&      #GY?7!7777777!7?5#
+     PJPB&       &B5J7!77777777777777!5                        d8888 8888888b. 8888888
+     P!!7?YP#&BPJ77!77777777777777777!5                       d88888 888   Y88b  888
+     P!7777!777!777777777777777777777!5                      d88P888 888    888  888
+     P!777777777777777777777777777777!5                     d88P 888 888   d88P  888
+     P!777777777777777777777777777777!5                    d88P  888 8888888P"   888
+     P!777777777777777777777777777777!5                   d88P   888 888         888
+     P!777777777777777777777777777777!5                  d8888888888 888         888
+     P!777777777777777777777777777777!5                 d88P     888 888       8888888
+     BJ77!777777777777777777777777!!7?G
+       &G5?7!777777777777777777!7?YG#
+           #GY?7!7777777777!7?YP#
+              &BPJ?7777777JPB&
+                  &B5??YG&
+
+Version:     {}
+API Version: {}
+""",
+				this.serviceVersion,
+				this.apiVersion
+			);
+		}
 		
 		logConfig();
 

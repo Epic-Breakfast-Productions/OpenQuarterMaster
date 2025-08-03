@@ -1,13 +1,8 @@
 package tech.ebp.oqm.core.api.interfaces.ui;
 
-import io.quarkus.qute.Location;
-import io.quarkus.qute.Template;
-import io.quarkus.qute.TemplateInstance;
 import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.PermitAll;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
-import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
@@ -15,10 +10,12 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
+import java.text.MessageFormat;
 import java.util.Optional;
 
 @SuppressWarnings("LombokGetterMayBeUsed")
@@ -38,23 +35,54 @@ public class IndexUi {
 	@Getter
 	@HeaderParam("x-forwarded-prefix")
 	Optional<String> forwardedPrefix;
-
-	@Getter
-	@Inject
-	@Location("index.html")
-	Template indexTemplate;
+	
+	@ConfigProperty(name="service.version")
+	String serviceVersion;
 
 	@GET
 	@Path("index.html")
+	@Produces(MediaType.TEXT_HTML)
 	@Operation(summary = "Simple index content to lead user to more resources. Same as / .")
-	public TemplateInstance getIndex() {
-		return this.getIndexTemplate()
-			.data("rootPrefix", this.forwardedPrefix.orElse(""));
+	public String getIndex() {
+		return MessageFormat.format("""
+<html lang="en">
+<head>
+	<title>OQM API</title>
+</head>
+<body>
+<main>
+	<img src="{0}/media/logo.svg" alt="OQM Logo">
+	<h1>
+		OQM Core API
+	</h1>
+	<p>
+		This service serves the core api forming the base functionality of the Open QuarterMaster system.
+	</p>
+	<p>
+		See <a href="{0}/q/swagger-ui">Swagger</a> for API documentation.
+	</p>
+</main>
+<hr />
+<footer>
+	<p>
+		Version {1}
+	</p>
+	<p>
+		&copy; 2024 <a href="https://epic-breakfast-productions.tech">EBP</a>
+	</p>
+</footer>
+</body>
+</html>
+""",
+			this.forwardedPrefix.orElse(""),
+			serviceVersion
+		);
 	}
 
 	@GET
+	@Produces(MediaType.TEXT_HTML)
 	@Operation(summary = "Simple index content to lead user to more resources. Same as /index.html.")
-	public TemplateInstance getRoot() {
+	public String getRoot() {
 		return this.getIndex();
 	}
 }

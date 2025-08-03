@@ -45,7 +45,6 @@ runningInfo:
   port: ${quarkus.http.port}
   hostnamePort: ${runningInfo.hostname}:${runningInfo.port}
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
-  fromEmail: no-reply@${runningInfo.hostname}
   depotUri: " "
 
 externalService:
@@ -113,8 +112,6 @@ quarkus:
       enabled: true
     port: 80
     ssl-port: 443
-  mailer:
-    from: ${runningInfo.fromEmail}
   reactive-messaging:
     health:
       enabled: true
