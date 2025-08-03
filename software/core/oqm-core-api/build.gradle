@@ -24,7 +24,6 @@ dependencies {
 	implementation 'io.quarkus:quarkus-messaging-kafka'
 	implementation 'io.quarkus:quarkus-opentelemetry'
 	implementation 'io.quarkus:quarkus-config-yaml'
-	implementation 'io.quarkus:quarkus-qute'
 	implementation 'io.quarkus:quarkus-mongodb-panache'
 	implementation 'io.quarkus:quarkus-hibernate-validator'
 	implementation 'io.quarkus:quarkus-elytron-security'
