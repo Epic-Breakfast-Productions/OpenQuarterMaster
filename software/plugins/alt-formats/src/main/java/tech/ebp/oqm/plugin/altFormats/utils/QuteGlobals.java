@@ -1,7 +1,7 @@
-package tech.ebp.oqm.core.api.utils;
+package tech.ebp.oqm.plugin.altFormats.utils;
 
 import io.quarkus.qute.TemplateGlobal;
-import tech.ebp.oqm.core.api.service.importExport.importing.csv.InvItemCsvConverter;
+import tech.ebp.oqm.plugin.altFormats.service.csv.InvItemCsvConverter;
 
 @TemplateGlobal
 public class QuteGlobals {

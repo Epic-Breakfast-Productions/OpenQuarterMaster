@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.interfaces.endpoints.info;
+package tech.ebp.oqm.plugin.altFormats.interfaces;
 
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;

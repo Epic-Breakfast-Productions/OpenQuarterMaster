@@ -1,0 +1,59 @@
+service:
+  version: ${quarkus.application.version}
+  gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
+
+
+quarkus:
+  container-image:
+    name: oqm-plugin-alt_formats
+    group: ebprod
+  http:
+    port: 80
+    ssl-port: 443
+  jib:
+    ports:
+      - 80
+      - 443
+  application:
+#    name: ${service.nameShort} - V${service.apiVersion}
+  rest-client:
+    logging:
+      scope: all
+    upc-barcodelookup-com:
+      url: ${productLookup.providers.barcodelookup-com.url}
+      scope: jakarta.inject.Singleton
+    upc-datakick:
+      url: ${productLookup.providers.datakick.url}
+      scope: jakarta.inject.Singleton
+    upc-upcitemdb:
+      url: ${productLookup.providers.upcitemdb.url}
+      scope: jakarta.inject.Singleton
+    lego-rebrickable:
+      url: ${productLookup.providers.rebrickable.url}
+      scope: jakarta.inject.Singleton
+  smallrye-openapi:
+    info-title: Alternate Formats API
+    info-version: ${quarkus.application.version}
+    info-description: API documentation for the Alternate Formats Plugin.
+    #    info-terms-of-service: <url>
+    info-contact-email: greg@epic-breakfast-productions.tech
+    info-contact-name: EBP
+    info-contact-url: ${service.gitLink}
+    info-license-name: GNU General Public License v3.0
+    info-license-url: ${service.gitLink}/blob/main/LICENSE
+  swagger-ui:
+    always-include: true
+    title: External Item Search v${quarkus.application.version}
+    theme: flattop
+    footer: With ❤️, EBP
+  health:
+    openapi:
+      included: true
+
+"%dev":
+  quarkus:
+    http:
+      port: 8080
+      ssl-port: 8443
+    log:
+      level: DEBUG
