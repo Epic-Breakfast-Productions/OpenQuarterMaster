@@ -1,7 +1,6 @@
-# Open QuarterMAster External item lookup plugin
+# Open QuarterMAster Alternate Formats Plugin
 
-This service enables searching for items outside the OQM system, in order to get their data into it.
-
+This service enables performing actions based on alternate data formats (csv, excel, etc)
 
 
 ## Quarkus info
