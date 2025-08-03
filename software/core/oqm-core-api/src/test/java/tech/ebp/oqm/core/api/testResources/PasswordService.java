@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service;
+package tech.ebp.oqm.core.api.testResources;
 
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
