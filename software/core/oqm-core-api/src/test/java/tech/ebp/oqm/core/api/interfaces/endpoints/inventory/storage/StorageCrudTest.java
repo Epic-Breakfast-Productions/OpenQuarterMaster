@@ -64,10 +64,6 @@
 //	@Inject
 //	TestUserService testUserService;
 //
-//	@Inject
-//	@Location("templates/items.csv")
-//	Template itemsCsv;
-//
 //	private ObjectId create(User user, InventoryItem item) throws JsonProcessingException {
 //		ValidatableResponse response = setupJwtCall(given(), user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 //										   .contentType(ContentType.JSON)
@@ -179,32 +175,4 @@
 //		updateData.put("name", FAKER.commerce().productName());
 //	}
 //
-//	@Test
-//	public void testAddFromCsv() throws IOException {
-//		User user = this.testUserService.getTestUser();
-//
-//		String csvData = this.itemsCsv.render();
-//
-//		csvData += System.lineSeparator() + "Test Simple, testing a simple amount item, AMOUNT_SIMPLE,,1.00,,,";
-//		csvData += System.lineSeparator() + "Test List, testing a list amount item, AMOUNT_LIST,,1.00,,,";
-//		csvData += System.lineSeparator() + "Test Tracked, testing a tracked item, TRACKED,,1.00,,serial,";
-//
-//
-//		ImportBundleFileBody body = new ImportBundleFileBody();
-//		body.file = new ByteArrayInputStream(csvData.getBytes());
-//		body.fileName = "test.csv";
-//
-//
-//		ValidatableResponse response = setupJwtCall(given(),  user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-//										   .contentType(ContentType.MULTIPART)
-//										   .multiPart("file", csvData)
-//										   .multiPart("fileName", "test.csv")
-//										   .when()
-//										   .post()
-//										   .then();
-//
-//		response.statusCode(Response.Status.OK.getStatusCode());
-//
-//		log.info("Got response body: {}", response.extract().body().asString());
-//	}
 //}
