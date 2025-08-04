@@ -145,7 +145,7 @@ fi
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postrm"
 
-dpkg-deb --build "$buildDir/$debDir" "$buildDir"
+dpkg-deb --build --root-owner-group "$buildDir/$debDir" "$buildDir"
 
 
 
