@@ -197,7 +197,7 @@ EOT
 		cp -r "$curPackage/$fileInSrc" "$curFile"
 	done;
 
-	dpkg-deb --build "$packageDebDir" "$buildDir"
+	dpkg-deb --build --root-owner-group "$packageDebDir" "$buildDir"
 	
 	#	
 	# RPM build
