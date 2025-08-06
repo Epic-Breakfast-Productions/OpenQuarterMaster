@@ -1,5 +1,6 @@
 package tech.ebp.oqm.plugin.imageSearch.interfaces;
 
+import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -9,12 +10,13 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import tech.ebp.oqm.plugin.imageSearch.service.ImageSearchService;
 
+@RequestScoped
 @Path("/search")
 public class ImageSearch {
     
     @Inject
     ImageSearchService imageSearchService;
-
+    
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     public Response search(
