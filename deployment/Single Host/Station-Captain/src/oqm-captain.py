@@ -59,9 +59,7 @@ CertsUtils.setupArgParser(subparsers)
 
 # TODO:: command to handle all init service setup; container, certs...
 
-
-# argcomplete.autocomplete(argParser)
-
+argcomplete.autocomplete(argParser)
 args = argParser.parse_args()
 
 # print(str(args))

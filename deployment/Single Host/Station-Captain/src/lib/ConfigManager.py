@@ -17,9 +17,9 @@ import collections.abc
 from ScriptInfos import *
 from LogUtils import *
 
-
+CONFIG_MNGR_DEFAULT_ADDENDUM_FILENAME = "99-custom.json"
 CONFIG_MNGR_MAIN_CONFIG_FILE = ScriptInfo.CONFIG_DIR + "/mainConfig.json"
-CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = ScriptInfo.CONFIG_VALUES_DIR + "/99-custom.json"
+CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = ScriptInfo.CONFIG_VALUES_DIR + "/" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILENAME
 
 SECRET_MNGR_SECRET_PW_HASH_SALT = b'saltySpittoonHowToughAreYa'
 SECRET_MNGR_SECRET_PW_HASH_ITERATIONS = int(480_000 * 2.5)
@@ -400,6 +400,8 @@ class ConfigManager:
             configFile = defaultAddendumFile
         else:
             configFile = additionalConfigDir + "/" + configFile
+
+        # TODO:: check to ensure in appropriate directory (additionalConfigDir) #414
 
         try:
             if not os.path.isfile(configFile):

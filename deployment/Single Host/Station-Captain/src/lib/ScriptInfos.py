@@ -1,7 +1,7 @@
 class ScriptInfo:
     SCRIPT_VERSION = 'SCRIPT_VERSION'
     SCRIPT_PACKAGE_NAME = "open+quarter+master-manager-station+captain"
-    SCRIPT_TITLE = "Open QuarterMaster Station Captain V" + SCRIPT_VERSION
+    SCRIPT_TITLE = "Open QuarterMaster Station Captain v" + SCRIPT_VERSION
     # urls
     HOME_GIT = "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster"
     STATION_CAPT_GIT = HOME_GIT + "/tree/main/software/Station%20Captain"

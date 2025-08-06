@@ -149,7 +149,7 @@ fi
 EOT
 chmod +x "$buildDir/$debDir/DEBIAN/postinst"
 
-dpkg-deb --build "$buildDir/$debDir" "$outputDir"
+dpkg-deb --build --root-owner-group "$buildDir/$debDir" "$outputDir"
 if [ $? -ne 0 ]; then
 	exit 1;
 fi

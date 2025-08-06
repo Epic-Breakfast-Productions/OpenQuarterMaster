@@ -2,9 +2,9 @@ name: Deployment - Repos - Test
 
 on:
   push:
-    branches: [ "dev" ]
+    branches: [ "development" ]
   pull_request:
-    branches: [ "dev" ]
+    branches: [ "development" ]
   workflow_call:
   workflow_dispatch:
     branches: [ "**" ]

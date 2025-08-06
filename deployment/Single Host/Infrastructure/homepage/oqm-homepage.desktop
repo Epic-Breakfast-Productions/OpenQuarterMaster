@@ -2,7 +2,7 @@
 Name=Home - OQM
 GenericName=Home - OQM
 Comment=Quick link to open the Open QuarterMaster Homepage
-Exec=bash -c 'xdg-open $(oqm-config -g infra.homepage.externalBaseUri)'
+Exec=bash -c 'xdg-open $(oqm-config g infra.homepage.externalBaseUri)'
 Icon=/etc/oqm/static/media/oqm-icon.svg
 Terminal=false
 

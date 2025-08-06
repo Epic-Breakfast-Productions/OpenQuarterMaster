@@ -11,8 +11,8 @@ updates:
 
   # Core API
   - package-ecosystem: "gradle"
-    directory: "/software/oqm-core-api"
-    target-branch: "dev"
+    directory: "/software/core/oqm-core-api"
+    target-branch: "development"
     schedule:
       interval: "weekly"
       day: "tuesday"
@@ -20,8 +20,8 @@ updates:
       - "area-dependencies"
       - "project-baseStation"
   - package-ecosystem: "docker"
-    directory: "/software/oqm-core-api/src/main/docker"
-    target-branch: "dev"
+    directory: "/software/core/oqm-core-api/src/main/docker"
+    target-branch: "development"
     schedule:
       interval: "weekly"
       day: "tuesday"
@@ -31,8 +31,17 @@ updates:
 
   # Base Station
   - package-ecosystem: "gradle"
-    directory: "/software/oqm-core-base-station"
-    target-branch: "dev"
+    directory: "/software/core/oqm-core-base-station"
+    target-branch: "development"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    labels:
+      - "area-dependencies"
+      - "project-baseStation"
+  - package-ecosystem: "docker"
+    directory: "/software/core/oqm-core-base-station"
+    target-branch: "development"
     schedule:
       interval: "weekly"
       day: "tuesday"
@@ -43,7 +52,7 @@ updates:
   # Station Captain
   - package-ecosystem: "maven"
     directory: "/software/Station Captain/stationCaptainTest"
-    target-branch: "dev"
+    target-branch: "development"
     schedule:
       interval: "weekly"
       day: "tuesday"
@@ -57,7 +66,7 @@ updates:
   # Core API Lib Quarkus
   - package-ecosystem: "gradle"
     directory: "/software/libs/core-api-lib-quarkus"
-    target-branch: "dev"
+    target-branch: "development"
     schedule:
       interval: "weekly"
       day: "tuesday"
@@ -71,7 +80,7 @@ updates:
   # External Item Search
   - package-ecosystem: "gradle"
     directory: "/software/plugins/external-item-search"
-    target-branch: "dev"
+    target-branch: "development"
     schedule:
       interval: "weekly"
       day: "tuesday"
@@ -80,7 +89,7 @@ updates:
   # Mss Controller
   - package-ecosystem: "gradle"
     directory: "/software/plugins/mss-controller"
-    target-branch: "dev"
+    target-branch: "development"
     schedule:
       interval: "weekly"
       day: "tuesday"

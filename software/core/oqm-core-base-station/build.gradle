@@ -1,0 +1,83 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+    id "io.freefair.lombok" version "8.14"
+}
+
+group 'com.ebp.openQuarterMaster'
+version '1.6.2'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    //allow pulling snapshots for oqm core api lib
+    maven({url= "https://central.sonatype.com/repository/maven-snapshots/"})
+}
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-rest'
+    implementation 'io.quarkus:quarkus-rest-jackson'
+    implementation 'io.quarkus:quarkus-rest-qute'
+    implementation 'io.quarkus:quarkus-rest-client'
+    implementation 'io.quarkus:quarkus-rest-client-jackson'
+    implementation 'io.quarkus:quarkus-oidc'
+    implementation 'io.quarkus:quarkus-config-yaml'
+    implementation 'io.quarkus:quarkus-smallrye-health'
+    implementation 'io.quarkus:quarkus-container-image-docker'
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-smallrye-openapi'
+    implementation 'io.quarkus:quarkus-opentelemetry'
+    implementation 'io.quarkus:quarkus-scheduler'
+
+    implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:3.0.0'
+
+    implementation 'org.apache.commons:commons-io:1.3.2'
+    implementation 'org.apache.commons:commons-text:1.14.0'
+
+    implementation 'uk.org.okapibarcode:okapibarcode:0.5.1'
+    implementation 'com.itextpdf:html2pdf:6.2.0'
+
+    //webjars
+    implementation 'org.webjars:jquery:3.7.1'
+    implementation 'org.webjars:bootstrap:5.3.3'
+
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation "org.junit.jupiter:junit-jupiter-params:5.13.4"
+    testImplementation 'io.rest-assured:rest-assured'
+    testImplementation 'net.datafaker:datafaker:2.4.4'
+
+    testImplementation 'com.microsoft.playwright:playwright:1.54.0'
+    testImplementation 'com.deque.html.axe-core:playwright:4.10.1'
+}
+
+java {
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(21))
+        }
+    }
+}
+
+test {
+    systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+}
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+/**
+ * Used to print the current version of this project.
+ *
+ * Used by the `makeInstallers.sh` script to get the version.
+ */
+tasks.register('printVersion') {
+    doLast {
+        println project.version
+    }
+}
