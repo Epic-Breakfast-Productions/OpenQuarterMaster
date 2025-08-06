@@ -1,11 +1,11 @@
 {
 	"packageName":"oqm-infra-traefik",
-	"version":"1.0.6",
+	"version":"1.0.7",
 	"description":"Traefik Reverse Proxy instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/traefik",
 	"configs": [],
 	"dependencies": {
-		"deb": ", oqm-manager-station+captain (>= 2.9.0), oqm-infra-homepage, python3-docker, python3-watchdog"
+		"deb": ", oqm-manager-station+captain (>= 2.9.1), oqm-infra-homepage, python3-docker, python3-watchdog"
 	},
 	"configFiles":{
 	},
