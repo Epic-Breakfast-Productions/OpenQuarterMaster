@@ -71,7 +71,7 @@ def setupAdminConfig(kcContainer: Container | None = None):
     runResult = kcContainer.exec_run(
         [
             KC_ADM_SCRIPT, "config", "truststore",
-            "--trustpass", mainCM.getConfigVal("cert.selfSigned.internalTrustStorePass"),
+            "--trustpass", mainCM.getConfigVal("cert.trustStore.systemExternalTrustStorePass"),
             "/etc/oqm/serviceConfig/infra/keycloak/files/oqmSystemExternalTruststore.p12"
         ])
     if runResult.exit_code != 0:
