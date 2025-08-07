@@ -78,9 +78,10 @@ to `self`. See "Internal Certs" below for more information.
 
 Other Relevant config:
 
-| Config Key        | Explanation                                                                                                     | Link to more info |
-|-------------------|-----------------------------------------------------------------------------------------------------------------|-------------------|
-| `system.hostname` | Used as the common name for the external system cert. Also included as a subject alternative name in that cert. |                   |
+| Config Key              | Explanation                                                                                                     | Link to more info |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------|-------------------|
+| `system.hostname`       | Used as the common name for the external system cert. Also included as a subject alternative name in that cert. |                   |
+| `system.altHostnameIps` | Used to add additional valid SAN's to the system cert.                                                          |                   |
 
 ### ACME (Let's Encrypt)
 
@@ -101,9 +102,10 @@ By default, the proxy is configured to use the TLS challenge method.
 
 Other Relevant config:
 
-| Config Key        | Explanation                              | Link to more info |
-|-------------------|------------------------------------------|-------------------|
-| `system.hostname` | Used as the domain for the ACME request. |                   |
+| Config Key              | Explanation                                             | Link to more info |
+|-------------------------|---------------------------------------------------------|-------------------|
+| `system.hostname`       | Used as the domain for the ACME request.                |                   |
+| `system.altHostnameIps` | Used to add additional valid SAN's to the ACME request. |                   |
 
 ### Provided
 
