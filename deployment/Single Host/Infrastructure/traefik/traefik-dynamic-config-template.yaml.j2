@@ -13,7 +13,7 @@ tls:
         domain:
           main: {{ system.hostname }}
           sans:
-            {%- for san in system.alternateSans %}
+            {%- for san in system.altHostnameIps %}
             - {{ san }}
             {%- endfor  %}
       {%- endif  %}
