@@ -21,6 +21,7 @@ from CronUtils import *
 from ServiceUtils import *
 from LogUtils import *
 from ipaddress import *
+import requests
 
 from PackageManagement import PackageManagement
 
@@ -33,6 +34,14 @@ class CertsUtils:
     """
     log = LogUtils.setupLogger("CertsUtils")
     AUTO_REGEN_CERTS_CRON_NAME = "autoRegenCerts"
+    LETSE_CA_SOURCES = {  # https://letsencrypt.org/certificates/
+        "ISRG Root X1": ["https://letsencrypt.org/certs/isrg-root-x1-cross-signed.pem"],
+        "ISRG Root X2": ["https://letsencrypt.org/certs/isrg-root-x2-cross-signed.pem"],
+        "Let's Encrypt E5": ["https://letsencrypt.org/certs/2024/e5.pem", "https://letsencrypt.org/certs/2024/e5-cross.pem"],
+        "Let's Encrypt E6": ["https://letsencrypt.org/certs/2024/e6.pem", "https://letsencrypt.org/certs/2024/e6-cross.pem"],
+        "Let's Encrypt R10": ["https://letsencrypt.org/certs/2024/r10.pem"],
+        "Let's Encrypt R11": ["https://letsencrypt.org/certs/2024/r11.pem"],
+    }
 
     @classmethod
     def setupArgParser(cls, subparsers):
@@ -49,8 +58,6 @@ class CertsUtils:
         ecp_parser.add_argument(dest="service", help="The name of the service (the domain name to access the service).")
         ecp_parser.add_argument(dest="destination", help="The directory to place the new certs.")
         ecp_parser.set_defaults(func=cls.writeInternalCertsFromArgs)
-
-
 
     @classmethod
     def regenCertsFromArgs(cls, args):
@@ -78,7 +85,6 @@ class CertsUtils:
             print("Failed to write certs for internal service: " + message)
             exit(6)
         print(message)
-
 
     @staticmethod
     def newPrivateKey() -> RSAPrivateKey:
@@ -114,7 +120,7 @@ class CertsUtils:
         :return: If the cert expires soon
         """
         expiring = cert.not_valid_after
-        now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None) # expring doesn't have tz data; fails to compare otherwise
+        now = datetime.datetime.now(datetime.timezone.utc).replace(tzinfo=None)  # expring doesn't have tz data; fails to compare otherwise
         soonThreshold = expiring - timedelta(days=mainCM.getConfigVal("cert.selfSigned.daysBeforeExpiryToRegen"))
         return now >= soonThreshold
 
@@ -234,8 +240,62 @@ class CertsUtils:
     def isAutoRegenCertsEnabled() -> bool:
         return CronUtils.isCronEnabled(CertsUtils.AUTO_REGEN_CERTS_CRON_NAME)
 
-    @staticmethod
-    def generateRootCA() -> (bool, str):
+    @classmethod
+    def generateSystemTruststore(cls) -> (bool, str):
+        """
+        Generates a new system trust store.
+        :return:
+        """
+        cls.log.info("Generating a new system trust store")
+        # root_ca_key_path = mainCM.getConfigVal("cert.selfSigned.certs.CARootPrivateKey")
+        root_ca_cert_path = mainCM.getConfigVal("cert.selfSigned.certs.CARootCert")
+        truststoreFile = mainCM.getConfigVal("cert.trustStore.systemExternalTrustStore")
+        truststorePassword = mainCM.getConfigVal("cert.trustStore.systemExternalTrustStorePass")
+
+        with (
+            open(truststoreFile, 'wb') as cert_file,
+            open(root_ca_cert_path, "rb") as root_ca_cert,
+            # open(root_ca_key_path, "rb") as root_ca_key
+        ):
+            cert = x509.load_pem_x509_certificate(root_ca_cert.read())
+            # key = load_pem_private_key(root_ca_key.read(), None)
+
+            cert_file.write(
+                pkcs12.serialize_key_and_certificates(
+                    b"OQM CA",
+                    None,
+                    cert,
+                    None,
+                    BestAvailableEncryption(bytes(truststorePassword, 'UTF-8'))
+                )
+            )
+
+            # TODO:: if provided,add provided CA
+
+            if mainCM.getConfigVal("cert.externalDefault") == "acme":
+                cls.log.info("Adding LetsEncrypt CA to system trust store.")
+                # TODO:: if not using letsencrypt for ACME, don't do this
+                for certName, certList in cls.LETSE_CA_SOURCES.items():
+                    for i, curCertUrl in enumerate(certList):
+                        certContent = None
+                        with(requests.get(curCertUrl) as certRequest):
+                            # TODO:: error check
+                            certContent = certRequest.content
+                        cert = x509.load_pem_x509_certificate(certContent)
+                        cert_file.write(
+                            pkcs12.serialize_key_and_certificates(
+                                (certName + " [" + str(i) + "]").encode("UTF-8"),
+                                None,
+                                cert,
+                                None,
+                                BestAvailableEncryption(bytes(truststorePassword, 'UTF-8'))
+                            )
+                        )
+                cls.log.info("Finished adding LetsEncrypt CAs to system trust store.")
+        cls.log.info("Finished writing new system trust store.")
+
+    @classmethod
+    def generateRootCA(cls) -> (bool, str):
         """
         Generates a new CA, then installs it on the system.
         :return:
@@ -246,11 +306,11 @@ class CertsUtils:
         ca_private_key = CertsUtils.newPrivateKey()
 
         ca_name = x509.Name([
-            x509.NameAttribute(x509.NameOID.COUNTRY_NAME,           mainCM.getConfigVal("cert.selfSigned.certInfo.countryName")),
+            x509.NameAttribute(x509.NameOID.COUNTRY_NAME, mainCM.getConfigVal("cert.selfSigned.certInfo.countryName")),
             x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, mainCM.getConfigVal("cert.selfSigned.certInfo.stateOrProvinceName")),
-            x509.NameAttribute(x509.NameOID.LOCALITY_NAME,          mainCM.getConfigVal("cert.selfSigned.certInfo.localityName")),
-            x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME,      mainCM.getConfigVal("cert.selfSigned.certInfo.organizationName")),
-            x509.NameAttribute(x509.NameOID.COMMON_NAME,            mainCM.getConfigVal("cert.selfSigned.certInfo.caCommonName")),
+            x509.NameAttribute(x509.NameOID.LOCALITY_NAME, mainCM.getConfigVal("cert.selfSigned.certInfo.localityName")),
+            x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.selfSigned.certInfo.organizationName")),
+            x509.NameAttribute(x509.NameOID.COMMON_NAME, mainCM.getConfigVal("cert.selfSigned.certInfo.caCommonName")),
         ])
         nvb = datetime.datetime.now(datetime.UTC)
         nva = nvb + datetime.timedelta(days=mainCM.getConfigVal("cert.selfSigned.rootCaTtl"))
@@ -282,6 +342,8 @@ class CertsUtils:
                     encoding=serialization.Encoding.PEM
                 )
             )
+
+        cls.generateSystemTruststore()
         returned, caInstallOutput = CertsUtils.ensureCaInstalled()
         if not returned:
             return False, caInstallOutput
@@ -293,9 +355,9 @@ class CertsUtils:
             certFile,
             commonName,
             subjectAltNames=None,
-            csrFile = None,
-            keystoreFile = None,
-            keystorePassword = None
+            csrFile=None,
+            keystoreFile=None,
+            keystorePassword=None
     ) -> (bool, str):
         """
         Generates a cert based on the information given.
@@ -316,10 +378,10 @@ class CertsUtils:
         private_key = CertsUtils.newPrivateKey()
 
         name = x509.Name([
-            x509.NameAttribute(x509.NameOID.COUNTRY_NAME,             mainCM.getConfigVal("cert.selfSigned.certInfo.countryName")),
-            x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME,   mainCM.getConfigVal("cert.selfSigned.certInfo.stateOrProvinceName")),
-            x509.NameAttribute(x509.NameOID.LOCALITY_NAME,            mainCM.getConfigVal("cert.selfSigned.certInfo.localityName")),
-            x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME,        mainCM.getConfigVal("cert.selfSigned.certInfo.organizationName")),
+            x509.NameAttribute(x509.NameOID.COUNTRY_NAME, mainCM.getConfigVal("cert.selfSigned.certInfo.countryName")),
+            x509.NameAttribute(x509.NameOID.STATE_OR_PROVINCE_NAME, mainCM.getConfigVal("cert.selfSigned.certInfo.stateOrProvinceName")),
+            x509.NameAttribute(x509.NameOID.LOCALITY_NAME, mainCM.getConfigVal("cert.selfSigned.certInfo.localityName")),
+            x509.NameAttribute(x509.NameOID.ORGANIZATION_NAME, mainCM.getConfigVal("cert.selfSigned.certInfo.organizationName")),
             x509.NameAttribute(x509.NameOID.ORGANIZATIONAL_UNIT_NAME, mainCM.getConfigVal("cert.selfSigned.certInfo.organizationalUnitName")),
             x509.NameAttribute(x509.NameOID.COMMON_NAME, commonName),
         ])
@@ -372,6 +434,8 @@ class CertsUtils:
 
         # Generate Keystore
         if keystoreFile is not None:
+            # TODO:: if acme enabled, add let'sEncrypt ca(S) https://letsencrypt.org/certificates/
+            # TODO:: contemplate keystore vs trust store. Write out diff ones
             with (open(keystoreFile, 'wb') as cert_file,
                   open(root_ca_cert_path, "rb") as root_ca_cert,
                   open(root_ca_key_path, "rb") as root_ca_key
@@ -443,30 +507,31 @@ class CertsUtils:
 
         return True, "Root CA Already Existent and not expiring soon.", False
 
-    @staticmethod
-    def ensureSystemCerts(force=False) -> (bool, str, bool):
+    @classmethod
+    def ensureSystemCerts(cls, force=False) -> (bool, str, bool):
         """
         Ensures that the external system cert is present, and not expiring soon.
         :param force: If to force writing a new CA anyways
         :return: success, message, if new certs written
         """
-        CertsUtils.log.info("Ensuring self signed system cert is present")
+        cls.log.info("Ensuring self signed system cert is present")
         systemCertKeyPath = mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCertKey")
         systemCertPath = mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCert")
 
         needWritten = False
         if force or not all(os.path.exists(path) for path in [systemCertKeyPath, systemCertPath]):
-            CertsUtils.log.info("System Cert did NOT exist.")
+            cls.log.info("System Cert did NOT exist.")
             needWritten = True
         else:
             rootCert = x509.load_pem_x509_certificate(open(systemCertPath, 'rb').read(), default_backend())
-            if CertsUtils.certExpiresSoon(rootCert):
+            if cls.certExpiresSoon(rootCert):
                 CertsUtils.log.info("System Cert expiring soon.")
                 needWritten = True
 
         if needWritten:
             CertsUtils.log.info("Writing new System Cert.")
-            success, message = CertsUtils.generateSystemCert()
+            cls.generateSystemTruststore()
+            success, message = cls.generateSystemCert()
             return success, message, True
 
         return True, "System Cert Already Existent and not expiring soon.", False
@@ -490,6 +555,7 @@ class CertsUtils:
         :return:
         """
         CertsUtils.log.info("Writing new cert for internal service %s", host)
+        shutil.copyfile(mainCM.getConfigVal("cert.trustStore.systemExternalTrustStore"), destination + "/oqmSystemExternalTruststore.p12")
         return CertsUtils.generateCert(
             destination + "/serviceCertKey.pem",
             destination + "/serviceCert.crt",

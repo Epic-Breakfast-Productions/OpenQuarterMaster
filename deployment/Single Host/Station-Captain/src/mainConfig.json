@@ -1,6 +1,7 @@
 {
 	"system": {
 		"hostname": "#{#mdnsHost}",
+		"altHostnameIps": [],
 		"systemDataDir": "/data",
 		"dataDir": "#{system.systemDataDir}/oqm",
 		"automaticContainerPruneFrequency": "monthly",
@@ -45,6 +46,10 @@
 	"cert": {
 		"externalDefault": "self",
 		"additionalExternalSANs": [],
+		"trustStore": {
+			"systemExternalTrustStore": "/etc/oqm/certs/oqmSystemExternalTruststore.p12",
+			"systemExternalTrustStorePass": "<secret>"
+		},
 		"selfSigned": {
 			"certs": {
 				"CARootPrivateKey": "/etc/oqm/certs/oqmSystemCaRootPrivateKey.pem",
