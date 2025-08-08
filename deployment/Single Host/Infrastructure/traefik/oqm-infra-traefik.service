@@ -56,7 +56,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  -v /tmp/oqm/serviceConfig/infra/traefik/config.d/traefik-static-config.yaml:/etc/traefik/traefik.yml:ro \
                                  -v /tmp/oqm/serviceConfig/infra/traefik/config.d/dynamicConfig/:/etc/traefik/dynamicConfig:ro \
                                  -v /tmp/oqm/serviceConfig/infra/traefik/certs/:/etc/traefik/certs:ro \
-                                 -v /data/oqm/traefik/acme:/etc/traefik/acme \
+                                 -v $(oqm-config g 'system.dataDir')/traefik/acme:/etc/traefik/acme \
                                  $IMAGE_NAME:$IMAGE_VERSION --log.level=DEBUG"
 # TODO:: meaningful healthcheck for startup
 

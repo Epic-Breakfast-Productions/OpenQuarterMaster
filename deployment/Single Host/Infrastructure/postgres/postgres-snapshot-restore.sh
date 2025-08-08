@@ -8,7 +8,7 @@ source /etc/oqm/snapshots/snapshot-restore-base.sh
 #echo "$mode"
 #echo "$targetDir"
 
-dataDir="/data/oqm/db/postgres"
+dataDir="$(oqm-config g 'system.dataDir')/db/postgres"
 targetDir="$targetDir/data/infra/postgres"
 
 if [ "$mode" == "snapshot" ]; then
