@@ -40,7 +40,7 @@ imageAddImageForm.submit(function (ev) {
 
 		console.log("Adding new image.");
 		Rest.call({
-			url: "/api/passthrough/media/image",
+			url: Rest.passRoot + "/media/image",
 			method: "POST",
 			data: addData,
 			dataType: false,
