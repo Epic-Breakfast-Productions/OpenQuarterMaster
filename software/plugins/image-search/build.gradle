@@ -115,11 +115,11 @@ tasks.register("downloadModels", DownloadModelsTask) {
 	group = "build"
 	description = "Downloads models before build to ensure presence."
 }
-build {
+processResources {
 	mustRunAfter("downloadModels")
 }
 
-tasks.build.configure { dependsOn(tasks.downloadModels) }
+tasks.processResources.configure { dependsOn(tasks.downloadModels) }
 
 /**
  * Used to print the current version of this project.
