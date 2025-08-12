@@ -83,6 +83,11 @@
 			"key": ""
 		}
 	},
+	"registration": {
+		"instanceId": null,
+		"registrationId": null,
+		"registrationSecret": null
+	},
 	"plugin": {
 	}
 }
