@@ -10,7 +10,8 @@ from ServiceUtils import *
 import shutil
 from systemd import journal
 from LogUtils import *
-
+from SystemInfoUtils import *
+from src.lib.SystemInfoUtils import SystemInfoUtils
 
 
 class LogManagement:
@@ -42,44 +43,6 @@ class LogManagement:
         LogManagement.log.info("Finished getting log events in %s seconds for %s", time.time() - start, service)
 
     @staticmethod
-    def getSystemInfo() -> str:
-        LogManagement.log.info("Getting system information.")
-        output = ""
-        ipAddrs = subprocess.run(["hostname", "-I"], shell=False, capture_output=True, text=True, check=True).stdout
-        ipAddrs = (subprocess.run(["hostname"], shell=False, capture_output=True, text=True,
-                                  check=True).stdout.replace("\n", "") + ".local " + ipAddrs)
-        ipAddrs = ipAddrs.replace(" ", "\n\t")
-        output += "Hostname and IP addresses:\n\t" + ipAddrs
-        output += "\tHostname set in configuration:\n\t\t" + mainCM.getConfigVal("system.hostname",
-                                                                                     mainCM.configData)
-        output += "\n\n\n"
-
-        with open("/etc/os-release") as file:
-            osInfo = file.read() + "\n"
-        osInfo += subprocess.run(["uname", "-a"], shell=False, capture_output=True, text=True, check=True).stdout
-        output += "OS Info:\n" + osInfo + "\n\n\n"
-
-        if os.path.isfile("/var/log/installer/oem-id"):
-            with open("/var/log/installer/oem-id", 'r') as f:
-                output += "OQM OEM Id:\n" + f.read() + "\n\n\n"
-
-        hwinfo = subprocess.run(["hwinfo", "--short"], shell=False, capture_output=True, text=True,
-                                check=True).stdout
-        hwinfo += "\n\nUSB Devices: \n\n"
-        hwinfo += subprocess.run(["lsusb"], shell=False, capture_output=True, text=True, check=True).stdout
-        hwinfo += "\n\nStorage Devices: \n\n"
-        hwinfo += subprocess.run(["lsblk"], shell=False, capture_output=True, text=True, check=True).stdout
-        output += "Hardware Info:\n\n" + hwinfo + "\n\n"
-
-        diskInfo = subprocess.run(["df", "-H"], shell=False, capture_output=True, text=True, check=True).stdout
-        output += "Disk Usage Info:\n\n" + diskInfo + "\n\n"
-        memInfo = subprocess.run(["free", "-h"], shell=False, capture_output=True, text=True, check=True).stdout
-        output += "Memory Info:\n\n" + memInfo + "\n\n"
-        LogManagement.log.info("Done getting system information.")
-
-        return output
-
-    @staticmethod
     def packageLogs() -> (bool, str):
         compressionAlg = mainCM.getConfigVal("snapshots.compressionAlg")
         if all(curAlg not in compressionAlg for curAlg in ["xz", "gz", "bz2"]):
@@ -104,7 +67,7 @@ class LogManagement:
                 return False, str(e)
 
             with open(compilingDir + "/00-sysInfo.txt", "w") as sysInfoFile:
-                sysInfoFile.write(LogManagement.getSystemInfo())
+                sysInfoFile.write(SystemInfoUtils.getSystemInfo())
 
             with open(compilingDir + "/01-installed.txt", "w") as sysInfoFile:
                 sysInfoFile.write(PackageManagement.getOqmPackagesStr(installed=True, notInstalled=False))

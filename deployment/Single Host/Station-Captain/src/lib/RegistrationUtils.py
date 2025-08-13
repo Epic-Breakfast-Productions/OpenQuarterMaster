@@ -6,6 +6,7 @@ from CronUtils import *
 from CertsUtils import *
 from SnapshotShared import *
 from SnapshotBackupUtils import *
+from SystemInfoUtils import *
 import logging
 import subprocess
 import datetime
@@ -13,6 +14,7 @@ import os
 import shutil
 import tarfile
 from LogUtils import *
+import requests
 
 
 class RegistrationUtils:
@@ -174,8 +176,38 @@ class RegistrationUtils:
 
     @classmethod
     def pingRegStatus(cls)->(bool, str):
-        cls.log.info("Pinging registration status.")
-    #     TODO
+        cls.log.info("Pinging registration details.")
+
+        packagesTree = PackageManagement.getOqmPackagesTree(notInstalled=False)
+        for groupName, packages  in packagesTree.values():
+            for packageName, package in packages.values():
+                packagesTree[groupName][packageName] = {"version": package['version']}
+
+        data = {
+            "deploymentType": "Single Node Host",
+            "oem-id": SystemInfoUtils.getOemId(),
+            "memory": SystemInfoUtils.getMemSizeGB(),
+            "cpuModel": SystemInfoUtils.getCpuModel(),
+            "cpuThreadCount": SystemInfoUtils.getCpuCount(),
+            "osType": SystemInfoUtils.getOsType(),
+            "os" : SystemInfoUtils.getOsFullName(),
+            "packageManager": PackageManagement.getSystemPackageManager(),
+            "oqmSoftwareVersions": packagesTree
+        }
+
+        result = requests.put(
+            cls.REG_BASE_URL + "/instance/" + mainCM.getConfigVal("registration.registrationId") + "/ping",
+            json=data,
+            headers={
+                "Content-Type": "application/json"
+            },
+            auth=(mainCM.getConfigVal("registration.instanceId"), mainCM.getConfigVal("registration.registrationSecret"))
+        )
+        if result.status_code != 200:
+            cls.log.error("Ping failed with status code %s", result.status_code)
+            return False, "Ping failed with status code " + str(result.status_code) + ": " + result.text
+        cls.log.info("Ping sent.")
+        return True, "Registration ping successful."
 
     @classmethod
     def enableAutomaticPing(cls):

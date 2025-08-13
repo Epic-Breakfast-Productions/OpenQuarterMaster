@@ -15,6 +15,7 @@ from LogManagement import *
 from InputValidators import *
 from CertsUtils import *
 from LogUtils import *
+from SystemInfoUtils import *
 
 
 class UserInteraction:
@@ -199,7 +200,7 @@ class UserInteraction:
         self.dialog.infobox("Gathering system information. please wait.")
         textToShow = ""
         try:
-            textToShow += LogManagement.getSystemInfo()
+            textToShow += SystemInfoUtils.getSystemInfo()
         except subprocess.CalledProcessError:
             UserInteraction.log.error("Failed to call necessary commands.")
         UserInteraction.log.debug("Done compiling host info.")

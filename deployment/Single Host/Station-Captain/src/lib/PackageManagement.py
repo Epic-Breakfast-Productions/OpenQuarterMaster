@@ -3,6 +3,8 @@ import subprocess
 import platform
 import re
 
+from numpy.core.defchararray import startswith
+
 from ServiceUtils import *
 from LogUtils import *
 
@@ -181,6 +183,7 @@ class PackageManagement:
         output = {}
         # print("cur line: ", curLine)
         output['package'] = curLine.split("/")[0]
+        output['group'] = output['package'].split("-")[1]
         output['displayName'] = PackageManagement.getPluginDisplayName(output['package'])
         lineParts = curLine.split(" ")
         # print("lineParts: ", lineParts)
@@ -202,8 +205,21 @@ class PackageManagement:
         result = result.splitlines()
         result = map(PackageManagement.packageLineToArray,result)
         # TODO:: debug
-        # print("Package list: ", list(result))
+        PackageManagement.log.debug("Package list: {0}", list(result))
         return result
+
+    @classmethod
+    def getOqmPackagesTree(cls, filter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True):
+        packageList = cls.getOqmPackagesList(filter, installed, notInstalled)
+        output = {
+            "core": {},
+            "plugins": {},
+            "infra": {}
+        }
+        for curPackage in packageList:
+            curGroup = curPackage['group']
+            output[curGroup][curPackage['package']] = curPackage
+        return output
 
     @staticmethod
     def ensureOnlyPluginsInstalled(pluginList:list) -> (bool, str):
