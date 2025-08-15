@@ -60,6 +60,9 @@ class SystemInfoUtils:
     @classmethod
     def getSystemInfo(cls):
         cls.log.info("Getting system information.")
+
+        # TODO:: registration info
+
         output = ""
         ipAddrs = subprocess.run(["hostname", "-I"], shell=False, capture_output=True, text=True, check=True).stdout
         ipAddrs = (subprocess.run(["hostname"], shell=False, capture_output=True, text=True,
@@ -89,7 +92,7 @@ class SystemInfoUtils:
         output += "Disk Usage Info:\n\n" + diskInfo + "\n\n"
         memInfo = subprocess.run(["free", "-h"], shell=False, capture_output=True, text=True, check=True).stdout
         output += "Memory Info:\n\n" + memInfo + "\n\n"
-        LogManagement.log.info("Done getting system information.")
+        cls.log.info("Done getting system information.")
 
         return output
 

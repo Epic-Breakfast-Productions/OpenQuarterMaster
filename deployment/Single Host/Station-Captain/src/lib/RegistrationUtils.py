@@ -172,7 +172,7 @@ class RegistrationUtils:
     @classmethod
     def getManagementLink(cls):
         cls.log.info("Getting management link.")
-        return cls.REG_BASE_URL + "/instance/" + mainCM.getConfigVal("registration.registrationId") + "/manage"
+        return cls.REG_BASE_URL + "/instance/" + mainCM.getConfigVal("registration.registrationId") + "/enter"
 
     @classmethod
     def pingRegStatus(cls)->(bool, str):
@@ -186,12 +186,14 @@ class RegistrationUtils:
         data = {
             "deploymentType": "Single Node Host",
             "oem-id": SystemInfoUtils.getOemId(),
-            "memory": SystemInfoUtils.getMemSizeGB(),
-            "cpuModel": SystemInfoUtils.getCpuModel(),
-            "cpuThreadCount": SystemInfoUtils.getCpuCount(),
-            "osType": SystemInfoUtils.getOsType(),
-            "os" : SystemInfoUtils.getOsFullName(),
-            "packageManager": PackageManagement.getSystemPackageManager(),
+            "systemDetails": {
+                "memory": SystemInfoUtils.getMemSizeGB(),
+                "cpuModel": SystemInfoUtils.getCpuModel(),
+                "cpuThreadCount": SystemInfoUtils.getCpuCount(),
+                "osType": SystemInfoUtils.getOsType(),
+                "os" : SystemInfoUtils.getOsFullName(),
+                "packageManager": PackageManagement.getSystemPackageManager()
+            },
             "oqmSoftwareVersions": packagesTree
         }
 
