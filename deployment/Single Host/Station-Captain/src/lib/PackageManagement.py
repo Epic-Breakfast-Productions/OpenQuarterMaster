@@ -3,8 +3,6 @@ import subprocess
 import platform
 import re
 
-from numpy.core.defchararray import startswith
-
 from ServiceUtils import *
 from LogUtils import *
 

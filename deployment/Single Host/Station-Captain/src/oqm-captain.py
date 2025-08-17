@@ -13,6 +13,7 @@ from SnapshotUtils import *
 from ContainerUtils import *
 from LogManagement import *
 from CertsUtils import *
+from RegistrationUtils import *
 import argparse
 import atexit
 import argcomplete
@@ -53,8 +54,9 @@ SnapshotUtils.setupArgParser(subparsers)
 ContainerUtils.setupArgParser(subparsers)
 LogManagement.setupArgParser(subparsers)
 CertsUtils.setupArgParser(subparsers)
+RegistrationUtils.setupArgParser(subparsers)
 
-# TODO:: registration and subscription utility
+# TODO:: subscription utility
 # TODO:: plugin utilities
 
 # TODO:: command to handle all init service setup; container, certs...

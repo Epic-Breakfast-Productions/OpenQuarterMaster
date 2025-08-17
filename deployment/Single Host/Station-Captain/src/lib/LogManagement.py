@@ -11,7 +11,7 @@ import shutil
 from systemd import journal
 from LogUtils import *
 from SystemInfoUtils import *
-from src.lib.SystemInfoUtils import SystemInfoUtils
+from SystemInfoUtils import *
 
 
 class LogManagement:

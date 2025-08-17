@@ -33,7 +33,7 @@ class RegistrationUtils:
         snapshotSubparsers = snapshotSubparser.add_subparsers(dest="containerCommand")
 
         snapshot_parser = snapshotSubparsers.add_parser("register", help="Registers this system.")
-        snapshot_parser.add_argument(dest="registrationId", help="The registration id given from the OQM website. Will display a link of not specified.", default="", nargs='?')
+        snapshot_parser.add_argument(dest="registrationId", help="The registration id given from the OQM website. Will display a registration link if not specified. Go to this link, register the instance, and come back here.", default="", nargs='?')
         snapshot_parser.set_defaults(func=cls.registerFromArgs)
 
         snapshot_parser = snapshotSubparsers.add_parser("ensureInstanceId", aliases=["eid", "instanceId"], help="Ensures that an instance ID is set for this system. If not, it will generate one and save it to the config file.")
@@ -78,6 +78,10 @@ class RegistrationUtils:
     @classmethod
     def statusFromArgs(cls, args):
         cls.log.info("Checking registration status.")
+        if cls.isRegistered():
+            print("System is registered.")
+        else:
+            print("System is not registered.")
 
     @classmethod
     def removeRegFromArgs(cls, args):
@@ -111,7 +115,7 @@ class RegistrationUtils:
     @classmethod
     def registerSys(cls, regId, newSecret)->(bool, str):
         cls.log.info("Registering system.")
-        mainCM.setConfigValInFile("registration.registrationId", newSecret, cls.REG_CONFIG_FILE)
+        mainCM.setConfigValInFile("registration.registrationId", regId, cls.REG_CONFIG_FILE)
         mainCM.setSecretValInFile("registration.registrationSecret", newSecret, cls.REG_CONFIG_FILE)
         mainCM.rereadConfigData()
 
