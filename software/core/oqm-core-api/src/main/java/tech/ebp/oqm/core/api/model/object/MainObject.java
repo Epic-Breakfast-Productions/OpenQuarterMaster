@@ -21,5 +21,6 @@ public abstract class MainObject implements Versionable {
 	 *
 	 * Openapi schema def in `openapi.yaml`
 	 */
+	@Schema(required = false, description = "The Id of this object.")
 	private ObjectId id;
 }

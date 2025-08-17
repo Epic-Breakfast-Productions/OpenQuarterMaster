@@ -31,7 +31,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-@Schema(name = "StorageBlock", description = "Describes where items can be stored.")
+@Schema(title = "StorageBlock", description = "Describes where items can be stored.")
 public class StorageBlock extends ImagedMainObject implements HasParent, FileAttachmentContaining {
 	public static final int CUR_SCHEMA_VERSION = 1;
 

@@ -26,7 +26,9 @@ import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.core.api.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
@@ -83,7 +85,10 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = Stored.class
+				oneOf = {
+					AmountStored.class,
+					UniqueStored.class
+				}
 			)
 		)
 	)

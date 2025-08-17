@@ -33,7 +33,7 @@ class StorageBlockTest extends BasicTest {
 					new ArrayList<>() {{
 						add(Quantities.getQuantity(5, OqmProvidedUnits.UNIT));
 					}},
-					new ArrayList<>(),
+					new LinkedHashSet<>(),
 					new LinkedHashSet<>()
 				)
 			),
@@ -47,7 +47,7 @@ class StorageBlockTest extends BasicTest {
 					new ArrayList<>() {{
 						add(Quantities.getQuantity(5, Units.KILOGRAM));
 					}},
-					new ArrayList<>(),
+					new LinkedHashSet<>(),
 					new LinkedHashSet<>()
 				)
 			)
