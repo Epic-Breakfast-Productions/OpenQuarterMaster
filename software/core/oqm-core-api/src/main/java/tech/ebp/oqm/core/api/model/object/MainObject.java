@@ -18,10 +18,8 @@ public abstract class MainObject implements Versionable {
 	/**
 	 * The id of this object in the Mongodb.
 	 * TODO:: make a string in openapi docs
+	 *
+	 * Openapi schema def in `openapi.yaml`
 	 */
-	@Schema(
-		description = "ObjectId hex string",
-		example = ""
-	)
 	private ObjectId id;
 }

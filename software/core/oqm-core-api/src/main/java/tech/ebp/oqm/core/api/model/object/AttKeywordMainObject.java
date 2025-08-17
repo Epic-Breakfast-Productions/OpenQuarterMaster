@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -39,6 +40,7 @@ public abstract class AttKeywordMainObject
 	@NotNull
 	@NonNull
 	@lombok.Builder.Default
+	@Schema(required = false, description = "Attribute key/value (string) pairs to associate with the object.")
 	private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
 	
 	/**
@@ -47,6 +49,7 @@ public abstract class AttKeywordMainObject
 	@NotNull
 	@NonNull
 	@lombok.Builder.Default
+	@Schema(required = false, description = "Keywords to associate with the object.")
 	private List<@NotBlank String> keywords = new ArrayList<>();
 	
 }

@@ -5,5 +5,7 @@ components:
       description: "Hex string representation of the ObjectId"
       type:
         - string
-      example: "<hex string>"
+      examples:
+        - null
+        - "<hex string>"
       properties:
