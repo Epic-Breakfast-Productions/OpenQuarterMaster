@@ -50,6 +50,14 @@ public class StorageBlockPassthrough extends PassthroughProvider {
 				   );
 	}
 	
+	@Path("bulk")
+	@POST
+	public Uni<Response> addStorageBlocksBulk(ArrayNode newStorageBlocks) {
+		return this.getOqmCoreApiClient().storageBlockAddBulk(this.getBearerHeaderStr(), this.getSelectedDb(), newStorageBlocks)
+				   .map(output->Response.ok(output).build()
+				   );
+	}
+	
 	@GET
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Uni<Response> search(
