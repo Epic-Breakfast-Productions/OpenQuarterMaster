@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.Iterator;
 
@@ -12,13 +13,28 @@ import java.util.Iterator;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor
 @Setter(AccessLevel.PROTECTED)
+@Schema(description = "Calculations on the search results related to paging.")
 public class PagingCalculations {
+	
+	@Schema(required = true, description = "If this was the first page.", examples = {"false"})
 	private boolean onFirstPage;
+	
+	@Schema(required = true, description = "If this was the last page.", examples = {"false"})
 	private boolean onLastPage;
+	
+	@Schema(required = true, description = "The number of pages in the query.", examples = {"11"})
 	private long numPages;
+	
+	@Schema(required = true, description = "The last page number.", examples = {"10"})
 	private long lastPage;
+	
+	@Schema(required = true, description = "The current page number.", examples = {"1"})
 	private long curPage;
+	
+	@Schema(required = true, description = "The next page number", examples = {"false"})
 	private long nextPage;
+	
+	@Schema(required = true, description = "The previous page number.", examples = {"false"})
 	private long previousPage;
 	
 	protected PagingCalculations(long curPageNum, long numPages) {
