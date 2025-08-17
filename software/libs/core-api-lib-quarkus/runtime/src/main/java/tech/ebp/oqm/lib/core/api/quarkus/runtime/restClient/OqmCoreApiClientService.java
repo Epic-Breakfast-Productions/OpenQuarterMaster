@@ -116,12 +116,18 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(STORAGE_BLOCK_ROOT_ENDPOINT)
 	Uni<ObjectNode> storageBlockSearch(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, @BeanParam StorageBlockSearch storageBlockSearch);
-
+	
 	@POST
 	@Path(STORAGE_BLOCK_ROOT_ENDPOINT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<String> storageBlockAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ObjectNode newStorageBlock);
+	
+	@POST
+	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/bulk")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<String> storageBlockAddBulk(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ArrayNode newStorageBlocks);
 
 	@GET
 	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/tree")
