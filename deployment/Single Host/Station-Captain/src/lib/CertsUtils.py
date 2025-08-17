@@ -252,6 +252,7 @@ class CertsUtils:
         truststoreFile = mainCM.getConfigVal("cert.trustStore.systemExternalTrustStore")
         truststorePassword = mainCM.getConfigVal("cert.trustStore.systemExternalTrustStorePass")
 
+        # TODO:: no certs making it into the keystore
         with (
             open(truststoreFile, 'wb') as cert_file,
             open(root_ca_cert_path, "rb") as root_ca_cert,
