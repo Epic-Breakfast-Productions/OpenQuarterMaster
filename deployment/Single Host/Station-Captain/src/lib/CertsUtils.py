@@ -252,47 +252,41 @@ class CertsUtils:
         truststoreFile = mainCM.getConfigVal("cert.trustStore.systemExternalTrustStore")
         truststorePassword = mainCM.getConfigVal("cert.trustStore.systemExternalTrustStorePass")
 
-        # TODO:: no certs making it into the keystore
-        with (
-            open(truststoreFile, 'wb') as cert_file,
-            open(root_ca_cert_path, "rb") as root_ca_cert,
+        trust_bundle = []
+
+        with(
+            open(root_ca_cert_path, "rb") as root_ca_cert
             # open(root_ca_key_path, "rb") as root_ca_key
         ):
             cert = x509.load_pem_x509_certificate(root_ca_cert.read())
-            # key = load_pem_private_key(root_ca_key.read(), None)
+            trust_bundle.append(cert)
 
+        if mainCM.getConfigVal("cert.externalDefault") == "acme":
+            cls.log.info("Adding LetsEncrypt CA to system trust store.")
+
+            for certName, certList in cls.LETSE_CA_SOURCES.items():
+                for i, curCertUrl in enumerate(certList):
+                    certContent = None
+                    with(requests.get(curCertUrl) as certRequest):
+                        # TODO:: error check
+                        certContent = certRequest.content
+                    cert = x509.load_pem_x509_certificate(certContent)
+                    trust_bundle.append(cert)
+            cls.log.info("Finished adding LetsEncrypt CAs to system trust store.")
+
+        # TODO:: if provided, add provided CA
+
+        with (
+            open(truststoreFile, 'wb') as cert_file
+        ):
             cert_file.write(
                 pkcs12.serialize_key_and_certificates(
-                    b"OQM CA",
-                    None,
-                    cert,
-                    None,
-                    BestAvailableEncryption(bytes(truststorePassword, 'UTF-8'))
+                    key=None,
+                    cert=None,
+                    cas=trust_bundle,
+                    encryption_algorithm=serialization.BestAvailableEncryption(truststorePassword.encode('UTF-8'))
                 )
             )
-
-            # TODO:: if provided,add provided CA
-
-            if mainCM.getConfigVal("cert.externalDefault") == "acme":
-                cls.log.info("Adding LetsEncrypt CA to system trust store.")
-                # TODO:: if not using letsencrypt for ACME, don't do this
-                for certName, certList in cls.LETSE_CA_SOURCES.items():
-                    for i, curCertUrl in enumerate(certList):
-                        certContent = None
-                        with(requests.get(curCertUrl) as certRequest):
-                            # TODO:: error check
-                            certContent = certRequest.content
-                        cert = x509.load_pem_x509_certificate(certContent)
-                        cert_file.write(
-                            pkcs12.serialize_key_and_certificates(
-                                (certName + " [" + str(i) + "]").encode("UTF-8"),
-                                None,
-                                cert,
-                                None,
-                                BestAvailableEncryption(bytes(truststorePassword, 'UTF-8'))
-                            )
-                        )
-                cls.log.info("Finished adding LetsEncrypt CAs to system trust store.")
         cls.log.info("Finished writing new system trust store.")
 
     @classmethod
