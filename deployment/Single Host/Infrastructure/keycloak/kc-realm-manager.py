@@ -78,8 +78,6 @@ def setupAdminConfig(kcContainer: Container | None = None):
         log.error("Failed to setup oqm trust store for KC admin: %s", runResult.output)
         raise ChildProcessError("Failed to setup oqm trust store for KC admin")
 
-
-    # TODO:: fails due to cert when using acme... figure out why.
     runResult = kcContainer.exec_run(
         [
             KC_ADM_SCRIPT, "config", "credentials",
