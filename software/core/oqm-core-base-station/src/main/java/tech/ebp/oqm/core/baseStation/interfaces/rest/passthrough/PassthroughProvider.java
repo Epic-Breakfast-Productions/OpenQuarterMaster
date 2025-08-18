@@ -157,8 +157,12 @@ public abstract class PassthroughProvider extends ApiProvider {
 	
 	protected Uni<Response> handleCall(Uni<?> uni) {
 		return uni.map(
-				response->
-					Response.ok(response).build()
+				response->{
+					if (response instanceof Response){
+						return (Response) response;
+					}
+					return Response.ok(response).build();
+				}
 			)
 				   .onFailure().recoverWithItem(this::handleApiError);
 	}

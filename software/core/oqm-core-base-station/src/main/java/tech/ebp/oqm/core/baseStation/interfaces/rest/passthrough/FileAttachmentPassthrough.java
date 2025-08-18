@@ -81,14 +81,16 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 		@HeaderParam("otherModalId") String otherModalId,
 		@HeaderParam("inputIdPrepend") String inputIdPrepend
 	) {
-		return this.processSearchResults(
-			this.getOqmCoreApiClient().fileAttachmentSearch(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject),
-			this.searchResultTemplate,
-			acceptType,
-			searchFormId,
-			otherModalId,
-			inputIdPrepend,
-			"select"
+		return this.handleCall(
+			this.processSearchResults(
+				this.getOqmCoreApiClient().fileAttachmentSearch(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject),
+				this.searchResultTemplate,
+				acceptType,
+				searchFormId,
+				otherModalId,
+				inputIdPrepend,
+				"select"
+			)
 		);
 	}
 	
@@ -110,10 +112,12 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 	)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<String> add(
+	public Uni<Response> add(
 		@BeanParam FileUploadBody body
 	) throws IOException {
-		return this.oqmCoreApiClient.fileAttachmentAdd(this.getBearerHeaderStr(), this.getSelectedDb(), body);
+		return this.handleCall(
+			this.oqmCoreApiClient.fileAttachmentAdd(this.getBearerHeaderStr(), this.getSelectedDb(), body)
+		);
 	}
 	
 	@Path("{id}")
@@ -145,10 +149,12 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@WithSpan
-	public Uni<ObjectNode> get(
+	public Uni<Response> get(
 		@PathParam("id") String id
 	) {
-		return this.oqmCoreApiClient.fileAttachmentGet(this.getBearerHeaderStr(), this.getSelectedDb(), id);
+		return this.handleCall(
+			this.oqmCoreApiClient.fileAttachmentGet(this.getBearerHeaderStr(), this.getSelectedDb(), id)
+		);
 	}
 	
 	@PUT
@@ -185,11 +191,13 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	@WithSpan
-	public Uni<Integer> updateFile(
+	public Uni<Response> updateFile(
 		@PathParam("id") String id,
 		@BeanParam FileUploadBody body
 	) {
-		return this.oqmCoreApiClient.fileAttachmentUpdateFile(this.getBearerHeaderStr(), this.getSelectedDb(), id, body);
+		return this.handleCall(
+			this.oqmCoreApiClient.fileAttachmentUpdateFile(this.getBearerHeaderStr(), this.getSelectedDb(), id, body)
+		);
 	}
 	
 	@PUT
@@ -226,12 +234,14 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@WithSpan
-	public Uni<ObjectNode> updateObj(
+	public Uni<Response> updateObj(
 		@PathParam("id")
 		String id,
 		ObjectNode updates
 	) {
-		return this.oqmCoreApiClient.fileAttachmentUpdateObj(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates);
+		return this.handleCall(
+			this.oqmCoreApiClient.fileAttachmentUpdateObj(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates)
+		);
 	}
 	
 	@Path("{id}/revision/{rev}")
@@ -264,13 +274,15 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@WithSpan
-	public Uni<ObjectNode> getRevision(
+	public Uni<Response> getRevision(
 		@PathParam("id")
 		String id,
 		@PathParam("rev")
 		String revision
 	) {
-		return this.oqmCoreApiClient.fileAttachmentGetRevision(this.getBearerHeaderStr(), this.getSelectedDb(), id, revision);
+		return this.handleCall(
+			this.oqmCoreApiClient.fileAttachmentGetRevision(this.getBearerHeaderStr(), this.getSelectedDb(), id, revision)
+		);
 	}
 	
 	@Path("{id}/revision/{rev}/data")
@@ -309,7 +321,9 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 		@PathParam("rev")
 		String revision
 	) {
-		return this.oqmCoreApiClient.fileAttachmentGetRevisionData(this.getBearerHeaderStr(), this.getSelectedDb(), id, revision);
+		return this.handleCall(
+			this.oqmCoreApiClient.fileAttachmentGetRevisionData(this.getBearerHeaderStr(), this.getSelectedDb(), id, revision)
+		);
 	}
 	
 	@Path("{id}")
@@ -341,11 +355,13 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@WithSpan
-	public Uni<ObjectNode> remove(
+	public Uni<Response> remove(
 		@PathParam("id")
 		String id
 	) {
-		return this.oqmCoreApiClient.fileAttachmentRemove(this.getBearerHeaderStr(), this.getSelectedDb(), id);
+		return this.handleCall(
+			this.oqmCoreApiClient.fileAttachmentRemove(this.getBearerHeaderStr(), this.getSelectedDb(), id)
+		);
 	}
 	
 	@GET
@@ -381,7 +397,9 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 		@HeaderParam("searchFormId") String searchFormId
 	) {
 		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().fileAttachmentGetHistoryForObject(this.getBearerHeaderStr(), this.getSelectedDb(), id, searchObject);
-		return this.processHistoryResults(searchUni, acceptType, searchFormId);
+		return this.handleCall(
+			this.processHistoryResults(searchUni, acceptType, searchFormId)
+		);
 	}
 	
 	@GET
@@ -400,9 +418,11 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@WithSpan
-	public Uni<ObjectNode> searchHistory(
+	public Uni<Response> searchHistory(
 		@BeanParam HistorySearch searchObject
 	) {
-		return this.oqmCoreApiClient.imageSearchHistory(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject);
+		return this.handleCall(
+			this.oqmCoreApiClient.fileAttachmentSearchHistory(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject)
+		);
 	}
 }
