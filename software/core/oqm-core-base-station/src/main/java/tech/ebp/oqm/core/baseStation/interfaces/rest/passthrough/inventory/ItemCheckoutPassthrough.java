@@ -31,15 +31,15 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCh
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class ItemCheckoutPassthrough extends PassthroughProvider {
-
+	
 	@Getter
 	@Inject
 	@Location("tags/search/itemCheckout/searchResults")
 	Template searchResultTemplate;
-
+	
 	@Inject
 	SearchResultTweak searchResultTweak;
-
+	
 	@GET
 	@Operation(
 		summary = "Gets a list of storage blocks, using search parameters."
@@ -67,22 +67,24 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		@HeaderParam("showItem") String showItem,
 		@HeaderParam("actionType") String actionType
 	) {
-		return this.processSearchResults(
-			this.getOqmCoreApiClient().itemCheckoutSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemCheckoutSearch)
-				.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "fromBlock", this.getBearerHeaderStr()))
-				.call(results -> searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
-				.call(results -> searchResultTweak.addCreatedByInteractingEntityRefToCheckoutSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr()))
-				.call(results -> searchResultTweak.addInteractingEntityRefToCheckoutSearchResult(results, this.getBearerHeaderStr()))
-			,
-			this.searchResultTemplate.data("showItem", "true".equalsIgnoreCase(showItem)),
-			acceptType,
-			searchFormId,
-			otherModalId,
-			inputIdPrepend,
-			actionType
+		return this.handleCall(
+			this.processSearchResults(
+				this.getOqmCoreApiClient().itemCheckoutSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemCheckoutSearch)
+					.call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "fromBlock", this.getBearerHeaderStr()))
+					.call(results->searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
+					.call(results->searchResultTweak.addCreatedByInteractingEntityRefToCheckoutSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr()))
+					.call(results->searchResultTweak.addInteractingEntityRefToCheckoutSearchResult(results, this.getBearerHeaderStr()))
+				,
+				this.searchResultTemplate.data("showItem", "true".equalsIgnoreCase(showItem)),
+				acceptType,
+				searchFormId,
+				otherModalId,
+				inputIdPrepend,
+				actionType
+			)
 		);
 	}
-
+	
 	@Path("{id}")
 	@GET
 	@Operation(
@@ -111,12 +113,14 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> get(
+	public Uni<Response> get(
 		@PathParam("id") String id
 	) {
-		return this.getOqmCoreApiClient().itemCheckoutGet(this.getBearerHeaderStr(), this.getSelectedDb(), id);
+		return this.handleCall(
+			this.getOqmCoreApiClient().itemCheckoutGet(this.getBearerHeaderStr(), this.getSelectedDb(), id)
+		);
 	}
-
+	
 	@PUT
 	@Path("{id}")
 	@Operation(
@@ -146,13 +150,15 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> update(
+	public Uni<Response> update(
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		return this.getOqmCoreApiClient().itemCheckoutUpdate(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates);
+		return this.handleCall(
+			this.getOqmCoreApiClient().itemCheckoutUpdate(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates)
+		);
 	}
-
+	
 	//<editor-fold desc="History">
 	@GET
 	@Path("{id}/history")
@@ -186,9 +192,11 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		@HeaderParam("searchFormId") String searchFormId
 	) {
 		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().itemCheckoutGetHistoryForObject(this.getBearerHeaderStr(), this.getSelectedDb(), id, searchObject);
-		return this.processHistoryResults(searchUni, acceptType, searchFormId);
+		return this.handleCall(
+			this.processHistoryResults(searchUni, acceptType, searchFormId)
+		);
 	}
-
+	
 	@GET
 	@Path("history")
 	@Operation(
@@ -208,10 +216,12 @@ public class ItemCheckoutPassthrough extends PassthroughProvider {
 		}
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> searchHistory(
+	public Uni<Response> searchHistory(
 		@BeanParam HistorySearch searchObject
 	) {
-		return this.getOqmCoreApiClient().itemCheckoutSearchHistory(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject);
+		return this.handleCall(
+			this.getOqmCoreApiClient().itemCheckoutSearchHistory(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject)
+		);
 	}
-
+	
 }

@@ -47,8 +47,10 @@ public class UnitsPassthrough extends PassthroughProvider {
 		)
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> getUnits() {
-		return this.getOqmCoreApiClient().unitGetAll(this.getBearerHeaderStr());
+	public Uni<Response> getUnits() {
+		return this.handleCall(
+			this.getOqmCoreApiClient().unitGetAll(this.getBearerHeaderStr())
+		);
 	}
 	
 	@GET
@@ -68,8 +70,10 @@ public class UnitsPassthrough extends PassthroughProvider {
 		)
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> getUnitCompatibleMap() {
-		return this.getOqmCoreApiClient().unitGetCompatibleMap(this.getBearerHeaderStr());
+	public Uni<Response> getUnitCompatibleMap() {
+		return this.handleCall(
+			this.getOqmCoreApiClient().unitGetCompatibleMap(this.getBearerHeaderStr())
+		);
 	}
 	
 	@GET
@@ -93,14 +97,15 @@ public class UnitsPassthrough extends PassthroughProvider {
 		@PathParam("unit") String unitString,
 		@HeaderParam("Accept") String acceptType
 	) {
-		return this.getOqmCoreApiClient().unitGetUnitCompatibleWith(this.getBearerHeaderStr(), unitString)
-				   .map((ArrayNode results)->{
-					   if (acceptType.equals("text/html")) {
-						   return Response.ok(unitOptionsTemplate.data("units", results), MediaType.TEXT_HTML).build();
-					   }
-					   return Response.ok(results).build();
-				   })
-			;
+		return this.handleCall(
+			this.getOqmCoreApiClient().unitGetUnitCompatibleWith(this.getBearerHeaderStr(), unitString)
+				.map((ArrayNode results)->{
+					if (acceptType.equals("text/html")) {
+						return Response.ok(unitOptionsTemplate.data("units", results), MediaType.TEXT_HTML).build();
+					}
+					return Response.ok(results).build();
+				})
+		);
 	}
 	
 	@POST
@@ -122,10 +127,12 @@ public class UnitsPassthrough extends PassthroughProvider {
 	)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<String> createCustomUnit(
+	public Uni<Response> createCustomUnit(
 		ObjectNode ncur
 	) {
-		return this.getOqmCoreApiClient().unitCreateCustomUnit(this.getBearerHeaderStr(), ncur);
+		return this.handleCall(
+			this.getOqmCoreApiClient().unitCreateCustomUnit(this.getBearerHeaderStr(), ncur)
+		);
 	}
 	
 	@PUT
@@ -147,9 +154,11 @@ public class UnitsPassthrough extends PassthroughProvider {
 	)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<String> convert(
+	public Uni<Response> convert(
 		JsonNode convertRequest
 	) {
-		return this.getOqmCoreApiClient().unitConvertQuantity(convertRequest);
+		return this.handleCall(
+			this.getOqmCoreApiClient().unitConvertQuantity(convertRequest)
+		);
 	}
 }

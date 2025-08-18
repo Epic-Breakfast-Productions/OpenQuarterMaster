@@ -56,7 +56,9 @@ public class ManagementPassthrough extends PassthroughProvider {
 	public Uni<Response> export(
 		@QueryParam("excludeHistory") boolean excludeHistory
 	) {
-		return this.getOqmCoreApiClient().manageExportData(this.getBearerHeaderStr(), excludeHistory);
+		return this.handleCall(
+			this.getOqmCoreApiClient().manageExportData(this.getBearerHeaderStr(), excludeHistory)
+		);
 	}
 	
 	@POST
@@ -78,9 +80,11 @@ public class ManagementPassthrough extends PassthroughProvider {
 	)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> importData(
+	public Uni<Response> importData(
 		@BeanParam ImportBundleFileBody body
 	) {
-		return this.getOqmCoreApiClient().manageImportData(this.getBearerHeaderStr(), body);
+		return this.handleCall(
+			this.getOqmCoreApiClient().manageImportData(this.getBearerHeaderStr(), body)
+		);
 	}
 }

@@ -35,35 +35,41 @@ public class InteractingEntityPassthrough extends PassthroughProvider {
 	Template historyTemplate;
 	
 	@GET
-	public Uni<ObjectNode> searchEntities(
+	public Uni<Response> searchEntities(
 		@BeanParam InteractingEntitySearch search
 	) {
-		return this.getOqmCoreApiClient().interactingEntitySearch(this.getBearerHeaderStr(), search);
+		return this.handleCall(
+			this.getOqmCoreApiClient().interactingEntitySearch(this.getBearerHeaderStr(), search)
+		);
 	}
 	
 	@GET
 	@Path("/{id}")
-	public Uni<ObjectNode> getInteractingEntity(
+	public Uni<Response> getInteractingEntity(
 		@PathParam("id") String id
 	) {
-		return this.getOqmCoreApiClient().interactingEntityGet(this.getBearerHeaderStr(), id);
+		return this.handleCall(
+			this.getOqmCoreApiClient().interactingEntityGet(this.getBearerHeaderStr(), id)
+		);
 	}
-
+	
 	@GET
 	@Path("/{id}/reference")
 	public Uni<Response> getInteractingEntityReference(
 		@PathParam("id") String id,
 		@HeaderParam("Accept") String acceptType
 	) {
-		return this.getOqmCoreApiClient().interactingEntityGetReference(this.getBearerHeaderStr(), id)
-				   .map((ObjectNode reference)->{
-					   if(MediaType.TEXT_HTML.equalsIgnoreCase(acceptType)){
-						  return Response.ok(
-							  historyTemplate.data("entityRef", reference)
-						  ).build();
-					   }
-					   return Response.ok(reference).build();
-				   });
+		return this.handleCall(
+			this.getOqmCoreApiClient().interactingEntityGetReference(this.getBearerHeaderStr(), id)
+				.map((ObjectNode reference)->{
+					if (MediaType.TEXT_HTML.equalsIgnoreCase(acceptType)) {
+						return Response.ok(
+							historyTemplate.data("entityRef", reference)
+						).build();
+					}
+					return Response.ok(reference).build();
+				})
+		);
 	}
 	
 }

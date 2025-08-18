@@ -552,6 +552,7 @@ addEditStorageForm.submit(async function (event) {
                 url: Rest.passRoot +"/inventory/storage-block/bulk",
                 method: "POST",
                 data: addEditData,
+				failMessagesDiv: addEditFormMessages,
                 done: function (data) {
                     console.log("Response from create request: " + JSON.stringify(data));
                     result = true;
@@ -566,6 +567,7 @@ addEditStorageForm.submit(async function (event) {
                 url: Rest.passRoot +"/inventory/storage-block",
                 method: "POST",
                 data: addEditData,
+				failMessagesDiv: addEditFormMessages,
                 done: function (data) {
                     console.log("Response from create request: " + JSON.stringify(data));
                     result = true;
