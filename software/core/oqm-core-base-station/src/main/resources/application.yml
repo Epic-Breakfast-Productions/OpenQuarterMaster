@@ -179,8 +179,16 @@ smallrye:
       credentials:
         secret: "**********"
     #      auth-server-url: http://localhost:8115/realms/oqm
-    oqmCoreApi:
-      refreshDbCacheFrequency: "30m"
+#    oqm:
+#      core:
+#        api:
+#          devservice:
+#            coreApiVersion: 3.0.3-DEV
+#          caching:
+#            oqmDatabase:
+#              refreshFrequencyEvery: "5m"
+#            unit:
+#              refreshFrequencyEvery: "5m"
 
   runningInfo:
     depotUri: "Hello World"
