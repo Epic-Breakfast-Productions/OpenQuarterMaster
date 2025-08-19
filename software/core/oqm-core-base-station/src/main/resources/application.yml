@@ -40,6 +40,8 @@ ui:
   defaults:
     search:
       defaultPageSize: 25
+  pagination:
+    breakToInput: 20
   storage:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
