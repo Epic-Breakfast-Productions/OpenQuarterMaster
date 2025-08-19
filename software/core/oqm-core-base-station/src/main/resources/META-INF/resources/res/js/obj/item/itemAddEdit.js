@@ -68,7 +68,8 @@ const ItemAddEdit = {
 		);
 	},
 
-	resetAddEditForm() {
+	resetAddEditForm: async function() {
+		let promises = [];
 		ExtItemSearch.hideAddEditProductSearchPane();
 		this.addEditItemIdInput.val("");
 		this.addEditItemFormMode.val("");
@@ -88,7 +89,7 @@ const ItemAddEdit = {
 		Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
 		FileAttachmentSearchSelect.resetInput(this.fileInput);
 
-		ItemAddEdit.updateLowStockUnits();
+		promises.push(ItemAddEdit.updateLowStockUnits());
 		this.associatedStorageInputContainer.html("");
 
 		// this.itemNotStoredCheck.attr("checked", false);
@@ -98,19 +99,20 @@ const ItemAddEdit = {
 		ItemAddEdit.addEditItemImagesSelected.text("");
 		ItemAddEdit.addEditKeywordDiv.text("");
 		ItemAddEdit.addEditAttDiv.text("");
+		Promise.all(promises);
 	},
-	setupAddEditForAdd() {
+	setupAddEditForAdd: async function() {
 		console.log("Setting up add/edit form for add.");
-		ItemAddEdit.resetAddEditForm();
+		await ItemAddEdit.resetAddEditForm();
 		ItemAddEdit.addEditItemModalLabelIcon.html(Icons.iconWithSub(Icons.item, Icons.add));
 		ItemAddEdit.addEditItemModalLabel.text("Item Add");
 		ItemAddEdit.addEditItemFormMode.val("add");
 		ItemAddEdit.addEditItemFormSubmitButton.html(Icons.iconWithSub(Icons.item, Icons.add) + " Add Item");
 	},
 
-	setupAddEditForEdit(itemId) {
+	setupAddEditForEdit: async function(itemId) {
 		console.log("Setting up add/edit form for editing item " + itemId);
-		ItemAddEdit.resetAddEditForm();
+		await ItemAddEdit.resetAddEditForm();
 		ItemAddEdit.addEditItemModalLabel.text("Item Edit");
 		ItemAddEdit.addEditItemFormMode.val("edit");
 		ItemAddEdit.addEditItemModalLabelIcon.html(Icons.iconWithSub(Icons.item, Icons.edit));
@@ -138,15 +140,16 @@ const ItemAddEdit = {
 				ItemAddEdit.addEditItemDescriptionInput.val(data.description);
 				ItemAddEdit.addEditItemStorageTypeInput.val(data.storageType);
 				ItemAddEdit.addEditItemBarcodeInput.val(data.barcode);
-				ItemAddEdit.addEditStoredTypeInputChanged();
+				Dselect.setValues(ItemAddEdit.addEditItemUnitInput, data.unit.string);
 				Dselect.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
-
-				if (data.lowStockThreshold) {
-					console.log("Item had low stock threshold.");
-					ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(data.lowStockThreshold.value)
-					ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val(data.lowStockThreshold.unit.string)
-				}
-
+				ItemAddEdit.addEditStoredTypeInputChanged(true)
+					.then(function () {
+						if (data.lowStockThreshold) {
+							console.log("Item had low stock threshold: ", data.lowStockThreshold);
+							ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(data.lowStockThreshold.value)
+							ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val(data.lowStockThreshold.unit.string)
+						}
+					});
 
 				if ((data.expiryWarningThreshold / 604800) % 1 == 0) {
 					console.log("Determined was weeks.");
@@ -179,8 +182,8 @@ const ItemAddEdit = {
 			}
 		});
 	},
-	addEditStoredTypeInputChanged() {
-		ItemAddEdit.foreachStoredTypeFromStorageInput(
+	addEditStoredTypeInputChanged: async function (force=false) {
+		await ItemAddEdit.foreachStoredTypeFromStorageInput(
 			function () {
 				ItemAddEdit.addEditItemUnitNameRow.show();
 				ItemAddEdit.addEditItemUnitInput.prop('required', true);
@@ -196,7 +199,7 @@ const ItemAddEdit = {
 				// ItemAddEdit.addEditItemStorageTypeInput.attr('data-current', "TRACKED");
 			}
 		);
-		ItemAddEdit.updateLowStockUnits();
+		return ItemAddEdit.updateLowStockUnits(force);
 	},
 
 	storageInput: {
@@ -246,19 +249,20 @@ const ItemAddEdit = {
 				}).get();
 		}
 	},
-	updateLowStockUnits(){
-		UnitUtils.getCompatibleUnitOptions(
-			ItemAddEdit.addEditItemUnitNameRow.is(":visible") ?
+	updateLowStockUnits(force=false) {
+		let itemUnit = (force || ItemAddEdit.addEditItemUnitNameRow.is(":visible")) ?
 			ItemAddEdit.addEditItemUnitInput.val() :
-				"units"
-		)
-			.then(function(options){
+			"units";
+
+		console.debug("Item unit: ", itemUnit);
+		return UnitUtils.getCompatibleUnitOptions(itemUnit)
+			.then(function (options) {
 				ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.html(options);
 			});
 	}
 };
 
-ItemAddEdit.addEditItemUnitInput.on("change", function(){
+ItemAddEdit.addEditItemUnitInput.on("change", function () {
 	console.log("Changed unit!");
 	ItemAddEdit.updateLowStockUnits();
 });
