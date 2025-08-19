@@ -17,10 +17,16 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 public class ItemStoredStats extends StatsWithTotalContaining {
+	
 
 	public ItemStoredStats(Unit<?> unit){
 		super(unit);
 	}
 
 	private Map<ObjectId, StoredInBlockStats> storageBlockStats = new LinkedHashMap<>();
+	private boolean lowStock = false;
+	
+	public boolean isAnyLowStock(){
+		return this.lowStock || this.getNumLowStock() != 0;
+	}
 }

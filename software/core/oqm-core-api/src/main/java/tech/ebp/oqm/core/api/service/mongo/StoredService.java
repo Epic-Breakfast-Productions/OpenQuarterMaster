@@ -92,7 +92,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 		
 		if (!item.getStorageBlocks().contains(newOrChangedObject.getStorageBlock())) {
-			throw new ValidationException("Storage block " + newOrChangedObject.getStorageBlock().toHexString() + " not used to hold this item ("+item.getId()+").");
+			throw new ValidationException("Storage block " + newOrChangedObject.getStorageBlock().toHexString() + " not used to hold this item (" + item.getId() + ").");
 		}
 		
 		if (item.getStorageType().storedType != newOrChangedObject.getType()) {
@@ -164,8 +164,8 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	
 	public <T extends Stored> SearchResult<T> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
 		StoredSearch search = new StoredSearch()
-			.setInventoryItemId(itemId == null ? null : itemId.toHexString())
-			.setStorageBlockId(storageBlockId == null ? null : storageBlockId.toHexString());
+								  .setInventoryItemId(itemId == null ? null : itemId.toHexString())
+								  .setStorageBlockId(storageBlockId == null ? null : storageBlockId.toHexString());
 		
 		//noinspection unchecked
 		SearchResult<T> result = (SearchResult<T>) this.search(
@@ -253,9 +253,11 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	private void addToStats(String oqmDbIdOrName, ClientSession cs, StoredStats storedStats, Stored stored) {
 		
 		if (!storedStats.getItemStats().containsKey(stored.getId())) {
-			storedStats.getItemStats().put(stored.getId(), new ItemStoredStats(
-				this.inventoryItemService.get(oqmDbIdOrName, cs, stored.getItem()).getUnit()
-			));
+			storedStats.getItemStats().put(
+				stored.getId(), new ItemStoredStats(
+					this.inventoryItemService.get(oqmDbIdOrName, cs, stored.getItem()).getUnit()
+				)
+			);
 		}
 		ItemStoredStats itemStoredStats = storedStats.getItemStats().get(stored.getItem());
 		
@@ -391,7 +393,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		//TODO:: separate thread to get these stats
 		
 		//process expiry and low stock for affected stored
-		ItemExpiryLowStockItemProcessResults results = new ItemExpiryLowStockItemProcessResults().setItem                       (item.getId());
+		ItemExpiryLowStockItemProcessResults results = new ItemExpiryLowStockItemProcessResults().setItem(item.getId());
 		{
 			FindIterable<Stored> storedInItem = this.listIterator(
 				oqmDbIdOrName, cs, new StoredSearch()
@@ -440,11 +442,13 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 					changed = true;
 					item.getNotificationStatus().setLowStock(true);
 					results.setLowStock(true);
+					storedStats.setLowStock(true);
 				}
 			} else {
 				if (item.getNotificationStatus().isLowStock()) {
 					changed = true;
 					item.getNotificationStatus().setLowStock(false);
+					storedStats.setLowStock(false);
 				}
 			}
 		}
@@ -463,6 +467,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 					this.addHistoryFor(oqmDbIdOrName, cs, event.getObjectId(), this.getCoreApiInteractingEntity(), event);
 				}
 			});
+			
 		}
 		
 		return ItemPostTransactionProcessResults.builder()
