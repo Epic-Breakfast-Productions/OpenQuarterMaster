@@ -15,7 +15,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @Getter
 @Setter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public class StoredSearch extends SearchKeyAttObject {
 	
 	@QueryParam("itemId") String inventoryItemIdFromQuery;

@@ -13,7 +13,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @Getter
 @Setter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public class InventoryItemSearch extends SearchKeyAttObject {
 	@QueryParam("name") String name;
 	@QueryParam("itemBarcode") String itemBarcode;
