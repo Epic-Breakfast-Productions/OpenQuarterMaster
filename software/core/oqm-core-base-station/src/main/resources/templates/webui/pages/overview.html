@@ -46,6 +46,13 @@
 				<p>
 					{itemCollectionStats.get("size").asLong()} types of items stored in over {storageCollectionStats.get("size").asLong()} storage blocks
 				</p>
+				
+				{#if parentBlocks.get("hasPages").asBoolean()}
+					<form id="overviewParentBlocksTreeForm" method="get" action="{rootPrefix}/overview#overview">
+						<input type="hidden" name="pageNum">
+					</form>
+					{#paginationButtons searchFormId="overviewParentBlocksTreeForm" searchResults=parentBlocks /}
+				{/if}
 				<div class="row">
 					<div class="col">
 						{#storageBlock/blockTree parentBlocks=parentBlocks rootPrefix=rootPrefix}{/storageBlock/blockTree}
@@ -64,9 +71,13 @@
 								Nothing close to expiring!
 							</p>
 						{#else}
+							{#if expiryWarnResults.get("hasPages").asBoolean()}
+								<form id="overviewExpiringSearchForm" method="get" action="{rootPrefix}/overview#expiringTab">
+									<input type="hidden" name="pageNum">
+								</form>
+							{/if}
 							<table class=" table table-bordered table-striped table-hover table-sm">
-							{#search/item/itemSearchResults searchResults=expiryWarnResults actionType='view' searchFormId=""}
-							{/search/item/itemSearchResults}
+							{#search/item/itemSearchResults searchResults=expiryWarnResults actionType='view' searchFormId="" rootPrefix=rootPrefix /}
 							</table>
 						{/if}
 					</div>
@@ -84,9 +95,13 @@
 								Nothing expired!
 							</p>
 						{#else}
+							{#if expiredResults.get("hasPages").asBoolean()}
+								<form id="overviewExpiredSearchForm" method="get" action="{rootPrefix}/overview#expiredTab">
+									<input type="hidden" name="pageNum">
+								</form>
+							{/if}
 							<table class=" table table-bordered table-striped table-hover table-sm">
-							{#search/item/itemSearchResults searchResults=expiredResults actionType='view' searchFormId=""}
-							{/search/item/itemSearchResults}
+							{#search/item/itemSearchResults searchResults=expiredResults actionType='view' searchFormId="overviewExpiredSearchForm" rootPrefix=rootPrefix /}
 							</table>
 						{/if}
 					</div>
@@ -103,9 +118,13 @@
 								No stock is low!
 							</p>
 						{#else}
+							{#if lowStockResults.get("hasPages").asBoolean()}
+								<form id="overviewLowStockSearchForm" method="get" action="{rootPrefix}/overview#lowStockTab">
+									<input type="hidden" name="pageNum">
+								</form>
+							{/if}
 							<table class=" table table-bordered table-striped table-hover table-sm">
-								{#search/item/itemSearchResults searchResults=lowStockResults actionType='view' searchFormId=""}
-								{/search/item/itemSearchResults}
+								{#search/item/itemSearchResults searchResults=lowStockResults actionType='view' searchFormId="overviewLowStockSearchForm" rootPrefix=rootPrefix /}
 							</table>
 						{/if}
 					</div>
@@ -115,13 +134,46 @@
 	{/pageContent}
 	{#scripts}
 		<script src="{rootPrefix}/res/js/obj/getters.js"></script>
+		<script src="{rootPrefix}/res/js/search.js"></script>
 		<script src="{rootPrefix}/res/js/obj/units.js"></script>
 		<script src="{rootPrefix}/res/js/pageComponents.js"></script>
 	{/scripts}
 	{#pageScript}
 		<script>
+			let overviewParentBlocksTreeForm = $("#overviewParentBlocksTreeForm");
+			if(overviewParentBlocksTreeForm.length !== 0){
+				overviewParentBlocksTreeForm.on("submit", function(e){
+					// e.preventDefault();
+					overviewParentBlocksTreeForm.find("input[name='pageNum']").attr("name", "storageBlockTreePage");
+				});
+			}
+			
+			let overviewLowStockSearchForm = $("#overviewLowStockSearchForm");
+			if(overviewLowStockSearchForm.length !== 0){
+				overviewLowStockSearchForm.on("submit", function(e){
+					// e.preventDefault();
+					overviewLowStockSearchForm.find("input[name='pageNum']").attr("name", "lowStockPage");
+				});
+			}
+			
+			let overviewExpiringSearchForm = $("#overviewExpiringSearchForm");
+			if(overviewExpiringSearchForm.length !== 0){
+				overviewExpiringSearchForm.on("submit", function(e){
+					// e.preventDefault();
+					overviewExpiringSearchForm.find("input[name='pageNum']").attr("name", "expiringPage");
+				});
+			}
+			
+			let overviewExpiredSearchForm = $("#overviewExpiredSearchForm");
+			if(overviewExpiredSearchForm.length !== 0){
+				overviewExpiredSearchForm.on("submit", function(e){
+					// e.preventDefault();
+					overviewExpiredSearchForm.find("input[name='pageNum']").attr("name", "expiredPage");
+				});
+			}
+			
+			
 			var created = { };
-
 
 			function getInvItemSection(invItemArr, parentId){
 				if(invItemArr.results.length === 0){
@@ -316,6 +368,12 @@
 					}
 				});
 			}
+			
+			let anchor = $(location).attr('hash');
+			if(anchor){
+				$(anchor).click();
+			}
+			
 		</script>
 	{/pageScript}
 {/include}

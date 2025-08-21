@@ -42,6 +42,15 @@ ui:
       defaultPageSize: 25
   pagination:
     breakToInput: 20
+  overview:
+    storageTree:
+      defaultPageSize: 500
+    lowStockItems:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+    expiringItems:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+    expiredItems:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
   storage:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
@@ -201,4 +210,7 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-
+#  ui:
+#    overview:
+#      lowStockItems:
+#        defaultPageSize: 2
