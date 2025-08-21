@@ -15,7 +15,7 @@
 !}
 <thead>
 <tr>
-	<td colspan="6" class="text-center searchResultsContainer">
+	<td colspan="7" class="text-center searchResultsContainer">
 		{#paginationButtons searchFormId = searchFormId searchResults = searchResults}{/paginationButtons}
 	</td>
 </tr>
@@ -32,7 +32,7 @@
 <tbody>
 {#if searchResults.get("empty").asBoolean()}
 <tr>
-	<td colspan="6" class="text-center">
+	<td colspan="7" class="text-center">
 		<h2>
 			No Items
 		</h2>
@@ -101,7 +101,7 @@
 		</button>
 		{#else if actionType == 'view'}
 	<td class="d-grid gap-2">
-		<a href="/items" class="btn btn-sm btn-info" title="View {name}">{#icons/view}{/icons/view}</a>
+		<a href="{rootPrefix}/items?view={id}" class="btn btn-sm btn-info" title="View {name}">{#icons/view}{/icons/view}</a>
 		{/if}
 	
 	</td>
@@ -112,7 +112,7 @@
 </tbody>
 <tfoot>
 <tr>
-	<td colspan="6" class="text-center searchResultsContainer">
+	<td colspan="7" class="text-center searchResultsContainer">
 		{#paginationButtons searchFormId = searchFormId searchResults = searchResults}{/paginationButtons}
 	</td>
 </tr>
