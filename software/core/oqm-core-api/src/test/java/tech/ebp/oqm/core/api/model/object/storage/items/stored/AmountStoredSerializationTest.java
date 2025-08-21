@@ -24,8 +24,15 @@ class AmountStoredSerializationTest extends ObjectSerializationTest<AmountStored
 			Arguments.of(
 				AmountStored.builder()
 					.item(new ObjectId())
-				.amount(Quantities.getQuantity(0, OqmProvidedUnits.UNIT))
-				.build()
+					.amount(Quantities.getQuantity(0, OqmProvidedUnits.UNIT))
+					.build()
+			),
+			Arguments.of(
+				AmountStored.builder()
+					.item(new ObjectId())
+					.amount(Quantities.getQuantity(0, OqmProvidedUnits.UNIT))
+					.expires(LocalDateTime.now())
+					.build()
 			)
 				//TODO:: more
 		);

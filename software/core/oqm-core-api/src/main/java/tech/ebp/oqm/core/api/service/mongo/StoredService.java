@@ -69,6 +69,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		output.add("amount");
 		output.add("item");
 		output.add("storageBlock");
+		output.add("type");
 		return output;
 	}
 	
