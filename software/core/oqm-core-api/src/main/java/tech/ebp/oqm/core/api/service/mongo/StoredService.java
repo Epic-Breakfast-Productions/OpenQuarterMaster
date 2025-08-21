@@ -438,17 +438,24 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 		if (item.getLowStockThreshold() != null) {
 			if (UnitUtils.underThreshold(item.getLowStockThreshold(), storedStats.getTotal())) {
-				if (!item.getNotificationStatus().isLowStock()) {
+				results.setLowStock(true);
+				storedStats.setLowStock(true);
+				
+				if (!oldStats.isLowStock()) {
 					changed = true;
+				}
+				
+				if(!item.getNotificationStatus().isLowStock()) {
 					item.getNotificationStatus().setLowStock(true);
-					results.setLowStock(true);
-					storedStats.setLowStock(true);
+					//TODO:: handle notification
 				}
 			} else {
-				if (item.getNotificationStatus().isLowStock()) {
+				item.getNotificationStatus().setLowStock(false);
+				storedStats.setLowStock(false);
+				item.getNotificationStatus().setLowStock(false);
+				
+				if (oldStats.isLowStock()) {
 					changed = true;
-					item.getNotificationStatus().setLowStock(false);
-					storedStats.setLowStock(false);
 				}
 			}
 		}
