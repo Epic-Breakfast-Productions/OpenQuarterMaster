@@ -37,6 +37,55 @@ const TimeHelpers = {
 					element.min = nowDateTimeStamp;
 				});
 		}
+	},
+	durationNumSecsToTimespan(duration){
+		if ((duration / 604800) % 1 == 0) {
+			console.log("Determined was weeks.");
+			return "weeks";
+		} else if ((duration / 86400) % 1 == 0) {
+			console.log("Determined was days.");
+			return "days";
+		} else if ((duration / 3600) % 1 == 0) {
+			console.log("Determined was hours.");
+			return "hours";
+		} else if ((duration / 60) % 1 == 0) {
+			console.log("Determined was minutes.");
+			return "minutes";
+		} else {
+			console.log("Determined was seconds.");
+			return "seconds";
+		}
+	},
+	durationNumSecsTo(duration, timespanTo = null){
+		if(timespanTo == null){
+			timespanTo = TimeHelpers.durationNumSecsToTimespan(duration);
+		}
+		console.debug("Turning duration " + duration + " to " + timespanTo)
+		let output = null;
+		switch (timespanTo) {
+			case "weeks":
+				output = duration / 604800;
+				break;
+			case "days":
+				output = duration / 86400;
+				break;
+			case "hours":
+				output = duration / 3600;
+				break;
+			case "minutes":
+				output = duration / 60;
+				break;
+			default:
+				output = duration;
+				break;
+		}
+		console.debug("Turned duration " + duration + " to " + output + " " + timespanTo);
+		return output;
+	},
+	durationNumSecsToHuman(duration){
+		let timespan = TimeHelpers.durationNumSecsToTimespan(duration);
+		let num = TimeHelpers.durationNumSecsTo(duration, timespan);
+		return num + " " + timespan;
 	}
 };
 
