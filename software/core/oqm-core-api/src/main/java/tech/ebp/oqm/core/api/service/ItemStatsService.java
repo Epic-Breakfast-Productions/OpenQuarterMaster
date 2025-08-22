@@ -169,6 +169,21 @@ public class ItemStatsService {
 		return output;
 	}
 	
+	/**
+	 * Processes a stored item to determine if expired/expiring or low stock.
+	 *
+	 * If flags changed, updates stored object in database, with history details passed.
+	 *
+	 * @param oqmDbIdOrName
+	 * @param cs
+	 * @param stored
+	 * @param expiryWarningThreshold
+	 * @param checkLowStock
+	 * @param checkExpired
+	 * @param entity
+	 * @param historyDetails
+	 * @return Empty if nothing changed. Result if any state changed.
+	 */
 	private Optional<StoredExpiryLowStockProcessResult> getStoredExpiryLowStockProcessResult(
 		String oqmDbIdOrName,
 		ClientSession cs,
@@ -185,13 +200,14 @@ public class ItemStatsService {
 		if (checkLowStock && stored.getType() == StoredType.AMOUNT) {
 			AmountStored amountStored = (AmountStored) stored;
 			
-			if (UnitUtils.underThreshold(amountStored.getLowStockThreshold(), amountStored.getAmount())) {
+			if (UnitUtils.atOrUnderThreshold(amountStored.getLowStockThreshold(), amountStored.getAmount())) {
+				curResult.setLowStock(true);
 				if (!amountStored.getNotificationStatus().isLowStock()) {
 					amountStored.getNotificationStatus().setLowStock(true);
-					curResult.setLowStock(true);
 					changed = true;
 				}
 			} else {
+				curResult.setLowStock(false);
 				if (amountStored.getNotificationStatus().isLowStock()) {
 					amountStored.getNotificationStatus().setLowStock(false);
 					changed = true;
@@ -201,21 +217,30 @@ public class ItemStatsService {
 		
 		if (checkExpired && stored.getExpires() != null) {
 			if (stored.getExpires().isBefore(LocalDateTime.now())) {
+				curResult.setExpired(true);
 				if (!stored.getNotificationStatus().isExpired()) {
-					changed = true;
 					stored.getNotificationStatus().setExpired(true);
 					stored.getNotificationStatus().setExpiredWarning(false);
-					curResult.setExpired(true);
+					changed = true;
 				}
 			} else if (
 					   !expiryWarningThreshold.equals(Duration.ZERO) &&
 					   stored.getExpires().isBefore(LocalDateTime.now().plus(expiryWarningThreshold))
 			) {
+				curResult.setExpiryWarn(true);
 				if (!stored.getNotificationStatus().isExpiredWarning()) {
-					changed = true;
 					stored.getNotificationStatus().setExpired(false);
 					stored.getNotificationStatus().setExpiredWarning(true);
-					curResult.setExpiryWarn(true);
+					changed = true;
+				}
+			} else {
+				if(stored.getNotificationStatus().isExpiredWarning()){
+					stored.getNotificationStatus().setExpiredWarning(false);
+					changed = true;
+				}
+				if(stored.getNotificationStatus().isExpired()){
+					stored.getNotificationStatus().setExpired(false);
+					changed = true;
 				}
 			}
 		}
@@ -241,7 +266,11 @@ public class ItemStatsService {
 	public ItemPostTransactionProcessResults postTransactionProcess(
 		String oqmDbIdOrName,
 		ClientSession cs,
-		InventoryItem item, ObjectId transactionId, Set<Stored> concerning, InteractingEntity entity, HistoryDetail... historyDetails
+		InventoryItem item,
+		ObjectId transactionId,
+		Set<Stored> concerning,
+		InteractingEntity entity,
+		HistoryDetail... historyDetails
 	) {
 		//TODO:: apply mutex here?
 		
@@ -269,7 +298,8 @@ public class ItemStatsService {
 						item.getExpiryWarningThreshold(),
 						true,
 						concerningIds.contains(curStored.getId()),
-						entity, historyDetails
+						entity,
+						historyDetails
 					);
 					if (result.isPresent()) {
 						StoredExpiryLowStockProcessResult curResult = result.get();
@@ -293,7 +323,7 @@ public class ItemStatsService {
 			changed = true;
 		}
 		if (item.getLowStockThreshold() != null) {
-			if (UnitUtils.underThreshold(item.getLowStockThreshold(), storedStats.getTotal())) {
+			if (UnitUtils.atOrUnderThreshold(item.getLowStockThreshold(), storedStats.getTotal())) {
 				results.setLowStock(true);
 				storedStats.setLowStock(true);
 				
@@ -339,6 +369,11 @@ public class ItemStatsService {
 				   .build();
 	}
 	
+	/**
+	 * Scans the entire given database for expired items.
+	 * @param oqmDbIdOrName The id or name of the database to scan.
+	 * @return The number of new
+	 */
 	public long scanForExpired(String oqmDbIdOrName) {
 		try (MongoSessionWrapper csw = new MongoSessionWrapper(this.getStoredService())) {
 			FindIterable<Stored> storedInItem = this.getStoredService().listIterator(
