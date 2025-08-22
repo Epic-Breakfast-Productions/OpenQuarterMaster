@@ -27,6 +27,7 @@ import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.core.api.service.ItemStatsService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
@@ -65,6 +66,9 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
+	
+	@Inject
+	ItemStatsService itemStatsService;
 	
 	public InventoryItemService() {
 		super(InventoryItem.class, false);
@@ -267,7 +271,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		FindIterable<InventoryItem> it = this.listIterator(oqmDbIdOrName, cs);
 		for (InventoryItem item : it) {
 			try {
-				item.setStats(this.getStoredService().getItemStats(oqmDbIdOrName, cs, item.getId()));
+				item.setStats(this.itemStatsService.getItemStats(oqmDbIdOrName, cs, item.getId()));
 				this.update(oqmDbIdOrName, cs, item, this.getCoreApiInteractingEntity());
 			} catch(Exception e) {
 				log.error("Error running post upgrade for inventory item: {}", item, e);
