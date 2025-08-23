@@ -8,9 +8,11 @@ import io.quarkus.arc.InstanceHandle;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
 import org.bson.types.ObjectId;
@@ -23,6 +25,7 @@ import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.StoredInBlockStats;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
@@ -32,6 +35,8 @@ import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
 import java.util.*;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.*;
 
@@ -144,6 +149,28 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				   .numExpireWarn(this.getNumStoredExpiryWarn(oqmDbIdOrName))
 				   .numLowStock(this.getNumLowStock(oqmDbIdOrName))
 				   .build();
+	}
+	
+	@Override
+	@WithSpan
+	public ObjectId add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid InventoryItem item, InteractingEntity entity, HistoryDetail... details) {
+		
+		item.setStats(
+			ItemStoredStats.builder()
+				.lowStock(
+					item.getLowStockThreshold() != null && item.getLowStockThreshold().getValue().longValue() != 0
+				)
+				.storageBlockStats(
+					item.getStorageBlocks().stream()
+						.collect(Collectors.toMap(
+							Function.identity(),
+							(storageBlockId)->StoredInBlockStats.builder().build()
+						))
+				)
+				.build()
+		);
+		
+		return super.add(oqmDbIdOrName, session, item, entity, details);
 	}
 	
 	
@@ -260,13 +287,13 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	public void runPostUpgrade(String oqmDbIdOrName, ClientSession cs, CollectionUpgradeResult upgradeResult) {
 		super.runPostUpgrade(oqmDbIdOrName, cs, upgradeResult);
 		
-//		log.info("client session: {}", cs);
-//		log.info("is ack: {}", this.getMongoClient().getWriteConcern().isAcknowledged());
-////		this.getDocumentCollection(oqmDbIdOrName).getWriteConcern()
-//
-//		this.getDocumentCollection(oqmDbIdOrName).find(cs).forEach((Document doc)->{
-//			log.info("Inv Item: {}", doc.toJson());
-//		});
+		//		log.info("client session: {}", cs);
+		//		log.info("is ack: {}", this.getMongoClient().getWriteConcern().isAcknowledged());
+		////		this.getDocumentCollection(oqmDbIdOrName).getWriteConcern()
+		//
+		//		this.getDocumentCollection(oqmDbIdOrName).find(cs).forEach((Document doc)->{
+		//			log.info("Inv Item: {}", doc.toJson());
+		//		});
 		
 		FindIterable<InventoryItem> it = this.listIterator(oqmDbIdOrName, cs);
 		for (InventoryItem item : it) {

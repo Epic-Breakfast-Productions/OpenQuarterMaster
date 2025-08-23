@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 
 import javax.measure.Unit;
@@ -17,6 +18,7 @@ import java.util.Map;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder
 public class ItemStoredStats extends StatsWithTotalContaining {
 	
 	public ItemStoredStats(Unit<?> unit) {
