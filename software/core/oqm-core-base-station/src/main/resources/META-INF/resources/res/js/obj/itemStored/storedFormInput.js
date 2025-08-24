@@ -43,7 +43,10 @@ const StoredFormInput = {
 				output.find(".storedConditionNotesInput").val(stored.conditionNotes);
 			}
 			if(stored.expires){
-				output.find(".storedExpiredInput").val(stored.expires);
+				TimeHelpers.setDatetimelocalInput(
+					output.find(".storedExpiredInput"),
+					stored.expires
+				);
 			}
 			KeywordAttEdit.addKeywordInputs(output.find(".keywordInputDiv"), stored.keywords);
 			KeywordAttEdit.addAttInputs(output.find(".attInputDiv"), stored.attributes);

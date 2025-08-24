@@ -24,8 +24,8 @@
 	<th scope="col">Name</th>
 	<th scope="col">Storage Type</th>
 	<th scope="col">Total</th>
-	<th scope="col"># {#icons/storageBlocks /}</th>
-	<th scope="col">Flags</th>
+	<th scope="col" style="width: 50px;"># {#icons/storageBlocks /}</th>
+	<th scope="col" style="width: 114px;">{#icons/flags /} Flags</th>
 	<th scope="col" style="width: 175px;">Actions</th>
 </tr>
 </thead>
@@ -101,7 +101,7 @@
 		</button>
 		{#else if actionType == 'view'}
 	<td class="d-grid gap-2">
-		<a href="{rootPrefix}/items?view={id}" class="btn btn-sm btn-info" title="View {name}">{#icons/view}{/icons/view}</a>
+		<a href="{rootPrefix}/items?view={id}" class="btn btn-sm btn-info" title="View {name}">{#icons/view /}</a>
 		{/if}
 	
 	</td>

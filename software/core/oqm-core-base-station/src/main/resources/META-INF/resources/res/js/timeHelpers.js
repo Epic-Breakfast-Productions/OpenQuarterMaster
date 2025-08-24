@@ -7,11 +7,14 @@
  */
 const TimeHelpers = {
 
+	tsToLocal(ts){
+		return ts.slice(0, 16);
+	},
 	/**
 	 * Get the current timestamp used for `datetime-local` inputs.
 	 */
 	getNowTs(){
-		return luxon.DateTime.now().toISO().slice(0, 16);
+		return TimeHelpers.tsToLocal(luxon.DateTime.now().toISO());
 	},
 	getTsFromInput(dtInputJq){
 		let value = dtInputJq.val();
@@ -26,6 +29,9 @@ const TimeHelpers = {
 
 		console.log("Returning dt value: " + value);
 		return value;
+	},
+	setDatetimelocalInput(dtInputJq, dt){
+		dtInputJq.val(TimeHelpers.tsToLocal(dt));
 	},
 	setupDateTimeInputs(){
 		let nowDateTimeStamp = this.getNowTs();

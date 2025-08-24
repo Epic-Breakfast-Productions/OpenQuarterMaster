@@ -60,12 +60,14 @@ const StoredView = {
 		return "";
 	},
 	getStorageBlockConditionView(stored) {
-		if (stored.condition) {
+		if (stored.condition || stored.conditionNotes) {
 			let conditionJqs = [];
 
-			let newJq = $('<p class="storedCondition mb-0"></p>');
-			newJq.text(stored.condition + "%");
-			conditionJqs.push(newJq);
+			if (stored.condition) {
+				let newJq = $('<p class="storedCondition mb-0"></p>');
+				newJq.text(stored.condition + "%");
+				conditionJqs.push(newJq);
+			}
 
 			if (stored.conditionNotes) {
 				let newJq = $('<p class="storedConditionNotes mt-0 small"></p>');
