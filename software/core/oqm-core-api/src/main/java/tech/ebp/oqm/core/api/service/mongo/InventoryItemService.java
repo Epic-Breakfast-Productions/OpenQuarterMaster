@@ -183,7 +183,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	public InventoryItem update(String oqmDbIdOrName, ClientSession cs, InventoryItem object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
 		InventoryItem output = super.update(oqmDbIdOrName, cs, object, entity, details);
 		
-		//TODO:: update again if necessary
+		//TODO:: update again if necessary #929
 		this.getItemStatsService().postItemUpdateProcess(oqmDbIdOrName, cs, object, entity, details);
 		
 		return output;

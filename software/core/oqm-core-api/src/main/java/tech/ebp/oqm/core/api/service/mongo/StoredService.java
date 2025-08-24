@@ -42,6 +42,9 @@ import java.util.stream.Collectors;
 
 import static tech.ebp.oqm.core.api.model.object.storage.items.StorageType.*;
 
+/**
+ * TODO:: recalc stats on update if necessary #929
+ */
 @Named("StoredService")
 @Slf4j
 @ApplicationScoped
