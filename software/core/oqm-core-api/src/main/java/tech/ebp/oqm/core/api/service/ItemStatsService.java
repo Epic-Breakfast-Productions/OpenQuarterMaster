@@ -227,6 +227,7 @@ public class ItemStatsService {
 				//  2025-08-23T05:17:20.462707133 is after 2025-08-23T01:31
 				log.info("{} ({}) is after {}", now, TimeZone.getDefault(), stored.getExpires());
 				curResult.setExpired(true);
+				curResult.setExpiryWarn(false);
 				if (!stored.getNotificationStatus().isExpired()) {
 					stored.getNotificationStatus().setExpired(true);
 					stored.getNotificationStatus().setExpiredWarning(false);
@@ -236,6 +237,7 @@ public class ItemStatsService {
 					   !expiryWarningThreshold.equals(Duration.ZERO) &&
 					   now.isAfter(stored.getExpires().minus(expiryWarningThreshold))
 			) {
+				curResult.setExpired(false);
 				curResult.setExpiryWarn(true);
 				if (!stored.getNotificationStatus().isExpiredWarning()) {
 					stored.getNotificationStatus().setExpired(false);
