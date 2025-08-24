@@ -1,7 +1,7 @@
 package tech.ebp.oqm.core.api.model.units;
 
+import jakarta.annotation.Nullable;
 import lombok.NonNull;
-import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
@@ -117,9 +117,15 @@ public final class UnitUtils {
 		}
 		throw new IllegalArgumentException("Unit string given (" + unitStr + ") does not represent any of the possible valid units.");
 	}
-
-
-	public static boolean underThreshold(Quantity<?> threshold, Quantity<?> amount) {
+	
+	/**
+	 * Determines if a quantity is at or under a threshold.
+	 *
+	 * @param threshold The threshold to check against. Will return false if null.
+	 * @param amount The amount to check if at or under the threshold.
+	 * @return If the threshold was not null, and the amount was at or under that threshold.
+	 */
+	public static boolean atOrUnderThreshold(@Nullable Quantity<?> threshold, Quantity<?> amount) {
 		return threshold != null && (((Comparable<Quantity<?>>)amount).compareTo(threshold) <= 0);
 	}
 }

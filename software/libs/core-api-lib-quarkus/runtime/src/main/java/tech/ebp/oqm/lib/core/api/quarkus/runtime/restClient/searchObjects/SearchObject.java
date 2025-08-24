@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @ToString
 @Getter
 @Setter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public abstract class SearchObject {
 	//paging
 	@QueryParam("pageSize") Integer pageSize;

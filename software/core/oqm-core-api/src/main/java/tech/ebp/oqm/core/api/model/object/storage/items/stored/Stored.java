@@ -21,6 +21,7 @@ import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.StoredNotificationStatus;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -76,7 +77,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 * When the item(s) held expire. Null if it does not expire.
 	 */
 	@lombok.Builder.Default
-	private LocalDateTime expires = null;
+	private ZonedDateTime expires = null;
 
 	/**
 	 * Statuses about this stored object.

@@ -68,7 +68,7 @@ const ItemAddEdit = {
 		);
 	},
 
-	resetAddEditForm: async function() {
+	resetAddEditForm: async function () {
 		let promises = [];
 		ExtItemSearch.hideAddEditProductSearchPane();
 		this.addEditItemIdInput.val("");
@@ -101,7 +101,7 @@ const ItemAddEdit = {
 		ItemAddEdit.addEditAttDiv.text("");
 		Promise.all(promises);
 	},
-	setupAddEditForAdd: async function() {
+	setupAddEditForAdd: async function () {
 		console.log("Setting up add/edit form for add.");
 		await ItemAddEdit.resetAddEditForm();
 		ItemAddEdit.addEditItemModalLabelIcon.html(Icons.iconWithSub(Icons.item, Icons.add));
@@ -110,7 +110,7 @@ const ItemAddEdit = {
 		ItemAddEdit.addEditItemFormSubmitButton.html(Icons.iconWithSub(Icons.item, Icons.add) + " Add Item");
 	},
 
-	setupAddEditForEdit: async function(itemId) {
+	setupAddEditForEdit: async function (itemId) {
 		console.log("Setting up add/edit form for editing item " + itemId);
 		await ItemAddEdit.resetAddEditForm();
 		ItemAddEdit.addEditItemModalLabel.text("Item Edit");
@@ -151,26 +151,25 @@ const ItemAddEdit = {
 						}
 					});
 
-				if ((data.expiryWarningThreshold / 604800) % 1 == 0) {
-					console.log("Determined was weeks.");
-					ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 604800);
-					ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 4);
-				} else if ((data.expiryWarningThreshold / 86400) % 1 == 0) {
-					console.log("Determined was days.");
-					ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 86400);
-					ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 3);
-				} else if ((data.expiryWarningThreshold / 3600) % 1 == 0) {
-					console.log("Determined was hours.");
-					ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 3600);
-					ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 2);
-				} else if ((data.expiryWarningThreshold / 60) % 1 == 0) {
-					console.log("Determined was minutes.");
-					ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold / 60);
-					ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 1);
-				} else {
-					console.log("Determined was seconds.");
-					ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(data.expiryWarningThreshold);
-					ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 0);
+				let durationTimespan = TimeHelpers.durationNumSecsToTimespan(data.expiryWarningThreshold);
+
+				ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(TimeHelpers.durationNumSecsTo(data.expiryWarningThreshold, durationTimespan));
+				switch (durationTimespan) {
+					case "weeks":
+						ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 4);
+						break;
+					case "days":
+						ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 3);
+						break;
+					case "hours":
+						ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 2);
+						break;
+					case "minutes":
+						ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 1);
+						break;
+					case "seconds":
+						ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 0);
+						break;
 				}
 
 				data.storageBlocks.forEach(curStorageBlockId => {
@@ -182,7 +181,7 @@ const ItemAddEdit = {
 			}
 		});
 	},
-	addEditStoredTypeInputChanged: async function (force=false) {
+	addEditStoredTypeInputChanged: async function (force = false) {
 		await ItemAddEdit.foreachStoredTypeFromStorageInput(
 			function () {
 				ItemAddEdit.addEditItemUnitNameRow.show();
@@ -249,7 +248,7 @@ const ItemAddEdit = {
 				}).get();
 		}
 	},
-	updateLowStockUnits(force=false) {
+	updateLowStockUnits(force = false) {
 		let itemUnit = (force || ItemAddEdit.addEditItemUnitNameRow.is(":visible")) ?
 			ItemAddEdit.addEditItemUnitInput.val() :
 			"units";

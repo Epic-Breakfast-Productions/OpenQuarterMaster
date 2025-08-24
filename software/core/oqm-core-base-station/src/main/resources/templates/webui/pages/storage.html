@@ -721,8 +721,8 @@ function setupView(blockId){
                             '<td class="blockViewItemActions"><a href="{rootPrefix}/items?view='+item.id+'" class="btn btn-info btn-sm">{#icons/view}{/icons/view}</a> </td>' +//actions
                             '</tr>');
                     row.find(".blockViewItemName").text(item.name);
-                    row.find(".blockViewItemAmountIn").text(item.storageMap[blockId].total.value + item.storageMap[blockId].total.unit.symbol);
-                    row.find(".blockViewItemTotal").text(item.total.value + item.total.unit.symbol);
+                    row.find(".blockViewItemAmountIn").text(item.stats.storageBlockStats[blockId].total.value + item.stats.storageBlockStats[blockId].total.unit.symbol);
+                    row.find(".blockViewItemTotal").text(item.stats.total.value + item.stats.total.unit.symbol);
                     storageBlockViewItemsStoredContent.append(row);
                 });
             }
