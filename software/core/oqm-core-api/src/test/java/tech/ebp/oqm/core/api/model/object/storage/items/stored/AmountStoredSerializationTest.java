@@ -9,6 +9,7 @@ import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.units.indriya.quantity.Quantities;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -31,7 +32,7 @@ class AmountStoredSerializationTest extends ObjectSerializationTest<AmountStored
 				AmountStored.builder()
 					.item(new ObjectId())
 					.amount(Quantities.getQuantity(0, OqmProvidedUnits.UNIT))
-					.expires(LocalDateTime.now())
+					.expires(ZonedDateTime.now())
 					.build()
 			)
 				//TODO:: more
