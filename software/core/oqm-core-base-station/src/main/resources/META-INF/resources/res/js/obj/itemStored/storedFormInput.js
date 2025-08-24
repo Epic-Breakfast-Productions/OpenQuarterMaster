@@ -24,6 +24,8 @@ const StoredFormInput = {
 			'</div>\n' + //TODO:: move these templates to js calls
 			// imageInputTemplate.html() +
 
+			//TODO:: add timezone note to expires
+
 			PageComponents.Inputs.keywords +
 			PageComponents.Inputs.attribute +
 			//TODO:: images/files
@@ -133,7 +135,7 @@ const StoredFormInput = {
 			dataToAddTo["barcode"] = commonInputsContainer.find('input[name="barcode"]').val();
 			dataToAddTo["condition"] = commonInputsContainer.find('input[name="condition"]').val();
 			dataToAddTo["conditionNotes"] = commonInputsContainer.find('textarea[name="conditionNotes"]').val();
-			dataToAddTo["expires"] = commonInputsContainer.find('input[name="expires"]').val();
+			dataToAddTo["expires"] = TimeHelpers.getTsFromInput(commonInputsContainer.find('input[name="expires"]'));
 			KeywordAttEdit.addKeywordAttData(dataToAddTo, commonInputsContainer.find(".keywordInputDiv"), commonInputsContainer.find(".attInputDiv"));
 		}
 		//amount inputs
