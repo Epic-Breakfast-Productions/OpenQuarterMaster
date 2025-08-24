@@ -25,9 +25,8 @@ public class StoredSearch extends SearchKeyAttObject {
 
 	@QueryParam("hasExpiryDate") Boolean hasExpiryDate;
 	@QueryParam("hasLowStockThreshold") Boolean hasLowStockThreshold;
-
-	@QueryParam("hasExpired") Boolean hasExpired;
-	@QueryParam("hasExpiryWarn") Boolean hasExpiryWarn;
-	@QueryParam("hasLowStock") Boolean hasLowStock;
-
+	
+	@QueryParam("expired") Boolean hasExpired;
+	@QueryParam("expiryWarn") Boolean hasExpiryWarn;
+	@QueryParam("lowStock") Boolean hasLowStock;
 }
