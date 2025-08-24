@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
@@ -33,14 +34,17 @@ import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
 import javax.measure.Quantity;
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.TimeZone;
 import java.util.stream.Collectors;
 
+@Slf4j
 @ApplicationScoped
 public class ItemStatsService {
 	
@@ -194,7 +198,7 @@ public class ItemStatsService {
 		InteractingEntity entity,
 		HistoryDetail... historyDetails
 	) {
-		StoredExpiryLowStockProcessResult curResult = new StoredExpiryLowStockProcessResult();
+		StoredExpiryLowStockProcessResult curResult = StoredExpiryLowStockProcessResult.builder().storedId(stored.getId()).build();
 		boolean changed = false;
 		
 		if (checkLowStock && stored.getType() == StoredType.AMOUNT) {
@@ -216,7 +220,12 @@ public class ItemStatsService {
 		}
 		
 		if (checkExpired && stored.getExpires() != null) {
-			if (stored.getExpires().isBefore(LocalDateTime.now())) {
+			ZonedDateTime now = ZonedDateTime.now();
+			if (
+				now.isAfter(stored.getExpires())
+			) {
+				//  2025-08-23T05:17:20.462707133 is after 2025-08-23T01:31
+				log.info("{} ({}) is after {}", now, TimeZone.getDefault(), stored.getExpires());
 				curResult.setExpired(true);
 				if (!stored.getNotificationStatus().isExpired()) {
 					stored.getNotificationStatus().setExpired(true);
@@ -225,7 +234,7 @@ public class ItemStatsService {
 				}
 			} else if (
 					   !expiryWarningThreshold.equals(Duration.ZERO) &&
-					   stored.getExpires().isBefore(LocalDateTime.now().plus(expiryWarningThreshold))
+					   now.isAfter(stored.getExpires().minus(expiryWarningThreshold))
 			) {
 				curResult.setExpiryWarn(true);
 				if (!stored.getNotificationStatus().isExpiredWarning()) {
@@ -253,6 +262,10 @@ public class ItemStatsService {
 	}
 	
 	/**
+	 * Performs the necessary processing to recalculate stats about an item after an item has a transaction applied.
+	 *
+	 * If stats changed, updated inventory item.
+	 *
 	 * @param oqmDbIdOrName
 	 * @param cs
 	 * @param item
@@ -369,6 +382,17 @@ public class ItemStatsService {
 				   .build();
 	}
 	
+	public ItemPostTransactionProcessResults postItemUpdateProcess(
+		String oqmDbIdOrName,
+		ClientSession cs,
+		InventoryItem item,
+		InteractingEntity entity,
+		HistoryDetail... historyDetails
+	) {
+		//TODO
+		return null;
+	}
+	
 	/**
 	 * Scans the entire given database for expired items.
 	 * @param oqmDbIdOrName The id or name of the database to scan.
@@ -402,8 +426,8 @@ public class ItemStatsService {
 						csw.getClientSession(),
 						curStored,
 						itemExpiryWarningThresholds.get(curStored.getItem()),
-						true,
 						false,
+						true,
 						this.coreApiInteractingEntity
 					);
 					if (result.isPresent()) {

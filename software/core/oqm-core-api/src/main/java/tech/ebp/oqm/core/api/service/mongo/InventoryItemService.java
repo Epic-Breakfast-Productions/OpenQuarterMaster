@@ -30,10 +30,14 @@ import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
+import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
+import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.ItemStatsService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
+import tech.units.indriya.quantity.Quantities;
 
+import javax.measure.Quantity;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -72,6 +76,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
 	
+	@Getter(AccessLevel.PRIVATE)
 	@Inject
 	ItemStatsService itemStatsService;
 	
@@ -154,9 +159,9 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@Override
 	@WithSpan
 	public ObjectId add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid InventoryItem item, InteractingEntity entity, HistoryDetail... details) {
-		
-		item.setStats(
+		item.setStats( //Build simple stats on the premise of not having any stored items
 			ItemStoredStats.builder()
+				.total((Quantities.getQuantity(0, item.getUnit())))
 				.lowStock(
 					item.getLowStockThreshold() != null && item.getLowStockThreshold().getValue().longValue() != 0
 				)
@@ -171,6 +176,17 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		);
 		
 		return super.add(oqmDbIdOrName, session, item, entity, details);
+	}
+	
+	@Override
+	@WithSpan
+	public InventoryItem update(String oqmDbIdOrName, ClientSession cs, InventoryItem object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
+		InventoryItem output = super.update(oqmDbIdOrName, cs, object, entity, details);
+		
+		//TODO:: update again if necessary
+		this.getItemStatsService().postItemUpdateProcess(oqmDbIdOrName, cs, object, entity, details);
+		
+		return output;
 	}
 	
 	
