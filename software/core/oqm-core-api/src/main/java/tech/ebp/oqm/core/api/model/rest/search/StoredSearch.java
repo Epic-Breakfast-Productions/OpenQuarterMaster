@@ -106,7 +106,7 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 			filters.add(eq("notificationStatus.expired", this.getHasExpired()));
 		}
 		if(this.hasValue(this.getHasExpiryWarn())){
-			filters.add(eq("notificationStatus.expiredWarning", this.getHasExpired()));
+			filters.add(eq("notificationStatus.expiredWarning", this.getHasExpiryWarn()));
 		}
 		
 		if(this.hasValue(this.getHasLowStock())){
