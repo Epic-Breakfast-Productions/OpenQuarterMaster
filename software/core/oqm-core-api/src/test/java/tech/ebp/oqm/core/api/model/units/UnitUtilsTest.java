@@ -174,8 +174,8 @@ class UnitUtilsTest extends BasicTest {
 	
 	@ParameterizedTest
 	@MethodSource("quantityCompareArgs")
-	public <T extends Quantity<T>> void testUnderThreshold(Quantity<T> threshold, Quantity<T> amount, boolean expected) {
-		assertEquals(expected, UnitUtils.underThreshold(threshold, amount));
+	public <T extends Quantity<T>> void testAtOrUnderThreshold(Quantity<T> threshold, Quantity<T> amount, boolean expected) {
+		assertEquals(expected, UnitUtils.atOrUnderThreshold(threshold, amount));
 	}
 	
 	//	@ParameterizedTest

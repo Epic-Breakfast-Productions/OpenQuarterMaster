@@ -94,14 +94,14 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 		if(this.hasValue(this.getHasLowStock())){
 			if(this.getHasLowStock()){
 				filters.add(
-					gt("stats.numLowStock", 0)
+					eq("stats.anyLowStock", true)
 				);
 			}
 		}
 		if(this.hasValue(this.getHasNoLowStock())){
 			if(this.getHasNoLowStock()){
 				filters.add(
-					eq("stats.numLowStock", 0)
+					eq("stats.anyLowStock", true)
 				);
 			}
 		}

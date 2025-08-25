@@ -41,6 +41,8 @@ const ItemView = {
 	itemViewBarcode: $("#itemViewBarcode"),
 	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
 	itemViewTotalLowStockThreshold: $("#itemViewTotalLowStockThreshold"),
+	itemViewExpiryWarnThresholdContainer: $("#itemViewExpiryWarnThresholdContainer"),
+	itemViewExpiryWarnThreshold: $("#itemViewExpiryWarnThreshold"),
 	itemViewIdentifyingAttContainer: $("#itemViewIdentifyingAttContainer"),
 	itemViewIdentifyingAtt: $("#itemViewIdentifyingAtt"),
 	viewKeywordsSection: $("#viewKeywordsSection"),
@@ -97,6 +99,8 @@ const ItemView = {
 		ItemView.itemViewTotal.text("");
 		ItemView.itemViewTotalLowStockThreshold.text("");
 		ItemView.itemViewTotalLowStockThresholdContainer.hide();
+		ItemView.itemViewExpiryWarnThreshold.text("");
+		ItemView.itemViewExpiryWarnThresholdContainer.hide();
 
 		ItemView.itemViewCheckedOutResultsContainer.html("");
 
@@ -414,6 +418,11 @@ const ItemView = {
 				if (itemData.lowStockThreshold) {
 					ItemView.itemViewTotalLowStockThreshold.text(itemData.lowStockThreshold.value + "" + itemData.lowStockThreshold.unit.symbol);
 					ItemView.itemViewTotalLowStockThresholdContainer.show();
+				}
+
+				if(itemData.expiryWarningThreshold){
+					ItemView.itemViewExpiryWarnThreshold.text(TimeHelpers.durationNumSecsToHuman(itemData.expiryWarningThreshold));
+					ItemView.itemViewExpiryWarnThresholdContainer.show();
 				}
 
 				Carousel.processImagedObjectImages(itemData, ItemView.itemViewCarousel);
