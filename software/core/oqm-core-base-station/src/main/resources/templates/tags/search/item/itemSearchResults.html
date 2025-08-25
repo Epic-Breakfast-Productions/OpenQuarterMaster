@@ -13,88 +13,107 @@
 
   if `actionType` is "select", callback will be "selectItem('<item name>', '<item id>', '<inputIdPrepend>')" on the select button
 !}
-  <thead>
-  <tr>
-    <td colspan="6" class="text-center searchResultsContainer">
-      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
-    </td>
-  </tr>
-  <tr>
-    <th scope="col" class="searchResultImageCol">Image</th>
-    <th scope="col">Name</th>
-    <th scope="col">Storage Type</th>
-    <th scope="col">Total</th>
-    <th scope="col"># {#icons/storageBlocks}{/icons/storageBlocks}</th>
-    <th scope="col" style="width: 175px;">Actions</th>
-  </tr>
-  </thead>
-  <tbody>
-  {#if searchResults.get("empty").asBoolean()}
-  <tr>
-    <td colspan="6" class="text-center">
-      <h2>
-        No Items
-      </h2>
-      {#if actionType == 'full'}
-      <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success btn-lg noResultsAddButton" data-bs-toggle="modal"
-                data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForAdd();">
-          {#icons/add}{/icons/add} Add Item
-        </button>
-      </div>
-      {/if}
-    </td>
-  </tr>
-  {#else}
-  {#for result in searchResults.get("results")}
-  	{#let id=result.get("id").asText() name=result.get("name").asText()}
-  <tr class="itemResultRow align-middle">
-    <td>
-      {#if !result.get("imageIds").isEmpty()}
-      <img src="{rootPrefix}/api/passthrough/media/image/for/item/{id}" class="searchResultImage">
-      {/if}
-    </td>
-    <td class="itemResultsName">{name}</td>
-    <td>{cdi:EnumFormattingService.formatEnum(result.get("storageType").asText())}</td>
-    <td>
-      {#amountDisplay amount=result.get("stats").get("total")}{/amountDisplay}
-    </td>
-    <td>
-      {result.get("storageBlocks").size()}
-    </td>
-    {#if actionType == 'full'}
-    <td class="d-flex flex-row">
-      <button type="button" class="btn btn-sm btn-info viewButton me-1" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
-        {#icons/view}{/icons/view}
-      </button>
-      <button type="button" class="btn btn-sm btn-warning me-1" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
-        {#icons/edit}{/icons/edit}
-      </button>
-      {#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false itemId=id checkinButton=false /}
-      <button type="button" class="btn btn-sm btn-danger me-1" title="Remove"
-              onclick="removeItem('{id}');">{#icons/remove}{/icons/remove}</button>
-    {#else if actionType == 'select'}
-    <td class="d-grid gap-2">
-      <button type="button" class="btn btn-sm btn-success" title="Select {name}"
-              data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
-              onclick="ItemSearchSelect.selectItem('{name}', '{id}', '{inputIdPrepend}');">
-        {#icons/select}{/icons/select} Select
-      </button>
-	{#else if actionType == 'view'}
-	  <td class="d-grid gap-2">
-		  <a href="/items" class="btn btn-sm btn-info" title="View {name}">{#icons/view}{/icons/view}</a>
-      {/if}
-		  
-    </td>
-  </tr>
-  	{/let}
-  {/for}
-  {/if}
-  </tbody>
-  <tfoot>
-  <tr>
-    <td colspan="6" class="text-center searchResultsContainer">
-      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
-    </td>
-  </tr>
-  </tfoot>
+<thead>
+<tr>
+	<td colspan="7" class="text-center searchResultsContainer">
+		{#paginationButtons searchFormId = searchFormId searchResults = searchResults /}
+	</td>
+</tr>
+<tr>
+	<th scope="col" class="searchResultImageCol">Image</th>
+	<th scope="col">Name</th>
+	<th scope="col">Storage Type</th>
+	<th scope="col">Total</th>
+	<th scope="col" style="width: 50px;"># {#icons/storageBlocks /}</th>
+	<th scope="col" style="width: 114px;">{#icons/flags /} Flags</th>
+	<th scope="col" style="width: 175px;">Actions</th>
+</tr>
+</thead>
+<tbody>
+{#if searchResults.get("empty").asBoolean()}
+<tr>
+	<td colspan="7" class="text-center">
+		<h2>
+			No Items
+		</h2>
+		{#if actionType == 'full'}
+		<div class="col d-grid gap-2">
+			<button type="button" class="btn btn-success btn-lg noResultsAddButton" data-bs-toggle="modal"
+				data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForAdd();">
+				{#icons/add /} Add Item
+			</button>
+		</div>
+	{/if}
+	</td>
+</tr>
+{#else}
+{#for result in searchResults.get("results")}
+{#let id = result.get("id").asText() name = result.get("name").asText()}
+<tr class="itemResultRow align-middle">
+	<td>
+		{#if ! result.get("imageIds").isEmpty()}
+			<img src="{rootPrefix}/api/passthrough/media/image/for/item/{id}" class="searchResultImage">
+		{/if}
+	</td>
+	<td class="itemResultsName">{name}</td>
+	<td>{cdi:EnumFormattingService.formatEnum(result.get("storageType").asText())}</td>
+	<td>
+		{#amountDisplay amount = result.get("stats").get("total")}{/amountDisplay}
+	</td>
+	<td>
+		{result.get("storageBlocks").size()}
+	</td>
+	<td>
+		{#if result.get("stats").get("anyLowStock").asBoolean()}
+		<span class="badge rounded-pill text-bg-danger" title="Low Stock">
+			{#icons/lowStock /}
+		</span>
+		{/if}
+		{#if result.get("stats").get("numExpiryWarn").asInt() > 0}
+		<span class="badge rounded-pill text-bg-warning" title="Expiring Soon">
+			{#icons/expiring /}
+		</span>
+		{/if}
+		{#if result.get("stats").get("numExpired").asInt() > 0}
+		<span class="badge rounded-pill text-bg-danger" title="Expired">
+			{#icons/expired /}
+		</span>
+		{/if}
+	</td>
+	{#if actionType == 'full'}
+	<td class="d-flex flex-row">
+		<button type="button" class="btn btn-sm btn-info viewButton me-1" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
+			{#icons/view}{/icons/view}
+		</button>
+		<button type="button" class="btn btn-sm btn-warning me-1" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
+			{#icons/edit}{/icons/edit}
+		</button>
+		{#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false itemId=id checkinButton=false /}
+		<button type="button" class="btn btn-sm btn-danger me-1" title="Remove"
+			onclick="removeItem('{id}');">{#icons/remove}{/icons/remove}
+		</button>
+		{#else if actionType == 'select'}
+	<td class="d-grid gap-2">
+		<button type="button" class="btn btn-sm btn-success" title="Select {name}"
+			data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
+			onclick="ItemSearchSelect.selectItem('{name}', '{id}', '{inputIdPrepend}');">
+			{#icons/select}{/icons/select} Select
+		</button>
+		{#else if actionType == 'view'}
+	<td class="d-grid gap-2">
+		<a href="{rootPrefix}/items?view={id}" class="btn btn-sm btn-info" title="View {name}">{#icons/view /}</a>
+		{/if}
+	
+	</td>
+</tr>
+{/let}
+{/for}
+{/if}
+</tbody>
+<tfoot>
+<tr>
+	<td colspan="7" class="text-center searchResultsContainer">
+		{#paginationButtons searchFormId = searchFormId searchResults = searchResults}{/paginationButtons}
+	</td>
+</tr>
+</tfoot>

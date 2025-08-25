@@ -18,11 +18,10 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientServ
 public class ApiHealthCheckPassthrough extends PassthroughProvider {
 	
 	@GET
-	public Uni<Response> getApiHealth(){
-		//TODO:: handle error cases
-		return this.getOqmCoreApiClient().getApiServerHealth().map(
-			response ->
-			Response.ok(response).build()
+	public Uni<Response> getApiHealth() {
+		return this.handleCall(
+			this.getOqmCoreApiClient()
+				   .getApiServerHealth()
 		);
 	}
 	
