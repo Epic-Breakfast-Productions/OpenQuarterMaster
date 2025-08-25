@@ -47,7 +47,7 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @BsonDiscriminator
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
-	public static final int CUR_SCHEMA_VERSION = 1;
+	public static final int CUR_SCHEMA_VERSION = 2;
 
 	public abstract StoredType getType();
 

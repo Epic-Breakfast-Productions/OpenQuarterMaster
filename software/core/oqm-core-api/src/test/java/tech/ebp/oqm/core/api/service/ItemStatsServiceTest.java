@@ -12,6 +12,7 @@ import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecyc
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -31,12 +32,6 @@ public class ItemStatsServiceTest extends RunningServerTest {
 	
 	@Inject
 	ItemStatsService itemStatsService;
-	
-//	@Test
-//	public void testTest(){
-//		assertFalse(LocalDateTime.now().isAfter(LocalDateTime.parse("2025-08-23T01:56:00")));
-////		assertTrue(LocalDateTime.parse("2025-08-23T00:47:00").isBefore(LocalDateTime.now()));
-//	}
 	
 	//TODO:: test Initial add stats
 	//TODO:: test post update stats
