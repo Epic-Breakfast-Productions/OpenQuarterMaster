@@ -568,6 +568,22 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Base Station instance for Open QuarterMaster.
 Licence: GPL-3+
 
+Package: oqm-core-base+station
+Version: 1.6.4
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.9.0), oqm-infra-keycloak (>= 1.2.3), oqm-infra-traefik (>= 1.0.0), oqm-core-api (>= 3.0.0)
+Recommends: oqm-plugin-ext_item_search
+Filename: ./oqm-core-base+station_1.6.4_all.deb
+Size: 5390
+MD5sum: 0c7c1c6211b77465dc30d6e016fc61bb
+SHA1: 121e8a96f16992ffdb41625bbd98c2577fe44a4a
+SHA256: 671ca346b63447b62c5ba4497c47a9b7060ca13ed87fdf5072c53aac3de176a5
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
 Package: oqm-core-depot
 Version: 1.0.0
 Architecture: all
