@@ -1,7 +1,9 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
@@ -14,6 +16,8 @@ import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidUPCA;
 @SuperBuilder(toBuilder = true)
 public class UPC_A extends GeneralId {
 	
+	@NonNull
+	@NotNull
 	@ValidUPCA
 	private String value;
 	
