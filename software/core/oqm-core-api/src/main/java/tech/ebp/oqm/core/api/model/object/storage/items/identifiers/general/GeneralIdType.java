@@ -10,14 +10,14 @@ package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general;
 public enum GeneralIdType {
 	UPC_A,
 	UPC_E,
-	EAN,
+	ISBN_10,
+	ISBN_13,
 	EAN_8,
 	EAN_13,
 	GTIN_14,
-	ASIN,
-	SKU,
-	ISBN_10,
-	ISBN_13,
+	
+//	ASIN, Amazon specific, ignore
+//	SKU, no way to determine proper format
 	
 	GENERIC(false);
 	

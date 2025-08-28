@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.codes.upc;
 
 import lombok.NonNull;
+import org.apache.commons.validator.routines.checkdigit.EAN13CheckDigit;
 
 /**
  * Class to handle common actions related to UPC (A & E) codes.
@@ -14,6 +15,8 @@ import lombok.NonNull;
  * </ul>
  */
 public class UpcCodeUtilities {
+	
+	private static final EAN13CheckDigit VALIDATOR = new EAN13CheckDigit();
 	
 	/**
 	 * Checks if a UPC-A code is valid.
@@ -33,29 +36,7 @@ public class UpcCodeUtilities {
 		if (code.length() != 12) {
 			return false;
 		}
-		
-		int checkDigit = Character.getNumericValue(code.charAt(11));
-		//indexes are -1 of what they should be
-		int oddDigitSum = (
-			Character.getNumericValue(code.charAt(0)) +
-			Character.getNumericValue(code.charAt(2)) +
-			Character.getNumericValue(code.charAt(4)) +
-			Character.getNumericValue(code.charAt(6)) +
-			Character.getNumericValue(code.charAt(8)) +
-			Character.getNumericValue(code.charAt(10))
-		);
-		int evenDigitSum = (
-			Character.getNumericValue(code.charAt(1)) +
-			Character.getNumericValue(code.charAt(3)) +
-			Character.getNumericValue(code.charAt(5)) +
-			Character.getNumericValue(code.charAt(7)) +
-			Character.getNumericValue(code.charAt(9))
-		);
-		
-		int totalSum = ((oddDigitSum * 3) + evenDigitSum);
-		int calculatedCheckDigit = (10 - (totalSum % 10)) % 10;
-		
-		return checkDigit == calculatedCheckDigit;
+		return VALIDATOR.isValid(code);
 	}
 	
 	/**

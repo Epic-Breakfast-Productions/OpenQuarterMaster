@@ -3,40 +3,26 @@ package tech.ebp.oqm.core.api.service.codes.upc;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.core.api.service.codes.CodeUtilTestBase;
 
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class UpcCodeUtilitiesTest {
+class UpcCodeUtilitiesTest extends CodeUtilTestBase {
 	
 	private static Stream<Arguments> upcaValidCodes() {
-		return Stream.of(
-			Arguments.of("012345678905"),
-			Arguments.of("078000003239"),
-			Arguments.of("063200009716"),
-			Arguments.of("022000159359"),
-			Arguments.of("887386978761")
-		
-		);
+		return validCodes(UPCA_CODES);
 	}
 	private static Stream<Arguments> upcaInvalidCodes() {
-		return Stream.of(
-			Arguments.of("012345678906")
-		);
+		return invalidCodes(UPCA_CODES);
 	}
 	
 	private static Stream<Arguments> upceValidCodes() {
-		return Stream.of(
-			Arguments.of("02345673"),
-			Arguments.of("02345147")
-		);
+		return validCodes(UPCE_CODES);
 	}
 	private static Stream<Arguments> upceInvalidCodes() {
-		return Stream.of(
-			Arguments.of("01234567"),
-			Arguments.of("01234568")
-		);
+		return invalidCodes(UPCE_CODES);
 	}
 	
 	@ParameterizedTest

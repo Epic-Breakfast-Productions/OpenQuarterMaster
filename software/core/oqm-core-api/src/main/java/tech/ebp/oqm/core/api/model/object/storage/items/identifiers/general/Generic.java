@@ -9,7 +9,7 @@ import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidUPCA;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public class Generic extends GeneralId {
 	
 	@ValidUPCA

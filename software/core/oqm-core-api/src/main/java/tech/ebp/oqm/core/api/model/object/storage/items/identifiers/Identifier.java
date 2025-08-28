@@ -4,7 +4,7 @@ import lombok.Data;
 import lombok.experimental.SuperBuilder;
 
 @Data
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public abstract class Identifier {
 	
 	public abstract String getValue();

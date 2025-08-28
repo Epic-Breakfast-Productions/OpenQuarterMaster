@@ -5,8 +5,8 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.Generic;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.UPC_A;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.UPC_E;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.UPC_A;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.UPC_E;
 import tech.ebp.oqm.core.api.service.codes.CodeUtils;
 
 import java.util.stream.Stream;
