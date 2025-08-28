@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -12,7 +13,7 @@ import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidUPCA;
 @SuperBuilder(toBuilder = true)
 public class Generic extends GeneralId {
 	
-	@ValidUPCA
+	@NotBlank
 	private String value;
 	
 	@Override

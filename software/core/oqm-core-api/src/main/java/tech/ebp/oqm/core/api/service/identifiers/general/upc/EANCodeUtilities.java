@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.codes.upc;
+package tech.ebp.oqm.core.api.service.identifiers.general.upc;
 
 import lombok.NonNull;
 import org.apache.commons.validator.routines.checkdigit.EAN13CheckDigit;

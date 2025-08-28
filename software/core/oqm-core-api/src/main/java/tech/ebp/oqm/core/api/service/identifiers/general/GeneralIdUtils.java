@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.codes;
+package tech.ebp.oqm.core.api.service.identifiers.general;
 
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.ean.EAN_13;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.ean.EAN_8;
@@ -9,17 +9,17 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.isbn
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.isbn.ISBN_13;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.UPC_A;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.UPC_E;
-import tech.ebp.oqm.core.api.service.codes.upc.EANCodeUtilities;
-import tech.ebp.oqm.core.api.service.codes.upc.GTINCodeUtilities;
-import tech.ebp.oqm.core.api.service.codes.upc.ISBNCodeUtilities;
-import tech.ebp.oqm.core.api.service.codes.upc.UpcCodeUtilities;
+import tech.ebp.oqm.core.api.service.identifiers.general.upc.EANCodeUtilities;
+import tech.ebp.oqm.core.api.service.identifiers.general.upc.GTINCodeUtilities;
+import tech.ebp.oqm.core.api.service.identifiers.general.upc.ISBNCodeUtilities;
+import tech.ebp.oqm.core.api.service.identifiers.general.upc.UpcCodeUtilities;
 
 
 /**
  *
  * https://www.computalabel.com/m/UPCexamplesM.htm
  */
-public class CodeUtils {
+public class GeneralIdUtils {
 	
 	public static GeneralId determineGeneralIdType(String code) {
 		if(UpcCodeUtilities.isValidUPCACode(code)){

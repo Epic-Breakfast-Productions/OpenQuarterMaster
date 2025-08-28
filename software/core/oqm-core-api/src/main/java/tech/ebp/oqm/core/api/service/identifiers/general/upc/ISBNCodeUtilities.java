@@ -1,9 +1,8 @@
-package tech.ebp.oqm.core.api.service.codes.upc;
+package tech.ebp.oqm.core.api.service.identifiers.general.upc;
 
 import lombok.NonNull;
 import org.apache.commons.validator.routines.checkdigit.EAN13CheckDigit;
 import org.apache.commons.validator.routines.checkdigit.ISBN10CheckDigit;
-import org.apache.commons.validator.routines.checkdigit.ISBNCheckDigit;
 
 /**
  * Class to handle common actions related to EAN (8 and 13) codes.

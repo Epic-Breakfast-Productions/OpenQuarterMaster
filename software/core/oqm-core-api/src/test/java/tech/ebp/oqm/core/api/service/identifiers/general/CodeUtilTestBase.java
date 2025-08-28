@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.codes;
+package tech.ebp.oqm.core.api.service.identifiers.general;
 
 import org.junit.jupiter.params.provider.Arguments;
 

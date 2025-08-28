@@ -1,10 +1,9 @@
 package tech.ebp.oqm.core.api.model.validation.validators.identifiers;
 
 import jakarta.validation.ConstraintValidatorContext;
-import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidEAN13;
 import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidEAN8;
 import tech.ebp.oqm.core.api.model.validation.validators.Validator;
-import tech.ebp.oqm.core.api.service.codes.upc.EANCodeUtilities;
+import tech.ebp.oqm.core.api.service.identifiers.general.upc.EANCodeUtilities;
 
 import java.util.ArrayList;
 import java.util.List;

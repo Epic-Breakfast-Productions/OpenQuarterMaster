@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.codes;
+package tech.ebp.oqm.core.api.service.identifiers.general;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -18,7 +18,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class CodeUtilsTest extends CodeUtilTestBase {
+class GeneralIdUtilsTest extends CodeUtilTestBase {
 	
 	private static <T extends GeneralId> Stream<Arguments> getArgs(List<String> codes, Function<String, T> generalBuilderFunc) {
 		return codes.stream().map(code->Arguments.of(code, generalBuilderFunc.apply(code)));
@@ -41,7 +41,7 @@ class CodeUtilsTest extends CodeUtilTestBase {
 	@ParameterizedTest
 	@MethodSource("getCodes")
 	public void isValidUPCACodeValid(String code, GeneralId expectedId) {
-		GeneralId returned = CodeUtils.determineGeneralIdType(code);
+		GeneralId returned = GeneralIdUtils.determineGeneralIdType(code);
 		
 		assertEquals(expectedId, returned);
 	}
