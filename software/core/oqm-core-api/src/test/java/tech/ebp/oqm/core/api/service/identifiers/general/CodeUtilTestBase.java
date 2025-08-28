@@ -39,11 +39,16 @@ public abstract class CodeUtilTestBase {
 	protected static final List<String> GTIN14_CODES = List.of(
 		"10012345678902"
 	);
+	protected static final List<String> GENERIC_IDENTIFIERS = List.of(
+		"Model T"
+	);
 	
 	
 	/**
 	 * Gets a list of arguments comprised of the codes given.
+	 *
 	 * @param validCodes Codes to turn into arguments
+	 *
 	 * @return An argument stream from the codes given.
 	 */
 	protected static Stream<Arguments> validCodes(List<String> validCodes) {
@@ -52,7 +57,9 @@ public abstract class CodeUtilTestBase {
 	
 	/**
 	 * Gets all codes available except the ones given
+	 *
 	 * @param validCodes The valid codes not to include
+	 *
 	 * @return A stream of all codes not in the provided list as arguments
 	 */
 	protected static Stream<Arguments> invalidCodes(List<String> validCodes) {
@@ -61,7 +68,8 @@ public abstract class CodeUtilTestBase {
 				UPCE_CODES.stream(),
 				ISBN13_CODES.stream(),
 				ISBN10_CODES.stream(),
-				GTIN14_CODES.stream()
+				GTIN14_CODES.stream(),
+				GENERIC_IDENTIFIERS.stream()
 			).reduce(Stream::concat)
 				   .orElseGet(Stream::empty)
 				   .filter(s->!validCodes.contains(s))
