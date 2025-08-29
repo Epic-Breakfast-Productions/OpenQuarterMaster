@@ -11,7 +11,8 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 @ToString(callSuper = true)
 @SuperBuilder
 public abstract class UniqueId extends Identifier {
-
+	
+	@lombok.Builder.Default
 	private boolean useInLabel = false;
 
 }

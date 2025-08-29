@@ -25,7 +25,10 @@ public class ItemStoredStats extends StatsWithTotalContaining {
 		super(unit);
 	}
 	
+	@lombok.Builder.Default
 	private Map<ObjectId, StoredInBlockStats> storageBlockStats = new LinkedHashMap<>();
+	
+	@lombok.Builder.Default
 	private boolean lowStock = false;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
