@@ -1,8 +1,10 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -39,10 +41,22 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.
 @BsonDiscriminator
 public abstract class GeneralId extends Identifier {
 	
+	/**
+	 * TODO:: maybe not have this here?
+	 */
+	@lombok.Builder.Default
+	private boolean useInLabel = false;
+	
+	/**
+	 * Abstract to allow attachment of appropriate validation annotation
+	 * TODO:: move to this class level annotation, switch case based on type?
+	 * @return
+	 */
 	public abstract GeneralIdType getType();
 	
 	public abstract String getValue();
 	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isBarcode() {
 		return this.getType().isBarcode;
 	}
