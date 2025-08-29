@@ -34,7 +34,7 @@ public interface OqmCoreApiClientService {
 	Uni<Currency> getCurrency(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 	//</editor-fold>
 	
-	//<editor-fold desc="Barcodes">
+	//<editor-fold desc="General Identifiers">
 	@GET
 	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/general/validate/{type}/{identifier}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -44,6 +44,11 @@ public interface OqmCoreApiClientService {
 	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/general/getIdObject/{identifier}")
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ObjectNode> generalIdGetObj(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("identifier") String code);
+	
+	@GET
+	@Path("/api/media/code/generalId/{type}/{value}")
+	@Produces("image/svg+xml")
+	Uni<String> generalIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String generalIdType, @PathParam("value") String data);
 	//</editor-fold>
 	
 	//<editor-fold desc="Interacting Entity">
