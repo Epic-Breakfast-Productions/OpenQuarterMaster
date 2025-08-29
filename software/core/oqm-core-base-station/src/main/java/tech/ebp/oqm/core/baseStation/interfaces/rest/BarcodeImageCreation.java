@@ -58,28 +58,6 @@ public class BarcodeImageCreation extends ApiProvider {
 	}
 	
 	@GET
-	@Path("generalId/{type}/{value}")
-	@Operation(
-		summary = "A barcode that represents the string given."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Got the currency."
-	)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response getBarcode(
-		@PathParam("type") String type,
-		@PathParam("value") String data
-	) {
-		log.info("Getting {}.", type);
-		return Response.status(Response.Status.OK)
-				   .entity(this.barcodeService.getGeneralIdData(type, data))
-				   .header("Content-Disposition", "attachment;filename=" + "code.svg")
-				   .type(BarcodeService.DATA_MEDIA_TYPE)
-				   .build();
-	}
-	
-	@GET
 	@Path("{codeType}/{code}")
 	@Operation(
 		summary = "A barcode that represents the string given."

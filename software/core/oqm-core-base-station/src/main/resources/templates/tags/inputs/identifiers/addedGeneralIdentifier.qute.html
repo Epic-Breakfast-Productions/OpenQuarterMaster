@@ -5,7 +5,7 @@
 		<input type="hidden" name="generalIdIsBarcode" value="{#if generalId??}{generalId.get("barcode").asText()}{/if}">
 		<!-- image goes here, if applicable -->
 		
-		<img src="{#if generalId??}{rootPrefix}/api/media/code/generalId/{generalId.get("type").asText()}/{generalId.get("value").asText()}{/if}" class="card-img-top {#if !generalId??}hidden{/if}" alt="Barcode Image">
+		<img src="{#if generalId??}{rootPrefix}/api/passthrough/identifier/general/barcode/{generalId.get("type").asText()}/{generalId.get("value").asText()}{/if}" class="card-img-top {#if !generalId??}hidden{/if}" alt="Barcode Image">
 		
 		
 		<div class="card-body pt-1">

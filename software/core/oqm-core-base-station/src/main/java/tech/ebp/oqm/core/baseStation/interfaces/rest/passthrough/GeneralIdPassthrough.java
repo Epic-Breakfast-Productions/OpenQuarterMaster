@@ -44,7 +44,6 @@ public class GeneralIdPassthrough extends PassthroughProvider {
 		responseCode = "200",
 		description = "Got the code object."
 	)
-//	@PermitAll
 	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Uni<Response> getIdObject(
 		@PathParam("identifier") String code,
@@ -59,9 +58,34 @@ public class GeneralIdPassthrough extends PassthroughProvider {
 							   newIdentifierTemplate
 								   .data("rootPrefix", this.getRootPrefix())
 								   .data("generalId", generalIdentifier)
-							   ).build();
+						   ).build();
 						   default -> Response.ok(generalIdentifier).build();
 					   };
+				   });
+	}
+	
+	@GET
+	@Path("barcode/{type}/{value}")
+	@Operation(
+		summary = "A barcode that represents the string given."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Got the currency."
+	)
+	@Produces("image/svg+xml")
+	public Uni<Response> getBarcode(
+		@PathParam("type") String type,
+		@PathParam("value") String data
+	) {
+		return this.getOqmCoreApiClient()
+				   .generalIdGetBarcodeImage(this.getBearerHeaderStr(), type, data)
+				   .map((String xmlData)->{
+					   return Response.status(Response.Status.OK)
+								  .entity(xmlData)
+								  .header("Content-Disposition", "attachment;filename=" + "code.svg")
+								  .type("image/svg+xml")
+								  .build();
 				   });
 	}
 }
