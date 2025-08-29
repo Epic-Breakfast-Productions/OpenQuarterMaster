@@ -37,5 +37,8 @@ const GeneralIdentifiers = {
 		});
 
 		//TODO:: call api, add div with thing
+	},
+	removeIdentifier(removeButtonJq){
+		removeButtonJq.closest('.generalIdentifierContainer').remove();
 	}
 }

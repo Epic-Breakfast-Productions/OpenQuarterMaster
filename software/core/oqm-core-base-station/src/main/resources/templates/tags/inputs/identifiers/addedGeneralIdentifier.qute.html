@@ -1,4 +1,4 @@
-<div class="col-3 mb-1">{! {"value":"45664","type":"GENERIC","barcode":false} !}
+<div class="col-3 mb-1 generalIdentifierContainer">{! {"value":"45664","type":"GENERIC","barcode":false} !}
 	<div class="card identifierDisplay">
 		<input type="hidden" name="generalIdValue" value="{#if generalId??}{generalId.get("value").asText()}{/if}">
 		<input type="hidden" name="generalIdType" value="{#if generalId??}{generalId.get("type").asText()}{/if}">
@@ -29,7 +29,7 @@
 					<button type="button" title="Move identifier up" class="btn btn-sm btn-outline-dark" onclick="{!TODO!}">{#icons/left /}</button>
 					<button type="button" title="Move identifier down" class="btn btn-sm btn-outline-dark" onclick="{!TODO!}">{#icons/right /}</button>
 				</div>
-				<button type="button" title="Remove this identifier" class="btn btn-sm btn-outline-danger" onclick="{!TODO!}">{#icons/remove /}</button>
+				<button type="button" title="Remove this identifier" class="btn btn-sm btn-outline-danger" onclick="GeneralIdentifiers.removeIdentifier($(this))">{#icons/remove /}</button>
 			</div>
 		</div>
 		
