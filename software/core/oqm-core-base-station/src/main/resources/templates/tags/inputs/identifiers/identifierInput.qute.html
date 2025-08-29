@@ -1,5 +1,5 @@
 <div class="input-group">
 	<button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#codeScannerModal" title="Click to open a scan window">{#icons/barcode /}</button>
-	<input type="text" class="form-control" placeholder="UPC, ISBN..." id="{id}" name="{#if name??}{name}{/if}" aria-describedby="{id}Help" {#if required??}{required}{/if}>
-	<button class="btn btn-outline-success" type="button" title="Add this identifier">{#icons/add /}</button>
+	<input type="text" class="form-control generalIdNewInput" placeholder="UPC, ISBN..." id="{id}" name="{#if name??}{name}{/if}" aria-describedby="{id}Help" {#if required??}{required}{/if}>
+	<button class="btn btn-outline-success" type="button" title="Add this identifier" onclick="GeneralIdentifiers.addIdentifier($(this).closest('.generalIdInputContainer'));">{#icons/add /}</button>
 </div>

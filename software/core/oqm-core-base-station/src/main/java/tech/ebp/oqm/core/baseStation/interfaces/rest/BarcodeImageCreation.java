@@ -2,7 +2,6 @@ package tech.ebp.oqm.core.baseStation.interfaces.rest;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -33,7 +32,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientServ
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
 @RolesAllowed(Roles.INVENTORY_VIEW)
 @RequestScoped
-public class BarcodeCreation extends ApiProvider {
+public class BarcodeImageCreation extends ApiProvider {
 	
 	@Inject
 	BarcodeService barcodeService;
@@ -54,6 +53,28 @@ public class BarcodeCreation extends ApiProvider {
 		return Response.status(Response.Status.OK)
 				   .entity(this.barcodeService.getCodeData(codeType, data))
 				   .header("Content-Disposition", "attachment;filename=" + label.replaceAll("\\W+", "") + "_" + codeContent + "_" + codeType + ".svg")
+				   .type(BarcodeService.DATA_MEDIA_TYPE)
+				   .build();
+	}
+	
+	@GET
+	@Path("generalId/{type}/{value}")
+	@Operation(
+		summary = "A barcode that represents the string given."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Got the currency."
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response getBarcode(
+		@PathParam("type") String type,
+		@PathParam("value") String data
+	) {
+		log.info("Getting {}.", type);
+		return Response.status(Response.Status.OK)
+				   .entity(this.barcodeService.getGeneralIdData(type, data))
+				   .header("Content-Disposition", "attachment;filename=" + "code.svg")
 				   .type(BarcodeService.DATA_MEDIA_TYPE)
 				   .build();
 	}

@@ -3,6 +3,12 @@ const PageComponents = {
 		attribute: '{attInputLines}\
 ',
 		keywords: '{keywordInputLines}\
+',
+		GeneralIds: {
+			generalIdInput: '{generalIdInputLines}\
+',
+			generalIdAdded: '{generalIdAddedLines}\
 '
+		}
 	}
 }

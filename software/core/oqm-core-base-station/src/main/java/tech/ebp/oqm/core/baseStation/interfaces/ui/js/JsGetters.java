@@ -31,19 +31,21 @@ public class JsGetters {
 	private static String carouselLines = "";
 	private static String attInputLines;
 	private static String keywordInputLines;
-
+	private static String generalIdInputLines;
+	private static String generalIdAddedLines;
+	
 	@Getter
 	@HeaderParam("x-forwarded-prefix")
 	Optional<String> forwardedPrefix;
-
-	protected String getRootPrefix(){
+	
+	protected String getRootPrefix() {
 		return this.forwardedPrefix.orElse("");
 	}
-
+	
 	@Inject
 	@Location("webui/js/icons.js")
 	Template icons;
-
+	
 	@Inject
 	@Location("webui/js/constants.js")
 	Template constants;
@@ -61,7 +63,18 @@ public class JsGetters {
 	@Location("webui/js/pageComponents.js")
 	Template componentsJs;
 	
-	private String templateToEscapedJs(TemplateInstance templateInstance){
+	@Location("tags/carousel.html")
+	Template carouselTemplate;
+	@Location("tags/inputs/attInput.html")
+	Template attInputTemplate;
+	@Location("tags/inputs/keywordInput.html")
+	Template keywordInputTemplate;
+	@Location("tags/inputs/identifiers/generalIdInput.qute.html")
+	Template generalIdInputTemplate;
+	@Location("tags/inputs/identifiers/addedGeneralIdentifier.qute.html")
+	Template generalIdAddedTemplate;
+	
+	private String templateToEscapedJs(TemplateInstance templateInstance) {
 		return templateInstance
 				   .render()
 				   .replaceAll("'", "\\\\'")
@@ -69,23 +82,41 @@ public class JsGetters {
 			;
 	}
 	
-	@Inject
-	public JsGetters(
-		@Location("tags/carousel.html") Template carouselTemplate,
-		@Location("tags/inputs/attInput.html") Template attInputTemplate,
-		@Location("tags/inputs/keywordInput.html") Template keywordInputTemplate
-	){
-		if(carouselLines == null){
+	private String getCarouselLines() {
+		if (carouselLines == null) {
 			carouselLines = this.templateToEscapedJs(carouselTemplate.data("id", ""));
 		}
-		if(attInputLines == null){
+		return carouselLines;
+	}
+	
+	private String getAttInputLines() {
+		if (attInputLines == null) {
 			attInputLines = this.templateToEscapedJs(attInputTemplate.instance());
 		}
-		if(keywordInputLines == null){
+		return attInputLines;
+	}
+	
+	private String getKeywordInputLines() {
+		if (keywordInputLines == null) {
 			keywordInputLines = this.templateToEscapedJs(keywordInputTemplate.instance());
 		}
+		return keywordInputLines;
 	}
-
+	
+	private String getGeneralIdInputLines() {
+		if (generalIdInputLines == null) {
+			generalIdInputLines = this.templateToEscapedJs(generalIdInputTemplate.data("id", ""));
+		}
+		return generalIdInputLines;
+	}
+	
+	private String getGeneralIdAddedLines() {
+		if (generalIdAddedLines == null) {
+			generalIdAddedLines = this.templateToEscapedJs(generalIdAddedTemplate.data("rootPrefix", this.forwardedPrefix.orElse("")));
+		}
+		return generalIdAddedLines;
+	}
+	
 	@GET
 	@Path("constants.js")
 	@PermitAll
@@ -93,7 +124,7 @@ public class JsGetters {
 	public Uni<String> constants() {
 		return constants.data("rootPrefix", this.getRootPrefix()).createUni();
 	}
-
+	
 	@GET
 	@Path("icons.js")
 	@PermitAll
@@ -116,7 +147,7 @@ public class JsGetters {
 	@Produces("text/javascript")
 	public Uni<String> carousel() {
 		return this.carouselJs
-				   .data("carouselLines", carouselLines)
+				   .data("carouselLines", this.getCarouselLines())
 				   .createUni();
 	}
 	
@@ -126,8 +157,10 @@ public class JsGetters {
 	@Produces("text/javascript")
 	public Uni<String> components() {
 		return this.componentsJs
-				   .data("attInputLines", attInputLines)
-				   .data("keywordInputLines", keywordInputLines)
+				   .data("attInputLines", this.getAttInputLines())
+				   .data("keywordInputLines", this.getKeywordInputLines())
+				   .data("generalIdInputLines", this.getGeneralIdInputLines())
+				   .data("generalIdAddedLines", this.getGeneralIdAddedLines())
 				   .createUni();
 	}
 }
