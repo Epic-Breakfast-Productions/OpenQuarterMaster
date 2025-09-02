@@ -9,6 +9,27 @@ const GeneralIdentifiers = {
 	getNewIdentifierInput(generalInputContainerJq){
 		return generalInputContainerJq.find("input[name='newIdentifier']");
 	},
+	getIdentifierContainer(subElementJq){
+		return subElementJq.closest('.generalIdentifierContainer');
+	},
+	getIdentifierImage(idContainerJq){
+		return idContainerJq.find(".identifierImage");
+	},
+	getIdentifierValueContainer(idContainerJq){
+		return idContainerJq.find(".identifierValue");
+	},
+	getIdentifierValue(idContainerJq){
+		return GeneralIdentifiers.getIdentifierValueContainer(idContainerJq).text();
+	},
+	getIdentifierType(idContainerJq){
+		return idContainerJq.find(".identifierType").text();
+	},
+	getIdentifierKey(idContainerJq){
+		return idContainerJq.find("input[name='generalIdKey'").text();
+	},
+	getIdentifierIsBarcodeCheckbox(idContainerJq){
+		return idContainerJq.find("input[name='generalIdIsBarcode'").text();
+	},
 	getNewIdentifierValue(generalInputContainerJq){
 		return GeneralIdentifiers.getNewIdentifierInput(generalInputContainerJq).val();
 	},
@@ -35,11 +56,24 @@ const GeneralIdentifiers = {
 				GeneralIdentifiers.clearInput(generalInputContainerJq);
 			}
 		});
+	},
+	handleIsBarcodeChecked(isBarcodeCheckboxJq){
+		let idContainerJq = GeneralIdentifiers.getIdentifierContainer(isBarcodeCheckboxJq);
+		let isChecked = isBarcodeCheckboxJq.prop("checked");
 
-		//TODO:: call api, add div with thing
+		let identifierValueContainer = GeneralIdentifiers.getIdentifierValueContainer(idContainerJq);
+		let identifierImage = GeneralIdentifiers.getIdentifierImage(idContainerJq);
+
+		if(isChecked){
+			identifierImage.removeClass("d-none");
+			identifierValueContainer.addClass("d-none");
+		} else {
+			identifierValueContainer.removeClass("d-none");
+			identifierImage.addClass("d-none");
+		}
 	},
 	moveUp(upButtonJq){
-		SelectedObjectDivUtils.moveUp(upButtonJq.closest('.generalIdentifierContainer'));
+		SelectedObjectDivUtils.moveUp(GeneralIdentifiers.getIdentifierContainer(upButtonJq));
 	},
 	moveDown(downButtonJq){
 		SelectedObjectDivUtils.moveDown(downButtonJq.closest('.generalIdentifierContainer'));
