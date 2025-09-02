@@ -26,4 +26,16 @@ public class ExtItemLookupResults {
 	@NotNull
 	@lombok.Builder.Default
 	private Map<@NonNull @NotNull @NotBlank String, String> serviceErrs = new HashMap<>();
+	
+	public ExtItemLookupResults combine(ExtItemLookupResults other) {
+		ExtItemLookupResults output = new ExtItemLookupResults();
+		
+		output.getResults().addAll(this.getResults());
+		output.getResults().addAll(other.getResults());
+		
+		output.getServiceErrs().putAll(this.getServiceErrs());
+		output.getServiceErrs().putAll(other.getServiceErrs());
+		
+		return this;
+	}
 }
