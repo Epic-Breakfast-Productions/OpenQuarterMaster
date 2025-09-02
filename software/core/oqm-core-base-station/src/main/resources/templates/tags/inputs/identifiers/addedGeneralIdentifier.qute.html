@@ -1,33 +1,35 @@
 <div class="col-3 mb-1 generalIdentifierContainer">{! {"value":"45664","type":"GENERIC","barcode":false} !}
 	<div class="card identifierDisplay">
-		<input type="hidden" name="generalIdValue" value="{#if generalId??}{generalId.get("value").asText()}{/if}">
-		<input type="hidden" name="generalIdType" value="{#if generalId??}{generalId.get("type").asText()}{/if}">
-		<input type="hidden" name="generalIdIsBarcode" value="{#if generalId??}{generalId.get("barcode").asText()}{/if}">
-		<!-- image goes here, if applicable -->
-		
-		<img src="{#if generalId??}{rootPrefix}/api/passthrough/identifier/general/barcode/{generalId.get("type").asText()}/{generalId.get("value").asText()}{/if}" class="card-img-top {#if !generalId??}hidden{/if}" alt="Barcode Image">
+		<img src="{#if generalId??}{rootPrefix}/api/passthrough/identifier/general/barcode/{generalId.get("type").asText()}/{generalId.get("value").asText()}{/if}" class="card-img-top {#if !generalId??}d-none{#else}{#if !generalId.get("barcode").asBoolean()}d-none{/if}{/if}" alt="Barcode Image">
 		
 		
-		<div class="card-body pt-1">
+		<div class="card-body p-1">
 			<div class="identifierValueContainer text-center">
-				<p class="h6 card-title identifierValue text-nowrap user-select-all mb-0">
-					{#if generalId??}{generalId.get("value").asText()}{/if}
-				</p>
-				<p class="identifierType text-secondary">
-					<small>
-						{#if generalId??}{generalId.get("type").asText()}{/if}
-					</small>
+				<p class="h4 card-title identifierValue text-nowrap user-select-all mb-0 {#if !generalId??}d-none{#else}{#if generalId.get("barcode").asBoolean()}d-none{/if}{/if}">{#if generalId??}{generalId.get("value").asText()}{/if}</p>
+				<p class=" text-secondary mb-1">
+					<small class="identifierType">{#if generalId??}{generalId.get("type").asText()}{/if}</small>
+					{#copyTextButton copyTextContainerJqSelector='$(this.parentElement.previousElementSibling)' /}
 				</p>
 			</div>
 			
+			<div class="input-group">
+				<div class="form-floating">
+					<input type="text" class="form-control" name="generalIdKey" value="{#if generalId??}{generalId.get("type").asText()}{/if}" aria-labelledby="Identifier Label" required>
+					<label>Identifier Label</label>
+				</div>
+				<div class="input-group-text px-1">
+					{#icons/barcode /}
+					{!TODO:: handle checked on/off event !}
+					<input class="form-check-input ms-1 mt-0" type="checkbox" value="" name="generalIdIsBarcode" aria-label="Checkbox for if barcode or not." {#if generalId??}{#if generalId.get("barcode").asBoolean()}checked{/if}{/if}>
+				</div>
+			</div>
 			
-			{!TODO:: key input, default to code type if not generic !}
 			{!TODO:: value edit? !}
 			
-			<div class="mt-1">
+			<div class="mt-1 d-flex justify-content-center">
 				<div class="input-group m-1 p-1">
-					<button type="button" title="Move identifier up" class="btn btn-sm btn-outline-dark" onclick="{!TODO!}">{#icons/left /}</button>
-					<button type="button" title="Move identifier down" class="btn btn-sm btn-outline-dark" onclick="{!TODO!}">{#icons/right /}</button>
+					<button type="button" title="Move identifier up" class="btn btn-sm btn-outline-dark" onclick="GeneralIdentifiers.moveUp($(this))">{#icons/left /}</button>
+					<button type="button" title="Move identifier down" class="btn btn-sm btn-outline-dark" onclick="GeneralIdentifiers.moveDown($(this))">{#icons/right /}</button>
 				</div>
 				<button type="button" title="Remove this identifier" class="btn btn-sm btn-outline-danger" onclick="GeneralIdentifiers.removeIdentifier($(this))">{#icons/remove /}</button>
 			</div>

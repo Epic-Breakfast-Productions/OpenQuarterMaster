@@ -38,7 +38,14 @@ const GeneralIdentifiers = {
 
 		//TODO:: call api, add div with thing
 	},
+	moveUp(upButtonJq){
+		SelectedObjectDivUtils.moveUp(upButtonJq.closest('.generalIdentifierContainer'));
+	},
+	moveDown(downButtonJq){
+		SelectedObjectDivUtils.moveDown(downButtonJq.closest('.generalIdentifierContainer'));
+	},
 	removeIdentifier(removeButtonJq){
-		removeButtonJq.closest('.generalIdentifierContainer').remove();
+		if(confirm("Are you sure you want to remove this identifier?") === false) return;
+		SelectedObjectDivUtils.removeSelected(removeButtonJq.closest('.generalIdentifierContainer'));
 	}
 }
