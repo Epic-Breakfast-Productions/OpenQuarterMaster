@@ -14,11 +14,11 @@
 			
 			<div class="input-group">
 				<div class="form-floating">
-					<input type="text" class="form-control" name="generalIdKey" value="{#if generalId??}{generalId.get("type").asText()}{/if}" aria-label="Identifier Label" required>
+					<input type="text" class="form-control" name="generalIdKey" value="{#if key??}{key}{#else if generalId??}{generalId.get("type").asText()}{/if}" aria-label="Identifier Label" required>
 					<label>Identifier Label</label>
 				</div>
 				
-				<div class="input-group-text px-1 {#if generalId??}{#if generalId.get("type").asText() != "GENERIC"}d-none{/if}{/if}">
+				<div class="input-group-text px-1 generalIdIsBarcodeSelectContainer {#if generalId??}{#if generalId.get("type").asText() != "GENERIC"}d-none{/if}{/if}">
 					{#icons/barcode /}
 					<input class="form-check-input ms-1 mt-0" type="checkbox" value="" name="generalIdIsBarcode" aria-label="Checkbox for if barcode or not." onchange="GeneralIdentifiers.handleIsBarcodeChecked($(this));" {#if generalId??}{#if generalId.get("barcode").asBoolean()}checked{/if}{/if}>
 				</div>

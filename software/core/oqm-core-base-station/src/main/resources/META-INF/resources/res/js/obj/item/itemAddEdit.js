@@ -151,7 +151,7 @@ const ItemAddEdit = {
 						}
 					});
 
-				//TODO:: populate general id's
+				GeneralIdentifiers.populateEdit(ItemAddEdit.generalIdInputContainer, data.generalIds);
 
 				let durationTimespan = TimeHelpers.durationNumSecsToTimespan(data.expiryWarningThreshold);
 
