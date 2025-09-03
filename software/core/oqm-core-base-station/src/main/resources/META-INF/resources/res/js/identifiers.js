@@ -100,10 +100,52 @@ const GeneralIdentifiers = {
 				curIdObj["isBarcode"] = GeneralIdentifiers.getIdentifierIsBarcodeCheckbox(curIdContainerJq).prop("checked")
 			}
 
-			//TODO:: not getting hey
 			output[GeneralIdentifiers.getIdentifierKey(curIdContainerJq)] = curIdObj;
 		});
 
 		return output;
+	},
+	View: {
+		showInDiv(divJq, generalIdentifierMap){
+			for (const [key, generalIdentifier] of Object.entries(generalIdentifierMap)) {
+				let newIdShow = $(`
+<div class="col-sm-6 col-md-4 col-lg-4 mb-1 generalIdentifierContainer">
+	<div class="card identifierDisplay">
+		<div class="card-header p-1 text-center">
+			<h5 class="card-title mb-0 identifierKey"></h5>
+		</div>
+		<a href="" target="_blank" class="identifierImageLink d-none">
+			<img src="" class="card-img identifierImage" alt="Barcode Image">
+		</a>
+		<div class="card-body p-1">
+			<div class="identifierValueContainer text-center">
+				<p class="h4 card-subtitle identifierValue text-nowrap user-select-all mb-0"></p>
+				<p class="text-secondary mb-1">
+					<small class="identifierType"></small>
+					`+PageComponents.Inputs.copyButton+`
+				</p>
+			</div>
+		</div>
+	</div>
+</div>`);
+				let valueDiv = newIdShow.find(".identifierValue");
+				let imageLink = newIdShow.find(".identifierImageLink");
+
+				newIdShow.find(".identifierKey").text(key);
+				valueDiv.text(generalIdentifier.value);
+				newIdShow.find(".identifierType").text(generalIdentifier.type);
+				newIdShow.find(".copyTextButton").attr("onClick", "TextCopyUtils.copyText(this,$(this.parentElement.previousElementSibling));");
+
+				if(generalIdentifier.barcode){
+					let barcodeUrl = Rest.passRoot + "/identifier/general/barcode/" + generalIdentifier.type + "/" + generalIdentifier.value;
+					valueDiv.addClass("d-none");
+					imageLink.removeClass("d-none");
+					imageLink.attr("href", barcodeUrl);
+					newIdShow.find(".identifierImage").attr("src", barcodeUrl);
+				}
+
+				divJq.append(newIdShow);
+			}
+		}
 	}
 }

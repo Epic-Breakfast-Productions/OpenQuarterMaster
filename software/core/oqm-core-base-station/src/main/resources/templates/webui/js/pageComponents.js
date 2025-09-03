@@ -4,6 +4,8 @@ const PageComponents = {
 ',
 		keywords: '{keywordInputLines}\
 ',
+		copyButton: '{copyButtonLines}\
+',
 		GeneralIds: {
 			generalIdInput: '{generalIdInputLines}\
 ',

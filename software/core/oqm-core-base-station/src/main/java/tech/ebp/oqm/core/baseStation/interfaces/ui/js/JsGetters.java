@@ -33,6 +33,7 @@ public class JsGetters {
 	private static String keywordInputLines;
 	private static String generalIdInputLines;
 	private static String generalIdAddedLines;
+	private static String copyTextButtonLines;
 	
 	@Getter
 	@HeaderParam("x-forwarded-prefix")
@@ -69,6 +70,8 @@ public class JsGetters {
 	Template attInputTemplate;
 	@Location("tags/inputs/keywordInput.html")
 	Template keywordInputTemplate;
+	@Location("tags/copyTextButton.html")
+	Template copyButtonTemplate;
 	@Location("tags/inputs/identifiers/generalIdInput.qute.html")
 	Template generalIdInputTemplate;
 	@Location("tags/inputs/identifiers/addedGeneralIdentifier.qute.html")
@@ -101,6 +104,13 @@ public class JsGetters {
 			keywordInputLines = this.templateToEscapedJs(keywordInputTemplate.instance());
 		}
 		return keywordInputLines;
+	}
+	
+	private String getCopyTextButtonLines() {
+		if (copyTextButtonLines == null) {
+			copyTextButtonLines = this.templateToEscapedJs(copyButtonTemplate.instance());
+		}
+		return copyTextButtonLines;
 	}
 	
 	private String getGeneralIdInputLines() {
@@ -159,6 +169,7 @@ public class JsGetters {
 		return this.componentsJs
 				   .data("attInputLines", this.getAttInputLines())
 				   .data("keywordInputLines", this.getKeywordInputLines())
+				   .data("copyButtonLines", this.getCopyTextButtonLines())
 				   .data("generalIdInputLines", this.getGeneralIdInputLines())
 				   .data("generalIdAddedLines", this.getGeneralIdAddedLines())
 				   .createUni();
