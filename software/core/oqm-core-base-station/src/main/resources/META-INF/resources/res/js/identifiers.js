@@ -30,11 +30,11 @@ const GeneralIdentifiers = {
 	getIdentifierType(idContainerJq){
 		return GeneralIdentifiers.getIdentifierTypeContainer(idContainerJq).text();
 	},
-	getIdentifierKeyInput(idContainerJq){
+	getIdentifierLabelInput(idContainerJq){
 		return idContainerJq.find("input[name='generalIdKey']");
 	},
-	getIdentifierKey(idContainerJq){
-		return GeneralIdentifiers.getIdentifierKeyInput(idContainerJq).val();
+	getIdentifierLabel(idContainerJq){
+		return GeneralIdentifiers.getIdentifierLabelInput(idContainerJq).val();
 	},
 	getIdentifierIsBarcodeCheckbox(idContainerJq){
 		return idContainerJq.find("input[name='generalIdIsBarcode']");
@@ -96,39 +96,33 @@ const GeneralIdentifiers = {
 	},
 	getGeneralIdData(generalInputContainerJq){
 		let getIdentifiersContainer = GeneralIdentifiers.getIdentifiersContainer(generalInputContainerJq);
-		let output = {};
+		let output = [];
 
 		getIdentifiersContainer.find(".generalIdentifierContainer").each(function (i, curIdContainer){
 			let curIdContainerJq = $(curIdContainer);
 			let curIdObj = {
 				value:  GeneralIdentifiers.getIdentifierValue(curIdContainerJq),
-				type: GeneralIdentifiers.getIdentifierType(curIdContainerJq)
+				type: GeneralIdentifiers.getIdentifierType(curIdContainerJq),
+				label: GeneralIdentifiers.getIdentifierLabel(curIdContainerJq)
 			}
 
 			if(curIdObj.type === "GENERIC"){
 				curIdObj["barcode"] = GeneralIdentifiers.getIdentifierIsBarcodeCheckbox(curIdContainerJq).prop("checked")
 			}
 
-			let curIdKey = GeneralIdentifiers.getIdentifierKey(curIdContainerJq);
-
-			if(output.hasOwnProperty(curIdKey)){
-				PageMessages.addMessageToDiv(GeneralIdentifiers.getMessagesContainer(generalInputContainerJq), "danger", "Cannot have more than one identifier with same label.");
-				throw new Error("Duplicate identifier key: " + curIdKey);
-			}
-
-			output[curIdKey] = curIdObj;
+			output.push(curIdObj);
 		});
 
 		return output;
 	},
-	populateEdit: function(generalInputContainerJq, generalIdentifierMap){
+	populateEdit: function(generalInputContainerJq, generalIdentifierList){
 		let getIdentifiersContainer = GeneralIdentifiers.getIdentifiersContainer(generalInputContainerJq);
-		for (const [key, generalIdentifier] of Object.entries(generalIdentifierMap)) {
+		for (const generalIdentifier of generalIdentifierList) {
 			let idInput = $(PageComponents.Inputs.GeneralIds.generalIdAdded);
 
 			GeneralIdentifiers.getIdentifierValueContainer(idInput).text(generalIdentifier.value);
 			GeneralIdentifiers.getIdentifierTypeContainer(idInput).text(generalIdentifier.type);
-			GeneralIdentifiers.getIdentifierKeyInput(idInput).val(key);
+			GeneralIdentifiers.getIdentifierLabelInput(idInput).val(generalIdentifier.label);
 
 			if(generalIdentifier.barcode){
 				let barcodeImage = idInput.find(".identifierImage");
@@ -148,8 +142,8 @@ const GeneralIdentifiers = {
 		}
 	},
 	View: {
-		showInDiv(divJq, generalIdentifierMap){
-			for (const [key, generalIdentifier] of Object.entries(generalIdentifierMap)) {
+		showInDiv(divJq, generalIdentifierArray){
+			for (const generalIdentifier of generalIdentifierArray) {
 				let newIdShow = $(`
 <div class="col-sm-6 col-md-4 col-lg-4 mb-1 generalIdentifierContainer">
 	<div class="card identifierDisplay">
@@ -173,7 +167,7 @@ const GeneralIdentifiers = {
 				let valueDiv = newIdShow.find(".identifierValue");
 				let imageLink = newIdShow.find(".identifierImageLink");
 
-				newIdShow.find(".identifierKey").text(key);
+				newIdShow.find(".identifierKey").text(generalIdentifier.label);
 				valueDiv.text(generalIdentifier.value);
 				newIdShow.find(".identifierType").text(generalIdentifier.type);
 				newIdShow.find(".copyTextButton").attr("onClick", "TextCopyUtils.copyText(this,$(this.parentElement.previousElementSibling));");
