@@ -109,7 +109,14 @@ const GeneralIdentifiers = {
 				curIdObj["barcode"] = GeneralIdentifiers.getIdentifierIsBarcodeCheckbox(curIdContainerJq).prop("checked")
 			}
 
-			output[GeneralIdentifiers.getIdentifierKey(curIdContainerJq)] = curIdObj;
+			let curIdKey = GeneralIdentifiers.getIdentifierKey(curIdContainerJq);
+
+			if(output.hasOwnProperty(curIdKey)){
+				PageMessages.addMessageToDiv(GeneralIdentifiers.getMessagesContainer(generalInputContainerJq), "danger", "Cannot have more than one identifier with same label.");
+				throw new Error("Duplicate identifier key: " + curIdKey);
+			}
+
+			output[curIdKey] = curIdObj;
 		});
 
 		return output;
