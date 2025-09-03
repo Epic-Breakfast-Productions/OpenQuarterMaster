@@ -80,7 +80,7 @@ public class GeneralIdPassthrough extends PassthroughProvider {
 				   .map((String xmlData)->{
 					   return Response.status(Response.Status.OK)
 								  .entity(xmlData)
-								  .header("Content-Disposition", "attachment;filename=" + "code.svg")
+								  .header("Content-Disposition", "attachment;filename=" + type + "_"+data+".svg")
 								  .type("image/svg+xml")
 								  .build();
 				   });
