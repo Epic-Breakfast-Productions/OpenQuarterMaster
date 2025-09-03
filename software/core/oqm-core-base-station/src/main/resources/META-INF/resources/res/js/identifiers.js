@@ -1,5 +1,8 @@
 
 const GeneralIdentifiers = {
+	getInputContainer(subElementJq){
+		return subElementJq.closest('.generalIdInputContainer');
+	},
 	getIdentifiersContainer(generalInputContainerJq){
 		return generalInputContainerJq.find(".identifiersContainer");
 	},
@@ -25,10 +28,10 @@ const GeneralIdentifiers = {
 		return idContainerJq.find(".identifierType").text();
 	},
 	getIdentifierKey(idContainerJq){
-		return idContainerJq.find("input[name='generalIdKey'").text();
+		return idContainerJq.find("input[name='generalIdKey']").val();
 	},
 	getIdentifierIsBarcodeCheckbox(idContainerJq){
-		return idContainerJq.find("input[name='generalIdIsBarcode'").text();
+		return idContainerJq.find("input[name='generalIdIsBarcode']");
 	},
 	getNewIdentifierValue(generalInputContainerJq){
 		return GeneralIdentifiers.getNewIdentifierInput(generalInputContainerJq).val();
@@ -81,5 +84,26 @@ const GeneralIdentifiers = {
 	removeIdentifier(removeButtonJq){
 		if(confirm("Are you sure you want to remove this identifier?") === false) return;
 		SelectedObjectDivUtils.removeSelected(removeButtonJq.closest('.generalIdentifierContainer'));
+	},
+	getGeneralIdData(generalInputContainerJq){
+		let getIdentifiersContainer = GeneralIdentifiers.getIdentifiersContainer(generalInputContainerJq);
+		let output = {};
+
+		getIdentifiersContainer.find(".generalIdentifierContainer").each(function (i, curIdContainer){
+			let curIdContainerJq = $(curIdContainer);
+			let curIdObj = {
+				value:  GeneralIdentifiers.getIdentifierValue(curIdContainerJq),
+				type: GeneralIdentifiers.getIdentifierType(curIdContainerJq)
+			}
+
+			if(curIdObj.type === "GENERIC"){
+				curIdObj["isBarcode"] = GeneralIdentifiers.getIdentifierIsBarcodeCheckbox(curIdContainerJq).prop("checked")
+			}
+
+			//TODO:: not getting hey
+			output[GeneralIdentifiers.getIdentifierKey(curIdContainerJq)] = curIdObj;
+		});
+
+		return output;
 	}
 }
