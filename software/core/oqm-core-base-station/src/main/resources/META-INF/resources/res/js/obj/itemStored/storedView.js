@@ -127,9 +127,9 @@ const StoredView = {
 
 	getStoredGeneralIds(stored){
 		if(Object.keys(stored.generalIds).length) {
-			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"></div>');
+			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row generalIdContainer"></div></div>');
 
-			GeneralIdentifiers.View.showInDiv(output, stored.generalIds);
+			GeneralIdentifiers.View.showInDiv(output.find(".generalIdContainer"), stored.generalIds);
 
 			return output;
 		}

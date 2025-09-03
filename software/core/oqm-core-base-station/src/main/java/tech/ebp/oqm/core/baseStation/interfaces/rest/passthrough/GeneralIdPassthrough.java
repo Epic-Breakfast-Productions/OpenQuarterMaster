@@ -5,10 +5,8 @@ import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
-import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
@@ -20,7 +18,6 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InteractingEntitySearch;
 
 @Slf4j
 @Path(PassthroughProvider.PASSTHROUGH_API_ROOT + "/identifier/general")
