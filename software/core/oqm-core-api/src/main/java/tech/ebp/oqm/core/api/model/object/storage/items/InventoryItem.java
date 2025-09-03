@@ -23,6 +23,7 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -66,13 +67,10 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	private String description = "";
 
 	/**
-	 * The barcode for this item.
-	 * <p>
-	 * TODO:: validate?
-	 * TODO:: rework
+	 * The general identifiers for this item
 	 */
 	@lombok.Builder.Default
-	private Map<String, GeneralId> generalIds = new LinkedHashMap<>();
+	private LinkedHashSet<GeneralId> generalIds = new LinkedHashSet<>();
 
 	/**
 	 * Categories this item belongs to.

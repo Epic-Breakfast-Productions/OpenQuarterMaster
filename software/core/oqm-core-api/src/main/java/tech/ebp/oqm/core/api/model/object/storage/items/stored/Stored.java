@@ -27,6 +27,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -72,7 +73,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 * The general ids that apply to this stored, but not to all stored (as specified in the associated item)
 	 */
 	@lombok.Builder.Default
-	private Map<@NotNull String, @NotNull GeneralId> generalIds = new LinkedHashMap<>();
+	private LinkedHashSet<@NotNull GeneralId> generalIds = new LinkedHashSet<>();
 	
 	/**
 	 * The barcode for this item.
