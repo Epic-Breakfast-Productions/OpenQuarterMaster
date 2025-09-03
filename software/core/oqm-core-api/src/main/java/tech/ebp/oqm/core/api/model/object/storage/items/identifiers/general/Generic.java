@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -20,6 +21,7 @@ public class Generic extends GeneralId {
 	@NotBlank
 	private String value;
 	
+	@lombok.Builder.Default
 	@JsonProperty(access = JsonProperty.Access.READ_WRITE)
 	private boolean barcode = false;
 	
