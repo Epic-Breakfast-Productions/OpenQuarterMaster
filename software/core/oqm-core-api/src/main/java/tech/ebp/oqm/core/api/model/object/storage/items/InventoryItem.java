@@ -72,7 +72,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * TODO:: rework
 	 */
 	@lombok.Builder.Default
-	private Map<String, GeneralId> identifiers = new LinkedHashMap<>();
+	private Map<String, GeneralId> generalIds = new LinkedHashMap<>();
 
 	/**
 	 * Categories this item belongs to.

@@ -4,9 +4,11 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
@@ -39,6 +41,8 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @BsonDiscriminator
+@AllArgsConstructor
+@NoArgsConstructor
 public abstract class GeneralId extends Identifier {
 	
 	/**

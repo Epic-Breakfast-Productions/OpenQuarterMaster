@@ -2,8 +2,10 @@ package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.ean
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
@@ -16,6 +18,7 @@ import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidISBN1
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
+@NoArgsConstructor
 public class EAN_8 extends GeneralId {
 	
 	@NonNull
