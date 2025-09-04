@@ -1,8 +1,8 @@
 package tech.ebp.oqm.core.baseStation.interfaces.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
@@ -33,7 +33,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientServ
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
 @RolesAllowed(Roles.INVENTORY_VIEW)
 @RequestScoped
-public class BarcodeCreation extends ApiProvider {
+public class BarcodeImageCreation extends ApiProvider {
 	
 	@Inject
 	BarcodeService barcodeService;
