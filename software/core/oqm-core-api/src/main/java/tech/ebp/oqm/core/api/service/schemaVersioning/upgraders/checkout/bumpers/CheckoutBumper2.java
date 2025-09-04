@@ -15,6 +15,9 @@ import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeCreatedObjectsResults;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectSchemaVersionBumper;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.UpgradingUtils;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.inventoryItem.bumpers.InvItemBumper2;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.stored.StoredSchemaUpgrader;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.stored.bumpers.StoredItemBumper2;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.stored.bumpers.StoredItemBumper3;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,11 +30,16 @@ public class CheckoutBumper2 extends ObjectSchemaVersionBumper<ItemCheckout> {
 	@Getter(AccessLevel.PRIVATE)
 	private final InvItemBumper2 invItemBumper = new InvItemBumper2();
 	
+	@Getter(AccessLevel.PRIVATE)
+	private final StoredItemBumper2 storedSchemaUpgrader2 = new StoredItemBumper2();
+	@Getter(AccessLevel.PRIVATE)
+	private final StoredItemBumper3 storedSchemaUpgrader3 = new StoredItemBumper3();
+	
 	public CheckoutBumper2() {
 		super(2);
 	}
 	
-	private ObjectNode createSpoofProcessResults(TextNode itemId){
+	private ObjectNode createSpoofProcessResults(TextNode itemId) {
 		ObjectNode spoofProcessResults = OBJECT_MAPPER.createObjectNode();
 		
 		ObjectNode expiryLowStockResults = spoofProcessResults.putObject("expiryLowStockResults");
@@ -66,7 +74,7 @@ public class CheckoutBumper2 extends ObjectSchemaVersionBumper<ItemCheckout> {
 	}
 	
 	private TextNode createCheckinTransaction(UpgradeCreatedObjectsResults cor, ObjectNode checkout) {
-		if(checkout.get("checkInDetails") == null){
+		if (checkout.get("checkInDetails") == null) {
 			return null;
 		}
 		
@@ -111,10 +119,16 @@ public class CheckoutBumper2 extends ObjectSchemaVersionBumper<ItemCheckout> {
 		//enforcing all these as whole
 		oldObj.put("type", "WHOLE");
 		
-		oldObj.put(
-			"checkedOut",
-			this.getInvItemBumper().adjustStored(oldObj.get("item").asText(), checkedOut, oldObj.get("checkedOutFrom").asText())
-		);
+		{
+			oldObj.set(
+				"checkedOut",
+				this.getStoredSchemaUpgrader3().bumpObject(
+					this.getStoredSchemaUpgrader2().bumpObject(
+						this.getInvItemBumper()
+							.adjustStored(oldObj.get("item").asText(), checkedOut, oldObj.get("checkedOutFrom").asText())
+					).getUpgradedObject()).getUpgradedObject()
+				);
+		}
 		
 		//don't need to do anything with this for whole?
 		TextNode fromBlock = (TextNode) oldObj.remove("checkedOutFrom");
@@ -132,7 +146,7 @@ public class CheckoutBumper2 extends ObjectSchemaVersionBumper<ItemCheckout> {
 			UpgradingUtils.normalizeObjectId(checkedOutFor, "entity");
 		}
 		checkedOutFor.remove("_t");
-		if(checkedOutFor.get("type").asText().equals("OQM_ENTITY")){
+		if (checkedOutFor.get("type").asText().equals("OQM_ENTITY")) {
 			oldObj.put("checkedOutByEntity", checkedOutFor.get("entity").asText());
 		} else {
 			oldObj.put("checkedOutByEntity", CoreApiInteractingEntity.BS_ID.toHexString());
@@ -152,6 +166,7 @@ public class CheckoutBumper2 extends ObjectSchemaVersionBumper<ItemCheckout> {
 		
 		oldObj.set("checkOutTransaction", this.createCheckoutTransaction(createdObjectsResults, oldObj));
 		oldObj.set("checkInTransaction", this.createCheckinTransaction(createdObjectsResults, oldObj));
+		
 		
 		return resultBuilder.build();
 	}
