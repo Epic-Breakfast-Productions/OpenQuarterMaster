@@ -19,8 +19,7 @@ import java.io.IOException;
 /**
  * Service to generate barcode images.
  *
- * TODO:: move to Core API
- * TODO:: rework to appropriately generate barcode type: https://github.com/woo-j/OkapiBarcode?tab=readme-ov-file
+ * TODO:: move to own service?
  * TODO:: add better labels to images https://github.com/jfree/jfreesvg
  */
 @ApplicationScoped
