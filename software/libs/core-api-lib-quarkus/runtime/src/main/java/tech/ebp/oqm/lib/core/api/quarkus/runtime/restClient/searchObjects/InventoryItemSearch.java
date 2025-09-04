@@ -13,10 +13,9 @@ import java.util.List;
 @ToString(callSuper = true)
 @Getter
 @Setter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public class InventoryItemSearch extends SearchKeyAttObject {
 	@QueryParam("name") String name;
-	@QueryParam("itemBarcode") String itemBarcode;
 	@QueryParam("itemCategories") List<String> categories;
 	@QueryParam("inStorageBlock") List<String> inStorageBlocks;
 	@QueryParam("hasExpired") Boolean hasExpired;
@@ -25,4 +24,5 @@ public class InventoryItemSearch extends SearchKeyAttObject {
 	@QueryParam("hasNoExpiryWarn") Boolean hasNoExpiryWarn;
 	@QueryParam("hasLowStock") Boolean hasLowStock;
 	@QueryParam("hasNoLowStock") Boolean hasNoLowStock;
+	@QueryParam("generalId") String generalId;
 }
