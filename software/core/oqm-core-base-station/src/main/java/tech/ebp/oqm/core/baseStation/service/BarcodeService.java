@@ -4,9 +4,12 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import tech.ebp.oqm.core.baseStation.model.CodeImageType;
 import uk.org.okapibarcode.backend.Code128;
+import uk.org.okapibarcode.backend.Code2Of5;
+import uk.org.okapibarcode.backend.Ean;
 import uk.org.okapibarcode.backend.HumanReadableLocation;
 import uk.org.okapibarcode.backend.QrCode;
 import uk.org.okapibarcode.backend.Symbol;
+import uk.org.okapibarcode.backend.Upc;
 import uk.org.okapibarcode.graphics.Color;
 import uk.org.okapibarcode.output.SvgRenderer;
 
@@ -16,6 +19,7 @@ import java.io.IOException;
 /**
  * Service to generate barcode images.
  *
+ * TODO:: move to separate service
  * TODO:: add better labels to images https://github.com/jfree/jfreesvg
  */
 @ApplicationScoped
@@ -64,4 +68,5 @@ public class BarcodeService {
 		}
 		throw new IllegalStateException();
 	}
+	
 }

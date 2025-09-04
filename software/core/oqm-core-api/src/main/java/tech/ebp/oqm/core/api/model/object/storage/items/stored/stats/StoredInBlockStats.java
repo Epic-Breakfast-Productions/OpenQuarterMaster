@@ -20,5 +20,6 @@ public class StoredInBlockStats extends StatsWithTotalContaining {
 		super(unit);
 	}
 
+	@lombok.Builder.Default
 	private boolean hasStored = false;
 }
