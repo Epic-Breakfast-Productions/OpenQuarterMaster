@@ -11,7 +11,6 @@ const ItemAddEdit = {
 	addEditItemIdInput: $("#addEditItemIdInput"),
 	addEditItemNameInput: $('#addEditItemNameInput'),
 	addEditItemDescriptionInput: $('#addEditItemDescriptionInput'),
-	addEditItemBarcodeInput: $('#addEditItemBarcodeInput'),
 	addEditItemPricePerUnitInput: $('#addEditItemPricePerUnitInput'),
 	addEditItemExpiryWarningThresholdInput: $('#addEditItemExpiryWarningThresholdInput'),
 	addEditItemExpiryWarningThresholdUnitInput: $('#addEditItemExpiryWarningThresholdUnitInput'),
@@ -21,6 +20,8 @@ const ItemAddEdit = {
 	addEditItemStorageTypeInput: $('#addEditItemStorageTypeInput'),
 	addEditItemUnitInput: $('#addEditItemUnitInput'),
 	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
+
+	generalIdInputContainer: GeneralIdentifiers.getInputContainer($("#addEditItemGeneralIdInput")),
 
 	// itemNotStoredCheck: $("#addEditItemNotStoredCheck"),
 	// itemNotStoredInputContainer: $("#addEditItemNotStoredInputContainer"),
@@ -75,7 +76,7 @@ const ItemAddEdit = {
 		this.addEditItemFormMode.val("");
 		ItemAddEdit.addEditItemNameInput.val("");
 		ItemAddEdit.addEditItemDescriptionInput.val("");
-		ItemAddEdit.addEditItemBarcodeInput.val("");
+		GeneralIdentifiers.reset(ItemAddEdit.generalIdInputContainer);
 		ItemAddEdit.addEditItemModalLabel.text("Item");
 		// ItemAddEdit.addEditItemPricePerUnitInput.val("0.00");
 		ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(0);
@@ -139,7 +140,6 @@ const ItemAddEdit = {
 				ItemAddEdit.addEditItemNameInput.val(data.name);
 				ItemAddEdit.addEditItemDescriptionInput.val(data.description);
 				ItemAddEdit.addEditItemStorageTypeInput.val(data.storageType);
-				ItemAddEdit.addEditItemBarcodeInput.val(data.barcode);
 				Dselect.setValues(ItemAddEdit.addEditItemUnitInput, data.unit.string);
 				Dselect.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
 				ItemAddEdit.addEditStoredTypeInputChanged(true)
@@ -150,6 +150,8 @@ const ItemAddEdit = {
 							ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val(data.lowStockThreshold.unit.string)
 						}
 					});
+
+				GeneralIdentifiers.populateEdit(ItemAddEdit.generalIdInputContainer, data.generalIds);
 
 				let durationTimespan = TimeHelpers.durationNumSecsToTimespan(data.expiryWarningThreshold);
 
@@ -266,13 +268,13 @@ ItemAddEdit.addEditItemUnitInput.on("change", function () {
 	ItemAddEdit.updateLowStockUnits();
 });
 
-//prevent enter from submitting form on barcode; barcode scanners can add enter key automatically
-ItemAddEdit.addEditItemBarcodeInput.on('keypress', function (e) {
-	// Ignore enter keypress
-	if (e.which === 13) {
-		return false;
-	}
-});
+// //prevent enter from submitting form on barcode; barcode scanners can add enter key automatically
+// ItemAddEdit.addEditItemBarcodeInput.on('keypress', function (e) {
+// 	// Ignore enter keypress
+// 	if (e.which === 13) {
+// 		return false;
+// 	}
+// });
 
 StorageSearchSelect.selectStorageBlock = function (blockName, blockId, inputIdPrepend, otherModalId) {
 	Main.processStart();
@@ -288,7 +290,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 	let addEditData = {
 		name: ItemAddEdit.addEditItemNameInput.val(),
 		description: ItemAddEdit.addEditItemDescriptionInput.val(),
-		barcode: ItemAddEdit.addEditItemBarcodeInput.val(),
+		generalIds: GeneralIdentifiers.getGeneralIdData(ItemAddEdit.generalIdInputContainer),
 		storageType: ItemAddEdit.addEditItemStorageTypeInput.val(),
 		expiryWarningThreshold: ItemAddEdit.addEditItemExpiryWarningThresholdInput.val() * ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.val(),
 		lowStockThreshold: (ItemAddEdit.addEditItemTotalLowStockThresholdInput.val() ? UnitUtils.getQuantityObj(

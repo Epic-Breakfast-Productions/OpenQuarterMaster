@@ -12,10 +12,10 @@ Inputs:
 	{#let isOnFirstPage = pagingCalculations.get("onFirstPage").asBoolean() isOnLastPage = pagingCalculations.get("onLastPage").asBoolean() currentPage = pagingCalculations.get("curPage").asInt()}
 	<ul class="pagination pagination-sm justify-content-center mb-0">
 		<li class="page-item {#if isOnFirstPage}disabled{/if}">
-			<button type="button" class="btn-link page-link" title="First page" onclick="Search.paginationClick('{searchFormId}', 1);" {#if isOnFirstPage}disabled{/if}>{#icons/icon icon = 'chevron-bar-left'}{/icons/icon}</button>
+			<button type="button" class="btn-link page-link" title="First page" onclick="Search.paginationClick('{searchFormId}', 1);" {#if isOnFirstPage}disabled{/if}>{#icons/icon icon = 'chevron-bar-left' /}</button>
 		</li>
 		<li class="page-item {#if isOnFirstPage}disabled{/if}">
-			<button type="button" class="btn-link page-link" title="Previous page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("previousPage").asLong()});" {#if isOnFirstPage}disabled{/if}>{#icons/icon icon = 'chevron-left'}{/icons/icon}</button>
+			<button type="button" class="btn-link page-link" title="Previous page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("previousPage").asLong()});" {#if isOnFirstPage}disabled{/if}>{#icons/left /}</button>
 		</li>
 		
 		{#if numPages <= config:['ui.pagination.breakToInput']}
@@ -38,7 +38,7 @@ Inputs:
 		{/if}
 		
 		<li class="page-item {#if isOnLastPage}disabled{/if}">
-			<button type="button" class="btn-link page-link" title="Next page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("nextPage").asLong()});" {#if isOnLastPage}disabled{/if}>{#icons/icon icon = 'chevron-right'}{/icons/icon}</button>
+			<button type="button" class="btn-link page-link" title="Next page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("nextPage").asLong()});" {#if isOnLastPage}disabled{/if}>{#icons/right /}</button>
 		</li>
 		<li class="page-item {#if isOnLastPage}disabled{/if}">
 			<button type="button" class="btn-link page-link" title="Last page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("lastPage").asLong()});" {#if isOnLastPage}disabled{/if}>{#icons/icon icon = 'chevron-bar-right'}{/icons/icon}</button>
