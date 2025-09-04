@@ -60,12 +60,14 @@ const StoredView = {
 		return "";
 	},
 	getStorageBlockConditionView(stored) {
-		if (stored.condition) {
+		if (stored.condition || stored.conditionNotes) {
 			let conditionJqs = [];
 
-			let newJq = $('<p class="storedCondition mb-0"></p>');
-			newJq.text(stored.condition + "%");
-			conditionJqs.push(newJq);
+			if (stored.condition) {
+				let newJq = $('<p class="storedCondition mb-0"></p>');
+				newJq.text(stored.condition + "%");
+				conditionJqs.push(newJq);
+			}
 
 			if (stored.conditionNotes) {
 				let newJq = $('<p class="storedConditionNotes mt-0 small"></p>');
@@ -119,6 +121,17 @@ const StoredView = {
 				"Attributes",
 				keywordContainer
 			);
+		}
+		return "";
+	},
+
+	getStoredGeneralIds(stored){
+		if(Object.keys(stored.generalIds).length) {
+			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row generalIdContainer"></div></div>');
+
+			GeneralIdentifiers.View.showInDiv(output.find(".generalIdContainer"), stored.generalIds);
+
+			return output;
 		}
 		return "";
 	},
@@ -203,7 +216,8 @@ const StoredView = {
 			StoredView.getStorageBlockConditionView(stored),
 			StoredView.getStorageBlockExpiresView(stored),
 			StoredView.getStoredKeywords(stored),
-			StoredView.getStoredAtts(stored)
+			StoredView.getStoredAtts(stored),
+			StoredView.getStoredGeneralIds(stored)
 		);
 		//TODO:: images, files
 

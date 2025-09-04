@@ -1,1 +1,1 @@
-<button type="button" class="btn btn-sm btn-outline-dark mx-2" onclick="copyText(this, '{textContainerId}')" title="Copy to Clipboard">{#icons/copy}{/icons/copy}</button>
+<button type="button" class="btn btn-sm btn-outline-dark mx-2 copyTextButton" onclick="TextCopyUtils.copyText(this, {#if copyTextContainerJqSelector??}{copyTextContainerJqSelector}{#else}$(this.previousSibling){/if}{#if fromTitle??}, true{/if})" title="Copy to Clipboard">{#icons/copy}{/icons/copy}</button>

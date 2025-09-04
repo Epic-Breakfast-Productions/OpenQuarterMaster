@@ -32,12 +32,13 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 
 	@QueryParam("hasExpiryDate") Boolean hasExpiryDate;
 	@QueryParam("hasLowStockThreshold") Boolean hasLowStockThreshold;
-
+	
+	@QueryParam("generalId") String generalId;
 
 	//TODO:: are these outdated?
-	@QueryParam("hasExpired") Boolean hasExpired;
-	@QueryParam("hasExpiryWarn") Boolean hasExpiryWarn;
-	@QueryParam("hasLowStock") Boolean hasLowStock;
+	@QueryParam("expired") Boolean hasExpired;
+	@QueryParam("expiryWarn") Boolean hasExpiryWarn;
+	@QueryParam("lowStock") Boolean hasLowStock;
 	
 	//TODO:: object specific fields, add to bson filter list
 	
@@ -101,51 +102,21 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 				ne("expires", null)
 			);
 		}
-		if(this.hasValue(this.getHasLowStockThreshold())){
-
-		}
-
 
 		if(this.hasValue(this.getHasExpired())){
-			filters.add(
-				(this.getHasExpired()?
-					 ne(
-						 "numExpired",
-						 0
-					 ) :
-					 eq(
-						 "numExpired",
-						 0
-					 )
-				)
-			);
+			filters.add(eq("notificationStatus.expired", this.getHasExpired()));
 		}
 		if(this.hasValue(this.getHasExpiryWarn())){
-			filters.add(
-				(this.getHasExpiryWarn()?
-					 ne(
-						 "numExpiryWarn",
-						 0
-					 ) :
-					 eq(
-						 "numExpiryWarn",
-						 0
-					 )
-				)
-			);
+			filters.add(eq("notificationStatus.expiredWarning", this.getHasExpiryWarn()));
 		}
+		
 		if(this.hasValue(this.getHasLowStock())){
+			filters.add(eq("notificationStatus.lowStock", this.getHasExpired()));
+		}
+		
+		if(this.hasValue(this.getGeneralId())){
 			filters.add(
-				(this.getHasLowStock()?
-					 ne(
-						 "numLowStock",
-						 0
-					 ) :
-					 eq(
-						 "numLowStock",
-						 0
-					 )
-				)
+				eq("generalIds.value", this.getGeneralId())
 			);
 		}
 		

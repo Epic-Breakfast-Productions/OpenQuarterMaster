@@ -49,6 +49,10 @@ public class PagingCalculations {
 		return this.onPage((long) curPage);
 	}
 	
+	public boolean isHasPages() {
+		return getNumPages() > 1;
+	}
+	
 	public Iterator<Long> getPageIterator() {
 		return new Iterator<>() {
 			private final long end = getNumPages();
