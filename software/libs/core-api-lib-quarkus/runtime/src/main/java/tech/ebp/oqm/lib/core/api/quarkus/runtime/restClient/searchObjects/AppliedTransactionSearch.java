@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @ToString(callSuper = true)
 @Getter
 @Setter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public class AppliedTransactionSearch extends SearchKeyAttObject {
 	public static AppliedTransactionSearch newInstance(){
 		return new AppliedTransactionSearch();

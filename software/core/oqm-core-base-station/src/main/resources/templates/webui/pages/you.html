@@ -27,7 +27,7 @@
   </dd>
   
   <dt class="col-sm-3 col-md-2">OQM Id:</dt>
-  <dd class="col-sm-9 col-md-10 user-select-all"><span id="userOqmId">{userInfo.getId()}</span>{#copyTextButton textContainerId='userOqmId'}{/copyTextButton}</dd>
+  <dd class="col-sm-9 col-md-10 user-select-all"><span id="userOqmId">{userInfo.getId()}</span>{#copyTextButton /}</dd>
   
   {!{#if !user.getExternIds().isEmpty()}!}
   {!<dt class="col-sm-3 col-md-2">External Ids:</dt>!}
@@ -67,7 +67,7 @@
                         <p>
                             This token is used to perform actions on the API. Use with caution.
                         </p>
-                        {#copyTextButton textContainerId='userCurrentToken'}{/copyTextButton}
+                        {#copyTextButton copyTextContainerJqSelector='$(\'#userCurrentToken\')' /}
                         <p>
                             <code id="userCurrentToken" class="user-select-all">{jwt}</code>
                         </p>

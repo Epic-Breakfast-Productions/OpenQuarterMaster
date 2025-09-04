@@ -1,14 +1,23 @@
 
-function copyText(buttonClicked, textContainerId){
-    navigator.clipboard.writeText($("#"+textContainerId).text());
+const TextCopyUtils = {
+	copyText(buttonClicked, textContainerJq, fromTitle= false) {
+		let copyText = fromTitle ?
+			textContainerJq.prop("title") :
+			textContainerJq.text()
+		;
 
-    buttonClicked = $(buttonClicked);
-    buttonClicked.html(Icons.copyChecked);
-    setTimeout(
-        function (){
-            // console.log("Setting copy symbol back.");
-            buttonClicked.html(Icons.copy);
-        },
-        5_000
-    );
+		console.debug("Writing text to clipboard: ", copyText);
+
+		navigator.clipboard.writeText(copyText);
+
+		buttonClicked = $(buttonClicked);
+		buttonClicked.html(Icons.copyChecked);
+		setTimeout(
+			function () {
+				// console.log("Setting copy symbol back.");
+				buttonClicked.html(Icons.copy);
+			},
+			5_000
+		);
+	}
 }
