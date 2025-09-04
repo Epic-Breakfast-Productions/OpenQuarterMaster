@@ -21,6 +21,13 @@ dependencies {
 	implementation 'io.quarkus:quarkus-messaging-kafka'
 	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-arc'
+	implementation 'io.quarkus:quarkus-oidc'
+
+	implementation group: 'org.tensorflow', name: 'tensorflow-core-platform', version: '0.5.0'
+	implementation group: 'org.openpnp', name: 'opencv', version: '4.9.0-0'
+
+	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:2.3.0'
+
 	testImplementation 'io.quarkus:quarkus-junit5'
 	testImplementation 'io.rest-assured:rest-assured'
 }
@@ -108,11 +115,11 @@ tasks.register("downloadModels", DownloadModelsTask) {
 	group = "build"
 	description = "Downloads models before build to ensure presence."
 }
-build {
+processResources {
 	mustRunAfter("downloadModels")
 }
 
-tasks.build.configure { dependsOn(tasks.downloadModels) }
+tasks.processResources.configure { dependsOn(tasks.downloadModels) }
 
 /**
  * Used to print the current version of this project.
