@@ -40,34 +40,6 @@ public abstract class ObjectSchemaVersionBumper<T extends Versionable> implement
 		return this.getBumperTo() - 1;
 	}
 	
-
-	
-	/**
-	 *
-	 * @param json
-	 * @param field
-	 * @param convertedType
-	 * @return
-	 */
-	protected JsonNode stringToConvertedTree(
-		ObjectNode json,
-		String field,
-		Class<?> convertedType
-	) {
-		if(json.has(field) && json.get(field).isTextual()) {
-			try {
-				json.set(
-					field,
-					OBJECT_MAPPER.valueToTree(
-						OBJECT_MAPPER.readValue(json.get(field).asText(), convertedType)
-					)
-				);
-			} catch(JsonProcessingException e) {
-				throw new UpgradeFailedException(e);
-			}
-		}
-		return json;
-	}
 	
 	/**
 	 * Method to mutate the given object and return the resulting upgraded object.

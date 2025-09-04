@@ -125,6 +125,17 @@ const StoredView = {
 		return "";
 	},
 
+	getStoredGeneralIds(stored){
+		if(Object.keys(stored.generalIds).length) {
+			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row generalIdContainer"></div></div>');
+
+			GeneralIdentifiers.View.showInDiv(output.find(".generalIdContainer"), stored.generalIds);
+
+			return output;
+		}
+		return "";
+	},
+
 	//TODO: finish figuring this out
 	getTransactBlockLink(stored, small = false,
 						 {
@@ -205,7 +216,8 @@ const StoredView = {
 			StoredView.getStorageBlockConditionView(stored),
 			StoredView.getStorageBlockExpiresView(stored),
 			StoredView.getStoredKeywords(stored),
-			StoredView.getStoredAtts(stored)
+			StoredView.getStoredAtts(stored),
+			StoredView.getStoredGeneralIds(stored)
 		);
 		//TODO:: images, files
 

@@ -37,8 +37,12 @@ const ItemView = {
 	itemViewStorageType: $("#itemViewStorageType"),
 	itemViewDescriptionContainer: $("#itemViewDescriptionContainer"),
 	itemViewDescription: $("#itemViewDescription"),
+
 	itemViewBarcodeContainer: $('#itemViewBarcodeContainer'),
 	itemViewBarcode: $("#itemViewBarcode"),
+
+	generalIdContent: $("#itemViewGeneralIdsAccordContent"),
+
 	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
 	itemViewTotalLowStockThreshold: $("#itemViewTotalLowStockThreshold"),
 	itemViewExpiryWarnThresholdContainer: $("#itemViewExpiryWarnThresholdContainer"),
@@ -94,8 +98,7 @@ const ItemView = {
 		ItemView.itemViewStorageType.text("");
 		ItemView.itemViewDescriptionContainer.hide();
 		ItemView.itemViewDescription.text("");
-		ItemView.itemViewBarcodeContainer.hide();
-		ItemView.itemViewBarcode.attr("src", "");
+		ItemView.generalIdContent.text("");
 		ItemView.itemViewTotal.text("");
 		ItemView.itemViewTotalLowStockThreshold.text("");
 		ItemView.itemViewTotalLowStockThresholdContainer.hide();
@@ -410,10 +413,7 @@ const ItemView = {
 					ItemView.itemViewDescriptionContainer.show();
 				}
 
-				if (itemData.barcode) {
-					ItemView.itemViewBarcode.attr("src", Rest.apiRoot + "/media/code/item/" + itemData.id + "/barcode");
-					ItemView.itemViewBarcodeContainer.show();
-				}
+				GeneralIdentifiers.View.showInDiv(ItemView.generalIdContent, itemData.generalIds);
 
 				if (itemData.lowStockThreshold) {
 					ItemView.itemViewTotalLowStockThreshold.text(itemData.lowStockThreshold.value + "" + itemData.lowStockThreshold.unit.symbol);
