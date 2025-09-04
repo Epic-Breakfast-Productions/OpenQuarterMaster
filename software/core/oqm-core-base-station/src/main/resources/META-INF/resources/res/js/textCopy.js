@@ -1,7 +1,10 @@
 
 const TextCopyUtils = {
-	copyText(buttonClicked, textContainerJq) {
-		let copyText = textContainerJq.text();
+	copyText(buttonClicked, textContainerJq, fromTitle= false) {
+		let copyText = fromTitle ?
+			textContainerJq.prop("title") :
+			textContainerJq.text()
+		;
 
 		console.debug("Writing text to clipboard: ", copyText);
 
