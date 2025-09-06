@@ -2,13 +2,23 @@
 	"_id": {
 		"$oid": "68b8f55a6cbfdc68d2d35d32"
 	},
-	"attachedFiles": [],
+	"attachedFiles": [
+		{
+			"$oid": "68b8f5216cbfdc68d2d35d30"
+		}],
 	"attributes": {},
 	"barcode": "032429253842",
-	"categories": [],
+	"categories": [
+		{
+			"$oid": "68b8f5216cbfdc68d2d35d30"
+		}],
 	"description": "",
 	"expiryWarningThreshold": "0.0",
-	"imageIds": [],
+	"imageIds": [
+		{
+			"$oid": "68b8f5216cbfdc68d2d35d30"
+		}
+	],
 	"keywords": [],
 	"name": "Test",
 	"notificationStatus": {
