@@ -78,7 +78,7 @@ quarkus:
   scheduler:
     metrics:
       enabled: true
-  health:
+  smallrye-health:
     openapi:
       included: true
   
@@ -112,11 +112,11 @@ quarkus:
       enabled: true
     port: 80
     ssl-port: 443
-  reactive-messaging:
+  messaging:
     health:
       enabled: true
-    metrics:
-      enabled: true
+#    metrics:
+#      enabled: true
 
 mp:
   messaging:
@@ -154,10 +154,10 @@ smallrye:
     http:
       port: 8080
       ssl-port: 8443
-      ssl:
-        certificate:
-          files: ../../../../dev/devTest-cert-cert.pem
-          key-files: ../../../../dev/devTest-cert-key.pem
+#      ssl:
+#        certificate:
+#          files: ../../../../dev/devTest-cert-cert.pem
+#          key-files: ../../../../dev/devTest-cert-key.pem
       auth:
         basic: true
     smallrye-jwt:

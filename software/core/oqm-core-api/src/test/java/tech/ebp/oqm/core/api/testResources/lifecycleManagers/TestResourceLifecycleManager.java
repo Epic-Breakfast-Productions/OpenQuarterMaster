@@ -2,7 +2,6 @@ package tech.ebp.oqm.core.api.testResources.lifecycleManagers;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import lombok.extern.slf4j.Slf4j;
-import org.testcontainers.Testcontainers;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -14,24 +13,14 @@ import java.util.Map;
  */
 @Slf4j
 public class TestResourceLifecycleManager implements QuarkusTestResourceLifecycleManager {
-	
-	public static final String EXTERNAL_AUTH_ARG = "externalAuth";
-	public static final String UI_TEST_ARG = "uiTest";
-	public static final String INT_TEST_ARG = "intTest";
-	
-	
 	//@Rule //TODO:: play with this in the test classes
-	/**
-	 * https://www.testcontainers.org/modules/webdriver_containers/
-	 */
-	private static final JaegerServerManager JAEGER_SERVER_MANAGER = new JaegerServerManager();
 	
 	private static final Collection<QuarkusTestResourceLifecycleManager> managersAsList = new ArrayList<>(){{
-		add(JAEGER_SERVER_MANAGER);
+//		add(JAEGER_SERVER_MANAGER);
 	}};
 	
 	static {
-		Testcontainers.exposeHostPorts(8081, 8085);
+//		Testcontainers.exposeHostPorts(8081, 8085);
 	}
 	
 	@Override

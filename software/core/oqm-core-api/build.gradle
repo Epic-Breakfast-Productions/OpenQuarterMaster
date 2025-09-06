@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '3.2.0'
+version '3.2.1-DEV'
 
 repositories {
 	mavenCentral()
@@ -64,7 +64,6 @@ dependencies {
 	testImplementation 'io.quarkus:quarkus-test-kafka-companion'
 	testImplementation 'net.datafaker:datafaker:2.4.4'
 	testImplementation 'org.assertj:assertj-core:3.27.4'
-	testImplementation 'io.jaegertracing:jaeger-testcontainers:0.7.0'
 }
 
 java {
