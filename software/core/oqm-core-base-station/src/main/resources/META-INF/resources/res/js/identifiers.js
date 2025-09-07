@@ -145,7 +145,7 @@ const GeneralIdentifiers = {
 		showInDiv(divJq, generalIdentifierArray){
 			for (const generalIdentifier of generalIdentifierArray) {
 				let newIdShow = $(`
-<div class="col-sm-6 col-md-4 col-lg-4 mb-1 generalIdentifierContainer">
+<div class="col-sm-6 col-md-6 col-lg-4 mb-1 generalIdentifierContainer">
 	<div class="card identifierDisplay">
 		<div class="card-header p-1 text-center">
 			<h5 class="card-title mb-0 identifierKey"></h5>
