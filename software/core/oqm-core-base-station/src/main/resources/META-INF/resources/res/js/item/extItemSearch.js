@@ -216,7 +216,7 @@ const ExtItemSearch = {
 					let newCarImageDir = $(
 						'    <div class="carousel-item">\n' +
 						'      <img src="" class="d-block w-100" alt="...">\n' +
-						'      <div class="carousel-caption d-none d-md-block">' +
+						'      <div class="carousel-caption d-md-block">' +
 						'          ' +
 						'      </div>' +
 						'    </div>\n'
