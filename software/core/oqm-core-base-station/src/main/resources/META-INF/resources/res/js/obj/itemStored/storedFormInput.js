@@ -21,7 +21,9 @@ const StoredFormInput = {
 	</div>
 
 	`+ PageComponents.Inputs.GeneralIds.generalIdInput + `
-
+	
+	`+PageComponents.Inputs.image+`
+	`+PageComponents.Inputs.file+`
 	`+ PageComponents.Inputs.keywords + `
 	`+ PageComponents.Inputs.attribute + `
 <!--	//TODO:: images/files-->

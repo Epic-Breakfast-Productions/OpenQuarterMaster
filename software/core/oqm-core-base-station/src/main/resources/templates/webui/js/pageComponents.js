@@ -4,6 +4,10 @@ const PageComponents = {
 ',
 		keywords: '{keywordInputLines}\
 ',
+		image: '{imageInputLines}\
+',
+		file: '{fileInputLines}\
+',
 		copyButton: '{copyButtonLines}\
 ',
 		GeneralIds: {

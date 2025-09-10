@@ -31,6 +31,8 @@ public class JsGetters {
 	private static String carouselLines = "";
 	private static String attInputLines;
 	private static String keywordInputLines;
+	private static String imageInputLines;
+	private static String fileInputLines;
 	private static String generalIdInputLines;
 	private static String generalIdAddedLines;
 	private static String copyTextButtonLines;
@@ -70,6 +72,10 @@ public class JsGetters {
 	Template attInputTemplate;
 	@Location("tags/inputs/keywordInput.html")
 	Template keywordInputTemplate;
+	@Location("tags/search/image/imageSelectFormInput.html")
+	Template imageInputTemplate;
+	@Location("tags/fileAttachment/fileAttachmentSelectFormInput.html")
+	Template fileInputTemplate;
 	@Location("tags/copyTextButton.html")
 	Template copyButtonTemplate;
 	@Location("tags/inputs/identifiers/generalIdInput.qute.html")
@@ -104,6 +110,20 @@ public class JsGetters {
 			keywordInputLines = this.templateToEscapedJs(keywordInputTemplate.instance());
 		}
 		return keywordInputLines;
+	}
+	
+	private String getImageInputLines() {
+		if (imageInputLines == null) {
+			imageInputLines = this.templateToEscapedJs(imageInputTemplate.instance());
+		}
+		return imageInputLines;
+	}
+	
+	private String getFileInputLines() {
+		if (fileInputLines == null) {
+			fileInputLines = this.templateToEscapedJs(fileInputTemplate.instance());
+		}
+		return fileInputLines;
 	}
 	
 	private String getCopyTextButtonLines() {
@@ -169,6 +189,8 @@ public class JsGetters {
 		return this.componentsJs
 				   .data("attInputLines", this.getAttInputLines())
 				   .data("keywordInputLines", this.getKeywordInputLines())
+				   .data("imageInputLines", this.getImageInputLines())
+				   .data("fileInputLines", this.getFileInputLines())
 				   .data("copyButtonLines", this.getCopyTextButtonLines())
 				   .data("generalIdInputLines", this.getGeneralIdInputLines())
 				   .data("generalIdAddedLines", this.getGeneralIdAddedLines())
