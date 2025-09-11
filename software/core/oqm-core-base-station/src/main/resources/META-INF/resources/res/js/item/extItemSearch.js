@@ -162,8 +162,8 @@ const ExtItemSearch = {
 					imageName = data[0].title;
 				}
 
-				curImagesSelectedDiv = ItemAddEdit.addEditItemImagesSelected;
-				selectImage(imageName, imageId);
+				ImageSearchSelect.curImagesSelectedDiv = ItemAddEdit.addEditItemImagesSelected;
+				ImageSearchSelect.selectImage(imageName, imageId);
 			}
 		});
 		return true;

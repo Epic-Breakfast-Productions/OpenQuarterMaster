@@ -109,6 +109,17 @@ const StoredView = {
 		return "";
 	},
 
+	getStoredImages(stored){
+		if(stored.imageIds.length) {
+			let output = $('<div class="col-sm-12 col-md-12 col-lg-6">'+Carousel.carouselTemplate+'</div>');
+
+			Carousel.processImagedObjectImages(stored, output.find(".carousel"));
+
+			return output;
+		}
+		return "";
+	},
+
 	getStoredAttachedFiles(stored){
 		if(stored.attachedFiles.length) {
 			let output = $('<div class="col-sm-12 col-md-12 col-lg-6">'+PageComponents.View.attachedFileList+'</div>');
@@ -205,6 +216,7 @@ const StoredView = {
 		}
 
 		newContentInfo.append(
+			StoredView.getStoredImages(stored),
 			StoredView.getStorageBlockAmountHeldView(stored, showCurrentlyStored),
 			StoredView.getStorageBlockIdentifyingDetailsView(stored),
 			StoredView.getStorageBlockConditionView(stored),
