@@ -21,7 +21,9 @@ const StoredFormInput = {
 	</div>
 
 	`+ PageComponents.Inputs.GeneralIds.generalIdInput + `
-
+	
+	`+PageComponents.Inputs.image+`
+	`+PageComponents.Inputs.file+`
 	`+ PageComponents.Inputs.keywords + `
 	`+ PageComponents.Inputs.attribute + `
 <!--	//TODO:: images/files-->
@@ -46,6 +48,8 @@ const StoredFormInput = {
 			GeneralIdentifiers.populateEdit(output.find(".generalIdInputContainer"), stored.generalIds);
 			KeywordAttEdit.addKeywordInputs(output.find(".keywordInputDiv"), stored.keywords);
 			KeywordAttEdit.addAttInputs(output.find(".attInputDiv"), stored.attributes);
+			ImageSearchSelect.addSelectedImages(output.find(".imagesSelected"), stored.imageIds);
+			FileAttachmentSearchSelect.populateFileInputFromObject(output, stored.attachedFiles);
 		}
 
 		return output;
@@ -136,6 +140,8 @@ const StoredFormInput = {
 			dataToAddTo["conditionNotes"] = commonInputsContainer.find('textarea[name="conditionNotes"]').val();
 			dataToAddTo["expires"] = TimeHelpers.getTsFromInput(commonInputsContainer.find('input[name="expires"]'));
 			KeywordAttEdit.addKeywordAttData(dataToAddTo, commonInputsContainer.find(".keywordInputDiv"), commonInputsContainer.find(".attInputDiv"));
+			ImageSearchSelect.addImagesToData(dataToAddTo, commonInputsContainer.find(".imagesSelected"));
+			dataToAddTo["attachedFiles"] = FileAttachmentSearchSelect.getFileListFromInput(commonInputsContainer.find(".fileAttachmentSelectInputTableContent"));
 		}
 		//amount inputs
 		let amountInputsContainer = containerJq.find(".amountStoredFormElements");
