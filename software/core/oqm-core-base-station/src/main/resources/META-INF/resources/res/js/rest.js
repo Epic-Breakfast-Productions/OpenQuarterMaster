@@ -1,6 +1,7 @@
 
 const Rest = {
 	wholeBody: $('body'),
+	webroot: Constants.rootPrefix,
 	apiRoot: Constants.rootPrefix + "/api",
 	passRoot: Constants.rootPrefix + "/api/passthrough",
 	componentRoot: Constants.rootPrefix + "/api/pageComponents",

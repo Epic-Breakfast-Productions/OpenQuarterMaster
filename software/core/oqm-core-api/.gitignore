@@ -37,3 +37,5 @@ nb-configuration.xml
 /generatedClients/
 
 !gradlw/wrapper/gradle-wrapper.jar
+
+*.hprof

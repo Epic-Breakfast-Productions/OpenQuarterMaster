@@ -30,11 +30,9 @@ quarkus:
     database: openQuarterMasterTest
     write-concern:
       journal: false
-  jaeger:
-    enabled: true
   smallrye-openapi:
     info-title: Open QuarterMaster Base Station API (TEST)
-  reactive-messaging:
+  messaging:
     health:
       enabled: true
     

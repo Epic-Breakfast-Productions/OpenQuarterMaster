@@ -49,7 +49,7 @@ public class HistoryEventNotificationService {
 	OutgoingNotificationService outgoingEventService;
 
 	private boolean outgoingEnabled() {
-		return this.outgoingServersEnabled && this.outgoingServers.isPresent() || this.kafkaServers.isPresent();
+		return this.outgoingServersEnabled && (this.outgoingServers.isPresent() || this.kafkaServers.isPresent());
 	}
 
 	/**

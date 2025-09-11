@@ -41,6 +41,7 @@ const ItemView = {
 	itemViewBarcodeContainer: $('#itemViewBarcodeContainer'),
 	itemViewBarcode: $("#itemViewBarcode"),
 
+	generalIdNumIds: $("#itemViewGeneralIdsNumIdsLabel"),
 	generalIdContent: $("#itemViewGeneralIdsAccordContent"),
 
 	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
@@ -98,6 +99,7 @@ const ItemView = {
 		ItemView.itemViewStorageType.text("");
 		ItemView.itemViewDescriptionContainer.hide();
 		ItemView.itemViewDescription.text("");
+		ItemView.generalIdNumIds.text("");
 		ItemView.generalIdContent.text("");
 		ItemView.itemViewTotal.text("");
 		ItemView.itemViewTotalLowStockThreshold.text("");
@@ -413,6 +415,7 @@ const ItemView = {
 					ItemView.itemViewDescriptionContainer.show();
 				}
 
+				ItemView.generalIdNumIds.text(itemData.generalIds.length);
 				GeneralIdentifiers.View.showInDiv(ItemView.generalIdContent, itemData.generalIds);
 
 				if (itemData.lowStockThreshold) {

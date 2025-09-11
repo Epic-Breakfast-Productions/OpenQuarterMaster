@@ -13,6 +13,9 @@ import static tech.ebp.oqm.core.api.model.object.ObjectUtils.OBJECT_MAPPER;
 public class UpgradingUtils {
 	
 	public static ArrayNode normalizeObjectList(ArrayNode list, String bsonInnerField) {
+		if(list == null || list.isNull()){
+			return list;
+		}
 		for(int i = 0; i < list.size(); i++){
 			JsonNode curNode = list.get(i);
 			if(curNode.isObject() && curNode.has(bsonInnerField)){

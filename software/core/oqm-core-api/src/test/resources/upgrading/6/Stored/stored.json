@@ -4,11 +4,17 @@
 	},
 	"_t": "tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored",
 	"amount": "{\"unit\":{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"},\"scale\":\"ABSOLUTE\",\"value\":10}",
-	"attachedFiles": [],
+	"attachedFiles": [
+		{
+			"$oid": "68b8f5216cbfdc68d2d35d30"
+		}],
 	"attributes": {},
 	"barcode": "032429253842",
 	"conditionNotes": "",
-	"imageIds": [],
+	"imageIds": [
+		{
+			"$oid": "68b8f5216cbfdc68d2d35d30"
+		}],
 	"item": {
 		"$oid": "68b8f55a6cbfdc68d2d35d32"
 	},

@@ -8,6 +8,7 @@ const FileAttachmentSearchSelect = {
 
 	setup(resultContainerJq){
 		console.log("Setting up for file attachment search select.");
+		ModalHelpers.setReturnModal(FileAttachmentSearchSelect.modal, resultContainerJq);
 		FileAttachmentAddEdit.setupForAdd();
 		this.curResultContainer = resultContainerJq;
 		this.selectSearch.submit();
@@ -62,7 +63,7 @@ FileAttachmentSearchSelect.selectSearch.on("submit", function (e){
 	console.log("URL search params: " + searchParams);
 
 	Rest.call({
-		spinnerContainer: imageSearchSelectModal.get(0),
+		spinnerContainer: FileAttachmentSearchSelect.modal.get(0),
 		url: Rest.passRoot + "/media/fileAttachment?" + searchParams,
 		method: 'GET',
 		failNoResponse: null,
@@ -71,7 +72,7 @@ FileAttachmentSearchSelect.selectSearch.on("submit", function (e){
 		extraHeaders: {
 			"accept": "text/html",
 			"actionType": "select",
-			"searchFormId": "imageSearchSelectForm",
+			"searchFormId": "fileAttachmentSearchSelectForm",
 			"inputIdPrepend": FileAttachmentSearchSelect.modal.attr("data-bs-inputIdPrepend"),
 			"otherModalId": FileAttachmentSearchSelect.modal.attr("data-bs-otherModalId")
 		},

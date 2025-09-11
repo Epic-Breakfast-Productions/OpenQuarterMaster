@@ -126,7 +126,7 @@ const ItemAddEdit = {
 			url: Rest.passRoot + "/inventory/item/" + itemId,
 			failMessagesDiv: ItemAddEdit.addEditItemFormMessages,
 			done: async function (data) {
-				addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds);
+				ImageSearchSelect.addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds);
 				KeywordAttEdit.addKeywordInputs(ItemAddEdit.addEditKeywordDiv, data.keywords);
 				KeywordAttEdit.addAttInputs(ItemAddEdit.addEditAttDiv, data.attributes);
 				FileAttachmentSearchSelect.populateFileInputFromObject(
@@ -318,7 +318,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 	);
 
 	KeywordAttEdit.addKeywordAttData(addEditData, ItemAddEdit.addEditKeywordDiv, ItemAddEdit.addEditAttDiv);
-	addImagesToData(addEditData, ItemAddEdit.addEditItemImagesSelected);
+	ImageSearchSelect.addImagesToData(addEditData, ItemAddEdit.addEditItemImagesSelected);
 
 	console.log("Data being submitted: " + JSON.stringify(addEditData));
 	let verb = "";
