@@ -30,7 +30,7 @@ import java.util.Optional;
 @Produces(MediaType.TEXT_HTML)
 public class JsGetters {
 	
-	private static String carouselLines = "";
+	private static String carouselLines;
 	private static String attInputLines;
 	private static String keywordInputLines;
 	private static String imageInputLines;

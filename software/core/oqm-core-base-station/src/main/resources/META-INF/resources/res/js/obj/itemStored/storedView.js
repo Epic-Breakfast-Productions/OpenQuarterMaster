@@ -8,7 +8,7 @@ const StoredView = {
 	viewModalHistory: $("#itemStoredHistory"),
 
 	getBlockViewCell(name, ...valueJqs) {
-		let output = $('<div class="col-sm-4 col-4 col-xs-6">' +
+		let output = $('<div class="col-sm-3 col-3 col-xs-6">' +
 			'<h5 class="storedDataTitle"></h5>' +
 			'<div class="storedDataContainer"></div>' +
 			'</div>');
@@ -111,7 +111,7 @@ const StoredView = {
 
 	getStoredImages(stored){
 		if(stored.imageIds.length) {
-			let output = $('<div class="col-sm-12 col-md-12 col-lg-6">'+Carousel.carouselTemplate+'</div>');
+			let output = $('<div class="col-sm-6 col-md-6 col-lg-3">'+Carousel.carouselTemplate+'</div>');
 
 			Carousel.processImagedObjectImages(stored, output.find(".carousel"));
 
