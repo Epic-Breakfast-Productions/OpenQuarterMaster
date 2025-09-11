@@ -16,5 +16,9 @@ const PageComponents = {
 			generalIdAdded: '{generalIdAddedLines}\
 '
 		}
+	},
+	View: {
+		attachedFileList: '{attachedFileListLines}\
+',
 	}
 }

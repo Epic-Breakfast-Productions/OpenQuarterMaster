@@ -19,6 +19,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -36,6 +38,8 @@ public class JsGetters {
 	private static String generalIdInputLines;
 	private static String generalIdAddedLines;
 	private static String copyTextButtonLines;
+	
+	private static String attachedFileListLines;
 	
 	@Getter
 	@HeaderParam("x-forwarded-prefix")
@@ -82,6 +86,8 @@ public class JsGetters {
 	Template generalIdInputTemplate;
 	@Location("tags/inputs/identifiers/addedGeneralIdentifier.qute.html")
 	Template generalIdAddedTemplate;
+	@Location("tags/fileAttachment/FileAttachmentObjectView.html")
+	Template fileAttachmentObjectViewTemplate;
 	
 	private String templateToEscapedJs(TemplateInstance templateInstance) {
 		return templateInstance
@@ -147,6 +153,13 @@ public class JsGetters {
 		return generalIdAddedLines;
 	}
 	
+	private String getAttachedFileListLines() {
+		if (attachedFileListLines == null) {
+			attachedFileListLines = this.templateToEscapedJs(fileAttachmentObjectViewTemplate.instance());
+		}
+		return attachedFileListLines;
+	}
+	
 	@GET
 	@Path("constants.js")
 	@PermitAll
@@ -194,6 +207,7 @@ public class JsGetters {
 				   .data("copyButtonLines", this.getCopyTextButtonLines())
 				   .data("generalIdInputLines", this.getGeneralIdInputLines())
 				   .data("generalIdAddedLines", this.getGeneralIdAddedLines())
+				   .data("attachedFileListLines", this.getAttachedFileListLines())
 				   .createUni();
 	}
 }

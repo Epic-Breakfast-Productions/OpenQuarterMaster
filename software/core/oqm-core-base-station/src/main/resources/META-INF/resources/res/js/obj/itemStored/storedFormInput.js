@@ -48,6 +48,7 @@ const StoredFormInput = {
 			GeneralIdentifiers.populateEdit(output.find(".generalIdInputContainer"), stored.generalIds);
 			KeywordAttEdit.addKeywordInputs(output.find(".keywordInputDiv"), stored.keywords);
 			KeywordAttEdit.addAttInputs(output.find(".attInputDiv"), stored.attributes);
+			FileAttachmentSearchSelect.populateFileInputFromObject(output, stored.attachedFiles);
 		}
 
 		return output;
@@ -138,6 +139,7 @@ const StoredFormInput = {
 			dataToAddTo["conditionNotes"] = commonInputsContainer.find('textarea[name="conditionNotes"]').val();
 			dataToAddTo["expires"] = TimeHelpers.getTsFromInput(commonInputsContainer.find('input[name="expires"]'));
 			KeywordAttEdit.addKeywordAttData(dataToAddTo, commonInputsContainer.find(".keywordInputDiv"), commonInputsContainer.find(".attInputDiv"));
+			dataToAddTo["attachedFiles"] = FileAttachmentSearchSelect.getFileListFromInput(commonInputsContainer.find(".fileAttachmentSelectInputTableContent"));
 		}
 		//amount inputs
 		let amountInputsContainer = containerJq.find(".amountStoredFormElements");

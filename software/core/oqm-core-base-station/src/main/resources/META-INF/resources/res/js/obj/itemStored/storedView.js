@@ -37,22 +37,6 @@ const StoredView = {
 		}
 		return "";
 	},
-	getStorageBlockBarcodeView(stored, index = false) {
-		//TODO:: rework
-		if (stored.barcode) {
-			let url = "/api/media/code/barcode/" + encodeURIComponent(stored.barcode);
-
-			if (index !== false) {
-				url += "/" + index;
-			}
-
-			return StoredView.getBlockViewCell(
-				"Barcode",
-				$('<img src="' + url + '" title="Stored item barcode" alt="Stored item barcode" class="barcodeViewImg">')
-			);
-		}
-		return "";
-	},
 	getStorageBlockIdentifyingDetailsView(stored) {
 		if (stored.type.includes("TRACKED") && stored.identifyingDetails) {
 			return StoredView.getSimpleBlockViewCell("Identifying Details", stored.identifyingDetails);
@@ -121,6 +105,17 @@ const StoredView = {
 				"Attributes",
 				keywordContainer
 			);
+		}
+		return "";
+	},
+
+	getStoredAttachedFiles(stored){
+		if(stored.attachedFiles.length) {
+			let output = $('<div class="col-sm-12 col-md-12 col-lg-6">'+PageComponents.View.attachedFileList+'</div>');
+
+			FileAttachmentView.setupObjectView(output, stored.attachedFiles, null);
+
+			return output;
 		}
 		return "";
 	},
@@ -211,13 +206,13 @@ const StoredView = {
 
 		newContentInfo.append(
 			StoredView.getStorageBlockAmountHeldView(stored, showCurrentlyStored),
-			StoredView.getStorageBlockBarcodeView(stored, index),
 			StoredView.getStorageBlockIdentifyingDetailsView(stored),
 			StoredView.getStorageBlockConditionView(stored),
 			StoredView.getStorageBlockExpiresView(stored),
 			StoredView.getStoredKeywords(stored),
 			StoredView.getStoredAtts(stored),
-			StoredView.getStoredGeneralIds(stored)
+			StoredView.getStoredGeneralIds(stored),
+			StoredView.getStoredAttachedFiles(stored)
 		);
 		//TODO:: images, files
 
