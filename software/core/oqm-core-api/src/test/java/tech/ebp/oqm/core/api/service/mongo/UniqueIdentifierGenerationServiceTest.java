@@ -80,7 +80,12 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("{inc}{rand}").build(), "^00001[0-9a-zA-Z]{3}$"),
 			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("foo-{inc}{rand}-bar").build(), "^foo-00001[0-9a-zA-Z]{3}-bar$"),
 			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("foo-{inc}-{rand}-bar").build(), "^foo-00001-[0-9a-zA-Z]{3}-bar$"),
-			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("foo-{inc}-some-{rand}-bar").build(), "^foo-00001-some-[0-9a-zA-Z]{3}-bar$")
+			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("foo-{inc}-some-{rand}-bar").build(), "^foo-00001-some-[0-9a-zA-Z]{3}-bar$"),
+			/*
+			 * Other
+			 */
+			//encoding
+			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("foo-{inc}").encoded(true).build(), "^Zm9vLTAwMDAx$")
 		);
 	}
 	
@@ -187,27 +192,28 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 		UniqueIdentifierGenerator gen = UniqueIdentifierGenerator.builder()
 											.generatorName(FAKER.name().name())
 											.idFormat("{inc}")
+											.encoded(true)
 											.build();
 		this.uniqueIdentifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen);
 		
 		List<Future<List<String>>> futures = new ArrayList<>(numThreads);
 		SortedSet<String> results = new TreeSet<>();
 		
-		ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
-		
-		TestThread.Builder threadBuilder = TestThread.builder()
-											   .generatorId(gen.getId())
-											   .numIterations(numIterations)
-											   .uniqueIdentifierGenerationService(this.uniqueIdentifierGenerationService);
-		
-		for (int i = 1; i <= numThreads; i++) {
-			threadBuilder.threadId("testThread-" + i);
+		try(ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+			TestThread.Builder threadBuilder = TestThread.builder()
+												   .generatorId(gen.getId())
+												   .numIterations(numIterations)
+												   .uniqueIdentifierGenerationService(this.uniqueIdentifierGenerationService);
 			
-			futures.add(executor.submit(threadBuilder.build()));
-		}
-		executor.shutdown();
-		while (!executor.awaitTermination(1, TimeUnit.MINUTES)) {
-			log.info("Still waiting on threads...");
+			for (int i = 1; i <= numThreads; i++) {
+				threadBuilder.threadId("testThread-" + i);
+				
+				futures.add(executor.submit(threadBuilder.build()));
+			}
+			executor.shutdown();
+			while (!executor.awaitTermination(1, TimeUnit.MINUTES)) {
+				log.info("Still waiting on threads...");
+			}
 		}
 		
 		for (Future<List<String>> future : futures) {

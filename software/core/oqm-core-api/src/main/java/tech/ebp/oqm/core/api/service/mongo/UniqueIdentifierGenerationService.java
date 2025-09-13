@@ -13,6 +13,9 @@ import tech.ebp.oqm.core.api.model.rest.search.UniqueIdGeneratorSearch;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -182,12 +185,27 @@ public class UniqueIdentifierGenerationService extends MongoObjectService<Unique
 		
 		sb.append(format, lastEnd.get(), format.length());
 		
-		return sb.toString();
+		String newIdentifier = sb.toString();
+		
+		if(generator.isEncoded()){
+			newIdentifier = Base64.getEncoder().withoutPadding().encodeToString(newIdentifier.getBytes());
+		}
+		
+		return newIdentifier;
 	}
 	
 	
 	public UniqueIdentifierGenerationService() {
 		super(UniqueIdentifierGenerator.class);
+	}
+	
+	@Override
+	public Set<String> getDisallowedUpdateFields() {
+		Set<String> output = new HashSet<>(super.getDisallowedUpdateFields());
+		output.add("idFormat");
+		output.add("lastIncremented");
+		output.add("encoded");
+		return output;
 	}
 	
 	
