@@ -1,10 +1,10 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.identifiers;
+package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique;
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,7 +14,6 @@ import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 
 import java.math.BigInteger;
-import java.util.List;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -46,12 +45,17 @@ public class UniqueIdentifierGenerator extends MainObject {
 	@lombok.Builder.Default
 	private BigInteger lastIncremented = null;
 	
+	/**
+	 * If this generator uses an incrementor or not.
+	 * @return
+	 */
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean hasIncrement(){
 		return (this.lastIncremented != null);
 	}
 	
 	/**
-	 * If whether or not to base64 encode the resulting string
+	 * If whether or not to base64 encode the resulting id string
 	 */
 	@lombok.Builder.Default
 	private boolean encoded = false;

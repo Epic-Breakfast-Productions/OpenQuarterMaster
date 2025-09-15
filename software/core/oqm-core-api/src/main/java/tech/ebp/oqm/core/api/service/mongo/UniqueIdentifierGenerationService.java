@@ -7,7 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.UniqueIdentifierGenerator;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdentifierGenerator;
 import tech.ebp.oqm.core.api.model.rest.search.UniqueIdGeneratorSearch;
 
 import java.math.BigInteger;

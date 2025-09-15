@@ -13,6 +13,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.ItemNotificationStatus;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
@@ -71,7 +72,19 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 */
 	@lombok.Builder.Default
 	private LinkedHashSet<GeneralId> generalIds = new LinkedHashSet<>();
-
+	
+	/**
+	 * Unique ID's for this particular item.
+	 */
+	@lombok.Builder.Default
+	private LinkedHashSet<UniqueId> uniqueIds = new LinkedHashSet<>();
+	
+	/**
+	 * Unique ID generators for this particular item's stored.
+	 */
+	@lombok.Builder.Default
+	private LinkedHashSet<ObjectId> uniqueIdGenerators = new LinkedHashSet<>();
+	
 	/**
 	 * Categories this item belongs to.
 	 */
