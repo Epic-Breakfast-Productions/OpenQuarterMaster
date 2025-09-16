@@ -41,7 +41,7 @@ import java.util.Optional;
 
 @Slf4j
 @Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/identifiers/unique/generator")
-@Tags({@Tag(name = "Storage Blocks", description = "Endpoints for managing Storage Blocks.")})
+@Tags({@Tag(name = "Unique IDs / Generation", description = "Endpoints for managing Unique ID Generators, and associated unique id endpoints.")})
 @RequestScoped
 public class UniqueIdGeneratorCrud extends MainObjectProvider<UniqueIdentifierGenerator, UniqueIdGeneratorSearch> {
 	
