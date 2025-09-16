@@ -11,6 +11,10 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ToGenerateUniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdentifierGenerator;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;
@@ -35,6 +39,9 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 
 	@Inject
 	InventoryItemTestObjectCreator itemTestObjectCreator;
+	
+	@Inject
+	UniqueIdentifierGenerationService uigs;
 
 	@Override
 	protected InventoryItem getTestObject() {
@@ -202,6 +209,80 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 
 		Exception exception = assertThrows(ValidationException.class, () -> this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, null, newId, updates, user));
 		log.info("Exception: {}", exception.getMessage());
+	}
+	
+	@Test
+	public void testGeneratedUniqueIdInAdd(){
+		User user = this.getTestUserService().getTestUser();
+		InventoryItem item = this.getTestObject();
+		
+		ObjectId uig = this.uigs.add(DEFAULT_TEST_DB_NAME, UniqueIdentifierGenerator.builder().idFormat("{inc}").build(), user);
+		
+		item.getUniqueIds().add(
+			ToGenerateUniqueId.builder().generateFrom(uig)
+				.label("SKU").build()
+		);
+		
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		
+		item = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newId);
+		
+		assertEquals(1, item.getUniqueIds().size());
+		
+		UniqueId id = item.getUniqueIds().getFirst();
+		log.info("generated id: {}", id);
+		assertInstanceOf(GeneratedUniqueId.class, id);
+	}
+	
+	@Test
+	public void testOtherSameIdDiffGeneratorUniqueIdInAdd(){
+		User user = this.getTestUserService().getTestUser();
+		InventoryItem item1 = this.getTestObject();
+		InventoryItem item2 = this.getTestObject();
+		
+		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, UniqueIdentifierGenerator.builder().idFormat("{inc}").build(), user);
+		ObjectId uig2 = this.uigs.add(DEFAULT_TEST_DB_NAME, UniqueIdentifierGenerator.builder().idFormat("{inc}").build(), user);
+		
+		item1.getUniqueIds().add(
+			ToGenerateUniqueId.builder().generateFrom(uig1)
+				.label("SKU").build()
+		);
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item1, user);
+		
+		item2.getUniqueIds().add(
+			ToGenerateUniqueId.builder().generateFrom(uig2)
+				.label("SKU").build()
+		);
+		newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item2, user);
+		
+		//		item1 = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newId);
+		//
+		//		assertEquals(1, item.getUniqueIds().size());
+		//
+		//		UniqueId id = item.getUniqueIds().getFirst();
+		//		log.info("generated id: {}", id);
+		//		assertInstanceOf(GeneratedUniqueId.class, id);
+	}
+	
+	@Test
+	public void testOtherSameIdSameGeneratorUniqueIdInAdd(){
+		User user = this.getTestUserService().getTestUser();
+		InventoryItem item1 = this.getTestObject();
+		InventoryItem item2 = this.getTestObject();
+		
+		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, UniqueIdentifierGenerator.builder().idFormat("{inc}").build(), user);
+		
+		item1.getUniqueIds().add(
+			ToGenerateUniqueId.builder().generateFrom(uig1)
+				.label("SKU").build()
+		);
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item1, user);
+		item1 = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newId);
+		
+		item2.getUniqueIds().add(
+			item1.getUniqueIds().getFirst()
+		);
+		assertThrows(ValidationException.class, ()->this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item2, user));
 	}
 
 	//TODO:: tests with images, file?
