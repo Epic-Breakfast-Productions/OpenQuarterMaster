@@ -126,6 +126,12 @@ Ingests:
 							{/if}
 						</a>
 						{/if}
+						<a class="dropdown-item {#if page is 'uniqueIdGenerators'}active{/if}" href="{rootPrefix}/uniqueIdGenerators">
+							{#icons/uniqueIdGenerators /} Unique Id Generators
+							{#if page is 'uniqueIdGenerators'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">
