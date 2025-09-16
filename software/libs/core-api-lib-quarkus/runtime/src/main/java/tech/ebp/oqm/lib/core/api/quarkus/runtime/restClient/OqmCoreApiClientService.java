@@ -16,6 +16,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.*;
 
 import java.util.Currency;
 import java.util.List;
+import java.util.Optional;
 
 import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.*;
 
@@ -49,6 +50,81 @@ public interface OqmCoreApiClientService {
 	@Path("/api/media/code/generalId/{type}/{value}")
 	@Produces("image/svg+xml")
 	Uni<String> generalIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String generalIdType, @PathParam("value") String data);
+	//</editor-fold>
+	
+	//<editor-fold desc="Unique IDs">
+	@GET
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/unique/generator")
+	Uni<ObjectNode> uniqueIdGeneratorSearch(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@BeanParam UniqueIdGeneratorSearch storageBlockSearch
+	);
+	
+	@POST
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/unique/generator")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<String> uniqueIdGeneratorAdd(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		ObjectNode newIdGenerator
+	);
+	
+	@GET
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/unique/generator/{generatorId}")
+	Uni<ObjectNode> uniqueIdGeneratorGet(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("generatorId") String storageBlockId
+	);
+	
+	@PUT
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/unique/generator/{generatorId}")
+	Uni<ObjectNode> uniqueIdGeneratorUpdate(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("generatorId") String generatorId,
+		ObjectNode updates
+	);
+	
+	@DELETE
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/unique/generator/{generatorId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> uniqueIdGeneratorDelete(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("generatorId") String generatorId
+	);
+	
+	@GET
+	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{generatorId}/history")
+	Uni<ObjectNode> uniqueIdGeneratorGetHistory(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("generatorId") String storageBlockId,
+		@BeanParam HistorySearch historySearch
+	);
+	
+	@GET
+	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{generatorId}/generate")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> uniqueIdGenerate(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("generatorId") String generatorId,
+		@QueryParam("num") Integer numToGenerate
+	);
+	
+	@GET
+	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{generatorId}/generate")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> uniqueIdGenerate(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("generatorId") String generatorId
+	);
+	
 	//</editor-fold>
 	
 	//<editor-fold desc="Interacting Entity">
@@ -733,6 +809,8 @@ public interface OqmCoreApiClientService {
 		@BeanParam HistorySearch searchObject
 	);
 	//</editor-fold>
+	
+	
 	
 	//<editor-fold desc="Inventory Management">
 	@GET
