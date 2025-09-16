@@ -66,6 +66,15 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		super(objectMapper, mongoClient, database, oqmDatabaseService, collectionName, clazz);
 	}
 	
+	/**
+	 * Any data massaging needed to do just before insertion/updates.
+	 * @param object
+	 */
+	public void massageIncomingData(String oqmDbIdOrName, @NonNull T object) {
+		//nothing to do
+	}
+	
+	
 	private FindIterable<T> find(String oqmDbIdOrName, ClientSession session, Bson filter) {
 		log.debug("Filter for find: {}", filter);
 		FindIterable<T> output;
@@ -436,6 +445,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		log.debug("New object: {}", object);
 		
 		this.ensureObjectValid(oqmDbIdOrName, true, object, session);
+		this.massageIncomingData(oqmDbIdOrName, object);
 		
 		InsertOneResult result;
 		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);

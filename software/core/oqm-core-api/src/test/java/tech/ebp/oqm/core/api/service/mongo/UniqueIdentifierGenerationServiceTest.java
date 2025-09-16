@@ -12,10 +12,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdGenResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdentifierGenerator;
+import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import java.math.BigInteger;
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.SortedSet;
@@ -49,7 +53,7 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 			//uuid
 			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("{uuid}").build(), "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"),
 			//random
-			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("{rand}").build(), "^[0-9a-zA-Z]{3}$"),
+			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("{rand}").build(), "^[0-9a-zA-Z]{5}$"),
 			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("{rand;1}").build(), "^[0-9a-zA-Z]{1}$"),
 			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("{rand;5}").build(), "^[0-9a-zA-Z]{5}$"),
 			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("{rand;50}").build(), "^[0-9a-zA-Z]{50}$"),
@@ -71,10 +75,10 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("{inc}-foo").build(), "^00001-foo$"),
 			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("bar-{inc}-foo").build(), "^bar-00001-foo$"),
 			//multiple
-			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("{inc}{rand}").build(), "^00001[0-9a-zA-Z]{3}$"),
-			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("foo-{inc}{rand}-bar").build(), "^foo-00001[0-9a-zA-Z]{3}-bar$"),
-			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("foo-{inc}-{rand}-bar").build(), "^foo-00001-[0-9a-zA-Z]{3}-bar$"),
-			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("foo-{inc}-some-{rand}-bar").build(), "^foo-00001-some-[0-9a-zA-Z]{3}-bar$"),
+			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("{inc}{rand}").build(), "^00001[0-9a-zA-Z]{5}$"),
+			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("foo-{inc}{rand}-bar").build(), "^foo-00001[0-9a-zA-Z]{5}-bar$"),
+			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("foo-{inc}-{rand}-bar").build(), "^foo-00001-[0-9a-zA-Z]{5}-bar$"),
+			Arguments.of(UniqueIdentifierGenerator.builder().idFormat("foo-{inc}-some-{rand}-bar").build(), "^foo-00001-some-[0-9a-zA-Z]{5}-bar$"),
 			/*
 			 * Other
 			 */
@@ -110,21 +114,12 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 		);
 	}
 	
-	public static Stream<Arguments> getThreadTestParams() {
-		return Stream.of(
-			Arguments.of(2, 10),
-			Arguments.of(3, 10),
-			Arguments.of(5, 10),
-			Arguments.of(10, 10),
-			Arguments.of(20, 20)
-		);
-	}
 	
 	@ParameterizedTest
 	@MethodSource("getGenerationValidTestArgs")
 	public void validFormatTest(UniqueIdentifierGenerator generator, String expectedFormat) {
 		StopWatch sw = StopWatch.createStarted();
-		String result = UniqueIdentifierGenerationService.getNextUniqueId(generator);
+		String result = UniqueIdentifierGenerationService.getNextNUniqueIds(generator);
 		sw.stop();
 		log.info("Generated ID in {}: {}", sw, result);
 		
@@ -138,7 +133,7 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 	@ParameterizedTest
 	@MethodSource("getGenerationInValidTestArgs")
 	public void invalidFormatTest(UniqueIdentifierGenerator generator) {
-		assertThrows(IllegalArgumentException.class, ()->UniqueIdentifierGenerationService.getNextUniqueId(generator));
+		assertThrows(IllegalArgumentException.class, ()->UniqueIdentifierGenerationService.getNextNUniqueIds(generator));
 	}
 	
 	@Test
@@ -147,14 +142,15 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 											.generatorName(FAKER.name().name())
 											.idFormat("{dt}-{rand}")
 											.build();
+		User testUser = TestUserService.getInstance().getTestUser();
+		this.uniqueIdentifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
 		
-		this.uniqueIdentifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen);
-		
-		String output = this.uniqueIdentifierGenerationService.getNextUniqueId(DEFAULT_TEST_DB_NAME, gen.getId());
+		UniqueIdGenResult output = this.uniqueIdentifierGenerationService.getNextNUniqueIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
 		
 		log.info("Generated ID: {}", output);
 		
 		assertNotNull(output);
+		assertEquals(1, output.getGeneratedIds().size());
 	}
 	
 	@Test
@@ -163,42 +159,68 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 											.generatorName(FAKER.name().name())
 											.idFormat("{inc}")
 											.build();
+		User testUser = TestUserService.getInstance().getTestUser();
+		this.uniqueIdentifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
 		
-		this.uniqueIdentifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen);
-		
-		String output = this.uniqueIdentifierGenerationService.getNextUniqueId(DEFAULT_TEST_DB_NAME, gen.getId());
+		UniqueIdGenResult output = this.uniqueIdentifierGenerationService.getNextNUniqueIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
 		
 		log.info("Generated ID: {}", output);
 		
-		assertEquals("00001", output);
+		assertEquals("00001", output.getGeneratedIds().getFirst());
 		
-		output = this.uniqueIdentifierGenerationService.getNextUniqueId(DEFAULT_TEST_DB_NAME, gen.getId());
+		output = this.uniqueIdentifierGenerationService.getNextNUniqueIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
 		
 		log.info("Second Generated ID: {}", output);
 		
-		assertEquals("00002", output);
+		assertEquals("00002", output.getGeneratedIds().getFirst());
 	}
 	
 	
+	public static Stream<Arguments> getThreadTestParams() {
+		List<Arguments> output = new ArrayList<>();
+		
+		for(int curNumThreads : List.of(2, 5, 10, 20)){
+			for(int curNumIterations : List.of(10, 20)){
+				for(int curNumPerIteration : List.of(1, 2, 5, 10, 20)){
+					output.add(Arguments.of("{rand}", curNumThreads, curNumIterations, curNumPerIteration));
+				}
+			}
+		}
+		
+		for(int curNumThreads : List.of(2, 10)){
+			for(int curNumIterations : List.of(10)){
+				for(int curNumPerIteration : List.of(1, 2, 5, 10, 20)){
+					output.add(Arguments.of("{inc}", curNumThreads, curNumIterations, curNumPerIteration));
+				}
+			}
+		}
+		
+		return output.stream();
+	}
+	
 	@ParameterizedTest
 	@MethodSource("getThreadTestParams")
-	public void incrementThreadTest(int numThreads, int numIterations) throws InterruptedException, ExecutionException {
+	public void generateThreadTest(String format, int numThreads, int numIterations, int numPerIteration) throws InterruptedException, ExecutionException {
 		UniqueIdentifierGenerator gen = UniqueIdentifierGenerator.builder()
 											.generatorName(FAKER.name().name())
-											.idFormat("{inc}")
-											.encoded(true)
+											.idFormat(format)
+//											.encoded(true)
 											.build();
-		this.uniqueIdentifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen);
+		User testUser = TestUserService.getInstance().getTestUser();
+		this.uniqueIdentifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
 		
-		List<Future<List<String>>> futures = new ArrayList<>(numThreads);
+		List<Future<List<UniqueIdGenResult>>> futures = new ArrayList<>(numThreads);
 		SortedSet<String> results = new TreeSet<>();
 		
+		StopWatch sw;
 		try(ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
 			TestThread.Builder threadBuilder = TestThread.builder()
 												   .generatorId(gen.getId())
 												   .numIterations(numIterations)
+												   .numPerIteration(numPerIteration)
 												   .uniqueIdentifierGenerationService(this.uniqueIdentifierGenerationService);
 			
+			sw = StopWatch.createStarted();
 			for (int i = 1; i <= numThreads; i++) {
 				threadBuilder.threadId("testThread-" + i);
 				
@@ -208,35 +230,57 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 			while (!executor.awaitTermination(1, TimeUnit.MINUTES)) {
 				log.info("Still waiting on threads...");
 			}
+			sw.stop();
 		}
 		
-		for (Future<List<String>> future : futures) {
-			results.addAll(future.get());
+		for (Future<List<UniqueIdGenResult>> future : futures) {
+			List<UniqueIdGenResult> curResultList = future.get();
+			
+			for (UniqueIdGenResult curResult : curResultList) {
+				assertEquals(numPerIteration, curResult.getGeneratedIds().size());
+				results.addAll(curResult.getGeneratedIds());
+			}
 		}
 		
-		assertEquals(numIterations * numThreads, results.size());
+		assertEquals(numIterations * numThreads * numPerIteration, results.size());
+		
+		Duration avgDurationPerId = sw.getDuration().dividedBy(results.size());
+		log.info("Generated {} results in {} ms ({} per id average)", results.size(), sw.getDuration(), avgDurationPerId);
+		
+		if(format.equals("{inc}")){
+			
+			BigInteger expected = BigInteger.ONE;
+			for(String curResultStr : results){
+				BigInteger curResult = new BigInteger(curResultStr);
+				
+				assertEquals(expected, curResult, "Was not a contiguous set of ids; expected: " + expected.toString() + " Got: " + curResult.toString());
+				
+				expected = expected.add(BigInteger.ONE);
+			}
+		}
 	}
 	
 	@Builder
 	@Slf4j
 	@AllArgsConstructor
-	static class TestThread implements Callable<List<String>> {
+	static class TestThread implements Callable<List<UniqueIdGenResult>> {
 		
 		private String threadId;
 		private ObjectId generatorId;
 		private UniqueIdentifierGenerationService uniqueIdentifierGenerationService;
 		private int numIterations;
+		private int numPerIteration;
 		
 		@SneakyThrows
 		@Override
-		public List<String> call() {
+		public List<UniqueIdGenResult> call() {
 			log.info("Running test thread {}", this.threadId);
 			
-			List<String> results = new ArrayList<>(this.numIterations);
+			List<UniqueIdGenResult> results = new ArrayList<>(this.numIterations);
 			
 			for (int i = 1; i <= this.numIterations; i++) {
 				results.add(
-					this.uniqueIdentifierGenerationService.getNextUniqueId(DEFAULT_TEST_DB_NAME, this.generatorId)
+					this.uniqueIdentifierGenerationService.getNextNUniqueIds(DEFAULT_TEST_DB_NAME, this.generatorId, this.numPerIteration)
 				);
 			}
 			log.info("DONE running test thread {}", this.threadId);
