@@ -5,8 +5,8 @@
     {#pageContent}
     <div class="row mb-2">
         <div class="col d-grid gap-2">
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditItemCategoryModal"
-                    onclick="Category.setupAddEditItemCategoryForAdd();">{#icons/add}{/icons/add} Add Category
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#uniqueIdGeneratorAddEditModal"
+                    onclick="">{#icons/add}{/icons/add} Add Generator
             </button>
         </div>
     </div>
@@ -23,7 +23,7 @@
                 <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                         aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                     <div class="accordion-body">
-                        {#search/category/searchForm id='mainCategorySearch' rootPrefix=rootPrefix /}
+                        {#object/uniqueIdGenerator/searchForm id='mainUniqueIdGeneratorSearch' rootPrefix=rootPrefix /}
                     </div>
                 </div>
             </div>
@@ -32,12 +32,13 @@
     <div class="row">
         <div class="col table-responsive">
             <table class=" table table-bordered table-striped table-hover table-sm">
-                {#search/category/searchResults actionType='full' searchFormId='mainCategorySearch' searchResults=searchResults rootPrefix=rootPrefix /}
+                {#object/uniqueIdGenerator/searchResults actionType='full' searchFormId='mainCategorySearch' searchResults=searchResults rootPrefix=rootPrefix /}
             </table>
         </div>
     </div>
     {/pageContent}
     {#modals}
+    	{#object/uniqueIdGenerator/addEditModal /}
     {/modals}
     {#scripts}
         <script src="{rootPrefix}/res/js/search.js"></script>

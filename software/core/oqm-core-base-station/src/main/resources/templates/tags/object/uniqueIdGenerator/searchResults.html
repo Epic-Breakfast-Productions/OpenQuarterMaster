@@ -1,0 +1,91 @@
+{!
+  Template to show storage search results. Gives the contents of a table, but not the main table tag
+
+  Ingests:
+  - actionType - the action to take. "full" or "select"
+  - storageService - the service to get storage blocks
+  - searchResults
+  - searchFormId - the id of the search form controlling the results
+  - inputIdPrepend - the prepend for the id of the inputs to set the data of
+  - otherModalId - the id of the other modal to open when selected
+
+  if `actionType` is "select", callback will be "selectStorageBlock('<block name>', '<block id>', '<inputIdPrepend>')" on the select button
+!}
+<thead>
+<tr>
+	<td colspan="8" class="text-center">
+		{#paginationButtons searchFormId = searchFormId searchResults = searchResults /}
+	</td>
+</tr>
+<tr>
+	<th scope="col" style="">Name</th>
+	<th scope="col">Format</th>
+	<th scope="col">Encoded</th>
+	<th scope="col">Last Increment</th>
+	<th scope="col" style="width: 125px;">Actions</th>
+</tr>
+</thead>
+<tbody>
+{#if searchResults.get("empty").asBoolean()}
+<tr>
+	<td colspan="8" class="text-center">
+		<h2>
+			No Unique ID Generators Found
+		</h2>
+	</td>
+</tr>
+{#else}
+	{#for result in searchResults.get("results")}
+		{#let id = result.get("id").asText()}
+			<tr class="align-middle">
+				
+				<td>
+					{#if !result.get("type").isNull()}
+						{result.get("name").asText()}
+					{/if}
+				</td>
+				<td>
+					{result.get("idFormat").asText()}
+				</td>
+				<td>
+					{#if result.get("encoding").asBoolean()}
+						Yes
+					{#else}
+						No
+					{/if}
+				</td>
+				<td>
+					{#if !result.get("lastIncremented").isNull()}
+						{result.get("lastIncremented").asText()}
+					{/if}
+				</td>
+				{#if actionType == 'full'}
+					<td>
+						<button type="button" class="btn btn-sm btn-danger" title="Edit" onclick="removeItemCheckout('{id}');">
+							{#icons/edit /}
+						</button>
+						<button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeItemCheckout('{id}');">
+							{#icons/remove /}
+						</button>
+					</td>
+				{#else if actionType == 'select'}
+					<td class="d-grid gap-2">
+						<button type="button" class="btn btn-sm btn-success" title="Select"
+							data-bs-toggle="modal" data-bs-target="#{otherModalId}"
+							onclick="">
+							{#icons/select /} Select
+						</button>
+					</td>
+				{/if}
+			</tr>
+		{/let}
+	{/for}
+{/if}
+</tbody>
+<tfoot>
+<tr>
+	<td colspan="8" class="text-center">
+		{#paginationButtons searchFormId = searchFormId searchResults = searchResults /}
+	</td>
+</tr>
+</tfoot>
