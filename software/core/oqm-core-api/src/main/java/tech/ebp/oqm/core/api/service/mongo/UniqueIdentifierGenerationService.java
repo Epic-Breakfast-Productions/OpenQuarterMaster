@@ -35,9 +35,12 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 	
 	
 	private static final Pattern PARTS_PATTERN = Pattern.compile("\\{[^}]*}");
-	private static final DateTimeFormatter DT_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy-HH:mm:ss");
 	private static final String PLACEHOLDER_PART_DELIM = ";";
 	private static final String PLACEHOLDER_ARG_DELIM = PLACEHOLDER_PART_DELIM;
+	private static final DateTimeFormatter DT_DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy-HH:mm:ss");
+	private static final int RAND_DEFAULT_LENGTH = 5;
+	private static final int INC_DEFAULT_PADDING = 5;
+	private static final int INC_DEFAULT_BASE = 10;
 	
 	/**
 	 * Actually generates the next id in the sequence.
@@ -51,7 +54,7 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 	 *         Uuid: {@code {uuid}}- a standard java-generated uuid
 	 *     </li>
 	 *     <li>
-	 *         Random: {@code {rand;length}}- a random series of digits and letters. Min length is 1, max length is 50. Length defaults to {@code 3}.
+	 *         Random: {@code {rand;length}}- a random series of digits and letters. Min length is 1, max length is 50. Length defaults to {@code 5}.
 	 *     </li>
 	 *     <li>
 	 *         Increment: {@code {inc;padding;base}}- an auto-incrementing number. Options:
@@ -60,7 +63,7 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 	 *                 Padding: How many digits to pad out to. For example, a value of {@code 5} produces {@code 00001}. Defaults to {@code 5}
 	 *             </li>
 	 *             <li>
-	 *                 Base: what base of number to use to increment; {@code 10} for standard digits, {@code 16} for base 16, etc. Defaults to {@code 16}
+	 *                 Base: what base of number to use to increment; {@code 10} for standard digits, {@code 16} for base 16, etc. Defaults to {@code 10}
 	 *             </li>
 	 *         </ol>
 	 *     </li>
@@ -112,7 +115,7 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 				
 				switch (placeholderType) {
 					case "dt": {
-						DateTimeFormatter formatter = DT_FORMATTER;
+						DateTimeFormatter formatter = DT_DEFAULT_FORMATTER;
 						
 						if (args.length > 0) {
 							formatter = DateTimeFormatter.ofPattern(args[0]);
@@ -125,7 +128,7 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 						sb.append(UUID.randomUUID());
 						break;
 					case "rand": {
-						int length = 5;
+						int length = RAND_DEFAULT_LENGTH;
 						
 						if (args.length > 0) {
 							length = Integer.parseInt(args[0]);
@@ -143,8 +146,8 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 						}
 						hadInc.set(true);
 						
-						int padding = 5;
-						int base = 10;
+						int padding = INC_DEFAULT_PADDING;
+						int base = INC_DEFAULT_BASE;
 						
 						if (args.length > 0) {
 							padding = Integer.parseInt(args[0]);
