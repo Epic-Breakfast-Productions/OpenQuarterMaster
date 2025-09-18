@@ -12,8 +12,8 @@ Ingests:
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="{id}ModalLabelAll">
-                    <span id="{id}ModalLabelIcon">{#insert titleIcon}{/}</span>
-                    <span id="{id}ModalLabel">{#if title??}{title.raw()}{/if}</span>
+                    <span id="{id}ModalLabelIcon" class="modalTitleIcon">{#insert titleIcon /}</span>
+                    <span id="{id}ModalLabel" class="modalTitleText">{#if title??}{title.raw()}{/if}</span>
                 </h5>
                 <button id="{id}ModalLabelCloseButton" type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close" {#if otherModalId??}data-bs-target="#{otherModalId}" data-bs-toggle="modal"{/if}></button>
             </div>
