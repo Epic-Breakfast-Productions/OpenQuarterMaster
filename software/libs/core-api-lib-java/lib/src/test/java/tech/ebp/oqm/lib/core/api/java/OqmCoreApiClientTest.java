@@ -19,6 +19,8 @@ import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 import java.util.Map;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
 class OqmCoreApiClientTest extends RunningServerTest {
 	private static MongoDBContainer mongoDBContainer = CoreAPITestContainerUtils.getMongoContainer();
 	private static OqmCoreApiWebServiceContainer coreApiContainer = CoreAPITestContainerUtils.getCoreApiContainer().setupForBasicAuth();
@@ -46,12 +48,26 @@ class OqmCoreApiClientTest extends RunningServerTest {
 	}
 	
 	@Test
-	void someLibraryMethodReturnsTrue() {
+	void testGetServerHealth() {
 		OqmCoreApiClient client = OqmCoreApiClient.builder()
 									  .config(getCoreApiConfig())
 									  .build();
 		
-		HttpResponse<ObjectNode> objectNode = client.getApiServerHealth().join();
-		System.out.println(objectNode.body().toPrettyString());
+		HttpResponse<ObjectNode> response = client.serverHealthGet().join();
+		
+		assertEquals(200, response.statusCode(), "Unexpected response code.");
+		System.out.println(response.body().toPrettyString());
+	}
+	
+	@Test
+	void testGetCurrency() {
+		OqmCoreApiClient client = OqmCoreApiClient.builder()
+									  .config(getCoreApiConfig())
+									  .build();
+		
+		HttpResponse<String> response = client.infoCurrencyGet().join();
+		
+		assertEquals(200, response.statusCode(), "Unexpected response code.");
+		System.out.println(response.body());
 	}
 }
