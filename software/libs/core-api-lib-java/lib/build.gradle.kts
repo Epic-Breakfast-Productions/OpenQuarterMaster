@@ -22,6 +22,8 @@ repositories {
 }
 
 dependencies {
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.20.0")
+
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
 
@@ -32,6 +34,12 @@ dependencies {
 
     // This dependency is used internally, and not exposed to consumers on their own compile classpath.
 //    implementation(libs.guava)
+
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.8.1")
+    testImplementation("org.testcontainers:testcontainers:1.21.3")
+    testImplementation("org.testcontainers:junit-jupiter:1.21.3")
+    testImplementation("org.testcontainers:mongodb:1.21.3")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
