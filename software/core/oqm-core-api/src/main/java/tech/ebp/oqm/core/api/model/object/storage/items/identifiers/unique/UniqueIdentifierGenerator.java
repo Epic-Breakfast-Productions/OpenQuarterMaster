@@ -29,7 +29,7 @@ public class UniqueIdentifierGenerator extends MainObject {
 	 * The name of the generator
 	 */
 	@lombok.Builder.Default
-	private String generatorName = null;
+	private String name = null;
 	
 	/**
 	 * The format of the id

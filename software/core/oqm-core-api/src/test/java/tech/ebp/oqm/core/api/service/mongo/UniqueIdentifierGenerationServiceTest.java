@@ -139,7 +139,7 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 	@Test
 	public void getNewIdTest() {
 		UniqueIdentifierGenerator gen = UniqueIdentifierGenerator.builder()
-											.generatorName(FAKER.name().name())
+											.name(FAKER.name().name())
 											.idFormat("{dt}-{rand}")
 											.build();
 		User testUser = TestUserService.getInstance().getTestUser();
@@ -156,7 +156,7 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 	@Test
 	public void incrementTest() {
 		UniqueIdentifierGenerator gen = UniqueIdentifierGenerator.builder()
-											.generatorName(FAKER.name().name())
+											.name(FAKER.name().name())
 											.idFormat("{inc}")
 											.build();
 		User testUser = TestUserService.getInstance().getTestUser();
@@ -202,7 +202,7 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 	@MethodSource("getThreadTestParams")
 	public void generateThreadTest(String format, int numThreads, int numIterations, int numPerIteration) throws InterruptedException, ExecutionException {
 		UniqueIdentifierGenerator gen = UniqueIdentifierGenerator.builder()
-											.generatorName(FAKER.name().name())
+											.name(FAKER.name().name())
 											.idFormat(format)
 //											.encoded(true)
 											.build();
