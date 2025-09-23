@@ -46,19 +46,21 @@ public class GeneralIdPassthrough extends PassthroughProvider {
 		@PathParam("identifier") String code,
 		@HeaderParam("Accept") String acceptType
 	) {
-		return this.getOqmCoreApiClient().generalIdGetObj(this.getBearerHeaderStr(), code)
-				   .map((ObjectNode generalIdentifier)->{
-					   log.debug("Got general identifier: {}", generalIdentifier);
-					   //noinspection SwitchStatementWithTooFewBranches
-					   return switch (acceptType) {
-						   case MediaType.TEXT_HTML -> Response.ok(
-							   newIdentifierTemplate
-								   .data("rootPrefix", this.getRootPrefix())
-								   .data("generalId", generalIdentifier)
-						   ).build();
-						   default -> Response.ok(generalIdentifier).build();
-					   };
-				   });
+		return this.handleCall(
+			this.getOqmCoreApiClient().generalIdGetObj(this.getBearerHeaderStr(), code)
+				.map((ObjectNode generalIdentifier)->{
+					log.debug("Got general identifier: {}", generalIdentifier);
+					//noinspection SwitchStatementWithTooFewBranches
+					return switch (acceptType) {
+						case MediaType.TEXT_HTML -> Response.ok(
+							newIdentifierTemplate
+								.data("rootPrefix", this.getRootPrefix())
+								.data("generalId", generalIdentifier)
+						).build();
+						default -> Response.ok(generalIdentifier).build();
+					};
+				})
+		);
 	}
 	
 	@GET
@@ -75,14 +77,16 @@ public class GeneralIdPassthrough extends PassthroughProvider {
 		@PathParam("type") String type,
 		@PathParam("value") String data
 	) {
-		return this.getOqmCoreApiClient()
-				   .generalIdGetBarcodeImage(this.getBearerHeaderStr(), type, data)
-				   .map((String xmlData)->{
-					   return Response.status(Response.Status.OK)
-								  .entity(xmlData)
-								  .header("Content-Disposition", "attachment;filename=" + type + "_"+data+".svg")
-								  .type("image/svg+xml")
-								  .build();
-				   });
+		return this.handleCall(
+			this.getOqmCoreApiClient()
+				.generalIdGetBarcodeImage(this.getBearerHeaderStr(), type, data)
+				.map((String xmlData)->{
+					return Response.status(Response.Status.OK)
+							   .entity(xmlData)
+							   .header("Content-Disposition", "attachment;filename=" + type + "_" + data + ".svg")
+							   .type("image/svg+xml")
+							   .build();
+				})
+		);
 	}
 }

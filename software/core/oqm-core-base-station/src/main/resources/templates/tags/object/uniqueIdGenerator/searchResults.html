@@ -40,7 +40,7 @@
 			<tr class="align-middle">
 				
 				<td>
-					{#if !result.get("type").isNull()}
+					{#if !result.get("name").isNull()}
 						{result.get("name").asText()}
 					{/if}
 				</td>
@@ -48,7 +48,7 @@
 					{result.get("idFormat").asText()}
 				</td>
 				<td>
-					{#if result.get("encoding").asBoolean()}
+					{#if result.get("encoded").asBoolean()}
 						Yes
 					{#else}
 						No
@@ -57,14 +57,19 @@
 				<td>
 					{#if !result.get("lastIncremented").isNull()}
 						{result.get("lastIncremented").asText()}
+					{#else}
+						N/A
 					{/if}
 				</td>
 				{#if actionType == 'full'}
 					<td>
-						<button type="button" class="btn btn-sm btn-danger" title="Edit" onclick="removeItemCheckout('{id}');">
+						<button type="button" class="btn btn-sm btn-primary" title="Generate" onclick="">
+							{#icons/add /}
+						</button>
+						<button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#uniqueIdGeneratorAddEditModal" onclick="UniqueIdGeneratorAddEdit.setupFormForEdit(UniqueIdGeneratorAddEdit.forms.modal, '{id}')">
 							{#icons/edit /}
 						</button>
-						<button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeItemCheckout('{id}');">
+						<button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="">
 							{#icons/remove /}
 						</button>
 					</td>

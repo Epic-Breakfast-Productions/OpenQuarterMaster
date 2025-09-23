@@ -1,6 +1,8 @@
 {#let id=(id.or("uniqueIdGeneratorAddEditForm"))}
-<form id="{id}">
+<form id="{id}" class="uniqueIdGeneratorAddEditForm">
 	<input type="hidden" name="generatorId" value="">
+	
+	<div class="formMessages"></div>
 	
 	<div class="mb-3">
 		<label for="{id}-nameInput" class="form-label">Name</label>
