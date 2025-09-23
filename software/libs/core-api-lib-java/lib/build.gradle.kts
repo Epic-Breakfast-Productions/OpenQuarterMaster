@@ -10,10 +10,12 @@
 plugins {
     // Apply the java-library plugin for API and implementation separation.
     `java-library`
+    `maven-publish`
+    signing
     id("io.freefair.lombok") version "8.14.2"
 }
 
-group = "com.ebp.openQuarterMaster"
+group = "tech.epic-breakfast-productions.openquartermaster.lib.core"
 version = "1.0.0-SNAPSHOT"
 
 repositories {
@@ -40,10 +42,17 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:1.21.3")
     testImplementation("org.testcontainers:junit-jupiter:1.21.3")
     testImplementation("org.testcontainers:mongodb:1.21.3")
+    testImplementation("net.datafaker:datafaker:2.4.4")
+    //for doing jwt's
+    testImplementation("io.jsonwebtoken:jjwt-api:0.13.0")
+    testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
+    testImplementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
 java {
+    withJavadocJar()
+    withSourcesJar()
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
@@ -52,4 +61,65 @@ java {
 tasks.named<Test>("test") {
     // Use JUnit Platform for unit tests.
     useJUnitPlatform()
+}
+
+
+publishing {
+    publications {
+        create<MavenPublication>("mavenJava") {
+            artifactId = "oqm-core-api-lib-java"
+            from(components["java"])
+            versionMapping {
+                usage("java-api") {
+                    fromResolutionOf("runtimeClasspath")
+                }
+                usage("java-runtime") {
+                    fromResolutionResult()
+                }
+            }
+            pom {
+                name = "OQM Core API Library for Java"
+                description = "OQM Core API Library for Java"
+                url = "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/dev/938-fr-minecraft-mod-i4i-fall-2025/software/libs/core-api-lib-java"
+                properties = mapOf(
+                )
+                licenses {
+                    license {
+                        name = "The Apache License, Version 2.0"
+                        url = "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE"
+                    }
+                }
+                developers {
+                    developer {
+                        id = "GregJohnStewart"
+                        name = "Greg Stewart"
+                        email = "greg@epic-breakfast-productions.tech"
+                    }
+                }
+                scm {
+                    connection = "scm:git:git://github.com/Epic-Breakfast-Productions/OpenQuarterMaster.git"
+                    developerConnection = "scm:git:ssh://github.com/Epic-Breakfast-Productions/OpenQuarterMaster.git"
+                    url = "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster"
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            val releasesRepoUrl = uri("https://oss.sonatype.org/content/repositories/snapshots/")
+            val snapshotsRepoUrl = uri("https://oss.sonatype.org/content/repositories/releases/")
+            url = if (version.toString().endsWith("SNAPSHOT")) snapshotsRepoUrl else releasesRepoUrl
+        }
+    }
+}
+
+signing {
+    sign(publishing.publications["mavenJava"])
+}
+
+tasks.javadoc {
+    if (JavaVersion.current().isJava9Compatible) {
+        (options as StandardJavadocDocletOptions).addBooleanOption("html5", true)
+    }
 }

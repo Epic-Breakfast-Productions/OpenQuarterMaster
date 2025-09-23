@@ -2,12 +2,13 @@ package tech.ebp.oqm.lib.core.api.java.testUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
+import org.testcontainers.utility.MountableFile;
 
+import java.util.Base64;
 import java.util.Map;
 
 public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServiceContainer> {
@@ -44,16 +45,13 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 		return this.getMappedPort(PORT);
 	}
 	
-	public OqmCoreApiWebServiceContainer setupForBasicAuth() {
+	/**
+	 * https://quarkus.io/guides/security-jwt#dealing-with-verification-keys
+	 * @return
+	 */
+	public OqmCoreApiWebServiceContainer setupForPlainJwtAuth() {
 		this.withEnv(Map.of(
-			"quarkus.smallrye-jwt.enabled", "false",
-			"quarkus.http.auth.basic", "true",
-			"quarkus.security.users.embedded.enabled", "true",
-			"quarkus.security.users.embedded.plain-text", "true",
-			"quarkus.security.users.embedded.users.regularUser", "wow",
-			"quarkus.security.users.embedded.users.adminUser", "wow",
-			"quarkus.security.users.embedded.roles.regularUser", "inventoryView,inventoryEdit",
-			"quarkus.security.users.embedded.roles.adminUser", "inventoryView,inventoryEdit,inventoryAdmin"
+			"mp.jwt.verify.publickey", Base64.getEncoder().encodeToString(JwtUtils.SIGNING_KEYPAIR.getPublic().getEncoded())
 		));
 		return this;
 	}

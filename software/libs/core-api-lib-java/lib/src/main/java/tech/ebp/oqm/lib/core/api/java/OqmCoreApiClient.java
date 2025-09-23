@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import tech.ebp.oqm.lib.core.api.java.auth.OqmCredentials;
@@ -18,26 +19,46 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.nio.charset.Charset;
+import java.text.MessageFormat;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static tech.ebp.oqm.lib.core.api.java.utils.Constants.API_V1_PATH;
 
+/**
+ * Client for communicating with the OQM Core API service.
+ *
+ *
+ */
 @Data
 @Builder
 @Setter(AccessLevel.PRIVATE)
 public class OqmCoreApiClient {
 	
+	@Getter(AccessLevel.PRIVATE)
 	@NonNull
 	@Builder.Default
 	private HttpClient httpClient = HttpClient.newHttpClient();
 	
+	@Getter(AccessLevel.PRIVATE)
 	@NonNull
 	private CoreApiConfig config;
 	
+	@Getter(AccessLevel.PRIVATE)
 	@Builder.Default
-	private OqmCredentials defaultCredentials = null;
+	private OqmCredentials servAccCreds = null;
 	
+	public boolean hasServiceAccountCredentials(){
+		return this.servAccCreds != null;
+	}
+	
+	/**
+	 * Sets up a basic request object
+	 * @param creds The credentials to use with the request
+	 * @param path The path to hit on the core api service
+	 * @param queryParams Query params to attach to the URL.
+	 * @return The request builder to use
+	 */
 	private HttpRequest.Builder setupRequest(
 		OqmCredentials creds,
 		String path,
@@ -89,11 +110,32 @@ public class OqmCoreApiClient {
 	//</editor-fold>
 	
 	//<editor-fold desc="General Identifiers">
+	public CompletableFuture<HttpResponse<ObjectNode>> generalIdValidateGet(OqmCredentials creds, String type, String identifier) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(
+						   creds,
+							   MessageFormat.format(
+							   API_V1_PATH + "/identifiers/general/validate/{0}/{1}",
+								   UriUtils.urlEncode(type),
+								   UriUtils.urlEncode(identifier)
+								   )
+						   )
+						   .GET()
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
+	
+	
 	//	@GET
 	//	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/general/validate/{type}/{identifier}")
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	Uni<ObjectNode> generalIdValidateGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type, @PathParam("identifier") String code);
 	//
+	
+	
+	
 	//	@GET
 	//	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/general/getIdObject/{identifier}")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -117,44 +159,71 @@ public class OqmCoreApiClient {
 				   );
 	}
 	
+	
+	//	TODO
 	//	@GET
 	//	@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity/{id}")
 	//	Uni<ObjectNode> interactingEntityGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("id") String entityId);
 	//
+	
+	//	TODO
 	//	@GET
 	//	@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity/{id}/reference")
 	//	Uni<ObjectNode> interactingEntityGetReference(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("id") String entityId);
-	//
-	//	@GET
-	//	@Path(ROOT_API_ENDPOINT_V1 + "/interacting-entity/self")
-	//	Uni<ObjectNode> interactingEntityGetSelf(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
+	
+	
+	public CompletableFuture<HttpResponse<String>> interactingEntityGetSelf(OqmCredentials creds) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, API_V1_PATH + "/interacting-entity/self")
+						   .GET()
+						   .build(),
+					   HttpResponse.BodyHandlers.ofString()
+				   );
+	}
+	
 	//</editor-fold>
 	
 	//<editor-fold desc="Units">
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(UNIT_ROOT_ENDPOINT)
 	//	@PermitAll
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	Uni<ObjectNode> unitGetAll(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(UNIT_ROOT_ENDPOINT + "/dimensions")
 	//	@PermitAll
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	Uni<ArrayNode> unitGetDimensions(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(UNIT_ROOT_ENDPOINT + "/deriveTypes")
 	//	@PermitAll
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	Uni<ArrayNode> unitGetDeriveTypes(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(UNIT_ROOT_ENDPOINT + "/compatibility")
 	//	@PermitAll
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	Uni<ObjectNode> unitGetCompatibleMap(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(UNIT_ROOT_ENDPOINT + "/compatibility/{unit}")
 	//	@PermitAll
@@ -164,6 +233,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("unit") String unitString
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(UNIT_ROOT_ENDPOINT + "/custom")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -171,6 +243,8 @@ public class OqmCoreApiClient {
 	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token
 	//	);
 	//
+	
+	//	TODO
 	//	@POST
 	//	@Path(UNIT_ROOT_ENDPOINT + "/custom")
 	//	@Consumes(MediaType.APPLICATION_JSON)
@@ -180,6 +254,8 @@ public class OqmCoreApiClient {
 	//		ObjectNode ncur
 	//	);
 	//
+	
+	//	TODO
 	//	@PUT
 	//	@Path(UNIT_ROOT_ENDPOINT + "/convert")
 	//	@Consumes(MediaType.APPLICATION_JSON)
@@ -187,9 +263,12 @@ public class OqmCoreApiClient {
 	//	Uni<String> unitConvertQuantity(
 	//		JsonNode quantityConvertRequest
 	//	);
+	
 	//</editor-fold>
 	
 	//<editor-fold desc="Storage Blocks">
+	
+	//	TODO
 	//	@GET
 	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT)
 	//	Uni<ObjectNode> storageBlockSearch(
@@ -198,18 +277,27 @@ public class OqmCoreApiClient {
 	//		@BeanParam StorageBlockSearch storageBlockSearch
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@POST
 	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT)
 	//	@Consumes(MediaType.APPLICATION_JSON)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	Uni<String> storageBlockAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ObjectNode newStorageBlock);
 	//
+	
+	
+	//	TODO
 	//	@POST
 	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/bulk")
 	//	@Consumes(MediaType.APPLICATION_JSON)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	Uni<String> storageBlockAddBulk(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ArrayNode newStorageBlocks);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/tree")
 	//	@Produces({MediaType.APPLICATION_JSON})
@@ -219,10 +307,16 @@ public class OqmCoreApiClient {
 	//		@QueryParam("onlyInclude") List<String> onlyInclude
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/stats")
 	//	Uni<ObjectNode> storageBlockCollectionStats(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{blockId}")
 	//	Uni<ObjectNode> storageBlockGet(
@@ -231,6 +325,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("blockId") String storageBlockId
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@PUT
 	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{id}")
 	//	Uni<ObjectNode> storageBlockUpdate(
@@ -240,6 +337,9 @@ public class OqmCoreApiClient {
 	//		ObjectNode updates
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@DELETE
 	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{id}")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -249,6 +349,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("id") String storageBlockId
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{blockId}/history")
 	//	Uni<ObjectNode> storageBlockGetHistory(
@@ -260,6 +363,9 @@ public class OqmCoreApiClient {
 	//</editor-fold>
 	
 	//<editor-fold desc="Item Categories">
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(ITEM_CAT_ROOT_ENDPOINT)
 	//	Uni<ObjectNode> itemCatSearch(
@@ -268,16 +374,25 @@ public class OqmCoreApiClient {
 	//		@BeanParam ItemCategorySearch itemCategorySearch
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@POST
 	//	@Path(ITEM_CAT_ROOT_ENDPOINT)
 	//	@Consumes(MediaType.APPLICATION_JSON)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	Uni<String> itemCatAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ObjectNode newItemCategory);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(ITEM_CAT_ROOT_ENDPOINT + "/{catId}")
 	//	Uni<ObjectNode> itemCatGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, @PathParam("catId") String itemCatId);
 	//
+	
+	
+	//	TODO
 	//	@PUT
 	//	@Path(ITEM_CAT_ROOT_ENDPOINT + "/{catId}")
 	//	Uni<ObjectNode> itemCatUpdate(
@@ -287,11 +402,17 @@ public class OqmCoreApiClient {
 	//		ObjectNode updates
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@DELETE
 	//	@Path(ITEM_CAT_ROOT_ENDPOINT + "/{id}")
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	Uni<ObjectNode> itemCatDelete(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, @PathParam("id") String itemCatId);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(ITEM_CAT_ROOT_ENDPOINT + "/{catId}/history")
 	//	Uni<ObjectNode> itemCatGetHistory(
@@ -301,6 +422,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam HistorySearch historySearch
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(ITEM_CAT_ROOT_ENDPOINT + "/tree")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -313,6 +437,9 @@ public class OqmCoreApiClient {
 	//</editor-fold>
 	
 	//<editor-fold desc="Inventory Items">
+	
+	
+	//	TODO
 	//	@POST
 	//	@Path(INV_ITEM_ROOT_ENDPOINT)
 	//	@Consumes(MediaType.APPLICATION_JSON)
@@ -323,6 +450,9 @@ public class OqmCoreApiClient {
 	//		ObjectNode item
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/stats")
 	//	@GET
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -331,6 +461,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_ROOT_ENDPOINT)
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -341,6 +474,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam InventoryItemSearch itemSearch
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -350,6 +486,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("itemId") String id
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@PUT
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -360,6 +499,9 @@ public class OqmCoreApiClient {
 	//		ObjectNode updates
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@DELETE
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -369,6 +511,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("itemId") String id
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{id}/history")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -379,6 +524,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam HistorySearch searchObject
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/history")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -388,6 +536,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam HistorySearch searchObject
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/block/{storageBlockId}/stored")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -399,6 +550,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam StoredSearch storedSearch
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -409,6 +563,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam StoredSearch storedSearch
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storedId}/history")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -420,6 +577,9 @@ public class OqmCoreApiClient {
 	//		HistorySearch search
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storedId}")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -430,6 +590,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("storedId") String storedId
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@PUT
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storedId}")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -441,6 +604,9 @@ public class OqmCoreApiClient {
 	//		ObjectNode updateObject
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/history")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -451,6 +617,9 @@ public class OqmCoreApiClient {
 	//		HistorySearch search
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@POST
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/transaction")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -461,6 +630,9 @@ public class OqmCoreApiClient {
 	//		ObjectNode transaction
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/transaction")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -471,6 +643,9 @@ public class OqmCoreApiClient {
 	//		AppliedTransactionSearch search
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/transaction/{transactionId}")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -481,6 +656,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("transactionId") String transactionId
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_STORED_ROOT_ENDPOINT)
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -490,6 +668,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam StoredSearch storedSearch
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}/history")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -500,6 +681,9 @@ public class OqmCoreApiClient {
 	//		HistorySearch search
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -509,6 +693,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("storedId") String storedId
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@PUT
 	//	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -519,6 +706,9 @@ public class OqmCoreApiClient {
 	//		ObjectNode updateObject
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/history")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -531,6 +721,9 @@ public class OqmCoreApiClient {
 	//</editor-fold>
 	
 	//<editor-fold desc="Images">
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(IMAGE_ROOT_ENDPOINT)
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -540,6 +733,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam ImageSearch searchObject
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@POST
 	//	@Path(IMAGE_ROOT_ENDPOINT)
 	//	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -550,6 +746,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam FileUploadBody body
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@Path(IMAGE_ROOT_ENDPOINT + "/{id}")
 	//	@GET
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -559,6 +758,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("id") String id
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@PUT
 	//	@Path(IMAGE_ROOT_ENDPOINT + "/{id}")
 	//	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -570,6 +772,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam FileUploadBody body
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@PUT
 	//	@Path(IMAGE_ROOT_ENDPOINT + "/{id}")
 	//	@Consumes(MediaType.APPLICATION_JSON)
@@ -582,6 +787,9 @@ public class OqmCoreApiClient {
 	//		ObjectNode updates
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/revision/{rev}")
 	//	@GET
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -594,6 +802,9 @@ public class OqmCoreApiClient {
 	//		String revision
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/revision/{rev}/data")
 	//	@GET
 	//	@Produces("*/*")
@@ -606,6 +817,9 @@ public class OqmCoreApiClient {
 	//		String revision
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/history")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -616,6 +830,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam HistorySearch searchObject
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(IMAGE_ROOT_ENDPOINT + "/history")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -625,6 +842,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam HistorySearch searchObject
 	//	);
 	//
+	
+	
+	//	TODO
 	//	//TODO:: what return datatype?
 	//	@GET
 	//	@Path(IMAGE_ROOT_ENDPOINT + "/for/{type}/{id}")
@@ -641,6 +861,9 @@ public class OqmCoreApiClient {
 	//</editor-fold>
 	
 	//<editor-fold desc="File Attachments">
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT)
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -650,6 +873,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam FileAttachmentSearch searchObject
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@POST
 	//	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT)
 	//	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -660,6 +886,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam FileUploadBody body
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}")
 	//	@GET
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -669,6 +898,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("id") String id
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@PUT
 	//	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}")
 	//	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -680,6 +912,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam FileUploadBody body
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@PUT
 	//	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}")
 	//	@Consumes(MediaType.APPLICATION_JSON)
@@ -692,6 +927,9 @@ public class OqmCoreApiClient {
 	//		ObjectNode updates
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}/revision/{rev}")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -704,6 +942,9 @@ public class OqmCoreApiClient {
 	//		String revision
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}/revision/{rev}/data")
 	//	@Produces("*/*")
@@ -716,6 +957,9 @@ public class OqmCoreApiClient {
 	//		String revision
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}")
 	//	@DELETE
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -726,6 +970,9 @@ public class OqmCoreApiClient {
 	//		String id
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}/history")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -736,6 +983,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam HistorySearch searchObject
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/history")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -747,6 +997,9 @@ public class OqmCoreApiClient {
 	//</editor-fold>
 	
 	//<editor-fold desc="Item Checkouts">
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(ITEM_CHECKOUT_ROOT_ENDPOINT)
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -756,6 +1009,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam ItemCheckoutSearch itemCheckoutSearch
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@Path(ITEM_CHECKOUT_ROOT_ENDPOINT + "/{id}")
 	//	@GET
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -765,6 +1021,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("id") String id
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@PUT
 	//	@Path(ITEM_CHECKOUT_ROOT_ENDPOINT + "/{id}")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -775,6 +1034,9 @@ public class OqmCoreApiClient {
 	//		ObjectNode updates
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(ITEM_CHECKOUT_ROOT_ENDPOINT + "/{id}/history")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -785,6 +1047,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam HistorySearch searchObject
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(ITEM_CHECKOUT_ROOT_ENDPOINT + "/history")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -796,6 +1061,8 @@ public class OqmCoreApiClient {
 	//</editor-fold>
 	
 	//<editor-fold desc="Inventory Management">
+	
+	//	TODO
 	//	@GET
 	//	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/export")
 	//	@Produces("application/tar+gzip")
@@ -804,6 +1071,9 @@ public class OqmCoreApiClient {
 	//		@QueryParam("excludeHistory") boolean excludeHistory
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@POST
 	//	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/import/file/bundle")
 	//	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -813,6 +1083,9 @@ public class OqmCoreApiClient {
 	//		@BeanParam ImportBundleFileBody body
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@POST
 	//	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db")
 	//	@Consumes(MediaType.APPLICATION_JSON)
@@ -822,12 +1095,18 @@ public class OqmCoreApiClient {
 	//		ObjectNode newDb
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@GET
 	//	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db")
 	//	@Consumes(MediaType.APPLICATION_JSON)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	Uni<ArrayNode> manageDbList(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 	//
+	
+	
+	//	TODO
 	//	@DELETE
 	//	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db/clearAllDbs")
 	//	@Produces(MediaType.APPLICATION_JSON)
@@ -835,6 +1114,9 @@ public class OqmCoreApiClient {
 	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token
 	//	);
 	//
+	
+	
+	//	TODO
 	//	@DELETE
 	//	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db/clear/{oqmDbIdOrName}")
 	//	@Produces(MediaType.APPLICATION_JSON)

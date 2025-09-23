@@ -7,29 +7,29 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
+
+import java.util.Base64;
 
 /**
- * Handles credentials for a service account (used with keycloak)
+ * Credentials to provide a plain JWT for the client.
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
+@SuperBuilder
 @Setter(AccessLevel.PRIVATE)
-public class ServiceAccountCreds extends OqmCredentials {
+public class JwtCreds extends OqmCredentials {
 	
-	private String name;
-	private String key;
-	
-	
-	
-	
-	
-	
+	/**
+	 * The actual JWT to use.
+	 */
+	private String jwt;
 	
 	@Override
 	public String getAccessHeaderContent() {
-		return "";
+		return "Bearer " + this.getJwt();
 	}
 }

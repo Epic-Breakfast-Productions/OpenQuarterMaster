@@ -9,20 +9,21 @@ import lombok.ToString;
 import java.util.Base64;
 
 /**
- *
+ * Don't use this, standard core api container is not and cannot be configured for basic auth
  */
-@Data
-@AllArgsConstructor
-@NoArgsConstructor
-@EqualsAndHashCode(callSuper = false)
-@ToString(callSuper = true)
-public class BasicCreds extends OqmCredentials {
-	
-	private String name;
-	private String password;
-	
-	@Override
-	public String getAccessHeaderContent() {
-		return "Authorization: Basic " + Base64.getEncoder().encodeToString((this.getName() + ":" + this.getPassword()).getBytes());
-	}
-}
+//@Deprecated()
+//@Data
+//@AllArgsConstructor
+//@NoArgsConstructor
+//@EqualsAndHashCode(callSuper = false)
+//@ToString(callSuper = true)
+//public class BasicCreds extends OqmCredentials {
+//
+//	private String name;
+//	private String password;
+//
+//	@Override
+//	public String getAccessHeaderContent() {
+//		return "Basic " + Base64.getEncoder().encodeToString((this.getName() + ":" + this.getPassword()).getBytes());
+//	}
+//}

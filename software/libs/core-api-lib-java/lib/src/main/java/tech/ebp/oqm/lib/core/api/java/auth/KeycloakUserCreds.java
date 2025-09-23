@@ -8,8 +8,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.Base64;
+
 /**
- * Handles credentials for a service account (used with keycloak)
+ * Credentials to hold user information, and handle getting jwt credential, as well as getting that token.
+ *
+ * TODO:: this needs fleshed out when we know how we want to do this
  */
 @Data
 @AllArgsConstructor
@@ -17,19 +21,12 @@ import lombok.ToString;
 @EqualsAndHashCode(callSuper = false)
 @ToString(callSuper = true)
 @Setter(AccessLevel.PRIVATE)
-public class ServiceAccountCreds extends OqmCredentials {
+public class KeycloakUserCreds extends JwtCreds {
 	
+	/**
+	 * The username? Needed?
+	 */
 	private String name;
-	private String key;
 	
-	
-	
-	
-	
-	
-	
-	@Override
-	public String getAccessHeaderContent() {
-		return "";
-	}
+	//TODO:: determine what would be useful to be here.
 }
