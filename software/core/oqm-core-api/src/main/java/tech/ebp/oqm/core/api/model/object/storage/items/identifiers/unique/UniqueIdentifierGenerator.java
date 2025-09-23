@@ -60,6 +60,11 @@ public class UniqueIdentifierGenerator extends MainObject {
 	@lombok.Builder.Default
 	private boolean encoded = false;
 	
+	/**
+	 * If the resulting ids are intended to be barcodes.
+	 */
+	@lombok.Builder.Default
+	private boolean barcode = false;
 	
 	@Override
 	public int getSchemaVersion() {

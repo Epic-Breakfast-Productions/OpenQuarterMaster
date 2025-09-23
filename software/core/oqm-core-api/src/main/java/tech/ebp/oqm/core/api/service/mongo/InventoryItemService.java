@@ -189,18 +189,11 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				GeneratedUniqueId generatedId = null;
 				
 				do {
-					generatedId = GeneratedUniqueId.builder()
-						.label(curId.getLabel())
-						.barcode(curId.isBarcode())
-						.useInLabel(curId.isUseInLabel())
-						.generatedFrom(generateFrom)
-						.value(
+					generatedId =
 							this.getUniqueIdentifierGenerationService().getNextUniqueId(
 								oqmDbIdOrName,
 								generateFrom
-							).getGeneratedIds().getFirst()
-						)
-						.build();
+							).getGeneratedIds().getFirst();
 					
 					if (!this.getItemsWithUniqueId(oqmDbIdOrName, null, generatedId).isEmpty()) {
 						generatedId = null;

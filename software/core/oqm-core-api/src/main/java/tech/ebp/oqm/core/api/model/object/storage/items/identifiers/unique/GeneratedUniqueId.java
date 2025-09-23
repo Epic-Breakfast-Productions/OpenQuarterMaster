@@ -16,7 +16,7 @@ import org.bson.types.ObjectId;
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
-public class GeneratedUniqueId extends UniqueId {
+public class GeneratedUniqueId extends UniqueId implements Comparable<GeneratedUniqueId> {
 	
 	@NonNull
 	@NotNull
@@ -33,5 +33,10 @@ public class GeneratedUniqueId extends UniqueId {
 	@Override
 	public UniqueIdType getType() {
 		return UniqueIdType.GENERATED;
+	}
+	
+	@Override
+	public int compareTo(GeneratedUniqueId generatedUniqueId) {
+		return this.getValue().compareTo(generatedUniqueId.getValue());
 	}
 }
