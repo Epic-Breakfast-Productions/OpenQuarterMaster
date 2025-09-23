@@ -11,9 +11,9 @@ import java.util.LinkedHashSet;
 @AllArgsConstructor
 public class UniqueIdGenResult {
 	
-	private LinkedHashSet<String> generatedIds = new LinkedHashSet<>();
+	private LinkedHashSet<GeneratedUniqueId> generatedIds = new LinkedHashSet<>();
 	
-	public boolean addGeneratedId(String id) {
+	public boolean addGeneratedId(GeneratedUniqueId id) {
 		return this.generatedIds.add(id);
 	}
 }

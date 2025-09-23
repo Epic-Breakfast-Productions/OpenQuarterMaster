@@ -13,6 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdGenResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdentifierGenerator;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
@@ -119,7 +120,7 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 	@MethodSource("getGenerationValidTestArgs")
 	public void validFormatTest(UniqueIdentifierGenerator generator, String expectedFormat) {
 		StopWatch sw = StopWatch.createStarted();
-		String result = UniqueIdentifierGenerationService.getNextNUniqueIds(generator);
+		String result = UniqueIdentifierGenerationService.getNextUniqueId(generator);
 		sw.stop();
 		log.info("Generated ID in {}: {}", sw, result);
 		
@@ -133,7 +134,7 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 	@ParameterizedTest
 	@MethodSource("getGenerationInValidTestArgs")
 	public void invalidFormatTest(UniqueIdentifierGenerator generator) {
-		assertThrows(IllegalArgumentException.class, ()->UniqueIdentifierGenerationService.getNextNUniqueIds(generator));
+		assertThrows(IllegalArgumentException.class, ()->UniqueIdentifierGenerationService.getNextUniqueId(generator));
 	}
 	
 	@Test
@@ -151,6 +152,38 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 		
 		assertNotNull(output);
 		assertEquals(1, output.getGeneratedIds().size());
+		
+		GeneratedUniqueId id = output.getGeneratedIds().getFirst();
+		
+		assertEquals(gen.getId(), id.getGeneratedFrom());
+		assertEquals(gen.getName(), id.getLabel());
+		assertNotNull(id.getValue());
+		assertEquals(gen.isBarcode(), id.isBarcode());
+	}
+	
+	@Test
+	public void getNewIdBarcodeTest() {
+		UniqueIdentifierGenerator gen = UniqueIdentifierGenerator.builder()
+											.name(FAKER.name().name())
+											.idFormat("{dt}-{rand}")
+											.barcode(true)
+											.build();
+		User testUser = TestUserService.getInstance().getTestUser();
+		this.uniqueIdentifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
+		
+		UniqueIdGenResult output = this.uniqueIdentifierGenerationService.getNextNUniqueIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+		
+		log.info("Generated ID: {}", output);
+		
+		assertNotNull(output);
+		assertEquals(1, output.getGeneratedIds().size());
+		
+		GeneratedUniqueId id = output.getGeneratedIds().getFirst();
+		
+		assertEquals(gen.getId(), id.getGeneratedFrom());
+		assertEquals(gen.getName(), id.getLabel());
+		assertNotNull(id.getValue());
+		assertEquals(gen.isBarcode(), id.isBarcode());
 	}
 	
 	@Test
@@ -166,13 +199,13 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 		
 		log.info("Generated ID: {}", output);
 		
-		assertEquals("00001", output.getGeneratedIds().getFirst());
+		assertEquals("00001", output.getGeneratedIds().getFirst().getValue());
 		
 		output = this.uniqueIdentifierGenerationService.getNextNUniqueIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
 		
 		log.info("Second Generated ID: {}", output);
 		
-		assertEquals("00002", output.getGeneratedIds().getFirst());
+		assertEquals("00002", output.getGeneratedIds().getFirst().getValue());
 	}
 	
 	
@@ -210,7 +243,7 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 		this.uniqueIdentifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
 		
 		List<Future<List<UniqueIdGenResult>>> futures = new ArrayList<>(numThreads);
-		SortedSet<String> results = new TreeSet<>();
+		SortedSet<GeneratedUniqueId> results = new TreeSet<>();
 		
 		StopWatch sw;
 		try(ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
@@ -250,8 +283,8 @@ class UniqueIdentifierGenerationServiceTest extends RunningServerTest {
 		if(format.equals("{inc}")){
 			
 			BigInteger expected = BigInteger.ONE;
-			for(String curResultStr : results){
-				BigInteger curResult = new BigInteger(curResultStr);
+			for(GeneratedUniqueId curId : results){
+				BigInteger curResult = new BigInteger(curId.getValue());
 				
 				assertEquals(expected, curResult, "Was not a contiguous set of ids; expected: " + expected.toString() + " Got: " + curResult.toString());
 				

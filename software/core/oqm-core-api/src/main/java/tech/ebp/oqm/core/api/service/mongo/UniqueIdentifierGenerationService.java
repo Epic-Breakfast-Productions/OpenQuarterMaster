@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdGenResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdentifierGenerator;
 import tech.ebp.oqm.core.api.model.rest.search.UniqueIdGeneratorSearch;
@@ -80,7 +81,7 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 	 *
 	 * @return The next id in the sequence
 	 */
-	public static String getNextNUniqueIds(UniqueIdentifierGenerator generator) {
+	public static String getNextUniqueId(UniqueIdentifierGenerator generator) {
 		String format = generator.getIdFormat();
 		
 		if (format == null || format.isBlank()) {
@@ -105,13 +106,13 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 				lastEnd.set(result.end());
 				
 				String placeholder = result.group();
-//				log.debug("placeholder: {}", placeholder);
+				//				log.debug("placeholder: {}", placeholder);
 				
 				String[] parts = placeholder.replace("{", "").replace("}", "").split(PLACEHOLDER_PART_DELIM, 2);
 				String placeholderType = parts[0].toLowerCase();
 				String[] args = parts.length > 1 ? parts[1].split(PLACEHOLDER_ARG_DELIM) : new String[0];
 				
-//				log.debug("placeholderType: {}, args: {}", placeholderType, args);
+				//				log.debug("placeholderType: {}, args: {}", placeholderType, args);
 				
 				switch (placeholderType) {
 					case "dt": {
@@ -191,7 +192,7 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 		
 		String newIdentifier = sb.toString();
 		
-		if(generator.isEncoded()){
+		if (generator.isEncoded()) {
 			newIdentifier = Base64.getEncoder().withoutPadding().encodeToString(newIdentifier.getBytes());
 		}
 		
@@ -224,7 +225,7 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 	}
 	
 	public UniqueIdGenResult getNextNUniqueIds(String oqmDbNameOrId, ObjectId generatorId, int numIds) {
-		if(numIds < 1){
+		if (numIds < 1) {
 			throw new IllegalArgumentException("Number of ids to generate must be greater than 0.");
 		}
 		
@@ -238,7 +239,7 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 			boolean tick = false;
 			do {
 				BigInteger origLastIncremented = gen.getLastIncremented();
-				curNewId = getNextNUniqueIds(gen);
+				curNewId = getNextUniqueId(gen);
 				
 				//no need to save if no increment
 				if (!gen.hasIncrement()) {
@@ -257,7 +258,7 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 				if (oldGen == null) {
 					log.debug("Got back a likely duplicate id. Retrying.");
 					
-					if(tick){
+					if (tick) {
 						gen = this.get(oqmDbNameOrId, generatorId);
 						tick = false;
 					} else {
@@ -268,10 +269,19 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 				}
 			} while (curNewId == null);
 			
-			if(!output.addGeneratedId(curNewId)){
+			if (
+				!output.addGeneratedId(
+					GeneratedUniqueId.builder()
+						.label(gen.getName())
+						.generatedFrom(gen.getId())
+						.value(curNewId)
+						.barcode(gen.isBarcode())
+						.build()
+				)
+			) {
 				log.warn("Duplicate id generated for generator {} / {}; consider reviewing format.", gen.getId(), gen.getIdFormat());
 			}
-		} while(output.getGeneratedIds().size() < numIds);
+		} while (output.getGeneratedIds().size() < numIds);
 		
 		log.info("Generated new id from generator ({}): {}", gen.getId(), output);
 		

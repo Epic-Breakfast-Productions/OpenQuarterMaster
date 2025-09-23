@@ -10,15 +10,6 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.Generic;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.ean.EAN_13;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.ean.EAN_8;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.gtin.GTIN_14;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.isbn.ISBN_10;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.isbn.ISBN_13;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.UPC_A;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.UPC_E;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
