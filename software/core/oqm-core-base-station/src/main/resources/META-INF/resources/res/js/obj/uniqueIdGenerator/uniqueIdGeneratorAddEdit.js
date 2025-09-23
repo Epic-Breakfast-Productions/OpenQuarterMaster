@@ -1,6 +1,9 @@
 
 const UniqueIdGeneratorAddEdit = {
 	formGetters: {
+		messages: function(formJq){
+			return formJq.find("div.formMessages");
+		},
 		id: function(formJq){
 			return formJq.find("input[name='generatorId']");
 		},
@@ -14,8 +17,13 @@ const UniqueIdGeneratorAddEdit = {
 			return formJq.find("input[name='format']");
 		}
 	},
+	forms: {
+		modal: $("#uniqueIdGeneratorAddEditForm")
+	},
 
 	resetForm(formJq){
+		console.log("Resetting unique id generator form.")
+		UniqueIdGeneratorAddEdit.formGetters.messages(formJq).text("");
 		UniqueIdGeneratorAddEdit.formGetters.id(formJq).val("");
 		UniqueIdGeneratorAddEdit.formGetters.name(formJq).val("");
 		UniqueIdGeneratorAddEdit.formGetters.encoded(formJq)
@@ -52,7 +60,7 @@ const UniqueIdGeneratorAddEdit = {
 		let generatorObj = {
 			name: UniqueIdGeneratorAddEdit.formGetters.name(formJq).val(),
 			encoded: UniqueIdGeneratorAddEdit.formGetters.encoded(formJq).prop("checked"),
-			format: UniqueIdGeneratorAddEdit.formGetters.format(formJq).val()
+			idFormat: UniqueIdGeneratorAddEdit.formGetters.format(formJq).val()
 		}
 
 		if(UniqueIdGeneratorAddEdit.formGetters.id(formJq).val() !== ""){
@@ -62,20 +70,36 @@ const UniqueIdGeneratorAddEdit = {
 		return generatorObj;
 	},
 
-	submitAddEditForm(formJq){
-		UniqueIdGeneratorAddEdit.resetForm(formJq);
+	submitAddEditForm(e, formJq, refreshOnSuccess = true){
+		e.preventDefault();
 
 		let generatorObj = UniqueIdGeneratorAddEdit.buildGeneratorObject(formJq);
-		//TODO:: submit to passthrough appropriately
+
+		if(!generatorObj.id){
+			Rest.call({
+				spinnerContainer: formJq[0],
+				method: "post",
+				url: Rest.passRoot + "/identifier/unique/generator",
+				data: generatorObj,
+				failMessagesDiv: UniqueIdGeneratorAddEdit.formGetters.messages(formJq),
+				done: function (data) {
+					if(refreshOnSuccess){
+						PageMessages.reloadPageWithMessage("Successfully added new unique id generator.", "success");
+					} else {
+						PageMessages.addMessageToDiv(UniqueIdGeneratorAddEdit.formGetters.messages(formJq))
+					}
+				}
+			});
+		}
 	},
 
 	setupFormSubmit(formJq, modalJq = false){
 		formJq.on("submit", function(event){
-			UniqueIdGeneratorAddEdit.submitAddEditForm(formJq);
+			UniqueIdGeneratorAddEdit.submitAddEditForm(event, formJq);
 		});
 	}
 }
 
-//TODO:: setup modal form
-
-
+if(UniqueIdGeneratorAddEdit.forms.modal){
+	UniqueIdGeneratorAddEdit.setupFormSubmit(UniqueIdGeneratorAddEdit.forms.modal);
+}
