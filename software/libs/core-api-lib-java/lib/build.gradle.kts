@@ -67,7 +67,7 @@ tasks.named<Test>("test") {
 publishing {
     publications {
         create<MavenPublication>("mavenJava") {
-            artifactId = "oqm-core-api-lib-java"
+            artifactId = "core-api-lib-java"
             from(components["java"])
             versionMapping {
                 usage("java-api") {
