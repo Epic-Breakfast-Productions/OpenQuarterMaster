@@ -115,7 +115,11 @@ publishing {
 }
 
 signing {
-    sign(publishing.publications["mavenJava"])
+    if (project.hasProperty("releaseSigningEnabled") && project.property("releaseSigningEnabled").toString().toBoolean()) {
+        sign(publishing.publications["mavenJava"])
+    } else {
+        // Skip signing for local or non-release builds
+    }
 }
 
 tasks.javadoc {
