@@ -23,6 +23,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = GeneratedUniqueId.class, name = "GENERATED"),
 	@JsonSubTypes.Type(value = ProvidedUniqueId.class, name = "PROVIDED"),
+	@JsonSubTypes.Type(value = ToGenerateUniqueId.class, name = "TO_GENERATE"),
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @BsonDiscriminator
