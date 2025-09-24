@@ -12,7 +12,7 @@
 		</div>
 	</div>
 	
-	<div class="form-check">
+	<div class="form-check mb-3">
 		<input class="form-check-input" type="checkbox" value="true" name="encoded" id="{id}-encodedInput" aria-describedby="{id}-encodedInputHelp">
 		<label class="form-check-label" for="{id}-encodedInput">
 			Encoded
@@ -21,6 +21,16 @@
 			If to encode the resulting text. This obfuscates the real value while remaining unique.<br />
 			Not changeable after generator creation.<br />
 			Example: <code>foo-\{inc}</code> -> <code>Zm9vLTAwMDAx</code>
+		</div>
+	</div>
+	
+	<div class="form-check mb-3">
+		<input class="form-check-input" type="checkbox" value="true" name="barcode" id="{id}-barcodeInput" aria-describedby="{id}-barcodeInputHelp">
+		<label class="form-check-label" for="{id}-barcodeInput">
+			Barcode
+		</label>
+		<div id="{id}-barcodeInputHelp" class="form-text">
+			If the resulting generated ids will be barcodes or not.
 		</div>
 	</div>
 	

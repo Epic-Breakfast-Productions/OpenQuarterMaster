@@ -5,7 +5,7 @@
     {#pageContent}
     <div class="row mb-2">
         <div class="col d-grid gap-2">
-            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#uniqueIdGeneratorAddEditModal" onclick="UniqueIdGeneratorAddEdit.setupFormForAdd(UniqueIdGeneratorAddEdit.forms.modal, UniqueIdGeneratorAddEdit.)">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#uniqueIdGeneratorAddEditModal" onclick="UniqueIdGeneratorAddEdit.setupFormForAdd(UniqueIdGeneratorAddEdit.forms.modal)">
             	{#icons/add}{/icons/add} Add Generator
             </button>
         </div>
@@ -47,6 +47,7 @@
         <script src="{rootPrefix}/res/js/obj/objView.js"></script>
         <script src="{rootPrefix}/res/js/obj/getters.js"></script>
         <script src="{rootPrefix}/res/js/textCopy.js"></script>
+        <script src="{rootPrefix}/res/js/obj/uniqueIdGenerator/uniqueIdGeneratorUtils.js"></script>
         <script src="{rootPrefix}/res/js/obj/uniqueIdGenerator/uniqueIdGeneratorAddEdit.js"></script>
         
     {/scripts}

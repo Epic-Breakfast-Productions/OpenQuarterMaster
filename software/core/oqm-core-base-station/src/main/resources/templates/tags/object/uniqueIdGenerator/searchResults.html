@@ -20,8 +20,9 @@
 <tr>
 	<th scope="col" style="">Name</th>
 	<th scope="col">Format</th>
-	<th scope="col">Encoded</th>
-	<th scope="col">Last Increment</th>
+	<th scope="col" style="width: 75px;">Encoded</th>
+	<th scope="col" style="width: 75px;">Barcode</th>
+	<th scope="col" style="width: 125px;">Last Increment</th>
 	<th scope="col" style="width: 125px;">Actions</th>
 </tr>
 </thead>
@@ -55,6 +56,13 @@
 					{/if}
 				</td>
 				<td>
+					{#if result.get("barcode").asBoolean()}
+						Yes
+					{#else}
+						No
+					{/if}
+				</td>
+				<td>
 					{#if !result.get("lastIncremented").isNull()}
 						{result.get("lastIncremented").asText()}
 					{#else}
@@ -63,7 +71,7 @@
 				</td>
 				{#if actionType == 'full'}
 					<td>
-						<button type="button" class="btn btn-sm btn-primary" title="Generate" onclick="">
+						<button type="button" class="btn btn-sm btn-primary" title="Generate" onclick="UniqueIdGeneratorUtils.generate('{id}');">
 							{#icons/add /}
 						</button>
 						<button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#uniqueIdGeneratorAddEditModal" onclick="UniqueIdGeneratorAddEdit.setupFormForEdit(UniqueIdGeneratorAddEdit.forms.modal, '{id}')">
