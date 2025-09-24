@@ -98,7 +98,7 @@ public interface OqmCoreApiClientService {
 	);
 	
 	@GET
-	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{generatorId}/history")
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/unique/generator/{generatorId}/history")
 	Uni<ObjectNode> uniqueIdGeneratorGetHistory(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
@@ -107,22 +107,13 @@ public interface OqmCoreApiClientService {
 	);
 	
 	@GET
-	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{generatorId}/generate")
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/unique/generator/{generatorId}/generate")
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ObjectNode> uniqueIdGenerate(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("generatorId") String generatorId,
 		@QueryParam("num") Integer numToGenerate
-	);
-	
-	@GET
-	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{generatorId}/generate")
-	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> uniqueIdGenerate(
-		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-		@PathParam("generatorId") String generatorId
 	);
 	
 	//</editor-fold>
