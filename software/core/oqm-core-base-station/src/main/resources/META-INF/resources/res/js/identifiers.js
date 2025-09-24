@@ -12,6 +12,9 @@ const GeneralIdentifiers = {
 	getNewIdentifierInput(generalInputContainerJq){
 		return generalInputContainerJq.find("input[name='newIdentifier']");
 	},
+	getNewIdentifierValue(generalInputContainerJq){
+		return GeneralIdentifiers.getNewIdentifierInput(generalInputContainerJq).val();
+	},
 	getIdentifierContainer(subElementJq){
 		return subElementJq.closest('.generalIdentifierContainer');
 	},
@@ -38,9 +41,6 @@ const GeneralIdentifiers = {
 	},
 	getIdentifierIsBarcodeCheckbox(idContainerJq){
 		return idContainerJq.find("input[name='generalIdIsBarcode']");
-	},
-	getNewIdentifierValue(generalInputContainerJq){
-		return GeneralIdentifiers.getNewIdentifierInput(generalInputContainerJq).val();
 	},
 	clearInput(generalInputContainerJq){
 		GeneralIdentifiers.getNewIdentifierInput(generalInputContainerJq).val("");
@@ -184,4 +184,58 @@ const GeneralIdentifiers = {
 			}
 		}
 	}
+}
+
+const UniqueIdentifiers = {
+	getInputContainer(subElementJq){
+		return subElementJq.closest('.uniqueIdInputContainer');
+	},
+	getIdentifiersContainer(generalInputContainerJq){
+		return generalInputContainerJq.find(".identifiersContainer");
+	},
+	getNewIdentifierInput(uniqueInputContainerJq){
+		return uniqueInputContainerJq.find("input[name='newIdentifier']");
+	},
+	getNewIdentifierValue(uniqueInputContainerJq){
+		return UniqueIdentifiers.getNewIdentifierInput(uniqueInputContainerJq).val();
+	},
+	clearNewInput(generalInputContainerJq){
+		UniqueIdentifiers.getNewIdentifierInput(generalInputContainerJq).val("");
+	},
+
+
+
+
+
+
+	newAddedIdentifier(newIdentifier){
+		let output = $(PageComponents.Inputs.UniqueIds.uniqueIdAdded);
+
+		//TODO:: fill this out
+
+		return output;
+	},
+
+
+
+
+
+
+	addIdentifier(uniqueInputContainerJq, newIdentifier = null){
+		if(newIdentifier === null){
+			newIdentifier = {
+				type: "PROVIDED",
+				value: UniqueIdentifiers.getNewIdentifierValue(uniqueInputContainerJq),
+				barcode: false
+			};
+		}
+
+		console.log("Adding a new general identifier: ", newIdentifier);
+
+		UniqueIdentifiers.getIdentifiersContainer(uniqueInputContainerJq).append(UniqueIdentifiers.newAddedIdentifier(newIdentifier));
+	},
+	addIdentifierToGenerate(uniqueInputContainerJq){
+		//TODO
+	},
+
 }

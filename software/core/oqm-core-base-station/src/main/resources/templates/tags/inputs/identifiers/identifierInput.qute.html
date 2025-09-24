@@ -1,7 +1,7 @@
 <div class="input-group">
 	<button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#codeScannerModal" title="Click to open a scan window">{#icons/barcode /}</button>
-	<input type="text" class="form-control generalIdNewInput" placeholder="UPC, ISBN..." id="{id}" name="{#if name??}{name}{/if}" aria-describedby="{id}Help" onkeydown="if(event.keyCode === 13) { {#if showAdd.or(true)}GeneralIdentifiers.addIdentifier($(this).closest('.generalIdInputContainer'));{/if} return false; }" {#if required??}{required}{/if}>
+	<input type="text" class="form-control generalIdNewInput" placeholder="UPC, ISBN..." id="{id}" name="{#if name??}{name}{/if}" aria-describedby="{id}Help" onkeydown="if(event.keyCode === 13) { {#if showAdd.or(true)} {idClass}.addIdentifier({idClass}.getInputContainer($(this)));{/if} return false; }" {#if required??}{required}{/if}>
 	{#if showAdd.or(true)}
-	<button class="btn btn-outline-success" type="button" title="Add this identifier" onclick="GeneralIdentifiers.addIdentifier($(this).closest('.generalIdInputContainer'));">{#icons/add /}</button>
+	<button class="btn btn-outline-success" type="button" title="Add this identifier" onclick="{idClass}.addIdentifier({idClass}.getInputContainer($(this)));">{#icons/add /}</button>
 	{/if}
 </div>

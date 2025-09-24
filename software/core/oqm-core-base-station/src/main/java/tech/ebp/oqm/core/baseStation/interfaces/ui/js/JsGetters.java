@@ -37,6 +37,7 @@ public class JsGetters {
 	private static String fileInputLines;
 	private static String generalIdInputLines;
 	private static String generalIdAddedLines;
+	private static String uniqueIdAddedLines;
 	private static String copyTextButtonLines;
 	
 	private static String attachedFileListLines;
@@ -86,6 +87,8 @@ public class JsGetters {
 	Template generalIdInputTemplate;
 	@Location("tags/inputs/identifiers/addedGeneralIdentifier.qute.html")
 	Template generalIdAddedTemplate;
+	@Location("tags/inputs/identifiers/addedUniqueIdentifier.qute.html")
+	Template uniqueIdAddedTemplate;
 	@Location("tags/fileAttachment/FileAttachmentObjectView.html")
 	Template fileAttachmentObjectViewTemplate;
 	
@@ -153,6 +156,13 @@ public class JsGetters {
 		return generalIdAddedLines;
 	}
 	
+	private String getUniqueIdAddedLines() {
+		if (uniqueIdAddedLines == null) {
+			uniqueIdAddedLines = this.templateToEscapedJs(uniqueIdAddedTemplate.data("rootPrefix", this.forwardedPrefix.orElse("")));
+		}
+		return uniqueIdAddedLines;
+	}
+	
 	private String getAttachedFileListLines() {
 		if (attachedFileListLines == null) {
 			attachedFileListLines = this.templateToEscapedJs(fileAttachmentObjectViewTemplate.instance());
@@ -207,6 +217,7 @@ public class JsGetters {
 				   .data("copyButtonLines", this.getCopyTextButtonLines())
 				   .data("generalIdInputLines", this.getGeneralIdInputLines())
 				   .data("generalIdAddedLines", this.getGeneralIdAddedLines())
+				   .data("uniqueIdAddedLines", this.getUniqueIdAddedLines())
 				   .data("attachedFileListLines", this.getAttachedFileListLines())
 				   .createUni();
 	}

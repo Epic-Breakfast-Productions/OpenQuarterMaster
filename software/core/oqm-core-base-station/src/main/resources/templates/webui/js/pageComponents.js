@@ -15,6 +15,10 @@ const PageComponents = {
 ',
 			generalIdAdded: '{generalIdAddedLines}\
 '
+		},
+		UniqueIds: {
+			uniqueIdAdded: '{uniqueIdAddedLines}\
+'
 		}
 	},
 	View: {
