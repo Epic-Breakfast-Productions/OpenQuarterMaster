@@ -1,55 +1,17 @@
 package tech.ebp.oqm.lib.core.api.java;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.containers.MongoDBContainer;
-import tech.ebp.oqm.lib.core.api.java.auth.OqmCredentials;
-import tech.ebp.oqm.lib.core.api.java.config.CoreApiConfig;
-import tech.ebp.oqm.lib.core.api.java.testUtils.CoreAPITestContainerUtils;
-import tech.ebp.oqm.lib.core.api.java.testUtils.JwtUtils;
-import tech.ebp.oqm.lib.core.api.java.testUtils.OqmCoreApiWebServiceContainer;
-import tech.ebp.oqm.lib.core.api.java.testUtils.RunningServerTest;
+import tech.ebp.oqm.lib.core.api.java.testUtils.testClases.JwtAuthTest;
 
-import java.net.URI;
-import java.net.URISyntaxException;
 import java.net.http.HttpResponse;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 /**
  *
- * TODO:: Figure out credentials. need to swap to jwt-driven. Create jwt here?
- *
  */
-class OqmCoreApiClientTest extends RunningServerTest {
-	private static MongoDBContainer mongoDBContainer = CoreAPITestContainerUtils.getMongoContainer();
-	private static OqmCoreApiWebServiceContainer coreApiContainer = CoreAPITestContainerUtils.getCoreApiContainer().setupForPlainJwtAuth();
-	
-	OqmCredentials creds = JwtUtils.generateJwtCreds(true);
-	
-	@BeforeAll
-	public static void startContainers() {
-		mongoDBContainer.start();
-		coreApiContainer.start();
-	}
-	
-	@AfterAll
-	public static void stopContainers() {
-		mongoDBContainer.start();
-		coreApiContainer.start();
-	}
-	
-	public CoreApiConfig getCoreApiConfig() {
-		try {
-			return CoreApiConfig.builder()
-					   .baseUri(new URI("http://" + coreApiContainer.getHost() + ":" + coreApiContainer.getFirstMappedPort().toString()))
-					   .build();
-		} catch(URISyntaxException e) {
-			throw new RuntimeException("Failed to create uri for core api.", e);
-		}
-	}
+class OqmCoreApiClientTest extends JwtAuthTest {
 	
 	@Test
 	void testGetServerHealth() {
@@ -81,9 +43,7 @@ class OqmCoreApiClientTest extends RunningServerTest {
 									  .config(getCoreApiConfig())
 									  .build();
 		
-		System.out.println("creds: " + creds.getAccessHeaderContent());
-		
-		HttpResponse<ObjectNode> response = client.generalIdValidateGet(creds, "ISBN_13", "9780691165615").join();
+		HttpResponse<ObjectNode> response = client.generalIdValidateGet(this.getCredentials(), "ISBN_13", "9780691165615").join();
 		
 		assertEquals(200, response.statusCode(), "Unexpected response code.");
 		System.out.println(response.body().toPrettyString());
@@ -95,9 +55,7 @@ class OqmCoreApiClientTest extends RunningServerTest {
 									  .config(getCoreApiConfig())
 									  .build();
 		
-		System.out.println("creds: \"" + creds.getAccessHeaderContent() + "\"");
-		
-		HttpResponse<String> response = client.interactingEntityGetSelf(creds).join();
+		HttpResponse<String> response = client.interactingEntityGetSelf(this.getCredentials()).join();
 		
 		System.out.println(response.body());
 		assertEquals(200, response.statusCode(), "Unexpected response code.");
