@@ -16,9 +16,6 @@ import java.util.Map;
 
 public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServiceContainer> {
 	
-	private static final Path httpsPrivateKey = Path.of("dev/testCert.key");
-	private static final Path httpsPublicKey = Path.of("dev/testCert.crt");
-	
 	static final int HTTP_PORT = 8123;
 	static final int HTTPS_PORT = 8443;
 	
@@ -78,12 +75,8 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 	}
 	
 	public OqmCoreApiWebServiceContainer setupForHttps(){
-//		export QUARKUS_TLS_KEY_STORE_PEM_0_CERT="-----BEGIN CERTIFICATE-----\n...\n-----END CERTIFICATE-----"
-		//    export QUARKUS_TLS_KEY_STORE_PEM_0_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
-		
-		
-		this.withCopyFileToContainer(MountableFile.forHostPath(httpsPublicKey), "/tmp/pubKey.pem");
-		this.withCopyFileToContainer(MountableFile.forHostPath(httpsPrivateKey), "/tmp/privKey.pem");
+		this.withCopyFileToContainer(MountableFile.forHostPath(CertUtils.httpsPublicKey), "/tmp/pubKey.pem");
+		this.withCopyFileToContainer(MountableFile.forHostPath(CertUtils.httpsPrivateKey), "/tmp/privKey.pem");
 		
 		this.withEnv(Map.of(
 			"quarkus.http.ssl.port", Integer.toString(HTTPS_PORT),

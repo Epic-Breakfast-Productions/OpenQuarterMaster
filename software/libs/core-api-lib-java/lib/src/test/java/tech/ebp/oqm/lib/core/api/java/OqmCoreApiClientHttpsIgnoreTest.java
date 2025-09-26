@@ -3,6 +3,7 @@ package tech.ebp.oqm.lib.core.api.java;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.lib.core.api.java.testUtils.CertUtils;
 import tech.ebp.oqm.lib.core.api.java.testUtils.testClases.JwtAuthTest;
 
 import javax.net.ssl.SSLContext;
@@ -15,9 +16,11 @@ import javax.net.ssl.X509ExtendedTrustManager;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.Socket;
 import java.net.http.HttpClient;
 import java.net.http.HttpResponse;
+import java.nio.file.Files;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
 import java.security.KeyStoreException;
@@ -31,7 +34,7 @@ import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 /**
- *
+ * These are examples of how to configure the client when certification issues become a problem.
  */
 class OqmCoreApiClientHttpsIgnoreTest extends JwtAuthTest {
 	
@@ -41,10 +44,11 @@ class OqmCoreApiClientHttpsIgnoreTest extends JwtAuthTest {
 		setupAndStart();
 	}
 	
-	
+	/**
+	 * Shows how a bad cert error will show itself
+	 */
 	@Test
-	void testBadCertThrowing() throws NoSuchAlgorithmException, KeyManagementException {
-		
+	void testBadCertThrowing() {
 		OqmCoreApiClient client = OqmCoreApiClient.builder()
 									  .config(getCoreApiConfig(true))
 									  .build();
@@ -54,6 +58,45 @@ class OqmCoreApiClientHttpsIgnoreTest extends JwtAuthTest {
 		assertInstanceOf(SSLHandshakeException.class, e.getCause());
 	}
 	
+	/**
+	 * Example showing usage of a keystore/truststore containing the OQM instance's certs to properly inform SSL handshakes.
+	 *
+	 * This is the proper method of resolving cert issues.
+	 */
+	@Test
+	void testSetupClientWithTrustStore() throws NoSuchAlgorithmException, KeyManagementException, IOException, CertificateException, KeyStoreException {
+		//load truststore, setup ssl context
+		KeyStore trustStore = KeyStore.getInstance("PKCS12"); // or "JKS"
+		try (InputStream instream = Files.newInputStream(CertUtils.keystore)) {
+			trustStore.load(instream, CertUtils.keystorePass.toCharArray());
+		}
+		TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+		tmf.init(trustStore);
+		
+		SSLContext context = SSLContext.getInstance("TLS");
+		context.init(null, tmf.getTrustManagers(), null);
+		
+		//build the client
+		OqmCoreApiClient client = OqmCoreApiClient.builder()
+									  .httpClient(HttpClient.newBuilder()
+													  .sslContext(context)
+													  .build())
+									  .config(getCoreApiConfig(true))
+									  .build();
+		
+		HttpResponse<ObjectNode> response = client.serverHealthGet().join();
+		
+		assertEquals(200, response.statusCode(), "Unexpected response code.");
+		System.out.println(response.body().toPrettyString());
+	}
+	
+	/**
+	 * Shows how to build an SSL Context that doesn't care about cert issues
+	 *
+	 * DO NOT use as standard, only for example. Prefer demonstration of bringing in the server's truststore instead. Use only if opted in by end user.
+	 * @throws NoSuchAlgorithmException
+	 * @throws KeyManagementException
+	 */
 	@Test
 	void testIgnoreCertIssues() throws NoSuchAlgorithmException, KeyManagementException {
 		//build SSLContext to ignore cert issues
@@ -110,6 +153,7 @@ class OqmCoreApiClientHttpsIgnoreTest extends JwtAuthTest {
 			null
 		);
 		
+		//build the client
 		OqmCoreApiClient client = OqmCoreApiClient.builder()
 									  .httpClient(HttpClient.newBuilder()
 													  .sslContext(context)
@@ -123,30 +167,4 @@ class OqmCoreApiClientHttpsIgnoreTest extends JwtAuthTest {
 		System.out.println(response.body().toPrettyString());
 	}
 	
-	@Test
-	void testSetupClientWithTrustStore() throws NoSuchAlgorithmException, KeyManagementException, IOException, CertificateException, KeyStoreException {
-		//build SSLContext to ignore cert issues
-		
-		KeyStore trustStore = KeyStore.getInstance("PKCS12"); // or "JKS"
-		try (FileInputStream instream = new FileInputStream("dev/testKeystore.p12")) {
-			trustStore.load(instream, "mypassword".toCharArray());
-		}
-		TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-		tmf.init(trustStore);
-		
-		SSLContext context = SSLContext.getInstance("TLS");
-		context.init(null, tmf.getTrustManagers(), null);
-		
-		OqmCoreApiClient client = OqmCoreApiClient.builder()
-									  .httpClient(HttpClient.newBuilder()
-													  .sslContext(context)
-													  .build())
-									  .config(getCoreApiConfig(true))
-									  .build();
-		
-		HttpResponse<ObjectNode> response = client.serverHealthGet().join();
-		
-		assertEquals(200, response.statusCode(), "Unexpected response code.");
-		System.out.println(response.body().toPrettyString());
-	}
 }
