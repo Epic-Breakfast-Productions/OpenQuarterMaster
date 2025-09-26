@@ -9,12 +9,9 @@ import tech.ebp.oqm.lib.core.api.java.testUtils.testClases.JwtAuthTest;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLHandshakeException;
-import javax.net.ssl.SSLParameters;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509ExtendedTrustManager;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.Socket;
@@ -36,7 +33,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 /**
  * These are examples of how to configure the client when certification issues become a problem.
  */
-class OqmCoreApiClientHttpsIgnoreTest extends JwtAuthTest {
+class OqmCoreApiClientHttpsDemoTest extends JwtAuthTest {
 	
 	@BeforeAll
 	public static void setup() {
