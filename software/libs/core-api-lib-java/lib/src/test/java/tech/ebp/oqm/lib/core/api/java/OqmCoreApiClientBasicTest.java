@@ -1,6 +1,7 @@
 package tech.ebp.oqm.lib.core.api.java;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.lib.core.api.java.testUtils.testClases.JwtAuthTest;
 
@@ -11,7 +12,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 /**
  *
  */
-class OqmCoreApiClientTest extends JwtAuthTest {
+class OqmCoreApiClientBasicTest extends JwtAuthTest {
+	
+	
+	@BeforeAll
+	public static void setup() {
+		setupAndStart();
+	}
 	
 	@Test
 	void testGetServerHealth() {

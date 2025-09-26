@@ -11,8 +11,7 @@ public class JwtAuthTest extends RunningServerTest {
 	@Getter
 	OqmCredentials credentials = JwtUtils.generateJwtCreds(true);
 	
-	@BeforeAll
-	public static void beforeAll() {
+	public static void setupAndStart() {
 		coreApiContainer.setupForPlainJwtAuth();
 		startContainers();
 	}

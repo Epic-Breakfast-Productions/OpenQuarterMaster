@@ -35,23 +35,8 @@ import java.util.List;
 import java.util.UUID;
 
 public class JwtUtils {
-	public static final KeyPair SIGNING_KEYPAIR;
+	public static final KeyPair SIGNING_KEYPAIR = CertUtils.getNewKeypair();
 	private static final Faker FAKER = new Faker();
-	
-	static {
-		KeyPairGenerator keyPairGenerator = null;
-		try {
-			keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-		} catch(NoSuchAlgorithmException e) {
-			throw new RuntimeException(e);
-		}
-		
-		SecureRandom secureRandom = new SecureRandom();
-		keyPairGenerator.initialize(2048, secureRandom);
-		
-		SIGNING_KEYPAIR = keyPairGenerator.generateKeyPair();
-	}
-	
 	
 	public static String generateJwtToken(boolean admin) {
 		String username = FAKER.internet().username();

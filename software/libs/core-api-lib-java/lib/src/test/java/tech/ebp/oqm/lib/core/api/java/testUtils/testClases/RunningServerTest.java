@@ -26,14 +26,18 @@ public abstract class RunningServerTest {
 		coreApiContainer.stop();
 	}
 	
-	public CoreApiConfig getCoreApiConfig() {
+	public CoreApiConfig getCoreApiConfig(boolean https) {
 		try {
 			return CoreApiConfig.builder()
-					   .baseUri(new URI("http://" + coreApiContainer.getHost() + ":" + coreApiContainer.getFirstMappedPort().toString()))
+					   .baseUri(new URI("http"+(https?"s":"")+"://" + coreApiContainer.getHost() + ":" + coreApiContainer.getPort(https)))
 					   .build();
 		} catch(URISyntaxException e) {
 			throw new RuntimeException("Failed to create uri for core api.", e);
 		}
+	}
+	
+	public CoreApiConfig getCoreApiConfig() {
+		return getCoreApiConfig(false);
 	}
 	
 	public abstract OqmCredentials getCredentials();

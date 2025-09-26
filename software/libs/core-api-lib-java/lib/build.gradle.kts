@@ -47,6 +47,7 @@ dependencies {
     testImplementation("io.jsonwebtoken:jjwt-api:0.13.0")
     testImplementation("io.jsonwebtoken:jjwt-impl:0.13.0")
     testImplementation("io.jsonwebtoken:jjwt-jackson:0.13.0")
+    testImplementation("org.bouncycastle:bcprov-jdk18on:1.82")
 }
 
 // Apply a specific Java toolchain to ease working on different environments.
