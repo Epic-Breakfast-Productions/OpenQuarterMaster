@@ -47,7 +47,7 @@ class OqmCoreApiClientHttpsDemoTest extends JwtAuthTest {
 	@Test
 	void testBadCertThrowing() {
 		OqmCoreApiClient client = OqmCoreApiClient.builder()
-									  .config(getCoreApiConfig(true))
+									  .config(getCoreApiConfig(true).build())
 									  .build();
 		
 		CompletionException e = assertThrows(CompletionException.class, () ->client.serverHealthGet().join());
@@ -78,7 +78,7 @@ class OqmCoreApiClientHttpsDemoTest extends JwtAuthTest {
 									  .httpClient(HttpClient.newBuilder()
 													  .sslContext(context)
 													  .build())
-									  .config(getCoreApiConfig(true))
+									  .config(getCoreApiConfig(true).build())
 									  .build();
 		
 		HttpResponse<ObjectNode> response = client.serverHealthGet().join();
@@ -155,7 +155,7 @@ class OqmCoreApiClientHttpsDemoTest extends JwtAuthTest {
 									  .httpClient(HttpClient.newBuilder()
 													  .sslContext(context)
 													  .build())
-									  .config(getCoreApiConfig(true))
+									  .config(getCoreApiConfig(true).build())
 									  .build();
 		
 		HttpResponse<ObjectNode> response = client.serverHealthGet().join();

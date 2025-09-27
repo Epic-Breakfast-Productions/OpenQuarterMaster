@@ -1,18 +1,19 @@
 package tech.ebp.oqm.lib.core.api.java.testUtils;
 
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.utility.DockerImageName;
 
-public class CoreAPITestContainerUtils {
+public class TestContainerUtils {
 	private static final String MONGODB_DEVSERVICE_HOSTNAME = "oqm-dev-mongodb-server";
+	public static final String KEYCLOAK_DEVSERVICE_HOSTNAME = "oqm-dev-keycloak-server";
 	
 	
 	public static MongoDBContainer getMongoContainer(){
 		DockerImageName mongoImageName = DockerImageName.parse("mongo:7");
 		
 		MongoDBContainer mongoDBContainer = new MongoDBContainer(mongoImageName);
-		mongoDBContainer.addExposedPorts();
 		mongoDBContainer.withNetwork(Network.SHARED);
 		mongoDBContainer.withNetworkAliases(MONGODB_DEVSERVICE_HOSTNAME);
 		
@@ -29,5 +30,19 @@ public class CoreAPITestContainerUtils {
 														  .withNetwork(Network.SHARED);
 			
 			return container;
+	}
+	
+	public static KeycloakContainer getKeycloakContainer(){
+		KeycloakContainer kcContainer = new KeycloakContainer();
+		
+		kcContainer.withNetworkAliases(KEYCLOAK_DEVSERVICE_HOSTNAME);
+		
+		kcContainer.addExposedPorts();
+		
+		kcContainer.withRealmImportFile("keycloak/oqm-realm.json");
+		kcContainer.withAccessToHost(true);
+		kcContainer.withNetwork(Network.SHARED);
+		
+		return kcContainer;
 	}
 }

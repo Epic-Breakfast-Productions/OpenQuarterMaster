@@ -23,7 +23,7 @@ class OqmCoreApiClientBasicTest extends JwtAuthTest {
 	@Test
 	void testGetServerHealth() {
 		OqmCoreApiClient client = OqmCoreApiClient.builder()
-									  .config(getCoreApiConfig())
+									  .config(getCoreApiConfig().build())
 									  .build();
 		
 		HttpResponse<ObjectNode> response = client.serverHealthGet().join();
@@ -35,7 +35,7 @@ class OqmCoreApiClientBasicTest extends JwtAuthTest {
 	@Test
 	void testGetCurrency() {
 		OqmCoreApiClient client = OqmCoreApiClient.builder()
-									  .config(getCoreApiConfig())
+									  .config(getCoreApiConfig().build())
 									  .build();
 		
 		HttpResponse<String> response = client.infoCurrencyGet().join();
@@ -47,7 +47,7 @@ class OqmCoreApiClientBasicTest extends JwtAuthTest {
 	@Test
 	void testGetGeneralId() {
 		OqmCoreApiClient client = OqmCoreApiClient.builder()
-									  .config(getCoreApiConfig())
+									  .config(getCoreApiConfig().build())
 									  .build();
 		
 		HttpResponse<ObjectNode> response = client.generalIdValidateGet(this.getCredentials(), "ISBN_13", "9780691165615").join();
@@ -59,7 +59,7 @@ class OqmCoreApiClientBasicTest extends JwtAuthTest {
 	@Test
 	void testGetInteractingEntitySelf() {
 		OqmCoreApiClient client = OqmCoreApiClient.builder()
-									  .config(getCoreApiConfig())
+									  .config(getCoreApiConfig().build())
 									  .build();
 		
 		HttpResponse<String> response = client.interactingEntityGetSelf(this.getCredentials()).join();

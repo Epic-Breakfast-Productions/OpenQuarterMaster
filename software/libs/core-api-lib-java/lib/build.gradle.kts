@@ -42,6 +42,7 @@ dependencies {
     testImplementation("org.testcontainers:testcontainers:1.21.3")
     testImplementation("org.testcontainers:junit-jupiter:1.21.3")
     testImplementation("org.testcontainers:mongodb:1.21.3")
+    testImplementation("com.github.dasniko:testcontainers-keycloak:3.4.0")
     testImplementation("net.datafaker:datafaker:2.4.4")
     //for doing jwt's
     testImplementation("io.jsonwebtoken:jjwt-api:0.13.0")

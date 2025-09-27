@@ -7,19 +7,18 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
+import tech.ebp.oqm.lib.core.api.java.auth.KCServiceAccountCreds;
 import tech.ebp.oqm.lib.core.api.java.auth.OqmCredentials;
 import tech.ebp.oqm.lib.core.api.java.config.CoreApiConfig;
+import tech.ebp.oqm.lib.core.api.java.config.KeycloakConfig;
 import tech.ebp.oqm.lib.core.api.java.utils.UriUtils;
 import tech.ebp.oqm.lib.core.api.java.utils.jackson.JacksonObjectNodeBodyHandler;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URLEncoder;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -31,7 +30,7 @@ import static tech.ebp.oqm.lib.core.api.java.utils.Constants.API_V1_PATH;
  *
  */
 @Data
-@Builder
+@Builder(buildMethodName = "buildInternal")
 @Setter(AccessLevel.PRIVATE)
 public class OqmCoreApiClient {
 	
@@ -44,19 +43,64 @@ public class OqmCoreApiClient {
 	@NonNull
 	private CoreApiConfig config;
 	
+	@Builder.Default
+	private OqmCredentials defaultCreds = null;
+	
+	/**
+	 * Convenience structure to hold account credentials.
+	 */
 	@Getter(AccessLevel.PRIVATE)
 	@Builder.Default
-	private OqmCredentials servAccCreds = null;
+	private Map<String, OqmCredentials> credentialsMap = new HashMap<>();
 	
-	public boolean hasServiceAccountCredentials(){
-		return this.servAccCreds != null;
+	public boolean hasDefaultCredentials() {
+		return this.defaultCreds != null;
+	}
+	
+	/**
+	 * Modifying the lombok builder to fenaegle keycloak config and default credentials.
+	 */
+	public static class OqmCoreApiClientBuilder {
+		
+		public OqmCoreApiClient build() {
+			OqmCoreApiClient output = this.buildInternal();
+			
+			if(output.getConfig().getKeycloakConfig() != null) {
+				boolean changed = false;
+				KeycloakConfig keycloakConfig = output.getConfig().getKeycloakConfig();
+				
+				//set keycloak httpclient if needed
+				if(keycloakConfig.getHttpClient() == null){
+					keycloakConfig = keycloakConfig.toBuilder().httpClient(output.getHttpClient()).build();
+					changed = true;
+				}
+				
+				//rebuild config if needed
+				if(changed){
+					output.setConfig(output.getConfig().toBuilder().keycloakConfig(keycloakConfig).build());
+				}
+				
+				//set default credentials if needed
+				if(keycloakConfig.isDefaultCreds()){
+					if(output.hasDefaultCredentials()){
+						throw new IllegalArgumentException("Cannot set default credentials to keycloak service account if there is already a default credentials set.");
+					}
+					
+					output.setDefaultCreds(new KCServiceAccountCreds(keycloakConfig));
+				}
+			}
+			
+			return output;
+		}
 	}
 	
 	/**
 	 * Sets up a basic request object
+	 *
 	 * @param creds The credentials to use with the request
 	 * @param path The path to hit on the core api service
 	 * @param queryParams Query params to attach to the URL.
+	 *
 	 * @return The request builder to use
 	 */
 	private HttpRequest.Builder setupRequest(
@@ -114,12 +158,12 @@ public class OqmCoreApiClient {
 		return this.getHttpClient()
 				   .sendAsync(
 					   this.setupRequest(
-						   creds,
+							   creds,
 							   MessageFormat.format(
-							   API_V1_PATH + "/identifiers/general/validate/{0}/{1}",
+								   API_V1_PATH + "/identifiers/general/validate/{0}/{1}",
 								   UriUtils.urlEncode(type),
 								   UriUtils.urlEncode(identifier)
-								   )
+							   )
 						   )
 						   .GET()
 						   .build(),
@@ -133,7 +177,6 @@ public class OqmCoreApiClient {
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	Uni<ObjectNode> generalIdValidateGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type, @PathParam("identifier") String code);
 	//
-	
 	
 	
 	//	@GET

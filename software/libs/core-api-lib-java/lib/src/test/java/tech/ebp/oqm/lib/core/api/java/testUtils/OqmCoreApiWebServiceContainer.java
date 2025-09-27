@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.api.java.testUtils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import dasniko.testcontainers.keycloak.KeycloakContainer;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
@@ -13,6 +14,8 @@ import java.nio.file.Path;
 import java.security.KeyPair;
 import java.util.Base64;
 import java.util.Map;
+
+import static tech.ebp.oqm.lib.core.api.java.testUtils.TestContainerUtils.KEYCLOAK_DEVSERVICE_HOSTNAME;
 
 public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServiceContainer> {
 	
@@ -71,6 +74,21 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 		this.withEnv(Map.of(
 			"mp.jwt.verify.publickey", Base64.getEncoder().encodeToString(JwtUtils.SIGNING_KEYPAIR.getPublic().getEncoded())
 		));
+		return this;
+	}
+	
+	public OqmCoreApiWebServiceContainer setupForKcAuth(KeycloakContainer keycloakContainer) {
+		//TODO: rework for keycloak
+		this.withEnv(Map.of(
+			"smallrye.jwt.verify.key.location",
+			String.format(
+				"http://%s:%s/realms/%s/protocol/openid-connect/certs",
+				KEYCLOAK_DEVSERVICE_HOSTNAME,
+				"8080",
+				"oqm"
+			)
+		));
+		
 		return this;
 	}
 	
