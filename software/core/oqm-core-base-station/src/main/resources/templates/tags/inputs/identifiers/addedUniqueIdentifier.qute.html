@@ -18,7 +18,7 @@
 				
 				<div class="input-group-text px-1 uniqueIdIsBarcodeSelectContainer {#if uniqueId??}{#if uniqueId.get("type").asText() != "GENERIC"}d-none{/if}{/if}">
 					{#icons/barcode /}
-					<input class="form-check-input ms-1 mt-0" type="checkbox" value="" name="uniqueIdIsBarcode" aria-label="Checkbox for if barcode or not." onchange="GeneralIdentifiers.handleIsBarcodeChecked($(this));" {#if uniqueId??}{#if uniqueId.get("barcode").asBoolean()}checked{/if}{/if}>
+					<input class="form-check-input ms-1 mt-0" type="checkbox" value="" name="uniqueIdIsBarcode" aria-label="Checkbox for if barcode or not." onchange="UniqueIdentifiers.barcodeCheckChanged($(this));" {#if uniqueId??}{#if uniqueId.get("barcode").asBoolean()}checked{/if}{/if}>
 				</div>
 			</div>
 			
@@ -27,7 +27,7 @@
 					<button type="button" title="Move identifier up" class="btn btn-sm btn-outline-dark" onclick="GeneralIdentifiers.moveUp($(this))">{#icons/left /}</button>
 					<button type="button" title="Move identifier down" class="btn btn-sm btn-outline-dark" onclick="GeneralIdentifiers.moveDown($(this))">{#icons/right /}</button>
 				</div>
-				<button type="button" title="Remove this identifier" class="btn btn-sm btn-outline-danger" onclick="GeneralIdentifiers.removeIdentifier($(this))">{#icons/remove /}</button>
+				<button type="button" title="Remove this identifier" class="btn btn-sm btn-outline-danger" onclick="UniqueIdentifiers.removeIdentifier($(this))">{#icons/remove /}</button>
 			</div>
 		</div>
 		
