@@ -22,7 +22,7 @@ import tech.ebp.oqm.core.api.service.identifiers.unique.UniqueIdBarcodeService;
 /**
  */
 @Slf4j
-@Path("/api/media/code/identifier/unique")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/media/code/identifier/unique")
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
 @RolesAllowed(Roles.INVENTORY_VIEW)
 @RequestScoped
