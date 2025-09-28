@@ -31,7 +31,6 @@ import java.util.Optional;
 @Produces(MediaType.TEXT_HTML)
 public class UniqueIdPassthrough extends PassthroughProvider {
 	
-	
 	@POST
 	@Path("generator")
 	@Operation(
@@ -96,6 +95,32 @@ public class UniqueIdPassthrough extends PassthroughProvider {
 		@QueryParam("num") Optional<Integer> num
 	) {
 		return this.handleCall(this.getOqmCoreApiClient().uniqueIdGenerate(this.getBearerHeaderStr(), this.getSelectedDb(), id, num.orElse(1)));
+	}
+	
+	@GET
+	@Path("barcode/{value}")
+	@Operation(
+		summary = "A barcode that represents the string given."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Got the currency."
+	)
+	@Produces("image/svg+xml")
+	public Uni<Response> getBarcode(
+		@PathParam("value") String data
+	) {
+		return this.handleCall(
+			this.getOqmCoreApiClient()
+				.uniqueIdGetBarcodeImage(this.getBearerHeaderStr(), data)
+				.map((String xmlData)->{
+					return Response.status(Response.Status.OK)
+							   .entity(xmlData)
+							   .header("Content-Disposition", "attachment;filename=" + data + ".svg")
+							   .type("image/svg+xml")
+							   .build();
+				})
+		);
 	}
 	
 }

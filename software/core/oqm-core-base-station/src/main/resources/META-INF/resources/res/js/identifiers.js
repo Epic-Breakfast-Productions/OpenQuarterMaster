@@ -199,26 +199,60 @@ const UniqueIdentifiers = {
 	getNewIdentifierValue(uniqueInputContainerJq){
 		return UniqueIdentifiers.getNewIdentifierInput(uniqueInputContainerJq).val();
 	},
+	getIdentifierImage(idContainerJq){
+		return idContainerJq.find(".identifierImage");
+	},
+	getIdentifierValueContainer(idContainerJq){
+		return idContainerJq.find(".identifierValue");
+	},
+	getIdentifierValue(idContainerJq){
+		return UniqueIdentifiers.getIdentifierValueContainer(idContainerJq).text();
+	},
 	clearNewInput(generalInputContainerJq){
 		UniqueIdentifiers.getNewIdentifierInput(generalInputContainerJq).val("");
 	},
 
+	removeIdentifier(removeButtonJq){
+		if(confirm("Are you sure you want to remove this identifier?") === false) return;
+		SelectedObjectDivUtils.removeSelected(removeButtonJq.closest('.uniqueIdentifierContainer'));
+	},
 
+	barcodeCheckChanged(isBarcodeCheckboxJq){
+		let inputContainerJq = UniqueIdentifiers.getInputContainer(isBarcodeCheckboxJq);
+		let idContainerJq = UniqueIdentifiers.getIdentifiersContainer(inputContainerJq);
+		let isChecked = isBarcodeCheckboxJq.prop("checked");
 
+		let identifierValueContainer = UniqueIdentifiers.getIdentifierValueContainer(idContainerJq);
+		let identifierImage = UniqueIdentifiers.getIdentifierImage(idContainerJq);
 
-
+		if(isChecked){
+			identifierImage.removeClass("d-none");
+			identifierValueContainer.addClass("d-none");
+			if(identifierImage.attr("src") === ""){
+				identifierImage.attr("src", Rest.passRoot + "/identifier/unique/barcode/" + identifierValueContainer.text());
+			}
+		} else {
+			identifierValueContainer.removeClass("d-none");
+			identifierImage.addClass("d-none");
+		}
+	},
 
 	newAddedIdentifier(newIdentifier){
+		console.log("Adding identifier: ", newIdentifier);
 		let output = $(PageComponents.Inputs.UniqueIds.uniqueIdAdded);
 
-		//TODO:: fill this out
+		let idValue = output.find(".identifierValue");
+
+		idValue.text(newIdentifier.value);
+
+		let barcodeInput = output.find("input[name='uniqueIdIsBarcode']");
+
+		barcodeInput.prop("checked", newIdentifier.barcode);
+
+		UniqueIdentifiers.barcodeCheckChanged(barcodeInput);
 
 		return output;
 	},
-
-
-
-
 
 
 	addIdentifier(uniqueInputContainerJq, newIdentifier = null){
