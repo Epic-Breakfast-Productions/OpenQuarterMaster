@@ -47,7 +47,7 @@ public interface OqmCoreApiClientService {
 	Uni<ObjectNode> generalIdGetObj(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("identifier") String code);
 	
 	@GET
-	@Path("/api/media/code/generalId/{type}/{value}")
+	@Path(ROOT_API_ENDPOINT_V1 + "/media/code/identifier/general/{type}/{value}")
 	@Produces("image/svg+xml")
 	Uni<String> generalIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String generalIdType, @PathParam("value") String data);
 	//</editor-fold>
@@ -115,6 +115,11 @@ public interface OqmCoreApiClientService {
 		@PathParam("generatorId") String generatorId,
 		@QueryParam("num") Integer numToGenerate
 	);
+	
+	@GET
+	@Path(ROOT_API_ENDPOINT_V1 + "/media/code/identifier/unique/{value}")
+	@Produces("image/svg+xml")
+	Uni<String> uniqueIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("value") String data);
 	
 	//</editor-fold>
 	
