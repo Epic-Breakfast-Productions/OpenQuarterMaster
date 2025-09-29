@@ -14,7 +14,6 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
@@ -26,24 +25,19 @@ import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ToGenerateUniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.ToGenerateId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdGenResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.StoredInBlockStats;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
-import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
-import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
-import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.ItemStatsService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 import tech.units.indriya.quantity.Quantities;
 
-import javax.measure.Quantity;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -81,7 +75,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
-	UniqueIdentifierGenerationService uniqueIdentifierGenerationService;
+	IdentifierGenerationService identifierGenerationService;
 	
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
@@ -185,15 +179,15 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			if (curId.getType() != UniqueIdType.TO_GENERATE) {
 				uniqueIds.add(curId);
 			} else {
-				ObjectId generateFrom = ((ToGenerateUniqueId) curId).getGenerateFrom();
+				ObjectId generateFrom = ((ToGenerateId) curId).getGenerateFrom();
 				GeneratedUniqueId generatedId = null;
 				
 				do {
 					generatedId =
-							this.getUniqueIdentifierGenerationService().getNextUniqueId(
-								oqmDbIdOrName,
-								generateFrom
-							).getGeneratedIds().getFirst();
+						(GeneratedUniqueId) this.getIdentifierGenerationService().getNextId(
+							oqmDbIdOrName,
+							generateFrom
+						).getGeneratedIds().getFirst();
 					
 					if (!this.getItemsWithUniqueId(oqmDbIdOrName, null, generatedId).isEmpty()) {
 						generatedId = null;

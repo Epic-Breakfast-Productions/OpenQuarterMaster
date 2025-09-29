@@ -7,10 +7,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Generated;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralGeneratedId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdGenResult;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdentifierGenerator;
-import tech.ebp.oqm.core.api.model.rest.search.UniqueIdGeneratorSearch;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdGenResult;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdentifierGenerator;
+import tech.ebp.oqm.core.api.model.rest.search.IdGeneratorSearch;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -32,8 +35,7 @@ import static com.mongodb.client.model.Filters.eq;
 @Slf4j
 @Named("UniqueIdentifierGenerationService")
 @ApplicationScoped
-public class UniqueIdentifierGenerationService extends MongoHistoriedObjectService<UniqueIdentifierGenerator, UniqueIdGeneratorSearch, CollectionStats> {
-	
+public class IdentifierGenerationService extends MongoHistoriedObjectService<IdentifierGenerator, IdGeneratorSearch, CollectionStats> {
 	
 	private static final Pattern PARTS_PATTERN = Pattern.compile("\\{[^}]*}");
 	private static final String PLACEHOLDER_PART_DELIM = ";";
@@ -81,7 +83,7 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 	 *
 	 * @return The next id in the sequence
 	 */
-	public static String getNextUniqueId(UniqueIdentifierGenerator generator) {
+	public static String getNextId(IdentifierGenerator generator) {
 		String format = generator.getIdFormat();
 		
 		if (format == null || format.isBlank()) {
@@ -200,13 +202,15 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 	}
 	
 	
-	public UniqueIdentifierGenerationService() {
-		super(UniqueIdentifierGenerator.class, false);
+	public IdentifierGenerationService() {
+		super(IdentifierGenerator.class, false);
 	}
 	
 	@Override
 	public Set<String> getDisallowedUpdateFields() {
 		Set<String> output = new HashSet<>(super.getDisallowedUpdateFields());
+		output.add("generates");
+		output.add("forObjectType");
 		output.add("idFormat");
 		output.add("lastIncremented");
 		output.add("encoded");
@@ -221,16 +225,47 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 	
 	@Override
 	public int getCurrentSchemaVersion() {
-		return UniqueIdentifierGenerator.CUR_SCHEMA_VERSION;
+		return IdentifierGenerator.CUR_SCHEMA_VERSION;
 	}
 	
-	public UniqueIdGenResult getNextNUniqueIds(String oqmDbNameOrId, ObjectId generatorId, int numIds) {
+	private <T extends Identifier & Generated> T getIdObjectFromNewValue(IdentifierGenerator generator, String newVal) {
+		//noinspection unchecked
+		return (T) switch (generator.getGenerates()) {
+			case UNIQUE -> GeneratedUniqueId.builder()
+							   .label(generator.getLabel())
+							   .generatedFrom(generator.getId())
+							   .value(newVal)
+							   .barcode(generator.isBarcode())
+							   .build();
+			case GENERAL -> GeneralGeneratedId.builder()
+								.label(generator.getLabel())
+								.generatedFrom(generator.getId())
+								.value(newVal)
+								.barcode(generator.isBarcode())
+								.build();
+		};
+	}
+	
+	public IdGenResult getNextNIds(String oqmDbNameOrId, ObjectId generatorId, int numIds) {
 		if (numIds < 1) {
 			throw new IllegalArgumentException("Number of ids to generate must be greater than 0.");
 		}
 		
-		UniqueIdentifierGenerator gen = this.get(oqmDbNameOrId, generatorId);
-		UniqueIdGenResult output = new UniqueIdGenResult();
+		IdentifierGenerator gen = this.get(oqmDbNameOrId, generatorId);
+		
+		IdGenResult output;
+		
+		switch (gen.getGenerates()){
+			case UNIQUE -> {
+				output = new IdGenResult<GeneratedUniqueId>();
+			}
+			case GENERAL -> {
+				output = new IdGenResult<GeneratedUniqueId>();
+			}
+			default -> {
+				throw new IllegalArgumentException("Unknown identifier type: " + gen.getGenerates());
+			}
+		}
 		
 		log.debug("Getting next id from generator: {}", gen.getId());
 		
@@ -239,14 +274,14 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 			boolean tick = false;
 			do {
 				BigInteger origLastIncremented = gen.getLastIncremented();
-				curNewId = getNextUniqueId(gen);
+				curNewId = getNextId(gen);
 				
 				//no need to save if no increment
 				if (!gen.hasIncrement()) {
 					continue;
 				}
 				
-				UniqueIdentifierGenerator oldGen = this.getTypedCollection(oqmDbNameOrId)
+				IdentifierGenerator oldGen = this.getTypedCollection(oqmDbNameOrId)
 													   .findOneAndReplace(
 														   Filters.and(
 															   eq("_id", gen.getId()),
@@ -269,15 +304,9 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 				}
 			} while (curNewId == null);
 			
+			//noinspection unchecked
 			if (
-				!output.addGeneratedId(
-					GeneratedUniqueId.builder()
-						.label(gen.getName())
-						.generatedFrom(gen.getId())
-						.value(curNewId)
-						.barcode(gen.isBarcode())
-						.build()
-				)
+				!output.addGeneratedId(this.getIdObjectFromNewValue(gen, curNewId))
 			) {
 				log.warn("Duplicate id generated for generator {} / {}; consider reviewing format.", gen.getId(), gen.getIdFormat());
 			}
@@ -288,7 +317,7 @@ public class UniqueIdentifierGenerationService extends MongoHistoriedObjectServi
 		return output;
 	}
 	
-	public UniqueIdGenResult getNextUniqueId(String oqmDbNameOrId, ObjectId generatorId) {
-		return this.getNextNUniqueIds(oqmDbNameOrId, generatorId, 1);
+	public IdGenResult getNextId(String oqmDbNameOrId, ObjectId generatorId) {
+		return this.getNextNIds(oqmDbNameOrId, generatorId, 1);
 	}
 }

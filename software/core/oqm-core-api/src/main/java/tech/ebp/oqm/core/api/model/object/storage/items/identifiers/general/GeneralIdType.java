@@ -19,7 +19,9 @@ public enum GeneralIdType {
 //	ASIN, Amazon specific, ignore
 //	SKU, no way to determine proper format
 	
-	GENERIC(false);
+	GENERIC(false),
+	GENERATED(false)
+	;
 	
 	public final boolean isBarcode;
 	

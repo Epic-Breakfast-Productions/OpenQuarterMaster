@@ -11,10 +11,11 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.Generates;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ToGenerateUniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.ToGenerateId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdentifierGenerator;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdentifierGenerator;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;
@@ -23,8 +24,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 
 import jakarta.inject.Inject;
 import tech.units.indriya.unit.Units;
-
-import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
@@ -41,7 +40,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	InventoryItemTestObjectCreator itemTestObjectCreator;
 	
 	@Inject
-	UniqueIdentifierGenerationService uigs;
+	IdentifierGenerationService uigs;
 
 	@Override
 	protected InventoryItem getTestObject() {
@@ -216,10 +215,10 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		User user = this.getTestUserService().getTestUser();
 		InventoryItem item = this.getTestObject();
 		
-		ObjectId uig = this.uigs.add(DEFAULT_TEST_DB_NAME, UniqueIdentifierGenerator.builder().idFormat("{inc}").build(), user);
+		ObjectId uig = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
 		
 		item.getUniqueIds().add(
-			ToGenerateUniqueId.builder().generateFrom(uig)
+			ToGenerateId.builder().generateFrom(uig)
 				.label("SKU").build()
 		);
 		
@@ -240,17 +239,17 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		InventoryItem item1 = this.getTestObject();
 		InventoryItem item2 = this.getTestObject();
 		
-		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, UniqueIdentifierGenerator.builder().idFormat("{inc}").build(), user);
-		ObjectId uig2 = this.uigs.add(DEFAULT_TEST_DB_NAME, UniqueIdentifierGenerator.builder().idFormat("{inc}").build(), user);
+		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
+		ObjectId uig2 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
 		
 		item1.getUniqueIds().add(
-			ToGenerateUniqueId.builder().generateFrom(uig1)
+			ToGenerateId.builder().generateFrom(uig1)
 				.label("SKU").build()
 		);
 		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item1, user);
 		
 		item2.getUniqueIds().add(
-			ToGenerateUniqueId.builder().generateFrom(uig2)
+			ToGenerateId.builder().generateFrom(uig2)
 				.label("SKU").build()
 		);
 		newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item2, user);
@@ -270,10 +269,10 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		InventoryItem item1 = this.getTestObject();
 		InventoryItem item2 = this.getTestObject();
 		
-		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, UniqueIdentifierGenerator.builder().idFormat("{inc}").build(), user);
+		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
 		
 		item1.getUniqueIds().add(
-			ToGenerateUniqueId.builder().generateFrom(uig1)
+			ToGenerateId.builder().generateFrom(uig1)
 				.label("SKU").build()
 		);
 		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item1, user);

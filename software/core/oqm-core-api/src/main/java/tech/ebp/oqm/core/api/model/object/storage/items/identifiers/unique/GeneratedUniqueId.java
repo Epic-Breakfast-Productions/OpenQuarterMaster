@@ -10,13 +10,14 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Generated;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
-public class GeneratedUniqueId extends UniqueId implements Comparable<GeneratedUniqueId> {
+public class GeneratedUniqueId extends UniqueId implements Comparable<GeneratedUniqueId>, Generated {
 	
 	@NonNull
 	@NotNull
