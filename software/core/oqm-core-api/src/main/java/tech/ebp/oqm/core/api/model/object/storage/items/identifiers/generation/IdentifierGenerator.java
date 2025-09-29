@@ -1,10 +1,11 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique;
+package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation;
 
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -14,6 +15,8 @@ import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 
 import java.math.BigInteger;
+import java.util.HashSet;
+import java.util.Set;
 
 
 @EqualsAndHashCode(callSuper = true)
@@ -22,7 +25,7 @@ import java.math.BigInteger;
 @SuperBuilder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class UniqueIdentifierGenerator extends MainObject {
+public class IdentifierGenerator extends MainObject {
 	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	/**
@@ -30,6 +33,34 @@ public class UniqueIdentifierGenerator extends MainObject {
 	 */
 	@lombok.Builder.Default
 	private String name = null;
+	
+	/**
+	 * The label to give resulting identifiers. Null to default to {@link #name}.
+	 */
+	@lombok.Builder.Default
+	private String label = null;
+	
+	public String getLabel(){
+		if(this.label == null){
+			return this.name;
+		}
+		return this.label;
+	}
+	
+	/**
+	 * What kind of identifier this generates
+	 */
+	@NonNull
+	@NotNull
+	private Generates generates;
+	
+	/**
+	 * What kind of objects this generator is intended for.
+	 */
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	private Set<GeneratorFor> forObjectType = new HashSet<>();
 	
 	/**
 	 * The format of the id

@@ -10,6 +10,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.ToGenerateId;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -23,7 +24,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = GeneratedUniqueId.class, name = "GENERATED"),
 	@JsonSubTypes.Type(value = ProvidedUniqueId.class, name = "PROVIDED"),
-	@JsonSubTypes.Type(value = ToGenerateUniqueId.class, name = "TO_GENERATE"),
+	@JsonSubTypes.Type(value = ToGenerateId.class, name = "TO_GENERATE"),
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @BsonDiscriminator
