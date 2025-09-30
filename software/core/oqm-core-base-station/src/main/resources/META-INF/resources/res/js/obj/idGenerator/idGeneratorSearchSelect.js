@@ -1,5 +1,5 @@
 
-const UniqueIdGeneratorSearchSelect = {
+const IdGeneratorSearchSelect = {
 
 
 

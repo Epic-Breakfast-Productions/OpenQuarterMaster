@@ -1,5 +1,5 @@
-{#let id=(id.or("uniqueIdGeneratorAddEditForm"))}
-<form id="{id}" class="uniqueIdGeneratorAddEditForm">
+{#let id=(id.or("idGeneratorAddEditForm"))}
+<form id="{id}" class="idGeneratorAddEditForm">
 	<input type="hidden" name="generatorId" value="">
 	
 	<div class="formMessages"></div>
@@ -12,25 +12,56 @@
 		</div>
 	</div>
 	
-	<div class="form-check mb-3">
-		<input class="form-check-input" type="checkbox" value="true" name="encoded" id="{id}-encodedInput" aria-describedby="{id}-encodedInputHelp">
-		<label class="form-check-label" for="{id}-encodedInput">
-			Encoded
-		</label>
-		<div id="{id}-encodedInputHelp" class="form-text">
-			If to encode the resulting text. This obfuscates the real value while remaining unique.<br />
-			Not changeable after generator creation.<br />
-			Example: <code>foo-\{inc}</code> -> <code>Zm9vLTAwMDAx</code>
+	<div class="row">
+		<div class="col mb-3">
+			<label for="{id}-generatesInput" class="form-label">Generates:</label>
+			<select class="form-select" id="{id}-generatesInput" name="generates" required>
+				<option value="UNIQUE">Unique IDs</option>
+				<option value="GENERAL">General IDs</option>
+			</select>
+			<div id="{id}-genForInputHelp" class="form-text">
+				What kind of ids this generator will generate.<br />
+				Not changeable after generator creation.
+			</div>
+		</div>
+		<div class="col mb-3">
+			<label for="{id}-genForInput" class="form-label">Generator For:</label>
+			<select class="form-select dselect-select" id="{id}-genForInput" name="generatesFor" aria-describedby="{id}-genForInputHelp" multiple>
+				<option value="ITEM">Items</option>
+				<option value="STORED">Stored</option>
+			</select>
+			<div id="{id}-genForInputHelp" class="form-text">
+				What this generator generates id's for. Informs what generators appear in generator searches in different contexts.<br />
+				Specify none for any usages.<br />
+				Not changeable after generator creation.
+			</div>
 		</div>
 	</div>
 	
-	<div class="form-check mb-3">
-		<input class="form-check-input" type="checkbox" value="true" name="barcode" id="{id}-barcodeInput" aria-describedby="{id}-barcodeInputHelp">
-		<label class="form-check-label" for="{id}-barcodeInput">
-			Barcode
-		</label>
-		<div id="{id}-barcodeInputHelp" class="form-text">
-			If the resulting generated ids will be barcodes or not.
+	<div class="row">
+		<div class="col mb-3">
+			<div class="form-check">
+				<input class="form-check-input" type="checkbox" value="true" name="encoded" id="{id}-encodedInput" aria-describedby="{id}-encodedInputHelp">
+				<label class="form-check-label" for="{id}-encodedInput">
+					Encoded
+				</label>
+				<div id="{id}-encodedInputHelp" class="form-text">
+					If to encode the resulting text. This obfuscates the real value while remaining unique.<br />
+					Not changeable after generator creation.<br />
+					Example: <code>foo-\{inc}</code> -> <code>Zm9vLTAwMDAx</code>
+				</div>
+			</div>
+		</div>
+		<div class="col mb-3">
+			<div class="form-check mb-3">
+				<input class="form-check-input" type="checkbox" value="true" name="barcode" id="{id}-barcodeInput" aria-describedby="{id}-barcodeInputHelp">
+				<label class="form-check-label" for="{id}-barcodeInput">
+					Barcode
+				</label>
+				<div id="{id}-barcodeInputHelp" class="form-text">
+					If the resulting generated ids will be barcodes or not.
+				</div>
+			</div>
 		</div>
 	</div>
 	

@@ -78,7 +78,7 @@ ui:
   itemsStored:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
-  uniqueIdGenerator:
+  idGenerator:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
 

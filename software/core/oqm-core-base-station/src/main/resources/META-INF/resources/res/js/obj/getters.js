@@ -154,7 +154,7 @@ const Getters = {
 
 			await Rest.call({
 				method: "GET",
-				url: Rest.passRoot + "/identifier/unique/generator/" + generatorId,
+				url: Rest.passRoot + "/identifier/generator/" + generatorId,
 				done: function(checkout){
 					output = checkout
 					doneFunc(checkout);
