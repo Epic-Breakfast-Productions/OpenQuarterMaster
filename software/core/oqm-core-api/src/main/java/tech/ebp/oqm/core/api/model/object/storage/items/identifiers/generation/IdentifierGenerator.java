@@ -16,6 +16,7 @@ import tech.ebp.oqm.core.api.model.object.MainObject;
 
 import java.math.BigInteger;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 
 
@@ -60,7 +61,7 @@ public class IdentifierGenerator extends MainObject {
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
-	private Set<GeneratorFor> forObjectType = new HashSet<>();
+	private LinkedHashSet<GeneratorFor> forObjectType = new LinkedHashSet<>();
 	
 	/**
 	 * The format of the id
