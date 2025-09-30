@@ -1,0 +1,16 @@
+{!
+Template for the search form for storage blocks
+
+Ingests:
+- otherModalId - the modal to return to when closing, if any
+!}
+{!{@tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch emptyStorageBlockSearch}!}
+{#modal id='idGeneratorSearchSelect' size='xl' title='Select an ID Generator' otherModalId=otherModalId}
+{#titleIcon}{#icons/search /}{/titleIcon}
+{#object/idGenerator/searchForm id='idGeneratorSelectForm' rootPrefix=rootPrefix /}
+<div class="col table-responsive">
+  <table class=" table table-bordered table-striped table-hover table-sm" id="idGeneratorSelectResults">
+
+  </table>
+</div>
+{/modal}

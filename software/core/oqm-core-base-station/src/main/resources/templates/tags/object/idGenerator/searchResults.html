@@ -19,6 +19,8 @@
 </tr>
 <tr>
 	<th scope="col" style="">Name</th>
+	<th scope="col" style="">Generates</th>
+	<th scope="col" style="">For</th>
 	<th scope="col">Format</th>
 	<th scope="col" style="width: 75px;">Encoded</th>
 	<th scope="col" style="width: 75px;">Barcode</th>
@@ -31,7 +33,7 @@
 <tr>
 	<td colspan="8" class="text-center">
 		<h2>
-			No Unique ID Generators Found
+			No ID Generators Found
 		</h2>
 	</td>
 </tr>
@@ -44,6 +46,26 @@
 					{#if !result.get("name").isNull()}
 						{result.get("name").asText()}
 					{/if}
+				</td>
+				<td>
+					{#when result.get("generates").asText()}
+						{#is "UNIQUE"}
+							{#icons/uniqueIds /} Unique Ids
+						{#is "GENERAL"}
+							{#icons/generalIds /} General Ids
+					{/when}
+				</td>
+				<td>
+					{#for curType in result.get("forObjectType")}
+						<span class="badge text-bg-secondary">
+							{#when curType.asText()}
+								{#is "ITEM"}
+									{#icons/items /} Items
+								{#is "STORED"}
+									{#icons/stored /} Stored
+							{/when}
+						</span>
+					{/for}
 				</td>
 				<td>
 					{result.get("idFormat").asText()}
@@ -71,10 +93,10 @@
 				</td>
 				{#if actionType == 'full'}
 					<td>
-						<button type="button" class="btn btn-sm btn-primary" title="Generate" onclick="UniqueIdGeneratorUtils.generate('{id}');">
+						<button type="button" class="btn btn-sm btn-primary" title="Generate" onclick="IdGeneratorUtils.generate('{id}', 1, IdGeneratorUtils.modalResultContainer);" data-bs-toggle="modal" data-bs-target="#idGeneratorGenerateResultModal">
 							{#icons/add /}
 						</button>
-						<button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#uniqueIdGeneratorAddEditModal" onclick="UniqueIdGeneratorAddEdit.setupFormForEdit(UniqueIdGeneratorAddEdit.forms.modal, '{id}')">
+						<button type="button" class="btn btn-sm btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#idGeneratorAddEditModal" onclick="IdGeneratorAddEdit.setupFormForEdit(IdGeneratorAddEdit.forms.modal, '{id}')">
 							{#icons/edit /}
 						</button>
 						<button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="">

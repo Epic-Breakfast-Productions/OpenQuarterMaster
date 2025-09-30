@@ -4,7 +4,7 @@ Template for the search form for storage blocks
 Ingests:
 - id - the id to give the form
 !}
-{#include tags/search/searchForm id=id action=(rootPrefix + '/uniqueIdGenerators') showKeywords=true showAttributes=true defaultPageSize=config:['ui.uniqueIdGenerator.search.defaultPageSize']}
+{#include tags/search/searchForm id=id action=(rootPrefix + '/idGenerators') showKeywords=true showAttributes=true defaultPageSize=config:['ui.idGenerator.search.defaultPageSize']}
 {#inputs}
 	<div class="mb-3 col col-3 form-check">
 		<input class="form-check-input" type="checkbox" id="{id}-stillCheckedOutInput" value="false" name="stillCheckedOut">
