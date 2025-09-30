@@ -18,7 +18,7 @@ https://docs.quarkiverse.io/quarkus-langchain4j/dev/index.html
 
 https://mike42.me/blog/2015-03-getting-a-usb-receipt-printer-working-on-linux
 
-https://en.wikipedia.org/wiki/JavaPOS
+https://en.wikipedia.org/wiki/JavaPOS / https://github.com/JavaPOSWorkingGroup/javapos
 
 ## Storage Interaction
 
