@@ -74,11 +74,8 @@ const IdGeneratorAddEdit = {
 
 				IdGeneratorAddEdit.formGetters.generates(formJq).val(generator.generates);
 				IdGeneratorAddEdit.formGetters.generates(formJq).prop("disabled", true);
-				IdGeneratorAddEdit.formGetters.generatesFor(formJq).prop("disabled", true);
+				IdGeneratorAddEdit.formGetters.generatesFor(formJq).prop("disabled", true);//TODO:: not working
 				Dselect.setValues(IdGeneratorAddEdit.formGetters.generatesFor(formJq), generator.forObjectType);
-
-				//TODO:: generates
-				//TODO:: for
 				IdGeneratorAddEdit.formGetters.barcode(formJq).prop("checked", generator.barcode);
 				IdGeneratorAddEdit.formGetters.encoded(formJq).prop("checked", generator.encoded);
 				IdGeneratorAddEdit.formGetters.format(formJq).val(generator.idFormat);
