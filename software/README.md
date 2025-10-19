@@ -4,7 +4,6 @@
 
 This is where all the software we maintain for Open QuarterMaster lives.
 
-- For the **Station Captain**, see [Station Captain](Station%20Captain)
 - For more in-depth Documentation pertaining to all software, see [docs](docs)
 - For the core components, see [core](core/)
   - [Core API](core/oqm-core-api)
