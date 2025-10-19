@@ -85,6 +85,7 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Produces("application/tar+gzip")
 	public Response export(
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName
 			//TODO:: options as bean param? figure this out
 	) throws IOException {
 		File outputFile = databaseExportService.exportDataToBundle(new DataExportOptions());
