@@ -95,11 +95,15 @@ quarkus:
     info-license-url: ${service.gitLink}/blob/main/LICENSE
     security-scheme: jwt
     security-scheme-name: JwtAuth
+    
   swagger-ui:
     always-include: true
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
     theme: flattop
     footer: With ❤️, EBP
+    urls:
+      "Single Node Host Deployed": /core/api/q/openapi/
+      dev: /q/openapi/
   http:
     body:
       preallocate-body-buffer: true
