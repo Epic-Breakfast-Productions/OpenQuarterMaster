@@ -11,6 +11,9 @@ import tech.ebp.oqm.lib.core.api.java.auth.KCServiceAccountCreds;
 import tech.ebp.oqm.lib.core.api.java.auth.OqmCredentials;
 import tech.ebp.oqm.lib.core.api.java.config.CoreApiConfig;
 import tech.ebp.oqm.lib.core.api.java.config.KeycloakConfig;
+import tech.ebp.oqm.lib.core.api.java.search.QueryParams;
+import tech.ebp.oqm.lib.core.api.java.utils.ConvenienceData;
+import tech.ebp.oqm.lib.core.api.java.utils.PathUtils;
 import tech.ebp.oqm.lib.core.api.java.utils.UriUtils;
 import tech.ebp.oqm.lib.core.api.java.utils.jackson.JacksonObjectNodeBodyHandler;
 
@@ -18,7 +21,7 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.MessageFormat;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
@@ -46,12 +49,8 @@ public class OqmCoreApiClient {
 	@Builder.Default
 	private OqmCredentials defaultCreds = null;
 	
-	/**
-	 * Convenience structure to hold account credentials.
-	 */
-	@Getter(AccessLevel.PRIVATE)
 	@Builder.Default
-	private Map<String, OqmCredentials> credentialsMap = new HashMap<>();
+	private ConvenienceData c = new ConvenienceData();
 	
 	public boolean hasDefaultCredentials() {
 		return this.defaultCreds != null;
@@ -106,7 +105,7 @@ public class OqmCoreApiClient {
 	private HttpRequest.Builder setupRequest(
 		OqmCredentials creds,
 		String path,
-		Map<String, String> queryParams
+		QueryParams queryParams
 	) {
 		HttpRequest.Builder reqBuilder = HttpRequest.newBuilder();
 		
@@ -127,7 +126,7 @@ public class OqmCoreApiClient {
 		OqmCredentials creds,
 		String path
 	) {
-		return this.setupRequest(creds, path, Map.of());
+		return this.setupRequest(creds, path, new QueryParams());
 	}
 	
 	//<editor-fold desc="Info">
@@ -311,25 +310,25 @@ public class OqmCoreApiClient {
 	
 	//<editor-fold desc="Storage Blocks">
 	
-	//	TODO
-	//	@GET
-	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT)
-	//	Uni<ObjectNode> storageBlockSearch(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@BeanParam StorageBlockSearch storageBlockSearch
-	//	);
-	//
+	public CompletableFuture<HttpResponse<ObjectNode>> storageBlockSearch(OqmCredentials creds, String oqmDbIdOrName, QueryParams queryParams) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getStorageBlockPath(oqmDbIdOrName), queryParams)
+						   .GET()
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
-	
-	//	TODO
-	//	@POST
-	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT)
-	//	@Consumes(MediaType.APPLICATION_JSON)
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	Uni<String> storageBlockAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ObjectNode newStorageBlock);
-	//
-	
+	public CompletableFuture<HttpResponse<String>> storageBlockAdd(OqmCredentials creds, String oqmDbIdOrName, ObjectNode newStorageBlock) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getStorageBlockPath(oqmDbIdOrName))
+						   .POST(HttpRequest.BodyPublishers.ofString(newStorageBlock.toString()))
+						   .build(),
+					   HttpResponse.BodyHandlers.ofString()
+				   );
+	}
 	
 	//	TODO
 	//	@POST
@@ -342,57 +341,40 @@ public class OqmCoreApiClient {
 	
 	//	TODO
 	//	@GET
-	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/tree")
-	//	@Produces({MediaType.APPLICATION_JSON})
-	//	Uni<ObjectNode> storageBlockTree(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@QueryParam("onlyInclude") List<String> onlyInclude
-	//	);
-	//
-	
-	
-	//	TODO
-	//	@GET
 	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/stats")
 	//	Uni<ObjectNode> storageBlockCollectionStats(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName);
 	//
 	
 	
-	//	TODO
-	//	@GET
-	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{blockId}")
-	//	Uni<ObjectNode> storageBlockGet(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@PathParam("blockId") String storageBlockId
-	//	);
-	//
+	public CompletableFuture<HttpResponse<ObjectNode>> storageBlockGet(OqmCredentials creds, String oqmDbIdOrName, String storageBlockId) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getStorageBlockPath(oqmDbIdOrName, storageBlockId))
+						   .GET()
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
+	public CompletableFuture<HttpResponse<ObjectNode>> storageBlockUpdate(OqmCredentials creds, String oqmDbIdOrName, String storageBlockId, ObjectNode storageBlockUpdates) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getStorageBlockPath(oqmDbIdOrName, storageBlockId))
+						   .PUT(HttpRequest.BodyPublishers.ofString(storageBlockUpdates.toString()))
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
-	//	TODO
-	//	@PUT
-	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{id}")
-	//	Uni<ObjectNode> storageBlockUpdate(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@PathParam("id") String storageBlockId,
-	//		ObjectNode updates
-	//	);
-	//
-	
-	
-	//	TODO
-	//	@DELETE
-	//	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/{id}")
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	Uni<ObjectNode> storageBlockDelete(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@PathParam("id") String storageBlockId
-	//	);
-	//
-	
+	public CompletableFuture<HttpResponse<ObjectNode>> storageBlockDelete(OqmCredentials creds, String oqmDbIdOrName, String storageBlockId) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getStorageBlockPath(oqmDbIdOrName, storageBlockId))
+						   .DELETE()
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
 	//	TODO
 	//	@GET
@@ -403,6 +385,9 @@ public class OqmCoreApiClient {
 	//		@PathParam("blockId") String storageBlockId,
 	//		@BeanParam HistorySearch historySearch
 	//	);
+	
+	
+	
 	//</editor-fold>
 	
 	//<editor-fold desc="Item Categories">

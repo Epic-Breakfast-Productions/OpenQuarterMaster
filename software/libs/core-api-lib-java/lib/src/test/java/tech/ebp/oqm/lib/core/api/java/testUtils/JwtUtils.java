@@ -54,8 +54,11 @@ public class JwtUtils {
 								 .issuer("testJwtUtils")
 								 .subject(UUID.randomUUID().toString())
 								 .claim("name", FAKER.name().fullName())
+								 .claim("email", FAKER.internet().emailAddress())
 								 .claim("groups", roles)
 								 .claim("upn", username)
+								 .claim("username", username)
+								 .claim("preferred_username", username)
 								 .issuedAt(
 									 Date.from(ZonedDateTime.now().minus(5, ChronoUnit.MINUTES).toInstant())
 								 )

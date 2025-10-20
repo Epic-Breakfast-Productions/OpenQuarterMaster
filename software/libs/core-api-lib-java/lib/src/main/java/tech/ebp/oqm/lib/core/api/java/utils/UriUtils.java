@@ -1,6 +1,10 @@
 package tech.ebp.oqm.lib.core.api.java.utils;
 
 import lombok.NoArgsConstructor;
+import tech.ebp.oqm.lib.core.api.java.search.ListParamVal;
+import tech.ebp.oqm.lib.core.api.java.search.QParamVal;
+import tech.ebp.oqm.lib.core.api.java.search.QueryParams;
+import tech.ebp.oqm.lib.core.api.java.search.StringParamVal;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -14,6 +18,12 @@ import java.util.Map;
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public final class UriUtils {
 	
+	private static void appendQueryParam(StringBuilder sb, String key, String val) {
+		sb.append(urlEncode(key));
+		sb.append('=');
+		sb.append(urlEncode(val));
+	};
+	
 	/**
 	 * Builds a url from the parameters.
 	 * @param baseUri The base URI to tack onto
@@ -21,20 +31,31 @@ public final class UriUtils {
 	 * @param queryParams Query parameters, if any, to attach to the URI
 	 * @return The new URI
 	 */
-	public static URI buildUri(URI baseUri, String path, Map<String, String> queryParams) {
+	public static URI buildUri(URI baseUri, String path, QueryParams queryParams) {
 		URI uri = baseUri.resolve(path);
 		
 		if (!queryParams.isEmpty()) {
 			StringBuilder sb = new StringBuilder(uri.getQuery() == null ? "" : uri.getQuery());
 			
 			
-			for (Map.Entry<String, String> entry : queryParams.entrySet()) {
+			for (Map.Entry<String, QParamVal<?>> entry : queryParams.entrySet()) {
 				if (!sb.isEmpty()) {
 					sb.append('&');
 				}
-				sb.append(urlEncode(entry.getKey()));
-				sb.append('=');
-				sb.append(urlEncode(entry.getValue()));
+				
+				if(entry.getValue() instanceof StringParamVal) {
+					appendQueryParam(sb, entry.getKey(), ((StringParamVal) entry.getValue()).get());
+				} else if (entry.getValue() instanceof ListParamVal){
+					boolean first = true;
+					for(String val : ((ListParamVal) entry.getValue()).get()){
+						if(first){
+							first = false;
+						} else {
+							sb.append('&');
+						}
+						appendQueryParam(sb, entry.getKey(), val);
+					}
+				}
 			}
 			
 			try {
