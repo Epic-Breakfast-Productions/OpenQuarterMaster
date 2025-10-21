@@ -21,8 +21,6 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.text.MessageFormat;
-import java.util.List;
-import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import static tech.ebp.oqm.lib.core.api.java.utils.Constants.API_V1_PATH;
@@ -467,17 +465,16 @@ public class OqmCoreApiClient {
 	//<editor-fold desc="Inventory Items">
 	
 	
-	//	TODO
-	//	@POST
-	//	@Path(INV_ITEM_ROOT_ENDPOINT)
-	//	@Consumes(MediaType.APPLICATION_JSON)
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	Uni<String> invItemCreate(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		ObjectNode item
-	//	);
-	//
+	public CompletableFuture<HttpResponse<String>> invItemCreate(OqmCredentials creds, String oqmDbIdOrName, ObjectNode newItem) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getInventoryItemPath(oqmDbIdOrName))
+						   .POST(HttpRequest.BodyPublishers.ofString(newItem.toString()))
+						   .build(),
+					   HttpResponse.BodyHandlers.ofString()
+				   );
+	}
+	
 	
 	
 	//	TODO
@@ -491,17 +488,15 @@ public class OqmCoreApiClient {
 	//
 	
 	
-	//	TODO
-	//	@GET
-	//	@Path(INV_ITEM_ROOT_ENDPOINT)
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	Uni<ObjectNode> invItemSearch(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		//for actual queries
-	//		@BeanParam InventoryItemSearch itemSearch
-	//	);
-	//
+	public CompletableFuture<HttpResponse<ObjectNode>> invItemSearch(OqmCredentials creds, String oqmDbIdOrName, QueryParams queryParams) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getInventoryItemPath(oqmDbIdOrName), queryParams)
+						   .GET()
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
 	
 	//	TODO
@@ -516,30 +511,26 @@ public class OqmCoreApiClient {
 	//
 	
 	
-	//	TODO
-	//	@PUT
-	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}")
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	Uni<ObjectNode> invItemUpdate(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@PathParam("itemId") String id,
-	//		ObjectNode updates
-	//	);
-	//
+	public CompletableFuture<HttpResponse<ObjectNode>> invItemUpdate(OqmCredentials creds, String oqmDbIdOrName, String itemId, ObjectNode invItemUpdates) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getInventoryItemPath(oqmDbIdOrName, itemId))
+						   .PUT(HttpRequest.BodyPublishers.ofString(invItemUpdates.toString()))
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
 	
-	//	TODO
-	//	@DELETE
-	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}")
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	Uni<ObjectNode> invItemDelete(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@PathParam("itemId") String id
-	//	);
-	//
-	
+	public CompletableFuture<HttpResponse<ObjectNode>> invItemDelete(OqmCredentials creds, String oqmDbIdOrName, String invItemId) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getInventoryItemPath(oqmDbIdOrName, invItemId))
+						   .DELETE()
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
 	//	TODO
 	//	@GET
@@ -578,20 +569,25 @@ public class OqmCoreApiClient {
 	//		@BeanParam StoredSearch storedSearch
 	//	);
 	//
+	public CompletableFuture<HttpResponse<ObjectNode>> invItemStoredInBlockSearch(OqmCredentials creds, String oqmDbIdOrName, String itemId, String storageBlockId, QueryParams queryParams) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getInventoryItemInBlockStoredPath(oqmDbIdOrName, itemId, storageBlockId), queryParams)
+						   .GET()
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
-	
-	//	TODO
-	//	@GET
-	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored")
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	Uni<ObjectNode> invItemStoredSearch(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@PathParam("itemId") String itemId,
-	//		@BeanParam StoredSearch storedSearch
-	//	);
-	//
-	
+	public CompletableFuture<HttpResponse<ObjectNode>> invItemStoredSearch(OqmCredentials creds, String oqmDbIdOrName, String itemId, QueryParams queryParams) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getInventoryItemStoredPath(oqmDbIdOrName, itemId), queryParams)
+						   .GET()
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
 	//	TODO
 	//	@GET
@@ -607,32 +603,25 @@ public class OqmCoreApiClient {
 	//
 	
 	
-	//	TODO
-	//	@GET
-	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storedId}")
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	Uni<ObjectNode> invItemStoredGet(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@PathParam("itemId") String itemId,
-	//		@PathParam("storedId") String storedId
-	//	);
-	//
+	public CompletableFuture<HttpResponse<ObjectNode>> invItemStoredGet(OqmCredentials creds, String oqmDbIdOrName, String itemId, String storedId) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getInventoryItemStoredPath(oqmDbIdOrName, itemId, storedId))
+						   .GET()
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
-	
-	//	TODO
-	//	@PUT
-	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/{storedId}")
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	Uni<ObjectNode> invItemStoredUpdate(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@PathParam("itemId") String itemId,
-	//		@PathParam("storedId") String storedId,
-	//		ObjectNode updateObject
-	//	);
-	//
-	
+	public CompletableFuture<HttpResponse<ObjectNode>> invItemStoredUpdate(OqmCredentials creds, String oqmDbIdOrName, String itemId, String storedId, ObjectNode storedUpdates) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getInventoryItemStoredPath(oqmDbIdOrName, itemId, storedId))
+						   .PUT(HttpRequest.BodyPublishers.ofString(storedUpdates.toString()))
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
 	//	TODO
 	//	@GET
@@ -646,19 +635,16 @@ public class OqmCoreApiClient {
 	//	);
 	//
 	
-	
-	//	TODO
-	//	@POST
-	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/transaction")
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	Uni<String> invItemStoredTransact(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@PathParam("itemId") String itemId,
-	//		ObjectNode transaction
-	//	);
-	//
-	
+
+	public CompletableFuture<HttpResponse<String>> invItemStoredTransact(OqmCredentials creds, String oqmDbIdOrName, String itemId, ObjectNode transaction) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getInventoryItemTransactionPath(oqmDbIdOrName, itemId))
+						   .POST(HttpRequest.BodyPublishers.ofString(transaction.toString()))
+						   .build(),
+					   HttpResponse.BodyHandlers.ofString()
+				   );
+	}
 	
 	//	TODO
 	//	@GET
@@ -673,18 +659,15 @@ public class OqmCoreApiClient {
 	//
 	
 	
-	//	TODO
-	//	@GET
-	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/transaction/{transactionId}")
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	Uni<ObjectNode> invItemStoredTransactionGet(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@PathParam("itemId") String itemId,
-	//		@PathParam("transactionId") String transactionId
-	//	);
-	//
-	
+	public CompletableFuture<HttpResponse<ObjectNode>> invItemStoredTransactionGet(OqmCredentials creds, String oqmDbIdOrName, String itemId, String transactionId) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getInventoryItemTransactionPath(oqmDbIdOrName, itemId, transactionId))
+						   .GET()
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
 	//	TODO
 	//	@GET

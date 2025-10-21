@@ -31,4 +31,34 @@ public final class PathUtils {
 	public static String getStorageBlockPath(String oqmDbIdOrName, String storageBlockId){
 		return getStorageBlockPath(oqmDbIdOrName) + "/" + storageBlockId;
 	}
+	
+	public static String getInventoryItemPath(String oqmDbIdOrName){
+		return getInventoryPath(oqmDbIdOrName) + "/inventory-item";
+	}
+	
+	public static String getInventoryItemPath(String oqmDbIdOrName, String itemId){
+		return getInventoryItemPath(oqmDbIdOrName) + "/" + itemId;
+	}
+	
+	public static String getInventoryItemInBlockPath(String oqmDbIdOrName, String itemId, String storageBlockId){
+		return getInventoryItemPath(oqmDbIdOrName, itemId) + "/block/" + storageBlockId;
+	}
+	public static String getInventoryItemInBlockStoredPath(String oqmDbIdOrName, String itemId, String storageBlockId){
+		return getInventoryItemInBlockPath(oqmDbIdOrName, itemId, storageBlockId) + "/stored";
+	}
+	
+	public static String getInventoryItemStoredPath(String oqmDbIdOrName, String itemId){
+		return getInventoryItemPath(oqmDbIdOrName, itemId) + "/stored";
+	}
+	
+	public static String getInventoryItemStoredPath(String oqmDbIdOrName, String itemId, String storedId){
+		return getInventoryItemStoredPath(oqmDbIdOrName, itemId) + "/" + storedId;
+	}
+	
+	public static String getInventoryItemTransactionPath(String oqmDbIdOrName, String itemId){
+		return getInventoryItemStoredPath(oqmDbIdOrName, itemId) + "/transaction";
+	}
+	public static String getInventoryItemTransactionPath(String oqmDbIdOrName, String itemId, String transactionId){
+		return getInventoryItemTransactionPath(oqmDbIdOrName, itemId) + "/" + transactionId;
+	}
 }
