@@ -71,7 +71,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public ObjectId create(
+	public StorageBlock create(
 		@Valid StorageBlock storageBlock
 	) {
 		return super.create(storageBlock);

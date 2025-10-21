@@ -65,7 +65,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ObjectId create(
+	public InventoryItem create(
 		@Valid InventoryItem item
 	) {
 		return super.create(item);

@@ -68,7 +68,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public ObjectId create(
+	public ItemCategory create(
 		@Valid ItemCategory itemCategory
 	) {
 		return super.create(itemCategory);
