@@ -1,0 +1,13 @@
+{
+  "itemGroup.chesttracker": "Example Mod Tab",
+  "block.chesttracker.example_block": "Example Block",
+  "item.chesttracker.example_item": "Example Item",
+
+  "chesttracker.configuration.title": "Chest Tracker Configs",
+  "chesttracker.configuration.section.chesttracker.common.toml": "Chest Tracker Configs",
+  "chesttracker.configuration.section.chesttracker.common.toml.title": "Chest Tracker Configs",
+  "chesttracker.configuration.items": "Item List",
+  "chesttracker.configuration.logDirtBlock": "Log Dirt Block",
+  "chesttracker.configuration.magicNumberIntroduction": "Magic Number Text",
+  "chesttracker.configuration.magicNumber": "Magic Number"
+}
