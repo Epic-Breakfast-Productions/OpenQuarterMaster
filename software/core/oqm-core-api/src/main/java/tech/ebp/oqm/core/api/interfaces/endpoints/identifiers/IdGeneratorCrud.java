@@ -65,7 +65,7 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public ObjectId create(
+	public IdentifierGenerator create(
 		@Valid IdentifierGenerator generator
 	) {
 		return super.create(generator);
