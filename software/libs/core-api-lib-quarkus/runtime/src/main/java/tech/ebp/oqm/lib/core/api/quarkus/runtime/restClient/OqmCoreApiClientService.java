@@ -65,7 +65,7 @@ public interface OqmCoreApiClientService {
 	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/generator")
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> idGeneratorAdd(
+	Uni<ObjectNode> idGeneratorAdd(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		ObjectNode newIdGenerator
@@ -217,7 +217,7 @@ public interface OqmCoreApiClientService {
 	@Path(STORAGE_BLOCK_ROOT_ENDPOINT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> storageBlockAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ObjectNode newStorageBlock);
+	Uni<ObjectNode> storageBlockAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ObjectNode newStorageBlock);
 	
 	@POST
 	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/bulk")
@@ -287,7 +287,7 @@ public interface OqmCoreApiClientService {
 	@Path(ITEM_CAT_ROOT_ENDPOINT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> itemCatAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ObjectNode newItemCategory);
+	Uni<ObjectNode> itemCatAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ObjectNode newItemCategory);
 	
 	@GET
 	@Path(ITEM_CAT_ROOT_ENDPOINT + "/{catId}")
@@ -332,7 +332,7 @@ public interface OqmCoreApiClientService {
 	@Path(INV_ITEM_ROOT_ENDPOINT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> invItemCreate(
+	Uni<ObjectNode> invItemCreate(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		ObjectNode item
@@ -559,7 +559,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> imageAdd(
+	Uni<ObjectNode> imageAdd(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@BeanParam FileUploadBody body
@@ -669,7 +669,7 @@ public interface OqmCoreApiClientService {
 	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> fileAttachmentAdd(
+	Uni<ObjectNode> fileAttachmentAdd(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@BeanParam FileUploadBody body
