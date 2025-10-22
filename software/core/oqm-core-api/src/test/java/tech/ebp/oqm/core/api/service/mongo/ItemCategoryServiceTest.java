@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -11,7 +10,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.testResources.data.ItemCategoryTestObjectCreator;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
@@ -31,7 +29,6 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class ItemCategoryServiceTest extends MongoHistoriedServiceTest<ItemCategory, ItemCategoryService> {
 	
 	ItemCategoryService itemCategoryService;

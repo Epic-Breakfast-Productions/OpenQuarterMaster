@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import jakarta.inject.Inject;
@@ -16,7 +15,6 @@ import jakarta.inject.Inject;
 @Tag("integration")
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(value = TestResourceLifecycleManager.class)
 @TestHTTPEndpoint(InventoryItemsCrud.class)
 class InventoryItemsCrudTest extends RunningServerTest {
 	

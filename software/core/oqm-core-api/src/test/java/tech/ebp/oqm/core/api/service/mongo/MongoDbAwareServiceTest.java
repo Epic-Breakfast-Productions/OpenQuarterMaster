@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.mongodb.client.model.Sorts;
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
@@ -18,7 +17,6 @@ import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.testResources.data.TestMainObject;
 import tech.ebp.oqm.core.api.testResources.data.TestMainObjectSearch;
 import tech.ebp.oqm.core.api.testResources.data.TestMongoService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 
@@ -35,7 +33,6 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class MongoDbAwareServiceTest extends RunningServerTest {
 	
 	@Inject

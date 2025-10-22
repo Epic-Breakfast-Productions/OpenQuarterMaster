@@ -16,7 +16,6 @@ import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationServic
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 import tech.ebp.oqm.core.api.testResources.data.TestMainObject;
 import tech.ebp.oqm.core.api.testResources.data.TestMongoHistoriedService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
@@ -31,7 +30,6 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 @QuarkusTestResource(value = KafkaCompanionResource.class, restrictToAnnotatedClass = true)
 class MongoHistoriedObjectServiceTest extends RunningServerTest {
 

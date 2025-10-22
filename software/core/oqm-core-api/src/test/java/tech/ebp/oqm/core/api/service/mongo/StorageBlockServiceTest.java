@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
@@ -8,12 +7,8 @@ import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
-import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
-import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.testResources.data.StorageBlockTestObjectCreator;
-import tech.ebp.oqm.core.api.testResources.data.TestUserService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
@@ -29,7 +24,6 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class StorageBlockServiceTest extends MongoHistoriedServiceTest<StorageBlock, StorageBlockService> {
 	
 	StorageBlockService storageBlockService;

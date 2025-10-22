@@ -12,8 +12,6 @@ import tech.ebp.oqm.core.api.service.mongo.utils.FileContentsGet;
 import tech.ebp.oqm.core.api.testResources.data.TestMainFileObject;
 import tech.ebp.oqm.core.api.testResources.data.TestMainFileObjectGet;
 import tech.ebp.oqm.core.api.testResources.data.TestMongoHistoriedFileService;
-import tech.ebp.oqm.core.api.testResources.data.TestUserService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
@@ -29,10 +27,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
-//@Disabled("Waiting on file transaction support")//TODO::  #51
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Inject

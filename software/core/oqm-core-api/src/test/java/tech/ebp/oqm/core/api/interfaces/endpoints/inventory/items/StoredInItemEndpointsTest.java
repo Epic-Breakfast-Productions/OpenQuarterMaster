@@ -15,7 +15,6 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import static io.restassured.RestAssured.given;
@@ -25,7 +24,6 @@ import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 @Tag("integration")
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(value = TestResourceLifecycleManager.class)
 //@TestHTTPEndpoint(StoredEndpoints.class)
 public class StoredInItemEndpointsTest extends RunningServerTest {
 
