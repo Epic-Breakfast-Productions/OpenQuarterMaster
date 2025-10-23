@@ -271,7 +271,8 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 		return this.getObjectService().getNextNIds(
 			this.getOqmDbIdOrName(),
 			new ObjectId(id),
-			numToGenerate.orElse(1)
+			numToGenerate.orElse(1),
+			null
 		);
 	}
 	

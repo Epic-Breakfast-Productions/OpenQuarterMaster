@@ -24,8 +24,9 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.ToGenerate;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.ToGenerateId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
@@ -174,30 +175,9 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	public void massageIncomingData(String oqmDbIdOrName, @NonNull InventoryItem item) {
 		super.massageIncomingData(oqmDbIdOrName, item);
 		
-		LinkedHashSet<UniqueId> uniqueIds = new LinkedHashSet<>(item.getUniqueIds().size());
-		for (UniqueId curId : item.getUniqueIds()) {
-			if (curId.getType() != UniqueIdType.TO_GENERATE) {
-				uniqueIds.add(curId);
-			} else {
-				ObjectId generateFrom = ((ToGenerateId) curId).getGenerateFrom();
-				GeneratedUniqueId generatedId = null;
-				
-				do {
-					generatedId =
-						(GeneratedUniqueId) this.getIdentifierGenerationService().getNextId(
-							oqmDbIdOrName,
-							generateFrom
-						).getGeneratedIds().getFirst();
-					
-					if (!this.getItemsWithUniqueId(oqmDbIdOrName, null, generatedId).isEmpty()) {
-						generatedId = null;
-					}
-				} while (generatedId == null);
-				
-				uniqueIds.add(generatedId);
-			}
-		}
-		item.setUniqueIds(uniqueIds);
+		item.setGeneralIds(this.getIdentifierGenerationService().generateIdPlaceholders(oqmDbIdOrName, item.getGeneralIds()));
+		item.setUniqueIds(this.getIdentifierGenerationService().generateIdPlaceholders(oqmDbIdOrName, item.getUniqueIds()));
+		
 	}
 	
 	@Override

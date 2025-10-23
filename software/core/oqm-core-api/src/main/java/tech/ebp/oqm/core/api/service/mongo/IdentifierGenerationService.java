@@ -10,9 +10,12 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Generated;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralGeneratedId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.Generates;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.ToGenerate;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdGenResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdentifierGenerator;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.rest.search.IdGeneratorSearch;
 
 import java.math.BigInteger;
@@ -20,6 +23,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -246,26 +250,23 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 		};
 	}
 	
-	public IdGenResult getNextNIds(String oqmDbNameOrId, ObjectId generatorId, int numIds) {
+	public IdGenResult<?> getNextNIds(String oqmDbNameOrId, ObjectId generatorId, int numIds, Generates generates) {
 		if (numIds < 1) {
 			throw new IllegalArgumentException("Number of ids to generate must be greater than 0.");
 		}
 		
 		IdentifierGenerator gen = this.get(oqmDbNameOrId, generatorId);
 		
-		IdGenResult output;
-		
-		switch (gen.getGenerates()){
-			case UNIQUE -> {
-				output = new IdGenResult<GeneratedUniqueId>();
-			}
-			case GENERAL -> {
-				output = new IdGenResult<GeneratedUniqueId>();
-			}
-			default -> {
-				throw new IllegalArgumentException("Unknown identifier type: " + gen.getGenerates());
+		if(generates != null) {
+			if(gen.getGenerates() != generates) {
+				throw new IllegalArgumentException("Cannot generate " + generates + " ids from a " + gen.getGenerates() + " generator.");
 			}
 		}
+		
+		IdGenResult<?> output = switch (gen.getGenerates()){
+			case UNIQUE -> new IdGenResult<GeneratedUniqueId>();
+			case GENERAL -> new IdGenResult<GeneralGeneratedId>();
+		};
 		
 		log.debug("Getting next id from generator: {}", gen.getId());
 		
@@ -317,7 +318,39 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 		return output;
 	}
 	
-	public IdGenResult getNextId(String oqmDbNameOrId, ObjectId generatorId) {
-		return this.getNextNIds(oqmDbNameOrId, generatorId, 1);
+	public IdGenResult<?> getNextId(String oqmDbNameOrId, ObjectId generatorId, Generates generates) {
+		return this.getNextNIds(oqmDbNameOrId, generatorId, 1, generates);
+	}
+	
+	public IdGenResult<?> getNextId(String oqmDbNameOrId, ObjectId generatorId) {
+		return this.getNextNIds(oqmDbNameOrId, generatorId, 1, null);
+	}
+	
+	
+	public <I extends Identifier> LinkedHashSet<I> generateIdPlaceholders(String oqmDbIdOrName, Set<I> identifiers){
+		LinkedHashSet<I> output = new LinkedHashSet<>(identifiers.size());
+		
+		for (I curId : identifiers) {
+			if (! (curId instanceof ToGenerate)) {
+				output.add(curId);
+			} else {
+				ObjectId generateFrom = ((ToGenerate) curId).getGenerateFrom();
+				I generatedId = null;
+				
+				generatedId = (I) this.getNextId(
+					oqmDbIdOrName,
+					generateFrom,
+					((ToGenerate) curId).generates()
+				).getGeneratedIds().getFirst();
+				
+				if(curId.getLabel() != null ){
+					generatedId.setLabel(curId.getLabel());
+				}
+				
+				output.add(generatedId);
+			}
+		}
+		
+		return output;
 	}
 }

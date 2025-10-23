@@ -18,12 +18,16 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.G
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdGenResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdentifierGenerator;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ProvidedUniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ToGenerateUniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import java.math.BigInteger;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
@@ -54,7 +58,10 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{dt}").build(), "^\\d{2}/\\d{2}/\\d{4}-\\d{2}:\\d{2}:\\d{2}$"),
 			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{dt;yyyy-MM-dd}").build(), "^\\d{4}-\\d{2}-\\d{2}$"),
 			//uuid
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{uuid}").build(), "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"),
+			Arguments.of(
+				IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{uuid}").build(),
+				"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
+			),
 			//random
 			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{rand}").build(), "^[0-9a-zA-Z]{5}$"),
 			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{rand;1}").build(), "^[0-9a-zA-Z]{1}$"),
@@ -149,7 +156,9 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
 		
-		IdGenResult<GeneralGeneratedId> output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+		IdGenResult<GeneralGeneratedId>
+			output =
+			(IdGenResult<GeneralGeneratedId>) this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1, Generates.GENERAL);
 		
 		log.info("Generated ID: {}", output);
 		
@@ -174,7 +183,8 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
 		
-		IdGenResult<GeneratedUniqueId> output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+		IdGenResult<GeneratedUniqueId> output =
+			(IdGenResult<GeneratedUniqueId>) this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1, Generates.UNIQUE);
 		
 		log.info("Generated ID: {}", output);
 		
@@ -193,14 +203,15 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 	public void getNewIdBarcodeTest() {
 		IdentifierGenerator gen = IdentifierGenerator.builder()
 									  .generates(Generates.UNIQUE)
-											.name(FAKER.name().name())
-											.idFormat("{dt}-{rand}")
-											.barcode(true)
-											.build();
+									  .name(FAKER.name().name())
+									  .idFormat("{dt}-{rand}")
+									  .barcode(true)
+									  .build();
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
 		
-		IdGenResult<GeneratedUniqueId> output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+		IdGenResult<GeneratedUniqueId> output =
+			(IdGenResult<GeneratedUniqueId>) this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1, Generates.UNIQUE);
 		
 		log.info("Generated ID: {}", output);
 		
@@ -219,19 +230,20 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 	public void incrementTest() {
 		IdentifierGenerator gen = IdentifierGenerator.builder()
 									  .generates(Generates.UNIQUE)
-											.name(FAKER.name().name())
-											.idFormat("{inc}")
-											.build();
+									  .name(FAKER.name().name())
+									  .idFormat("{inc}")
+									  .build();
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
 		
-		IdGenResult<GeneratedUniqueId> output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+		IdGenResult<GeneratedUniqueId> output =
+			(IdGenResult<GeneratedUniqueId>) this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1, Generates.UNIQUE);
 		
 		log.info("Generated ID: {}", output);
 		
 		assertEquals("00001", output.getGeneratedIds().getFirst().getValue());
 		
-		output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+		output = (IdGenResult<GeneratedUniqueId>) this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1, Generates.UNIQUE);
 		
 		log.info("Second Generated ID: {}", output);
 		
@@ -242,17 +254,17 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 	public static Stream<Arguments> getThreadTestParams() {
 		List<Arguments> output = new ArrayList<>();
 		
-		for(int curNumThreads : List.of(2, 5, 10, 20)){
-			for(int curNumIterations : List.of(10, 20)){
-				for(int curNumPerIteration : List.of(1, 2, 5, 10, 20)){
+		for (int curNumThreads : List.of(2, 5, 10, 20)) {
+			for (int curNumIterations : List.of(10, 20)) {
+				for (int curNumPerIteration : List.of(1, 2, 5, 10, 20)) {
 					output.add(Arguments.of("{rand}", curNumThreads, curNumIterations, curNumPerIteration));
 				}
 			}
 		}
 		
-		for(int curNumThreads : List.of(2, 10)){
-			for(int curNumIterations : List.of(10)){
-				for(int curNumPerIteration : List.of(1, 2, 5, 10, 20)){
+		for (int curNumThreads : List.of(2, 10)) {
+			for (int curNumIterations : List.of(10)) {
+				for (int curNumPerIteration : List.of(1, 2, 5, 10, 20)) {
 					output.add(Arguments.of("{inc}", curNumThreads, curNumIterations, curNumPerIteration));
 				}
 			}
@@ -266,10 +278,9 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 	public void generateThreadTest(String format, int numThreads, int numIterations, int numPerIteration) throws InterruptedException, ExecutionException {
 		IdentifierGenerator gen = IdentifierGenerator.builder()
 									  .generates(Generates.UNIQUE)
-											.name(FAKER.name().name())
-											.idFormat(format)
-//											.encoded(true)
-											.build();
+									  .name(FAKER.name().name())
+									  .idFormat(format)
+									  .build();
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
 		
@@ -277,7 +288,7 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 		SortedSet<GeneratedUniqueId> results = new TreeSet<>();
 		
 		StopWatch sw;
-		try(ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
+		try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
 			TestThread.Builder threadBuilder = TestThread.builder()
 												   .generatorId(gen.getId())
 												   .numIterations(numIterations)
@@ -311,10 +322,10 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 		Duration avgDurationPerId = sw.getDuration().dividedBy(results.size());
 		log.info("Generated {} results in {} ms ({} per id average)", results.size(), sw.getDuration(), avgDurationPerId);
 		
-		if(format.equals("{inc}")){
+		if (format.equals("{inc}")) {
 			
 			BigInteger expected = BigInteger.ONE;
-			for(GeneratedUniqueId curId : results){
+			for (GeneratedUniqueId curId : results) {
 				BigInteger curResult = new BigInteger(curId.getValue());
 				
 				assertEquals(expected, curResult, "Was not a contiguous set of ids; expected: " + expected.toString() + " Got: " + curResult.toString());
@@ -344,12 +355,58 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 			
 			for (int i = 1; i <= this.numIterations; i++) {
 				results.add(
-					this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, this.generatorId, this.numPerIteration)
+					(IdGenResult<GeneratedUniqueId>) this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, this.generatorId, this.numPerIteration, Generates.UNIQUE)
 				);
 			}
 			log.info("DONE running test thread {}", this.threadId);
 			return results;
 		}
+	}
+	
+	public static Stream<Arguments> getPlaceholderParams() {
+		IdentifierGenerator uniqueGen = IdentifierGenerator.builder()
+											.id(ObjectId.get())
+											.generates(Generates.UNIQUE)
+											.name(FAKER.name().name())
+											.idFormat("{inc}")
+											.build();
+		return Stream.of(
+			Arguments.of(
+				uniqueGen,
+				new LinkedHashSet<>() {{
+					this.add(ToGenerateUniqueId.builder().generateFrom(uniqueGen.getId()).build());
+					this.add(ToGenerateUniqueId.builder().generateFrom(uniqueGen.getId()).label("second").build());
+				}},
+				new LinkedHashSet<>() {{
+					this.add(GeneratedUniqueId.builder().generatedFrom(uniqueGen.getId()).value("00001").barcode(false).label(uniqueGen.getLabel()).build());
+					this.add(GeneratedUniqueId.builder().generatedFrom(uniqueGen.getId()).value("00002").barcode(false).label("second").build());
+				}}
+			),
+			Arguments.of(
+				uniqueGen,
+				new LinkedHashSet<>() {{
+					this.add(ToGenerateUniqueId.builder().generateFrom(uniqueGen.getId()).build());
+					this.add(ProvidedUniqueId.builder().value("foobar").label("foobar").build());
+					this.add(ToGenerateUniqueId.builder().generateFrom(uniqueGen.getId()).label("second").build());
+				}},
+				new LinkedHashSet<>() {{
+					this.add(GeneratedUniqueId.builder().generatedFrom(uniqueGen.getId()).value("00001").barcode(false).label(uniqueGen.getLabel()).build());
+					this.add(ProvidedUniqueId.builder().value("foobar").label("foobar").build());
+					this.add(GeneratedUniqueId.builder().generatedFrom(uniqueGen.getId()).value("00002").barcode(false).label("second").build());
+				}}
+			)
+		);
+	}
+	
+	@ParameterizedTest
+	@MethodSource("getPlaceholderParams")
+	public void testPlaceholderReplacement(IdentifierGenerator gen, LinkedHashSet<UniqueId> placeholders, LinkedHashSet<UniqueId> expectedIds) {
+		User testUser = TestUserService.getInstance().getTestUser();
+		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
+		
+		LinkedHashSet<UniqueId> output = this.identifierGenerationService.generateIdPlaceholders(DEFAULT_TEST_DB_NAME, placeholders);
+		
+		assertEquals(expectedIds, output);
 	}
 	
 }
