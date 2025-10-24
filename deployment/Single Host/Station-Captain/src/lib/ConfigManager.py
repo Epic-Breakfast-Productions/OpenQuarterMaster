@@ -196,7 +196,7 @@ class SecretManager:
 # Exception to throw when config errors occur
 class ConfigKeyNotFoundException(Exception):
     def __init__(self, message):
-        super().__init__("Config key error. " + message)
+        super().__init__("Config key error. \"" + message + "\"")
     pass
 
 
