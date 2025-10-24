@@ -28,9 +28,9 @@ service:
   image:
     resizing:
       enabled: true
-      height: 500
+      height: 750
       width: ${service.image.resizing.height}
-      savedType: "png"
+      savedType: "jpg"
   dbs:
     ifNone:
       create: true

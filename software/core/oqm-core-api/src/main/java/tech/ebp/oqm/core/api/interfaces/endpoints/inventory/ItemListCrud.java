@@ -52,13 +52,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "List added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "List added."
 	)
 	@APIResponse(
 		responseCode = "400",

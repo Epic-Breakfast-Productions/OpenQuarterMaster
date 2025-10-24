@@ -49,13 +49,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Item added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "Item added."
 	)
 	@APIResponse(
 		responseCode = "400",
