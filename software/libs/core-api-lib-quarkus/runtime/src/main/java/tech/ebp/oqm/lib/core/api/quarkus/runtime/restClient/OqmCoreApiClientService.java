@@ -16,7 +16,6 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.*;
 
 import java.util.Currency;
 import java.util.List;
-import java.util.Optional;
 
 import static tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants.*;
 
@@ -58,7 +57,7 @@ public interface OqmCoreApiClientService {
 	Uni<ObjectNode> idGeneratorSearch(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-		@BeanParam UniqueIdGeneratorSearch storageBlockSearch
+		@BeanParam IdGeneratorSearch storageBlockSearch
 	);
 	
 	@POST
