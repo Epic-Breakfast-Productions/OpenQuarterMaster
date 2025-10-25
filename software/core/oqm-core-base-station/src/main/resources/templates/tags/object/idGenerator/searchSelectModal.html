@@ -5,12 +5,29 @@ Ingests:
 - otherModalId - the modal to return to when closing, if any
 !}
 {!{@tech.ebp.oqm.baseStation.rest.search.StorageBlockSearch emptyStorageBlockSearch}!}
-{#modal id='idGeneratorSearchSelect' size='xl' title='Select an ID Generator' otherModalId=otherModalId}
+{#modal id='idGeneratorSearchSelect' size='xl' title='Select an ID Generator' otherModalId=(otherModalId or "")}
 {#titleIcon}{#icons/search /}{/titleIcon}
-{#object/idGenerator/searchForm id='idGeneratorSelectForm' rootPrefix=rootPrefix /}
-<div class="col table-responsive">
-  <table class=" table table-bordered table-striped table-hover table-sm" id="idGeneratorSelectResults">
-
-  </table>
+<ul class="nav nav-tabs" id="idGeneratorSelectTab" role="tablist">
+	<li class="nav-item" role="presentation">
+		<button class="nav-link active" id="idGeneratorSelectSearchTab" data-bs-toggle="tab" data-bs-target="#idGeneratorSelectSearchTabContent" type="button" role="tab" aria-controls="idGeneratorSelectSearchTabContent" aria-selected="true">
+			{#icons/search /} Search
+		</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="idGeneratorSelectNewGeneratorTab" data-bs-toggle="tab" data-bs-target="#idGeneratorSelectNewGeneratorTabContent" type="button" role="tab" aria-controls="idGeneratorSelectNewGeneratorTabContent" aria-selected="false">
+			{#icons/add /} Add New
+		</button>
+	</li>
+</ul>
+<div class="tab-content" id="idGeneratorSelectTabContent">
+	<div class="tab-pane fade show active" id="idGeneratorSelectSearchTabContent" role="tabpanel" aria-labelledby="idGeneratorSelectSearchTab">
+		{#object/idGenerator/searchForm id='idGeneratorSearchSelectForm' rootPrefix=rootPrefix /}
+		<div class="row" id="idGeneratorSearchSelectResults">
+		</div>
+	</div>
+	<div class="tab-pane fade" id="idGeneratorSelectNewGeneratorTabContent" role="tabpanel" aria-labelledby="idGeneratorSelectNewGeneratorTab">
+		{#object/idGenerator/addEditForm id='idGeneratorSearchSelectNewGeneratorForm' rootPrefix=rootPrefix /}
+		<button type="submit" form="idGeneratorSearchSelectNewGeneratorForm" class="btn btn-success">{#icons/add /} Add Generator</button>
+	</div>
 </div>
 {/modal}
