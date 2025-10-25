@@ -50,6 +50,10 @@ public class SearchObject<T extends MainObject> {
 		return val != null;
 	}
 	
+	protected boolean hasValue(Enum<?> val){
+		return val != null;
+	}
+	
 	protected boolean hasValue(Collection<?> val){
 		return val != null && !val.isEmpty();
 	}

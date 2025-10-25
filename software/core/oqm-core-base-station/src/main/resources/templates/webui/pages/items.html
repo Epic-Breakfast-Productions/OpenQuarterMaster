@@ -38,8 +38,7 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/item/itemSearchForm id='mainPageSearch' rootPrefix=rootPrefix}
-                    {/search/item/itemSearchForm}
+                    {#search/item/itemSearchForm id='mainPageSearch' rootPrefix=rootPrefix /}
                 </div>
             </div>
         </div>
@@ -98,6 +97,7 @@
 	{#CodeScannerModal /}
 	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal" /}
 	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal' /}
+	{#object/idGenerator/searchSelectModal rootPrefix=rootPrefix /}
 {/modals}
 
 {#scripts}

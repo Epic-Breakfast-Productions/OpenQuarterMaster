@@ -12,6 +12,9 @@ const GeneralIdentifiers = {
 	getNewIdentifierInput(generalInputContainerJq){
 		return generalInputContainerJq.find("input[name='newIdentifier']");
 	},
+	getNewIdentifierValue(generalInputContainerJq){
+		return GeneralIdentifiers.getNewIdentifierInput(generalInputContainerJq).val();
+	},
 	getIdentifierContainer(subElementJq){
 		return subElementJq.closest('.generalIdentifierContainer');
 	},
@@ -38,9 +41,6 @@ const GeneralIdentifiers = {
 	},
 	getIdentifierIsBarcodeCheckbox(idContainerJq){
 		return idContainerJq.find("input[name='generalIdIsBarcode']");
-	},
-	getNewIdentifierValue(generalInputContainerJq){
-		return GeneralIdentifiers.getNewIdentifierInput(generalInputContainerJq).val();
 	},
 	clearInput(generalInputContainerJq){
 		GeneralIdentifiers.getNewIdentifierInput(generalInputContainerJq).val("");
@@ -184,4 +184,92 @@ const GeneralIdentifiers = {
 			}
 		}
 	}
+}
+
+const UniqueIdentifiers = {
+	getInputContainer(subElementJq){
+		return subElementJq.closest('.uniqueIdInputContainer');
+	},
+	getIdentifiersContainer(generalInputContainerJq){
+		return generalInputContainerJq.find(".identifiersContainer");
+	},
+	getNewIdentifierInput(uniqueInputContainerJq){
+		return uniqueInputContainerJq.find("input[name='newIdentifier']");
+	},
+	getNewIdentifierValue(uniqueInputContainerJq){
+		return UniqueIdentifiers.getNewIdentifierInput(uniqueInputContainerJq).val();
+	},
+	getIdentifierImage(idContainerJq){
+		return idContainerJq.find(".identifierImage");
+	},
+	getIdentifierValueContainer(idContainerJq){
+		return idContainerJq.find(".identifierValue");
+	},
+	getIdentifierValue(idContainerJq){
+		return UniqueIdentifiers.getIdentifierValueContainer(idContainerJq).text();
+	},
+	clearNewInput(generalInputContainerJq){
+		UniqueIdentifiers.getNewIdentifierInput(generalInputContainerJq).val("");
+	},
+
+	removeIdentifier(removeButtonJq){
+		if(confirm("Are you sure you want to remove this identifier?") === false) return;
+		SelectedObjectDivUtils.removeSelected(removeButtonJq.closest('.uniqueIdentifierContainer'));
+	},
+
+	barcodeCheckChanged(isBarcodeCheckboxJq){
+		let inputContainerJq = UniqueIdentifiers.getInputContainer(isBarcodeCheckboxJq);
+		let idContainerJq = UniqueIdentifiers.getIdentifiersContainer(inputContainerJq);
+		let isChecked = isBarcodeCheckboxJq.prop("checked");
+
+		let identifierValueContainer = UniqueIdentifiers.getIdentifierValueContainer(idContainerJq);
+		let identifierImage = UniqueIdentifiers.getIdentifierImage(idContainerJq);
+
+		if(isChecked){
+			identifierImage.removeClass("d-none");
+			identifierValueContainer.addClass("d-none");
+			if(identifierImage.attr("src") === ""){
+				identifierImage.attr("src", Rest.passRoot + "/identifier/unique/barcode/" + identifierValueContainer.text());
+			}
+		} else {
+			identifierValueContainer.removeClass("d-none");
+			identifierImage.addClass("d-none");
+		}
+	},
+
+	newAddedIdentifier(newIdentifier){
+		console.log("Adding identifier: ", newIdentifier);
+		let output = $(PageComponents.Inputs.UniqueIds.uniqueIdAdded);
+
+		let idValue = output.find(".identifierValue");
+
+		idValue.text(newIdentifier.value);
+
+		let barcodeInput = output.find("input[name='uniqueIdIsBarcode']");
+
+		barcodeInput.prop("checked", newIdentifier.barcode);
+
+		UniqueIdentifiers.barcodeCheckChanged(barcodeInput);
+
+		return output;
+	},
+
+
+	addIdentifier(uniqueInputContainerJq, newIdentifier = null){
+		if(newIdentifier === null){
+			newIdentifier = {
+				type: "PROVIDED",
+				value: UniqueIdentifiers.getNewIdentifierValue(uniqueInputContainerJq),
+				barcode: false
+			};
+		}
+
+		console.log("Adding a new general identifier: ", newIdentifier);
+
+		UniqueIdentifiers.getIdentifiersContainer(uniqueInputContainerJq).append(UniqueIdentifiers.newAddedIdentifier(newIdentifier));
+	},
+	addIdentifierToGenerate(uniqueInputContainerJq){
+		//TODO
+	},
+
 }

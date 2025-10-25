@@ -75,13 +75,11 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@lombok.Builder.Default
 	private LinkedHashSet<@NotNull GeneralId> generalIds = new LinkedHashSet<>();
 	
-//	/**
-//	 * The barcode for this item.
-//	 * <p>
-//	 * TODO:: validate; ensure uniqueness
-//	 */
-//	@lombok.Builder.Default
-//	private Map<@NotNull String, @NotNull UniqueId> uniqueIds = new LinkedHashMap<>();
+	/**
+	 * Unique ID's for this particular item.
+	 */
+	@lombok.Builder.Default
+	private LinkedHashSet<UniqueId> uniqueIds = new LinkedHashSet<>();
 
 	/**
 	 * When the item(s) held expire. Null if it does not expire.
