@@ -1,10 +1,16 @@
 package tech.ebp.oqm.core.baseStation.interfaces.rest.passthrough;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.quarkus.qute.Location;
+import io.quarkus.qute.Template;
 import io.quarkus.security.Authenticated;
 import io.smallrye.mutiny.Uni;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -13,10 +19,17 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.headers.Header;
+import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import tech.ebp.oqm.core.baseStation.utils.Roles;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.IdGeneratorSearch;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
 
+import java.util.Map;
 import java.util.Optional;
 
 @Slf4j
@@ -25,6 +38,51 @@ import java.util.Optional;
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class IdGeneratorPassthrough extends PassthroughProvider {
+	
+	@Getter
+	@Inject
+	@Location("tags/object/idGenerator/searchResults")
+	Template searchResultTemplate;
+	
+	@GET
+	@Operation(
+		summary = "Gets a list of objects, using search parameters."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Items retrieved.",
+		content = {
+			@Content(
+				mediaType = "application/json"
+			)
+		},
+		headers = {
+			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
+			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
+		}
+	)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
+	public Uni<Response> search(
+		//for actual queries
+		@BeanParam IdGeneratorSearch search,
+		@HeaderParam("Accept") String acceptType,
+		@HeaderParam("searchFormId") String searchFormId,
+		@HeaderParam("otherModalId") String otherModalId,
+		@HeaderParam("inputIdPrepend") String inputIdPrepend
+	) {
+		return this.handleCall(
+			this.processSearchResults(
+				this.getOqmCoreApiClient().idGeneratorSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search),
+				this.searchResultTemplate,
+				acceptType,
+				searchFormId,
+				otherModalId,
+				inputIdPrepend,
+				"select"
+			)
+		);
+	}
+	
 	
 	@POST
 	@Operation(

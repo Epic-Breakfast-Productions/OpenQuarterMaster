@@ -22,8 +22,10 @@ Ingests:
 <div class="tab-content" id="idGeneratorSelectTabContent">
 	<div class="tab-pane fade show active" id="idGeneratorSelectSearchTabContent" role="tabpanel" aria-labelledby="idGeneratorSelectSearchTab">
 		{#object/idGenerator/searchForm id='idGeneratorSearchSelectForm' rootPrefix=rootPrefix /}
-		<div class="row" id="idGeneratorSearchSelectResults">
-		</div>
+		
+		<table class=" table table-bordered table-striped table-hover table-sm" id="idGeneratorSearchSelectResults">
+
+		</table>
 	</div>
 	<div class="tab-pane fade" id="idGeneratorSelectNewGeneratorTabContent" role="tabpanel" aria-labelledby="idGeneratorSelectNewGeneratorTab">
 		{#object/idGenerator/addEditForm id='idGeneratorSearchSelectNewGeneratorForm' rootPrefix=rootPrefix /}

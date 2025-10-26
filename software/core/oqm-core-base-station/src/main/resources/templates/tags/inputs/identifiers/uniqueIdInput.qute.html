@@ -6,8 +6,6 @@
 		<div class="col">
 			
 			<div class="accordion" id="{id}-uniqueIdentifierGenerateAccord">
-				
-				
 				<div class="accordion-item">
 					<h2 class="accordion-header">
 						<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{id}-uniqueIdentifierGenerateAccordCollapse" aria-expanded="false" aria-controls="{id}-uniqueIdentifierGenerateAccordCollapse">
@@ -17,28 +15,7 @@
 					</h2>
 					<div id="{id}-uniqueIdentifierGenerateAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#{id}-uniqueIdentifierGenerateAccord">
 						<div class="accordion-body">
-							
-							<div class="d-grid gap-2 mb-1">
-								<button type="button" class="btn btn-sm btn-outline-success">
-									{#icons/add /} Associate/Create Id Generator
-								</button>
-							</div>
-							
-							<table class="table table-sm table-bordered table-striped table-hover m-0" id="{id}-uniqueIdentifier">
-								<thead>
-								<tr>
-									<td>
-										Name
-									</td>
-									<td>
-										Action
-									</td>
-								</tr>
-								</thead>
-								<tbody>
-								
-								</tbody>
-							</table>
+							{#inputs/identifiers/identifierGeneratorInput forObject="ITEM" generates="UNIQUE" id=id /}
 						</div>
 					</div>
 				</div>
