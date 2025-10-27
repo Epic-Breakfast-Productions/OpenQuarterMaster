@@ -3,6 +3,9 @@ const IdGeneratorSearchSelect = {
 		getInputContainer(innerElementJq) {
 			return innerElementJq.closest(".idGeneratorInput");
 		},
+		getAssociatedGeneratorList(idGenInputJq) {
+			return idGenInputJq.find(".associatedIdentifierGeneratorTableContent");
+		},
 		init(idGenInputJq) {
 
 		},
@@ -14,9 +17,42 @@ const IdGeneratorSearchSelect = {
 			let idGenInputContainer = IdGeneratorSearchSelect.IdGenInput.getInputContainer(buttonJq);
 
 			IdGeneratorSearchSelect.setupSearchSelect(
+				idGenInputContainer,
 				idGenInputContainer.data("generates"),
 				idGenInputContainer.data("forobject")
 			);
+		},
+		associateIdGenerator: function (idGenInputJq, idGenData) {
+			if (idGenInputJq instanceof String) {
+				//TODO:: get, re-call
+			}
+			if (idGenData instanceof String) {
+				//TODO:: get, re-call
+			}
+
+			//TODO:: skip if not proper type of id generator
+
+			let newRow = $('<tr class="associatedIdentifierGenerator"></tr>');
+
+			newRow.append($('<td class="idGeneratorName"></td>').text(idGenData.name));
+
+			newRow.append(
+				$('<td></td>')
+					.append(
+						$('<button type="button" class="btn btn-sm btn-outline-success me-1" onclick="IdGeneratorSearchSelect.IdGenInput.addIdToGenerate($(this))" title="Use This ID Generator to make a new ID"></button>')
+							.html(Icons.add)
+					)
+					.append( //TODO:: don't do this if no associate button
+						$('<button type="button" class="btn btn-sm btn-outline-danger" onclick="$(this).closest(\'.associatedIdentifierGenerator\').remove()" title="Unassociate this ID generator"></button>')
+							.html(Icons.remove)
+					)
+			);
+
+
+			IdGeneratorSearchSelect.IdGenInput.getAssociatedGeneratorList(idGenInputJq).append(newRow);
+		},
+		addIdToGenerate(buttonJq) {
+			//TODO
 		}
 	},
 
@@ -25,9 +61,11 @@ const IdGeneratorSearchSelect = {
 	searchSelectSearchResults: $("#idGeneratorSearchSelectResults"),
 	newGeneratorForm: $("#idGeneratorSearchSelectNewGeneratorForm"),
 
-	setupSearchSelect: function (generates, forObject) {
+	setupSearchSelect: function (idGenSelectAddInputJq, generates, forObject) {
 		console.log("Setting up search select for: ", generates, forObject);
-		IdGeneratorAddEdit.setupFormForAdd(IdGeneratorSearchSelect.newGeneratorForm);
+		IdGeneratorAddEdit.setupFormForAdd(IdGeneratorSearchSelect.newGeneratorForm, false, idGenSelectAddInputJq.attr("id"));
+
+
 		if (generates) {
 			let generatesInput = IdGeneratorSearchSelect.searchSelectForm.find("select[name='generates']");
 			generatesInput.val(generates);
@@ -55,6 +93,10 @@ const IdGeneratorSearchSelect = {
 		IdGeneratorSearchSelect.searchSelectForm.trigger("submit");
 	},
 
+	closeModal() {
+		IdGeneratorSearchSelect.searchSelectModal.find(".btn-close").click();
+	},
+
 
 	addUniqueId: function () {
 
@@ -76,7 +118,7 @@ IdGeneratorSearchSelect.searchSelectForm.on("submit", function (event) {
 	Rest.call({
 		spinnerContainer: IdGeneratorSearchSelect.searchSelectModal.get(0),
 		url: Rest.passRoot + "/identifier/generator?" + searchParams,
-		returnType:"html",
+		returnType: "html",
 		method: 'GET',
 		failNoResponse: null,
 		failNoResponseCheckStatus: true,

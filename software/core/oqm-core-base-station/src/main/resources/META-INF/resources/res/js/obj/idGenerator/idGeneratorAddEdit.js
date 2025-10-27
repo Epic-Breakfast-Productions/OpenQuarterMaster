@@ -47,8 +47,12 @@ const IdGeneratorAddEdit = {
 			.prop("disabled", false);
 	},
 
-	setupFormForAdd(formJq, modalJq=false){
+	setupFormForAdd(formJq, modalJq=false, destinationId=false){
 		IdGeneratorAddEdit.resetForm(formJq);
+
+		if(destinationId){
+			formJq.data("destination", destinationId);
+		}
 
 		if(modalJq){
 			modalJq.find(".modalTitleText").text("Add ID Generator");
@@ -115,10 +119,18 @@ const IdGeneratorAddEdit = {
 				data: generatorObj,
 				failMessagesDiv: IdGeneratorAddEdit.formGetters.messages(formJq),
 				done: function (data) {
-					if(refreshOnSuccess){
-						PageMessages.reloadPageWithMessage("Successfully added new id generator.", "success");
+
+					if(formJq.data("destination")){
+						let destinationId = formJq.data("destination");
+						console.log("Sending back to destination: ", destinationId);
+						IdGeneratorSearchSelect.IdGenInput.associateIdGenerator($("#"+destinationId), data);
+						IdGeneratorSearchSelect.closeModal();
 					} else {
-						PageMessages.addMessageToDiv(IdGeneratorAddEdit.formGetters.messages(formJq), "success", "Successfully added new id generator.")
+						if(refreshOnSuccess){
+							PageMessages.reloadPageWithMessage("Successfully added new id generator.", "success");
+						} else {
+							PageMessages.addMessageToDiv(IdGeneratorAddEdit.formGetters.messages(formJq), "success", "Successfully added new id generator.")
+						}
 					}
 				}
 			});
@@ -147,6 +159,6 @@ const IdGeneratorAddEdit = {
 	}
 }
 
-if(IdGeneratorAddEdit.forms.modal){
-	IdGeneratorAddEdit.setupFormSubmit(IdGeneratorAddEdit.forms.modal);
-}
+$(".idGeneratorAddEditForm").each(function(i, formJs){
+	IdGeneratorAddEdit.setupFormSubmit($(formJs));
+});
