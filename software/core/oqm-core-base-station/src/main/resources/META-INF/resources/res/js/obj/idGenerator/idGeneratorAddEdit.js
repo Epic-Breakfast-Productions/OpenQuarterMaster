@@ -47,11 +47,11 @@ const IdGeneratorAddEdit = {
 			.prop("disabled", false);
 	},
 
-	setupFormForAdd(formJq, modalJq=false, destinationId=false){
+	setupFormForAdd(formJq, modalJq=false, select=false){
 		IdGeneratorAddEdit.resetForm(formJq);
 
-		if(destinationId){
-			formJq.data("destination", destinationId);
+		if(select){
+			formJq.data("select", true);
 		}
 
 		if(modalJq){
@@ -120,10 +120,10 @@ const IdGeneratorAddEdit = {
 				failMessagesDiv: IdGeneratorAddEdit.formGetters.messages(formJq),
 				done: function (data) {
 
-					if(formJq.data("destination")){
+					if(formJq.data("select")){
 						let destinationId = formJq.data("destination");
 						console.log("Sending back to destination: ", destinationId);
-						IdGeneratorSearchSelect.IdGenInput.associateIdGenerator($("#"+destinationId), data);
+						IdGeneratorSearchSelect.selectIdGenerator(data);
 						IdGeneratorSearchSelect.closeModal();
 					} else {
 						if(refreshOnSuccess){

@@ -4,22 +4,19 @@
 			{#inputs/identifiers/identifierInput id=id name="newIdentifier" idClass="UniqueIdentifiers" /}
 		</div>
 		<div class="col">
-			
-			<div class="accordion" id="{id}-uniqueIdentifierGenerateAccord">
-				<div class="accordion-item">
-					<h2 class="accordion-header">
-						<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{id}-uniqueIdentifierGenerateAccordCollapse" aria-expanded="false" aria-controls="{id}-uniqueIdentifierGenerateAccordCollapse">
-							{#icons/idGenerators /}
-							Generate ID
-						</button>
-					</h2>
-					<div id="{id}-uniqueIdentifierGenerateAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#{id}-uniqueIdentifierGenerateAccord">
-						<div class="accordion-body">
-							{#inputs/identifiers/identifierGeneratorInput forObject="ITEM" generates="UNIQUE" id=id /}
-						</div>
-					</div>
-				</div>
-			
+			<div class="d-grid gap-2 mb-1">
+				<button
+					type="button"
+					id="{id}-generateButton"
+					class="btn btn-sm btn-outline-success idGeneratorGenerateButton"
+					data-bs-toggle="modal"
+					data-bs-target="#idGeneratorSearchSelectModal"
+					data-generates="UNIQUE"
+					data-forobject="ITEM"
+					onclick="IdGeneratorSearchSelect.GenerateInput.generateButtonClicked(this);"
+				>
+					{#icons/idGenerators /} Generate Id
+				</button>
 			</div>
 		</div>
 	</div>
