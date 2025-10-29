@@ -127,13 +127,12 @@ const IdGeneratorSearchSelect = {
 			console.warn("Destination of selected generator could not be determined.");
 		}
 	},
-
-
-	addUniqueId: function () {
-
-	},
-	setupModal: function () {
-
+	newToGenerateId(generatorData, generates){
+		return {
+			"generateFrom": generatorData.id,
+			"generates": generates,
+			"type": "TO_GENERATE"
+		};
 	}
 }
 
