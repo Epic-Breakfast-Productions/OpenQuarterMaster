@@ -5,7 +5,7 @@
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/traefik",
 	"configs": [],
 	"dependencies": {
-		"deb": ", oqm-manager-station+captain (>= 2.9.1), oqm-infra-homepage, python3-docker, python3-watchdog"
+		"deb": ", oqm-manager-station+captain (>= 2.9.2), oqm-infra-homepage, python3-docker, python3-watchdog"
 	},
 	"configFiles":{
 	},

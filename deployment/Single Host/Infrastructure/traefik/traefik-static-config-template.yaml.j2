@@ -27,6 +27,6 @@ certificatesResolvers:
   acmeResolver:
     acme:
       email: {{ cert.acme.contactEmail }}
-      storage: acme.json
+      storage: /etc/traefik/acme/acme.json
       tlsChallenge: {}
 {%- endif %}
