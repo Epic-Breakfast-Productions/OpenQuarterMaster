@@ -60,6 +60,10 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
+	IdentifierGenerationService identifierGenerationService;
+	
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
 	ItemCheckoutService itemCheckoutService;
 	
 	@Getter(AccessLevel.PRIVATE)
@@ -147,6 +151,14 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 				}
 			}
 		}
+	}
+	
+	@Override
+	public void massageIncomingData(String oqmDbIdOrName, @NonNull Stored stored) {
+		super.massageIncomingData(oqmDbIdOrName, stored);
+		
+		stored.setGeneralIds(this.getIdentifierGenerationService().generateIdPlaceholders(oqmDbIdOrName, stored.getGeneralIds()));
+		stored.setUniqueIds(this.getIdentifierGenerationService().generateIdPlaceholders(oqmDbIdOrName, stored.getUniqueIds()));
 	}
 	
 	@Override

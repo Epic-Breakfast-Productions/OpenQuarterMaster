@@ -28,6 +28,7 @@ const Icons = {
 	checkinTransaction: '{#icons/transactionCheckin /}',
 	transferTransaction: '{#icons/transactionTransfer /}',
 	setTransaction: '{#icons/transactionSet /}',
+	idGenerators: '{#icons/idGenerators /}',
 
 	iconWithSub(icon, subIcon){
 		return icon + '<sup>' + subIcon + '</sup>';

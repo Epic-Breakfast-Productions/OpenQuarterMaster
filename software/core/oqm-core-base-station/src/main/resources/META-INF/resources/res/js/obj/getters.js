@@ -147,6 +147,21 @@ const Getters = {
 
 			return result;
 		}
+	},
+	Identifiers: {
+		generator: async function(generatorId, doneFunc = function(){}) {
+			let output = null;
+
+			await Rest.call({
+				method: "GET",
+				url: Rest.passRoot + "/identifier/generator/" + generatorId,
+				done: function(checkout){
+					output = checkout
+					doneFunc(checkout);
+				}
+			});
+			return output;
+		}
 	}
 }
 

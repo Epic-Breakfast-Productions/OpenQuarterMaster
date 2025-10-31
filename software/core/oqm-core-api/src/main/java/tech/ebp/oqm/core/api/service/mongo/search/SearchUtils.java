@@ -25,14 +25,18 @@ public class SearchUtils {
 	
 	public static Pattern getSearchTermPattern(String term) {
 		return Pattern.compile(
-			ANY_NONE_OR_MANY_CHARS + term + ANY_NONE_OR_MANY_CHARS,
+			//TODO:: quoting seems to break searching for sanitized characters (but quoting required to not throw exceptions)
+			ANY_NONE_OR_MANY_CHARS + Pattern.quote(term) + ANY_NONE_OR_MANY_CHARS,
 			Pattern.CASE_INSENSITIVE
 		);
 	}
 	
 	public static Bson getBasicSearchFilter(String field, String value) {
 		if (value != null && !value.isBlank()) {
-			return regex(field, SearchUtils.getSearchTermPattern(value.strip()));
+			return regex(
+				field,
+				SearchUtils.getSearchTermPattern(value.strip())
+			);
 		}
 		return null;
 	}
