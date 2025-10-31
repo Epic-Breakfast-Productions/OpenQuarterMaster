@@ -328,6 +328,7 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 	
 	
 	public <I extends Identifier> LinkedHashSet<I> generateIdPlaceholders(String oqmDbIdOrName, Set<I> identifiers){
+		log.debug("Generating placeholders for identifiers: {}.", identifiers);
 		LinkedHashSet<I> output = new LinkedHashSet<>(identifiers.size());
 		
 		for (I curId : identifiers) {

@@ -24,8 +24,6 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.ToGenerate;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdType;
@@ -177,7 +175,6 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		
 		item.setGeneralIds(this.getIdentifierGenerationService().generateIdPlaceholders(oqmDbIdOrName, item.getGeneralIds()));
 		item.setUniqueIds(this.getIdentifierGenerationService().generateIdPlaceholders(oqmDbIdOrName, item.getUniqueIds()));
-		
 	}
 	
 	@Override
