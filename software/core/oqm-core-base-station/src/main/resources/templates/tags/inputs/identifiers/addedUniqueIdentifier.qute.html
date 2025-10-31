@@ -12,7 +12,7 @@
 			
 			<div class="input-group">
 				<div class="form-floating">
-					<input type="text" class="form-control" name="uniqueIdKey" value="{#if uniqueId??}{#if uniqueId.get("label").isNull()}{uniqueId.get("type").asText()}{#else}{uniqueId.get("label").asText()}{/if}{/if}" aria-label="Identifier Label" required>
+					<input type="text" class="form-control" name="label" value="{#if uniqueId??}{#if uniqueId.get("label").isNull()}{uniqueId.get("type").asText()}{#else}{uniqueId.get("label").asText()}{/if}{/if}" aria-label="Identifier Label" required>
 					<label>Identifier Label</label>
 				</div>
 				

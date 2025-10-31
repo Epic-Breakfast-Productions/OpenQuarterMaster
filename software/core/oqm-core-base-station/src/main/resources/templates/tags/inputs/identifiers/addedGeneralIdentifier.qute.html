@@ -14,7 +14,7 @@
 			
 			<div class="input-group">
 				<div class="form-floating">
-					<input type="text" class="form-control" name="generalIdKey" value="{#if generalId??}{#if generalId.get("label").isNull()}{generalId.get("type").asText()}{#else}{generalId.get("label").asText()}{/if}{/if}" aria-label="Identifier Label" required>
+					<input type="text" class="form-control" name="label" value="{#if generalId??}{#if generalId.get("label").isNull()}{generalId.get("type").asText()}{#else}{generalId.get("label").asText()}{/if}{/if}" aria-label="Identifier Label" required>
 					<label>Identifier Label</label>
 				</div>
 				

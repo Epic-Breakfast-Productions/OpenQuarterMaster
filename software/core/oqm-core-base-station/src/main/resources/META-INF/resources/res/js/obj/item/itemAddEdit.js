@@ -22,6 +22,7 @@ const ItemAddEdit = {
 	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
 
 	generalIdInputContainer: GeneralIdentifiers.getInputContainer($("#addEditItemGeneralIdInput")),
+	uniqueIdInputContainer: UniqueIdentifiers.getInputContainer($("#addEditItemUniqueIdInput")),
 
 	// itemNotStoredCheck: $("#addEditItemNotStoredCheck"),
 	// itemNotStoredInputContainer: $("#addEditItemNotStoredInputContainer"),
@@ -77,6 +78,7 @@ const ItemAddEdit = {
 		ItemAddEdit.addEditItemNameInput.val("");
 		ItemAddEdit.addEditItemDescriptionInput.val("");
 		GeneralIdentifiers.reset(ItemAddEdit.generalIdInputContainer);
+		//TODO:: unique
 		ItemAddEdit.addEditItemModalLabel.text("Item");
 		// ItemAddEdit.addEditItemPricePerUnitInput.val("0.00");
 		ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(0);
@@ -152,6 +154,7 @@ const ItemAddEdit = {
 					});
 
 				GeneralIdentifiers.populateEdit(ItemAddEdit.generalIdInputContainer, data.generalIds);
+				//TODO:: unique
 
 				let durationTimespan = TimeHelpers.durationNumSecsToTimespan(data.expiryWarningThreshold);
 
@@ -291,6 +294,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 		name: ItemAddEdit.addEditItemNameInput.val(),
 		description: ItemAddEdit.addEditItemDescriptionInput.val(),
 		generalIds: GeneralIdentifiers.getGeneralIdData(ItemAddEdit.generalIdInputContainer),
+		uniqueIds: UniqueIdentifiers.getUniqueIdData(ItemAddEdit.uniqueIdInputContainer),
 		storageType: ItemAddEdit.addEditItemStorageTypeInput.val(),
 		expiryWarningThreshold: ItemAddEdit.addEditItemExpiryWarningThresholdInput.val() * ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.val(),
 		lowStockThreshold: (ItemAddEdit.addEditItemTotalLowStockThresholdInput.val() ? UnitUtils.getQuantityObj(

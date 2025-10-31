@@ -148,7 +148,7 @@ const Getters = {
 			return result;
 		}
 	},
-	UniqueId: {
+	Identifiers: {
 		generator: async function(generatorId, doneFunc = function(){}) {
 			let output = null;
 

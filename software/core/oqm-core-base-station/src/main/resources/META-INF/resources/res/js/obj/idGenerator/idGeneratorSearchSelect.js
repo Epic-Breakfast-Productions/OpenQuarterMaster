@@ -9,8 +9,6 @@ const IdGeneratorSearchSelect = {
 		associateButtonClicked: function (buttonJs) {
 			console.debug("Clicked associate button.");
 			let buttonJq = $(buttonJs);
-			ModalHelpers.setReturnModal($("#idGeneratorSearchSelectModal"), buttonJq);
-
 			let idGenInputContainer = IdGeneratorSearchSelect.IdGenInput.getInputContainer(buttonJq);
 
 			IdGeneratorSearchSelect.setupSearchSelect(
@@ -42,7 +40,6 @@ const IdGeneratorSearchSelect = {
 		generateButtonClicked: function (buttonJs) {
 			console.debug("Clicked generate button.");
 			let buttonJq = $(buttonJs);
-			ModalHelpers.setReturnModal($("#idGeneratorSearchSelectModal"), buttonJq);
 
 			IdGeneratorSearchSelect.setupSearchSelect(
 				buttonJq,
@@ -53,19 +50,68 @@ const IdGeneratorSearchSelect = {
 		generateFor(generateButtonJq, idGeneratorData){
 			console.log("Adding to generate");
 			let generates = generateButtonJq.data("generates");
+			// let newId = IdGeneratorSearchSelect.GenerateInput.newToGenerateId(idGeneratorData, generates);//TODO:: needed?
+
+			let addedToGenerate = $(`
+			<div class="col-xl-3 col-md-4 col-sm-6 col-xs-6 mb-1 toGenerateContainer">
+				<div class="card identifierDisplay">
+					<div class="card-body p-1">
+						<div class="identifierValueContainer text-center">
+							<p class="h4 card-title identifierValue text-nowrap user-select-all mb-0 ">
+								`+Icons.idGenerators+`
+								Generating
+							</p>
+							<p class=" text-secondary mb-1">
+								Generating from:<br />
+								`+Icons.idGenerators+`<span class="fromGenerator"></span>
+							</p>
+						</div>
+						
+						<div class="form-floating">
+							<input type="text" class="form-control" name="label" aria-label="Identifier Label">
+							<label>Identifier Label</label>
+						</div>
+						
+						<div class="mt-1 d-flex justify-content-center">
+							<div class="input-group m-1 p-1">
+								<button type="button" title="Move identifier up" class="btn btn-sm btn-outline-dark moveUpButton"><i class="bi bi-chevron-left "></i></button>
+								<button type="button" title="Move identifier down" class="btn btn-sm btn-outline-dark moveDownButton"><i class="bi bi-chevron-right "></i></button>
+							</div>
+							<button type="button" title="Remove this identifier" class="btn btn-sm btn-outline-danger removeButton"><i class="bi bi-trash-fill "></i></button>
+						</div>
+					</div>
+					
+				</div>
+				
+			</div>
+			`);
+			//TODO:: adjust added above
+			addedToGenerate.find(".fromGenerator").data("generator", idGeneratorData.id).text(idGeneratorData.name);
+			addedToGenerate.find("input[name=label]").val(idGeneratorData.label);
+
+
 
 			switch(generates){
 				case "UNIQUE":
-					//TODO
+					addedToGenerate.addClass("uniqueIdentifierContainer");
+
+					//TODO:: add onclicks
+
+
+					UniqueIdentifiers.getIdentifiersContainer(UniqueIdentifiers.getInputContainer(generateButtonJq)).append(addedToGenerate);
 					break;
 				case "GENERAL":
+					addedToGenerate.addClass("generalIdentifierContainer");
+					addedToGenerate.find(".moveUpButton").on("click", function(e){GeneralIdentifiers.moveUp($(this))});
+					addedToGenerate.find(".moveDownButton").on("click", function(e){GeneralIdentifiers.moveDown($(this))});
+					addedToGenerate.find(".removeButton").on("click", function(e){GeneralIdentifiers.removeIdentifier($(this))});
 
-					//TODO
+					GeneralIdentifiers.getIdentifiersContainer(GeneralIdentifiers.getInputContainer(generateButtonJq)).append(addedToGenerate);
 					break;
 				default:
 					console.warn("Bad generates value");
 			}
-		}
+		},
 	},
 
 	searchSelectModal: $("#idGeneratorSearchSelectModal"),
@@ -75,6 +121,9 @@ const IdGeneratorSearchSelect = {
 
 	setupSearchSelect: function (idGenSelectAddInputJq, generates, forObject) {
 		console.log("Setting up search select for: ", generates, forObject);
+
+		ModalHelpers.setReturnModal(IdGeneratorSearchSelect.searchSelectModal, idGenSelectAddInputJq);
+
 		let destinationId = idGenSelectAddInputJq.attr("id");
 		IdGeneratorAddEdit.setupFormForAdd(IdGeneratorSearchSelect.newGeneratorForm, false, true);
 		IdGeneratorSearchSelect.searchSelectModal.data("destinationId", destinationId);
@@ -111,10 +160,11 @@ const IdGeneratorSearchSelect = {
 		IdGeneratorSearchSelect.searchSelectModal.find(".btn-close").click();
 	},
 
-	selectIdGenerator: function (idGenData) {
+	selectIdGenerator: async function (idGenData) {
 		console.log("Selected id generator: ", idGenData);
-		if(idGenData instanceof String){//TODO
-			//TODO:: get real data, re-call
+		if(typeof idGenData === 'string' || idGenData instanceof String){
+			return Getters.Identifiers.generator(idGenData)
+				.then(IdGeneratorSearchSelect.selectIdGenerator);
 		}
 
 		let destination = $("#" + IdGeneratorSearchSelect.searchSelectModal.data("destinationId"));
@@ -126,13 +176,6 @@ const IdGeneratorSearchSelect = {
 		} else {
 			console.warn("Destination of selected generator could not be determined.");
 		}
-	},
-	newToGenerateId(generatorData, generates){
-		return {
-			"generateFrom": generatorData.id,
-			"generates": generates,
-			"type": "TO_GENERATE"
-		};
 	}
 }
 
@@ -157,7 +200,7 @@ IdGeneratorSearchSelect.searchSelectForm.on("submit", function (event) {
 			"searchFormId": "storageSearchSelectForm",
 			"inputIdPrepend": IdGeneratorSearchSelect.searchSelectModal.attr("data-bs-inputIdPrepend"),
 			"destinationId": IdGeneratorSearchSelect.searchSelectModal.data("destinationId"),
-			"otherModalId": IdGeneratorSearchSelect.searchSelectModal.data("bs-otherModalId")
+			"otherModalId": IdGeneratorSearchSelect.searchSelectModal.data("bs-othermodalid")
 		},
 		async: false,
 		done: function (data) {
