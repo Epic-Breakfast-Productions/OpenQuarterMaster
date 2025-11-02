@@ -10,8 +10,10 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import tech.ebp.oqm.plugin.imageSearch.service.ImageSearchService;
 
+import java.io.IOException;
+
 @RequestScoped
-@Path("/search")
+@Path("/imageSearch")
 public class ImageSearch {
     
     @Inject
@@ -21,7 +23,7 @@ public class ImageSearch {
     @Produces(MediaType.TEXT_PLAIN)
     public Response search(
         @QueryParam("q") String queryImage
-    ) {
+    ) throws IOException {
         return Response.ok(
             this.imageSearchService.search(queryImage)
         ).build();
