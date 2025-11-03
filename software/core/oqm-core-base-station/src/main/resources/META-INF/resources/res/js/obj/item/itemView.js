@@ -41,8 +41,13 @@ const ItemView = {
 	itemViewBarcodeContainer: $('#itemViewBarcodeContainer'),
 	itemViewBarcode: $("#itemViewBarcode"),
 
+	idsAccord: $("#itemViewIdsContainer"),
+	generalIdsAccord: $("#itemViewGeneralIdsAccord"),
 	generalIdNumIds: $("#itemViewGeneralIdsNumIdsLabel"),
 	generalIdContent: $("#itemViewGeneralIdsAccordContent"),
+	uniqueIdsAccord: $("#itemViewUniqueIdsAccord"),
+	uniqueIdNumIds: $("#itemViewUniqueIdsNumIdsLabel"),
+	uniqueIdContent: $("#itemViewUniqueIdsAccordContent"),
 
 	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
 	itemViewTotalLowStockThreshold: $("#itemViewTotalLowStockThreshold"),
@@ -99,8 +104,15 @@ const ItemView = {
 		ItemView.itemViewStorageType.text("");
 		ItemView.itemViewDescriptionContainer.hide();
 		ItemView.itemViewDescription.text("");
+
+		ItemView.idsAccord.hide();
+		ItemView.generalIdsAccord.hide();
 		ItemView.generalIdNumIds.text("");
 		ItemView.generalIdContent.text("");
+		ItemView.uniqueIdsAccord.hide();
+		ItemView.uniqueIdNumIds.text("");
+		ItemView.uniqueIdContent.text("");
+
 		ItemView.itemViewTotal.text("");
 		ItemView.itemViewTotalLowStockThreshold.text("");
 		ItemView.itemViewTotalLowStockThresholdContainer.hide();
@@ -415,8 +427,23 @@ const ItemView = {
 					ItemView.itemViewDescriptionContainer.show();
 				}
 
-				ItemView.generalIdNumIds.text(itemData.generalIds.length);
-				GeneralIdentifiers.View.showInDiv(ItemView.generalIdContent, itemData.generalIds);
+				if(itemData.generalIds.length || itemData.uniqueIds.length){
+					console.debug("Had ids to show");
+					if(itemData.generalIds.length){
+						ItemView.generalIdsAccord.show();
+						ItemView.generalIdNumIds.text(itemData.generalIds.length);
+						GeneralIdentifiers.View.showInDiv(ItemView.generalIdContent, itemData.generalIds);
+					}
+					if(itemData.uniqueIds.length){
+						ItemView.uniqueIdsAccord.show();
+						ItemView.uniqueIdNumIds.text(itemData.uniqueIds.length);
+						UniqueIdentifiers.View.showInDiv(ItemView.uniqueIdContent, itemData.uniqueIds);
+					}
+					ItemView.idsAccord.show();
+				}
+
+
+
 
 				if (itemData.lowStockThreshold) {
 					ItemView.itemViewTotalLowStockThreshold.text(itemData.lowStockThreshold.value + "" + itemData.lowStockThreshold.unit.symbol);

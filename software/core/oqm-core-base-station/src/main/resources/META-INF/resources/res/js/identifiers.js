@@ -251,7 +251,19 @@ const UniqueIdentifiers = {
 	clearNewInput(generalInputContainerJq) {
 		UniqueIdentifiers.getNewIdentifierInput(generalInputContainerJq).val("");
 	},
+	reset(generalInputContainerJq) {
+		UniqueIdentifiers.clearNewInput(generalInputContainerJq);
+		UniqueIdentifiers.getIdentifiersContainer(generalInputContainerJq).html("");
+	},
 
+	moveUp(upButtonJq) {
+		//TODO:: fix
+		SelectedObjectDivUtils.moveUp(UniqueIdentifiers.getAddedIdentifiersContainer(upButtonJq));
+	},
+	moveDown(downButtonJq) {
+		//TODO:: fix
+		SelectedObjectDivUtils.moveDown(downButtonJq.closest('.uniqueIdentifierContainer'));
+	},
 	removeIdentifier(removeButtonJq) {
 		if (confirm("Are you sure you want to remove this identifier?") === false) return;
 		SelectedObjectDivUtils.removeSelected(removeButtonJq.closest('.uniqueIdentifierContainer'));
@@ -280,8 +292,9 @@ const UniqueIdentifiers = {
 		console.log("Adding identifier: ", newIdentifier);
 		let output = $(PageComponents.Inputs.UniqueIds.uniqueIdAdded);
 
-		let idValue = output.find(".identifierValue");
+		output.find("input[name='label']").val(newIdentifier.label);
 
+		let idValue = output.find(".identifierValue");
 		idValue.text(newIdentifier.value);
 
 		let barcodeInput = output.find("input[name='uniqueIdIsBarcode']");
@@ -292,7 +305,14 @@ const UniqueIdentifiers = {
 
 		return output;
 	},
+	populateEdit: function (uniqueInputContainerJq, uniqueIdentifierList) {
+		let getIdentifiersContainer = UniqueIdentifiers.getIdentifiersContainer(uniqueInputContainerJq);
+		for (const generalIdentifier of uniqueIdentifierList) {
+			let idInput = UniqueIdentifiers.newAddedIdentifier(generalIdentifier);
 
+			getIdentifiersContainer.append(idInput);
+		}
+	},
 
 	addIdentifier(uniqueInputContainerJq, newIdentifier = null) {
 		if (newIdentifier === null) {
@@ -332,6 +352,48 @@ const UniqueIdentifiers = {
 		});
 
 		return output;
-	}
+	},
+	View: {
+		showInDiv(divJq, uniqueIdentifierArray) {
+			for (const uniqueIdentifier of uniqueIdentifierArray) {
+				let newIdShow = $(`
+<div class="col-sm-6 col-md-6 col-lg-4 mb-1 uniqueIdentifierContainer">
+	<div class="card identifierDisplay">
+		<div class="card-header p-1 text-center">
+			<h5 class="card-title mb-0 identifierKey"></h5>
+		</div>
+		<a href="" target="_blank" class="identifierImageLink d-none">
+			<img src="" class="card-img identifierImage" alt="Barcode Image">
+		</a>
+		<div class="card-body p-1">
+			<div class="identifierValueContainer text-center">
+				<p class="h4 card-subtitle identifierValue text-nowrap user-select-all mb-0"></p>
+				<p class="text-secondary mb-1">
+					<small class="identifierType"></small>
+					` + PageComponents.Inputs.copyButton + `
+				</p>
+			</div>
+		</div>
+	</div>
+</div>`);
+				let valueDiv = newIdShow.find(".identifierValue");
+				let imageLink = newIdShow.find(".identifierImageLink");
 
+				newIdShow.find(".identifierKey").text(uniqueIdentifier.label);
+				valueDiv.text(uniqueIdentifier.value);
+				newIdShow.find(".identifierType").text(uniqueIdentifier.type);
+				newIdShow.find(".copyTextButton").attr("onClick", "TextCopyUtils.copyText(this,$(this.parentElement.previousElementSibling));");
+
+				if (uniqueIdentifier.barcode) {
+					let barcodeUrl = Rest.passRoot + "/identifier/unique/barcode/" + uniqueIdentifier.value;
+					valueDiv.addClass("d-none");
+					imageLink.removeClass("d-none");
+					imageLink.attr("href", barcodeUrl);
+					newIdShow.find(".identifierImage").attr("src", barcodeUrl);
+				}
+
+				divJq.append(newIdShow);
+			}
+		}
+	}
 }

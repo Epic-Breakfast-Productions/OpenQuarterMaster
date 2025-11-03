@@ -95,8 +95,9 @@ const IdGeneratorSearchSelect = {
 				case "UNIQUE":
 					addedToGenerate.addClass("uniqueIdentifierContainer");
 
-					//TODO:: add onclicks
-
+					addedToGenerate.find(".moveUpButton").on("click", function(e){UniqueIdentifiers.moveUp($(this))});
+					addedToGenerate.find(".moveDownButton").on("click", function(e){UniqueIdentifiers.moveDown($(this))});
+					addedToGenerate.find(".removeButton").on("click", function(e){UniqueIdentifiers.removeIdentifier($(this))});
 
 					UniqueIdentifiers.getIdentifiersContainer(UniqueIdentifiers.getInputContainer(generateButtonJq)).append(addedToGenerate);
 					break;
