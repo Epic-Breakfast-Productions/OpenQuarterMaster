@@ -22,6 +22,7 @@ import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.core.api.service.mongo.MongoService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
+import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import java.io.IOException;
@@ -53,6 +54,9 @@ public class ObjectSchemaUpgradeServiceTest extends RunningServerTest {
 	
 	@Inject
 	InventoryItemService inventoryItemService;
+	
+	@Inject
+	StoredService storedService;
 	
 	@Inject
 	ItemCheckoutService itemCheckoutService;
@@ -134,6 +138,7 @@ public class ObjectSchemaUpgradeServiceTest extends RunningServerTest {
 		long historyEventCountExpected = this.loadDocuments(caseDir.resolve("HistoryEvent"), this.inventoryItemService.getHistoryService().getDocumentCollection(DEFAULT_TEST_DB_NAME));
 		long invItemCountExpected = this.loadDocuments(caseDir.resolve("InventoryItem"), this.inventoryItemService.getDocumentCollection(DEFAULT_TEST_DB_NAME));
 		long itemCheckoutCountExpected = this.loadDocuments(caseDir.resolve("ItemCheckout"), this.itemCheckoutService.getDocumentCollection(DEFAULT_TEST_DB_NAME));
+		long storedExpected = this.loadDocuments(caseDir.resolve("Stored"), this.storedService.getDocumentCollection(DEFAULT_TEST_DB_NAME));
 		
 		log.info("Performing upgrade.");
 		Optional<TotalUpgradeResult> resultOptional = this.objectSchemaUpgradeService.updateSchema(true);

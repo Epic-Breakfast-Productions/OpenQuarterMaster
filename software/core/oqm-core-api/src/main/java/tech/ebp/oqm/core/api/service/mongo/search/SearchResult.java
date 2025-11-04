@@ -43,4 +43,8 @@ public class SearchResult<T> {
 	public boolean isEmpty() {
 		return this.results.isEmpty();
 	}
+	
+	public boolean isHasPages() {
+		return this.pagingCalculations.isHasPages();
+	}
 }

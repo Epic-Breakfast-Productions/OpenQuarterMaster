@@ -20,8 +20,10 @@ public class PagingCalculations {
 	private long curPage;
 	private long nextPage;
 	private long previousPage;
+	private long pageResultIndexStart;
+	private long pageResultIndexEnd;
 	
-	protected PagingCalculations(long curPageNum, long numPages) {
+	protected PagingCalculations(long curPageNum, long numPages, long startIndex, long endIndex) {
 		this(
 			curPageNum <= 1,
 			curPageNum == numPages,
@@ -29,12 +31,19 @@ public class PagingCalculations {
 			numPages,
 			curPageNum,
 			(Math.min(curPageNum + 1, numPages)),
-			(Math.max(curPageNum - 1, 1))
+			(Math.max(curPageNum - 1, 1)),
+			startIndex,
+			endIndex
 		);
 	}
 	
 	public PagingCalculations(PagingOptions options, long numResults) {
-		this(options.getPageNum(), (long) Math.ceil((double) numResults / (double) options.getPageSize()));
+		this(
+			options.getPageNum(),
+			(long) Math.ceil((double) numResults / (double) options.getPageSize()),
+			options.getSkipVal(),
+			options.getSkipVal() + options.pageSize - 1
+		);
 	}
 	
 	public PagingCalculations(SearchResult<?> searchResult) {
@@ -47,6 +56,10 @@ public class PagingCalculations {
 	
 	public boolean onPage(int curPage) {
 		return this.onPage((long) curPage);
+	}
+	
+	public boolean isHasPages() {
+		return getNumPages() > 1;
 	}
 	
 	public Iterator<Long> getPageIterator() {

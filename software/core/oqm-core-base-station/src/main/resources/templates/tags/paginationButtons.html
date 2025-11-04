@@ -1,40 +1,53 @@
-{!{@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}!}
-{!
-TODO:: don't create millions of pages when they exist
-Inputs:
-- searchFormId; the id of the search form to reference
-- pagingOptions: the options for paging
-- numResults: the number of search results in the current search
-!}
-{#let pagingOptions=searchResults.get("pagingOptions") pagingCalculations=searchResults.get("pagingCalculations")}
-{#if !searchResults.get("empty").asBoolean() }
+{#let pagingOptions = searchResults.get("pagingOptions") pagingCalculations = searchResults.get("pagingCalculations") numPages = searchResults.get("pagingCalculations").get("numPages").asInt()}
+{#if ! searchResults.get("empty").asBoolean() }
 <nav aria-label="Search Pagination">
-	{#let isOnFirstPage=pagingCalculations.get("onFirstPage").asBoolean() isOnLastPage=pagingCalculations.get("onLastPage").asBoolean() currentPage=pagingCalculations.get("curPage").asInt()}
-    <ul class="pagination pagination-sm justify-content-center mb-0">
-        <li class="page-item {#if isOnFirstPage}disabled{/if}">
-            <button type="button" class="btn-link page-link" title="First page" onclick="Search.paginationClick('{searchFormId}', 1);" {#if isOnFirstPage}disabled{/if}>{#icons/icon icon='chevron-bar-left'}{/icons/icon}</button>
-        </li>
-        <li class="page-item {#if isOnFirstPage}disabled{/if}">
-            <button type="button" class="btn-link page-link" title="Previous page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("previousPage").asLong()});" {#if isOnFirstPage}disabled{/if}>{#icons/icon icon='chevron-left'}{/icons/icon}</button>
-        </li>
-
-        {#for page in pagingCalculations.get("numPages").asInt()}
-        <li class="page-item {#if page is currentPage}active{/if}">
-            <button type="button" class="btn-link page-link" title="Page {page}" onclick="Search.paginationClick('{searchFormId}', {page});" {#if currentPage is page}disabled{/if}>{page}</button>
-        </li>
-        {/for}
-
-        <li class="page-item {#if isOnLastPage}disabled{/if}">
-            <button type="button" class="btn-link page-link" title="Next page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("nextPage").asLong()});" {#if isOnLastPage}disabled{/if}>{#icons/icon icon='chevron-right'}{/icons/icon}</button>
-        </li>
-        <li class="page-item {#if isOnLastPage}disabled{/if}">
-            <button type="button" class="btn-link page-link" title="Last page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("lastPage").asLong()});" {#if isOnLastPage}disabled{/if}>{#icons/icon icon='chevron-bar-right'}{/icons/icon}</button>
-        </li>
-    </ul>
+	{#let isOnFirstPage = pagingCalculations.get("onFirstPage").asBoolean() isOnLastPage = pagingCalculations.get("onLastPage").asBoolean() currentPage = pagingCalculations.get("curPage").asInt()}
+	<ul class="pagination pagination-sm justify-content-center mb-0">
+		<li class="page-item {#if isOnFirstPage}disabled{/if}">
+			<button type="button" class="btn-link page-link" title="First page" onclick="Search.paginationClick('{searchFormId}', 1);" {#if isOnFirstPage}disabled{/if}>{#icons/icon icon = 'chevron-bar-left' /}</button>
+		</li>
+		<li class="page-item {#if isOnFirstPage}disabled{/if}">
+			<button type="button" class="btn-link page-link" title="Previous page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("previousPage").asLong()});" {#if isOnFirstPage}disabled{/if}>{#icons/left /}</button>
+		</li>
+		
+		{#if numPages <= config:['ui.pagination.breakToInput']}
+			{#for page in numPages}
+			<li class="page-item {#if page is currentPage}active{/if}">
+				<button type="button" class="btn-link page-link" title="Page {page}" onclick="Search.paginationClick('{searchFormId}', {page});" {#if currentPage is page}disabled{/if}>{page}</button>
+			</li>
+			{/for}
+		{#else}
+			<li class="page-item">
+				<div class="input-group input-group-sm">
+					<span class="input-group-text">Page</span>
+					<input type="number" class="form-control" aria-label="Page Number" value="{currentPage}" style="width: 100px;">
+					<span class="input-group-text" >of {numPages}</span>
+					<button class="btn btn-outline-secondary" type="button" title="Go to Page" onclick="Search.paginationClick('{searchFormId}', $(this).prev().val());">
+						{#icons/icon icon='book-half' /}
+					</button>
+				</div>
+			</li>
+		{/if}
+		
+		<li class="page-item {#if isOnLastPage}disabled{/if}">
+			<button type="button" class="btn-link page-link" title="Next page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("nextPage").asLong()});" {#if isOnLastPage}disabled{/if}>{#icons/right /}</button>
+		</li>
+		<li class="page-item {#if isOnLastPage}disabled{/if}">
+			<button type="button" class="btn-link page-link" title="Last page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("lastPage").asLong()});" {#if isOnLastPage}disabled{/if}>{#icons/icon icon = 'chevron-bar-right' /}</button>
+		</li>
+	</ul>
 	{/let}
 </nav>
+{#if searchResults.get("hasPages").asBoolean() }
+<span class="fw-lighter">
+	Showing {str:format("%,d", (pagingCalculations.get("pageResultIndexStart").asLong() + 1))} through {str:format("%,d", (pagingCalculations.get("pageResultIndexEnd").asLong() + 1))} of {str:format("%,d", searchResults.get("numResultsForEntireQuery").asLong())} total results.
+</span>
 {#else}
-<!-- No pagination needed. -->
+<span class="fw-lighter">
+	Showing all {str:format("%,d", searchResults.get("numResultsForEntireQuery").asLong())} results.
+</span>
+{/if}
+{#else}
+<!-- No pagination needed; no results. -->
 {/if}
 {/let}
-<span class="fw-lighter"># of results total: {str:format("%,d",searchResults.get("numResultsForEntireQuery").asLong())}</span>

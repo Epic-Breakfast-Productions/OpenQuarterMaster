@@ -52,6 +52,7 @@ ItemStoredEdit.form.on("submit", async function (e) {
 
 	let updateData = {};
 	StoredFormInput.dataFromInputs(updateData, ItemStoredEdit.form);
+	delete updateData["type"];
 
 	console.debug("Stored item update data: ", updateData);
 

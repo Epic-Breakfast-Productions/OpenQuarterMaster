@@ -1,7 +1,7 @@
 plugins {
     id 'java'
     id 'io.quarkus'
-    id "io.freefair.lombok" version "8.14"
+    id "io.freefair.lombok" version "8.14.2"
 }
 
 group 'tech.ebp.openQuarterMaster'
@@ -28,7 +28,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-container-image-docker'
     implementation 'io.quarkus:quarkus-arc'
 
-    implementation group: 'org.jsoup', name: 'jsoup', version: '1.21.1'
+    implementation group: 'org.jsoup', name: 'jsoup', version: '1.21.2'
     implementation 'io.quarkiverse.wiremock:quarkus-wiremock:1.5.1'
 
 

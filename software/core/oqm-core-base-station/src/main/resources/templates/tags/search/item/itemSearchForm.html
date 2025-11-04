@@ -13,10 +13,8 @@ Ingests:
     <div id="{id}-itemNameInputHelp" class="form-text">The name of the item to find.</div>
 </div>
 <div class="mb-3 col col-3">
-	{#let id=(id + '-itemCategoryInput')}
-    <label for="{id}" class="form-label">Barcode</label>
-    {#inputs/barcodeInput name='itemBarcode' id=id}{/inputs/barcodeInput}
-    {/let}
+    <label for="{id}-itemGenIdInput" class="form-label">General Id</label>
+	{#inputs/identifiers/identifierInput id=(id + "-itemGenIdInput") name="generalId" showAdd=false /}
 </div>
 <div class="mb-3 col col-3">
     {#let id=(id + '-itemCategoryInput')}

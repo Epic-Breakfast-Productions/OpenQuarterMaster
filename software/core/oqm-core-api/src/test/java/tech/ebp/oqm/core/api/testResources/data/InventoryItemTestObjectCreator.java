@@ -15,7 +15,6 @@ public class InventoryItemTestObjectCreator extends TestObjectCreator<InventoryI
 	public InventoryItem getTestObject() {
 		InventoryItem item = new InventoryItem()
 			.setName(faker.commerce().productName())
-			.setBarcode("123456789")
 			.setDescription(faker.lorem().sentence())
 			.setUnit(OqmProvidedUnits.UNIT)
 			.setStorageType(StorageType.BULK);

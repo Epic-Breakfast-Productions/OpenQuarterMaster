@@ -39,6 +39,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferWholeTransaction;
 import tech.ebp.oqm.core.api.model.rest.search.AppliedTransactionSearch;
+import tech.ebp.oqm.core.api.service.ItemStatsService;
 import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
 import tech.ebp.oqm.core.api.service.mongo.MongoObjectService;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
@@ -61,6 +62,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 	
 	@Inject
 	StoredService storedService;
+	
+	@Inject
+	ItemStatsService itemStatsService;
 	
 	@Inject
 	ItemCheckoutService itemCheckoutService;
@@ -144,7 +148,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				);
 				
 				appliedTransactionBuilder.affectedStored(new LinkedHashSet<>(affectedStored.stream().map(Stored::getId).toList()));
-				appliedTransactionBuilder.postApplyResults(this.storedService.postTransactionProcess(
+				appliedTransactionBuilder.postApplyResults(this.itemStatsService.postTransactionProcess(
 					oqmDbIdOrName,
 					csw.getClientSession(),
 					inventoryItem,

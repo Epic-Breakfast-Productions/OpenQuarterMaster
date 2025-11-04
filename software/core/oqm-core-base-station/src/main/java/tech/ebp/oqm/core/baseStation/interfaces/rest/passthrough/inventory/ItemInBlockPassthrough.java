@@ -36,7 +36,7 @@ import java.util.Optional;
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class ItemInBlockPassthrough extends PassthroughProvider {
-
+	
 	@Getter
 	@Inject
 	@Location("tags/search/itemStored/searchResults")
@@ -48,10 +48,10 @@ public class ItemInBlockPassthrough extends PassthroughProvider {
 	@Getter
 	@PathParam("blockId")
 	String blockId;
-
+	
 	@Inject
 	SearchResultTweak searchResultTweak;
-
+	
 	@GET
 	@Path("stored")
 	@Operation(
@@ -72,22 +72,24 @@ public class ItemInBlockPassthrough extends PassthroughProvider {
 		@HeaderParam("showStorage") boolean showStorage,
 		@HeaderParam("actionType") Optional<String> actionType
 	) {
-		return this.processSearchResults(
-			this.getOqmCoreApiClient()
-				.invItemStoredInBlockSearch(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), this.getBlockId(), storedSearch)
-				.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "storageBlock", this.getBearerHeaderStr()))
-				.call(results -> searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
-			,
-			this.searchResultTemplate
-				.data("showItem", showItem)
-				.data("showStorage", showStorage)
-			,
-			acceptType,
-			searchFormId,
-			otherModalId,
-			inputIdPrepend,
-			actionType.orElse("select")
+		return this.handleCall(
+			this.processSearchResults(
+				this.getOqmCoreApiClient()
+					.invItemStoredInBlockSearch(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), this.getBlockId(), storedSearch)
+					.call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "storageBlock", this.getBearerHeaderStr()))
+					.call(results->searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
+				,
+				this.searchResultTemplate
+					.data("showItem", showItem)
+					.data("showStorage", showStorage)
+				,
+				acceptType,
+				searchFormId,
+				otherModalId,
+				inputIdPrepend,
+				actionType.orElse("select")
+			)
 		);
 	}
-
+	
 }

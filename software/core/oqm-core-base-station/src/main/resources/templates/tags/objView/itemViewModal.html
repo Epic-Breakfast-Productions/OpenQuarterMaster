@@ -4,7 +4,7 @@
         <div class="col" id="itemViewMessages"></div>
     </div>
 <div class="row">
-    {#carousel id='itemViewCarousel' carouselCss='col'}{/carousel}
+    {#carousel id='itemViewCarousel' carouselCss='col-md-12 col-sm-12 col-lg-6 col-xl-4'}{/carousel}
     <div class="col">
         <div class="row">
             <div class="card col-sm-12 col-md-6">
@@ -19,7 +19,7 @@
                     <h5 class="card-title d-inline">Id:</h5>
                     <p class="card-text d-inline">
                         <small>
-                            <span id="itemViewId"></span>{#copyTextButton textContainerId='itemViewId'}{/copyTextButton}
+                            <span id="itemViewId"></span>{#copyTextButton /}
                         </small>
                     </p>
                 </div>
@@ -52,6 +52,13 @@
                     </p>
                 </div>
             </div>
+            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewExpiryWarnThresholdContainer">
+                <div class="card-body">
+                    <h5 class="card-title d-inline">Expiry Warning Threshold:</h5>
+                    <p id="itemViewExpiryWarnThreshold" class="d-inline">
+                    </p>
+                </div>
+            </div>
             <div class="card col-sm-12 col-md-6 col-lg-4">
                 <div class="card-body">
                     <h5 class="card-title d-inline">Value per Unit <span id="itemViewValPerUnitDefault">(default)</span>:</h5>
@@ -68,23 +75,36 @@
                     </p>
                 </div>
             </div>
-            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewIdentifyingAttContainer">
+            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewIdentifyingAttContainer">{!TODO:: remove? !}
                 <div class="card-body">
                     <h5 class="card-title d-inline">Identifying Attribute:</h5>
                     <p id="itemViewIdentifyingAtt" class="d-inline">
                     </p>
                 </div>
             </div>
-            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewBarcodeContainer">
+            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewGeneralIdsContainer">
                 <div class="card-body">
-                    <h5 class="card-title">Barcode:</h5>
-                    <img src="" id="itemViewBarcode" class="barcodeViewImg" alt="Item Barcode">
+					<div class="accordion" id="itemViewGeneralIdsAccord">
+					  <div class="accordion-item">
+						<h2 class="accordion-header">
+						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewGeneralIdsAccordCollapse" aria-expanded="false" aria-controls="itemViewGeneralIdsAccordCollapse">
+							{#icons/barcode /}
+							General Ids (<span id="itemViewGeneralIdsNumIdsLabel"></span>)
+						  </button>
+						</h2>
+						<div id="itemViewGeneralIdsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewGeneralIdsAccord">
+						  <div class="accordion-body">
+						  	<div class="row" id="itemViewGeneralIdsAccordContent">
+						  	</div>
+						  </div>
+						</div>
+					  </div>
+					</div>
                 </div>
             </div>
 			<div class="card col-sm-12 col-md-6" id="itemViewFilesContainer">
 				<div class="card-body" style="padding: 2px 0;">
-					{#fileAttachment/FileAttachmentObjectView id='itemViewFiles'}
-					{/fileAttachment/FileAttachmentObjectView}
+					{#fileAttachment/FileAttachmentObjectView id='itemViewFiles' /}
 				</div>
 			</div>
         </div>

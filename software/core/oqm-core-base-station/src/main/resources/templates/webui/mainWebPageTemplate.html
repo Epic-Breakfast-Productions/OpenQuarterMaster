@@ -39,7 +39,7 @@ Ingests:
 	<!--  At top in order to prevent flashing -->
 	<script src="{rootPrefix}/res/js/theme.js"></script>
 </head>
-<body class="min-vh-100 vstack">
+<body class="min-vh-100 vstack" data-csrft="{inject:csrf.token}">
 <span id="oqmPageInfo" data-page-initted="false"></span>
 
 <!-- nav here -->
@@ -252,10 +252,14 @@ Ingests:
 	{#if showTitle}
 		<h1>{#icons/pageIcon page=page addSpace=true}{/icons/pageIcon} {title}</h1>
 		{#insert additionalTitleContent}{/}
+		
+		<div id="messageDiv">
+		</div>
 		<hr/>
+	{#else}
+		<div id="messageDiv">
+		</div>
 	{/if}
-	<div id="messageDiv">
-	</div>
 	
 	<main class="" role="main">
 		{#insert pageContent}<h1>No body!</h1>{/}

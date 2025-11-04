@@ -40,6 +40,17 @@ ui:
   defaults:
     search:
       defaultPageSize: 25
+  pagination:
+    breakToInput: 20
+  overview:
+    storageTree:
+      defaultPageSize: 500
+    lowStockItems:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+    expiringItems:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+    expiredItems:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
   storage:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
@@ -127,7 +138,8 @@ quarkus:
     logout:
       path: /logout
       post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
-      
+  rest-csrf:
+    
   keycloak:
     devservices:
       port: 9328
@@ -179,8 +191,16 @@ smallrye:
       credentials:
         secret: "**********"
     #      auth-server-url: http://localhost:8115/realms/oqm
-    oqmCoreApi:
-      refreshDbCacheFrequency: "30m"
+#    oqm:
+#      core:
+#        api:
+#          devservice:
+#            coreApiVersion: 3.0.3-DEV
+#          caching:
+#            oqmDatabase:
+#              refreshFrequencyEvery: "5m"
+#            unit:
+#              refreshFrequencyEvery: "5m"
 
   runningInfo:
     depotUri: "Hello World"
@@ -191,4 +211,11 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-
+#  ui:
+#    overview:
+#      lowStockItems:
+#        defaultPageSize: 2
+#      expiringItems:
+#        defaultPageSize: 2
+#      expiredItems:
+#        defaultPageSize: 2

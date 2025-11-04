@@ -1,34 +1,33 @@
 const StoredFormInput = {
 	getBasicInputs(stored) {
-		//TODO:: update to use barcode input
-		let output = $(
-			'<div class="commonStoredFormElements">' +
-			'<div class="mb-3 ">\n' +
-			'    <label class="form-label">Barcode</label>\n' +
-			'    <div class="input-group">\n' +
-			'        <input type="text" class="form-control storedBarcodeInput" name="barcode" placeholder="UPC, ISBN...">\n' +
-			'    </div>\n' + '</div>\n' + '<div class="mb-3 ">\n' +
-			'    <label class="form-label">Condition Percentage</label>\n' +
-			'    <div class="input-group">\n' +
-			'        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition">\n' +
-			'        <span class="input-group-text" id="addon-wrapping">%</span>\n' +
-			//TODO:: better label of better to worse
-			'    </div>\n' + '</div>\n' + '<div class="mb-3">\n' +
-			'    <label class="form-label">Condition Details</label>\n' +
-			'    <textarea class="form-control storedConditionNotesInput" name="conditionNotes"></textarea>\n' +
-			'</div>\n' +
-			'<div class="mb-3">\n' +
-			'    <label class="form-label">Expires</label>\n' +
-			'    <input type="datetime-local" class="form-control storedExpiredInput" name="expires">\n' +
-			//TODO:: note to leave blank if not applicable
-			'</div>\n' + //TODO:: move these templates to js calls
-			// imageInputTemplate.html() +
+		let output = $(`
+<div class="commonStoredFormElements">
+	<div class="mb-3 ">
+		<label class="form-label">Condition Percentage</label>
+		<div class="input-group">
+			<input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition">
+			<span class="input-group-text" id="addon-wrapping">%</span>
+<!--				//TODO:: better label of better to worse-->
+		</div>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Condition Details</label>
+		<textarea class="form-control storedConditionNotesInput" name="conditionNotes"></textarea>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Expires</label>
+		<input type="datetime-local" class="form-control storedExpiredInput" name="expires">
+<!--		//TODO:: note to leave blank if not applicable-->
+	</div>
 
-			PageComponents.Inputs.keywords +
-			PageComponents.Inputs.attribute +
-			//TODO:: images/files
-			'</div>\n'
-		);
+	`+ PageComponents.Inputs.GeneralIds.generalIdInput + `
+	
+	`+PageComponents.Inputs.image+`
+	`+PageComponents.Inputs.file+`
+	`+ PageComponents.Inputs.keywords + `
+	`+ PageComponents.Inputs.attribute + `
+<!--	//TODO:: images/files-->
+</div>`);
 
 		if(stored != null){
 			if(stored.barcode){
@@ -41,10 +40,16 @@ const StoredFormInput = {
 				output.find(".storedConditionNotesInput").val(stored.conditionNotes);
 			}
 			if(stored.expires){
-				output.find(".storedExpiredInput").val(stored.expires);
+				TimeHelpers.setDatetimelocalInput(
+					output.find(".storedExpiredInput"),
+					stored.expires
+				);
 			}
+			GeneralIdentifiers.populateEdit(output.find(".generalIdInputContainer"), stored.generalIds);
 			KeywordAttEdit.addKeywordInputs(output.find(".keywordInputDiv"), stored.keywords);
 			KeywordAttEdit.addAttInputs(output.find(".attInputDiv"), stored.attributes);
+			ImageSearchSelect.addSelectedImages(output.find(".imagesSelected"), stored.imageIds);
+			FileAttachmentSearchSelect.populateFileInputFromObject(output, stored.attachedFiles);
 		}
 
 		return output;
@@ -130,11 +135,13 @@ const StoredFormInput = {
 		let commonInputsContainer = containerJq.find(".commonStoredFormElements");
 		if(commonInputsContainer.length && commonInputsContainer.is(":visible")){
 			console.log("Had common form elements section.");
-			dataToAddTo["barcode"] = commonInputsContainer.find('input[name="barcode"]').val();
+			dataToAddTo["generalIds"] = GeneralIdentifiers.getGeneralIdData(commonInputsContainer.find('.generalIdInputContainer'));
 			dataToAddTo["condition"] = commonInputsContainer.find('input[name="condition"]').val();
 			dataToAddTo["conditionNotes"] = commonInputsContainer.find('textarea[name="conditionNotes"]').val();
-			dataToAddTo["expires"] = commonInputsContainer.find('input[name="expires"]').val();
+			dataToAddTo["expires"] = TimeHelpers.getTsFromInput(commonInputsContainer.find('input[name="expires"]'));
 			KeywordAttEdit.addKeywordAttData(dataToAddTo, commonInputsContainer.find(".keywordInputDiv"), commonInputsContainer.find(".attInputDiv"));
+			ImageSearchSelect.addImagesToData(dataToAddTo, commonInputsContainer.find(".imagesSelected"));
+			dataToAddTo["attachedFiles"] = FileAttachmentSearchSelect.getFileListFromInput(commonInputsContainer.find(".fileAttachmentSelectInputTableContent"));
 		}
 		//amount inputs
 		let amountInputsContainer = containerJq.find(".amountStoredFormElements");

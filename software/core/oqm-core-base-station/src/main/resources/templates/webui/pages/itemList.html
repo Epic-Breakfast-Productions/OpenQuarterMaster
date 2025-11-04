@@ -9,7 +9,7 @@
 				<p class="mb-0">
 					Created by: {#interactingEntityRef entityRef=listCreateEvent.getEntity()}{/interactingEntityRef}<br />
 					On: {listCreateEvent.getTimestamp()}<br />
-					<small>Id: <span id="itemListId">{itemList.getId()}</span>{#copyTextButton textContainerId='itemListId'}{/copyTextButton}</small>
+					<small>Id: <span id="itemListId">{itemList.getId()}</span>{#copyTextButton /}</small>
 					{#if !itemList.getDescription().isBlank()}
 					<br />{itemList.getDescription()}
 					{/if}

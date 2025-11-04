@@ -70,15 +70,15 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@Consumes(MediaType.APPLICATION_JSON)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	@WithSpan
-	public ObjectId create(
+	public T create(
 		@Valid T object
 	) {
 		log.info("Creating new {} ({}) from REST interface.", this.getObjectClass().getSimpleName(), object.getClass());
 		
-		ObjectId output = this.getObjectService().add(this.getOqmDbIdOrName(), object, this.getInteractingEntity());
+		ObjectId newId = this.getObjectService().add(this.getOqmDbIdOrName(), object, this.getInteractingEntity());
 		
-		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), output);
-		return output;
+		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), newId);
+		return object;
 	}
 	
 	@WithSpan

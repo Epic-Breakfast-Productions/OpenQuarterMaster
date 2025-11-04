@@ -202,10 +202,8 @@ Accepts:
     {/modal}
     
     
-{#search/storage/searchSelectModal otherModalId="addEditModal" rootPrefix=rootPrefix}
-{/search/storage/searchSelectModal}
-{#search/image/imageSearchSelectModal otherModalId="addEditModal" rootPrefix=rootPrefix}
-{/search/image/imageSearchSelectModal}
+{#search/storage/searchSelectModal otherModalId="addEditModal" rootPrefix=rootPrefix /}
+{#search/image/imageSearchSelectModal otherModalId="addEditModal" rootPrefix=rootPrefix /}
 
 {#modal id='storageBlockInventorySheetPrintout' title='Inventory Sheet Printout' otherModalId="storageBlockViewModal" submitForm="storageBlockInventorySheetPrintoutForm" submitDismiss=false}
 	{#titleIcon}{#icons/print}{/icons/print}{/titleIcon}
@@ -274,7 +272,7 @@ Accepts:
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title" style="display: inline">Id:</h5>
-                    <p class="card-text" style="display: inline"><span id="storageBlockViewId"></span>{#copyTextButton textContainerId='storageBlockViewId'}{/copyTextButton}</p>
+                    <p class="card-text" style="display: inline"><span id="storageBlockViewId"></span>{#copyTextButton /}</p>
                     <p style="margin-bottom: 5px;">
                         <button type="button" class="btn btn-secondary btn-sm" data-bs-toggle="modal" data-bs-target="#storageBlockInventorySheetPrintoutModal" onclick="setupStorageBlockInvSheetPrintoutForm()">{#icons/print}{/icons/print} Printout</button>
                     </p>
@@ -364,6 +362,7 @@ Accepts:
 {#scripts}
 <script src="{rootPrefix}/res/js/search.js"></script>
 <script src="{rootPrefix}/res/js/historySearch.js"></script>
+<script src="{rootPrefix}/res/js/modalHelpers.js"></script>
 <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
 <script src="{rootPrefix}/res/js/obj/objView.js"></script>
 <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
@@ -486,7 +485,7 @@ function setupAddEditForEdit(blockId){
     	spinnerContainer: addEditModal,
     	url: Rest.passRoot +"/inventory/storage-block/" + blockId,
     	done: function(data){
-    	    addSelectedImages(imagesSelected, data.imageIds);
+			ImageSearchSelect.addSelectedImages(imagesSelected, data.imageIds);
     	    addEditFormId.val(blockId);
             addEditLabelInput.val(data.label);
             addEditNicknameInput.val(data.nickname);
@@ -522,7 +521,7 @@ addEditStorageForm.submit(async function (event) {
     };
     
     KeywordAttEdit.addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
-    addImagesToData(addEditData, imagesSelected);
+	ImageSearchSelect.addImagesToData(addEditData, imagesSelected);
     
     capacityInputDiv.children().each(function (i, curCapDiv) {
         var cur = $(curCapDiv);
@@ -552,6 +551,7 @@ addEditStorageForm.submit(async function (event) {
                 url: Rest.passRoot +"/inventory/storage-block/bulk",
                 method: "POST",
                 data: addEditData,
+				failMessagesDiv: addEditFormMessages,
                 done: function (data) {
                     console.log("Response from create request: " + JSON.stringify(data));
                     result = true;
@@ -566,6 +566,7 @@ addEditStorageForm.submit(async function (event) {
                 url: Rest.passRoot +"/inventory/storage-block",
                 method: "POST",
                 data: addEditData,
+				failMessagesDiv: addEditFormMessages,
                 done: function (data) {
                     console.log("Response from create request: " + JSON.stringify(data));
                     result = true;
@@ -719,8 +720,8 @@ function setupView(blockId){
                             '<td class="blockViewItemActions"><a href="{rootPrefix}/items?view='+item.id+'" class="btn btn-info btn-sm">{#icons/view}{/icons/view}</a> </td>' +//actions
                             '</tr>');
                     row.find(".blockViewItemName").text(item.name);
-                    row.find(".blockViewItemAmountIn").text(item.storageMap[blockId].total.value + item.storageMap[blockId].total.unit.symbol);
-                    row.find(".blockViewItemTotal").text(item.total.value + item.total.unit.symbol);
+                    row.find(".blockViewItemAmountIn").text(item.stats.storageBlockStats[blockId].total.value + item.stats.storageBlockStats[blockId].total.unit.symbol);
+                    row.find(".blockViewItemTotal").text(item.stats.total.value + item.stats.total.unit.symbol);
                     storageBlockViewItemsStoredContent.append(row);
                 });
             }

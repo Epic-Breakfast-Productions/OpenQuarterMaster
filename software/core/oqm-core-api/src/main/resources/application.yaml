@@ -28,9 +28,9 @@ service:
   image:
     resizing:
       enabled: true
-      height: 500
+      height: 750
       width: ${service.image.resizing.height}
-      savedType: "png"
+      savedType: "jpg"
   dbs:
     ifNone:
       create: true
@@ -78,7 +78,7 @@ quarkus:
   scheduler:
     metrics:
       enabled: true
-  health:
+  smallrye-health:
     openapi:
       included: true
   
@@ -95,11 +95,15 @@ quarkus:
     info-license-url: ${service.gitLink}/blob/main/LICENSE
     security-scheme: jwt
     security-scheme-name: JwtAuth
+    
   swagger-ui:
     always-include: true
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
     theme: flattop
     footer: With ❤️, EBP
+    urls:
+      "Single Node Host Deployed": /core/api/q/openapi/
+      dev: /q/openapi/
   http:
     body:
       preallocate-body-buffer: true
@@ -112,11 +116,11 @@ quarkus:
       enabled: true
     port: 80
     ssl-port: 443
-  reactive-messaging:
+  messaging:
     health:
       enabled: true
-    metrics:
-      enabled: true
+#    metrics:
+#      enabled: true
 
 mp:
   messaging:
@@ -154,10 +158,10 @@ smallrye:
     http:
       port: 8080
       ssl-port: 8443
-      ssl:
-        certificate:
-          files: ../../../../dev/devTest-cert-cert.pem
-          key-files: ../../../../dev/devTest-cert-key.pem
+#      ssl:
+#        certificate:
+#          files: ../../../../dev/devTest-cert-cert.pem
+#          key-files: ../../../../dev/devTest-cert-key.pem
       auth:
         basic: true
     smallrye-jwt:

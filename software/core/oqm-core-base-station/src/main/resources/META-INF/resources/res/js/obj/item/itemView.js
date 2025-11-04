@@ -37,10 +37,17 @@ const ItemView = {
 	itemViewStorageType: $("#itemViewStorageType"),
 	itemViewDescriptionContainer: $("#itemViewDescriptionContainer"),
 	itemViewDescription: $("#itemViewDescription"),
+
 	itemViewBarcodeContainer: $('#itemViewBarcodeContainer'),
 	itemViewBarcode: $("#itemViewBarcode"),
+
+	generalIdNumIds: $("#itemViewGeneralIdsNumIdsLabel"),
+	generalIdContent: $("#itemViewGeneralIdsAccordContent"),
+
 	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
 	itemViewTotalLowStockThreshold: $("#itemViewTotalLowStockThreshold"),
+	itemViewExpiryWarnThresholdContainer: $("#itemViewExpiryWarnThresholdContainer"),
+	itemViewExpiryWarnThreshold: $("#itemViewExpiryWarnThreshold"),
 	itemViewIdentifyingAttContainer: $("#itemViewIdentifyingAttContainer"),
 	itemViewIdentifyingAtt: $("#itemViewIdentifyingAtt"),
 	viewKeywordsSection: $("#viewKeywordsSection"),
@@ -92,11 +99,13 @@ const ItemView = {
 		ItemView.itemViewStorageType.text("");
 		ItemView.itemViewDescriptionContainer.hide();
 		ItemView.itemViewDescription.text("");
-		ItemView.itemViewBarcodeContainer.hide();
-		ItemView.itemViewBarcode.attr("src", "");
+		ItemView.generalIdNumIds.text("");
+		ItemView.generalIdContent.text("");
 		ItemView.itemViewTotal.text("");
 		ItemView.itemViewTotalLowStockThreshold.text("");
 		ItemView.itemViewTotalLowStockThresholdContainer.hide();
+		ItemView.itemViewExpiryWarnThreshold.text("");
+		ItemView.itemViewExpiryWarnThresholdContainer.hide();
 
 		ItemView.itemViewCheckedOutResultsContainer.html("");
 
@@ -406,14 +415,17 @@ const ItemView = {
 					ItemView.itemViewDescriptionContainer.show();
 				}
 
-				if (itemData.barcode) {
-					ItemView.itemViewBarcode.attr("src", Rest.apiRoot + "/media/code/item/" + itemData.id + "/barcode");
-					ItemView.itemViewBarcodeContainer.show();
-				}
+				ItemView.generalIdNumIds.text(itemData.generalIds.length);
+				GeneralIdentifiers.View.showInDiv(ItemView.generalIdContent, itemData.generalIds);
 
 				if (itemData.lowStockThreshold) {
 					ItemView.itemViewTotalLowStockThreshold.text(itemData.lowStockThreshold.value + "" + itemData.lowStockThreshold.unit.symbol);
 					ItemView.itemViewTotalLowStockThresholdContainer.show();
+				}
+
+				if(itemData.expiryWarningThreshold){
+					ItemView.itemViewExpiryWarnThreshold.text(TimeHelpers.durationNumSecsToHuman(itemData.expiryWarningThreshold));
+					ItemView.itemViewExpiryWarnThresholdContainer.show();
 				}
 
 				Carousel.processImagedObjectImages(itemData, ItemView.itemViewCarousel);

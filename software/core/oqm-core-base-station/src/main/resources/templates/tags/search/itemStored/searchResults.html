@@ -1,19 +1,4 @@
-{!{@tech.ebp.oqm.baseStation.service.mongo.search.SearchResult<tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem> searchResults}!}
-{!{@tech.ebp.oqm.baseStation.service.mongo.search.PagingCalculations pagingCalculations}!}
-{!
-  Template to show storage search results. Gives the contents of a table, but not the main table tag
-
-  Ingests:
-  - actionType - the action to take. "full" or "select"
-  - itemService - the service to get items
-  - searchResults
-  - searchFormId - the id of the search form controlling the results
-  - inputIdPrepend - the prepend for the id of the inputs to set the data of
-  - otherModalId - the id of the other modal to open when selected
-
-  if `actionType` is "select", callback will be "selectItem('<item name>', '<item id>', '<inputIdPrepend>')" on the select button
-!}
-  {#let showAmount=(inventoryItem.get("storageType").asText().equals("BULK") || inventoryItem.get("storageType").asText().equals("AMOUNT_LIST")) }
+  {#let showAmount=cdi:ItemStoredResultsQuteFunctions.showAmount(inventoryItem.or(null))}
   <thead>
   <tr>
     <td colspan="100" class="text-center searchResultsContainer">
@@ -23,11 +8,12 @@
   <tr>
     <th scope="col" class="searchResultImageCol">Image</th>
     <th scope="col">Label</th>
-    <th scope="col">Id?</th>
-    {#if showType}<th scope="col">Type</th>{/if}
-    {#if showItem}<th scope="col">Item</th>{/if}
-    {#if showStorage}<th scope="col">{#icons/storageBlock}{/icons/storageBlock} Stored In</th>{/if}
+    <th scope="col" style="width: 125px;">Id?</th>
+    {#if showType??}<th scope="col">Type</th>{/if}
+    {#if showItem??}<th scope="col">Item</th>{/if}
+    {#if showStorage??}<th scope="col">{#icons/storageBlock}{/icons/storageBlock} Stored In</th>{/if}
     {#if showAmount}<th scope="col">Amount</th>{/if}
+    <th scope="col" style="width: 114px;">{#icons/flags /} Flags</th>
     <th scope="col" style="width: 150px;">Actions</th>
   </tr>
   </thead>
@@ -55,16 +41,43 @@
   <tr class="itemStoredResultRow align-middle">
     <td>
       {#if !result.get("imageIds").isEmpty()}
-      <img src="/api/passthrough/media/image/for/itemStored/{id}" class="searchResultImage">{! TODO:: fix this url !}
+      <img src="/api/passthrough/media/image/for/item_stored/{id}" class="searchResultImage">{! TODO:: fix this url !}
       {/if}
     </td>
     <td class="">{labelText}</td>
-    <td>{id}</td>
+    <td>
+		<abbr title="{id}">...{id.substring(id.length() - 6)}</abbr>{#copyTextButton fromTitle=true /}
+	</td>
 
     {#if showType}<td>{cdi:EnumFormattingService.formatEnum(result.get("type").asText())}</td>{/if}
     {#if showItem}<td>{result.get("item-name").asText()}</td>{/if}{!TODO:: link this !}
     {#if showStorage}<td>{result.get("storageBlock-labelText").asText()}</td>{/if}{!TODO:: link !}
-    {#if showAmount}<td>{#amountDisplay amount=result.get("amount")}{/amountDisplay}</td>{/if}
+    {#if showAmount}
+		<td>
+			{#if cdi:ItemStoredResultsQuteFunctions.storedIsAmount(result)}
+				{#amountDisplay amount=result.get("amount")}{/amountDisplay}
+			{#else}
+				n/a
+			{/if}
+		</td>
+	{/if}
+	<td>
+		{#if result.get("notificationStatus").get("lowStock").asBoolean()}
+		<span class="badge rounded-pill text-bg-danger" title="Low Stock">
+			{#icons/lowStock /}
+		</span>
+		{/if}
+		{#if result.get("notificationStatus").get("expiredWarning").asBoolean()}
+		<span class="badge rounded-pill text-bg-warning" title="Expiring Soon">
+			{#icons/expiring /}
+		</span>
+		{/if}
+		{#if result.get("notificationStatus").get("expired").asBoolean()}
+		<span class="badge rounded-pill text-bg-danger" title="Expired">
+			{#icons/expired /}
+		</span>
+		{/if}
+	</td>
     {#if actionType == 'full'}
     <td class="d-flex flex-row">
 		{!TODO:: configure to choose row or modal. Separate button/group?!}
@@ -92,7 +105,7 @@
       </button>
 	{#else if actionType == 'view'}
 	  <td class="d-grid gap-2">
-		  <a href="/items" class="btn btn-sm btn-info" title="View {name}">{#icons/view}{/icons/view}</a>
+		  <a href="{rootPrefix}/items?viewStored={id}" class="btn btn-sm btn-info" title="View Stored">{#icons/view}{/icons/view}</a>
       {/if}
 		  
     </td>

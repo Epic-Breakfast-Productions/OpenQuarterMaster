@@ -52,13 +52,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "List added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "List added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -69,7 +63,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public ObjectId create(
+	public ItemList create(
 		@Valid ItemList itemList
 	) {
 		return super.create(itemList);
