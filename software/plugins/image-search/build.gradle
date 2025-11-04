@@ -27,10 +27,11 @@ dependencies {
 	implementation group: 'org.tensorflow', name: 'tensorflow-core-platform', version: '0.5.0'
 	implementation group: 'org.openpnp', name: 'opencv', version: '4.9.0-0'
 
-	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:2.3.0'
+	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:3.2.0'
 
 	testImplementation 'io.quarkus:quarkus-junit5'
 	testImplementation 'io.rest-assured:rest-assured'
+	testImplementation 'net.datafaker:datafaker:2.4.4'
 }
 
 group 'tech.ebp.oqm.plugin'

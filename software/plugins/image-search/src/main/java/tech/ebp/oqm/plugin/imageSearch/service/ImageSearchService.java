@@ -7,6 +7,7 @@ import java.util.LinkedHashMap;
 import com.fasterxml.jackson.core.type.TypeReference;
 import lombok.extern.slf4j.Slf4j;
 import nu.pattern.OpenCV;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.opencv.core.*;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
@@ -22,10 +23,14 @@ import java.io.IOException;
 import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 
 @Slf4j
 @ApplicationScoped
 public class ImageSearchService {
+	
+	@RestClient
+	OqmCoreApiClientService coreApiClient;
 	
 	/**
 	 *
@@ -47,6 +52,15 @@ public class ImageSearchService {
 	
 	
 	public LinkedHashMap<Double, String> search(String query) throws IOException {
+		
+//		coreApiClient.imageGetRevisionData();
+		
+		
+		
+		
+		
+		
+		
 		log.info("Searching for query: " + query);
 		OpenCV.loadLocally();
 		

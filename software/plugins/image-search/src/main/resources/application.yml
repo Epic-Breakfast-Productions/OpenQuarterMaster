@@ -19,7 +19,6 @@ quarkus:
       port: 9328
       realm-path: "../../../../dev/oqm-realm.json"
       realm-name: oqm
-      
 
 "%dev":
   quarkus:
@@ -31,3 +30,7 @@ quarkus:
       client-id: oqm-app
       credentials:
         secret: "**********"
+oqm:
+  core:
+    api:
+      baseUri:
