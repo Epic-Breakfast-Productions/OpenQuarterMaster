@@ -1,7 +1,6 @@
 # Image Search Plugin
 
 
-
  - store image vectors in mongodb
  - pull image data from OQM
  - present an endopoint to upload an image, search for matches
@@ -12,7 +11,7 @@
 
 ## TODOS
 
- - 
+ - [ ] Replace `imageData.json` with mongodb 
 
 
 
