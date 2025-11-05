@@ -24,7 +24,8 @@ repositories {
 }
 
 dependencies {
-    implementation("com.fasterxml.jackson.core:jackson-databind:2.20.0")
+    //TODO:: update to latest; BEWARE dependency issues in Minecraft mod
+    implementation("com.fasterxml.jackson.core:jackson-databind:2.13.4.2")
 
     // Use JUnit Jupiter for testing.
     testImplementation(libs.junit.jupiter)
