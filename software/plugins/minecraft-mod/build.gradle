@@ -19,6 +19,8 @@ group = mod_group_id
 
 repositories {
     // Add here additional repositories if required by some of the dependencies below.
+    mavenCentral()
+    mavenLocal()
 }
 
 base {
@@ -133,6 +135,7 @@ dependencies {
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+    implementation("tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-java:1.0.0-SNAPSHOT")
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
