@@ -644,10 +644,10 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(IMAGE_ROOT_ENDPOINT + "/for/{type}/{id}")
 	@Produces({
-		"image/png",
+		"image/*",
 		"text/plain"
 	})
-	Uni<Response> imageForObject(
+	Uni<InputStream> imageForObject(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("type") String type,
