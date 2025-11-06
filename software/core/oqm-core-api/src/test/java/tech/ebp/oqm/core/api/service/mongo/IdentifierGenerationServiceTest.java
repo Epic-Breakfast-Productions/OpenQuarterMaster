@@ -55,72 +55,72 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 			 * Basics/ individual
 			 */
 			//datetime
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{dt}").build(), "^\\d{2}/\\d{2}/\\d{4}-\\d{2}:\\d{2}:\\d{2}$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{dt;yyyy-MM-dd}").build(), "^\\d{4}-\\d{2}-\\d{2}$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{dt}").build(), "^\\d{2}/\\d{2}/\\d{4}-\\d{2}:\\d{2}:\\d{2}$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{dt;yyyy-MM-dd}").build(), "^\\d{4}-\\d{2}-\\d{2}$"),
 			//uuid
 			Arguments.of(
-				IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{uuid}").build(),
+				IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{uuid}").build(),
 				"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
 			),
 			//random
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{rand}").build(), "^[0-9a-zA-Z]{5}$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{rand;1}").build(), "^[0-9a-zA-Z]{1}$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{rand;5}").build(), "^[0-9a-zA-Z]{5}$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{rand;50}").build(), "^[0-9a-zA-Z]{50}$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{rand}").build(), "^[0-9a-zA-Z]{5}$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{rand;1}").build(), "^[0-9a-zA-Z]{1}$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{rand;5}").build(), "^[0-9a-zA-Z]{5}$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{rand;50}").build(), "^[0-9a-zA-Z]{50}$"),
 			//increment
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}").build(), "^00001$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc;1}").build(), "^1$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc;50}").build(), "^0{49}1$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc;3;2}").build(), "^001$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc;3;36}").build(), "^001$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}").lastIncremented(BigInteger.TWO).build(), "^00003$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc;2}").lastIncremented(new BigInteger("100", 10)).build(), "^101$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc;2;36}").lastIncremented(new BigInteger("34", 10)).build(), "^0Z$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc;2;36}").lastIncremented(new BigInteger("35", 10)).build(), "^10$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), "^00001$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;1}").build(), "^1$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;50}").build(), "^0{49}1$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;3;2}").build(), "^001$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;3;36}").build(), "^001$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").lastIncremented(BigInteger.TWO).build(), "^00003$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;2}").lastIncremented(new BigInteger("100", 10)).build(), "^101$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;2;36}").lastIncremented(new BigInteger("34", 10)).build(), "^0Z$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;2;36}").lastIncremented(new BigInteger("35", 10)).build(), "^10$"),
 			/*
 			 * Combined
 			 */
 			//prefix/suffix
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("foo-{inc}").build(), "^foo-00001$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}-foo").build(), "^00001-foo$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("bar-{inc}-foo").build(), "^bar-00001-foo$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}").build(), "^foo-00001$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}-foo").build(), "^00001-foo$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("bar-{inc}-foo").build(), "^bar-00001-foo$"),
 			//multiple
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}{rand}").build(), "^00001[0-9a-zA-Z]{5}$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("foo-{inc}{rand}-bar").build(), "^foo-00001[0-9a-zA-Z]{5}-bar$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("foo-{inc}-{rand}-bar").build(), "^foo-00001-[0-9a-zA-Z]{5}-bar$"),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("foo-{inc}-some-{rand}-bar").build(), "^foo-00001-some-[0-9a-zA-Z]{5}-bar$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}{rand}").build(), "^00001[0-9a-zA-Z]{5}$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}{rand}-bar").build(), "^foo-00001[0-9a-zA-Z]{5}-bar$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}-{rand}-bar").build(), "^foo-00001-[0-9a-zA-Z]{5}-bar$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}-some-{rand}-bar").build(), "^foo-00001-some-[0-9a-zA-Z]{5}-bar$"),
 			/*
 			 * Other
 			 */
 			//encoding
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("foo-{inc}").encoded(true).build(), "^Zm9vLTAwMDAx$")
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}").encoded(true).build(), "^Zm9vLTAwMDAx$")
 		);
 	}
 	
 	public static Stream<Arguments> getGenerationInValidTestArgs() {
 		return Stream.of(
 			//blank things
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("").build()),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("\t").build()),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat(" ").build()),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("\n").build()),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("  {dt}").build()),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{dt} ").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("\t").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat(" ").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("\n").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("  {dt}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{dt} ").build()),
 			//no args in format
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("test").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("test").build()),
 			//Bad args
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{}").build()),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{test}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{test}").build()),
 			//bad rand
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{rand;-1}").build()),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{rand;0}").build()),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{rand;51}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{rand;-1}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{rand;0}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{rand;51}").build()),
 			//bad increment
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc;-1}").build()),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc;51}").build()),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc;3;37}").build()),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc;3;1}").build()),
-			Arguments.of(IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}{inc}").build())
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;-1}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;51}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;3;37}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;3;1}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}{inc}").build())
 		);
 	}
 	

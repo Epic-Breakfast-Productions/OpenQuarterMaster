@@ -32,6 +32,8 @@ public class IdentifierGenerator extends MainObject {
 	/**
 	 * The name of the generator
 	 */
+	@NonNull
+	@NotNull
 	@lombok.Builder.Default
 	private String name = null;
 	

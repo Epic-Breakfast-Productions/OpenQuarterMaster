@@ -215,7 +215,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		User user = this.getTestUserService().getTestUser();
 		InventoryItem item = this.getTestObject();
 		
-		ObjectId uig = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
+		ObjectId uig = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
 		
 		item.getUniqueIds().add(
 			ToGenerateUniqueId.builder().generateFrom(uig)
@@ -239,8 +239,8 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		InventoryItem item1 = this.getTestObject();
 		InventoryItem item2 = this.getTestObject();
 		
-		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
-		ObjectId uig2 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
+		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
+		ObjectId uig2 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test2").generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
 		
 		item1.getUniqueIds().add(
 			ToGenerateUniqueId.builder().generateFrom(uig1)
@@ -269,7 +269,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		InventoryItem item1 = this.getTestObject();
 		InventoryItem item2 = this.getTestObject();
 		
-		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
+		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
 		
 		item1.getUniqueIds().add(
 			ToGenerateUniqueId.builder().generateFrom(uig1)

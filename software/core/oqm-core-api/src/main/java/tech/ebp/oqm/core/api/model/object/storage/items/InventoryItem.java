@@ -80,16 +80,10 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	private LinkedHashSet<UniqueId> uniqueIds = new LinkedHashSet<>();
 	
 	/**
-	 * Unique ID generators for this particular item's stored.
+	 * ID generators for this particular item's stored.
 	 */
 	@lombok.Builder.Default
-	private LinkedHashSet<ObjectId> generalIdGenerators = new LinkedHashSet<>();
-	
-	/**
-	 * Unique ID generators for this particular item's stored.
-	 */
-	@lombok.Builder.Default
-	private LinkedHashSet<ObjectId> uniqueIdGenerators = new LinkedHashSet<>();
+	private LinkedHashSet<ObjectId> idGenerators = new LinkedHashSet<>();
 	
 	/**
 	 * Categories this item belongs to.
