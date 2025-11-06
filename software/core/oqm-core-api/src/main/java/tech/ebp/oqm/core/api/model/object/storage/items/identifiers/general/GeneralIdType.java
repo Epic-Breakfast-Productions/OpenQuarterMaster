@@ -33,4 +33,8 @@ public enum GeneralIdType {
 	GeneralIdType(boolean isBarcode) {
 		this.isBarcode = isBarcode;
 	}
+	
+	public String prettyName() {
+		return this.name().replaceAll("_", "-");
+	}
 }

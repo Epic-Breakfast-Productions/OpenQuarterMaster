@@ -4,6 +4,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
+import tech.ebp.oqm.core.api.service.identifiers.IdBarcodeService;
 import uk.org.okapibarcode.backend.Code128;
 import uk.org.okapibarcode.backend.Code2Of5;
 import uk.org.okapibarcode.backend.Ean;
@@ -23,22 +24,9 @@ import java.io.IOException;
  * TODO:: add better labels to images https://github.com/jfree/jfreesvg
  */
 @ApplicationScoped
-public class GeneralIdBarcodeService {
-	public static final String DATA_MEDIA_TYPE = "image/svg+xml";
+public class GeneralIdBarcodeService extends IdBarcodeService {
 	
-	private static String toImageData(Symbol code){
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		SvgRenderer renderer = new SvgRenderer(os, 1, Color.WHITE, Color.BLACK, true);
-		try {
-			renderer.render(code);
-		} catch(IOException e) {
-			throw new IllegalStateException(new RuntimeException(e));
-		}
-		return os.toString();
-	}
-	
-	
-	public String getGeneralIdData(GeneralIdType type, String data){
+	public String getGeneralIdData(GeneralIdType type, String data, String label){
 		String dataIn = data;
 		int hQuietZone = 10;
 		
@@ -95,11 +83,14 @@ public class GeneralIdBarcodeService {
 		barcode.setHumanReadableLocation(HumanReadableLocation.BOTTOM);
 		barcode.setContent(dataIn);
 		
-		return toImageData(barcode);
+		return processBarcodeData(
+			barcode,
+			type.prettyName() + (label == null ? "" : " / ") + (label == null? "" : label)
+		);
 	}
 	
 	public String getGeneralIdData(GeneralId identifier){
-		return this.getGeneralIdData(identifier.getType(), identifier.getValue());
+		return this.getGeneralIdData(identifier.getType(), identifier.getValue(), identifier.getLabel());
 	}
 	
 }

@@ -4,6 +4,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -15,6 +16,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.service.identifiers.general.GeneralIdBarcodeService;
 import tech.ebp.oqm.core.api.service.identifiers.unique.UniqueIdBarcodeService;
@@ -32,7 +34,7 @@ public class UniqueIdImageEndpoints extends EndpointProvider {
 	UniqueIdBarcodeService uniqueIdBarcodeService;
 	
 	@GET
-	@Path("{value}")
+	@Path("{value}/{label}")
 	@Operation(
 		summary = "A barcode that represents the string given."
 	)
@@ -42,12 +44,33 @@ public class UniqueIdImageEndpoints extends EndpointProvider {
 	)
 	@Produces(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
 	public Response getBarcode(
-		@PathParam("value") String data
+		@PathParam("value") String data,
+		@PathParam("label") String label
 	) {
 		log.info("Getting barcode for unique id value: {}", data);
 		
 		return Response.status(Response.Status.OK)
-				   .entity(this.uniqueIdBarcodeService.getUniqueIdData(data))
+				   .entity(this.uniqueIdBarcodeService.getUniqueIdData(data, label))
+				   .header("Content-Disposition", "attachment;filename=" + "code.svg")
+				   .type(UniqueIdBarcodeService.DATA_MEDIA_TYPE)
+				   .build();
+	}
+	
+	@POST
+	@Operation(
+		summary = "A barcode that represents the string given."
+	)
+	@APIResponse(
+		responseCode = "200"
+	)
+	@Produces(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
+	public Response getBarcode(
+		UniqueId id
+	) {
+		log.info("Getting barcode for unique id: {}", id);
+		
+		return Response.status(Response.Status.OK)
+				   .entity(this.uniqueIdBarcodeService.getUniqueIdData(id))
 				   .header("Content-Disposition", "attachment;filename=" + "code.svg")
 				   .type(UniqueIdBarcodeService.DATA_MEDIA_TYPE)
 				   .build();

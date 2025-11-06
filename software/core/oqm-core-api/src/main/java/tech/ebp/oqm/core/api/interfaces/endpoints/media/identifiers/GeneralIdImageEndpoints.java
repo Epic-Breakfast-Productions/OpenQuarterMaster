@@ -4,6 +4,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
@@ -14,6 +15,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.service.identifiers.general.GeneralIdBarcodeService;
@@ -30,18 +32,6 @@ public class GeneralIdImageEndpoints extends EndpointProvider {
 	
 	@Inject
 	GeneralIdBarcodeService generalIdBarcodeService;
-	
-	private Response getBarcodeResponse(
-		GeneralIdType codeType,
-		String content,
-		String svgData
-	) {
-		return Response.status(Response.Status.OK)
-				   .entity(svgData)
-				   .header("Content-Disposition", "attachment;filename=" + codeType + "_" + content.replaceAll("\\W+", "") + ".svg")
-				   .type(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
-				   .build();
-	}
 	
 	@GET
 	@Path("{type}/{value}")
@@ -62,10 +52,28 @@ public class GeneralIdImageEndpoints extends EndpointProvider {
 			return Response.status(Response.Status.BAD_REQUEST).entity("Value not a valid " + type).build();
 		}
 		return Response.status(Response.Status.OK)
-				   .entity(this.generalIdBarcodeService.getGeneralIdData(type, data))
+				   .entity(this.generalIdBarcodeService.getGeneralIdData(type, data, null))
 				   .header("Content-Disposition", "attachment;filename=" + "code.svg")
 				   .type(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
 				   .build();
 	}
 	
+	@POST
+	@Operation(
+		summary = "A barcode that represents the general id given."
+	)
+	@APIResponse(
+		responseCode = "200"
+	)
+	@Produces(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
+	public Response getBarcode(
+		GeneralId generalId
+	) {
+		log.info("Getting {} barcode.", generalId);
+		return Response.status(Response.Status.OK)
+				   .entity(this.generalIdBarcodeService.getGeneralIdData(generalId))
+				   .header("Content-Disposition", "attachment;filename=" + "code.svg")
+				   .type(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
+				   .build();
+	}
 }

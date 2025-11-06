@@ -5,6 +5,8 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdType;
+import tech.ebp.oqm.core.api.service.identifiers.IdBarcodeService;
 import uk.org.okapibarcode.backend.Code128;
 import uk.org.okapibarcode.backend.Code2Of5;
 import uk.org.okapibarcode.backend.Ean;
@@ -24,22 +26,9 @@ import java.io.IOException;
  * TODO:: add better labels to images https://github.com/jfree/jfreesvg
  */
 @ApplicationScoped
-public class UniqueIdBarcodeService {
-	public static final String DATA_MEDIA_TYPE = "image/svg+xml";
+public class UniqueIdBarcodeService extends IdBarcodeService {
 	
-	private static String toImageData(Symbol code){
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		SvgRenderer renderer = new SvgRenderer(os, 1, Color.WHITE, Color.BLACK, true);
-		try {
-			renderer.render(code);
-		} catch(IOException e) {
-			throw new IllegalStateException(new RuntimeException(e));
-		}
-		return os.toString();
-	}
-	
-	
-	public String getUniqueIdData(String data){
+	public String getUniqueIdData(String data, String label){
 		String dataIn = data;
 		int hQuietZone = 10;
 		
@@ -54,14 +43,14 @@ public class UniqueIdBarcodeService {
 		barcode.setHumanReadableLocation(HumanReadableLocation.BOTTOM);
 		barcode.setContent(dataIn);
 		
-		return toImageData(barcode);
+		return processBarcodeData(barcode, label);
 	}
 	
 	public String getUniqueIdData(UniqueId identifier){
-		return this.getUniqueIdData(identifier.getValue());
+		return this.getUniqueIdData(identifier.getValue(), identifier.getLabel());
 	}
 	
-	public String getObjectIdData(ObjectId objectId){
+	public String getObjectIdData(ObjectId objectId){//TODO:: rework for full object (type, label)
 		Code128 barcode = new Code128();
 		barcode.setFontName("Monospaced");
 //		barcode.setFontSize(16);
@@ -72,6 +61,6 @@ public class UniqueIdBarcodeService {
 		barcode.setHumanReadableLocation(HumanReadableLocation.BOTTOM);
 		barcode.setContent(objectId.toHexString());
 		
-		return toImageData(barcode);
+		return processBarcodeData(barcode,null);
 	}
 }

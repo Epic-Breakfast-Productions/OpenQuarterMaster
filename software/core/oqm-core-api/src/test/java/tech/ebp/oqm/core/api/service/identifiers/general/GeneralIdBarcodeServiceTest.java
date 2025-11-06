@@ -33,9 +33,11 @@ class GeneralIdBarcodeServiceTest extends CodeUtilTestBase {
 			fileName + ".svg"
 		);
 		
+		log.info("Writing to {}: {}", outputPath, data);
+		
 		try{
 			outputPath.toFile().getParentFile().mkdirs();
-			Files.writeString(outputPath, data, StandardOpenOption.CREATE);
+			Files.writeString(outputPath, data, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
 		} catch(IOException e) {
 			throw new RuntimeException(e);
 		}
