@@ -10,6 +10,9 @@ quarkus.http.insecure-requests=enabled
 #quarkus.http.insecure-requests=redirect
 quarkus.log.level=INFO
 
+quarkus.rest-csrf.token-signature-key={core.baseStation.csrfSigKey}
+quarkus.rest-csrf.cookie-path=/core/base-station/
+
 # SSL Config
 quarkus.tls.key-store.pem.0.cert=/etc/oqm/serviceConfig/core/base+station/files/serviceCert.crt
 quarkus.tls.key-store.pem.0.key=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKey.pem

@@ -39,12 +39,14 @@ public class StoredInItemEndpointsTest extends RunningServerTest {
 	public void testSearchEmptyDb() throws JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
 
-		String id = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+		String json = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 			.body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
 			.contentType(ContentType.JSON)
 			.post("/api/v1/db/"+DEFAULT_TEST_DB_NAME+"/inventory/item")
 			.then().statusCode(200)
-			.extract().body().asString().replaceAll("\"","");
+			.extract().body().asString();
+		
+		String id = OBJECT_MAPPER.readValue(json, InventoryItem.class).getId().toHexString();
 
 		ValidatableResponse response = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 			.when()
