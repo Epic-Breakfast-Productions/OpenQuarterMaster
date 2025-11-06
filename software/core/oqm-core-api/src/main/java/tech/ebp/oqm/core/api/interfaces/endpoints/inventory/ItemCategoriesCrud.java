@@ -51,13 +51,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "Object added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -68,7 +62,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public ObjectId create(
+	public ItemCategory create(
 		@Valid ItemCategory itemCategory
 	) {
 		return super.create(itemCategory);

@@ -19,6 +19,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-rest'
     implementation 'io.quarkus:quarkus-rest-jackson'
     implementation 'io.quarkus:quarkus-rest-qute'
+    implementation 'io.quarkus:quarkus-rest-csrf'
     implementation 'io.quarkus:quarkus-rest-client'
     implementation 'io.quarkus:quarkus-rest-client-jackson'
     implementation 'io.quarkus:quarkus-oidc'
@@ -45,7 +46,7 @@ dependencies {
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation "org.junit.jupiter:junit-jupiter-params:5.13.4"
     testImplementation 'io.rest-assured:rest-assured'
-    testImplementation 'net.datafaker:datafaker:2.4.4'
+    testImplementation 'net.datafaker:datafaker:2.5.3'
 
     testImplementation 'com.microsoft.playwright:playwright:1.56.0'
     testImplementation 'com.deque.html.axe-core:playwright:4.10.2'
