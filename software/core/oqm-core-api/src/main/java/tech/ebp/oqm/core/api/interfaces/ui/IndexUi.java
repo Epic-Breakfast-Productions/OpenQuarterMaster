@@ -59,7 +59,7 @@ public class IndexUi {
 		This service serves the core api forming the base functionality of the Open QuarterMaster system.
 	</p>
 	<p>
-		See <a href="{0}/q/swagger-ui">Swagger</a> for API documentation.
+		See <a href="{0}/q/swagger-ui/">Swagger</a> for API documentation.
 	</p>
 </main>
 <hr />
