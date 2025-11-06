@@ -10,7 +10,7 @@
    - https://github.com/docker/buildx/issues/132#issuecomment-847136842
    - Steps:
      1. Setup buildx
-        1. `sudo apt install docker-buildx`
+        1. `sudo apt install docker-buildx qemu-user-static`
         2. Add/set `{"experimental": true,"features": {"buildkit": true}}` to `vim /etc/docker/daemon.json`
         2. `sudo systemctl daemon-reload`
         2. `sudo systemctl reload docker`
