@@ -1,43 +1,30 @@
 
 
-<div class="accordion" id="{id}-associatedIdGeneratorAccord">
-	<div class="accordion-item">
-		<h2 class="accordion-header">
-			<button class="accordion-button thinAccordion collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{id}-associatedIdGeneratorAccordCollapse" aria-expanded="false" aria-controls="{id}-associatedIdGeneratorAccordCollapse">
-				{#icons/idGenerators /}
-				Associate Id Generators
-			</button>
-		</h2>
-		<div id="{id}-associatedIdGeneratorAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#{id}-associatedIdGeneratorAccord">
-			<div class="accordion-body">
-				<div class="idGeneratorAssociatedInput" id="{id}-associatedIdGeneratorInput" data-forObject="{forObject}" data-generates="{generates}" data-modifying="{modifying.or("true")}">
-					
-					{#if modifying.or(true)}
-					<div class="d-grid gap-2 mb-1">
-						<button type="button" class="btn btn-sm btn-outline-success idGeneratorAssociateButton" data-bs-toggle="modal" data-bs-target="#idGeneratorSearchSelectModal" onclick="IdGeneratorSearchSelect.AssociatedInput.associateButtonClicked(this);">
-							{#icons/add /} Associate/Create Id Generator
-						</button>
-					</div>
-					{/if}
-					
-					<table class="table table-sm table-bordered table-striped table-hover m-0">
-						<thead>
-						<tr>
-							<td>
-								Name
-							</td>
-							<td>
-								Action
-							</td>
-						</tr>
-						</thead>
-						<tbody class="associatedIdentifierGeneratorTableContent">
-						
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
+<div class="idGeneratorAssociatedInput" id="{id}-associatedIdGeneratorInput" data-forObject="{forObject}" data-generates="{generates.or("")}" data-modifying="{modifying.or("true")}">
+	<p class="form-text">
+		Associated ID generators appear when adding / modifying stored items.
+	</p>
+	{#if modifying.or(true)}
+	<div class="d-grid gap-2 mb-1">
+		<button type="button" class="btn btn-sm btn-outline-success idGeneratorAssociateButton" data-bs-toggle="modal" data-bs-target="#idGeneratorSearchSelectModal" onclick="IdGeneratorSearchSelect.AssociatedInput.associateButtonClicked(this);">
+			{#icons/add /} Associate Id Generator
+		</button>
 	</div>
-
+	{/if}
+	
+	<table class="table table-sm table-bordered table-striped table-hover m-0">
+		<thead>
+		<tr>
+			<td>
+				Name
+			</td>
+			<td>
+				Action
+			</td>
+		</tr>
+		</thead>
+		<tbody class="associatedIdentifierGeneratorTableContent">
+		
+		</tbody>
+	</table>
 </div>

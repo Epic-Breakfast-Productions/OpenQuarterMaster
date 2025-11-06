@@ -289,7 +289,7 @@ const UniqueIdentifiers = {
 	},
 
 	newAddedIdentifier(newIdentifier) {
-		console.log("Adding identifier: ", newIdentifier);
+		console.log("Adding unique identifier: ", newIdentifier);
 		let output = $(PageComponents.Inputs.UniqueIds.uniqueIdAdded);
 
 		output.find("input[name='label']").val(newIdentifier.label);
@@ -321,9 +321,10 @@ const UniqueIdentifiers = {
 				value: UniqueIdentifiers.getNewIdentifierValue(uniqueInputContainerJq),
 				barcode: false
 			};
+			UniqueIdentifiers.getNewIdentifierInput(uniqueInputContainerJq).val("");
 		}
 
-		console.log("Adding a new general identifier: ", newIdentifier);
+		console.log("Adding a new unique identifier: ", newIdentifier);
 
 		UniqueIdentifiers.getIdentifiersContainer(uniqueInputContainerJq).append(UniqueIdentifiers.newAddedIdentifier(newIdentifier));
 	},

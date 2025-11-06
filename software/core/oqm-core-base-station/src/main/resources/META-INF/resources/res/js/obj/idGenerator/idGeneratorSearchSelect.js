@@ -1,7 +1,7 @@
 const IdGeneratorSearchSelect = {
 	AssociatedInput: {
 		getInputContainer(innerElementJq) {
-			return innerElementJq.closest(".idGeneratorInput");
+			return innerElementJq.closest(".idGeneratorAssociatedInput");
 		},
 		getAssociatedGeneratorList(idGenInputJq) {
 			return idGenInputJq.find(".associatedIdentifierGeneratorTableContent");
@@ -9,7 +9,7 @@ const IdGeneratorSearchSelect = {
 		associateButtonClicked: function (buttonJs) {
 			console.debug("Clicked associate button.");
 			let buttonJq = $(buttonJs);
-			let idGenInputContainer = IdGeneratorSearchSelect.IdGenInput.getInputContainer(buttonJq);
+			let idGenInputContainer = IdGeneratorSearchSelect.AssociatedInput.getInputContainer(buttonJq);
 
 			IdGeneratorSearchSelect.setupSearchSelect(
 				idGenInputContainer,
@@ -23,7 +23,9 @@ const IdGeneratorSearchSelect = {
 
 			let newRow = $('<tr class="associatedIdentifierGenerator"></tr>');
 
-			newRow.append($('<td class="idGeneratorName"></td>').text(idGenData.name));
+			newRow.append($('<td class="idGeneratorName"></td>')
+				.text(idGenData.name))
+				.attr("data-id", idGenData.id);
 
 			newRow.append(
 				$('<td></td>')
@@ -33,7 +35,19 @@ const IdGeneratorSearchSelect = {
 					)
 			);
 
-			IdGeneratorSearchSelect.IdGenInput.getAssociatedGeneratorList(idGenInputJq).append(newRow);
+			IdGeneratorSearchSelect.AssociatedInput.getAssociatedGeneratorList(idGenInputJq).append(newRow);
+		},
+		resetAssociatedIdGenListData: function (idGenInputJq) {
+			IdGeneratorSearchSelect.AssociatedInput.getAssociatedGeneratorList(idGenInputJq).text("");
+		},
+		getAssociatedIdGenListData: function (idGenInputJq) {
+			let output = [];
+
+			IdGeneratorSearchSelect.AssociatedInput.getAssociatedGeneratorList(idGenInputJq).find("tr").each(function (curIdGenRow) {
+				output.push($(curIdGenRow).data("id"));
+			})
+
+			return output;
 		}
 	},
 	GenerateInput: {
@@ -121,7 +135,7 @@ const IdGeneratorSearchSelect = {
 	newGeneratorForm: $("#idGeneratorSearchSelectNewGeneratorForm"),
 
 	setupSearchSelect: function (idGenSelectAddInputJq, generates, forObject) {
-		console.log("Setting up search select for: ", generates, forObject);
+		console.log("Setting up id generator search select for: ", generates, forObject);
 
 		ModalHelpers.setReturnModal(IdGeneratorSearchSelect.searchSelectModal, idGenSelectAddInputJq);
 
@@ -172,7 +186,7 @@ const IdGeneratorSearchSelect = {
 
 		if(destination.hasClass("idGeneratorGenerateButton")){
 			IdGeneratorSearchSelect.GenerateInput.generateFor(destination, idGenData);
-		} else if(destination.hasClass("")){//TODO: correct class to check
+		} else if(destination.hasClass("idGeneratorAssociatedInput")){
 			IdGeneratorSearchSelect.AssociatedInput.associateIdGenerator(destination, idGenData);
 		} else {
 			console.warn("Destination of selected generator could not be determined.");

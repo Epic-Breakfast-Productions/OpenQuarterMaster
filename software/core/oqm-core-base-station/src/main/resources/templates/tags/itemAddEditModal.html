@@ -136,19 +136,24 @@
                     </label>
                     <div class="col-sm-10">
                         {#inputs/identifiers/generalIdInput id="addEditItemGeneralIdInput" /}
-                        <hr />
-                        {#inputs/identifiers/associatedIdGeneratorInput forObject="STORED" generates="GENERAL" id=(id + "-general") /}
                     </div>
                 </div>
-                <div class="mb-3 row">
+                <div class="mb-5 row">
                     <label for="addEditItemUniqueIdInput" class="col-form-label col-sm-2">
                     	{#icons/uniqueIds /}
                     	Unique Identifiers:
                     </label>
                     <div class="col-sm-10">
                         {#inputs/identifiers/uniqueIdInput id="addEditItemUniqueIdInput" /}
-                        <hr />
-                        {#inputs/identifiers/associatedIdGeneratorInput forObject="STORED" generates="UNIQUE" id=(id + "-unique") /}
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="addEditItemUniqueIdInput" class="col-form-label col-sm-2">
+                    	{#icons/idGenerators /}
+                    	Associated ID Generators:
+                    </label>
+                    <div class="col-sm-10">
+                        {#inputs/identifiers/associatedIdGeneratorInput forObject="STORED" id=(id + "-item") /}
                     </div>
                 </div>
                 <hr />
