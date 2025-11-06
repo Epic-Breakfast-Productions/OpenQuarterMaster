@@ -14,6 +14,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.ImportBundleFileBody;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.*;
 
+import java.io.InputStream;
 import java.util.Currency;
 import java.util.List;
 
@@ -611,7 +612,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/revision/{rev}/data")
 	@GET
 	@Produces("*/*")
-	Uni<Response> imageGetRevisionData(
+	Uni<InputStream> imageGetRevisionData(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("id")
@@ -721,7 +722,7 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}/revision/{rev}/data")
 	@Produces("*/*")
-	Uni<Response> fileAttachmentGetRevisionData(
+	Uni<InputStream> fileAttachmentGetRevisionData(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("id")
