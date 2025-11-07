@@ -49,6 +49,10 @@ const ItemView = {
 	uniqueIdNumIds: $("#itemViewUniqueIdsNumIdsLabel"),
 	uniqueIdContent: $("#itemViewUniqueIdsAccordContent"),
 
+	assocIdGensAccord: $("#itemViewIdGeneratorsAccord"),
+	assocIdGensNumIds: $("#itemViewIdGeneratorsNumIdsLabel"),
+	assocIdGensContent: $("#itemViewIdGeneratorsAccordContent"),
+
 	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
 	itemViewTotalLowStockThreshold: $("#itemViewTotalLowStockThreshold"),
 	itemViewExpiryWarnThresholdContainer: $("#itemViewExpiryWarnThresholdContainer"),
@@ -112,6 +116,8 @@ const ItemView = {
 		ItemView.uniqueIdsAccord.hide();
 		ItemView.uniqueIdNumIds.text("");
 		ItemView.uniqueIdContent.text("");
+		ItemView.assocIdGensNumIds.text("");
+		ItemView.assocIdGensContent.text("");
 
 		ItemView.itemViewTotal.text("");
 		ItemView.itemViewTotalLowStockThreshold.text("");
@@ -427,7 +433,7 @@ const ItemView = {
 					ItemView.itemViewDescriptionContainer.show();
 				}
 
-				if(itemData.generalIds.length || itemData.uniqueIds.length){
+				if(itemData.generalIds.length || itemData.uniqueIds.length || itemData.idGenerators.length) {
 					console.debug("Had ids to show");
 					if(itemData.generalIds.length){
 						ItemView.generalIdsAccord.show();
@@ -438,6 +444,19 @@ const ItemView = {
 						ItemView.uniqueIdsAccord.show();
 						ItemView.uniqueIdNumIds.text(itemData.uniqueIds.length);
 						UniqueIdentifiers.View.showInDiv(ItemView.uniqueIdContent, itemData.uniqueIds);
+					}
+					if(itemData.idGenerators.length){
+						ItemView.assocIdGensAccord.show();
+						ItemView.assocIdGensNumIds.text(itemData.idGenerators.length);
+
+						itemData.idGenerators.forEach(function (idGenerator, i) {
+							Getters.Identifiers.generator(idGenerator).then(function (generator) {
+								let newEntry = $('<li></li>');
+								newEntry.text(generator.name + " / " + generator.format);
+
+								ItemView.assocIdGensContent.append(newEntry);
+							});
+						});
 					}
 					ItemView.idsAccord.show();
 				}
