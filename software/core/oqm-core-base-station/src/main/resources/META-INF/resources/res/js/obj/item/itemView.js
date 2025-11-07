@@ -452,7 +452,7 @@ const ItemView = {
 						itemData.idGenerators.forEach(function (idGenerator, i) {
 							Getters.Identifiers.generator(idGenerator).then(function (generator) {
 								let newEntry = $('<li></li>');
-								newEntry.text(generator.name + " / " + generator.format);
+								newEntry.text(generator.name + " / " + generator.idFormat);
 
 								ItemView.assocIdGensContent.append(newEntry);
 							});
@@ -460,9 +460,6 @@ const ItemView = {
 					}
 					ItemView.idsAccord.show();
 				}
-
-
-
 
 				if (itemData.lowStockThreshold) {
 					ItemView.itemViewTotalLowStockThreshold.text(itemData.lowStockThreshold.value + "" + itemData.lowStockThreshold.unit.symbol);
