@@ -1,0 +1,13 @@
+{
+  "itemGroup.oqmchesttracker": "Example Mod Tab",
+  "block.oqmchesttracker.example_block": "Example Block",
+  "item.oqmchesttracker.example_item": "Example Item",
+
+  "oqmchesttracker.configuration.title": "OQM Chest Tracker Configs",
+  "oqmchesttracker.configuration.section.oqmchesttracker.common.toml": "OQM Chest Tracker Configs",
+  "oqmchesttracker.configuration.section.oqmchesttracker.common.toml.title": "OQM Chest Tracker Configs",
+  "oqmchesttracker.configuration.items": "Item List",
+  "oqmchesttracker.configuration.logDirtBlock": "Log Dirt Block",
+  "oqmchesttracker.configuration.magicNumberIntroduction": "Magic Number Text",
+  "oqmchesttracker.configuration.magicNumber": "Magic Number"
+}
