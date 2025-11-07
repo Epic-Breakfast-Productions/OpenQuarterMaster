@@ -1,8 +1,19 @@
 # storagotchi
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+This app is meant to be a cute semi-interactable entity to play with in the background. Support your Storagotchi by performing storage related tasks!
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+## Features
+
+ - Storagotchi
+   - happiness / energy level based on recent activity
+   - animated
+ - Environment
+   - Buildable, points from storage actions
+ - stream changes to state via websocket
+ - Notifications
+   - If enabled, notify thru browser when things happen and state changes
+
+
 
 ## Running the application in dev mode
 
