@@ -71,19 +71,19 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * The general identifiers for this item
 	 */
 	@lombok.Builder.Default
-	private LinkedHashSet<GeneralId> generalIds = new LinkedHashSet<>();
+	private LinkedHashSet<@NotNull GeneralId> generalIds = new LinkedHashSet<>();
 	
 	/**
 	 * Unique ID's for this particular item.
 	 */
 	@lombok.Builder.Default
-	private LinkedHashSet<UniqueId> uniqueIds = new LinkedHashSet<>();
+	private LinkedHashSet<@NotNull UniqueId> uniqueIds = new LinkedHashSet<>();
 	
 	/**
 	 * ID generators for this particular item's stored.
 	 */
 	@lombok.Builder.Default
-	private LinkedHashSet<ObjectId> idGenerators = new LinkedHashSet<>();
+	private LinkedHashSet<@NotNull ObjectId> idGenerators = new LinkedHashSet<>();
 	
 	/**
 	 * Categories this item belongs to.
@@ -103,7 +103,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
-	private LinkedHashSet<ObjectId> storageBlocks = new LinkedHashSet<>();
+	private LinkedHashSet<@NotNull ObjectId> storageBlocks = new LinkedHashSet<>();
 
 	/**
 	 * Files that have been attached to the item.
