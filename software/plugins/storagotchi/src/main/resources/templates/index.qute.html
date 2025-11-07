@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>Storagotchi - Open QuarterMaster</title>
+	<meta charset="UTF-8" />
+	
+	<link rel="stylesheet" href="/lib/xp.css/0.2.6/XP.css" />
+	<style>
+		dialog.window {
+			border-width: 0;
+		}
+	</style>
+</head>
+
+<body class="surface">
+<div class="window" style="width: 100%; height: 100%">
+	<div class="title-bar">
+		<div class="title-bar-text">
+			Storagotchi
+		</div>
+		<div class="title-bar-controls">
+			<button aria-label="Help"></button>
+			<button aria-label="Minimize" disabled></button>
+			<button aria-label="Restore" disabled></button>
+			<button aria-label="Close" disabled></button>
+		</div>
+	</div>
+	<div class="window-body">
+		<p>Hello, world!</p>
+		<button id="testModalOpenButton">Click me</button>
+	</div>
+</div>
+
+
+<dialog class="window" style="width: 300px" id="testDialog">
+	<div class="title-bar">
+		<div class="title-bar-text">A Window With Stuff In It</div>
+		<div class="title-bar-controls">
+			<button type="button" aria-label="Minimize"></button>
+			<button type="button" aria-label="Maximize"></button>
+			<button type="button" aria-label="Close" class="modalClose"></button>
+		</div>
+	</div>
+	<div class="window-body">
+		<p>There's so much room for activities!</p>
+		<button>Click me</button>
+	</div>
+</dialog>
+
+<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+<script>
+	const testDialog = $("#testDialog");
+	
+	const showButton = $("#testModalOpenButton");
+	const closeButton = testDialog.find(".modalClose");
+	
+	// "Show the dialog" button opens the dialog modally
+	showButton.on("click", () => {
+		console.log("Opening test modal");
+		testDialog[0].showModal();
+	});
+	
+	// "Close" button closes the dialog
+	closeButton.on("click", () => {
+		console.log("Closing test modal");
+		testDialog[0].close();
+	});
+</script>
+
+</body>
+</html>
