@@ -157,6 +157,7 @@ const ItemAddEdit = {
 
 				GeneralIdentifiers.populateEdit(ItemAddEdit.generalIdInputContainer, data.generalIds);
 				UniqueIdentifiers.populateEdit(ItemAddEdit.uniqueIdInputContainer, data.uniqueIds);
+				IdGeneratorSearchSelect.AssociatedInput.populateAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput, data.idGenerators);
 
 				let durationTimespan = TimeHelpers.durationNumSecsToTimespan(data.expiryWarningThreshold);
 
@@ -297,7 +298,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 		description: ItemAddEdit.addEditItemDescriptionInput.val(),
 		generalIds: GeneralIdentifiers.getGeneralIdData(ItemAddEdit.generalIdInputContainer),
 		uniqueIds: UniqueIdentifiers.getUniqueIdData(ItemAddEdit.uniqueIdInputContainer),
-		idGenerators: IdGeneratorSearchSelect.AssociatedInput.getAssociatedIdGenListData(),
+		idGenerators: IdGeneratorSearchSelect.AssociatedInput.getAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput),
 		storageType: ItemAddEdit.addEditItemStorageTypeInput.val(),
 		expiryWarningThreshold: ItemAddEdit.addEditItemExpiryWarningThresholdInput.val() * ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.val(),
 		lowStockThreshold: (ItemAddEdit.addEditItemTotalLowStockThresholdInput.val() ? UnitUtils.getQuantityObj(

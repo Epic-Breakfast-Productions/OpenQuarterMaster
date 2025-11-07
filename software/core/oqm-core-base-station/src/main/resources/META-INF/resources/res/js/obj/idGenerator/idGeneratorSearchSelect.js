@@ -18,9 +18,6 @@ const IdGeneratorSearchSelect = {
 			);
 		},
 		associateIdGenerator: function (idGenInputJq, idGenData) {
-
-			//TODO:: skip if not proper type of id generator
-
 			let newRow = $('<tr class="associatedIdentifierGenerator"></tr>');
 
 			newRow.append($('<td class="idGeneratorName"></td>')
@@ -43,11 +40,18 @@ const IdGeneratorSearchSelect = {
 		getAssociatedIdGenListData: function (idGenInputJq) {
 			let output = [];
 
-			IdGeneratorSearchSelect.AssociatedInput.getAssociatedGeneratorList(idGenInputJq).find("tr").each(function (curIdGenRow) {
+			IdGeneratorSearchSelect.AssociatedInput.getAssociatedGeneratorList(idGenInputJq).find("tr").each(function (i, curIdGenRow) {
 				output.push($(curIdGenRow).data("id"));
 			})
 
 			return output;
+		},
+		populateAssociatedIdGenListData: function (idGenInputJq, list) {
+			list.forEach(function (item) {
+				Getters.Identifiers.generator(item).then(function (idGenData){
+					IdGeneratorSearchSelect.AssociatedInput.associateIdGenerator(idGenInputJq, idGenData);
+				});
+			});
 		}
 	},
 	GenerateInput: {
