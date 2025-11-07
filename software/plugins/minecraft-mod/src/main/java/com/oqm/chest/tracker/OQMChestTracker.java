@@ -30,6 +30,14 @@ import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.ChestMenu;
+import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.neoforged.neoforge.event.entity.player.PlayerContainerEvent;
 
 import tech.ebp.oqm.lib.core.api.java.OqmCoreApiClient;
 
@@ -64,6 +72,9 @@ public class OQMChestTracker {
     //         .displayItems((parameters, output) -> {
     //             output.accept(EXAMPLE_ITEM.get()); // Add the example item to the tab. For your own tabs, this method is preferred over the event
     //         }).build());
+
+    public Map<String, Integer> openChestData = new HashMap<>();
+    public Map<String, Integer> closeChestData = new HashMap<>();
 
     private static OqmCoreApiClient oqmCoreApiClient;
 
@@ -117,5 +128,83 @@ public class OQMChestTracker {
     public void onServerStarting(ServerStartingEvent event) {
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
+    }
+
+    private Map<String, Integer> collectChestItems(ChestMenu chestMenu) {
+        Map<String, Integer> map = new HashMap<>();
+
+        for (int i = 0; i < chestMenu.getContainer().getContainerSize(); i++) {
+            var item = chestMenu.getContainer().getItem(i);
+            if (!item.isEmpty()) {
+                String name = item.getHoverName().getString();
+                int count = item.getCount();
+                map.put(name, map.getOrDefault(name, 0) + count);
+            }
+        }
+
+        return map;
+    }
+
+    @SubscribeEvent
+    public void onChestOpened(PlayerContainerEvent.Open event) {
+        if (event.getContainer() instanceof ChestMenu chestMenu) {
+            openChestData = collectChestItems(chestMenu);
+        }
+    }
+
+    @SubscribeEvent
+    public void onChestClosed(PlayerContainerEvent.Close event) {
+        if (event.getContainer() instanceof ChestMenu chestMenu) {
+            // Clear previous close chest data
+            closeChestData.clear();
+
+            // Get player who closed the chest
+            Player player = event.getEntity();
+            String playerName = player.getName().getString();
+
+            // Get chest contents
+            var container = chestMenu.getContainer();
+
+            // Find the position of the chest
+            Object pos;
+            if (container instanceof ChestBlockEntity chestBlockEntity) {
+                pos = chestBlockEntity.getBlockPos();
+            } else {
+                pos = "unknown position";
+            }
+
+            // Log each item in the chest
+            for (int i = 0; i < container.getContainerSize(); i++) {
+                var item = container.getItem(i);
+                if (!item.isEmpty()) {
+                    String name = item.getHoverName().getString();
+                    int count = item.getCount();
+                    closeChestData.put(name, closeChestData.getOrDefault(name, 0) + count);
+                }
+            }
+
+            // Compare open and close chest data to find changes
+            if (!(openChestData.equals(closeChestData))) {
+                // Create a set of all item names in both open and close data
+                Set<String> allItemNames = new HashSet<>(openChestData.keySet());
+                allItemNames.addAll(closeChestData.keySet());
+
+                // Check for added or removed items
+                for (String itemName : allItemNames) {
+                    int openCount = openChestData.getOrDefault(itemName, 0);
+                    int closeCount = closeChestData.getOrDefault(itemName, 0);
+                    if (openCount != closeCount) {
+                        int difference = closeCount - openCount;
+                        if (difference > 0) {
+                            LOGGER.info("Player {} added {} of item {} to chest at {}", playerName, difference, itemName, pos);
+                        } else {
+                            LOGGER.info("Player {} removed {} of item {} from chest at {}", playerName, -difference, itemName, pos);
+                        }
+                    }
+                }
+            } else {
+                LOGGER.info("No changes detected in chest contents by player {}", playerName);
+            }
+        }
     }
 }
