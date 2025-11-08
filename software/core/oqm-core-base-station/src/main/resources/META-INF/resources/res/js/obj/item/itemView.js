@@ -116,6 +116,7 @@ const ItemView = {
 		ItemView.uniqueIdsAccord.hide();
 		ItemView.uniqueIdNumIds.text("");
 		ItemView.uniqueIdContent.text("");
+		ItemView.assocIdGensAccord.hide();
 		ItemView.assocIdGensNumIds.text("");
 		ItemView.assocIdGensContent.text("");
 

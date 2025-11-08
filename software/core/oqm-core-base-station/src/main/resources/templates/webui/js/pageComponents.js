@@ -17,6 +17,8 @@ const PageComponents = {
 '
 		},
 		UniqueIds: {
+			uniqueIdInput: '{uniqueIdInputLines}\
+',
 			uniqueIdAdded: '{uniqueIdAddedLines}\
 '
 		}

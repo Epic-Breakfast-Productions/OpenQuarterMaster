@@ -64,7 +64,7 @@ public class GeneralIdPassthrough extends PassthroughProvider {
 	}
 	
 	@GET
-	@Path("barcode/{type}/{value}")
+	@Path("barcode/{type}/{value}/{label}")
 	@Operation(
 		summary = "A barcode that represents the string given."
 	)
@@ -75,11 +75,12 @@ public class GeneralIdPassthrough extends PassthroughProvider {
 	@Produces("image/svg+xml")
 	public Uni<Response> getBarcode(
 		@PathParam("type") String type,
-		@PathParam("value") String data
+		@PathParam("value") String data,
+		@PathParam("label") String label
 	) {
 		return this.handleCall(
 			this.getOqmCoreApiClient()
-				.generalIdGetBarcodeImage(this.getBearerHeaderStr(), type, data)
+				.generalIdGetBarcodeImage(this.getBearerHeaderStr(), type, data, label)
 				.map((String xmlData)->{
 					return Response.status(Response.Status.OK)
 							   .entity(xmlData)

@@ -27,7 +27,7 @@ import java.util.Optional;
 public class UniqueIdPassthrough extends PassthroughProvider {
 	
 	@GET
-	@Path("barcode/{value}")
+	@Path("barcode/{value}/{label}")
 	@Operation(
 		summary = "A barcode that represents the string given."
 	)
@@ -37,11 +37,12 @@ public class UniqueIdPassthrough extends PassthroughProvider {
 	)
 	@Produces("image/svg+xml")
 	public Uni<Response> getBarcode(
-		@PathParam("value") String data
+		@PathParam("value") String data,
+		@PathParam("label") String label
 	) {
 		return this.handleCall(
 			this.getOqmCoreApiClient()
-				.uniqueIdGetBarcodeImage(this.getBearerHeaderStr(), data)
+				.uniqueIdGetBarcodeImage(this.getBearerHeaderStr(), data, label)
 				.map((String xmlData)->{
 					return Response.status(Response.Status.OK)
 							   .entity(xmlData)

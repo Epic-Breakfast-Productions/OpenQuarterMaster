@@ -20,7 +20,21 @@ const StoredFormInput = {
 <!--		//TODO:: note to leave blank if not applicable-->
 	</div>
 
-	`+ PageComponents.Inputs.GeneralIds.generalIdInput + `
+	<div class="mb-3">
+		<label class="form-label">
+			`+Icons.generalIds+`
+			General Ids
+		</label>
+		`+ PageComponents.Inputs.GeneralIds.generalIdInput + `
+	</div>
+	
+	<div class="mb-3">
+		<label class="form-label">
+			`+Icons.uniqueIds+`
+			Unique Ids
+		</label>
+		`+ PageComponents.Inputs.UniqueIds.uniqueIdInput + `
+	</div>
 	
 	`+PageComponents.Inputs.image+`
 	`+PageComponents.Inputs.file+`
@@ -136,6 +150,7 @@ const StoredFormInput = {
 		if(commonInputsContainer.length && commonInputsContainer.is(":visible")){
 			console.log("Had common form elements section.");
 			dataToAddTo["generalIds"] = GeneralIdentifiers.getGeneralIdData(commonInputsContainer.find('.generalIdInputContainer'));
+			dataToAddTo["uniqueIds"] = UniqueIdentifiers.getUniqueIdData(commonInputsContainer.find('.uniqueIdInputContainer'));
 			dataToAddTo["condition"] = commonInputsContainer.find('input[name="condition"]').val();
 			dataToAddTo["conditionNotes"] = commonInputsContainer.find('textarea[name="conditionNotes"]').val();
 			dataToAddTo["expires"] = TimeHelpers.getTsFromInput(commonInputsContainer.find('input[name="expires"]'));

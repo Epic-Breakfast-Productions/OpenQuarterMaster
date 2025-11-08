@@ -1,6 +1,6 @@
 <div class="col-xl-3 col-md-4 col-sm-6 col-xs-6 mb-1 uniqueIdentifierContainer">{! {"value":"45664","type":"GENERIC","barcode":false} !}
 	<div class="card identifierDisplay">
-		<img src="{#if uniqueId??}{rootPrefix}/api/passthrough/identifier/unique/barcode/{uniqueId.get("value").asText()}{/if}" class="card-img-top identifierImage {#if !uniqueId??}d-none{#else}{#if !uniqueId.get("barcode").asBoolean()}d-none{/if}{/if}" alt="Barcode Image">
+		<img src="{#if uniqueId??}{rootPrefix}/api/passthrough/identifier/unique/barcode/{uniqueId.get("value").asText()}/{uniqueId.get("label").asText()}{/if}" class="card-img-top identifierImage {#if !uniqueId??}d-none{#else}{#if !uniqueId.get("barcode").asBoolean()}d-none{/if}{/if}" alt="Barcode Image">
 		
 		
 		<div class="card-body p-1">
@@ -12,7 +12,7 @@
 			
 			<div class="input-group">
 				<div class="form-floating">
-					<input type="text" class="form-control" name="label" value="{#if uniqueId??}{#if uniqueId.get("label").isNull()}{uniqueId.get("type").asText()}{#else}{uniqueId.get("label").asText()}{/if}{/if}" aria-label="Identifier Label" required>
+					<input type="text" class="form-control" name="label" value="{#if uniqueId??}{#if uniqueId.get("label").isNull()}{uniqueId.get("type").asText()}{#else}{uniqueId.get("label").asText()}{/if}{/if}" onchange="UniqueIdentifiers.barcodeCheckChanged($(this));" aria-label="Identifier Label" required>
 					<label>Identifier Label</label>
 				</div>
 				

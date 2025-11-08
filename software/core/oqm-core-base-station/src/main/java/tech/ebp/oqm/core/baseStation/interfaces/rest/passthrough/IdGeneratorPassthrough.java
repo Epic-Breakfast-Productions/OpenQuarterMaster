@@ -149,30 +149,31 @@ public class IdGeneratorPassthrough extends PassthroughProvider {
 		return this.handleCall(this.getOqmCoreApiClient().idGenerate(this.getBearerHeaderStr(), this.getSelectedDb(), id, num.orElse(1)));
 	}
 	
-	@GET
-	@Path("barcode/{value}")
-	@Operation(
-		summary = "A barcode that represents the string given."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Got the currency."
-	)
-	@Produces("image/svg+xml")
-	public Uni<Response> getBarcode(
-		@PathParam("value") String data
-	) {
-		return this.handleCall(
-			this.getOqmCoreApiClient()
-				.uniqueIdGetBarcodeImage(this.getBearerHeaderStr(), data)
-				.map((String xmlData)->{
-					return Response.status(Response.Status.OK)
-							   .entity(xmlData)
-							   .header("Content-Disposition", "attachment;filename=" + data + ".svg")
-							   .type("image/svg+xml")
-							   .build();
-				})
-		);
-	}
+//	@GET
+//	@Path("barcode/{value}/{label}")
+//	@Operation(
+//		summary = "A barcode that represents the string given."
+//	)
+//	@APIResponse(
+//		responseCode = "200",
+//		description = "Got the currency."
+//	)
+//	@Produces("image/svg+xml")
+//	public Uni<Response> getBarcode(
+//		@PathParam("value") String data,
+//		@PathParam("label") String label
+//	) {
+//		return this.handleCall(
+//			this.getOqmCoreApiClient()
+//				.uniqueIdGetBarcodeImage(this.getBearerHeaderStr(), data, label)
+//				.map((String xmlData)->{
+//					return Response.status(Response.Status.OK)
+//							   .entity(xmlData)
+//							   .header("Content-Disposition", "attachment;filename=" + data + ".svg")
+//							   .type("image/svg+xml")
+//							   .build();
+//				})
+//		);
+//	}
 	
 }
