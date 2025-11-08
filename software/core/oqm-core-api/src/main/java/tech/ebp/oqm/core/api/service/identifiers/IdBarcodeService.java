@@ -55,7 +55,7 @@ public abstract class IdBarcodeService {
 	public static String processBarcodeData(Symbol code, String label){
 		String output = toImageData(code);
 		
-		if(label != null){// add label to image
+		if(label != null && !label.isBlank()){// add label to image
 			log.debug("Adding label: {}", label);
 			Document document;
 			try(

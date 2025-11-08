@@ -34,7 +34,7 @@ public class GeneralIdImageEndpoints extends EndpointProvider {
 	GeneralIdBarcodeService generalIdBarcodeService;
 	
 	@GET
-	@Path("{type}/{value}")
+	@Path("{type}/{value}/{label}")
 	@Operation(
 		summary = "A barcode that represents the string given."
 	)
@@ -45,15 +45,16 @@ public class GeneralIdImageEndpoints extends EndpointProvider {
 	@Produces(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
 	public Response getBarcode(
 		@PathParam("type") GeneralIdType type,
-		@PathParam("value") String data
+		@PathParam("value") String data,
+		@PathParam("label") String label
 	) {
 		log.info("Getting {} barcode.", type);
 		if(!GeneralIdUtils.isValidCode(type, data)){
 			return Response.status(Response.Status.BAD_REQUEST).entity("Value not a valid " + type).build();
 		}
 		return Response.status(Response.Status.OK)
-				   .entity(this.generalIdBarcodeService.getGeneralIdData(type, data, null))
-				   .header("Content-Disposition", "attachment;filename=" + "code.svg")
+				   .entity(this.generalIdBarcodeService.getGeneralIdData(type, data, label))
+				   .header("Content-Disposition", "attachment;filename="+label+"_"+data+".svg")
 				   .type(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
 				   .build();
 	}
@@ -69,11 +70,10 @@ public class GeneralIdImageEndpoints extends EndpointProvider {
 	public Response getBarcode(
 		GeneralId generalId
 	) {
-		log.info("Getting {} barcode.", generalId);
-		return Response.status(Response.Status.OK)
-				   .entity(this.generalIdBarcodeService.getGeneralIdData(generalId))
-				   .header("Content-Disposition", "attachment;filename=" + "code.svg")
-				   .type(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
-				   .build();
+		return this.getBarcode(
+			generalId.getType(),
+			generalId.getValue(),
+			generalId.getLabel()
+		);
 	}
 }

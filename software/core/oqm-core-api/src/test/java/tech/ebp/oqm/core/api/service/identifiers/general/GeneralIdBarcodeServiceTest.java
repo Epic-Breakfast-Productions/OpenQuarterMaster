@@ -57,7 +57,7 @@ class GeneralIdBarcodeServiceTest extends CodeUtilTestBase {
 		assertNotNull(data);
 		assertFalse(data.isEmpty());
 		
-		writeToFile(data, "generalIds", identifier.getType() + "-" + identifier.getValue());
+		writeToFile(data, "generalIds", identifier.getType() + "-" + identifier.getValue()+ "-" + identifier.getLabel());
 	}
 	
 }

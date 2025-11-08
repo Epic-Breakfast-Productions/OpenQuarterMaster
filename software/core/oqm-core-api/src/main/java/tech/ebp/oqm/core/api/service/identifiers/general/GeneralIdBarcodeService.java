@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.identifiers.general;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
@@ -23,6 +24,7 @@ import java.io.IOException;
  * TODO:: move to own service?
  * TODO:: add better labels to images https://github.com/jfree/jfreesvg
  */
+@Slf4j
 @ApplicationScoped
 public class GeneralIdBarcodeService extends IdBarcodeService {
 	
@@ -66,7 +68,7 @@ public class GeneralIdBarcodeService extends IdBarcodeService {
 				dataIn = data.substring(0, 13);//shave off check bit
 				yield gtin14Code;
 			}
-			case GENERIC -> {
+			case GENERIC, GENERATED-> {
 				Code128 genericCode = new Code128();
 				yield genericCode;
 			}
@@ -83,9 +85,28 @@ public class GeneralIdBarcodeService extends IdBarcodeService {
 		barcode.setHumanReadableLocation(HumanReadableLocation.BOTTOM);
 		barcode.setContent(dataIn);
 		
+		String labelStr = null;
+		boolean haveLabelGiven = label != null && !label.isBlank();
+		
+		if(type.displayInBarcode){
+			labelStr = type.prettyName();
+			
+			if(haveLabelGiven && !type.name().equals(label)){
+				labelStr += " / " + label;
+			}
+		} else {
+			if(!haveLabelGiven){
+				labelStr = type.prettyName();
+			} else {
+				labelStr = label;
+			}
+		}
+		
+		log.debug("Built label for {}/{}: {}", type, label, labelStr);
+		
 		return processBarcodeData(
 			barcode,
-			type.prettyName() + (label == null ? "" : " / ") + (label == null? "" : label)
+			labelStr
 		);
 	}
 	

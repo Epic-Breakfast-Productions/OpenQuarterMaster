@@ -51,7 +51,7 @@ public class UniqueIdImageEndpoints extends EndpointProvider {
 		
 		return Response.status(Response.Status.OK)
 				   .entity(this.uniqueIdBarcodeService.getUniqueIdData(data, label))
-				   .header("Content-Disposition", "attachment;filename=" + "code.svg")
+				   .header("Content-Disposition", "attachment;filename="+label+"_"+data+".svg")
 				   .type(UniqueIdBarcodeService.DATA_MEDIA_TYPE)
 				   .build();
 	}
@@ -68,12 +68,7 @@ public class UniqueIdImageEndpoints extends EndpointProvider {
 		UniqueId id
 	) {
 		log.info("Getting barcode for unique id: {}", id);
-		
-		return Response.status(Response.Status.OK)
-				   .entity(this.uniqueIdBarcodeService.getUniqueIdData(id))
-				   .header("Content-Disposition", "attachment;filename=" + "code.svg")
-				   .type(UniqueIdBarcodeService.DATA_MEDIA_TYPE)
-				   .build();
+		return this.getBarcode(id.getValue(), id.getLabel());
 	}
 	
 }
