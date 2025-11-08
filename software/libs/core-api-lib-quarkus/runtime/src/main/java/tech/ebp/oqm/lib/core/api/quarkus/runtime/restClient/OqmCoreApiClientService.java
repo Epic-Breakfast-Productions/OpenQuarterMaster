@@ -35,23 +35,6 @@ public interface OqmCoreApiClientService {
 	Uni<Currency> getCurrency(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 	//</editor-fold>
 	
-	//<editor-fold desc="General Identifiers">
-	@GET
-	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/general/validate/{type}/{identifier}")
-	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> generalIdValidateGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type, @PathParam("identifier") String code);
-	
-	@GET
-	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/general/getIdObject/{identifier}")
-	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> generalIdGetObj(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("identifier") String code);
-	
-	@GET
-	@Path(ROOT_API_ENDPOINT_V1 + "/media/code/identifier/general/{type}/{value}")
-	@Produces("image/svg+xml")
-	Uni<String> generalIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String generalIdType, @PathParam("value") String data);
-	//</editor-fold>
-	
 	//<editor-fold desc="ID Generators">
 	@GET
 	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/generator")
@@ -118,12 +101,29 @@ public interface OqmCoreApiClientService {
 	
 	//</editor-fold>
 	
+	//<editor-fold desc="General Identifiers">
+	@GET
+	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/general/validate/{type}/{identifier}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> generalIdValidateGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type, @PathParam("identifier") String code);
+	
+	@GET
+	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/general/getIdObject/{identifier}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> generalIdGetObj(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("identifier") String code);
+	
+	@GET
+	@Path(ROOT_API_ENDPOINT_V1 + "/media/code/identifier/general/{type}/{value}/{label}")
+	@Produces("image/svg+xml")
+	Uni<String> generalIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String generalIdType, @PathParam("value") String data, @PathParam("label") String label);
+	//</editor-fold>
+	
 	//<editor-fold desc="Unique IDs">
 	
 	@GET
-	@Path(ROOT_API_ENDPOINT_V1 + "/media/code/identifier/unique/{value}")
+	@Path(ROOT_API_ENDPOINT_V1 + "/media/code/identifier/unique/{value}/{label}")
 	@Produces("image/svg+xml")
-	Uni<String> uniqueIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("value") String data);
+	Uni<String> uniqueIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("value") String data, @PathParam("label") String label);
 	
 	//</editor-fold>
 	
