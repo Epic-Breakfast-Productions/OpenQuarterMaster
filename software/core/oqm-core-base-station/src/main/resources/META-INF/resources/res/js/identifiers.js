@@ -8,6 +8,9 @@ const GeneralIdentifiers = {
 	getMessagesContainer(generalInputContainerJq) {
 		return generalInputContainerJq.find(".identifierMessagesContainer");
 	},
+	getAssociateButton(generalInputContainerJq) {
+		return generalInputContainerJq.find(".idGeneratorGenerateButton");
+	},
 	getNewIdentifierInput(generalInputContainerJq) {
 		return generalInputContainerJq.find("input[name='newIdentifier']");
 	},
@@ -156,9 +159,6 @@ const GeneralIdentifiers = {
 	newAddedIdentifier(generalIdentifier) {
 		let idInput = $(PageComponents.Inputs.GeneralIds.generalIdAdded);
 
-		//TODO:: handle toGenerate
-
-
 		GeneralIdentifiers.getIdentifierValueContainer(idInput).text(generalIdentifier.value);
 		GeneralIdentifiers.getIdentifierTypeContainer(idInput).text(generalIdentifier.type);
 		GeneralIdentifiers.getIdentifierLabelInput(idInput).val(generalIdentifier.label);
@@ -187,6 +187,9 @@ const GeneralIdentifiers = {
 
 			getIdentifiersContainer.append(idInput);
 		}
+	},
+	setupForAssociated: function(generalInputContainerJq, identifierList){
+		GeneralIdentifiers.getAssociateButton(generalInputContainerJq).data("idGeneratorList", identifierList);
 	},
 	View: {
 		showInDiv(divJq, generalIdentifierArray) {
@@ -242,6 +245,9 @@ const UniqueIdentifiers = {
 	},
 	getAddedIdentifiersContainer(generalInputContainerJq) {
 		return generalInputContainerJq.closest(".uniqueIdentifierContainer");
+	},
+	getAssociateButton(generalInputContainerJq) {
+		return generalInputContainerJq.find(".idGeneratorGenerateButton");
 	},
 	getNewIdentifierInput(uniqueInputContainerJq) {
 		return uniqueInputContainerJq.find("input[name='newIdentifier']");
@@ -345,6 +351,9 @@ const UniqueIdentifiers = {
 
 			getIdentifiersContainer.append(idInput);
 		}
+	},
+	setupForAssociated: function(generalInputContainerJq, identifierList){
+		UniqueIdentifiers.getAssociateButton(generalInputContainerJq).data("idGeneratorList", identifierList);
 	},
 
 	addIdentifier(uniqueInputContainerJq, newIdentifier = null) {

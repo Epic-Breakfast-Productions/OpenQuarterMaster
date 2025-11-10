@@ -1,5 +1,5 @@
 const StoredFormInput = {
-	getBasicInputs(stored) {
+	getBasicInputs(stored, item) {
 		let output = $(`
 <div class="commonStoredFormElements">
 	<div class="mb-3 ">
@@ -40,8 +40,10 @@ const StoredFormInput = {
 	`+PageComponents.Inputs.file+`
 	`+ PageComponents.Inputs.keywords + `
 	`+ PageComponents.Inputs.attribute + `
-<!--	//TODO:: images/files-->
 </div>`);
+
+		let generalIdInputContainer = output.find(".generalIdInputContainer");
+		let uniqueIdInputContainer = output.find(".uniqueIdInputContainer");
 
 		if(stored != null){
 			if(stored.barcode){
@@ -59,11 +61,21 @@ const StoredFormInput = {
 					stored.expires
 				);
 			}
-			GeneralIdentifiers.populateEdit(output.find(".generalIdInputContainer"), stored.generalIds);
+
+			GeneralIdentifiers.getAssociateButton(generalIdInputContainer).data("forobject", "STORED").attr("id", "generatorSelect-" + window.crypto.getRandomValues(new Uint8Array(5)).join(""));
+			UniqueIdentifiers.getAssociateButton(uniqueIdInputContainer).data("forobject", "STORED").attr("id", "generatorSelect-" + window.crypto.getRandomValues(new Uint8Array(5)).join(""));
+
+			GeneralIdentifiers.populateEdit(generalIdInputContainer, stored.generalIds, (item==null?null:item.idGenerators));
+			UniqueIdentifiers.populateEdit(uniqueIdInputContainer, stored.uniqueIds, (item==null?null:item.idGenerators));
 			KeywordAttEdit.addKeywordInputs(output.find(".keywordInputDiv"), stored.keywords);
 			KeywordAttEdit.addAttInputs(output.find(".attInputDiv"), stored.attributes);
 			ImageSearchSelect.addSelectedImages(output.find(".imagesSelected"), stored.imageIds);
 			FileAttachmentSearchSelect.populateFileInputFromObject(output, stored.attachedFiles);
+		}
+
+		if(item !== null){
+			GeneralIdentifiers.setupForAssociated(generalIdInputContainer, item.idGenerators);
+			UniqueIdentifiers.setupForAssociated(uniqueIdInputContainer, item.idGenerators);
 		}
 
 		return output;
@@ -140,7 +152,7 @@ const StoredFormInput = {
 			}
 		);
 
-		output.append(this.getBasicInputs(stored));
+		output.append(this.getBasicInputs(stored, item));
 
 		return output;
 	},

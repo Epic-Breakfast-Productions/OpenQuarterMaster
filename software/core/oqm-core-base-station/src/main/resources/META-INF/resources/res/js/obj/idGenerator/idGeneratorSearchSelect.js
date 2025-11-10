@@ -63,13 +63,16 @@ const IdGeneratorSearchSelect = {
 	},
 	GenerateInput: {
 		generateButtonClicked: function (buttonJs) {
-			console.debug("Clicked generate button.");
+			console.debug("Clicked generate button: ", buttonJs);
 			let buttonJq = $(buttonJs);
+
+			let list = buttonJq.data("idGeneratorList");
 
 			IdGeneratorSearchSelect.setupSearchSelect(
 				buttonJq,
 				buttonJq.data("generates"),
-				buttonJq.data("forobject")
+				buttonJq.data("forobject"),
+				list
 			);
 		},
 		generateFor(generateButtonJq, idGeneratorData){
@@ -141,14 +144,21 @@ const IdGeneratorSearchSelect = {
 	},
 
 	searchSelectModal: $("#idGeneratorSearchSelectModal"),
+	searchSelectContainer: $("#idGeneratorSelectSearchAddContainer"),
+	associatedContainer: $("#idGeneratorSelectSearchFromAssociatedContainer"),
 	searchSelectForm: $("#idGeneratorSearchSelectForm"),
 	searchSelectSearchResults: $("#idGeneratorSearchSelectResults"),
 	newGeneratorForm: $("#idGeneratorSearchSelectNewGeneratorForm"),
+	associatedList: $("#idGeneratorSelectSearchFromAssociatedList"),
 
 	setupSearchSelect: function (idGenSelectAddInputJq, generates, forObject, genList = null) {
 		console.log("Setting up id generator search select for: ", generates, forObject);
 
 		ModalHelpers.setReturnModal(IdGeneratorSearchSelect.searchSelectModal, idGenSelectAddInputJq);
+
+		IdGeneratorSearchSelect.searchSelectContainer.show();
+		IdGeneratorSearchSelect.associatedContainer.hide();
+		IdGeneratorSearchSelect.associatedList.text("");
 
 		let destinationId = idGenSelectAddInputJq.attr("id");
 		IdGeneratorAddEdit.setupFormForAdd(IdGeneratorSearchSelect.newGeneratorForm, false, true);
@@ -177,6 +187,46 @@ const IdGeneratorSearchSelect = {
 			addForObj.find(':selected').prop('disabled', false);
 			addForObj.find(':not(:selected)').prop('disabled', true);
 			Dselect.setupDselect(addForObj[0]);
+		}
+
+		if(genList !== null){
+			IdGeneratorSearchSelect.searchSelectContainer.hide();
+			IdGeneratorSearchSelect.associatedContainer.show();
+
+			for(let curGenId in genList){
+				Getters.Identifiers.generator(genList[curGenId]).then(function (idGenData){
+					if(generates && idGenData.generates != generates){
+						return;
+					}
+					if(forObject && !idGenData.forObjectType.includes(forObject)){
+						return;
+					}
+
+					let newSelection = $(`
+<div class="col-lg-3 col-md-4 col-sm-6 col-xs-12">
+	<div class="card" >
+		<div class="card-body">
+			<h5 class="card-title"></h5>
+			<p class="card-text typeContainer"></p>
+			<p class="card-text formatContainer"></p>
+			<div class="d-grid gap-2">
+				<button class="btn btn-primary btn-sm selectIdGenButton" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">Select</button>
+			</div>
+		</div>
+	</div>
+</div>
+`);
+
+					newSelection.on("click", function (e) {IdGeneratorSearchSelect.selectIdGenerator(idGenData)});
+					newSelection.find(".card-title").text(idGenData.name);
+					newSelection.find(".typeContainer").text(idGenData.type);
+					newSelection.find(".formatContainer").text(idGenData.format);
+
+					newSelection.find(".selectIdGenButton").attr("data-bs-target", "#" + IdGeneratorSearchSelect.searchSelectModal.data("bs-othermodalid"));
+
+					IdGeneratorSearchSelect.associatedList.append(newSelection);
+				});
+			}
 		}
 
 		IdGeneratorSearchSelect.searchSelectForm.trigger("submit");
