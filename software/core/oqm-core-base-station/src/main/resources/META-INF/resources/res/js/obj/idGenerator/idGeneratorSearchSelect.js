@@ -138,7 +138,7 @@ const IdGeneratorSearchSelect = {
 	searchSelectSearchResults: $("#idGeneratorSearchSelectResults"),
 	newGeneratorForm: $("#idGeneratorSearchSelectNewGeneratorForm"),
 
-	setupSearchSelect: function (idGenSelectAddInputJq, generates, forObject) {
+	setupSearchSelect: function (idGenSelectAddInputJq, generates, forObject, genList = null) {
 		console.log("Setting up id generator search select for: ", generates, forObject);
 
 		ModalHelpers.setReturnModal(IdGeneratorSearchSelect.searchSelectModal, idGenSelectAddInputJq);
@@ -160,7 +160,7 @@ const IdGeneratorSearchSelect = {
 			addGenerates.find(':not(:selected)').prop('disabled', true);
 		}
 		if (forObject) {
-			let forObjectInput = IdGeneratorSearchSelect.searchSelectForm.find("select[name='forObjectType']");
+			let forObjectInput = IdGeneratorSearchSelect.searchSelectForm.find("select[name='generatorFor']");
 			forObjectInput.val(forObject);
 			forObjectInput.find(':selected').prop('disabled', false);
 			forObjectInput.find(':not(:selected)').prop('disabled', true);
