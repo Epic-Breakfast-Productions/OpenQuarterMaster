@@ -1,10 +1,13 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
+import com.mongodb.client.ClientSession;
 import com.mongodb.client.model.Filters;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Generated;
@@ -16,7 +19,10 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.Gener
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdGenResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdentifierGenerator;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.search.IdGeneratorSearch;
+import tech.ebp.oqm.core.api.service.mongo.exception.DbModValidationException;
+import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -24,6 +30,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -31,6 +38,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
 
+import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 
 /**
@@ -208,6 +216,32 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 	
 	public IdentifierGenerationService() {
 		super(IdentifierGenerator.class, false);
+	}
+	
+	@WithSpan
+	@Override
+	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, IdentifierGenerator generator, ClientSession clientSession) {
+		super.ensureObjectValid(oqmDbIdOrName, newObject, generator, clientSession);
+		
+		Bson parentFilter = and(
+			eq("name", generator.getName())
+		);
+		
+		if(newObject){
+			long count = this.count(oqmDbIdOrName, clientSession, parentFilter);
+			if(count > 0){
+				throw new DbModValidationException("Already have an id generator with the same name.");
+			}
+		} else {
+			List<IdentifierGenerator> results = this.list(oqmDbIdOrName, clientSession, parentFilter, null, null);
+			
+			if(!results.isEmpty()){
+				if(results.size() > 1 || !results.get(0).getId().equals(generator.getId())){
+					throw new DbModValidationException("Already have an id generator with the same name present.");
+				}
+			}
+		}
+		
 	}
 	
 	@Override

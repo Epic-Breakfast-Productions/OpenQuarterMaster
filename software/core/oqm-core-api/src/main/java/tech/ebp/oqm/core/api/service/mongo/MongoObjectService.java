@@ -419,8 +419,9 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	public T update(String oqmDbIdOrName, ClientSession clientSession, @Valid T object) throws DbNotFoundException {
-		//TODO:: review this
+		
 		this.get(oqmDbIdOrName, clientSession, object.getId());
+		this.ensureObjectValid(oqmDbIdOrName, false, object, clientSession);
 		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (clientSession != null) {
 			return collection.findOneAndReplace(clientSession, eq("_id", object.getId()), object);

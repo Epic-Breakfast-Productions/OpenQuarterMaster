@@ -21,6 +21,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.I
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ProvidedUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ToGenerateUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
+import tech.ebp.oqm.core.api.service.mongo.exception.DbModValidationException;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
@@ -317,10 +318,10 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 			}
 		}
 		
-		assertEquals(numIterations * numThreads * numPerIteration, results.size());
-		
 		Duration avgDurationPerId = sw.getDuration().dividedBy(results.size());
 		log.info("Generated {} results in {} ms ({} per id average)", results.size(), sw.getDuration(), avgDurationPerId);
+		
+		assertEquals(numIterations * numThreads * numPerIteration, results.size(), "Did not have expected number of results.");
 		
 		if (format.equals("{inc}")) {
 			
@@ -407,6 +408,47 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 		LinkedHashSet<UniqueId> output = this.identifierGenerationService.generateIdPlaceholders(DEFAULT_TEST_DB_NAME, placeholders);
 		
 		assertEquals(expectedIds, output);
+	}
+	
+	
+	@Test
+	public void no2sameNamesTestNew() {
+		IdentifierGenerator gen1 = IdentifierGenerator.builder()
+									   .generates(Generates.UNIQUE)
+									   .name(FAKER.name().name())
+									   .idFormat("{inc}")
+									   .build();
+		User testUser = TestUserService.getInstance().getTestUser();
+		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen1, testUser);
+		
+		IdentifierGenerator gen2 = IdentifierGenerator.builder()
+									   .generates(Generates.UNIQUE)
+									   .name(gen1.getLabel())
+									   .idFormat("{inc}")
+									   .build();
+		
+		assertThrows(DbModValidationException.class, ()->this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen2, testUser));
+		
+	}
+	
+	@Test
+	public void no2sameNamesTestUpdates() {
+		IdentifierGenerator gen1 = IdentifierGenerator.builder()
+									   .generates(Generates.UNIQUE)
+									   .name(FAKER.name().name())
+									   .idFormat("{inc}")
+									   .build();
+		User testUser = TestUserService.getInstance().getTestUser();
+		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen1, testUser);
+		
+		IdentifierGenerator gen2 = IdentifierGenerator.builder()
+									   .generates(Generates.UNIQUE)
+									   .name(FAKER.name().name())
+									   .idFormat("{inc}")
+									   .build();
+		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen2, testUser);
+		
+		assertThrows(DbModValidationException.class, ()->this.identifierGenerationService.update(DEFAULT_TEST_DB_NAME, gen2.setName(gen1.getName()), testUser));
 	}
 	
 }

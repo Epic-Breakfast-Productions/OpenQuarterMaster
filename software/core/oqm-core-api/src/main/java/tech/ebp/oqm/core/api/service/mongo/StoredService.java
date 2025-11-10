@@ -28,6 +28,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.stored.*;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.*;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
+import tech.ebp.oqm.core.api.service.mongo.exception.DbHistoryNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.ItemAwareSearchResult;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
