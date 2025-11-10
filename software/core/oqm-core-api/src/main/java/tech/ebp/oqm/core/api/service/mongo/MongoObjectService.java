@@ -396,6 +396,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 												   .collect(Collectors.joining(", ")));
 		}
 		this.ensureObjectValid(oqmDbIdOrName, false, object, cs);
+		this.massageIncomingData(oqmDbIdOrName, object);
 		
 		if (cs == null) {
 			this.getTypedCollection(oqmDbIdOrName).findOneAndReplace(eq("_id", id), object);
@@ -422,6 +423,8 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		
 		this.get(oqmDbIdOrName, clientSession, object.getId());
 		this.ensureObjectValid(oqmDbIdOrName, false, object, clientSession);
+		this.massageIncomingData(oqmDbIdOrName, object);
+		
 		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (clientSession != null) {
 			return collection.findOneAndReplace(clientSession, eq("_id", object.getId()), object);

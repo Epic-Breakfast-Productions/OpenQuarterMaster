@@ -18,11 +18,8 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.T
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdGenResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdentifierGenerator;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.search.IdGeneratorSearch;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbModValidationException;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
@@ -361,7 +358,7 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 	}
 	
 	
-	public <I extends Identifier> LinkedHashSet<I> generateIdPlaceholders(String oqmDbIdOrName, Set<I> identifiers){
+	public <I extends Identifier> LinkedHashSet<I> replaceIdPlaceholders(String oqmDbIdOrName, Set<I> identifiers){
 		log.debug("Generating placeholders for identifiers: {}.", identifiers);
 		LinkedHashSet<I> output = new LinkedHashSet<>(identifiers.size());
 		

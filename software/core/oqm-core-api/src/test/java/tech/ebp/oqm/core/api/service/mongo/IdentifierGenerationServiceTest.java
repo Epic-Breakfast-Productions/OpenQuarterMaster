@@ -405,7 +405,7 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
 		
-		LinkedHashSet<UniqueId> output = this.identifierGenerationService.generateIdPlaceholders(DEFAULT_TEST_DB_NAME, placeholders);
+		LinkedHashSet<UniqueId> output = this.identifierGenerationService.replaceIdPlaceholders(DEFAULT_TEST_DB_NAME, placeholders);
 		
 		assertEquals(expectedIds, output);
 	}

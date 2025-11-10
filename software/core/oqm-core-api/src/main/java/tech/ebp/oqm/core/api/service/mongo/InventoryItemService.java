@@ -173,8 +173,8 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	public void massageIncomingData(String oqmDbIdOrName, @NonNull InventoryItem item) {
 		super.massageIncomingData(oqmDbIdOrName, item);
 		
-		item.setGeneralIds(this.getIdentifierGenerationService().generateIdPlaceholders(oqmDbIdOrName, item.getGeneralIds()));
-		item.setUniqueIds(this.getIdentifierGenerationService().generateIdPlaceholders(oqmDbIdOrName, item.getUniqueIds()));
+		item.setGeneralIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, item.getGeneralIds()));
+		item.setUniqueIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, item.getUniqueIds()));
 	}
 	
 	@Override
