@@ -31,7 +31,7 @@ import java.util.Optional;
 
 @Slf4j
 @Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/identifiers/generator")
-@Tags({@Tag(name = "IDs Generation", description = "Endpoints for managing ID Generators.")})
+@Tags({@Tag(name = "ID Generation", description = "Endpoints for managing ID Generators.")})
 @RequestScoped
 public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdGeneratorSearch> {
 	
