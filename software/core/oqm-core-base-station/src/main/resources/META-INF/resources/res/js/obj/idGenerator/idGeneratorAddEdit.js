@@ -38,6 +38,8 @@ const IdGeneratorAddEdit = {
 		IdGeneratorAddEdit.formGetters.name(formJq).val("");
 		IdGeneratorAddEdit.formGetters.generates(formJq).prop("disabled", false);
 		IdGeneratorAddEdit.formGetters.generatesFor(formJq).prop("disabled", false);
+		IdGeneratorAddEdit.formGetters.generates(formJq).find("option").prop("disabled", false);
+		IdGeneratorAddEdit.formGetters.generatesFor(formJq).find("option").prop("disabled", false).prop("checked", false);
 		Dselect.resetDselect( IdGeneratorAddEdit.formGetters.generatesFor(formJq));
 		IdGeneratorAddEdit.formGetters.barcode(formJq).prop("checked", false);
 		IdGeneratorAddEdit.formGetters.encoded(formJq)

@@ -18,6 +18,13 @@ const IdGeneratorSearchSelect = {
 			);
 		},
 		associateIdGenerator: function (idGenInputJq, idGenData) {
+			let associatedGeneratorList = IdGeneratorSearchSelect.AssociatedInput.getAssociatedGeneratorList(idGenInputJq);
+
+			if(associatedGeneratorList.find(`[data-id='${idGenData.id}']`).length > 0) {
+				console.log("Already selected id generator.")
+				return;
+			}
+
 			let newRow = $('<tr class="associatedIdentifierGenerator"></tr>');
 
 			newRow.append($('<td class="idGeneratorName"></td>')
@@ -32,7 +39,7 @@ const IdGeneratorSearchSelect = {
 					)
 			);
 
-			IdGeneratorSearchSelect.AssociatedInput.getAssociatedGeneratorList(idGenInputJq).append(newRow);
+			associatedGeneratorList.append(newRow);
 		},
 		resetAssociatedIdGenListData: function (idGenInputJq) {
 			IdGeneratorSearchSelect.AssociatedInput.getAssociatedGeneratorList(idGenInputJq).text("");
