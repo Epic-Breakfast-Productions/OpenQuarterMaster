@@ -79,7 +79,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 * Unique ID's for this particular item.
 	 */
 	@lombok.Builder.Default
-	private LinkedHashSet<UniqueId> uniqueIds = new LinkedHashSet<>();
+	private LinkedHashSet<@NotNull UniqueId> uniqueIds = new LinkedHashSet<>();
 
 	/**
 	 * When the item(s) held expire. Null if it does not expire.

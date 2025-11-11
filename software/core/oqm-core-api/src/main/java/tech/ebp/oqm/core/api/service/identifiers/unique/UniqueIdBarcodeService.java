@@ -20,10 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Service to generate barcode images.
- *
- * TODO:: move to own service?
- * TODO:: add better labels to images https://github.com/jfree/jfreesvg
+ * Service to generate barcode images for unique ids and objects.
  */
 @ApplicationScoped
 public class UniqueIdBarcodeService extends IdBarcodeService {
@@ -36,8 +33,6 @@ public class UniqueIdBarcodeService extends IdBarcodeService {
 		
 		barcode.setFontName("Monospaced");
 		barcode.setFontSize(8);
-//		barcode.setModuleWidth(1);
-//		barcode.setBarHeight(50);
 		barcode.setQuietZoneHorizontal(hQuietZone);
 		barcode.setQuietZoneVertical(2);
 		barcode.setHumanReadableLocation(HumanReadableLocation.BOTTOM);
@@ -53,8 +48,7 @@ public class UniqueIdBarcodeService extends IdBarcodeService {
 	public String getObjectIdData(ObjectId objectId){//TODO:: rework for full object (type, label)
 		Code128 barcode = new Code128();
 		barcode.setFontName("Monospaced");
-//		barcode.setFontSize(16);
-//		barcode.setModuleWidth(2);
+		barcode.setFontSize(8);
 //		barcode.setBarHeight(50);
 		barcode.setQuietZoneHorizontal(2);
 		barcode.setQuietZoneVertical(2);
