@@ -130,7 +130,7 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 	}
 	
 	@Override
-	public ObjectId add(String oqmDbIdOrName, ClientSession clientSession, Image fileObject, File origImage, String fileName, InteractingEntity interactingEntity) throws IOException {
+	public Image add(String oqmDbIdOrName, ClientSession clientSession, Image fileObject, File origImage, String fileName, InteractingEntity interactingEntity) throws IOException {
 		File endImage;
 		if(this.imageResizeConfig.enabled()) {
 			String origFileNameNoExt = FilenameUtils.removeExtension(fileName);
