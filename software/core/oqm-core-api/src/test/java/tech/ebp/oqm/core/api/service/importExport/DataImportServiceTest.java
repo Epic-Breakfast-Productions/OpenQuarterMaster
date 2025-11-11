@@ -141,7 +141,7 @@ class DataImportServiceTest extends RunningServerTest {
 
 			FileUtils.writeStringToFile(curFile, FAKER.lorem().paragraph(), Charset.defaultCharset());
 
-			ObjectId id = this.fileAttachmentService.add(DEFAULT_TEST_DB_NAME, attachment, curFile, testUser);
+			ObjectId id = this.fileAttachmentService.add(DEFAULT_TEST_DB_NAME, attachment, curFile, testUser).getId();
 
 			for (int j = 1; j <= 3; j++) {
 				curFile = new File(tempFilesDir, i + "-" + j + ".txt");

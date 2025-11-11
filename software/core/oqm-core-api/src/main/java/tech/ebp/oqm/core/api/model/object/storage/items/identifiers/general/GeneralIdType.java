@@ -19,15 +19,25 @@ public enum GeneralIdType {
 //	ASIN, Amazon specific, ignore
 //	SKU, no way to determine proper format
 	
-	GENERIC(false);
+	GENERIC(false, false),
+	GENERATED(false, false),
+	TO_GENERATE(false, false),
+	;
 	
 	public final boolean isBarcode;
+	public final boolean displayInBarcode;
 	
 	GeneralIdType() {
 		this.isBarcode = true;
+		this.displayInBarcode = true;
 	}
 	
-	GeneralIdType(boolean isBarcode) {
+	GeneralIdType(boolean isBarcode, boolean displayInBarcode) {
 		this.isBarcode = isBarcode;
+		this.displayInBarcode = displayInBarcode;
+	}
+	
+	public String prettyName() {
+		return this.name().replaceAll("_", "-");
 	}
 }

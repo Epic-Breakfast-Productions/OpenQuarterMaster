@@ -1,8 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
@@ -14,32 +12,25 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
-import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
-import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemExpiryLowStockItemProcessResults;
-import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemPostTransactionProcessResults;
-import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.StoredExpiryLowStockProcessResult;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.*;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.*;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
-import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.ItemAwareSearchResult;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
-import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
-import javax.measure.Quantity;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 import static tech.ebp.oqm.core.api.model.object.storage.items.StorageType.*;
 
 /**
@@ -57,6 +48,10 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	InventoryItemService inventoryItemService;
+	
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	IdentifierGenerationService identifierGenerationService;
 	
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
@@ -147,6 +142,33 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 				}
 			}
 		}
+		
+		for (UniqueId curUniqueId : newOrChangedObject.getUniqueIds()) {
+			if (curUniqueId.getType() == UniqueIdType.TO_GENERATE) {
+				continue;
+			}
+			
+			List<Stored> uniqueIdresults = this.getItemsWithUniqueId(oqmDbIdOrName, clientSession, curUniqueId, newOrChangedObject.getItem());
+			if (!uniqueIdresults.isEmpty()) {
+				if (newObject) {
+					throw new ValidationException("Item stored with unique id '" + curUniqueId + "' already exists.");
+				} else {
+					for (Stored curMatcingName : uniqueIdresults) {
+						if (!curMatcingName.getId().equals(newOrChangedObject.getId())) {
+							throw new ValidationException("Item stored with unique id '" + curUniqueId + "' already exists.");
+						}
+					}
+				}
+			}
+		}
+	}
+	
+	@Override
+	public void massageIncomingData(String oqmDbIdOrName, @NonNull Stored stored) {
+		super.massageIncomingData(oqmDbIdOrName, stored);
+		
+		stored.setGeneralIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, stored.getGeneralIds()));
+		stored.setUniqueIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, stored.getUniqueIds()));
 	}
 	
 	@Override
@@ -164,6 +186,40 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	public CollectionStats getStats(String oqmDbIdOrName) {
 		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
 				   .build();
+	}
+	
+	public List<Stored> getItemsWithUniqueId(String oqmDbIdOrName, ClientSession clientSession, UniqueId id, ObjectId itemId) {
+		Bson filter;
+		
+		switch (id.getType()) {
+			case GENERATED -> {
+				filter = and(
+					eq("item",  itemId),
+					eq("uniqueIds.generatedFrom", ((GeneratedUniqueId) id).getGeneratedFrom()),
+					eq("uniqueIds.value", id.getValue())
+				);
+			}
+			case PROVIDED -> {
+				filter = and(
+					eq("item",  itemId),
+					eq("uniqueIds.value", id.getValue())
+				);
+			}
+			default -> {
+				return Collections.emptyList();
+			}
+		}
+		
+		List<Stored> list = new ArrayList<>();
+		this.listIterator(
+			oqmDbIdOrName,
+			clientSession,
+			filter,
+			null,
+			null
+		).into(list);
+		
+		return list;
 	}
 	
 	public <T extends Stored> SearchResult<T> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {

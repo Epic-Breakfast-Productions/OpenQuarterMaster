@@ -1,0 +1,30 @@
+
+
+<div class="idGeneratorAssociatedInput" id="{id}-associatedIdGeneratorInput" data-forObject="{forObject}" data-generates="{generates.or("")}" data-modifying="{modifying.or("true")}">
+	<p class="form-text">
+		Associated ID generators appear when adding / modifying stored items.
+	</p>
+	{#if modifying.or(true)}
+	<div class="d-grid gap-2 mb-1">
+		<button type="button" class="btn btn-sm btn-outline-success idGeneratorAssociateButton" data-bs-toggle="modal" data-bs-target="#idGeneratorSearchSelectModal" onclick="IdGeneratorSearchSelect.AssociatedInput.associateButtonClicked(this);">
+			{#icons/add /} Associate Id Generator
+		</button>
+	</div>
+	{/if}
+	
+	<table class="table table-sm table-bordered table-striped table-hover m-0">
+		<thead>
+		<tr>
+			<td>
+				Name
+			</td>
+			<td>
+				Action
+			</td>
+		</tr>
+		</thead>
+		<tbody class="associatedIdentifierGeneratorTableContent">
+		
+		</tbody>
+	</table>
+</div>

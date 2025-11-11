@@ -39,7 +39,7 @@ Ingests:
 	<!--  At top in order to prevent flashing -->
 	<script src="{rootPrefix}/res/js/theme.js"></script>
 </head>
-<body class="min-vh-100 vstack">
+<body class="min-vh-100 vstack" data-csrft="{inject:csrf.token}">
 <span id="oqmPageInfo" data-page-initted="false"></span>
 
 <!-- nav here -->
@@ -126,6 +126,12 @@ Ingests:
 							{/if}
 						</a>
 						{/if}
+						<a class="dropdown-item {#if page is 'idGenerators'}active{/if}" href="{rootPrefix}/idGenerators">
+							{#icons/idGenerators /} Id Generators
+							{#if page is 'uniqueIdGenerators'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">

@@ -5,6 +5,7 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.security.Authenticated;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -285,6 +286,7 @@ public class FileAttachmentPassthrough extends PassthroughProvider {
 		);
 	}
 	
+	@Blocking
 	@Path("{id}/revision/{rev}/data")
 	@GET
 	@Operation(

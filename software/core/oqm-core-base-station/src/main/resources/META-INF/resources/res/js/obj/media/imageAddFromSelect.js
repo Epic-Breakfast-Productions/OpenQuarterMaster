@@ -42,13 +42,13 @@ ImageAddFromSelect.imageAddImageForm.submit(function (ev) {
 			dataType: false,
 			async: false,
 			done: function(data) {
-				console.log("New image id: " + data)
-				ImageSearchSelect.selectImage(addData.title, data);
+				console.log("New image id: " + data.id)
+				ImageSearchSelect.selectImage(addData.title, data.id);
 				ImageAddFromSelect.imageSearchSelectModalLabelCloseButton.click();
 				ImageAddFromSelect.resetImageAdd();
 			},
 			fail: function(data) {
-				console.warn("Bad response from image add attempt: " + JSON.stringify(data));
+				console.warn("Bad response from image add attempt: ", data);
 				PageMessages.addMessageToDiv(ImageAddFromSelect.formMessages, "danger", "Failed to add image: " + data.responseText, "Failed", null);
 			}
 		});
