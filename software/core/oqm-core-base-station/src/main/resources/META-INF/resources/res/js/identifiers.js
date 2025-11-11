@@ -132,15 +132,7 @@ const GeneralIdentifiers = {
 
 			if (curIdContainerJq.hasClass("toGenerateContainer")) {
 				curIdObj['type'] = "TO_GENERATE";
-				// curIdObj['generates'] = "GENERAL";
 				curIdObj['generateFrom'] = curIdContainerJq.find(".fromGenerator").data("generator");
-
-
-				//  {
-				// 				"generateFrom": generatorData.id,
-				// 				"generates": generates,
-				// 				"type": "TO_GENERATE"
-				// 			}
 			} else {
 				curIdObj['value'] = GeneralIdentifiers.getIdentifierValue(curIdContainerJq);
 				curIdObj['type'] = GeneralIdentifiers.getIdentifierType(curIdContainerJq);

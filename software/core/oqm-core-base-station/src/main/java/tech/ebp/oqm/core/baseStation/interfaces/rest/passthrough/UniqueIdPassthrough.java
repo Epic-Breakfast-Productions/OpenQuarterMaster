@@ -32,8 +32,7 @@ public class UniqueIdPassthrough extends PassthroughProvider {
 		summary = "A barcode that represents the string given."
 	)
 	@APIResponse(
-		responseCode = "200",
-		description = "Got the currency."
+		responseCode = "200"
 	)
 	@Produces("image/svg+xml")
 	public Uni<Response> getBarcode(
@@ -46,7 +45,7 @@ public class UniqueIdPassthrough extends PassthroughProvider {
 				.map((String xmlData)->{
 					return Response.status(Response.Status.OK)
 							   .entity(xmlData)
-							   .header("Content-Disposition", "attachment;filename=" + data + ".svg")
+							   .header("Content-Disposition", "attachment;filename=" + data + "-" + label +".svg")
 							   .type("image/svg+xml")
 							   .build();
 				})
