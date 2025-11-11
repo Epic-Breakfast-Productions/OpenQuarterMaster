@@ -1,5 +1,5 @@
 const StoredFormInput = {
-	getBasicInputs(stored) {
+	getBasicInputs(stored, item) {
 		let output = $(`
 <div class="commonStoredFormElements">
 	<div class="mb-3 ">
@@ -20,12 +20,30 @@ const StoredFormInput = {
 <!--		//TODO:: note to leave blank if not applicable-->
 	</div>
 
-	`+ PageComponents.Inputs.GeneralIds.generalIdInput + `
-
+	<div class="mb-3">
+		<label class="form-label">
+			`+Icons.generalIds+`
+			General Ids
+		</label>
+		`+ PageComponents.Inputs.GeneralIds.generalIdInput + `
+	</div>
+	
+	<div class="mb-3">
+		<label class="form-label">
+			`+Icons.uniqueIds+`
+			Unique Ids
+		</label>
+		`+ PageComponents.Inputs.UniqueIds.uniqueIdInput + `
+	</div>
+	
+	`+PageComponents.Inputs.image+`
+	`+PageComponents.Inputs.file+`
 	`+ PageComponents.Inputs.keywords + `
 	`+ PageComponents.Inputs.attribute + `
-<!--	//TODO:: images/files-->
 </div>`);
+
+		let generalIdInputContainer = output.find(".generalIdInputContainer");
+		let uniqueIdInputContainer = output.find(".uniqueIdInputContainer");
 
 		if(stored != null){
 			if(stored.barcode){
@@ -43,9 +61,21 @@ const StoredFormInput = {
 					stored.expires
 				);
 			}
-			GeneralIdentifiers.populateEdit(output.find(".generalIdInputContainer"), stored.generalIds);
+
+			GeneralIdentifiers.getAssociateButton(generalIdInputContainer).data("forobject", "STORED").attr("id", "generatorSelect-" + window.crypto.getRandomValues(new Uint8Array(5)).join(""));
+			UniqueIdentifiers.getAssociateButton(uniqueIdInputContainer).data("forobject", "STORED").attr("id", "generatorSelect-" + window.crypto.getRandomValues(new Uint8Array(5)).join(""));
+
+			GeneralIdentifiers.populateEdit(generalIdInputContainer, stored.generalIds, (item==null?null:item.idGenerators));
+			UniqueIdentifiers.populateEdit(uniqueIdInputContainer, stored.uniqueIds, (item==null?null:item.idGenerators));
 			KeywordAttEdit.addKeywordInputs(output.find(".keywordInputDiv"), stored.keywords);
 			KeywordAttEdit.addAttInputs(output.find(".attInputDiv"), stored.attributes);
+			ImageSearchSelect.addSelectedImages(output.find(".imagesSelected"), stored.imageIds);
+			FileAttachmentSearchSelect.populateFileInputFromObject(output, stored.attachedFiles);
+		}
+
+		if(item !== null){
+			GeneralIdentifiers.setupForAssociated(generalIdInputContainer, item.idGenerators);
+			UniqueIdentifiers.setupForAssociated(uniqueIdInputContainer, item.idGenerators);
 		}
 
 		return output;
@@ -122,7 +152,7 @@ const StoredFormInput = {
 			}
 		);
 
-		output.append(this.getBasicInputs(stored));
+		output.append(this.getBasicInputs(stored, item));
 
 		return output;
 	},
@@ -132,10 +162,13 @@ const StoredFormInput = {
 		if(commonInputsContainer.length && commonInputsContainer.is(":visible")){
 			console.log("Had common form elements section.");
 			dataToAddTo["generalIds"] = GeneralIdentifiers.getGeneralIdData(commonInputsContainer.find('.generalIdInputContainer'));
+			dataToAddTo["uniqueIds"] = UniqueIdentifiers.getUniqueIdData(commonInputsContainer.find('.uniqueIdInputContainer'));
 			dataToAddTo["condition"] = commonInputsContainer.find('input[name="condition"]').val();
 			dataToAddTo["conditionNotes"] = commonInputsContainer.find('textarea[name="conditionNotes"]').val();
 			dataToAddTo["expires"] = TimeHelpers.getTsFromInput(commonInputsContainer.find('input[name="expires"]'));
 			KeywordAttEdit.addKeywordAttData(dataToAddTo, commonInputsContainer.find(".keywordInputDiv"), commonInputsContainer.find(".attInputDiv"));
+			ImageSearchSelect.addImagesToData(dataToAddTo, commonInputsContainer.find(".imagesSelected"));
+			dataToAddTo["attachedFiles"] = FileAttachmentSearchSelect.getFileListFromInput(commonInputsContainer.find(".fileAttachmentSelectInputTableContent"));
 		}
 		//amount inputs
 		let amountInputsContainer = containerJq.find(".amountStoredFormElements");

@@ -14,7 +14,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.InvItemCollectionStats;
@@ -24,20 +24,19 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.StoredInBlockStats;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
-import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
-import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
-import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.ItemStatsService;
 import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 import tech.units.indriya.quantity.Quantities;
 
-import javax.measure.Quantity;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -72,6 +71,10 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	StoredService storedService;
+	
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	IdentifierGenerationService identifierGenerationService;
 	
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
@@ -130,6 +133,25 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			}
 		}
 		
+		for (UniqueId curUniqueId : newOrChangedObject.getUniqueIds()) {
+			if (curUniqueId.getType() == UniqueIdType.TO_GENERATE) {
+				continue;
+			}
+			
+			List<InventoryItem> uniqueIdresults = this.getItemsWithUniqueId(oqmDbIdOrName, clientSession, curUniqueId);
+			if (!uniqueIdresults.isEmpty()) {
+				if (newObject) {
+					throw new ValidationException("Item with unique id '" + curUniqueId + "' already exists.");
+				} else {
+					for (InventoryItem curMatcingName : uniqueIdresults) {
+						if (!curMatcingName.getId().equals(newOrChangedObject.getId())) {
+							throw new ValidationException("Item with unique id '" + curUniqueId + "' already exists.");
+						}
+					}
+				}
+			}
+		}
+		
 		if (!newObject) {
 			//TODO:: in try?
 			InventoryItem existing = this.get(oqmDbIdOrName, newOrChangedObject.getId());
@@ -145,6 +167,14 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				);
 			}
 		}
+	}
+	
+	@Override
+	public void massageIncomingData(String oqmDbIdOrName, @NonNull InventoryItem item) {
+		super.massageIncomingData(oqmDbIdOrName, item);
+		
+		item.setGeneralIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, item.getGeneralIds()));
+		item.setUniqueIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, item.getUniqueIds()));
 	}
 	
 	@Override
@@ -180,7 +210,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	@Override
 	@WithSpan
-	public InventoryItem update(String oqmDbIdOrName, ClientSession cs, InventoryItem object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
+	public InventoryItem update(String oqmDbIdOrName, ClientSession cs, InventoryItem object, InteractingEntity entity, HistoryDetail... details) throws DbNotFoundException {
 		InventoryItem output = super.update(oqmDbIdOrName, cs, object, entity, details);
 		
 		//TODO:: update again if necessary #929
@@ -224,6 +254,39 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@WithSpan
 	public long getNumLowStock(String oqmDbIdOrName) {
 		return this.getSumOfIntField(oqmDbIdOrName, "numLowStock");
+	}
+	
+	public List<InventoryItem> getItemsWithUniqueId(String oqmDbIdOrName, ClientSession clientSession, UniqueId id) {
+		
+		Bson filter;
+		
+		switch (id.getType()) {
+			case GENERATED -> {
+				filter = and(
+					eq("uniqueIds.generatedFrom", ((GeneratedUniqueId) id).getGeneratedFrom()),
+					eq("uniqueIds.value", id.getValue())
+				);
+			}
+			case PROVIDED -> {
+				filter = and(
+					eq("uniqueIds.value", id.getValue())
+				);
+			}
+			default -> {
+				return Collections.emptyList();
+			}
+		}
+		
+		List<InventoryItem> list = new ArrayList<>();
+		this.listIterator(
+			oqmDbIdOrName,
+			clientSession,
+			filter,
+			null,
+			null
+		).into(list);
+		
+		return list;
 	}
 	
 	public Set<ObjectId> getItemsReferencing(String oqmDbIdOrName, ClientSession clientSession, Image image) {

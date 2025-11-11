@@ -18,6 +18,8 @@ https://docs.quarkiverse.io/quarkus-langchain4j/dev/index.html
 
 https://mike42.me/blog/2015-03-getting-a-usb-receipt-printer-working-on-linux
 
+https://en.wikipedia.org/wiki/JavaPOS / https://github.com/JavaPOSWorkingGroup/javapos
+
 ## Storage Interaction
 
 Inspiration: https://www.instructables.com/FindyBot3000-a-Voice-Controlled-Organizer/
@@ -83,4 +85,8 @@ Users create a custom workflow for items to come into and work through, and fini
 ## Workato connector
 
 https://www.workato.com/integrations?utm_medium=adwords&utm_source=cpc&utm_campaign=workato_brand&utm_content=workato_specific%20keywords&utm_term=workato
+
+## Reward generator
+
+Generates seratonin based on usage stats
 

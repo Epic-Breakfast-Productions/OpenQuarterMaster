@@ -1,0 +1,61 @@
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title="Id Generators" page='idGenerators'}
+    {#pageStyle}
+    
+    {/pageStyle}
+    {#pageContent}
+    <div class="row mb-2">
+        <div class="col d-grid gap-2">
+            <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#idGeneratorAddEditModal" onclick="IdGeneratorAddEdit.setupFormForAdd(IdGeneratorAddEdit.forms.modal)">
+            	{#icons/add /} Add Generator
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col accordion" id="searchAccordion">
+            <div class="accordion-item">
+                <h2 class="accordion-header" id="searchHeader">
+                    <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+                            data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+                            aria-controls="searchCollapse">
+                        {#icons/search /} Search Fields
+                    </button>
+                </h2>
+                <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+                        aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+                    <div class="accordion-body">
+                        {#object/idGenerator/searchForm id='mainPageSearch' rootPrefix=rootPrefix /}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col table-responsive">
+            <table class=" table table-bordered table-striped table-hover table-sm">
+                {#object/idGenerator/searchResults actionType='full' searchFormId='mainGeneratorSearch' searchResults=searchResults rootPrefix=rootPrefix /}
+            </table>
+        </div>
+    </div>
+    {/pageContent}
+    {#modals}
+    	{#object/idGenerator/addEditModal /}
+    	{#object/idGenerator/GenerateResultModal /}
+    {/modals}
+    {#scripts}
+        <script src="{rootPrefix}/res/js/search.js"></script>
+        <script src="{rootPrefix}/res/js/historySearch.js"></script>
+        <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
+        <script src="{rootPrefix}/res/js/obj/objView.js"></script>
+        <script src="{rootPrefix}/res/js/obj/getters.js"></script>
+        <script src="{rootPrefix}/res/js/textCopy.js"></script>
+        <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorUtils.js"></script>
+        <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorAddEdit.js"></script>
+        
+    {/scripts}
+    
+    {#pageScript}
+        <script>
+        
+        </script>
+    {/pageScript}
+{/include}

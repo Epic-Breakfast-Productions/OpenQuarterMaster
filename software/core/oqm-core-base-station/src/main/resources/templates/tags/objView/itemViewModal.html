@@ -4,7 +4,7 @@
         <div class="col" id="itemViewMessages"></div>
     </div>
 <div class="row">
-    {#carousel id='itemViewCarousel' carouselCss='col'}{/carousel}
+    {#carousel id='itemViewCarousel' carouselCss='col-md-12 col-sm-12 col-lg-6 col-xl-4'}{/carousel}
     <div class="col">
         <div class="row">
             <div class="card col-sm-12 col-md-6">
@@ -82,19 +82,49 @@
                     </p>
                 </div>
             </div>
-            <div class="card col-sm-12 col-md-12 col-lg-6" id="itemViewGeneralIdsContainer">
+            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewIdsContainer">
                 <div class="card-body">
-					<div class="accordion" id="itemViewGeneralIdsAccord">
-					  <div class="accordion-item">
+					<div class="accordion" id="itemViewIdsAccord">
+					  <div class="accordion-item" id="itemViewGeneralIdsAccord">
 						<h2 class="accordion-header">
 						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewGeneralIdsAccordCollapse" aria-expanded="false" aria-controls="itemViewGeneralIdsAccordCollapse">
-							{#icons/barcode /}
+							{#icons/generalIds /}
 							General Ids (<span id="itemViewGeneralIdsNumIdsLabel"></span>)
 						  </button>
 						</h2>
-						<div id="itemViewGeneralIdsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewGeneralIdsAccord">
+						<div id="itemViewGeneralIdsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
 						  <div class="accordion-body">
 						  	<div class="row" id="itemViewGeneralIdsAccordContent">
+						  	</div>
+						  </div>
+						</div>
+					  </div>
+					  <div class="accordion-item" id="itemViewUniqueIdsAccord">
+						<h2 class="accordion-header">
+						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewUniqueIdsAccordCollapse" aria-expanded="false" aria-controls="itemViewUniqueIdsAccordCollapse">
+							{#icons/uniqueIds /}
+							Unique Ids (<span id="itemViewUniqueIdsNumIdsLabel"></span>)
+						  </button>
+						</h2>
+						<div id="itemViewUniqueIdsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
+						  <div class="accordion-body">
+						  	<div class="row" id="itemViewUniqueIdsAccordContent">
+						  	</div>
+						  </div>
+						</div>
+					  </div>
+					  <div class="accordion-item" id="itemViewIdGeneratorsAccord">
+						<h2 class="accordion-header">
+						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewIdGeneratorsAccordCollapse" aria-expanded="false" aria-controls="itemViewIdGeneratorsAccordCollapse">
+							{#icons/idGenerators /}
+							ID Generators (<span id="itemViewIdGeneratorsNumIdsLabel"></span>)
+						  </button>
+						</h2>
+						<div id="itemViewIdGeneratorsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
+						  <div class="accordion-body">
+						  	<div class="row">
+						  		<ul id="itemViewIdGeneratorsAccordContent">
+								</ul>
 						  	</div>
 						  </div>
 						</div>
@@ -104,8 +134,7 @@
             </div>
 			<div class="card col-sm-12 col-md-6" id="itemViewFilesContainer">
 				<div class="card-body" style="padding: 2px 0;">
-					{#fileAttachment/FileAttachmentObjectView id='itemViewFiles'}
-					{/fileAttachment/FileAttachmentObjectView}
+					{#fileAttachment/FileAttachmentObjectView id='itemViewFiles' /}
 				</div>
 			</div>
         </div>

@@ -32,6 +32,7 @@ import tech.ebp.oqm.core.api.model.rest.storage.IMAGED_OBJ_TYPE_NAME;
 import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.ImageSearch;
+import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.ItemCategoryService;
@@ -66,6 +67,8 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	InventoryItemService itemService;
 	@Inject
 	ItemCategoryService itemCategoryService;
+	@Inject
+	StoredService itemStoredService;
 	@Inject
 	Validator validator;
 	
@@ -479,6 +482,9 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 			}
 			case item_category -> {
 				return this.getImageFromObject(this.itemCategoryService, id);
+			}
+			case item_stored -> {
+				return this.getImageFromObject(this.itemStoredService, id);
 			}
 			default -> {
 				log.error("Should not have gotten to this point... server error.");

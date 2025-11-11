@@ -19,7 +19,11 @@ import tech.ebp.oqm.core.api.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.file.MongoHistoriedFileService;
 
+import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageWriter;
+import javax.imageio.stream.FileImageOutputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -87,8 +91,46 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 		return outputImage;
 	}
 	
+	public void writeImage(BufferedImage imageData, File endImage){
+		
+		if(this.imageResizeConfig.isJpg()) {
+			if (imageData.getType() != BufferedImage.TYPE_INT_RGB) {
+				log.debug("Converting image to rgb for jpeg writing.");
+				BufferedImage rgbImage = new BufferedImage(imageData.getWidth(), imageData.getHeight(), BufferedImage.TYPE_INT_RGB);
+				Graphics2D g = rgbImage.createGraphics();
+				g.drawImage(imageData, 0, 0, null);
+				g.dispose();
+				imageData = rgbImage;
+			}
+		}
+		
+		try {
+			if(this.imageResizeConfig.isJpg()){
+				
+				try(FileImageOutputStream out = new FileImageOutputStream(endImage)) {
+					//extra setup for higher quality jpg
+					final ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
+					writer.setOutput(out);
+					
+					ImageWriteParam jpgWriteParam = writer.getDefaultWriteParam();
+					jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
+					jpgWriteParam.setCompressionQuality(this.imageResizeConfig.jsonCompression());
+					
+					writer.write(null, new IIOImage(imageData, null, null), jpgWriteParam);
+					writer.dispose();
+				}
+			} else {
+				if(!ImageIO.write(imageData, this.imageResizeConfig.savedType(), endImage)) {
+					throw new IllegalStateException("FAILED to write resized image file.");
+				}
+			}
+		} catch(IOException | IllegalStateException e) {
+			throw new RuntimeException("Failed to write image data: " + e.getMessage(), e);
+		}
+	}
+	
 	@Override
-	public ObjectId add(String oqmDbIdOrName, ClientSession clientSession, Image fileObject, File origImage, String fileName, InteractingEntity interactingEntity) throws IOException {
+	public Image add(String oqmDbIdOrName, ClientSession clientSession, Image fileObject, File origImage, String fileName, InteractingEntity interactingEntity) throws IOException {
 		File endImage;
 		if(this.imageResizeConfig.enabled()) {
 			String origFileNameNoExt = FilenameUtils.removeExtension(fileName);
@@ -107,13 +149,7 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 				}
 
 				bufferedImage = resizeImage(bufferedImage);
-				if(
-					//TODO:: support dealing with higher quality jpg's: https://stackoverflow.com/questions/17108234/setting-jpg-compression-level-with-imageio-in-java
-					!ImageIO.write(bufferedImage, this.imageResizeConfig.savedType(), endImage)
-				){
-					log.error("FAILED to write resized image file.");
-					throw new IllegalStateException("FAILED to write resized image file.");
-				}
+				this.writeImage(bufferedImage, endImage);
 			}
 		} else {
 			endImage = origImage;

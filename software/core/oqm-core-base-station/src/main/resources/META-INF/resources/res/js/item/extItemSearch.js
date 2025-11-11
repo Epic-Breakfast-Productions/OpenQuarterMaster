@@ -162,8 +162,8 @@ const ExtItemSearch = {
 					imageName = data[0].title;
 				}
 
-				curImagesSelectedDiv = ItemAddEdit.addEditItemImagesSelected;
-				selectImage(imageName, imageId);
+				ImageSearchSelect.curImagesSelectedDiv = ItemAddEdit.addEditItemImagesSelected;
+				ImageSearchSelect.selectImage(imageName, imageId);
 			}
 		});
 		return true;
@@ -215,8 +215,8 @@ const ExtItemSearch = {
 					}
 					let newCarImageDir = $(
 						'    <div class="carousel-item">\n' +
-						'      <img src="" class="d-block w-100" alt="...">\n' +
-						'      <div class="carousel-caption d-none d-md-block">' +
+						'      <img src="" class="d-block w-100" alt="External Item Search Result Image">\n' +
+						'      <div class="carousel-caption d-md-block">' +
 						'          ' +
 						'      </div>' +
 						'    </div>\n'
@@ -332,8 +332,9 @@ ExtItemSearch.websiteScanSearchForm.submit(function (event) {
 ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
 	event.preventDefault();
 	let barcodeText = ExtItemSearch.prodBarcodeSearchBarcodeInput.val();
-	console.log("Searching for a barcode: " + barcodeText);
-	ItemAddEdit.addEditItemBarcodeInput.val(barcodeText);
+	console.log("Searching for a barcode: ", barcodeText);
+	GeneralIdentifiers.getNewIdentifierInput(ItemAddEdit.generalIdInputContainer).val(barcodeText);
+	GeneralIdentifiers.addIdentifier(ItemAddEdit.generalIdInputContainer);
 	ExtItemSearch.extSearchResults.html("");
 
 	Rest.call({

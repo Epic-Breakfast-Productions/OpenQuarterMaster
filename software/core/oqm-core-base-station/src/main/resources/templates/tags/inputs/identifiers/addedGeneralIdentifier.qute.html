@@ -1,6 +1,6 @@
-<div class="col-3 mb-1 generalIdentifierContainer">{! {"value":"45664","type":"GENERIC","barcode":false} !}
+<div class="col-xl-3 col-md-4 col-sm-6 col-xs-6 mb-1 generalIdentifierContainer">{! {"value":"45664","type":"GENERIC","barcode":false} !}
 	<div class="card identifierDisplay">
-		<img src="{#if generalId??}{rootPrefix}/api/passthrough/identifier/general/barcode/{generalId.get("type").asText()}/{generalId.get("value").asText()}{/if}" class="card-img-top identifierImage {#if !generalId??}d-none{#else}{#if !generalId.get("barcode").asBoolean()}d-none{/if}{/if}" alt="Barcode Image">
+		<img src="{#if generalId??}{rootPrefix}/api/passthrough/identifier/general/barcode/{generalId.get("type").asText()}/{generalId.get("value").asText()}/{#if generalId.get("label").isNull()}{generalId.get("type").asText()}{#else}{generalId.get("label").asText()}{/if}{/if}" class="card-img-top identifierImage {#if !generalId??}d-none{#else}{#if !generalId.get("barcode").asBoolean()}d-none{/if}{/if}" alt="Barcode Image">
 		
 		
 		<div class="card-body p-1">
@@ -14,13 +14,13 @@
 			
 			<div class="input-group">
 				<div class="form-floating">
-					<input type="text" class="form-control" name="generalIdKey" value="{#if generalId??}{#if generalId.get("label").isNull()}{generalId.get("type").asText()}{#else}{generalId.get("label").asText()}{/if}{/if}" aria-label="Identifier Label" required>
+					<input type="text" class="form-control" name="label" value="{#if generalId??}{#if generalId.get("label").isNull()}{generalId.get("type").asText()}{#else}{generalId.get("label").asText()}{/if}{/if}" onchange="GeneralIdentifiers.handleIsBarcodeNeedUpdate($(this));" aria-label="Identifier Label" required>
 					<label>Identifier Label</label>
 				</div>
 				
 				<div class="input-group-text px-1 generalIdIsBarcodeSelectContainer {#if generalId??}{#if generalId.get("type").asText() != "GENERIC"}d-none{/if}{/if}">
 					{#icons/barcode /}
-					<input class="form-check-input ms-1 mt-0" type="checkbox" value="" name="generalIdIsBarcode" aria-label="Checkbox for if barcode or not." onchange="GeneralIdentifiers.handleIsBarcodeChecked($(this));" {#if generalId??}{#if generalId.get("barcode").asBoolean()}checked{/if}{/if}>
+					<input class="form-check-input ms-1 mt-0" type="checkbox" value="" name="generalIdIsBarcode" aria-label="Checkbox for if barcode or not." onchange="GeneralIdentifiers.handleIsBarcodeNeedUpdate($(this));" {#if generalId??}{#if generalId.get("barcode").asBoolean()}checked{/if}{/if}>
 				</div>
 			</div>
 			

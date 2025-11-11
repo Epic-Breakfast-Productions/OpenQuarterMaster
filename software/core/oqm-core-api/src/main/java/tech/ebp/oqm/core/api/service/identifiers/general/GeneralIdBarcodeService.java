@@ -1,9 +1,11 @@
 package tech.ebp.oqm.core.api.service.identifiers.general;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
+import tech.ebp.oqm.core.api.service.identifiers.IdBarcodeService;
 import uk.org.okapibarcode.backend.Code128;
 import uk.org.okapibarcode.backend.Code2Of5;
 import uk.org.okapibarcode.backend.Ean;
@@ -22,23 +24,11 @@ import java.io.IOException;
  * TODO:: move to own service?
  * TODO:: add better labels to images https://github.com/jfree/jfreesvg
  */
+@Slf4j
 @ApplicationScoped
-public class BarcodeService {
-	public static final String DATA_MEDIA_TYPE = "image/svg+xml";
+public class GeneralIdBarcodeService extends IdBarcodeService {
 	
-	private static String toImageData(Symbol code){
-		ByteArrayOutputStream os = new ByteArrayOutputStream();
-		SvgRenderer renderer = new SvgRenderer(os, 1, Color.WHITE, Color.BLACK, true);
-		try {
-			renderer.render(code);
-		} catch(IOException e) {
-			throw new IllegalStateException(new RuntimeException(e));
-		}
-		return os.toString();
-	}
-	
-	
-	public String getGeneralIdData(GeneralIdType type, String data){
+	public String getGeneralIdData(GeneralIdType type, String data, String label){
 		String dataIn = data;
 		int hQuietZone = 10;
 		
@@ -78,7 +68,7 @@ public class BarcodeService {
 				dataIn = data.substring(0, 13);//shave off check bit
 				yield gtin14Code;
 			}
-			case GENERIC -> {
+			case GENERIC, GENERATED-> {
 				Code128 genericCode = new Code128();
 				yield genericCode;
 			}
@@ -95,24 +85,33 @@ public class BarcodeService {
 		barcode.setHumanReadableLocation(HumanReadableLocation.BOTTOM);
 		barcode.setContent(dataIn);
 		
-		return toImageData(barcode);
+		String labelStr = null;
+		boolean haveLabelGiven = label != null && !label.isBlank();
+		
+		if(type.displayInBarcode){
+			labelStr = type.prettyName();
+			
+			if(haveLabelGiven && !type.name().equals(label)){
+				labelStr += " / " + label;
+			}
+		} else {
+			if(!haveLabelGiven){
+				labelStr = type.prettyName();
+			} else {
+				labelStr = label;
+			}
+		}
+		
+		log.debug("Built label for {}/{}: {}", type, label, labelStr);
+		
+		return processBarcodeData(
+			barcode,
+			labelStr
+		);
 	}
 	
 	public String getGeneralIdData(GeneralId identifier){
-		return this.getGeneralIdData(identifier.getType(), identifier.getValue());
+		return this.getGeneralIdData(identifier.getType(), identifier.getValue(), identifier.getLabel());
 	}
 	
-	public String getObjectIdData(ObjectId objectId){
-		Code128 barcode = new Code128();
-		barcode.setFontName("Monospaced");
-//		barcode.setFontSize(16);
-//		barcode.setModuleWidth(2);
-//		barcode.setBarHeight(50);
-		barcode.setQuietZoneHorizontal(2);
-		barcode.setQuietZoneVertical(2);
-		barcode.setHumanReadableLocation(HumanReadableLocation.BOTTOM);
-		barcode.setContent(objectId.toHexString());
-		
-		return toImageData(barcode);
-	}
 }

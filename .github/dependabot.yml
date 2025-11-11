@@ -27,7 +27,7 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
-      - "project-baseStation"
+      - "project-core-baseStation"
 
   # Base Station
   - package-ecosystem: "gradle"
@@ -49,16 +49,6 @@ updates:
       - "area-dependencies"
       - "project-baseStation"
 
-  # Station Captain
-  - package-ecosystem: "maven"
-    directory: "/software/Station Captain/stationCaptainTest"
-    target-branch: "development"
-    schedule:
-      interval: "weekly"
-      day: "tuesday"
-    labels:
-      - "area-dependencies"
-      - "project-stationCaptain"
 #
 # Libraries
 #
