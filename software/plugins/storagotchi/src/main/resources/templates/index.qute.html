@@ -9,6 +9,11 @@
 		dialog.window {
 			border-width: 0;
 		}
+		#gameCanvas {
+			width: 100%;
+			min-height: 500px;
+			/*border: 1px solid black;*/
+		}
 	</style>
 </head>
 
@@ -19,15 +24,19 @@
 			Storagotchi
 		</div>
 		<div class="title-bar-controls">
-			<button aria-label="Help"></button>
+			<button id="testModalOpenButton" aria-label="Help"></button>
 			<button aria-label="Minimize" disabled></button>
 			<button aria-label="Restore" disabled></button>
 			<button aria-label="Close" disabled></button>
 		</div>
 	</div>
 	<div class="window-body">
-		<p>Hello, world!</p>
-		<button id="testModalOpenButton">Click me</button>
+		<div id="gameCanvas"></div>
+	</div>
+	<div class="status-bar">
+		<p class="status-bar-field">Press F1 for help</p>
+		<p class="status-bar-field">Slide 1</p>
+		<p class="status-bar-field">CPU Usage: 14%</p>
 	</div>
 </div>
 
@@ -65,6 +74,57 @@
 		console.log("Closing test modal");
 		testDialog[0].close();
 	});
+</script>
+<script type="module">
+	import { Application, Assets, Container, Sprite } from '/lib/pixi/8.14.0/pixi.min.mjs';
+	
+	(async () => {
+		let gameCanvas = document.getElementById("gameCanvas");
+		// Create a new application
+		const app = new Application();
+		
+		// Initialize the application
+		await app.init({
+			background: '#ece9d8',
+			resizeTo: gameCanvas
+		});
+		
+		// Append the application canvas to the document body
+		gameCanvas.appendChild(app.canvas);
+		
+		// Create and add a container to the stage
+		const container = new Container();
+		
+		
+		app.stage.addChild(container);
+		
+		// Load the bunny texture
+		const texture = await Assets.load('https://pixijs.com/assets/bunny.png');
+		
+		// Create a 5x5 grid of bunnies in the container
+		for (let i = 0; i < 25; i++) {
+			const bunny = new Sprite(texture);
+			
+			bunny.x = (i % 5) * 40;
+			bunny.y = Math.floor(i / 5) * 40;
+			container.addChild(bunny);
+		}
+		
+		// Move the container to the center
+		container.x = app.screen.width / 2;
+		container.y = app.screen.height / 2;
+		
+		// Center the bunny sprites in local container coordinates
+		container.pivot.x = container.width / 2;
+		container.pivot.y = container.height / 2;
+		
+		// Listen for animate update
+		app.ticker.add((time) => {
+			// Continuously rotate the container!
+			// * use delta to create frame-independent transform *
+			container.rotation -= 0.001 * time.deltaTime;
+		});
+	})();
 </script>
 
 </body>
