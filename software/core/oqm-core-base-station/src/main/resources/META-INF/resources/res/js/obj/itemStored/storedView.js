@@ -142,6 +142,17 @@ const StoredView = {
 		return "";
 	},
 
+	getStoredUniqueIds(stored){
+		if(Object.keys(stored.uniqueIds).length) {
+			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row uniqueIdContainer"></div></div>');
+
+			UniqueIdentifiers.View.showInDiv(output.find(".uniqueIdContainer"), stored.uniqueIds);
+
+			return output;
+		}
+		return "";
+	},
+
 	//TODO: finish figuring this out
 	getTransactBlockLink(stored, small = false,
 						 {
@@ -224,6 +235,7 @@ const StoredView = {
 			StoredView.getStoredKeywords(stored),
 			StoredView.getStoredAtts(stored),
 			StoredView.getStoredGeneralIds(stored),
+			StoredView.getStoredUniqueIds(stored),
 			StoredView.getStoredAttachedFiles(stored)
 		);
 		//TODO:: images, files

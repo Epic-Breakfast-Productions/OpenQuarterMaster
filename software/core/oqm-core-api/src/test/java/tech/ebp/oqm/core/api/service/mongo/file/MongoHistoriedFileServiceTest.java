@@ -56,7 +56,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 			testMainObject,
 			testFileOne,
 			testUser
-		);
+		).getId();
 		
 		assertEquals(1, this.testMongoFileService.count(DEFAULT_TEST_DB_NAME));
 		assertNotNull(testMainObject.getId());

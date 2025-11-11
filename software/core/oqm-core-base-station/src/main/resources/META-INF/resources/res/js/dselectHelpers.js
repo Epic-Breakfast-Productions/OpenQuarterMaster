@@ -1,7 +1,7 @@
 const Dselect = {
 	standardOps: {search: true, clearable: true},
-	setupDselect(selectObj) {
-		dselect(selectObj, Dselect.standardOps);
+	setupDselect(selectJs) {
+		dselect(selectJs, Dselect.standardOps);
 	},
 	setupPageDselects() {
 		document.querySelectorAll(".dselect-select").forEach(function (cur) {

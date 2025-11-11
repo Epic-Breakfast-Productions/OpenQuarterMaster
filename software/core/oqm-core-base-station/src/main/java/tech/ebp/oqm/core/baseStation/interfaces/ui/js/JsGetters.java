@@ -37,6 +37,8 @@ public class JsGetters {
 	private static String fileInputLines;
 	private static String generalIdInputLines;
 	private static String generalIdAddedLines;
+	private static String uniqueIdInputLines;
+	private static String uniqueIdAddedLines;
 	private static String copyTextButtonLines;
 	
 	private static String attachedFileListLines;
@@ -86,6 +88,10 @@ public class JsGetters {
 	Template generalIdInputTemplate;
 	@Location("tags/inputs/identifiers/addedGeneralIdentifier.qute.html")
 	Template generalIdAddedTemplate;
+	@Location("tags/inputs/identifiers/addedUniqueIdentifier.qute.html")
+	Template uniqueIdAddedTemplate;
+	@Location("tags/inputs/identifiers/uniqueIdInput.qute.html")
+	Template uniqueIdInputTemplate;
 	@Location("tags/fileAttachment/FileAttachmentObjectView.html")
 	Template fileAttachmentObjectViewTemplate;
 	
@@ -153,6 +159,20 @@ public class JsGetters {
 		return generalIdAddedLines;
 	}
 	
+	private String getUniqueIdInputLines() {
+		if (uniqueIdInputLines == null) {
+			uniqueIdInputLines = this.templateToEscapedJs(uniqueIdInputTemplate.data("id", ""));
+		}
+		return uniqueIdInputLines;
+	}
+	
+	private String getUniqueIdAddedLines() {
+		if (uniqueIdAddedLines == null) {
+			uniqueIdAddedLines = this.templateToEscapedJs(uniqueIdAddedTemplate.data("rootPrefix", this.forwardedPrefix.orElse("")));
+		}
+		return uniqueIdAddedLines;
+	}
+	
 	private String getAttachedFileListLines() {
 		if (attachedFileListLines == null) {
 			attachedFileListLines = this.templateToEscapedJs(fileAttachmentObjectViewTemplate.instance());
@@ -207,6 +227,8 @@ public class JsGetters {
 				   .data("copyButtonLines", this.getCopyTextButtonLines())
 				   .data("generalIdInputLines", this.getGeneralIdInputLines())
 				   .data("generalIdAddedLines", this.getGeneralIdAddedLines())
+				   .data("uniqueIdInputLines", this.getUniqueIdInputLines())
+				   .data("uniqueIdAddedLines", this.getUniqueIdAddedLines())
 				   .data("attachedFileListLines", this.getAttachedFileListLines())
 				   .createUni();
 	}
