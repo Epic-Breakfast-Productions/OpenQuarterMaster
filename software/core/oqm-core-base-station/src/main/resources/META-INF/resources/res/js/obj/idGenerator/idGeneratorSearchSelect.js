@@ -207,7 +207,6 @@ const IdGeneratorSearchSelect = {
 	<div class="card" >
 		<div class="card-body">
 			<h5 class="card-title"></h5>
-			<p class="card-text typeContainer"></p>
 			<p class="card-text formatContainer"></p>
 			<div class="d-grid gap-2">
 				<button class="btn btn-primary btn-sm selectIdGenButton" data-bs-target="#exampleModalToggle" data-bs-toggle="modal">Select</button>
@@ -219,8 +218,7 @@ const IdGeneratorSearchSelect = {
 
 					newSelection.on("click", function (e) {IdGeneratorSearchSelect.selectIdGenerator(idGenData)});
 					newSelection.find(".card-title").text(idGenData.name);
-					newSelection.find(".typeContainer").text(idGenData.type);
-					newSelection.find(".formatContainer").text(idGenData.format);
+					newSelection.find(".formatContainer").text(idGenData.idFormat);
 
 					newSelection.find(".selectIdGenButton").attr("data-bs-target", "#" + IdGeneratorSearchSelect.searchSelectModal.data("bs-othermodalid"));
 
