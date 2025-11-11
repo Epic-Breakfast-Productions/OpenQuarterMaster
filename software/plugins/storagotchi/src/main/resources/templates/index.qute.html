@@ -31,12 +31,50 @@
 		</div>
 	</div>
 	<div class="window-body">
-		<div id="gameCanvas"></div>
+		<section class="tabs" style="max-width: 100%">
+			<menu role="tablist" aria-label="Sample Tabs">
+				<button role="tab" aria-selected="true" aria-controls="tab-A">Tab A</button>
+				<button role="tab" aria-controls="tab-B">Tab B</button>
+				<button role="tab" aria-controls="tab-C">Tab C</button>
+			</menu>
+			<!-- the tab content -->
+			<article role="tabpanel" id="tab-A">
+				<div id="gameCanvas"></div>
+			</article>
+			<article role="tabpanel" hidden id="tab-B">
+				<h3>More...</h3>
+				<p>This tab contains a GroupBox</p>
+				<fieldset>
+					<legend>Today's mood</legend>
+					<div class="field-row">
+						<input id="radio10" type="radio" name="fieldset-example2">
+						<label for="radio10">Claire Saffitz</label>
+					</div>
+					<div class="field-row">
+						<input id="radio11" type="radio" name="fieldset-example2">
+						<label for="radio11">Brad Leone</label>
+					</div>
+					<div class="field-row">
+						<input id="radio12" type="radio" name="fieldset-example2">
+						<label for="radio12">Chris Morocco</label>
+					</div>
+					<div class="field-row">
+						<input id="radio13" type="radio" name="fieldset-example2">
+						<label for="radio13">Carla Lalli Music</label>
+					</div>
+				</fieldset>
+			</article>
+			<article role="tabpanel" hidden id="tab-C">
+				<h3>Tab 3</h3>
+				<p>Lorem Ipsum Dolor Sit</p>
+			</article>
+		</section>
 	</div>
 	<div class="status-bar">
 		<p class="status-bar-field">Press F1 for help</p>
 		<p class="status-bar-field">Slide 1</p>
 		<p class="status-bar-field">CPU Usage: 14%</p>
+		<p class="status-bar-field" style="max-width: 125px;"><progress></progress></p>
 	</div>
 </div>
 
@@ -74,6 +112,45 @@
 		console.log("Closing test modal");
 		testDialog[0].close();
 	});
+	
+	
+	const tabs = document.querySelectorAll("menu[role=tablist]");
+	
+	for (let i = 0; i < tabs.length; i++) {
+		const tab = tabs[i];
+		
+		const tabButtons = tab.querySelectorAll("menu[role=tablist] > button");
+		
+		tabButtons.forEach((btn) =>
+			btn.addEventListener("click", (e) => {
+				e.preventDefault();
+				
+				tabButtons.forEach((button) => {
+					if (
+						button.getAttribute("aria-controls") ===
+						e.target.getAttribute("aria-controls")
+					) {
+						button.setAttribute("aria-selected", true);
+						openTab(e, tab);
+					} else {
+						button.setAttribute("aria-selected", false);
+					}
+				});
+			})
+		);
+	}
+	
+	function openTab(event, tab) {
+		const articles = tab.parentNode.querySelectorAll('[role="tabpanel"]');
+		articles.forEach((p) => {
+			p.setAttribute("hidden", true);
+		});
+		const article = tab.parentNode.querySelector(
+			`[role="tabpanel"]#${ event.target.getAttribute("aria-controls")}`
+		);
+		article.removeAttribute("hidden");
+	}
+
 </script>
 <script type="module">
 	import { Application, Assets, Container, Sprite } from '/lib/pixi/8.14.0/pixi.min.mjs';
@@ -85,7 +162,8 @@
 		
 		// Initialize the application
 		await app.init({
-			background: '#ece9d8',
+			backgroundAlpha: 0,
+			// background: '#ece9d8', //beige
 			resizeTo: gameCanvas
 		});
 		
@@ -99,7 +177,7 @@
 		app.stage.addChild(container);
 		
 		// Load the bunny texture
-		const texture = await Assets.load('https://pixijs.com/assets/bunny.png');
+		const texture = await Assets.load('/media/sprites/storagotchi/storagotchi-0.png');
 		
 		// Create a 5x5 grid of bunnies in the container
 		for (let i = 0; i < 25; i++) {
