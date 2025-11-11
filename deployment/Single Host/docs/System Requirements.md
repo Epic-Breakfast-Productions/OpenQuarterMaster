@@ -42,6 +42,9 @@ In addition to these requirements, please look through the "Gotchas" section on 
 > [!NOTE]
 > it is possible certain plugins, or a large number of plugins, will require more resources or have different hardware requirements.
 
+> [!NOTE]
+> If running on your own hardware, we strongly recommend that system be run on a UPS/ Battery Backup in order to prevent power outages and dips from affecting the system.
+
 ### Proven SBC's and other 'specialty' hardware:
 
 - ARM:
