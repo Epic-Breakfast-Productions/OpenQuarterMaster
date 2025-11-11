@@ -318,13 +318,13 @@ public class OqmCoreApiClient {
 				   );
 	}
 	
-	public CompletableFuture<HttpResponse<String>> storageBlockAdd(OqmCredentials creds, String oqmDbIdOrName, ObjectNode newStorageBlock) {
+	public CompletableFuture<HttpResponse<ObjectNode>> storageBlockAdd(OqmCredentials creds, String oqmDbIdOrName, ObjectNode newStorageBlock) {
 		return this.getHttpClient()
 				   .sendAsync(
 					   this.setupRequest(creds, PathUtils.getStorageBlockPath(oqmDbIdOrName))
 						   .POST(HttpRequest.BodyPublishers.ofString(newStorageBlock.toString()))
 						   .build(),
-					   HttpResponse.BodyHandlers.ofString()
+					   JacksonObjectNodeBodyHandler.INSTANCE
 				   );
 	}
 	
@@ -465,13 +465,13 @@ public class OqmCoreApiClient {
 	//<editor-fold desc="Inventory Items">
 	
 	
-	public CompletableFuture<HttpResponse<String>> invItemCreate(OqmCredentials creds, String oqmDbIdOrName, ObjectNode newItem) {
+	public CompletableFuture<HttpResponse<ObjectNode>> invItemCreate(OqmCredentials creds, String oqmDbIdOrName, ObjectNode newItem) {
 		return this.getHttpClient()
 				   .sendAsync(
 					   this.setupRequest(creds, PathUtils.getInventoryItemPath(oqmDbIdOrName))
 						   .POST(HttpRequest.BodyPublishers.ofString(newItem.toString()))
 						   .build(),
-					   HttpResponse.BodyHandlers.ofString()
+					   JacksonObjectNodeBodyHandler.INSTANCE
 				   );
 	}
 	
