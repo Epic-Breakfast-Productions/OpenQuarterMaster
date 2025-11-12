@@ -13,6 +13,30 @@ This app is meant to be a cute semi-interactable entity to play with in the back
  - Notifications
    - If enabled, notify thru browser when things happen and state changes
 
+Game Mechanics
+
+ - Initial state:
+   - boxes around the page
+   - Some items smattered around
+   - Storagotchi in center
+   - calculated number of items lying around for the number of OQM inventory actions taken recently
+ - Storagotchi:
+   - goes to boxes, picks things up, carries them around
+   - drops said items
+   - gets overwhelmed when too cluttered (too many items on screen)
+   - gets inspired by your inventory actions, cleans up one item per action
+   - does something fun when clicked (giggle? dance?)
+ - Boxes:
+   - jump / move slightly when clicked
+   - "give" items to Storagotchi
+   - "take" items from Storagotchi
+
+## Credits
+
+Resources from:
+
+ - https://last-tick.itch.io/16x16-icons-tools-electronic-gadgets
+ - https://apokalips123.itch.io/pixel-warehouse-stuff
 
 
 ## Running the application in dev mode

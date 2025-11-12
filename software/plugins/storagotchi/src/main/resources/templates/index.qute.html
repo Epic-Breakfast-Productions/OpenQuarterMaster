@@ -22,6 +22,11 @@
 			height: 95vh;
 		}
 		
+		#mainWindowBody {
+			margin-bottom: 0px;
+			/*height: 100%;*/
+		}
+		
 		dialog.window {
 			border-width: 0;
 		}
@@ -47,18 +52,22 @@
 			<button aria-label="Close" disabled></button>
 		</div>
 	</div>
-	<div class="window-body">
-		<section class="tabs" style="max-width: 100%;">
-			<menu role="tablist" aria-label="Sample Tabs">
-				<button role="tab" aria-selected="true" aria-controls="tab-A">Tab A</button>
-				<button role="tab" aria-controls="tab-B">Tab B</button>
-				<button role="tab" aria-controls="tab-C">Tab C</button>
+	<div class="window-body" id="mainWindowBody">
+		<section class="tabs" style="max-width: 100%; height: 100%;" id="mainTabs">
+			<menu role="tablist" aria-label="Navigation">
+				<button role="tab" aria-selected="true" aria-controls="tab-game">Storagotchi</button>
+				<button role="tab" aria-controls="tab-guide">Guide</button>
+				<button role="tab" aria-controls="tab-options">Options</button>
 			</menu>
 			<!-- the tab content -->
-			<article role="tabpanel" id="tab-A">
+			<article role="tabpanel" id="tab-game" class="tabContent">
 				<div id="gameCanvas"></div>
 			</article>
-			<article role="tabpanel" hidden id="tab-B">
+			<article role="tabpanel" id="tab-guide" class="tabContent" hidden>
+				<h3>Tab 3</h3>
+				<p>Lorem Ipsum Dolor Sit</p>
+			</article>
+			<article role="tabpanel" id="tab-options" class="tabContent" hidden>
 				<h3>More...</h3>
 				<p>This tab contains a GroupBox</p>
 				<fieldset>
@@ -81,14 +90,10 @@
 					</div>
 				</fieldset>
 			</article>
-			<article role="tabpanel" hidden id="tab-C">
-				<h3>Tab 3</h3>
-				<p>Lorem Ipsum Dolor Sit</p>
-			</article>
 		</section>
 	</div>
 	{!<div style="height: 100%;"></div>!}
-	<div class="status-bar" style="margin-top: auto">
+	<div class="status-bar" style="margin-top: auto; margin-bottom: 0;">
 		<p class="status-bar-field">Press F1 for help</p>
 		<p class="status-bar-field">Slide 1</p>
 		<p class="status-bar-field">CPU Usage: 14%</p>
@@ -99,18 +104,27 @@
 </div>
 
 
-<dialog class="window" style="width: 300px" id="testDialog">
+<dialog class="window" style="width: 250px" id="testDialog">
 	<div class="title-bar">
-		<div class="title-bar-text">A Window With Stuff In It</div>
+		<div class="title-bar-text">Info</div>
 		<div class="title-bar-controls">
-			<button type="button" aria-label="Minimize"></button>
-			<button type="button" aria-label="Maximize"></button>
 			<button type="button" aria-label="Close" class="modalClose"></button>
 		</div>
 	</div>
 	<div class="window-body">
-		<p>There's so much room for activities!</p>
-		<button>Click me</button>
+		<h3>Storagotchi</h3>
+		<p>
+			A fun digital dude to help you stay motivated with your inventory management.
+		</p>
+		<p>
+			Version 1.0.0-SNAPSHOT TODO
+		</p>
+		<p>
+			&copy; 2025 <a href="https://epic-breakfast-productions.tech">Epic Breakfast Productions</a>
+		</p>
+		<p>
+			Source on <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/storagotchi/">Open QuarterMaster Github</a>
+		</p>
 	</div>
 </dialog>
 
@@ -166,7 +180,7 @@
 			p.setAttribute("hidden", true);
 		});
 		const article = tab.parentNode.querySelector(
-			`[role="tabpanel"]#${ event.target.getAttribute("aria-controls") }`
+			`[role="tabpanel"]#` + event.target.getAttribute("aria-controls")
 		);
 		article.removeAttribute("hidden");
 	}
@@ -175,9 +189,26 @@
 <script type="module">
 	import * as PIXI from '/lib/pixi/8.14.0/pixi.min.mjs';
 	
+	//boxes
+	const NUM_BOXES = 10;
+	const BOX_DISTANCE_THRESHOLD = 100;
+	const BOX_WIDTH_MOD = 0.03;
+	
+	//stuff
+	const STUFF_DISTANCE_THRESHOLD = 100;
+	const STUFF_WIDTH_MOD = 0.02;
+	
+	//storagotchi
+	const SG_WIDTH_MOD = 0.03;
+	
+	const gameState = {
+		oqmActionCount: 0
+	};
+	
 	
 	// Create a new application
 	const app = new PIXI.Application();
+	const boxes = [];
 	let storagotchi = null;
 	
 	
@@ -185,6 +216,8 @@
 		await preload();
 		await initApp();
 		
+		setupBackdrop();
+		setupBoxes();
 		setupStoragotchi();
 		
 		// Listen for animate update
@@ -196,7 +229,13 @@
 	async function preload() {
 		// Create an array of asset data to load.
 		const assets = [
-			{ alias: 'storagotchi-1', src: '/media/sprites/storagotchi/storagotchi-0.png' },
+			{ alias: 'storagotchi-1', src: '/media/sprites/storagotchi/storagotchi-0.png'},
+			{ alias: 'box-1-closed', src: '/media/sprites/box/box-1-closed.png'},
+			{ alias: 'box-1-open', src: '/media/sprites/box/box-1-open.png'},
+			{ alias: 'box-2-closed', src: '/media/sprites/box/box-2-closed.png'},
+			{ alias: 'box-2-open', src: '/media/sprites/box/box-2-open.png'},
+			{ alias: 'box-3-closed', src: '/media/sprites/box/box-3-closed.png'},
+			{ alias: 'box-3-open', src: '/media/sprites/box/box-3-open.png'},
 		];
 		
 		// Load the assets defined above.
@@ -217,9 +256,87 @@
 		gameCanvas.appendChild(app.canvas);
 	}
 	
-	function setupStoragotchi(){
+	function setupBackdrop() {
+		const gradient = new PIXI.FillGradient({
+			end: { x: 1, y: 0},
+			colorStops: [
+				{ offset: 0, color: 0xff0000}, // Red at start
+				{ offset: 0.5, color: 0x00ff00}, // Green at middle
+				{ offset: 1, color: 0x0000ff}, // Blue at end
+			],
+		});
+		
+		const graphics = new PIXI.Graphics();
+		
+		graphics.circle(app.screen.width / 2, app.screen.height / 2, 100)
+			.fill({ fill: gradient})
+		
+		app.stage.addChild(graphics);
+	}
+	
+	function randomIntFromInterval(min, max) { // min and max included
+		return Math.floor(Math.random() * (max - min + 1) + min);
+	}
+	
+	
+	function spriteNear(sprite, x, y, radius) {
+		const dx = sprite.x - x;
+		const dy = sprite.y - y;
+		const distance = Math.sqrt((dx * dx) + (dy * dy));
+		return distance <= radius;
+	}
+	
+	function spritesNear(sprite1, sprite2, radius) {
+		return spriteNear(sprite1, sprite2.x, sprite2.y, radius);
+	}
+	
+	function spriteNearThings(sprite, radius = 100) {
+		//not near center
+		if (spriteNear(sprite, app.screen.width / 2, app.screen.height / 2, radius)) {
+			console.debug("Sprite near center.");
+			return true;
+		}
+		for (let box in boxes) {
+			if (spritesNear(sprite, boxes[box], radius)) {
+				console.debug("Sprite near box.");
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	function setupBoxes() {
+		for (let i = 0; i < NUM_BOXES; i++) {
+			let box = PIXI.Sprite.from('box-' + (Math.floor(Math.random() * 3) + 1) + "-closed");
+			box.anchor.set(0.5, 0.5);
+			box.width = app.screen.width * BOX_WIDTH_MOD;
+			box.scale.y = box.scale.x;
+			
+			
+			do {
+				let x = randomIntFromInterval(50, app.screen.width - 50);
+				let y = randomIntFromInterval(50, app.screen.height - 50);
+				
+				box.x = x;
+				box.y = y;
+			} while (spriteNearThings(box, BOX_DISTANCE_THRESHOLD));
+			
+			
+			boxes.push(box);
+			
+			app.stage.addChild(box);
+		}
+	}
+	
+	function setupStoragotchi() {
 		storagotchi = PIXI.Sprite.from('storagotchi-1');
-		storagotchi.anchor.set(0.5, 1);
+		storagotchi.anchor.set(0.5, 1);//bottom center of sprite
+		
+		console.log("Initial storagotchi height/width: ", storagotchi.height, storagotchi.width);
+		
+		storagotchi.width = app.screen.width * SG_WIDTH_MOD;
+		storagotchi.scale.y = storagotchi.scale.x;
 		
 		storagotchi.x = app.screen.width / 2;
 		storagotchi.y = app.screen.height / 2;
@@ -227,10 +344,10 @@
 		app.stage.addChild(storagotchi);
 	}
 	
-	function animateStoragotchi(app, time, delta){
-		storagotchi.rotation += ((Math.random() < 0.5)?-1:1) * 0.05 * delta;
+	function animateStoragotchi(app, time, delta) {
+		storagotchi.rotation += ((Math.random() < 0.5) ? -1 : 1) * 0.05 * delta;
 	}
-	
+
 </script>
 
 </body>
