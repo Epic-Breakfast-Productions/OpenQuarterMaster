@@ -20,11 +20,21 @@ Game Mechanics
    - Some items smattered around
    - Storagotchi in center
    - calculated number of items lying around for the number of OQM inventory actions taken recently
+   - Scoreboard blank
+ - IMS Scoreboard
+   - Shows inventory statistics
+     - \# blocks, items, stored
+     - rates of inventory actions taken recently
  - Storagotchi:
+   - at start:
+     - wakes up, updates scoreboard
    - goes to boxes, picks things up, carries them around
-   - drops said items
+   - drops said items randomly
    - gets overwhelmed when too cluttered (too many items on screen)
-   - gets inspired by your inventory actions, cleans up one item per action
+   - receives messages on how IRL storage work is going
+     - Updates scoreboard when received (after completing current action) 
+     - gets inspired by your inventory actions, cleans up one item per action
+     - received over websocket
    - does something fun when clicked
      - giggle
      - dance
@@ -36,6 +46,8 @@ Game Mechanics
    - "take" items from Storagotchi
  - stuff
    - wiggles when clicked
+   - Sits around
+   - Rarity scale on what gets pulled out of boxes
 
 ## Credits
 
