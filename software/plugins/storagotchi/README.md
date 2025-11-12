@@ -25,11 +25,17 @@ Game Mechanics
    - drops said items
    - gets overwhelmed when too cluttered (too many items on screen)
    - gets inspired by your inventory actions, cleans up one item per action
-   - does something fun when clicked (giggle? dance?)
+   - does something fun when clicked
+     - giggle
+     - dance
+     - (rare) quotes
+       - https://www.goodreads.com/work/quotes/41711738-jinsei-ga-tokimeku-katazuke-no-maho
  - Boxes:
    - jump / move slightly when clicked
    - "give" items to Storagotchi
    - "take" items from Storagotchi
+ - stuff
+   - wiggles when clicked
 
 ## Credits
 

@@ -57,38 +57,44 @@
 			<menu role="tablist" aria-label="Navigation">
 				<button role="tab" aria-selected="true" aria-controls="tab-game">Storagotchi</button>
 				<button role="tab" aria-controls="tab-guide">Guide</button>
-				<button role="tab" aria-controls="tab-options">Options</button>
+				<button role="tab" aria-controls="tab-options">Options <span id="optionsChangedIndicator"></span></button>
 			</menu>
 			<!-- the tab content -->
 			<article role="tabpanel" id="tab-game" class="tabContent">
 				<div id="gameCanvas"></div>
 			</article>
 			<article role="tabpanel" id="tab-guide" class="tabContent" hidden>
-				<h3>Tab 3</h3>
-				<p>Lorem Ipsum Dolor Sit</p>
+				<h3>Guide</h3>
 			</article>
 			<article role="tabpanel" id="tab-options" class="tabContent" hidden>
-				<h3>More...</h3>
-				<p>This tab contains a GroupBox</p>
-				<fieldset>
-					<legend>Today's mood</legend>
-					<div class="field-row">
-						<input id="radio10" type="radio" name="fieldset-example2">
-						<label for="radio10">Claire Saffitz</label>
-					</div>
-					<div class="field-row">
-						<input id="radio11" type="radio" name="fieldset-example2">
-						<label for="radio11">Brad Leone</label>
-					</div>
-					<div class="field-row">
-						<input id="radio12" type="radio" name="fieldset-example2">
-						<label for="radio12">Chris Morocco</label>
-					</div>
-					<div class="field-row">
-						<input id="radio13" type="radio" name="fieldset-example2">
-						<label for="radio13">Carla Lalli Music</label>
-					</div>
-				</fieldset>
+				<h3>Options</h3>
+				<button>Save</button>
+				<form id="optionsForm">
+					<fieldset>
+						<legend>Audio</legend>
+						<div class="field-row" style="width: 300px">
+							<label for="range25">Volume:</label>
+							<label for="range26">Low</label>
+							<input id="range26" type="range" min="1" max="11" value="5" />
+							<label for="range27">High</label>
+						</div>
+						<div class="field-row">
+							<input type="checkbox" id="example1">
+							<label for="example1">Music</label>
+						</div>
+						<div class="field-row">
+							<input type="checkbox" id="example1">
+							<label for="example1">Sfx</label>
+						</div>
+					</fieldset>
+					<fieldset>
+						<legend>Customization</legend>
+						<div class="field-row">
+							<label for="text21">Storagotchi Name: </label>
+							<input id="text21" type="text" value="Storagotchi" required />
+						</div>
+					</fieldset>
+				</form>
 			</article>
 		</section>
 	</div>
@@ -184,7 +190,11 @@
 		);
 		article.removeAttribute("hidden");
 	}
-
+	
+	let optionsChangedIndicator = $("#optionsChangedIndicator");
+	$("#optionsForm").find("input,select").on("input", function(){
+		optionsChangedIndicator.text("*");
+	});
 </script>
 <script type="module">
 	import * as PIXI from '/lib/pixi/8.14.0/pixi.min.mjs';
