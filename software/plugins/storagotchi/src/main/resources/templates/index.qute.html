@@ -2,23 +2,40 @@
 <html lang="en">
 <head>
 	<title>Storagotchi - Open QuarterMaster</title>
-	<meta charset="UTF-8" />
+	<meta charset="UTF-8"/>
 	
-	<link rel="stylesheet" href="/lib/xp.css/0.2.6/XP.css" />
+	<link rel="stylesheet" href="/lib/xp.css/0.2.6/XP.css"/>
 	<style>
+		html {
+			height: 100%;
+		}
+		
+		body {
+			min-height: 100vh;
+			background-image: url(/media/background/windows_xp_original-wallpaper.jpg);
+			background-size: cover;
+			background-repeat: no-repeat;
+		}
+		
+		#mainWindow {
+			width: 95vw; /* 100% of the viewport width */
+			height: 95vh;
+		}
+		
 		dialog.window {
 			border-width: 0;
 		}
+		
 		#gameCanvas {
 			width: 100%;
-			min-height: 500px;
+			min-height: 100%;
 			/*border: 1px solid black;*/
 		}
 	</style>
 </head>
 
-<body class="surface">
-<div class="window" style="width: 100%; height: 100%">
+<body class="">
+<div class="window" id="mainWindow">
 	<div class="title-bar">
 		<div class="title-bar-text">
 			Storagotchi
@@ -31,7 +48,7 @@
 		</div>
 	</div>
 	<div class="window-body">
-		<section class="tabs" style="max-width: 100%">
+		<section class="tabs" style="max-width: 100%;">
 			<menu role="tablist" aria-label="Sample Tabs">
 				<button role="tab" aria-selected="true" aria-controls="tab-A">Tab A</button>
 				<button role="tab" aria-controls="tab-B">Tab B</button>
@@ -70,11 +87,14 @@
 			</article>
 		</section>
 	</div>
-	<div class="status-bar">
+	{!<div style="height: 100%;"></div>!}
+	<div class="status-bar" style="margin-top: auto">
 		<p class="status-bar-field">Press F1 for help</p>
 		<p class="status-bar-field">Slide 1</p>
 		<p class="status-bar-field">CPU Usage: 14%</p>
-		<p class="status-bar-field" style="max-width: 125px;"><progress></progress></p>
+		<p class="status-bar-field" style="max-width: 125px;">
+			<progress></progress>
+		</p>
 	</div>
 </div>
 
@@ -146,19 +166,45 @@
 			p.setAttribute("hidden", true);
 		});
 		const article = tab.parentNode.querySelector(
-			`[role="tabpanel"]#${ event.target.getAttribute("aria-controls")}`
+			`[role="tabpanel"]#${ event.target.getAttribute("aria-controls") }`
 		);
 		article.removeAttribute("hidden");
 	}
 
 </script>
 <script type="module">
-	import { Application, Assets, Container, Sprite } from '/lib/pixi/8.14.0/pixi.min.mjs';
+	import * as PIXI from '/lib/pixi/8.14.0/pixi.min.mjs';
+	
+	
+	// Create a new application
+	const app = new PIXI.Application();
+	let storagotchi = null;
+	
 	
 	(async () => {
+		await preload();
+		await initApp();
+		
+		setupStoragotchi();
+		
+		// Listen for animate update
+		app.ticker.add((time) => {
+			animateStoragotchi(app, time, time.deltaTime);
+		});
+	})();
+	
+	async function preload() {
+		// Create an array of asset data to load.
+		const assets = [
+			{ alias: 'storagotchi-1', src: '/media/sprites/storagotchi/storagotchi-0.png' },
+		];
+		
+		// Load the assets defined above.
+		await PIXI.Assets.load(assets);
+	}
+	
+	async function initApp() {
 		let gameCanvas = document.getElementById("gameCanvas");
-		// Create a new application
-		const app = new Application();
 		
 		// Initialize the application
 		await app.init({
@@ -169,40 +215,22 @@
 		
 		// Append the application canvas to the document body
 		gameCanvas.appendChild(app.canvas);
+	}
+	
+	function setupStoragotchi(){
+		storagotchi = PIXI.Sprite.from('storagotchi-1');
+		storagotchi.anchor.set(0.5, 1);
 		
-		// Create and add a container to the stage
-		const container = new Container();
+		storagotchi.x = app.screen.width / 2;
+		storagotchi.y = app.screen.height / 2;
 		
-		
-		app.stage.addChild(container);
-		
-		// Load the bunny texture
-		const texture = await Assets.load('/media/sprites/storagotchi/storagotchi-0.png');
-		
-		// Create a 5x5 grid of bunnies in the container
-		for (let i = 0; i < 25; i++) {
-			const bunny = new Sprite(texture);
-			
-			bunny.x = (i % 5) * 40;
-			bunny.y = Math.floor(i / 5) * 40;
-			container.addChild(bunny);
-		}
-		
-		// Move the container to the center
-		container.x = app.screen.width / 2;
-		container.y = app.screen.height / 2;
-		
-		// Center the bunny sprites in local container coordinates
-		container.pivot.x = container.width / 2;
-		container.pivot.y = container.height / 2;
-		
-		// Listen for animate update
-		app.ticker.add((time) => {
-			// Continuously rotate the container!
-			// * use delta to create frame-independent transform *
-			container.rotation -= 0.001 * time.deltaTime;
-		});
-	})();
+		app.stage.addChild(storagotchi);
+	}
+	
+	function animateStoragotchi(app, time, delta){
+		storagotchi.rotation += ((Math.random() < 0.5)?-1:1) * 0.05 * delta;
+	}
+	
 </script>
 
 </body>
