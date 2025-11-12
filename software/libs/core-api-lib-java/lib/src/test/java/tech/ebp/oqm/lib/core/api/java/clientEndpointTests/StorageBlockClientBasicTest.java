@@ -44,7 +44,7 @@ class StorageBlockClientBasicTest extends JwtAuthTest {
 		
 		newStorageBlock.put("label", "testStorageBlock");
 		
-		HttpResponse<String> response = client.storageBlockAdd(this.getCredentials(), "default", newStorageBlock).join();
+		HttpResponse<ObjectNode> response = client.storageBlockAdd(this.getCredentials(), "default", newStorageBlock).join();
 		
 		assertEquals(200, response.statusCode(), "Unexpected response code: " + response.body());
 		System.out.println(response.body());
@@ -60,8 +60,8 @@ class StorageBlockClientBasicTest extends JwtAuthTest {
 		
 		newStorageBlock.put("label", "testStorageBlock2");
 		
-		HttpResponse<String> response = client.storageBlockAdd(this.getCredentials(), "default", newStorageBlock).join();
-		String id = response.body().replaceAll("\"", "");
+		HttpResponse<ObjectNode> response = client.storageBlockAdd(this.getCredentials(), "default", newStorageBlock).join();
+		String id = response.body().get("id").asText();
 		assertEquals(200, response.statusCode(), "Unexpected response code: " + response.body());
 		
 		System.out.println("Created Storage Block ID: " + id);

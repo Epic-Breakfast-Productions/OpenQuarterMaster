@@ -41,6 +41,18 @@ class UriUtilsTest {
 				URI.create("https://localhost:8080/"), "foo", new QueryParams(){{
 					this.put("foo", QParamVal.of("bar", "bar2"));
 				}}
+			),
+			Arguments.of(
+				URI.create("https://localhost:8080/core/api"),
+				URI.create("https://localhost:8080/core/api"), "", new QueryParams()
+			),
+			Arguments.of(
+				URI.create("https://localhost:8080/core/api/q/health"),
+				URI.create("https://localhost:8080/core/api"), "/q/health", new QueryParams()
+			),
+			Arguments.of(
+				URI.create("https://localhost/core/api/q/health"),
+				URI.create("https://localhost/core/api"), "/q/health", new QueryParams()
 			)
 		);
 	}

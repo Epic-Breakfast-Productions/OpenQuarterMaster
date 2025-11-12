@@ -22,7 +22,7 @@ public class TestContainerUtils {
 	
 	
 	public static OqmCoreApiWebServiceContainer getCoreApiContainer() {
-		DockerImageName dockerImageName = DockerImageName.parse("docker.io/ebprod/oqm-core-api:3.2.0-DEV");
+		DockerImageName dockerImageName = DockerImageName.parse("docker.io/ebprod/oqm-core-api:4.0.0");
 			
 			OqmCoreApiWebServiceContainer container = new OqmCoreApiWebServiceContainer(dockerImageName)
 														  .withAccessToHost(true)

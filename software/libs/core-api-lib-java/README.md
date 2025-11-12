@@ -14,3 +14,9 @@ implementation("tech.epic-breakfast-productions.openquartermaster.lib.core:core-
 ```shell
  ./gradlew publishToMavenLocal
 ```
+
+... ignoring tests
+
+```
+./gradlew publishToMavenLocal -x test
+```

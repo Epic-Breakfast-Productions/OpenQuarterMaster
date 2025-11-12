@@ -32,13 +32,16 @@ public final class UriUtils {
 	 * @return The new URI
 	 */
 	public static URI buildUri(URI baseUri, String path, QueryParams queryParams) {
-		URI uri = baseUri.resolve(path);
 		
+		String fullPath = baseUri.getPath() +  path;
+		
+		String queryParamString = "";
 		if (!queryParams.isEmpty()) {
-			StringBuilder sb = new StringBuilder(uri.getQuery() == null ? "" : uri.getQuery());
+			StringBuilder sb = new StringBuilder();
 			
-			
+			boolean hadParams = false;
 			for (Map.Entry<String, QParamVal<?>> entry : queryParams.entrySet()) {
+				hadParams = true;
 				if (!sb.isEmpty()) {
 					sb.append('&');
 				}
@@ -58,20 +61,57 @@ public final class UriUtils {
 				}
 			}
 			
-			try {
-				uri = new URI(
-					uri.getScheme(),
-					uri.getAuthority(),
-					uri.getPath(),
-					sb.toString(),
-					uri.getFragment()
-				);
-			} catch(URISyntaxException e) {
-				throw new RuntimeException("Failed to build exception for request.", e);
+			queryParamString = sb.toString();
+			if(queryParamString.equals("?")) {
+				queryParamString = "";
 			}
 		}
 		
-		return uri;
+		try {
+			StringBuilder sb = new StringBuilder();
+			
+			sb.append(baseUri.getScheme());
+			sb.append("://");
+			sb.append(baseUri.getHost());
+			
+			if(baseUri.getPort() != -1) {
+				sb.append(":");
+				sb.append(baseUri.getPort());
+			}
+			
+			sb.append(fullPath);
+			
+			if(!queryParamString.isBlank()) {
+				sb.append("?");
+				sb.append(queryParamString);
+			}
+			
+			
+			return new URI(sb.toString());
+			
+			
+			
+//
+//			if(queryParamString.isBlank()) {
+//
+//				return new URI(
+//					baseUri.getScheme(),
+//					baseUri.getHost() + ":" + baseUri.getPort(),
+//					fullPath,
+//					baseUri.getFragment()
+//				);
+//			} else {
+//				return new URI(
+//					baseUri.getScheme(),
+//					baseUri.getHost() + ":" + baseUri.getPort(),
+//					fullPath,
+//					queryParamString,
+//					baseUri.getFragment()
+//				);
+//			}
+		} catch(URISyntaxException e) {
+			throw new RuntimeException("Failed to build exception for request.", e);
+		}
 	}
 	
 	/**
