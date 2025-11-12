@@ -1,7 +1,11 @@
 plugins {
 	id 'java'
 	id 'io.quarkus'
+	id "io.freefair.lombok" version "9.0.0"
 }
+
+group = 'tech.ebp.oqm.plugin'
+version = '1.0.0-SNAPSHOT'
 
 repositories {
 	mavenCentral()
@@ -21,6 +25,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-oidc'
 	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-smallrye-health'
+	implementation 'io.quarkus:quarkus-websockets-next'
 
 	implementation 'org.webjars:jquery:3.7.1'
 
@@ -28,8 +33,6 @@ dependencies {
 	testImplementation 'io.rest-assured:rest-assured'
 }
 
-group = 'tech.ebp.oqm.plugin'
-version = '1.0.0-SNAPSHOT'
 
 java {
 	sourceCompatibility = JavaVersion.VERSION_21

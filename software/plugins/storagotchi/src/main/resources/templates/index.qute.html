@@ -20,11 +20,26 @@
 		#mainWindow {
 			width: 95vw; /* 100% of the viewport width */
 			height: 95vh;
+			display: flex;
+			flex-direction: column;
 		}
 		
 		#mainWindowBody {
+			flex: 1;
+		}
+		
+		.mainTabBody {
+			flex:1;
 			margin-bottom: 0px;
-			/*height: 100%;*/
+			overflow: scroll;
+		}
+		
+		#mainTabs {
+			/*border: 1px solid black;*/
+			max-width: 100%;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
 		}
 		
 		dialog.window {
@@ -53,20 +68,21 @@
 		</div>
 	</div>
 	<div class="window-body" id="mainWindowBody">
-		<section class="tabs" style="max-width: 100%; height: 100%;" id="mainTabs">
+		<section class="tabs"  id="mainTabs">
 			<menu role="tablist" aria-label="Navigation">
 				<button role="tab" aria-selected="true" aria-controls="tab-game">Storagotchi</button>
 				<button role="tab" aria-controls="tab-guide">Guide</button>
 				<button role="tab" aria-controls="tab-options">Options <span id="optionsChangedIndicator"></span></button>
 			</menu>
 			<!-- the tab content -->
-			<article role="tabpanel" id="tab-game" class="tabContent">
+			<article role="tabpanel" id="tab-game" class="mainTabBody">
 				<div id="gameCanvas"></div>
 			</article>
-			<article role="tabpanel" id="tab-guide" class="tabContent" hidden>
+			<article role="tabpanel" id="tab-guide" class="mainTabBody" hidden>
 				<h3>Guide</h3>
+				<p>Content</p>
 			</article>
-			<article role="tabpanel" id="tab-options" class="tabContent" hidden>
+			<article role="tabpanel" id="tab-options" class="mainTabBody" hidden>
 				<h3>Options</h3>
 				<button>Save</button>
 				<form id="optionsForm">
@@ -99,11 +115,12 @@
 		</section>
 	</div>
 	{!<div style="height: 100%;"></div>!}
-	<div class="status-bar" style="margin-top: auto; margin-bottom: 0;">
-		<p class="status-bar-field">Press F1 for help</p>
-		<p class="status-bar-field">Slide 1</p>
-		<p class="status-bar-field">CPU Usage: 14%</p>
-		<p class="status-bar-field" style="max-width: 125px;">
+	<div class="status-bar" style="margin-bottom: 3px;">
+		<p class="status-bar-field"  style="max-width: 85px;">Status: <span id="statusDisplay">?</span></p>
+		<p class="status-bar-field"></p><!-- spacer -->
+		<p class="status-bar-field" style="max-width: 85px;">CPU Usage: <span  id="cpuDisplay"></span>%</p>
+		<p class="status-bar-field" style="max-width: 125px;">State: <span  id="stateDisplay"></span></p>
+		<p class="status-bar-field" style="max-width: 115px;" id="stateLoadBar">
 			<progress></progress>
 		</p>
 	</div>
@@ -195,9 +212,76 @@
 	$("#optionsForm").find("input,select").on("input", function(){
 		optionsChangedIndicator.text("*");
 	});
+	
+	let stateDisplay = $("#stateDisplay");
+	let stateLoadBar = $("#stateLoadBar");
+	
+	function updateLoadBar(loadBarPerc = null){
+		if(loadBarPerc === null){
+			stateLoadBar.html("<progress></progress>");
+		} else {
+			stateLoadBar.html(`<progress value="`+loadBarPerc+`"></progress>`);
+		}
+	}
+	
+	function updateStateDisplay(state, loadBarPerc = 0){
+		stateDisplay.text(state);
+		updateLoadBar(loadBarPerc);
+	}
+	
+	let cpuDisplay = $("#cpuDisplay");
+	function updateCpuDisplay(state){
+		let perc = 0;
+		switch(state){
+			case "pinned": // 100%
+				perc = 100;
+				break;
+			case "high": // 75 - 100 %
+				perc = Math.floor(Math.random() * (100 - 75 + 1)) + 75;
+				break;
+			case "med": // 50 - 75 %
+				perc = Math.floor(Math.random() * (75 - 50 + 1)) + 50;
+				break;
+			case "medLow": // 25 - 50%
+				perc = Math.floor(Math.random() * (50 - 25 + 1)) + 25;
+				break;
+			case "low": // 0 - 50%
+				perc = Math.floor(Math.random() * (25 + 1));
+				break;
+			default:
+				perc = "?";
+		}
+		
+		cpuDisplay.text(perc);
+	}
+	updateCpuDisplay("");
+	
+	let statusDisplay = $("#statusDisplay");
+	function updateStatusDisplay(status){
+		statusDisplay.text(status);
+	}
 </script>
+<script>
+	
+	function newUpdatesWebSocket(){
+		let wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+		let wsUrl = `${ wsProtocol}//${ window.location.host}${ window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/ws/updates`;
+		
+		let socket = new WebSocket(wsUrl)
+		socket.onopen = (event) => {
+			console.log('WebSocket connection opened:', event);
+			updateStatusDisplay("Connected");
+		}
+		return socket;
+	}
+	
+	const updatesSocket = newUpdatesWebSocket();
+</script>
+
 <script type="module">
 	import * as PIXI from '/lib/pixi/8.14.0/pixi.min.mjs';
+	
+	const SCREEN_BORDER = 100;
 	
 	//boxes
 	const NUM_BOXES = 10;
@@ -210,6 +294,8 @@
 	
 	//storagotchi
 	const SG_WIDTH_MOD = 0.03;
+	const SG_CPU_UPDATE_TIME = 750;
+	const SG_WAKEUP_TIME = 2000;
 	
 	const gameState = {
 		oqmActionCount: 0
@@ -325,8 +411,8 @@
 			
 			
 			do {
-				let x = randomIntFromInterval(50, app.screen.width - 50);
-				let y = randomIntFromInterval(50, app.screen.height - 50);
+				let x = randomIntFromInterval(SCREEN_BORDER, app.screen.width - SCREEN_BORDER);
+				let y = randomIntFromInterval(SCREEN_BORDER, app.screen.height - SCREEN_BORDER);
 				
 				box.x = x;
 				box.y = y;
@@ -351,11 +437,101 @@
 		storagotchi.x = app.screen.width / 2;
 		storagotchi.y = app.screen.height / 2;
 		
+		storagotchi["state"] = {
+			"state": "wakeup",
+			"cpu": "pinned",
+			"cpuTimer": performance.now(),
+			"start": performance.now()
+		};
+		updateStateDisplay("Waking Up", 0);
+		
 		app.stage.addChild(storagotchi);
 	}
 	
+	function storagotchiWakeup(app, time, delta){
+		let curTime = performance.now();
+		let curDiff = curTime - storagotchi["state"]["start"];
+		
+		if(curDiff < SG_WAKEUP_TIME){
+			updateLoadBar(curDiff / SG_WAKEUP_TIME);
+			storagotchi.rotation += ((Math.random() < 0.5) ? -1 : 1) * 0.05 * delta;
+		} else {
+			console.log("Storagotchi woken up - now meandering");
+			storagotchi.rotation = 0;
+			storagotchi["state"]["state"] = "meander";
+			storagotchi["state"]["cpu"] = "low";
+			storagotchi["state"]["start"] = performance.now();
+			storagotchi["state"]["destination"] = null;
+			updateStateDisplay("Meandering", null);
+		}
+	}
+	
+	
+	
+	function storagotchiMeander(app, time, delta){
+		if(storagotchi["state"]["destination"] == null){
+			let x = randomIntFromInterval(SCREEN_BORDER, app.screen.width - SCREEN_BORDER);
+			let y = randomIntFromInterval(SCREEN_BORDER, app.screen.height - SCREEN_BORDER);
+			storagotchi["state"]["destination"] = {
+				x: x,
+				y: y
+			}
+			storagotchi["state"]["speed"] = 0.7;//TODO:: randomize
+		}
+		
+		if(storagotchi["state"]["destination"] === "wait"){ // waiting
+			let curTime = performance.now();
+			
+			if((curTime - storagotchi["state"]["start"]) > 2000){
+				storagotchi["state"]["destination"] = null;
+			}
+		} else if( // got to destination
+			storagotchi.x === storagotchi["state"]["destination"]["x"] &&
+			storagotchi.y === storagotchi["state"]["destination"]["y"]
+		){
+			storagotchi["state"]["destination"] = "wait";
+			storagotchi["state"]["start"] = performance.now();
+		} else { //move to destination
+			let directionX = storagotchi["state"]["destination"]["x"] - storagotchi.x;
+			let directionY = storagotchi["state"]["destination"]["y"] - storagotchi.y;
+			
+			let distance = Math.sqrt(directionX * directionX + directionY * directionY);
+			
+			if (distance > storagotchi["state"]["speed"]) { // Move if distance is greater than speed
+				directionX /= distance;
+				directionY /= distance;
+				
+				storagotchi.x += directionX * storagotchi["state"]["speed"] * delta;
+				storagotchi.y += directionY * storagotchi["state"]["speed"] * delta;
+			} else { // Stop when close enough
+				console.log("Storagotchi got to meander destination");
+				storagotchi.x =  storagotchi["state"]["destination"]["x"];
+				storagotchi.y =  storagotchi["state"]["destination"]["y"];
+			}
+		}
+		
+	}
+	
+	
 	function animateStoragotchi(app, time, delta) {
-		storagotchi.rotation += ((Math.random() < 0.5) ? -1 : 1) * 0.05 * delta;
+		
+		let curTime = performance.now();
+		let curDiff = curTime - storagotchi["state"]["cpuTimer"];
+		
+		if(curDiff > SG_CPU_UPDATE_TIME){
+			storagotchi["state"]["cpuTimer"] = performance.now();
+			updateCpuDisplay(storagotchi["state"]["cpu"]);
+		}
+		
+		
+		switch (storagotchi["state"]["state"]){
+			case "wakeup":
+				storagotchiWakeup(app, time, delta);
+				break;
+			case "meander":
+				storagotchiMeander(app, time, delta);
+				break;
+		}
 	}
 
 </script>
