@@ -353,19 +353,10 @@
 	}
 	
 	function setupBackdrop() {
-		const gradient = new PIXI.FillGradient({
-			end: { x: 1, y: 0},
-			colorStops: [
-				{ offset: 0, color: 0xff0000}, // Red at start
-				{ offset: 0.5, color: 0x00ff00}, // Green at middle
-				{ offset: 1, color: 0x0000ff}, // Blue at end
-			],
-		});
-		
 		const graphics = new PIXI.Graphics();
 		
 		graphics.circle(app.screen.width / 2, app.screen.height / 2, 100)
-			.fill({ fill: gradient})
+			.fill({ color: '#bed5ff'})
 		
 		app.stage.addChild(graphics);
 	}
