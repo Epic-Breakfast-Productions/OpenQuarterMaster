@@ -354,7 +354,9 @@
 		];
 		
 		// Load the assets defined above.
+		console.log("Loading assets");
 		await PIXI.Assets.load(assets);
+		console.log("Finished loading assets.");
 	}
 	
 	async function initApp() {
@@ -384,11 +386,21 @@
 		return Math.floor(Math.random() * (max - min + 1) + min);
 	}
 	
+	function distanceBetween(x1,y1,x2,y2){
+		const dx = x1 - x2;
+		const dy = y1 - y2;
+		return Math.sqrt((dx * dx) + (dy * dy));
+	}
+	
+	function distanceBetweenSprites(sprite1, sprite2){
+		return distanceBetween(
+			sprite1.x, sprite1.y,
+			sprite2.x, sprite2.y
+		);
+	}
 	
 	function spriteNear(sprite, x, y, radius) {
-		const dx = sprite.x - x;
-		const dy = sprite.y - y;
-		const distance = Math.sqrt((dx * dx) + (dy * dy));
+		const distance = distanceBetween(sprite.x, sprite.y, x, y);
 		return distance <= radius;
 	}
 	
@@ -536,30 +548,74 @@
 	}
 	
 	function storagotchiDecide(app, time, delta){
-		if((performance.now() - storagotchi["state"]["start"]) > 2000){ //TODO:: randomize
+		let now = performance.now();
+		let diff = now - storagotchi["state"]["start"];
+		let waitTime = 2000;
+		
+		updateLoadBar(diff / waitTime);
+		
+		if(diff > waitTime){ //TODO:: randomize
 			//decide what to do next
-			storagotchiSetupForMeander();
-			//TODO:: actually decide
+			if(Math.random() < 0.5) { //TODO:: more actions
+				storagotchiSetupForMeander();
+			} else {
+				storagotchiSetupForGetThing();
+			}
 		}
 	}
 	
 	
 	function storagotchiSetupForGetThing(){
-		//TODO
+		storagotchi["state"]["state"] = "getItem";
+		storagotchi["state"]["cpu"] = "medLow";
+		storagotchi["state"]["start"] = performance.now();
+		storagotchi["state"]["destination"] = null;
+		updateStateDisplay("Getting Item", null);
+		
+		console.log("Setup to get an item.");
 	}
 	
 	function storagotchiGetThing(app, time, delta){
 		if(storagotchi["state"]["destination"] == null){
 			let randomIndex = Math.floor(Math.random() * boxes.length);
-			let box = boxes[randomIndex];
 			
-			storagotchi["state"]["destination"] = {
-				x: box.x,
-				y: box.y
-			}
+			storagotchi["state"]["destination"] = boxes[randomIndex];
+			storagotchi["state"]["originalDistance"] = distanceBetweenSprites(storagotchi, storagotchi["state"]["destination"]);
 			storagotchi["state"]["speed"] = 0.7;//TODO:: randomize
+			console.log("Selected a box");
 		}
+		
+		if( // got to destination
+			storagotchi.x === storagotchi["state"]["destination"]["x"] &&
+			storagotchi.y === storagotchi["state"]["destination"]["y"]
+		){
+			storagotchiSetupForMeander(); // TODO:: pick item from box
+		} else { //move to destination
+			let directionX = storagotchi["state"]["destination"]["x"] - storagotchi.x;
+			let directionY = storagotchi["state"]["destination"]["y"] - storagotchi.y;
+			
+			let distance = distanceBetweenSprites(storagotchi["state"]["destination"], storagotchi);
+			
+			// console.debug("distance: ", distance, storagotchi["state"]["originalDistance"]);
+			
+			updateLoadBar( (storagotchi["state"]["originalDistance"] - distance) / storagotchi["state"]["originalDistance"]);
+			
+			if (distance > storagotchi["state"]["speed"]) { // Move if distance is greater than speed
+				directionX /= distance;
+				directionY /= distance;
+				
+				storagotchi.x += directionX * storagotchi["state"]["speed"] * delta;
+				storagotchi.y += directionY * storagotchi["state"]["speed"] * delta;
+			} else { // Stop when close enough
+				console.log("Storagotchi got to destination box.");
+				storagotchi.x =  storagotchi["state"]["destination"]["x"];
+				storagotchi.y =  storagotchi["state"]["destination"]["y"];
+			}
+		}
+		
 	}
+	
+	
 	
 	
 	function animateStoragotchi(app, time, delta) {
@@ -582,6 +638,9 @@
 				break;
 			case "deciding":
 				storagotchiDecide(app, time, delta);
+				break;
+			case "getItem":
+				storagotchiGetThing(app, time, delta);
 				break;
 		}
 	}
