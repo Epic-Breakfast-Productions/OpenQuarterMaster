@@ -70,7 +70,7 @@
 	<div class="window-body" id="mainWindowBody">
 		<section class="tabs"  id="mainTabs">
 			<menu role="tablist" aria-label="Navigation">
-				<button role="tab" aria-selected="true" aria-controls="tab-game">Storagotchi</button>
+				<button role="tab" aria-selected="true" aria-controls="tab-game">{settings.getStoragotchiName()}</button>
 				<button role="tab" aria-controls="tab-guide">Guide</button>
 				<button role="tab" aria-controls="tab-options">Options <span id="optionsChangedIndicator"></span></button>
 			</menu>
@@ -89,25 +89,25 @@
 					<fieldset>
 						<legend>Audio</legend>
 						<div class="field-row" style="width: 300px">
-							<label for="range25">Volume:</label>
-							<label for="range26">Low</label>
-							<input id="range26" type="range" min="1" max="11" value="5" />
-							<label for="range27">High</label>
+							<label for="volumeInput">Volume:</label>
+							<label for="volumeInput">Low</label>
+							<input id="volumeInput" type="range" min="0" max="1" step="0.05" name="volume" value="{settings.getVolume()}" />
+							<label for="volumeInput">High</label>
 						</div>
 						<div class="field-row">
-							<input type="checkbox" id="example1">
-							<label for="example1">Music</label>
+							<input type="checkbox" id="musicInput" name="music" value="true" {#if settings.isMusic()}checked{/if}>
+							<label for="musicInput">Music</label>
 						</div>
 						<div class="field-row">
-							<input type="checkbox" id="example1">
-							<label for="example1">Sfx</label>
+							<input type="checkbox" id="soundfxInput" name="soundfx" value="true" {#if settings.isSoundfx()}checked{/if}>
+							<label for="soundfxInput">Sfx</label>
 						</div>
 					</fieldset>
 					<fieldset>
 						<legend>Customization</legend>
 						<div class="field-row">
-							<label for="text21">Storagotchi Name: </label>
-							<input id="text21" type="text" value="Storagotchi" required />
+							<label for="storagotchiNameInput">Storagotchi Name:</label>
+							<input id="storagotchiNameInput" name="storagotchiName" type="text" value="{settings.getStoragotchiName()}" required />
 						</div>
 					</fieldset>
 				</form>
@@ -301,6 +301,17 @@
 		oqmActionCount: 0
 	};
 	
+	const stuff = {
+		{#for entry in stuffMap}
+		{#let rarity=entry.getKey() stuffList=entry.getValue()}
+		// {rarity}
+		{rarity}: [
+			{#for curStuff in stuffList}
+			"stuff-{rarity}-{curStuff}"{#if curStuff_hasNext},{/if}
+			{/for}
+		]{#if entry_hasNext},{/if}
+		{/for}
+	};
 	
 	// Create a new application
 	const app = new PIXI.Application();
@@ -332,6 +343,14 @@
 			{ alias: 'box-2-open', src: '/media/sprites/box/box-2-open.png'},
 			{ alias: 'box-3-closed', src: '/media/sprites/box/box-3-closed.png'},
 			{ alias: 'box-3-open', src: '/media/sprites/box/box-3-open.png'},
+			//stuff
+			{#for entry in stuffMap}
+			{#let rarity=entry.getKey() stuffList=entry.getValue()}
+			// {rarity}
+				{#for curStuff in stuffList}
+			{ alias: "stuff-{rarity}-{curStuff}", src: '/media/sprites/stuff/{rarity}/{curStuff}' },
+				{/for}
+			{/for}
 		];
 		
 		// Load the assets defined above.
@@ -449,15 +468,17 @@
 		} else {
 			console.log("Storagotchi woken up - now meandering");
 			storagotchi.rotation = 0;
-			storagotchi["state"]["state"] = "meander";
-			storagotchi["state"]["cpu"] = "low";
-			storagotchi["state"]["start"] = performance.now();
-			storagotchi["state"]["destination"] = null;
-			updateStateDisplay("Meandering", null);
+			storagotchiSetupForMeander();
 		}
 	}
 	
-	
+	function storagotchiSetupForMeander(){
+		storagotchi["state"]["state"] = "meander";
+		storagotchi["state"]["cpu"] = "low";
+		storagotchi["state"]["start"] = performance.now();
+		storagotchi["state"]["destination"] = null;
+		updateStateDisplay("Meandering", null);
+	}
 	
 	function storagotchiMeander(app, time, delta){
 		if(storagotchi["state"]["destination"] == null){
@@ -498,9 +519,46 @@
 				console.log("Storagotchi got to meander destination");
 				storagotchi.x =  storagotchi["state"]["destination"]["x"];
 				storagotchi.y =  storagotchi["state"]["destination"]["y"];
+				
+				if(Math.random() < 0.5) {
+					storagotchiSetDecidingState();
+				}
 			}
 		}
 		
+	}
+	
+	function storagotchiSetDecidingState(){
+		storagotchi["state"]["state"] = "deciding";
+		storagotchi["state"]["cpu"] = "high";
+		storagotchi["state"]["start"] = performance.now();
+		updateStateDisplay("Deciding", null);
+	}
+	
+	function storagotchiDecide(app, time, delta){
+		if((performance.now() - storagotchi["state"]["start"]) > 2000){ //TODO:: randomize
+			//decide what to do next
+			storagotchiSetupForMeander();
+			//TODO:: actually decide
+		}
+	}
+	
+	
+	function storagotchiSetupForGetThing(){
+		//TODO
+	}
+	
+	function storagotchiGetThing(app, time, delta){
+		if(storagotchi["state"]["destination"] == null){
+			let randomIndex = Math.floor(Math.random() * boxes.length);
+			let box = boxes[randomIndex];
+			
+			storagotchi["state"]["destination"] = {
+				x: box.x,
+				y: box.y
+			}
+			storagotchi["state"]["speed"] = 0.7;//TODO:: randomize
+		}
 	}
 	
 	
@@ -521,6 +579,9 @@
 				break;
 			case "meander":
 				storagotchiMeander(app, time, delta);
+				break;
+			case "deciding":
+				storagotchiDecide(app, time, delta);
 				break;
 		}
 	}
