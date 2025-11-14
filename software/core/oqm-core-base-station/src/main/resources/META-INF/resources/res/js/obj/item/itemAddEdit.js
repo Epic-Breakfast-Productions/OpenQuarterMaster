@@ -11,7 +11,6 @@ const ItemAddEdit = {
 	addEditItemIdInput: $("#addEditItemIdInput"),
 	addEditItemNameInput: $('#addEditItemNameInput'),
 	addEditItemDescriptionInput: $('#addEditItemDescriptionInput'),
-	addEditItemBarcodeInput: $('#addEditItemBarcodeInput'),
 	addEditItemPricePerUnitInput: $('#addEditItemPricePerUnitInput'),
 	addEditItemExpiryWarningThresholdInput: $('#addEditItemExpiryWarningThresholdInput'),
 	addEditItemExpiryWarningThresholdUnitInput: $('#addEditItemExpiryWarningThresholdUnitInput'),
@@ -21,6 +20,10 @@ const ItemAddEdit = {
 	addEditItemStorageTypeInput: $('#addEditItemStorageTypeInput'),
 	addEditItemUnitInput: $('#addEditItemUnitInput'),
 	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
+
+	generalIdInputContainer: GeneralIdentifiers.getInputContainer($("#addEditItemGeneralIdInput")),
+	uniqueIdInputContainer: UniqueIdentifiers.getInputContainer($("#addEditItemUniqueIdInput")),
+	associatedGeneratorInput: $("#addEditItem-item-associatedIdGeneratorInput"),
 
 	// itemNotStoredCheck: $("#addEditItemNotStoredCheck"),
 	// itemNotStoredInputContainer: $("#addEditItemNotStoredInputContainer"),
@@ -75,7 +78,9 @@ const ItemAddEdit = {
 		this.addEditItemFormMode.val("");
 		ItemAddEdit.addEditItemNameInput.val("");
 		ItemAddEdit.addEditItemDescriptionInput.val("");
-		ItemAddEdit.addEditItemBarcodeInput.val("");
+		GeneralIdentifiers.reset(ItemAddEdit.generalIdInputContainer);
+		UniqueIdentifiers.reset(ItemAddEdit.uniqueIdInputContainer);
+		IdGeneratorSearchSelect.AssociatedInput.resetAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput);
 		ItemAddEdit.addEditItemModalLabel.text("Item");
 		// ItemAddEdit.addEditItemPricePerUnitInput.val("0.00");
 		ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(0);
@@ -125,7 +130,7 @@ const ItemAddEdit = {
 			url: Rest.passRoot + "/inventory/item/" + itemId,
 			failMessagesDiv: ItemAddEdit.addEditItemFormMessages,
 			done: async function (data) {
-				addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds);
+				ImageSearchSelect.addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds);
 				KeywordAttEdit.addKeywordInputs(ItemAddEdit.addEditKeywordDiv, data.keywords);
 				KeywordAttEdit.addAttInputs(ItemAddEdit.addEditAttDiv, data.attributes);
 				FileAttachmentSearchSelect.populateFileInputFromObject(
@@ -139,7 +144,6 @@ const ItemAddEdit = {
 				ItemAddEdit.addEditItemNameInput.val(data.name);
 				ItemAddEdit.addEditItemDescriptionInput.val(data.description);
 				ItemAddEdit.addEditItemStorageTypeInput.val(data.storageType);
-				ItemAddEdit.addEditItemBarcodeInput.val(data.barcode);
 				Dselect.setValues(ItemAddEdit.addEditItemUnitInput, data.unit.string);
 				Dselect.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
 				ItemAddEdit.addEditStoredTypeInputChanged(true)
@@ -150,6 +154,10 @@ const ItemAddEdit = {
 							ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val(data.lowStockThreshold.unit.string)
 						}
 					});
+
+				GeneralIdentifiers.populateEdit(ItemAddEdit.generalIdInputContainer, data.generalIds);
+				UniqueIdentifiers.populateEdit(ItemAddEdit.uniqueIdInputContainer, data.uniqueIds);
+				IdGeneratorSearchSelect.AssociatedInput.populateAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput, data.idGenerators);
 
 				let durationTimespan = TimeHelpers.durationNumSecsToTimespan(data.expiryWarningThreshold);
 
@@ -266,13 +274,13 @@ ItemAddEdit.addEditItemUnitInput.on("change", function () {
 	ItemAddEdit.updateLowStockUnits();
 });
 
-//prevent enter from submitting form on barcode; barcode scanners can add enter key automatically
-ItemAddEdit.addEditItemBarcodeInput.on('keypress', function (e) {
-	// Ignore enter keypress
-	if (e.which === 13) {
-		return false;
-	}
-});
+// //prevent enter from submitting form on barcode; barcode scanners can add enter key automatically
+// ItemAddEdit.addEditItemBarcodeInput.on('keypress', function (e) {
+// 	// Ignore enter keypress
+// 	if (e.which === 13) {
+// 		return false;
+// 	}
+// });
 
 StorageSearchSelect.selectStorageBlock = function (blockName, blockId, inputIdPrepend, otherModalId) {
 	Main.processStart();
@@ -288,7 +296,9 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 	let addEditData = {
 		name: ItemAddEdit.addEditItemNameInput.val(),
 		description: ItemAddEdit.addEditItemDescriptionInput.val(),
-		barcode: ItemAddEdit.addEditItemBarcodeInput.val(),
+		generalIds: GeneralIdentifiers.getGeneralIdData(ItemAddEdit.generalIdInputContainer),
+		uniqueIds: UniqueIdentifiers.getUniqueIdData(ItemAddEdit.uniqueIdInputContainer),
+		idGenerators: IdGeneratorSearchSelect.AssociatedInput.getAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput),
 		storageType: ItemAddEdit.addEditItemStorageTypeInput.val(),
 		expiryWarningThreshold: ItemAddEdit.addEditItemExpiryWarningThresholdInput.val() * ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.val(),
 		lowStockThreshold: (ItemAddEdit.addEditItemTotalLowStockThresholdInput.val() ? UnitUtils.getQuantityObj(
@@ -316,7 +326,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 	);
 
 	KeywordAttEdit.addKeywordAttData(addEditData, ItemAddEdit.addEditKeywordDiv, ItemAddEdit.addEditAttDiv);
-	addImagesToData(addEditData, ItemAddEdit.addEditItemImagesSelected);
+	ImageSearchSelect.addImagesToData(addEditData, ItemAddEdit.addEditItemImagesSelected);
 
 	console.log("Data being submitted: " + JSON.stringify(addEditData));
 	let verb = "";

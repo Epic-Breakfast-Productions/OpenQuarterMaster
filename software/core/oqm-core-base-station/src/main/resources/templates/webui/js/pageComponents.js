@@ -3,6 +3,28 @@ const PageComponents = {
 		attribute: '{attInputLines}\
 ',
 		keywords: '{keywordInputLines}\
+',
+		image: '{imageInputLines}\
+',
+		file: '{fileInputLines}\
+',
+		copyButton: '{copyButtonLines}\
+',
+		GeneralIds: {
+			generalIdInput: '{generalIdInputLines}\
+',
+			generalIdAdded: '{generalIdAddedLines}\
 '
+		},
+		UniqueIds: {
+			uniqueIdInput: '{uniqueIdInputLines}\
+',
+			uniqueIdAdded: '{uniqueIdAddedLines}\
+'
+		}
+	},
+	View: {
+		attachedFileList: '{attachedFileListLines}\
+',
 	}
 }

@@ -1,0 +1,28 @@
+<div class="generalIdInputContainer identifierInputContainer">
+	<div class="row">
+		<div class="col">
+			{#inputs/identifiers/identifierInput id=id name="newIdentifier" idClass="GeneralIdentifiers" /}
+		</div>
+		
+		<div class="col">
+			<div class="d-grid gap-2 mb-1">
+				<button
+					type="button"
+					id="{id}-generateButton"
+					class="btn btn-sm btn-outline-success idGeneratorGenerateButton"
+					data-bs-toggle="modal"
+					data-bs-target="#idGeneratorSearchSelectModal"
+					data-generates="GENERAL"
+					data-forobject="ITEM"
+					onclick="IdGeneratorSearchSelect.GenerateInput.generateButtonClicked(this);"
+				>
+					{#icons/idGenerators /} Generate Id
+				</button>
+			</div>
+		</div>
+	</div>
+	<div class="identifierMessagesContainer"></div>
+	<div class="row identifiersContainer mt-1">
+		{!where things go !}
+	</div>
+</div>

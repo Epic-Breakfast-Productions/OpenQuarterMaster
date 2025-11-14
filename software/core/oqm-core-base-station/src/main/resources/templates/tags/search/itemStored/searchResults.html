@@ -8,7 +8,7 @@
   <tr>
     <th scope="col" class="searchResultImageCol">Image</th>
     <th scope="col">Label</th>
-    <th scope="col">Id?</th>
+    <th scope="col" style="width: 125px;">Id?</th>
     {#if showType??}<th scope="col">Type</th>{/if}
     {#if showItem??}<th scope="col">Item</th>{/if}
     {#if showStorage??}<th scope="col">{#icons/storageBlock}{/icons/storageBlock} Stored In</th>{/if}
@@ -41,11 +41,13 @@
   <tr class="itemStoredResultRow align-middle">
     <td>
       {#if !result.get("imageIds").isEmpty()}
-      <img src="/api/passthrough/media/image/for/itemStored/{id}" class="searchResultImage">{! TODO:: fix this url !}
+      <img src="/api/passthrough/media/image/for/item_stored/{id}" class="searchResultImage">{! TODO:: fix this url !}
       {/if}
     </td>
     <td class="">{labelText}</td>
-    <td>{id}</td>
+    <td>
+		<abbr title="{id}">...{id.substring(id.length() - 6)}</abbr>{#copyTextButton fromTitle=true /}
+	</td>
 
     {#if showType}<td>{cdi:EnumFormattingService.formatEnum(result.get("type").asText())}</td>{/if}
     {#if showItem}<td>{result.get("item-name").asText()}</td>{/if}{!TODO:: link this !}

@@ -8,7 +8,7 @@ const ItemCategoryView = {
 				method: "GET",
 				async: false,
 				done: function (data) {
-					let curCat = $('<a class="badge m-1 itemCatBadge text-decoration-none" href="/itemCategories?view='+data.id+'"></a>');
+					let curCat = $('<a class="badge m-1 itemCatBadge text-decoration-none" href="'+Rest.webroot+'/itemCategories?view='+data.id+'"></a>');
 
 					curCat.text(data.name);
 
@@ -19,7 +19,7 @@ const ItemCategoryView = {
 					}
 
 					if(data.imageIds.length){
-						curCat.prepend('<img class="itemCatBadgeImage" src="/api/passthrough/media/image/for/item_category/'+data.id+'" />');
+						curCat.prepend('<img class="itemCatBadgeImage" src="'+Rest.passRoot+'/media/image/for/item_category/'+data.id+'" />');
 					}
 					if(data.description){
 						curCat.attr("title", data.description);

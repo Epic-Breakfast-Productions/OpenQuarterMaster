@@ -46,4 +46,8 @@ https://central.sonatype.org/publish/publish-portal-maven/
 
 `./mvnw deploy`
 
+then:
+
+https://central.sonatype.com/publishing/deployments
+
 

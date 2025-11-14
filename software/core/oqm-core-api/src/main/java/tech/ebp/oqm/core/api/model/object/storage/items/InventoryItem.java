@@ -12,6 +12,8 @@ import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.ItemNotificationStatus;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
@@ -22,8 +24,11 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -37,7 +42,7 @@ import java.util.Set;
 @SuperBuilder(toBuilder = true)
 @ValidItemUnit
 public class InventoryItem extends ImagedMainObject implements FileAttachmentContaining {
-	public static final int CUR_SCHEMA_VERSION = 2;
+	public static final int CUR_SCHEMA_VERSION = 3;
 
 	/**
 	 * The name of this inventory item
@@ -63,14 +68,23 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	private String description = "";
 
 	/**
-	 * The barcode for this item.
-	 * <p>
-	 * TODO:: validate?
-	 * TODO:: rework
+	 * The general identifiers for this item
 	 */
 	@lombok.Builder.Default
-	private String barcode = null;
-
+	private LinkedHashSet<@NotNull GeneralId> generalIds = new LinkedHashSet<>();
+	
+	/**
+	 * Unique ID's for this particular item.
+	 */
+	@lombok.Builder.Default
+	private LinkedHashSet<@NotNull UniqueId> uniqueIds = new LinkedHashSet<>();
+	
+	/**
+	 * ID generators for this particular item's stored.
+	 */
+	@lombok.Builder.Default
+	private LinkedHashSet<@NotNull ObjectId> idGenerators = new LinkedHashSet<>();
+	
 	/**
 	 * Categories this item belongs to.
 	 */
@@ -89,7 +103,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
-	private LinkedHashSet<ObjectId> storageBlocks = new LinkedHashSet<>();
+	private LinkedHashSet<@NotNull ObjectId> storageBlocks = new LinkedHashSet<>();
 
 	/**
 	 * Files that have been attached to the item.

@@ -20,7 +20,6 @@ import static com.mongodb.client.model.Filters.*;
 @Setter
 public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("name") String name;
-	@QueryParam("itemBarcode") String itemBarcode;
 	@QueryParam("itemCategories") List<ObjectId> categories;
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
 	@QueryParam("hasExpired") Boolean hasExpired;
@@ -29,6 +28,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("hasNoExpiryWarn") Boolean hasNoExpiryWarn;
 	@QueryParam("hasLowStock") Boolean hasLowStock;
 	@QueryParam("hasNoLowStock") Boolean hasNoLowStock;
+	@QueryParam("generalId") String generalId;
 	
 	//TODO:: object specific fields, add to bson filter list
 	
@@ -39,11 +39,6 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 		if (this.hasValue(this.getName())) {
 			filters.add(
 				SearchUtils.getBasicSearchFilter("name", this.getName())
-			);
-		}
-		if (this.hasValue(this.getItemBarcode())) {
-			filters.add(
-				eq("barcode", this.getItemBarcode())
 			);
 		}
 		if (this.getCategories() != null && !this.categories.isEmpty()) {
@@ -104,6 +99,11 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 					eq("stats.anyLowStock", true)
 				);
 			}
+		}
+		if(this.hasValue(this.getGeneralId())){
+			filters.add(
+				eq("generalIds.value", this.getGeneralId())
+			);
 		}
 		
 		return filters;

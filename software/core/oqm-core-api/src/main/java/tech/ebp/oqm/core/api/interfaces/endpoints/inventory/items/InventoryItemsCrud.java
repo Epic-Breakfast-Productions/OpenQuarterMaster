@@ -49,13 +49,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Item added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "Item added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -65,7 +59,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ObjectId create(
+	public InventoryItem create(
 		@Valid InventoryItem item
 	) {
 		return super.create(item);

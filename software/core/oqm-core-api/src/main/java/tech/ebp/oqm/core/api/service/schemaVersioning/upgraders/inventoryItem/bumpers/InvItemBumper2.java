@@ -12,6 +12,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
 import tech.ebp.oqm.core.api.model.object.upgrade.SingleUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeCreatedObjectsResults;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectSchemaVersionBumper;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.UpgradingUtils;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
@@ -43,7 +44,7 @@ public class InvItemBumper2 extends ObjectSchemaVersionBumper<InventoryItem> {
 		oldStored.remove("storedType");
 		
 		if(oldStored.has("amount")){
-			this.stringToConvertedTree(
+			UpgradingUtils.stringToConvertedTree(
 				oldStored,
 				"amount",
 				Quantity.class
@@ -89,8 +90,8 @@ public class InvItemBumper2 extends ObjectSchemaVersionBumper<InventoryItem> {
 		oldObj.remove("trackedItemIdentifierName");
 		
 		//update existing fields
-		this.stringToConvertedTree(oldObj, "expiryWarningThreshold", Duration.class);
-		this.stringToConvertedTree(oldObj, "unit", Unit.class);
+		UpgradingUtils.stringToConvertedTree(oldObj, "expiryWarningThreshold", Duration.class);
+		UpgradingUtils.stringToConvertedTree(oldObj, "unit", Unit.class);
 		
 		//add new fields
 		oldObj.putNull("stats");

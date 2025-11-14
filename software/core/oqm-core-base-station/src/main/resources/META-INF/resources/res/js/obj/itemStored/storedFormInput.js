@@ -1,36 +1,49 @@
 const StoredFormInput = {
-	getBasicInputs(stored) {
-		//TODO:: update to use barcode input
-		let output = $(
-			'<div class="commonStoredFormElements">' +
-			'<div class="mb-3 ">\n' +
-			'    <label class="form-label">Barcode</label>\n' +
-			'    <div class="input-group">\n' +
-			'        <input type="text" class="form-control storedBarcodeInput" name="barcode" placeholder="UPC, ISBN...">\n' +
-			'    </div>\n' + '</div>\n' + '<div class="mb-3 ">\n' +
-			'    <label class="form-label">Condition Percentage</label>\n' +
-			'    <div class="input-group">\n' +
-			'        <input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition">\n' +
-			'        <span class="input-group-text" id="addon-wrapping">%</span>\n' +
-			//TODO:: better label of better to worse
-			'    </div>\n' + '</div>\n' + '<div class="mb-3">\n' +
-			'    <label class="form-label">Condition Details</label>\n' +
-			'    <textarea class="form-control storedConditionNotesInput" name="conditionNotes"></textarea>\n' +
-			'</div>\n' +
-			'<div class="mb-3">\n' +
-			'    <label class="form-label">Expires</label>\n' +
-			'    <input type="datetime-local" class="form-control storedExpiredInput" name="expires">\n' +
-			//TODO:: note to leave blank if not applicable
-			'</div>\n' + //TODO:: move these templates to js calls
-			// imageInputTemplate.html() +
+	getBasicInputs(stored, item) {
+		let output = $(`
+<div class="commonStoredFormElements">
+	<div class="mb-3 ">
+		<label class="form-label">Condition Percentage</label>
+		<div class="input-group">
+			<input type="number" max="100" min="0" step="any" class="form-control storedConditionPercentageInput" name="condition">
+			<span class="input-group-text" id="addon-wrapping">%</span>
+<!--				//TODO:: better label of better to worse-->
+		</div>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Condition Details</label>
+		<textarea class="form-control storedConditionNotesInput" name="conditionNotes"></textarea>
+	</div>
+	<div class="mb-3">
+		<label class="form-label">Expires</label>
+		<input type="datetime-local" class="form-control storedExpiredInput" name="expires">
+<!--		//TODO:: note to leave blank if not applicable-->
+	</div>
 
-			//TODO:: add timezone note to expires
+	<div class="mb-3">
+		<label class="form-label">
+			`+Icons.generalIds+`
+			General Ids
+		</label>
+		`+ PageComponents.Inputs.GeneralIds.generalIdInput + `
+	</div>
+	
+	<div class="mb-3">
+		<label class="form-label">
+			`+Icons.uniqueIds+`
+			Unique Ids
+		</label>
+		`+ PageComponents.Inputs.UniqueIds.uniqueIdInput + `
+	</div>
+	
+	`+PageComponents.Inputs.image+`
+	`+PageComponents.Inputs.file+`
+	`+ PageComponents.Inputs.keywords + `
+	`+ PageComponents.Inputs.attribute + `
+</div>`);
 
-			PageComponents.Inputs.keywords +
-			PageComponents.Inputs.attribute +
-			//TODO:: images/files
-			'</div>\n'
-		);
+		let generalIdInputContainer = output.find(".generalIdInputContainer");
+		let uniqueIdInputContainer = output.find(".uniqueIdInputContainer");
 
 		if(stored != null){
 			if(stored.barcode){
@@ -48,8 +61,21 @@ const StoredFormInput = {
 					stored.expires
 				);
 			}
+
+			GeneralIdentifiers.getAssociateButton(generalIdInputContainer).data("forobject", "STORED").attr("id", "generatorSelect-" + window.crypto.getRandomValues(new Uint8Array(5)).join(""));
+			UniqueIdentifiers.getAssociateButton(uniqueIdInputContainer).data("forobject", "STORED").attr("id", "generatorSelect-" + window.crypto.getRandomValues(new Uint8Array(5)).join(""));
+
+			GeneralIdentifiers.populateEdit(generalIdInputContainer, stored.generalIds, (item==null?null:item.idGenerators));
+			UniqueIdentifiers.populateEdit(uniqueIdInputContainer, stored.uniqueIds, (item==null?null:item.idGenerators));
 			KeywordAttEdit.addKeywordInputs(output.find(".keywordInputDiv"), stored.keywords);
 			KeywordAttEdit.addAttInputs(output.find(".attInputDiv"), stored.attributes);
+			ImageSearchSelect.addSelectedImages(output.find(".imagesSelected"), stored.imageIds);
+			FileAttachmentSearchSelect.populateFileInputFromObject(output, stored.attachedFiles);
+		}
+
+		if(item !== null){
+			GeneralIdentifiers.setupForAssociated(generalIdInputContainer, item.idGenerators);
+			UniqueIdentifiers.setupForAssociated(uniqueIdInputContainer, item.idGenerators);
 		}
 
 		return output;
@@ -126,7 +152,7 @@ const StoredFormInput = {
 			}
 		);
 
-		output.append(this.getBasicInputs(stored));
+		output.append(this.getBasicInputs(stored, item));
 
 		return output;
 	},
@@ -135,11 +161,14 @@ const StoredFormInput = {
 		let commonInputsContainer = containerJq.find(".commonStoredFormElements");
 		if(commonInputsContainer.length && commonInputsContainer.is(":visible")){
 			console.log("Had common form elements section.");
-			dataToAddTo["barcode"] = commonInputsContainer.find('input[name="barcode"]').val();
+			dataToAddTo["generalIds"] = GeneralIdentifiers.getGeneralIdData(commonInputsContainer.find('.generalIdInputContainer'));
+			dataToAddTo["uniqueIds"] = UniqueIdentifiers.getUniqueIdData(commonInputsContainer.find('.uniqueIdInputContainer'));
 			dataToAddTo["condition"] = commonInputsContainer.find('input[name="condition"]').val();
 			dataToAddTo["conditionNotes"] = commonInputsContainer.find('textarea[name="conditionNotes"]').val();
 			dataToAddTo["expires"] = TimeHelpers.getTsFromInput(commonInputsContainer.find('input[name="expires"]'));
 			KeywordAttEdit.addKeywordAttData(dataToAddTo, commonInputsContainer.find(".keywordInputDiv"), commonInputsContainer.find(".attInputDiv"));
+			ImageSearchSelect.addImagesToData(dataToAddTo, commonInputsContainer.find(".imagesSelected"));
+			dataToAddTo["attachedFiles"] = FileAttachmentSearchSelect.getFileListFromInput(commonInputsContainer.find(".fileAttachmentSelectInputTableContent"));
 		}
 		//amount inputs
 		let amountInputsContainer = containerJq.find(".amountStoredFormElements");

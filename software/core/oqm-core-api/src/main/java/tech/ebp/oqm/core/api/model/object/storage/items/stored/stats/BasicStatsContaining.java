@@ -10,9 +10,16 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @SuperBuilder
 public class BasicStatsContaining {
-
+	
+	@lombok.Builder.Default
 	private long numStored = 0;
+	
+	@lombok.Builder.Default
 	private long numLowStock = 0;
+	
+	@lombok.Builder.Default
 	private long numExpiryWarn = 0;
+	
+	@lombok.Builder.Default
 	private long numExpired = 0;
 }

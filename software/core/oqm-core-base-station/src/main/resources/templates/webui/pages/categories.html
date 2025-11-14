@@ -101,7 +101,7 @@
                                 <h5 class="card-title d-inline">Id:</h5>
                                 <p class="card-text d-inline">
                                     <small>
-                                        <span id="itemCategoryViewId"></span>{#copyTextButton textContainerId='itemCategoryViewId'}{/copyTextButton}
+                                        <span id="itemCategoryViewId"></span>{#copyTextButton /}
                                     </small>
                                 </p>
                             </div>
@@ -149,8 +149,7 @@
                 </div>
             </div>
         {/modal}
-        {#search/image/imageSearchSelectModal otherModalId="addEditItemCategoryModal" rootPrefix=rootPrefix}
-        {/search/image/imageSearchSelectModal}
+        {#search/image/imageSearchSelectModal otherModalId="addEditItemCategoryModal" rootPrefix=rootPrefix /}
     {/modals}
     {#scripts}
         <script src="{rootPrefix}/res/js/search.js"></script>
@@ -241,7 +240,7 @@
                                 Category.colorCheckboxChanged();
                                 Category.colorInput.val(data.color);
                             }
-                            addSelectedImages(Category.imagesInputDiv, data.imageIds);
+                            ImageSearchSelect.addSelectedImages(Category.imagesInputDiv, data.imageIds);
 							KeywordAttEdit.addKeywordInputs(Category.keywordInputs, data.keywords);
 							KeywordAttEdit.addAttInputs(Category.attInputs, data.attributes);
                         },
@@ -263,7 +262,7 @@
 					color: (Category.colorCheckInput.is(":checked")?Category.colorInput.val():null)
                 };
 				KeywordAttEdit.addKeywordAttData(data, Category.keywordInputs, Category.attInputs);
-                addImagesToData(data, Category.imagesInputDiv);
+                ImageSearchSelect.addImagesToData(data, Category.imagesInputDiv);
                 
                 var result = false;
                 var verb = "";

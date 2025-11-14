@@ -38,8 +38,7 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/item/itemSearchForm id='mainPageSearch' rootPrefix=rootPrefix}
-                    {/search/item/itemSearchForm}
+                    {#search/item/itemSearchForm id='mainPageSearch' rootPrefix=rootPrefix /}
                 </div>
             </div>
         </div>
@@ -98,6 +97,7 @@
 	{#CodeScannerModal /}
 	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal" /}
 	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal' /}
+	{#object/idGenerator/searchSelectModal rootPrefix=rootPrefix /}
 {/modals}
 
 {#scripts}
@@ -105,7 +105,9 @@
     <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
     <script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
     <script src="{rootPrefix}/res/js/obj/media/imageAddFromSelect.js"></script>
+    <script src="{rootPrefix}/res/js/selectedObjectDivUtils.js"></script>
     <script src="{rootPrefix}/res/js/search.js"></script>
+    <script src="{rootPrefix}/res/js/identifiers.js"></script>
     <script src="{rootPrefix}/res/js/other.js"></script>
     <script src="{rootPrefix}/res/js/historySearch.js"></script>
     <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
@@ -140,6 +142,8 @@
 	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredTransaction.js"></script>
 	<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
 	<script src="{rootPrefix}/res/js/entityRef.js"></script>
+	<script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorAddEdit.js"></script>
+	<script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorSearchSelect.js"></script>
 {/scripts}
 
 
