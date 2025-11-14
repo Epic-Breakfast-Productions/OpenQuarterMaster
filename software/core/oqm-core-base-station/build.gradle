@@ -41,7 +41,7 @@ dependencies {
 
     //webjars
     implementation 'org.webjars:jquery:3.7.1'
-    implementation 'org.webjars:bootstrap:5.3.3'
+    implementation 'org.webjars:bootstrap:5.3.8'
 
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation "org.junit.jupiter:junit-jupiter-params:6.0.0"
