@@ -823,7 +823,7 @@ public interface OqmCoreApiClientService {
 	);
 	
 	@POST
-	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/import/file/bundle")
+	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db/import/file/bundle")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ObjectNode> manageImportData(
