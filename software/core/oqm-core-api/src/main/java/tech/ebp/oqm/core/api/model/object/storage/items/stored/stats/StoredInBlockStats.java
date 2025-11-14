@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 
 import javax.measure.Unit;
 
@@ -12,11 +13,13 @@ import javax.measure.Unit;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder
 public class StoredInBlockStats extends StatsWithTotalContaining {
 
 	public StoredInBlockStats(Unit<?> unit){
 		super(unit);
 	}
 
+	@lombok.Builder.Default
 	private boolean hasStored = false;
 }

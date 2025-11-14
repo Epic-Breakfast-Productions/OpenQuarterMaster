@@ -8,7 +8,7 @@ const StoredView = {
 	viewModalHistory: $("#itemStoredHistory"),
 
 	getBlockViewCell(name, ...valueJqs) {
-		let output = $('<div class="col-sm-4 col-4 col-xs-6">' +
+		let output = $('<div class="col-sm-3 col-3 col-xs-6">' +
 			'<h5 class="storedDataTitle"></h5>' +
 			'<div class="storedDataContainer"></div>' +
 			'</div>');
@@ -37,22 +37,6 @@ const StoredView = {
 		}
 		return "";
 	},
-	getStorageBlockBarcodeView(stored, index = false) {
-		//TODO:: rework
-		if (stored.barcode) {
-			let url = "/api/media/code/barcode/" + encodeURIComponent(stored.barcode);
-
-			if (index !== false) {
-				url += "/" + index;
-			}
-
-			return StoredView.getBlockViewCell(
-				"Barcode",
-				$('<img src="' + url + '" title="Stored item barcode" alt="Stored item barcode" class="barcodeViewImg">')
-			);
-		}
-		return "";
-	},
 	getStorageBlockIdentifyingDetailsView(stored) {
 		if (stored.type.includes("TRACKED") && stored.identifyingDetails) {
 			return StoredView.getSimpleBlockViewCell("Identifying Details", stored.identifyingDetails);
@@ -60,12 +44,14 @@ const StoredView = {
 		return "";
 	},
 	getStorageBlockConditionView(stored) {
-		if (stored.condition) {
+		if (stored.condition || stored.conditionNotes) {
 			let conditionJqs = [];
 
-			let newJq = $('<p class="storedCondition mb-0"></p>');
-			newJq.text(stored.condition + "%");
-			conditionJqs.push(newJq);
+			if (stored.condition) {
+				let newJq = $('<p class="storedCondition mb-0"></p>');
+				newJq.text(stored.condition + "%");
+				conditionJqs.push(newJq);
+			}
 
 			if (stored.conditionNotes) {
 				let newJq = $('<p class="storedConditionNotes mt-0 small"></p>');
@@ -119,6 +105,50 @@ const StoredView = {
 				"Attributes",
 				keywordContainer
 			);
+		}
+		return "";
+	},
+
+	getStoredImages(stored){
+		if(stored.imageIds.length) {
+			let output = $('<div class="col-sm-6 col-md-6 col-lg-3">'+Carousel.carouselTemplate+'</div>');
+
+			Carousel.processImagedObjectImages(stored, output.find(".carousel"));
+
+			return output;
+		}
+		return "";
+	},
+
+	getStoredAttachedFiles(stored){
+		if(stored.attachedFiles.length) {
+			let output = $('<div class="col-sm-12 col-md-12 col-lg-6">'+PageComponents.View.attachedFileList+'</div>');
+
+			FileAttachmentView.setupObjectView(output, stored.attachedFiles, null);
+
+			return output;
+		}
+		return "";
+	},
+
+	getStoredGeneralIds(stored){
+		if(Object.keys(stored.generalIds).length) {
+			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row generalIdContainer"></div></div>');
+
+			GeneralIdentifiers.View.showInDiv(output.find(".generalIdContainer"), stored.generalIds);
+
+			return output;
+		}
+		return "";
+	},
+
+	getStoredUniqueIds(stored){
+		if(Object.keys(stored.uniqueIds).length) {
+			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row uniqueIdContainer"></div></div>');
+
+			UniqueIdentifiers.View.showInDiv(output.find(".uniqueIdContainer"), stored.uniqueIds);
+
+			return output;
 		}
 		return "";
 	},
@@ -197,13 +227,16 @@ const StoredView = {
 		}
 
 		newContentInfo.append(
+			StoredView.getStoredImages(stored),
 			StoredView.getStorageBlockAmountHeldView(stored, showCurrentlyStored),
-			StoredView.getStorageBlockBarcodeView(stored, index),
 			StoredView.getStorageBlockIdentifyingDetailsView(stored),
 			StoredView.getStorageBlockConditionView(stored),
 			StoredView.getStorageBlockExpiresView(stored),
 			StoredView.getStoredKeywords(stored),
-			StoredView.getStoredAtts(stored)
+			StoredView.getStoredAtts(stored),
+			StoredView.getStoredGeneralIds(stored),
+			StoredView.getStoredUniqueIds(stored),
+			StoredView.getStoredAttachedFiles(stored)
 		);
 		//TODO:: images, files
 

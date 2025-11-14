@@ -8,7 +8,7 @@ import java.util.List;
 
 @ToString(callSuper = true)
 @Getter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
 public class HistorySearch extends SearchObject {

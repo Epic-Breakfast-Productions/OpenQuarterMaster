@@ -13,7 +13,7 @@ import java.util.List;
 @ToString(callSuper = true)
 @Setter
 @Getter
-@SuperBuilder
+@SuperBuilder(toBuilder = true)
 public abstract class SearchKeyAttObject extends SearchObject {
 	//attKeywords
 	@QueryParam("keyword")

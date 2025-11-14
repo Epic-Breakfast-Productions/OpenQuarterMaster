@@ -626,7 +626,7 @@ const ItemStoredTransaction = {
 					ItemStoredTransaction.Checkin.keywordInputs,
 					ItemStoredTransaction.Checkin.attInputs
 				);
-				addImagesToData(transactionData.details, ItemStoredTransaction.Checkin.imageSelect);
+				ImageSearchSelect.addImagesToData(transactionData.details, ItemStoredTransaction.Checkin.imageSelect);
 
 				switch (ItemStoredTransaction.Checkin.byWhoSelect.val()) {
 					case "originalFor":

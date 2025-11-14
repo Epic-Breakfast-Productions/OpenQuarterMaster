@@ -1,0 +1,30 @@
+{
+	"_id": {
+		"$oid": "68ab4e323ed04c53bb9fd944"
+	},
+	"_t": "tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored",
+	"amount": "{\"unit\":{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"},\"scale\":\"ABSOLUTE\",\"value\":0}",
+	"attachedFiles": [],
+	"attributes": {},
+	"barcode": "",
+	"conditionNotes": "",
+	"expires": {
+		"$date": "2025-08-26T02:38:00Z"
+	},
+	"imageIds": [],
+	"item": {
+		"$oid": "68ab4df73ed04c53bb9fd93c"
+	},
+	"keywords": [],
+	"labelText": "0 units",
+	"notificationStatus": {
+		"expired": false,
+		"expiredWarning": false,
+		"lowStock": false
+	},
+	"schemaVersion": 1,
+	"storageBlock": {
+		"$oid": "68ab4d9f3ed04c53bb9fd933"
+	},
+	"type": "AMOUNT"
+}

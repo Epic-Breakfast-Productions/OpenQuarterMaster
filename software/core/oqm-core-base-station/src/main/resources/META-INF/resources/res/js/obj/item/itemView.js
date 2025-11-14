@@ -37,10 +37,26 @@ const ItemView = {
 	itemViewStorageType: $("#itemViewStorageType"),
 	itemViewDescriptionContainer: $("#itemViewDescriptionContainer"),
 	itemViewDescription: $("#itemViewDescription"),
+
 	itemViewBarcodeContainer: $('#itemViewBarcodeContainer'),
 	itemViewBarcode: $("#itemViewBarcode"),
+
+	idsAccord: $("#itemViewIdsContainer"),
+	generalIdsAccord: $("#itemViewGeneralIdsAccord"),
+	generalIdNumIds: $("#itemViewGeneralIdsNumIdsLabel"),
+	generalIdContent: $("#itemViewGeneralIdsAccordContent"),
+	uniqueIdsAccord: $("#itemViewUniqueIdsAccord"),
+	uniqueIdNumIds: $("#itemViewUniqueIdsNumIdsLabel"),
+	uniqueIdContent: $("#itemViewUniqueIdsAccordContent"),
+
+	assocIdGensAccord: $("#itemViewIdGeneratorsAccord"),
+	assocIdGensNumIds: $("#itemViewIdGeneratorsNumIdsLabel"),
+	assocIdGensContent: $("#itemViewIdGeneratorsAccordContent"),
+
 	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
 	itemViewTotalLowStockThreshold: $("#itemViewTotalLowStockThreshold"),
+	itemViewExpiryWarnThresholdContainer: $("#itemViewExpiryWarnThresholdContainer"),
+	itemViewExpiryWarnThreshold: $("#itemViewExpiryWarnThreshold"),
 	itemViewIdentifyingAttContainer: $("#itemViewIdentifyingAttContainer"),
 	itemViewIdentifyingAtt: $("#itemViewIdentifyingAtt"),
 	viewKeywordsSection: $("#viewKeywordsSection"),
@@ -92,11 +108,23 @@ const ItemView = {
 		ItemView.itemViewStorageType.text("");
 		ItemView.itemViewDescriptionContainer.hide();
 		ItemView.itemViewDescription.text("");
-		ItemView.itemViewBarcodeContainer.hide();
-		ItemView.itemViewBarcode.attr("src", "");
+
+		ItemView.idsAccord.hide();
+		ItemView.generalIdsAccord.hide();
+		ItemView.generalIdNumIds.text("");
+		ItemView.generalIdContent.text("");
+		ItemView.uniqueIdsAccord.hide();
+		ItemView.uniqueIdNumIds.text("");
+		ItemView.uniqueIdContent.text("");
+		ItemView.assocIdGensAccord.hide();
+		ItemView.assocIdGensNumIds.text("");
+		ItemView.assocIdGensContent.text("");
+
 		ItemView.itemViewTotal.text("");
 		ItemView.itemViewTotalLowStockThreshold.text("");
 		ItemView.itemViewTotalLowStockThresholdContainer.hide();
+		ItemView.itemViewExpiryWarnThreshold.text("");
+		ItemView.itemViewExpiryWarnThresholdContainer.hide();
 
 		ItemView.itemViewCheckedOutResultsContainer.html("");
 
@@ -406,14 +434,42 @@ const ItemView = {
 					ItemView.itemViewDescriptionContainer.show();
 				}
 
-				if (itemData.barcode) {
-					ItemView.itemViewBarcode.attr("src", Rest.apiRoot + "/media/code/item/" + itemData.id + "/barcode");
-					ItemView.itemViewBarcodeContainer.show();
+				if(itemData.generalIds.length || itemData.uniqueIds.length || itemData.idGenerators.length) {
+					console.debug("Had ids to show");
+					if(itemData.generalIds.length){
+						ItemView.generalIdsAccord.show();
+						ItemView.generalIdNumIds.text(itemData.generalIds.length);
+						GeneralIdentifiers.View.showInDiv(ItemView.generalIdContent, itemData.generalIds);
+					}
+					if(itemData.uniqueIds.length){
+						ItemView.uniqueIdsAccord.show();
+						ItemView.uniqueIdNumIds.text(itemData.uniqueIds.length);
+						UniqueIdentifiers.View.showInDiv(ItemView.uniqueIdContent, itemData.uniqueIds);
+					}
+					if(itemData.idGenerators.length){
+						ItemView.assocIdGensAccord.show();
+						ItemView.assocIdGensNumIds.text(itemData.idGenerators.length);
+
+						itemData.idGenerators.forEach(function (idGenerator, i) {
+							Getters.Identifiers.generator(idGenerator).then(function (generator) {
+								let newEntry = $('<li></li>');
+								newEntry.text(generator.name + " / " + generator.idFormat);
+
+								ItemView.assocIdGensContent.append(newEntry);
+							});
+						});
+					}
+					ItemView.idsAccord.show();
 				}
 
 				if (itemData.lowStockThreshold) {
 					ItemView.itemViewTotalLowStockThreshold.text(itemData.lowStockThreshold.value + "" + itemData.lowStockThreshold.unit.symbol);
 					ItemView.itemViewTotalLowStockThresholdContainer.show();
+				}
+
+				if(itemData.expiryWarningThreshold){
+					ItemView.itemViewExpiryWarnThreshold.text(TimeHelpers.durationNumSecsToHuman(itemData.expiryWarningThreshold));
+					ItemView.itemViewExpiryWarnThresholdContainer.show();
 				}
 
 				Carousel.processImagedObjectImages(itemData, ItemView.itemViewCarousel);

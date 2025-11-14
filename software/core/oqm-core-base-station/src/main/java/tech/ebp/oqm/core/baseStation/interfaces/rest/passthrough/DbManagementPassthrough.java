@@ -27,40 +27,46 @@ import java.util.Map;
 @Authenticated
 @RequestScoped
 public class DbManagementPassthrough extends PassthroughProvider {
-
+	
 	@Blocking
 	@POST
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<String> addDb(
+	public Uni<Response> addDb(
 		ObjectNode newDb
 	) {
-		return this.getOqmCoreApiClient().manageDbAdd(this.getBearerHeaderStr(), newDb)
-			.eventually(() -> {
-				return Uni.createFrom().item(() -> {
-					getOqmDatabaseService().refreshCache();
-					return null;
-				}).runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
-			});
+		return this.handleCall(
+			this.getOqmCoreApiClient().manageDbAdd(this.getBearerHeaderStr(), newDb)
+				.eventually(()->{
+					return Uni.createFrom().item(()->{
+						getOqmDatabaseService().refreshCache();
+						return null;
+					}).runSubscriptionOn(Infrastructure.getDefaultWorkerPool());
+				})
+		);
 	}
-
+	
 	@Blocking
 	@DELETE
 	@Path("/clear/{oqmDbIdOrName}")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> clearDatabase(
+	public Uni<Response> clearDatabase(
 		@PathParam("oqmDbIdOrName")
 		String oqmDbIdOrName
 	) {
-		return this.getOqmCoreApiClient().manageDbClear(this.getBearerHeaderStr(), oqmDbIdOrName);
+		return this.handleCall(
+			this.getOqmCoreApiClient().manageDbClear(this.getBearerHeaderStr(), oqmDbIdOrName)
+		);
 	}
-
+	
 	@Blocking
 	@DELETE
 	@Path("/clearAllDbs")
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ArrayNode> clearAllDatabase() {
+	public Uni<Response> clearAllDatabase() {
 		log.info("Clearing dbs");
-		return this.getOqmCoreApiClient().manageDbClearAll(this.getBearerHeaderStr());
+		return this.handleCall(
+			this.getOqmCoreApiClient().manageDbClearAll(this.getBearerHeaderStr())
+		);
 	}
-
+	
 }

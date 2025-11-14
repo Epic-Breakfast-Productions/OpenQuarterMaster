@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
@@ -15,6 +16,7 @@ import javax.measure.Unit;
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
+@SuperBuilder
 public abstract class StatsWithTotalContaining extends BasicStatsContaining {
 
 	public StatsWithTotalContaining(Unit<?> unit){

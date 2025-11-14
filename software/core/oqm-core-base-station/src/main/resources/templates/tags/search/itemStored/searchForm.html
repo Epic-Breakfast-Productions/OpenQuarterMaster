@@ -11,5 +11,9 @@ Ingests:
         {/inputs/item/itemSelectInput}
         {#inputs/storageBlock/storageBlockSelectInput id=id blockIdName='blockId'}
         {/inputs/storageBlock/storageBlockSelectInput}
+		<div class="mb-3 col col-3">
+			<label for="{id}-itemGenIdInput" class="form-label">General Id</label>
+			{#inputs/identifiers/identifierInput id=(id + "-itemGenIdInput") name="generalId" showAdd=false /}
+		</div>
     {/inputs}
 {/include}

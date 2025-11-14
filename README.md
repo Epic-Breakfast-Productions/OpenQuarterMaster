@@ -24,34 +24,9 @@ We are very much in development still, so check back often! We are also acceptin
 
  - For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single%20Host)
  - To see all the ways you can deploy OQM for yourself, see [Deployment](deployment/)
+ - For information on the overall system, see the [software](software/) directory.
 
 ## How it works
-
-```mermaid
-C4Context
-title System Context diagram for Open QuarterMaster
-
-Person(user, "User", "You (Hopefully)!")
-
-System_Boundary(b1, "Deployment Environment- Local computer/server, Kubernetes") {
-
-  SystemDb_Ext(baseStation, "OQM Base Station", "Handles all Inventory Management core functionality")
-  System(stationCaptain, "Station Captain", "Manages your installation (On single server only)")
-
-  Boundary(boundaryInfra, "Infrastructure Components") {
-    SystemDb(mongo, "MongoDB")
-    SystemDb(amq, "AMQ")
-    System(jaeger, "Jaeger")
-  }
-  
-  Boundary(boundaryPlugins, "Plugins") {
-    System(pluginPoc, "Point of Sale (Planned)", "Standard POS functions")
-    System(pluginStorage, "Interactive and Modular Storage (Planned)", "A system that intractis with physical storage medims to help convey placement of items.")
-  }
-}
-
-```
-Please use the diagram above for reference.
 
 How we accomplish the goal of being the only inventory management system you could ever need is through our modular design. The main component of Open QuarterMaster is the [Core API](software/core/oqm-core-api). Think of this as the central hub and core functionality of the system. It handles all the generic inventory management tasks; what is stored where, and facts about what is stored. This central component is designed to be, on the whole, generic and accessible. We also have a frontend for the core API called the [Base Station](software/core/oqm-core-base-station), which lets you have direct and easy to navigate access to your inventory.
 
@@ -60,6 +35,8 @@ To cover specific use-cases, we have what we call [Plugins](software/plugins). T
 In the theme of flexibility, the system is designed to be run in many different environments. It is just as home on the cloud as well as something as small as a [Raspberry Pi](https://www.raspberrypi.com/). This is accomplished using containers, segmenting each software component, ensuring flexibility and ease of management.
 
 To get started on your own hardware, please see [Single Host Deployment](deployment/Single%20Host)
+
+For more information on the overall system, see the [software](software/) directory. 
 
 ## On Privacy
 

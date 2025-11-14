@@ -100,7 +100,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 	}
 	
 	@WithSpan
-	public ObjectId add(String dbIdOrName, ClientSession clientSession, T fileObject, File file, String fileName, InteractingEntity interactingEntity) throws IOException {
+	public T add(String dbIdOrName, ClientSession clientSession, T fileObject, File file, String fileName, InteractingEntity interactingEntity) throws IOException {
 		FileMetadata fileMetadata = new FileMetadata(file);
 		fileMetadata.setOrigName(FilenameUtils.getName(fileName));
 		fileObject.setFileName(fileName);
@@ -133,16 +133,16 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 				}
 			}
 			
-			return newId;
+			return fileObject;
 		}
 	}
 	
-	public ObjectId add(String dbIdOrName, ClientSession clientSession, T fileObject, File file, InteractingEntity interactingEntity) throws IOException {
+	public T add(String dbIdOrName, ClientSession clientSession, T fileObject, File file, InteractingEntity interactingEntity) throws IOException {
 		return this.add(dbIdOrName, clientSession, fileObject, file, file.getName(), interactingEntity);
 	}
 	
 	@WithSpan
-	public ObjectId add(String dbIdOrName, ClientSession clientSession, T fileObject, U uploadBody, InteractingEntity interactingEntity) throws IOException {
+	public T add(String dbIdOrName, ClientSession clientSession, T fileObject, U uploadBody, InteractingEntity interactingEntity) throws IOException {
 		File tempFile = this.getTempFileService().getTempFile(
 			FilenameUtils.removeExtension(uploadBody.fileName),
 			FilenameUtils.getExtension(uploadBody.fileName),
@@ -151,20 +151,20 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		
 		FileUtils.copyInputStreamToFile(uploadBody.file, tempFile);
 		
-		ObjectId id = this.add(dbIdOrName, clientSession, fileObject, tempFile, uploadBody.fileName, interactingEntity);
+		T newObj = this.add(dbIdOrName, clientSession, fileObject, tempFile, uploadBody.fileName, interactingEntity);
 		
 		if (!tempFile.delete()) {
 			log.warn("Failed to delete temporary upload file: {}", tempFile);
 		}
 		
-		return id;
+		return newObj;
 	}
 	
-	public ObjectId add(String dbIdOrName, T fileObject, U uploadBody, InteractingEntity interactingEntity) throws IOException {
+	public T add(String dbIdOrName, T fileObject, U uploadBody, InteractingEntity interactingEntity) throws IOException {
 		return this.add(dbIdOrName, null, fileObject, uploadBody, interactingEntity);
 	}
 	
-	public ObjectId add(String dbIdOrName, T fileObject, File file, InteractingEntity interactingEntity) throws IOException {
+	public T add(String dbIdOrName, T fileObject, File file, InteractingEntity interactingEntity) throws IOException {
 		return this.add(dbIdOrName, null, fileObject, file, interactingEntity);
 	}
 	

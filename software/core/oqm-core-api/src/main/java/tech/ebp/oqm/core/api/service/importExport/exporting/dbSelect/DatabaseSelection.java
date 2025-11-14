@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 
@@ -19,6 +20,7 @@ import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 	@JsonSubTypes.Type(value = IncludeDatabaseSelection.class, name = "INCLUDE"),
 	@JsonSubTypes.Type(value = SelectNoDatabases.class, name = "NONE")
 })
+@SuperBuilder
 public abstract class DatabaseSelection {
 	public abstract DatabaseSelectionType getDatabaseSelectionType();
 

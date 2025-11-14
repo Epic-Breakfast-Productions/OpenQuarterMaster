@@ -77,12 +77,11 @@ public class AddUniqueSingleTransactionUiTest extends WebUiTest {
 //				.isVisible()
 //		);
 	
-		String barcode = String.valueOf(FAKER.barcode().gtin14());
 		String condition = "100";
 		String conditionNotes = FAKER.lorem().paragraph();
 		
 		attTransactionModal.locator(AddTransactionUtils.TO_BLOCK_SELECT).selectOption(storageBlocks.getFirst().get("id").asText());
-		addStoredInputs.locator(AddTransactionUtils.COMMON_BARCODE_INPUT).fill(barcode);
+		
 		addStoredInputs.locator(AddTransactionUtils.COMMON_CONDITION_INPUT).fill(condition);
 		addStoredInputs.locator(AddTransactionUtils.COMMON_CONDITION_NOTES_INPUT).fill(conditionNotes);
 		List<String> keywords = AttKeywordUiUtils.fillKeywords(addStoredInputs, 5);
@@ -118,7 +117,6 @@ public class AddUniqueSingleTransactionUiTest extends WebUiTest {
 		Locator storedViewContainer = oqm.locator("#itemViewStoredSingleContainer");
 		assertTrue(storedViewContainer.isVisible());
 		
-		assertTrue(storedViewContainer.locator(".barcodeViewImg").isVisible());
 		assertTrue(storedViewContainer.locator(".storedCondition").isVisible());
 		assertEquals(
 			condition + "%",

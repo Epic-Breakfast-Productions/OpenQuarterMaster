@@ -17,15 +17,6 @@
 				</button>
 			</li>
 			<li class="nav-item" role="presentation">
-				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
-					{#icons/expiring}{/icons/expiring} Expiring
-					{#let totalExpired=expiredResults.get("numResultsForEntireQuery").asInt() totalExpiryWarn=expiryWarnResults.get("numResultsForEntireQuery").asInt()}
-						{#if totalExpired > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</sup>{/if}
-						{#if totalExpiryWarn > 0}<sup class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</sup>{/if}
-					{/let}
-				</button>
-			</li>
-			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="lowStockTab" data-bs-toggle="tab" data-bs-target="#lowStockTabContent" type="button" role="tab" aria-controls="lowStockTabContent" aria-selected="false">
 					{#icons/lowStock}{/icons/lowStock} Low Stock
 					{#let totalLowStock=lowStockResults.get("numResultsForEntireQuery").asInt()}
@@ -33,12 +24,35 @@
 					{/let}
 				</button>
 			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="expiringTab" data-bs-toggle="tab" data-bs-target="#expiringTabContent" type="button" role="tab" aria-controls="expiringTabContent" aria-selected="false">
+					{#icons/expiring /} Expiring
+					{#let totalExpiryWarn=expiryWarnResults.get("numResultsForEntireQuery").asInt()}
+						{#if totalExpiryWarn > 0}<sup class="badge rounded-pill bg-warning" title="Expiring Soon">{str:format("%,d",totalExpiryWarn)}</sup>{/if}
+					{/let}
+				</button>
+			</li>
+			<li class="nav-item" role="presentation">
+				<button class="nav-link" id="expiredTab" data-bs-toggle="tab" data-bs-target="#expiredTabContent" type="button" role="tab" aria-controls="expiredTabContent" aria-selected="false">
+					{#icons/expired /} Expired
+					{#let totalExpired=expiredResults.get("numResultsForEntireQuery").asInt()}
+						{#if totalExpired > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalExpired)}</sup>{/if}
+					{/let}
+				</button>
+			</li>
 		</ul>
 		<div class="tab-content">
 			<div class="tab-pane fade show active" id="overviewTabContent" role="tabpanel" aria-labelledby="overviewTab">
-				<p>
+				<p class="mt-3">
 					{itemCollectionStats.get("size").asLong()} types of items stored in over {storageCollectionStats.get("size").asLong()} storage blocks
 				</p>
+				
+				{#if parentBlocks.get("hasPages").asBoolean()}
+					<form id="overviewParentBlocksTreeForm" method="get" action="{rootPrefix}/overview#overview">
+						<input type="hidden" name="pageNum">
+					</form>
+					{#paginationButtons searchFormId="overviewParentBlocksTreeForm" searchResults=parentBlocks /}
+				{/if}
 				<div class="row">
 					<div class="col">
 						{#storageBlock/blockTree parentBlocks=parentBlocks rootPrefix=rootPrefix}{/storageBlock/blockTree}
@@ -46,72 +60,182 @@
 				</div>
 			</div>
 			<div class="tab-pane fade" id="expiringTabContent" role="tabpanel" aria-labelledby="expiringTab">
-				<div class="row">
+				<div class="row mt-3">
 					<div class="col">
+					{! TODO:: swap to stored search !}
 						<h3>
-							Expired:
-						</h3>
-						{#if expiredResults.get("empty").asBoolean()}
-							<p>
-								Nothing expired!
-							</p>
-						{#else}
-							<table class=" table table-bordered table-striped table-hover table-sm">
-							{#search/item/itemSearchResults searchResults=expiredResults actionType='view' searchFormId=""}
-							{/search/item/itemSearchResults}
-							</table>
-						{/if}
-					</div>
-				</div>
-				<hr />
-				<div class="row">
-					<div class="col">
-						<h3>
-							Close to expiring:
+							Stored Items Close to expiring:
 						</h3>
 						{#if expiryWarnResults.get("empty").asBoolean()}
 							<p>
 								Nothing close to expiring!
 							</p>
 						{#else}
+							{#if expiryWarnResults.get("hasPages").asBoolean()}
+								<form id="overviewExpiringSearchForm" method="get" action="{rootPrefix}/overview#expiringTab">
+									<input type="hidden" name="pageNum">
+								</form>
+							{/if}
 							<table class=" table table-bordered table-striped table-hover table-sm">
-							{#search/item/itemSearchResults searchResults=expiryWarnResults actionType='view' searchFormId=""}
-							{/search/item/itemSearchResults}
+							{#search/itemStored/searchResults searchResults=expiryWarnResults actionType='full' searchFormId="" showType=true showItem=true showStorage=true rootPrefix=rootPrefix /}
 							</table>
 						{/if}
 					</div>
 				</div>
 			</div>
-		<div class="tab-pane fade" id="lowStockTabContent" role="tabpanel" aria-labelledby="lowStockTab">
-			<div class="row">
-				<div class="col">
-					<h3>
-						Low Stock:
-					</h3>
-					{#if lowStockResults.get("empty").asBoolean()}
-						<p>
-							No stock is low!
-						</p>
-					{#else}
-						<table class=" table table-bordered table-striped table-hover table-sm">
-							{#search/item/itemSearchResults searchResults=lowStockResults actionType='view' searchFormId=""}
-							{/search/item/itemSearchResults}
-						</table>
-					{/if}
+			<div class="tab-pane fade" id="expiredTabContent" role="tabpanel" aria-labelledby="expiredTab">
+				<div class="row mt-3">
+					<div class="col">
+					{! TODO:: swap to stored search !}
+						<h3>
+							Expired Stored Items:
+						</h3>
+						{#if expiredResults.get("empty").asBoolean()}
+							<p>
+								Nothing expired!
+							</p>
+						{#else}
+							{#if expiredResults.get("hasPages").asBoolean()}
+								<form id="overviewExpiredSearchForm" method="get" action="{rootPrefix}/overview#expiredTab">
+									<input type="hidden" name="pageNum">
+								</form>
+							{/if}
+							<table class=" table table-bordered table-striped table-hover table-sm">
+							{#search/itemStored/searchResults searchResults=expiredResults actionType='full' showType=true showItem=true showStorage=true searchFormId="overviewExpiredSearchForm" rootPrefix=rootPrefix /}
+							</table>
+						{/if}
+					</div>
+				</div>
+			</div>
+			<div class="tab-pane fade" id="lowStockTabContent" role="tabpanel" aria-labelledby="lowStockTab">
+				<div class="row mt-3">
+					<div class="col">
+						<h3>
+							Items with Low Stock:
+						</h3>
+						{#if lowStockResults.get("empty").asBoolean()}
+							<p>
+								No stock is low!
+							</p>
+						{#else}
+							{#if lowStockResults.get("hasPages").asBoolean()}
+								<form id="overviewLowStockSearchForm" method="get" action="{rootPrefix}/overview#lowStockTab">
+									<input type="hidden" name="pageNum">
+								</form>
+							{/if}
+							<table class=" table table-bordered table-striped table-hover table-sm">
+								{#search/item/itemSearchResults searchResults=lowStockResults actionType='view' searchFormId="overviewLowStockSearchForm" rootPrefix=rootPrefix /}
+							</table>
+						{/if}
+					</div>
 				</div>
 			</div>
 		</div>
-		</div>
 	{/pageContent}
+	{#modals}
+		{#objView/itemViewModal currency=currency  rootPrefix=rootPrefix}
+			{#footerButtons}
+				<button type="button" id="itemViewEditButton" class="btn btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" >
+					{#icons/edit}{/icons/edit}
+					Edit Item
+				</button>
+			{/footerButtons}
+		{/objView/itemViewModal}
+		{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency /}
+		{#search/storage/searchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
+		{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
+		{#search/item/itemSearchSelectModal rootPrefix=rootPrefix /}
+		{#search/itemStored/itemStoredSearchSelectModal rootPrefix=rootPrefix /}
+		{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal" rootPrefix=rootPrefix /}
+		{#itemStored/itemStoredViewModal rootPrefix=rootPrefix /}
+		{#itemStored/itemStoredEditModal rootPrefix=rootPrefix /}
+		{#itemStored/transaction/allTransactionModals /}
+		{#CodeScannerModal /}
+		{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal" /}
+		{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal' /}
+	{/modals}
 	{#scripts}
-		<script src="{rootPrefix}/res/js/obj/getters.js"></script>
-		<script src="{rootPrefix}/res/js/obj/units.js"></script>
-		<script src="{rootPrefix}/res/js/pageComponents.js"></script>
+	<script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageAddFromSelect.js"></script>
+    <script src="{rootPrefix}/res/js/search.js"></script>
+    <script src="{rootPrefix}/res/js/other.js"></script>
+    <script src="{rootPrefix}/res/js/historySearch.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/objView.js"></script>
+    <script src="{rootPrefix}/res/js/storedTypeUtils.js"></script>
+    <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/units.js"></script>
+    <script src="{rootPrefix}/res/js/obj/getters.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
+    <script src="{rootPrefix}/res/js/carousel.js"></script>
+    <script src="{rootPrefix}/res/js/obj/storageBlock/storageBlockTree.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCategoryView.js"></script>
+    <script src="{rootPrefix}/res/js/textCopy.js"></script>
+    <script src="{rootPrefix}/res/js/item/extItemSearch.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
+	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/identifiers.js"></script>
+    <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorAddEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorUtils.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemAddEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemStored/storedView.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemStored/storedFormInput.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemStored/itemStoredEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/item/itemView.js"></script>
+    <script src="{rootPrefix}/res/js/CodeScanning.js"></script>
+    <script src="{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
+    <script src="{rootPrefix}/res/js/pageComponents.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearch.js"></script>
+	<script src="{rootPrefix}/res/js/modalHelpers.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredTransaction.js"></script>
+	<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
+	<script src="{rootPrefix}/res/js/entityRef.js"></script>
+	
 	{/scripts}
 	{#pageScript}
 		<script>
+			let overviewParentBlocksTreeForm = $("#overviewParentBlocksTreeForm");
+			if(overviewParentBlocksTreeForm.length !== 0){
+				overviewParentBlocksTreeForm.on("submit", function(e){
+					// e.preventDefault();
+					overviewParentBlocksTreeForm.find("input[name='pageNum']").attr("name", "storageBlockTreePage");
+				});
+			}
+			
+			let overviewLowStockSearchForm = $("#overviewLowStockSearchForm");
+			if(overviewLowStockSearchForm.length !== 0){
+				overviewLowStockSearchForm.on("submit", function(e){
+					// e.preventDefault();
+					overviewLowStockSearchForm.find("input[name='pageNum']").attr("name", "lowStockPage");
+				});
+			}
+			
+			let overviewExpiringSearchForm = $("#overviewExpiringSearchForm");
+			if(overviewExpiringSearchForm.length !== 0){
+				overviewExpiringSearchForm.on("submit", function(e){
+					// e.preventDefault();
+					overviewExpiringSearchForm.find("input[name='pageNum']").attr("name", "expiringPage");
+				});
+			}
+			
+			let overviewExpiredSearchForm = $("#overviewExpiredSearchForm");
+			if(overviewExpiredSearchForm.length !== 0){
+				overviewExpiredSearchForm.on("submit", function(e){
+					// e.preventDefault();
+					overviewExpiredSearchForm.find("input[name='pageNum']").attr("name", "expiredPage");
+				});
+			}
+			
+			
 			var created = { };
-
 
 			function getInvItemSection(invItemArr, parentId){
 				if(invItemArr.results.length === 0){
@@ -237,7 +361,7 @@
 				if(itemData.description){
 					//TODO
 				}
-				//TODO:: fill with details
+				//TODO:: fill with details #918
 				
 				return output;
 			}
@@ -306,6 +430,12 @@
 					}
 				});
 			}
+			
+			let anchor = $(location).attr('hash');
+			if(anchor){
+				$(anchor).click();
+			}
+			
 		</script>
 	{/pageScript}
 {/include}

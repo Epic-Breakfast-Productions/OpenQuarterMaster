@@ -19,11 +19,6 @@ import java.util.Map;
 public class ConfigHealthCheck implements HealthCheck {
 	private static final String HEALTH_CHECK_NAME = "Config Sanity health check";
 	
-	private Map<String, String> checkAuthConfig(){
-		Map<String, String> invalidConfigs = new HashMap<>();
-		//TODO
-		return invalidConfigs;
-	}
 	private Map<String, String> checkRunningInfoConfig(){
 		Map<String, String> invalidConfigs = new HashMap<>();
 		
@@ -45,7 +40,6 @@ public class ConfigHealthCheck implements HealthCheck {
 	public HealthCheckResponse call() {
 		Map<String, String> invalidConfigs = new HashMap<>();
 		
-		invalidConfigs.putAll(checkAuthConfig());
 		invalidConfigs.putAll(checkRunningInfoConfig());
 		
 		if(invalidConfigs.isEmpty()) {

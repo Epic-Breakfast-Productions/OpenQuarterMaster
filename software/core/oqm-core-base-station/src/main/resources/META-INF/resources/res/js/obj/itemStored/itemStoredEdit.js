@@ -13,11 +13,17 @@ const ItemStoredEdit = {
 		ItemStoredEdit.infoItemName.text("");
 		ItemStoredEdit.infoBlockLabel.text("");
 	},
-	setupEditForm: async function(buttonPressed, itemId, stored){
+	setupEditForm: async function(buttonPressed, item, stored){
 		Main.processStart();
+		if (typeof item === "string" || (item instanceof String)) {
+			return Getters.InventoryItem.get(item, function (itemData){
+				ItemStoredEdit.setupEditForm(buttonPressed, itemData, stored);
+				Main.processStop();
+			});
+		}
 		if (typeof stored === "string" || (stored instanceof String)) {
-			return Getters.StoredItem.getStored(itemId, stored, function (storedData){
-				ItemStoredEdit.setupEditForm(buttonPressed, itemId, storedData);
+			return Getters.StoredItem.getStored(item.id, stored, function (storedData){
+				ItemStoredEdit.setupEditForm(buttonPressed, item.id, storedData);
 				Main.processStop();
 			});
 		}
@@ -28,16 +34,15 @@ const ItemStoredEdit = {
 		let promises = [];
 
 		ItemStoredEdit.infoStoredLabel.text(stored.labelText);
-		promises.push(Getters.InventoryItem.getItemName(itemId, function (itemName){
-			ItemStoredEdit.infoItemName.text(itemName);
-		}));
+		ItemStoredEdit.infoItemName.text(item.name);
+
 		promises.push(getStorageBlockLabel(stored.storageBlock, function (blockLabel){
 			ItemStoredEdit.infoBlockLabel.text(blockLabel);
 		}));
 
-		ItemStoredEdit.form.attr("action", Rest.passRoot + "/inventory/item/"+itemId+"/stored/"+stored.id);
+		ItemStoredEdit.form.attr("action", Rest.passRoot + "/inventory/item/"+item.id+"/stored/"+stored.id);
 
-		let inputs = await StoredFormInput.getStoredInputs(stored.type, stored, null, true);
+		let inputs = await StoredFormInput.getStoredInputs(stored.type, stored, item, true);
 		ItemStoredEdit.form.append(inputs);
 
 		Promise.all(promises);
@@ -52,6 +57,7 @@ ItemStoredEdit.form.on("submit", async function (e) {
 
 	let updateData = {};
 	StoredFormInput.dataFromInputs(updateData, ItemStoredEdit.form);
+	delete updateData["type"];
 
 	console.debug("Stored item update data: ", updateData);
 
