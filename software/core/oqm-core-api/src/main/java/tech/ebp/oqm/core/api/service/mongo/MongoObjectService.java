@@ -227,7 +227,8 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 			list,
 			this.count(oqmDbIdOrName, filter),
 			!filters.isEmpty(),
-			pagingOptions
+			pagingOptions,
+			searchObject
 		);
 	}
 	

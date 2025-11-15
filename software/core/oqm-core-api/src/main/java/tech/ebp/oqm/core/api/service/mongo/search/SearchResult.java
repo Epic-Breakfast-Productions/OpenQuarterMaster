@@ -3,13 +3,15 @@ package tech.ebp.oqm.core.api.service.mongo.search;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import tech.ebp.oqm.core.api.model.object.MainObject;
+import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 
 import java.util.List;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class SearchResult<T> {
+public class SearchResult<T extends MainObject> {
 	
 	private List<T> results;
 	private long numResults;
@@ -17,6 +19,7 @@ public class SearchResult<T> {
 	private boolean hadSearchQuery;
 	private PagingOptions pagingOptions;
 	private PagingCalculations pagingCalculations;
+	private SearchObject<?> searchObject;
 	
 	public SearchResult(List<T> results) {
 		this(
@@ -25,18 +28,20 @@ public class SearchResult<T> {
 			results.size(),
 			false,
 			null,
+			null,
 			null
 		);
 	}
 	
-	public SearchResult(List<T> results, long numResultsForEntireQuery, boolean hadSearchQuery, PagingOptions pagingOptions) {
+	public SearchResult(List<T> results, long numResultsForEntireQuery, boolean hadSearchQuery, PagingOptions pagingOptions, SearchObject<?> searchObject) {
 		this(
 			results,
 			results.size(),
 			numResultsForEntireQuery,
 			hadSearchQuery,
 			pagingOptions,
-			new PagingCalculations(pagingOptions, numResultsForEntireQuery)
+			new PagingCalculations(pagingOptions, numResultsForEntireQuery),
+			searchObject
 		);
 	}
 	

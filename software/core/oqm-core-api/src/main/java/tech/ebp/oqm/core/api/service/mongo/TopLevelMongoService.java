@@ -192,7 +192,8 @@ public abstract class TopLevelMongoService<T extends MainObject, S extends Searc
 			list,
 			this.count(filter),
 			!filters.isEmpty(),
-			pagingOptions
+			pagingOptions,
+			searchObject
 		);
 	}
 	

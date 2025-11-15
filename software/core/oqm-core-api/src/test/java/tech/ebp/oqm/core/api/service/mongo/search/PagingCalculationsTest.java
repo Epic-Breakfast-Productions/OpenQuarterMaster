@@ -8,6 +8,8 @@ import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingCalculations;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
+import tech.ebp.oqm.core.api.testResources.data.TestMainObject;
+import tech.ebp.oqm.core.api.testResources.data.TestMainObjectSearch;
 
 import java.util.Collections;
 import java.util.Iterator;
@@ -91,7 +93,7 @@ class PagingCalculationsTest {
 	@Test
 	public void testSearchConstructor() {
 		PagingCalculations calculations = new PagingCalculations(
-			new SearchResult<Void>(Collections.emptyList(), 3, false, new PagingOptions(1, 2))
+			new SearchResult<TestMainObject>(Collections.emptyList(), 3, false, new PagingOptions(1, 2), new TestMainObjectSearch())
 		);
 		
 		assertEquals(3, calculations.getNumPages());
