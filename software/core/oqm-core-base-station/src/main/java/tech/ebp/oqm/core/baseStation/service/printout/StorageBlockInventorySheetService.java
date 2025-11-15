@@ -72,6 +72,7 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 		ObjectNode itemsInBlockSr,
 		InventorySheetsOptions options
 	) {
+		//TODO:: update these
 		Predicate<ObjectNode> simpleAmountFilter = new Predicate<ObjectNode>() {
 			@Override
 			public boolean test(ObjectNode inventoryItem) {
@@ -90,9 +91,7 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 				return  "TRACKED".equals(inventoryItem.get("storageType").asText());
 			}
 		};
-
-
-
+		
 		return this.setupBasicPrintoutData(this.inventorySheetTemplate)
 			.data("simpleAmountFilter", simpleAmountFilter)
 			.data("listAmountFilter", listAmountFilter)
@@ -173,8 +172,7 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 			doc.getDocumentInfo().setSubject("Inventory sheet for " + block.get("label").asText());
 			doc.getDocumentInfo().setTitle(block.get("labelText").asText() + " Inventory Sheet");
 			doc.getDocumentInfo().setKeywords("inventory, sheet, " + storageBlockId);
-
-
+			
 			String html = this.getHtmlInventorySheet(
 				block,
 				storageBlockChildrenSr,
