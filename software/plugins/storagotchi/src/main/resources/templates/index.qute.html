@@ -71,12 +71,17 @@
 		<section class="tabs"  id="mainTabs">
 			<menu role="tablist" aria-label="Navigation">
 				<button role="tab" aria-selected="true" aria-controls="tab-game">{settings.getStoragotchiName()}</button>
+				<button role="tab" aria-controls="tab-achievements">Achievements</button>
 				<button role="tab" aria-controls="tab-guide">Guide</button>
 				<button role="tab" aria-controls="tab-options">Options <span id="optionsChangedIndicator"></span></button>
 			</menu>
 			<!-- the tab content -->
 			<article role="tabpanel" id="tab-game" class="mainTabBody">
 				<div id="gameCanvas"></div>
+			</article>
+			<article role="tabpanel" id="tab-achievements" class="mainTabBody" hidden>
+				<h3>Achievements</h3>
+				<p>Achievements for doing cool things with your inventory</p>
 			</article>
 			<article role="tabpanel" id="tab-guide" class="mainTabBody" hidden>
 				<h3>Guide</h3>
@@ -140,7 +145,7 @@
 			A fun digital dude to help you stay motivated with your inventory management.
 		</p>
 		<p>
-			Version 1.0.0-SNAPSHOT TODO
+			Version {config:['quarkus.application.version']}
 		</p>
 		<p>
 			&copy; 2025 <a href="https://epic-breakfast-productions.tech">Epic Breakfast Productions</a>
@@ -248,6 +253,9 @@
 			case "low": // 0 - 50%
 				perc = Math.floor(Math.random() * (25 + 1));
 				break;
+			case "none": // 0 - 50%
+				perc = 0;
+				break;
 			default:
 				perc = "?";
 		}
@@ -278,8 +286,11 @@
 	const updatesSocket = newUpdatesWebSocket();
 </script>
 
+<script src="/lib/pixi/8.14.0/pixi.min.js"></script>
+<script src="/lib/pixi/8.14.0/pixi-sound.js"></script>
 <script type="module">
-	import * as PIXI from '/lib/pixi/8.14.0/pixi.min.mjs';
+	// import * as PIXI from '/lib/pixi/8.14.0/pixi.min.mjs';
+	// import * as PIXIS from '/lib/pixi/8.14.0/pixi-sound.js';
 	
 	const SCREEN_BORDER = 100;
 	
@@ -295,7 +306,7 @@
 	//storagotchi
 	const SG_WIDTH_MOD = 0.03;
 	const SG_CPU_UPDATE_TIME = 750;
-	const SG_WAKEUP_TIME = 2000;
+	const SG_WAKEUP_TIME = 23_500;
 	
 	const gameState = {
 		oqmActionCount: 0
@@ -315,6 +326,12 @@
 	
 	// Create a new application
 	const app = new PIXI.Application();
+	const sounds = {
+		"sfx": {
+		},
+		"music": {
+		}
+	};
 	const boxes = [];
 	let storagotchi = null;
 	
@@ -357,6 +374,14 @@
 		console.log("Loading assets");
 		await PIXI.Assets.load(assets);
 		console.log("Finished loading assets.");
+		
+		//sounds
+		sounds["sfx"]['dial-up'] = PIXI.sound.Sound.from({
+			alias: 'dial-up',
+			url: '/media/audio/sfx/dial-up.mp3',
+			preload: true
+		});
+		
 	}
 	
 	async function initApp() {
@@ -380,6 +405,10 @@
 			.fill({ color: '#bed5ff'})
 		
 		app.stage.addChild(graphics);
+	}
+	
+	function randomFloatFromInterval(min, max) { // min and max included
+		return Math.random() * (max - min) + min;
 	}
 	
 	function randomIntFromInterval(min, max) { // min and max included
@@ -459,15 +488,40 @@
 		storagotchi.x = app.screen.width / 2;
 		storagotchi.y = app.screen.height / 2;
 		
+		storagotchi.eventMode = 'static';
+		storagotchi.on('click', (event) => {
+			console.log('Storagotchi clicked!', event);
+			
+			switch(storagotchi["state"]["state"]){
+				case "asleep":
+					storagotchiSetupWakeup();
+					break;
+				case "wakeup":
+					storagotchiWakeupDone();
+					break;
+				default:
+					console.log("Noting to do in this state");
+			}
+		});
+		
+		storagotchi["state"] = {
+			"state": "asleep",
+			"cpu": "none",
+			"cpuTimer": performance.now()
+		};
+		updateStateDisplay("Asleep", 0);
+		
+		app.stage.addChild(storagotchi);
+	}
+	
+	function storagotchiSetupWakeup(app, time, delta){
 		storagotchi["state"] = {
 			"state": "wakeup",
 			"cpu": "pinned",
-			"cpuTimer": performance.now(),
 			"start": performance.now()
 		};
 		updateStateDisplay("Waking Up", 0);
-		
-		app.stage.addChild(storagotchi);
+		sounds["sfx"]['dial-up'].play();
 	}
 	
 	function storagotchiWakeup(app, time, delta){
@@ -476,12 +530,16 @@
 		
 		if(curDiff < SG_WAKEUP_TIME){
 			updateLoadBar(curDiff / SG_WAKEUP_TIME);
-			storagotchi.rotation += ((Math.random() < 0.5) ? -1 : 1) * 0.05 * delta;
+			storagotchi.rotation += ((Math.random() < 0.5) ? -1 : 1) * 0.1 * delta;
 		} else {
-			console.log("Storagotchi woken up - now meandering");
-			storagotchi.rotation = 0;
-			storagotchiSetupForMeander();
+			storagotchiWakeupDone(app, time, delta);
 		}
+	}
+	function storagotchiWakeupDone(app, time, delta){
+		console.log("Storagotchi woken up - now meandering");
+		sounds["sfx"]["dial-up"].stop();
+		storagotchi.rotation = 0;
+		storagotchiSetupForMeander();
 	}
 	
 	function storagotchiSetupForMeander(){
@@ -490,6 +548,7 @@
 		storagotchi["state"]["start"] = performance.now();
 		storagotchi["state"]["destination"] = null;
 		updateStateDisplay("Meandering", null);
+		console.log("Setup for meandering");
 	}
 	
 	function storagotchiMeander(app, time, delta){
@@ -500,13 +559,15 @@
 				x: x,
 				y: y
 			}
-			storagotchi["state"]["speed"] = 0.7;//TODO:: randomize
+			storagotchi["state"]["speed"] = randomFloatFromInterval(0.5, 1);
+			console.log("Got new meander destination, moving at: ", storagotchi["state"]["speed"]);
 		}
 		
 		if(storagotchi["state"]["destination"] === "wait"){ // waiting
 			let curTime = performance.now();
 			
-			if((curTime - storagotchi["state"]["start"]) > 2000){
+			if((curTime - storagotchi["state"]["start"]) > storagotchi["state"]["duration"]){
+				console.log("Done with meandering wait.");
 				storagotchi["state"]["destination"] = null;
 			}
 		} else if( // got to destination
@@ -514,7 +575,9 @@
 			storagotchi.y === storagotchi["state"]["destination"]["y"]
 		){
 			storagotchi["state"]["destination"] = "wait";
+			storagotchi["state"]["duration"] = randomIntFromInterval(1_000, 3_000);
 			storagotchi["state"]["start"] = performance.now();
+			console.log("Meandering wait for ms: ", storagotchi["state"]["duration"]);
 		} else { //move to destination
 			let directionX = storagotchi["state"]["destination"]["x"] - storagotchi.x;
 			let directionY = storagotchi["state"]["destination"]["y"] - storagotchi.y;
@@ -544,21 +607,24 @@
 		storagotchi["state"]["state"] = "deciding";
 		storagotchi["state"]["cpu"] = "high";
 		storagotchi["state"]["start"] = performance.now();
+		storagotchi["state"]["duration"] = randomIntFromInterval(2_000, 10_000);
 		updateStateDisplay("Deciding", null);
+		console.log("Deciding what to do...");
 	}
 	
 	function storagotchiDecide(app, time, delta){
 		let now = performance.now();
 		let diff = now - storagotchi["state"]["start"];
-		let waitTime = 2000;
 		
-		updateLoadBar(diff / waitTime);
+		updateLoadBar(diff / storagotchi["state"]["duration"]);
 		
-		if(diff > waitTime){ //TODO:: randomize
+		if(diff > storagotchi["state"]["duration"]){
 			//decide what to do next
 			if(Math.random() < 0.5) { //TODO:: more actions
+				console.log("Decided to meander.");
 				storagotchiSetupForMeander();
 			} else {
+				console.log("Decided to get an item.");
 				storagotchiSetupForGetThing();
 			}
 		}
@@ -581,7 +647,7 @@
 			
 			storagotchi["state"]["destination"] = boxes[randomIndex];
 			storagotchi["state"]["originalDistance"] = distanceBetweenSprites(storagotchi, storagotchi["state"]["destination"]);
-			storagotchi["state"]["speed"] = 0.7;//TODO:: randomize
+			storagotchi["state"]["speed"] = randomFloatFromInterval(1, 2);
 			console.log("Selected a box");
 		}
 		

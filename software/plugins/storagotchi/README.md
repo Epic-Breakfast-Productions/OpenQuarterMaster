@@ -12,16 +12,28 @@ This app is meant to be a cute semi-interactable entity to play with in the back
  - stream changes to state via websocket
  - Notifications
    - If enabled, notify thru browser when things happen and state changes
+ - Achievements
+   - achievement ideas:
+     - first image
+     - first storage block
+     - first storage block with parent
+     - first item
+     - first item of type
+     - Have items of all types
+     - \# of objects
+     - first transaction
 
 Game Mechanics
+
+\* = doing later 
 
  - Initial state:
    - boxes around the page
    - Some items smattered around
    - Storagotchi in center
    - calculated number of items lying around for the number of OQM inventory actions taken recently
-   - Scoreboard blank
- - IMS Scoreboard
+   - *Scoreboard blank
+ - *IMS Scoreboard
    - Shows inventory statistics
      - \# blocks, items, stored
      - rates of inventory actions taken recently
