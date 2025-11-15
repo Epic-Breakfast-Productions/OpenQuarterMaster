@@ -149,7 +149,7 @@ const ExtItemSearch = {
 						},
 						done: function (data) {
 							console.log("Added image from url! " + data);
-							imageId = data;
+							imageId = data.id;
 						}
 					});
 
