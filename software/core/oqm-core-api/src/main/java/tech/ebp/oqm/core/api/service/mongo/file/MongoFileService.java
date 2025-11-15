@@ -201,7 +201,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		
 		return new SearchResult<>(
 			results,
-			this.getFileObjectService().count(dbIdOrName, filter),
+			(int) this.getFileObjectService().count(dbIdOrName, filter),
 			!filters.isEmpty(),
 			search.getPagingOptions(),
 			search

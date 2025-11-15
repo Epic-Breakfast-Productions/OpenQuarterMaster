@@ -8,6 +8,7 @@ import lombok.ToString;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchUtils;
 
 import java.util.ArrayList;
@@ -20,6 +21,7 @@ import static com.mongodb.client.model.Filters.*;
 @Setter
 public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("name") String name;
+	@QueryParam("storageTypes") List<StorageType> storageTypes;
 	@QueryParam("itemCategories") List<ObjectId> categories;
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
 	@QueryParam("hasExpired") Boolean hasExpired;
@@ -41,7 +43,17 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 				SearchUtils.getBasicSearchFilter("name", this.getName())
 			);
 		}
-		if (this.getCategories() != null && !this.categories.isEmpty()) {
+		if (this.getCategories() != null && !this.getStorageTypes().isEmpty()) {
+			List<Bson> typeFilterList = new ArrayList<>(this.getStorageTypes().size());
+			for (StorageType curType : this.getStorageTypes()) {
+				typeFilterList.add(eq(
+					"storageType",
+					curType
+				));
+			}
+			filters.add(Filters.or(typeFilterList));
+		}
+		if (this.getCategories() != null && !this.getCategories().isEmpty()) {
 			List<Bson> catsFilterList = new ArrayList<>(this.getCategories().size());
 			for (ObjectId curCategoryId : this.getCategories()) {
 				catsFilterList.add(in(

@@ -14,8 +14,8 @@ import java.util.List;
 public class SearchResult<T extends MainObject> {
 	
 	private List<T> results;
-	private long numResults;
-	private long numResultsForEntireQuery;
+	private int numResults;
+	private int numResultsForEntireQuery;
 	private boolean hadSearchQuery;
 	private PagingOptions pagingOptions;
 	private PagingCalculations pagingCalculations;
@@ -33,7 +33,7 @@ public class SearchResult<T extends MainObject> {
 		);
 	}
 	
-	public SearchResult(List<T> results, long numResultsForEntireQuery, boolean hadSearchQuery, PagingOptions pagingOptions, SearchObject<?> searchObject) {
+	public SearchResult(List<T> results, int numResultsForEntireQuery, boolean hadSearchQuery, PagingOptions pagingOptions, SearchObject<?> searchObject) {
 		this(
 			results,
 			results.size(),

@@ -225,7 +225,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		
 		return new SearchResult<>(
 			list,
-			this.count(oqmDbIdOrName, filter),
+			(int) this.count(oqmDbIdOrName, filter),
 			!filters.isEmpty(),
 			pagingOptions,
 			searchObject

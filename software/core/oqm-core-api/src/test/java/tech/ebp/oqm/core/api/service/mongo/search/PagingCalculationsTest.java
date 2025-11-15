@@ -42,13 +42,13 @@ class PagingCalculationsTest {
 	@MethodSource("getConstructorArgs")
 	public void testConstructor(
 		PagingOptions options,
-		long numResults,
+		int numResults,
 		boolean expectedOnFirstPage,
 		boolean expectedOnLastPage,
-		long expectedNumPages,
-		long expectedCurPage,
-		long expectedNextPage,
-		long expectedPreviousPage
+		int expectedNumPages,
+		int expectedCurPage,
+		int expectedNextPage,
+		int expectedPreviousPage
 	) {
 		PagingCalculations calculations = new PagingCalculations(options, numResults);
 		
