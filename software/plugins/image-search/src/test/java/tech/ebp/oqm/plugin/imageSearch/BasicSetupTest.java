@@ -132,7 +132,7 @@ public class BasicSetupTest extends RunningServerTest {
 
         //create an item object for the image
         ObjectNode item = JsonNodeFactory.instance.objectNode();
-        item.put("name", FAKER.appliance().equipment());
+        item.put("name", FAKER.appliance().equipment() + "-" + outputFilename);
         item.put("storageType", "BULK");
         item.putObject("unit").put("string", "units");
         item.putArray("imageIds").add(imageId);
