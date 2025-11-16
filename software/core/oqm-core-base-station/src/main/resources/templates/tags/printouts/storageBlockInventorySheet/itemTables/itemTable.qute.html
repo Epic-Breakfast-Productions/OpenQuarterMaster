@@ -1,0 +1,25 @@
+
+<div class="section">
+	<table>
+		<thead>
+		{#if tableTitle??}
+		<tr>
+			<th colspan="99">
+				{tableTitle}
+			</th>
+		</tr>
+		{/if}
+		<tr>
+			{#insert tableHeaderCells}{/}
+		</tr>
+		</thead>
+		<tbody>
+			{#insert tableBodyRows}{/}
+		</tbody>
+		<tfoot>
+		<tr>
+			{#insert tableHeaderCells}{/}
+		</tr>
+		</tfoot>
+	</table>
+</div>

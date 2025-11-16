@@ -38,25 +38,25 @@ import java.util.stream.StreamSupport;
 @Slf4j
 @ApplicationScoped
 public class StorageBlockInventorySheetService extends PrintoutDataService {
-
+	
 	private static final DateTimeFormatter FILENAME_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MM-dd-yyyy_kk-mm");
-
+	
 	private static final String EXPORT_TEMP_DIR_PREFIX = "oqm-sheets";
-
+	
 	private static final ConverterProperties CONVERTER_PROPERTIES;
-
+	
 	static {
 		CONVERTER_PROPERTIES = new ConverterProperties()
-			.setBaseUri(ConfigProvider.getConfig().getValue("runningInfo.baseUrl", String.class));
+								   .setBaseUri(ConfigProvider.getConfig().getValue("runningInfo.baseUrl", String.class));
 	}
-
+	
 	@RestClient
 	OqmCoreApiClientService coreApiClientService;
-
+	
 	@Inject
 	@Location("printouts/storageBlockInvSheet/storageBlockInventorySheet.html")
 	Template inventorySheetTemplate;
-
+	
 	private File getTempPdfFile(String name) throws IOException {
 		java.nio.file.Path tempDirPath = Files.createTempDirectory(EXPORT_TEMP_DIR_PREFIX);
 		File tempDir = tempDirPath.toFile();
@@ -65,47 +65,23 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 			"oqm_storage_sheet_" + name + "_" + ZonedDateTime.now().format(FILENAME_TIMESTAMP_FORMAT) + ".pdf";
 		return new File(tempDir, exportFileName);
 	}
-
+	
 	private TemplateInstance getHtmlInventorySheet(
+		String oqmApiToken,
+		String oqmDbIdOrName,
 		ObjectNode storageBlock,
-		ObjectNode childrenSr,
-		ObjectNode itemsInBlockSr,
 		InventorySheetsOptions options
 	) {
-		//TODO:: update these
-		Predicate<ObjectNode> simpleAmountFilter = new Predicate<ObjectNode>() {
-			@Override
-			public boolean test(ObjectNode inventoryItem) {
-				return "AMOUNT_SIMPLE".equals(inventoryItem.get("storageType").asText());
-			}
-		};
-		Predicate<ObjectNode> listAmountFilter = new Predicate<ObjectNode>() {
-			@Override
-			public boolean test(ObjectNode inventoryItem) {
-				return "AMOUNT_LIST".equals(inventoryItem.get("storageType").asText());
-			}
-		};
-		Predicate<ObjectNode> trackedFilter = new Predicate<ObjectNode>() {
-			@Override
-			public boolean test(ObjectNode inventoryItem) {
-				return  "TRACKED".equals(inventoryItem.get("storageType").asText());
-			}
-		};
-		
 		return this.setupBasicPrintoutData(this.inventorySheetTemplate)
-			.data("simpleAmountFilter", simpleAmountFilter)
-			.data("listAmountFilter", listAmountFilter)
-			.data("trackedFilter", trackedFilter)
-			.data("options", options)
-			.data("storageBlock", storageBlock)
-			.data("storageBlockChildrenSearchResults", childrenSr)
-			.data("searchResult", itemsInBlockSr)
+				   .data("auth", oqmApiToken)
+				   .data("db", oqmDbIdOrName)
+				   .data("options", options)
+				   .data("storageBlock", storageBlock)
 			;
 	}
-
+	
 	/**
-	 * https://kb.itextpdf.com/home/it7kb/ebooks/itext-7-converting-html-to-pdf-with-pdfhtml https://www.baeldung.com/java-pdf-creation
-	 * https://www.baeldung.com/java-html-to-pdf
+	 * https://kb.itextpdf.com/home/it7kb/ebooks/itext-7-converting-html-to-pdf-with-pdfhtml https://www.baeldung.com/java-pdf-creation https://www.baeldung.com/java-html-to-pdf
 	 *
 	 * @param entity
 	 * @param storageBlockId
@@ -122,49 +98,34 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 		InventorySheetsOptions options
 	) throws Throwable {
 		log.info("Getting inventory sheet for block {} with options: {}", storageBlockId, options);
-
+		
 		ObjectNode block;
-		ObjectNode storageBlockChildrenSr;
-		ObjectNode itemsInBlockSr;
 		{
 			CompletableFuture<ObjectNode> blockGetFut = this.coreApiClientService.storageBlockGet(oqmApiToken, oqmDbIdOrName, storageBlockId)
-				.subscribeAsCompletionStage();
-			CompletableFuture<ObjectNode> blockChildrenGetFut = this.coreApiClientService.storageBlockSearch(
-				oqmApiToken, oqmDbIdOrName,
-				StorageBlockSearch.builder().isChildOf(storageBlockId).build()
-			)
-				.subscribeAsCompletionStage();
-			CompletableFuture<ObjectNode> itemsInBlockGetFut = this.coreApiClientService.invItemSearch(
-				oqmApiToken,
-				oqmDbIdOrName,
-				InventoryItemSearch.builder().inStorageBlocks(List.of(storageBlockId)).build()
-			).subscribeAsCompletionStage();
-
+															.subscribeAsCompletionStage();
 			try {
 				block = blockGetFut.join();
-				storageBlockChildrenSr = blockChildrenGetFut.join();
-				itemsInBlockSr = itemsInBlockGetFut.join();
-			} catch(CompletionException e){
+			} catch(CompletionException e) {
 				throw e.getCause();
 			}
 		}
-
+		
 		File outputFile = getTempPdfFile(storageBlockId);
-
+		
 		try (
 			PdfWriter writer = new PdfWriter(outputFile);
 		) {
 			PdfDocument doc = new PdfDocument(writer);
-
+			
 			{
 				PageSize size = new PageSize(options.getPageSize().size);
-
+				
 				if (PageOrientation.LANDSCAPE.equals(options.getPageOrientation())) {
 					size = size.rotate();
 				}
 				doc.setDefaultPageSize(size);
 			}
-
+			
 			doc.getDocumentInfo().addCreationDate();
 			doc.getDocumentInfo().setCreator("Open QuarterMaster Base Station");
 			doc.getDocumentInfo().setProducer("Open QuarterMaster Base Station");
@@ -174,9 +135,9 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 			doc.getDocumentInfo().setKeywords("inventory, sheet, " + storageBlockId);
 			
 			String html = this.getHtmlInventorySheet(
+				oqmApiToken,
+				oqmDbIdOrName,
 				block,
-				storageBlockChildrenSr,
-				itemsInBlockSr,
 				options
 			).render();
 			log.debug("Html generated: {}", html);

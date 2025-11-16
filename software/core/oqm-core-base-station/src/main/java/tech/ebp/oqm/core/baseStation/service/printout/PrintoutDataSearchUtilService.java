@@ -94,7 +94,7 @@ public class PrintoutDataSearchUtilService {
 		private ObjectNode curResults;
 		@NonNull
 		private TriFunction<String, String, ObjectNode, ObjectNode> operation;
-		private boolean first;
+		private boolean first = true;
 		
 		public ResultsIterator(
 			String auth,
@@ -102,7 +102,7 @@ public class PrintoutDataSearchUtilService {
 			ObjectNode curResults,
 			TriFunction<String, String, ObjectNode, ObjectNode> operation
 			){
-			this(auth, db, curResults, operation, false);
+			this(auth, db, curResults, operation, true);
 		}
 		
 		@Override
@@ -120,6 +120,10 @@ public class PrintoutDataSearchUtilService {
 			this.curResults = this.operation.apply(this.auth, this.db, this.curResults);
 			
 			return curResults;
+		}
+		
+		public boolean hasResults(){
+			return !this.curResults.get("empty").asBoolean();
 		}
 	}
 	
