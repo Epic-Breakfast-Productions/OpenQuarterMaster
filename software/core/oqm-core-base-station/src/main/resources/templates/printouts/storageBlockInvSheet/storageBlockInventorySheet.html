@@ -17,9 +17,12 @@
 				Items in Block
 			</h2>
 			
-			{#printouts/storageBlockInventorySheet/itemTables/bulkStoredTable itemSearchIt=bulkItemIt storageBlock=storageBlock options=options /}
+			{#printouts/storageBlockInventorySheet/itemTables/bulkStoredTable auth=auth db=db itemSearchIt=bulkItemIt storageBlock=storageBlock options=options /}
+			{cdi:QDS.debug("done items in block")}
 		
 		</div> <!-- items in block section -->
 		{/let}
+		{cdi:QDS.debug("done items in block section")}
 	{/body}
 {/include}
+{cdi:QDS.debug("done sheet")}

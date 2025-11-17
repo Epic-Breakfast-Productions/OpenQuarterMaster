@@ -1,80 +1,64 @@
 {#if itemSearchIt.hasResults()}
-	{#printouts/storageBlockInventorySheet/itemTables/itemTable options=options itemSearchIt=itemSearchIt}
+	{#printouts/storageBlockInventorySheet/itemTables/itemTable auth=auth db=db options=options itemSearchIt=itemSearchIt storageBlock=storageBlock}
 		{#tableHeaderCells}
-			{#if options.includeNumCol}
-				<th>
-					#
-				</th>
-			{/if}
-			{#if options.includeImageCol}
-				<th class="imageTableCellHeader">
-					Image
-				</th>
-			{/if}
-			<th>
-				Item
-			</th>
+			
+			{#printouts/storageBlockInventorySheet/itemTables/itemStdHeaderPre options=options /}
 			<th>
 				Amount
 			</th>
 			{#if options.includeConditionCol}
-				<th>
-					Cond.
-				</th>
-				<th>
-					Cond. Notes
-				</th>
+			<th>
+				Cond.
+			</th>
+			<th>
+				Cond. Notes
+			</th>
 			{/if}
 			<th>
 				Exp.?
 			</th>
+
+			{#printouts/storageBlockInventorySheet/itemTables/itemStdHeaderPost options=options /}
+
 		{/tableHeaderCells}
 		{#tableBodyRows}
 			{#for curResult in itemSearchIt}
-				<tr>
-					<td>in outer loop: {curResult.get("empty").asText()}</td>
-				</tr>
+				{#let startIndex=curResult.get("pagingCalculations").get("pageResultIndexStart").asInt()}
 				{#for curItem in curResult.get("results")}
-					
-					<tr>
-						<td>in inner loop</td>
-					</tr>
-					{#let curWrapper = curItem.get("storageMap").get(storageBlock.get("id").asText())}
+					{#let blockStats = curItem.get("stats").get("storageBlockStats").get(storageBlock.get("id").asText())}
 						<tr>
-							{#if options.includeNumCol}
-								<td class="text-center">
-									{curItem_count}
+							{#printouts/storageBlockInventorySheet/itemTables/itemStdRowPre options=options item=curItem resultNo=(curItem_index + startIndex) /}
+							
+							<td>{blockStats.get("total").get("value").asInt()}{blockStats.get("total").get("unit").get("symbol").asText()}</td>
+							
+							{#let stored=cdi:PrintoutDataUtilService.getSingleStoredInBlockPage(auth, db, curItem.get("id").asText(), storageBlock.get("id").asText())}
+								{#if options.includeConditionCol}
+								<td>
+									{#if stored??}
+										{#if !stored.get("condition").isNull()}
+											{stored.get("condition").asText()}%
+										{/if}
+									{/if}
 								</td>
-							{/if}
-							{#if options.includeImageCol}
-								{#if ! curItem.get("imageIds").isEmpty()}
-									<td class="imageTableCell">
-										{#let curImage = imageService.get(curItem.getImageIds().get(0))}
-											<img src="data:{curImage.getMimeType()};base64, {curImage.getData()}" alt="Image for item {curItem.getName()}"
-												class="imageTableCellImage">
-										{/let}
-									</td>
-								{#else}
-									<td></td>
+								<td>
+									{#if stored??}
+										{#if !stored.get("conditionNotes").isNull()}
+											{stored.get("conditionNotes").asText()}
+										{/if}
+									{/if}
+								</td>
 								{/if}
-							{/if}
-							<td>
-								{curItem.get("name").asText()}
-							</td>
-							<td>{curWrapper.get("total").get("value").asInt()}{curWrapper.get("total").get("unit").get("symbol").asText()}</td>
+								<td>
+									{#if stored??}
+										{#if !stored.get("expires").isNull()}
+											{cdi:DateTimeService.formatForUi(stored.get("expires").asText())}
+										{/if}
+									{/if}
+								</td>
+								
+							{/let}
 							
-							{#if options.includeConditionCol}
-								<td>{curWrapper.get("stored").get("condition").asInt()}%</td>
-								<td>{curWrapper.get("stored").get("conditionNotes").asText()}</td>
-							{/if}
-							<td>
-								{#if curWrapper.get("stored").get("expires").asText() != null}
-									{curWrapper.get("stored").get("notificationStatus").get("expired").asBoolean()}
-								{/if}
-							</td>
-							
-							{! TODO:: optionally handle keywords, atts, barcode? !}
-						
+							{#printouts/storageBlockInventorySheet/itemTables/itemStdRowPost options=options item=curItem /}
 						</tr>
 					{/let}
 				{/for}

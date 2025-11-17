@@ -1,0 +1,22 @@
+{#if options.includeNumCol}
+	<td class="text-center">
+		{resultNo}
+	</td>
+{/if}
+{#if options.includeImageCol}
+	{#if ! item.get("imageIds").isEmpty()}
+		<td class="imageTableCell">
+			{!TODO:: this !}
+			{!{#let curImage = imageService.get(item.getImageIds().get(0))}!}
+				{!<img src="data:{curImage.getMimeType()};base64, {curImage.getData()}" alt="Image for item {item.get("name").asText()}"!}
+					{!class="imageTableCellImage">!}
+			{!{/let}!}
+		</td>
+	{#else}
+		<td></td>
+	{/if}
+{/if}
+<td>
+	{item.get("name").asText()}
+</td>
+

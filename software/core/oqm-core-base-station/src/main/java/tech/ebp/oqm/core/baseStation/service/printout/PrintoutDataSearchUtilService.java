@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.baseStation.service.printout;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
@@ -13,13 +12,12 @@ import org.apache.commons.lang3.function.TriFunction;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StoredSearch;
 
-import javax.xml.transform.Result;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import java.util.function.BiFunction;
 
 @Slf4j
 @Named("PrintoutDataUtilService")
@@ -29,7 +27,8 @@ public class PrintoutDataSearchUtilService {
 	@RestClient
 	OqmCoreApiClientService client;
 
-	public ObjectNode getItemsInBlock(String auth, String db, String blockId, String storageType) {
+	public ObjectNode searchItemsInBlock(String auth, String db, String blockId, String storageType) {
+		log.debug("Getting {} items in block {}", storageType, blockId);
 		try {
 			return this.client.invItemSearch(
 				auth,
@@ -45,6 +44,7 @@ public class PrintoutDataSearchUtilService {
 	}
 	
 	public ObjectNode getItemsNextPage(String auth, String db, ObjectNode prevSearchResults){
+		log.debug("Getting next items in block");
 		ObjectNode pagingCalculations = (ObjectNode) prevSearchResults.get("pagingCalculations");
 		ObjectNode prevQuery = (ObjectNode) prevSearchResults.get("searchObject");
 		
@@ -77,9 +77,30 @@ public class PrintoutDataSearchUtilService {
 		return new ResultsIterator(
 			auth,
 			db,
-			this.getItemsInBlock(auth, db, blockId, storageType),
+			this.searchItemsInBlock(auth, db, blockId, storageType),
 			this::getItemsNextPage
 		);
+	}
+	
+	public ObjectNode getSingleStoredInBlockPage(String auth, String db, String itemId, String blockId){
+		ObjectNode results;
+		try {
+			results = (ObjectNode) this.client.invItemStoredInBlockSearch(auth, db, itemId, blockId, new StoredSearch())
+					   .subscribeAsCompletionStage()
+					   .get();
+		} catch(InterruptedException|ExecutionException e) {
+			throw new RuntimeException(e);
+		}
+		
+		int numResults = results.get("numResultsForEntireQuery").asInt();
+		if(numResults == 0){
+			return null;
+		} else if (numResults > 1) {
+			log.warn("Found more than one results for {} block in item {}", blockId, itemId);
+			return null;
+		}
+		
+		return (ObjectNode) results.get("results").get(0);
 	}
 	
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
@@ -107,23 +128,34 @@ public class PrintoutDataSearchUtilService {
 		
 		@Override
 		public boolean hasNext() {
-			return this.curResults == null || this.curResults.get("pagingCalculations").get("onLastPage").asBoolean();
+			boolean onLastPage = this.curResults.get("pagingCalculations").get("onLastPage").asBoolean();
+			boolean hasNext = this.first || !onLastPage;
+			
+			log.debug("Has next? {} / first: {} on last page: {}",  hasNext, this.first, onLastPage);
+			
+			
+			return hasNext;
 		}
 		
 		@Override
 		public ObjectNode next() {
-			if(first){
-				first = false;
+			if(this.first){
+				log.info("Was at first result from search");
+				
+				this.first = false;
 				return curResults;
 			}
-			
+			log.info("Getting next results from search");
 			this.curResults = this.operation.apply(this.auth, this.db, this.curResults);
 			
-			return curResults;
+			return this.curResults;
 		}
 		
 		public boolean hasResults(){
-			return !this.curResults.get("empty").asBoolean();
+			boolean hasResults = !this.curResults.get("empty").asBoolean();
+			log.debug("Has results from search? {}", hasResults);
+			
+			return hasResults;
 		}
 	}
 	
