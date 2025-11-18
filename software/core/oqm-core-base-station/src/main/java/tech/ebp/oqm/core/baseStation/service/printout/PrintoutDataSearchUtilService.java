@@ -6,6 +6,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.function.TriFunction;
@@ -73,7 +74,7 @@ public class PrintoutDataSearchUtilService {
 		}
 	}
 	
-	public Iterator<ObjectNode> getItemInBlockResultsIterator(String auth, String db, String blockId, String storageType){
+	public ResultsIterator getItemInBlockResultsIterator(String auth, String db, String blockId, String storageType){
 		return new ResultsIterator(
 			auth,
 			db,
@@ -103,6 +104,25 @@ public class PrintoutDataSearchUtilService {
 		return (ObjectNode) results.get("results").get(0);
 	}
 	
+	public ObjectNode searchStoredInBlock(String auth, String db, String itemId, String blockId){
+		try {
+			return (ObjectNode) this.client.invItemStoredInBlockSearch(auth, db, itemId, blockId, new StoredSearch())
+									   .subscribeAsCompletionStage()
+									   .get();
+		} catch(InterruptedException|ExecutionException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public ResultsIterator searchStoredInBlockResultsIterator(String auth, String db, String itemId, String blockId){
+		return new ResultsIterator(
+			auth,
+			db,
+			this.searchStoredInBlock(auth, db, itemId, blockId),
+			this::getItemsNextPage
+		);
+	}
+	
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class ResultsIterator implements Iterator<ObjectNode> {
 		
@@ -111,6 +131,7 @@ public class PrintoutDataSearchUtilService {
 		@NonNull
 		private String db;
 		
+		@Getter
 		@NonNull
 		private ObjectNode curResults;
 		@NonNull

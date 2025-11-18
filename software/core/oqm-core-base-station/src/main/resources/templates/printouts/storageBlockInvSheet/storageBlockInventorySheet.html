@@ -1,8 +1,9 @@
 {#include printouts/mainPrintoutTemplate generateDatetime=generateDatetime}
+	{#icon}{#icons/storageBlock /}{/icon}
 	{#title}{storageBlock.get("labelText").asText()} - Inventory sheet{/title}
 	{#body}
 		<h1>
-			{storageBlock.get("labelText").asText()} - Inventory sheet
+			{#icons/storageBlock /} {storageBlock.get("labelText").asText()} - Inventory sheet
 		</h1>
 
 		{!<p>Total Items: {searchResult.get("numResultsForEntireQuery").asText()}</p> TODO!}
@@ -14,15 +15,13 @@
 		{#let bulkItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'BULK') amtListItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'AMOUNT_LIST') uniqueMultiItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'UNIQUE_MULTI') uniqueSingleItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'UNIQUE_SINGLE')}
 		<div class="section">
 			<h2>
-				Items in Block
+				{#icons/items /} Items in Block
 			</h2>
 			
 			{#printouts/storageBlockInventorySheet/itemTables/bulkStoredTable auth=auth db=db itemSearchIt=bulkItemIt storageBlock=storageBlock options=options /}
-			{cdi:QDS.debug("done items in block")}
+		
 		
 		</div> <!-- items in block section -->
 		{/let}
-		{cdi:QDS.debug("done items in block section")}
 	{/body}
 {/include}
-{cdi:QDS.debug("done sheet")}
