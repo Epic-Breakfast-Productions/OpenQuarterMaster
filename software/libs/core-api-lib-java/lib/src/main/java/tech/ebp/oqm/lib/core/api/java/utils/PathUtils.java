@@ -33,7 +33,7 @@ public final class PathUtils {
 	}
 	
 	public static String getInventoryItemPath(String oqmDbIdOrName){
-		return getInventoryPath(oqmDbIdOrName) + "/inventory-item";
+		return getInventoryPath(oqmDbIdOrName) + "/item";
 	}
 	
 	public static String getInventoryItemPath(String oqmDbIdOrName, String itemId){

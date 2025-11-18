@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.lib.core.api.java.testUtils.testClases.JwtAuthTest;
+import tech.ebp.oqm.lib.core.api.java.utils.jackson.JacksonUtils;
 
 import java.net.http.HttpResponse;
 
@@ -63,6 +64,24 @@ class OqmCoreApiClientBasicTest extends JwtAuthTest {
 									  .build();
 		
 		HttpResponse<String> response = client.interactingEntityGetSelf(this.getCredentials()).join();
+		
+		System.out.println(response.body());
+		assertEquals(200, response.statusCode(), "Unexpected response code.");
+	}
+	
+	@Test
+	void testCreateItem() {
+		OqmCoreApiClient client = OqmCoreApiClient.builder()
+									  .config(getCoreApiConfig().build())
+									  .build();
+		
+		ObjectNode newItem = JacksonUtils.MAPPER.createObjectNode();
+		
+		newItem.put("name", "testItem");
+		newItem.put("storageType", "BULK");
+		newItem.putObject("unit").put("string", "units");
+		
+		HttpResponse<ObjectNode> response = client.invItemCreate(this.getCredentials(), "default", newItem).join();
 		
 		System.out.println(response.body());
 		assertEquals(200, response.statusCode(), "Unexpected response code.");
