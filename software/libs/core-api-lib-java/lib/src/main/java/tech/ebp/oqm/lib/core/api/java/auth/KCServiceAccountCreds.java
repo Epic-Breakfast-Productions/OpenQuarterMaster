@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.lib.core.api.java.config.KeycloakConfig;
+import tech.ebp.oqm.lib.core.api.java.utils.UriUtils;
 import tech.ebp.oqm.lib.core.api.java.utils.jackson.JacksonObjectNodeBodyHandler;
 
 import java.io.IOException;
@@ -57,7 +58,7 @@ public class KCServiceAccountCreds extends OqmCredentials {
 			HttpResponse<ObjectNode> response = this.keycloakConfig.getHttpClient()
 				.send(
 					HttpRequest.newBuilder()
-						.uri(this.keycloakConfig.getBaseUri().resolve("/realms/" + this.keycloakConfig.getRealm() + "/protocol/openid-connect/token"))
+						.uri(UriUtils.buildUri(this.keycloakConfig.getBaseUri(), "/realms/" + this.keycloakConfig.getRealm() + "/protocol/openid-connect/token"))
 						.header("Authorization", "Basic: " + Base64.getEncoder().encodeToString((this.keycloakConfig.getClientId() + ":" + this.getKeycloakConfig().getClientSecret()).getBytes()))
 						.header("Content-Type", "application/x-www-form-urlencoded")
 						.POST(HttpRequest.BodyPublishers.ofString(form))

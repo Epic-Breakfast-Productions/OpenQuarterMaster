@@ -114,6 +114,10 @@ public final class UriUtils {
 		}
 	}
 	
+	public static URI buildUri(URI baseUri, String path) {
+		return buildUri(baseUri, path, new QueryParams());
+	}
+	
 	/**
 	 * URL encodes a string using the default charset.
 	 * @param str The string to encode.
