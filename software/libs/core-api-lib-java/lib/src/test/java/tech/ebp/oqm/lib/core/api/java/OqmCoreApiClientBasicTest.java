@@ -3,6 +3,7 @@ package tech.ebp.oqm.lib.core.api.java;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.lib.core.api.java.search.QueryParams;
 import tech.ebp.oqm.lib.core.api.java.testUtils.testClases.JwtAuthTest;
 import tech.ebp.oqm.lib.core.api.java.utils.jackson.JacksonUtils;
 
@@ -85,5 +86,22 @@ class OqmCoreApiClientBasicTest extends JwtAuthTest {
 		
 		System.out.println(response.body());
 		assertEquals(200, response.statusCode(), "Unexpected response code.");
+		
+		
+		HttpResponse<ObjectNode> searchAllResponse = client.invItemSearch(this.getCredentials(), "default", new QueryParams()).join();
+		System.out.println(searchAllResponse.body());
+		assertEquals(200, searchAllResponse.statusCode(), "Unexpected response code.");
+		
+		HttpResponse<ObjectNode> searchOneResponse = client.invItemSearch(this.getCredentials(), "default", new QueryParams().addParam("name", "testItem")).join();
+		System.out.println(searchOneResponse.body());
+		assertEquals(200, searchOneResponse.statusCode(), "Unexpected response code.");
+		
+		HttpResponse<ObjectNode> searchNoneResponse = client.invItemSearch(this.getCredentials(), "default", new QueryParams().addParam("name", "foo")).join();
+		System.out.println(searchNoneResponse.body());
+		assertEquals(200, searchNoneResponse.statusCode(), "Unexpected response code.");
+		
+		HttpResponse<ObjectNode> getResponse = client.invItemGet(this.getCredentials(), "default", response.body().get("id").asText()).join();
+		System.out.println(getResponse.body());
+		assertEquals(200, getResponse.statusCode(), "Unexpected response code.");
 	}
 }

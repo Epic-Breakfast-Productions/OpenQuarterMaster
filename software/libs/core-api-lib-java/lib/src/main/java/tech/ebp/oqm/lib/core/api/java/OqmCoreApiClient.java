@@ -499,16 +499,15 @@ public class OqmCoreApiClient {
 	}
 	
 	
-	//	TODO
-	//	@GET
-	//	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}")
-	//	@Produces(MediaType.APPLICATION_JSON)
-	//	Uni<ObjectNode> invItemGet(
-	//		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-	//		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-	//		@PathParam("itemId") String id
-	//	);
-	//
+	public CompletableFuture<HttpResponse<ObjectNode>> invItemGet(OqmCredentials creds, String oqmDbIdOrName, String itemId) {
+		return this.getHttpClient()
+				   .sendAsync(
+					   this.setupRequest(creds, PathUtils.getInventoryItemPath(oqmDbIdOrName, itemId))
+						   .GET()
+						   .build(),
+					   JacksonObjectNodeBodyHandler.INSTANCE
+				   );
+	}
 	
 	
 	public CompletableFuture<HttpResponse<ObjectNode>> invItemUpdate(OqmCredentials creds, String oqmDbIdOrName, String itemId, ObjectNode invItemUpdates) {
