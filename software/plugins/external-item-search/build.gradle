@@ -29,7 +29,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-arc'
 
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.21.2'
-    implementation 'io.quarkiverse.wiremock:quarkus-wiremock:1.5.1'
+    implementation 'io.quarkiverse.wiremock:quarkus-wiremock:1.5.2'
 
 
     testImplementation 'io.quarkus:quarkus-junit5'
