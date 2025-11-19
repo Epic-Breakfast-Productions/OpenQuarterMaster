@@ -75,6 +75,33 @@ class StorageCrudTest extends RunningServerTest {
 		
 		assertEquals(newBlockData.get("label").asText(), returnNode.get("label").asText());
 	}
+	
+	@Test
+	public void testBadCreds() throws JsonProcessingException {
+		User user = this.getTestUserService().getTestUser();
+		
+		ObjectNode newBlockData = ObjectUtils.OBJECT_MAPPER.createObjectNode();
+		newBlockData.put("label", "test block");
+		
+		ValidatableResponse response = setupJwtCall(given(), user.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY) + "foo")
+										   .contentType(ContentType.JSON)
+										   .body(newBlockData)
+										   .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
+										   .when()
+										   .post()
+										   .then();
+		
+		String returnStr = response.extract().body().asString();
+		
+		log.info("Return: {}", returnStr);
+		
+		response.statusCode(Response.Status.UNAUTHORIZED.getStatusCode())
+			.contentType(ContentType.JSON);
+		
+		ErrorMessage errorMessage = objectMapper.readValue(returnStr, ErrorMessage.class);
+		log.info("Error message: {}", errorMessage);
+	}
+	
 	@ParameterizedTest
 	@MethodSource("getBadStorageArgs")
 	public void testBadCreate(String createJson) throws IOException {

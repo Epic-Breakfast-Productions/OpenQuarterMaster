@@ -24,7 +24,7 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 	UriInfo uriInfo;
 	
 	private ErrorMessage.Builder<?, ?> buildOutputForHibViolation(ViolationReport report) {
-		log.info("Violation Report type. Mapping to standard error object.");
+		log.debug("Violation Report type. Mapping to standard error object.");
 		
 		StringBuilder sb = new StringBuilder("Data validation errors (" + report.getViolations().size() + "): ");
 		
@@ -44,7 +44,7 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 			}
 		}
 		
-		//TODO:: add original obj
+		//TODO:: add original obj?
 		return ErrorMessage.builder()
 							.displayMessage(sb.toString())
 							.cause(report);
@@ -79,19 +79,29 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 		} else {
 			log.warn("Unknown response type: {} / {}", responseContext.getEntityType(), responseContext.getEntity());
 			
+			outputBuilder = ErrorMessage.builder();
 			if(responseFam == Response.Status.Family.CLIENT_ERROR){
-				outputBuilder = ErrorMessage.builder()
-									.displayMessage("Unknown client error occurred. This might be caused by bad data read by the server.");
+				switch (responseContext.getStatus()) {
+					case 401:
+					case 403:
+					case 404:
+					case 405:
+					case 406:
+						outputBuilder.displayMessage(responseContext.getStatusInfo().getReasonPhrase());
+						break;
+					default:
+						outputBuilder.displayMessage("Unknown client error occurred: "+responseContext.getStatusInfo().getReasonPhrase()+" This might be caused by bad data read by the server.");
+						break;
+				}
+				
 			} else if(responseFam == Response.Status.Family.SERVER_ERROR) {
-				outputBuilder = ErrorMessage.builder()
-									.displayMessage("Unknown server error occurred.");
+				outputBuilder.displayMessage("Unknown server error occurred.");
 			}
 		}
 		
 		if (outputBuilder != null) {
 			ErrorMessage message = outputBuilder.build();
-			
-			log.info("Error message: {}", message);
+			log.debug("Error message: {}", message);
 			
 			responseContext.setEntity(message);
 		} else {
