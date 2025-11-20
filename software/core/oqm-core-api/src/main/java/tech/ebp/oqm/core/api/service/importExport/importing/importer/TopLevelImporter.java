@@ -12,6 +12,8 @@ public abstract class TopLevelImporter<R> extends Importer<R> {
 
 	public abstract Path getObjectDirPath(Path topLevelPath);
 
+	public abstract R getNoObjDirPathExistValue();
+	
 	public abstract R readInObjectsImpl(
 		ClientSession clientSession,
 		Path directory,
@@ -28,7 +30,7 @@ public abstract class TopLevelImporter<R> extends Importer<R> {
 		Path objectDirPath = this.getObjectDirPath(topLevelPath);
 
 		if(!Files.exists(objectDirPath)){
-			return null;
+			return this.getNoObjDirPathExistValue();
 		}
 		return this.readInObjectsImpl(
 			clientSession,

@@ -12,6 +12,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.ImportBundleFileBody;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.otherQueries.DbExportQuery;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.*;
 
 import java.io.InputStream;
@@ -814,15 +815,15 @@ public interface OqmCoreApiClientService {
 	
 	//<editor-fold desc="Inventory Management">
 	@GET
-	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/export")
+	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db/export")
 	@Produces("application/tar+gzip")
 	Uni<Response> manageExportData(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-		@QueryParam("excludeHistory") boolean excludeHistory
+		@BeanParam DbExportQuery exportQuery
 	);
 	
 	@POST
-	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/import/file/bundle")
+	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db/import/file/bundle")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ObjectNode> manageImportData(

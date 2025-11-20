@@ -249,7 +249,7 @@ class DataImportServiceTest extends RunningServerTest {
 		}
 		File bundle = this.databaseExportService.exportDataToBundle(DataExportOptions.builder().build());
 
-		FileUtils.copyFile(bundle, new File("build/export.tar.gz"));
+		FileUtils.copyFile(bundle, new File("build/export" + DatabaseExportService.OQM_EXPORT_FILE_EXT));
 
 
 		List<ItemCheckout> oldCheckedout = this.itemCheckoutService.list(DEFAULT_TEST_DB_NAME, null, Sorts.ascending("checkoutDate"), null);
@@ -292,7 +292,7 @@ class DataImportServiceTest extends RunningServerTest {
 		log.info("Size of file bundle: {}", bundle.length());
 
 		try (InputStream is = new FileInputStream(bundle)) {
-			this.dataImportService.importBundle(is, "test.tar.gz", testUser, DataImportOptions.builder().build());
+			this.dataImportService.importBundle(is, "test"+DatabaseExportService.OQM_EXPORT_FILE_EXT, testUser, DataImportOptions.builder().build());
 		}
 
 		//TODO:: catch assertion exception, write both lists out to file

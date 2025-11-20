@@ -38,8 +38,12 @@ public class UnitImporter extends TopLevelImporter<Long> {
 	public Path getObjectDirPath(Path topLevelPath) {
 		return topLevelPath.resolve(this.customUnitService.getCollectionName());
 	}
-
-
+	
+	@Override
+	public Long getNoObjDirPathExistValue() {
+		return 0L;
+	}
+	
 	private void readInUnit(
 		ClientSession clientSession,
 		CustomUnitEntry curObj,
@@ -94,9 +98,9 @@ public class UnitImporter extends TopLevelImporter<Long> {
 		List<File> filesForObject = getObjectFiles(directory);
 
 		log.info("Found {} files for {} in {}", filesForObject.size(), this.getCustomUnitService().getCollectionName(), directory);
-		StopWatch sw = StopWatch.createStarted();
 		List<File> orphanEntries = new ArrayList<>();
 		List<ObjectId> addedList = new ArrayList<>();
+		StopWatch sw = StopWatch.createStarted();
 		for (File curObjFile : filesForObject) {
 			this.readInUnit(clientSession, curObjFile, options, orphanEntries, addedList);
 		}

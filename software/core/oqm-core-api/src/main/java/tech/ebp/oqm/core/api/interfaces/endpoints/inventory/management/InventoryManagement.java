@@ -4,6 +4,7 @@ package tech.ebp.oqm.core.api.interfaces.endpoints.inventory.management;
 import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.enterprise.inject.Default;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.*;
@@ -19,10 +20,13 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.model.rest.dataImportExport.DataImportResult;
+import tech.ebp.oqm.core.api.model.rest.dataImportExport.DbExportQuery;
 import tech.ebp.oqm.core.api.model.rest.dataImportExport.ImportBundleFileBody;
 import tech.ebp.oqm.core.api.model.rest.management.DbClearResult;
 import tech.ebp.oqm.core.api.scheduled.ExpiryProcessor;
 import tech.ebp.oqm.core.api.service.importExport.exporting.DatabaseExportService;
+import tech.ebp.oqm.core.api.service.importExport.exporting.dbSelect.IncludeDatabaseSelection;
+import tech.ebp.oqm.core.api.service.importExport.exporting.dbSelect.ListBasedDatabaseSelection;
 import tech.ebp.oqm.core.api.service.importExport.importing.DataImportService;
 import tech.ebp.oqm.core.api.service.importExport.exporting.DataExportOptions;
 import tech.ebp.oqm.core.api.service.mongo.DatabaseManagementService;
@@ -40,7 +44,7 @@ import java.util.Map;
 /**
  *
  * TODO:: refactor to more specific classes
- *
+ * <p>
  * https://mkyong.com/java/how-to-create-tar-gz-in-java/
  */
 @Slf4j
@@ -60,13 +64,13 @@ public class InventoryManagement extends EndpointProvider {
 	
 	@Inject
 	DatabaseManagementService dbms;
-
+	
 	@Inject
 	OqmDatabaseService oqmDatabaseService;
 	
 	@Blocking
 	@GET
-	@Path("db/{oqmDbIdOrName}/export")
+	@Path("db/export")
 	@Operation(
 		summary = "Creates a bundle of all inventory data stored."
 	)
@@ -85,10 +89,18 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Produces("application/tar+gzip")
 	public Response export(
-		@PathParam("oqmDbIdOrName") String oqmDbIdOrName
-			//TODO:: options as bean param? figure this out
+		@BeanParam DbExportQuery dbExportQuery
 	) throws IOException {
-		File outputFile = databaseExportService.exportDataToBundle(new DataExportOptions());
+		DataExportOptions ops = DataExportOptions.builder()
+			.databaseSelection(
+				IncludeDatabaseSelection.builder()
+					.list(dbExportQuery.getDatabases())
+					.build()
+			)
+			.includeHistory(dbExportQuery.isIncludeHistory())
+			.build();
+		
+		File outputFile = this.databaseExportService.exportDataToBundle(ops);
 		
 		Response.ResponseBuilder response = Response.ok(outputFile);
 		response.header("Content-Disposition", "attachment;filename=" + outputFile.getName());
@@ -97,7 +109,7 @@ public class InventoryManagement extends EndpointProvider {
 	
 	@Blocking
 	@POST
-	@Path("import/file/bundle")
+	@Path("db/import/file/bundle")
 	@Operation(
 		summary = "."
 	)
@@ -147,7 +159,7 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	public Response triggerSearchAndProcessExpiring() {
 		expiryProcessor.searchAndProcessExpiring();
-
+		
 		return Response.ok().build();
 	}
 	
@@ -172,16 +184,16 @@ public class InventoryManagement extends EndpointProvider {
 		String oqmDbIdOrName
 	) throws Exception {
 		try (MongoSessionWrapper csw = new MongoSessionWrapper(null, this.getInteractingEntityService())) {
-			return csw.runTransaction(() -> {
+			return csw.runTransaction(()->{
 				return this.dbms.clearDb(csw.getClientSession(), oqmDbIdOrName, this.getInteractingEntity());
 			});
-		} catch (Exception e) {
+		} catch(Exception e) {
 			log.error("Failed to apply transaction: ", e);
 			throw e;
 		}
 	}
-
-
+	
+	
 	@Blocking
 	@DELETE
 	@Path("/db/clearAllDbs")
@@ -202,7 +214,7 @@ public class InventoryManagement extends EndpointProvider {
 	) throws Exception {
 		return this.dbms.clearAllDbs(this.getInteractingEntity());
 	}
-
+	
 	@Blocking
 	@POST
 	@Path("db")
@@ -232,7 +244,7 @@ public class InventoryManagement extends EndpointProvider {
 		log.info("Created new database from REST call: {}", result);
 		return Response.ok(result).build();
 	}
-
+	
 	@Blocking
 	@PUT
 	@Path("db/ensure/{dbName}")
@@ -262,7 +274,7 @@ public class InventoryManagement extends EndpointProvider {
 		log.info("Created new database from REST call: {}", result);
 		return Response.ok(result).build();
 	}
-
+	
 	@Blocking
 	@GET
 	@Path("db")
@@ -287,7 +299,7 @@ public class InventoryManagement extends EndpointProvider {
 	public Response listDatabases() {
 		return Response.ok(this.oqmDatabaseService.listIterator().into(new ArrayList<>())).build();
 	}
-
+	
 	@Blocking
 	@GET
 	@Path("db/refreshCache")

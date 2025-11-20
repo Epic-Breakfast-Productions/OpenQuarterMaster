@@ -25,7 +25,7 @@ Ingests:
 	<title>{#if title??}{title} - {/if}{config:['service.nameFull']}</title>
 	
 	<!-- CSS -->
-	<link href="{rootPrefix}/lib/bootstrap/5.3.3/bootswatch.yeti.min.css" rel="stylesheet">
+	<link href="{rootPrefix}/lib/bootstrap/5.3.8/bootswatch.yeti.min.css" rel="stylesheet">
 	<link rel="stylesheet" href="{rootPrefix}/lib/bootstrap-icons/1.11.1/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="{rootPrefix}/lib/spin.js/spin.css">
 	<link rel="stylesheet" href="{rootPrefix}/lib/dselect/1.0.4/dist/css/dselect.min.css">
@@ -39,7 +39,7 @@ Ingests:
 	<!--  At top in order to prevent flashing -->
 	<script src="{rootPrefix}/res/js/theme.js"></script>
 </head>
-<body class="min-vh-100 vstack" data-csrft="{inject:csrf.token}">
+<body class="min-vh-100 vstack" data-csrft="{inject:csrf.token}" data-csrfh="{inject:csrf.headerName}">
 <span id="oqmPageInfo" data-page-initted="false"></span>
 
 <!-- nav here -->
@@ -170,7 +170,7 @@ Ingests:
 			<form class="d-flex me-auto" method="get" action="{rootPrefix}/items" id="navSearchForm">
 				<div class="input-group">
 					<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name" style="max-width:150px;">
-					<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchTypeSelect">{#icons/items}{/icons/items}</button>
+					<button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchTypeSelect">{#icons/items}{/icons/items}</button>
 					<ul class="dropdown-menu dropdown-menu-end">
 						<li><a class="dropdown-item" href="#" onclick="updateNavSearchDestination('{rootPrefix}/items', Icons.items, 'name')">{#icons/items}{/icons/items} Items</a></li>
 						<li><a class="dropdown-item" href="#" onclick="updateNavSearchDestination('{rootPrefix}/storage', Icons.storageBlocks, 'labelOrNickname')">{#icons/storageBlocks}{/icons/storageBlocks} Storage Blocks</a></li>
@@ -379,7 +379,7 @@ Ingests:
 
 <!-- scripts -->
 <script src="{rootPrefix}/webjars/jquery/3.7.1/jquery.min.js"></script>
-<script src="{rootPrefix}/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="{rootPrefix}/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
 <script src="{rootPrefix}/lib/luxon/3.3.0/luxon.min.js"></script>
 <script src="{rootPrefix}/lib/js-cookie/3.0.5/js.cookie.min.js"></script>
 <script src="{rootPrefix}/lib/spin.js/spin.umd.js"></script>
