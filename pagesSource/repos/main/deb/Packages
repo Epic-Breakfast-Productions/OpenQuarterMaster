@@ -328,6 +328,21 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Core API instance for Open QuarterMaster.
 Licence: GPL-3+
 
+Package: oqm-core-api
+Version: 4.1.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.9.0), oqm-infra-keycloak (>= 1.2.3), oqm-infra-mongodb (>= 1.1.0), oqm-infra-traefik (>= 1.0.0)
+Filename: ./oqm-core-api_4.1.0_all.deb
+Size: 5216
+MD5sum: 5fc9e81b90a787bff0f3233183ad0398
+SHA1: 9fad6473de4f12d50de2b1fefadc1f819834322b
+SHA256: 3e332dc1c533c24fbdd1790db7ebca0357eea60c1d07ee82ee344defd6d99df4
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-api
+Description: Core API instance for Open QuarterMaster.
+Licence: GPL-3+
+
 Package: oqm-core-base+station
 Version: 1.0.40
 Architecture: all
@@ -734,6 +749,22 @@ Size: 5426
 MD5sum: d6528ab685b802a4462710dbf1a5077e
 SHA1: 13cc57e6493f3ddd5fa486b765ebe874fcf2e878
 SHA256: ff496e671774a7a1c3b5a797452091963cd4eeee65447ab410f0e79c414f6574
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-core-base+station
+Version: 1.9.2
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.9.0), oqm-infra-keycloak (>= 1.2.3), oqm-infra-traefik (>= 1.0.0), oqm-core-api (>= 4.1.0)
+Recommends: oqm-plugin-ext_item_search
+Filename: ./oqm-core-base+station_1.9.2_all.deb
+Size: 5426
+MD5sum: 15976c5f7293f67f1e4b9629530cbaa1
+SHA1: c18e7cf02c6b2fa66aa92bb270a980295804266a
+SHA256: 91278e0664f3e84d712ab4446df6b77c75d3021bb94307ab159cef59c464320d
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
 Description: Base Station instance for Open QuarterMaster.

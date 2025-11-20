@@ -6,8 +6,8 @@ plugins {
 	id("org.spdx.sbom") version "0.9.0"
 }
 
-group 'tech.ebp.oqm.core'
-version '4.1.0-DEV'
+group 'com.ebp.openQuarterMaster'
+version '4.1.0'
 
 repositories {
 	mavenCentral()
