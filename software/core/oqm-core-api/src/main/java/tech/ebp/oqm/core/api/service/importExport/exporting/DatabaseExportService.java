@@ -51,6 +51,7 @@ import static tech.ebp.oqm.core.api.service.importExport.ImportExportConstants.*
 public class DatabaseExportService {
 
 	public static final String OQM_EXPORT_PREFIX = "oqm_export";
+	public static final String OQM_EXPORT_FILE_EXT = ".oqmdb";
 	public static final String TEMP_FOLDER = "export";
 	public static final String GZIP_COMMENT = "Created by Open QuarterMaster Base Station. Full data export, intended to be re-imported by the Base Station software.";
 	public static final int GZIP_COMPRESSION_LEVEL = Deflater.BEST_COMPRESSION;
@@ -279,7 +280,7 @@ public class DatabaseExportService {
 
 		File dirToArchive = this.tempFileService.getTempDir(OQM_EXPORT_PREFIX, TEMP_FOLDER);
 		Path dirToArchiveAsPath = dirToArchive.toPath();
-		File outputFile = new File(dirToArchive.getParentFile(), dirToArchive.getName() + ".tar.gz");
+		File outputFile = new File(dirToArchive.getParentFile(), dirToArchive.getName() + OQM_EXPORT_FILE_EXT);
 		outputFile.deleteOnExit();
 		File topLevelDataDir = new File(dirToArchive, TOP_LEVEL_DIR_NAME);
 		File dbDataDir = new File(dirToArchive, DBS_DIR_NAME);
@@ -462,6 +463,5 @@ public class DatabaseExportService {
 		mainSw.stop();
 		log.info("Took {} total to generate output bundle.", mainSw);
 		return outputFile;
-
 	}
 }

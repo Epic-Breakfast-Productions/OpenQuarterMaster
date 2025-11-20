@@ -32,6 +32,7 @@ import tech.ebp.oqm.core.api.model.rest.dataImportExport.EntityImportResult;
 import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
 import tech.ebp.oqm.core.api.model.rest.search.*;
 import tech.ebp.oqm.core.api.service.importExport.exporting.DataImportExportUtils;
+import tech.ebp.oqm.core.api.service.importExport.exporting.DatabaseExportService;
 import tech.ebp.oqm.core.api.service.importExport.importing.importer.*;
 import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.*;
@@ -169,7 +170,7 @@ public class DataImportService {
 		DataImportOptions importOptions
 	) throws IOException {
 		log.info("Importing bundle {}", fileName);
-		if (!fileName.endsWith(".tar.gz")) {
+		if (!fileName.endsWith(DatabaseExportService.OQM_EXPORT_FILE_EXT)) {
 			throw new IllegalArgumentException("Invalid file type given.");
 		}
 
