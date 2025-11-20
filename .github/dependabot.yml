@@ -18,7 +18,7 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
-      - "project-baseStation"
+      - "project-core-api"
   - package-ecosystem: "docker"
     directory: "/software/core/oqm-core-api/src/main/docker"
     target-branch: "development"
@@ -27,7 +27,7 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
-      - "project-core-baseStation"
+      - "project-core-api"
 
   # Base Station
   - package-ecosystem: "gradle"
@@ -38,7 +38,7 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
-      - "project-baseStation"
+      - "project-core-baseStation"
   - package-ecosystem: "docker"
     directory: "/software/core/oqm-core-base-station"
     target-branch: "development"
@@ -47,7 +47,7 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
-      - "project-baseStation"
+      - "project-core-baseStation"
 
 #
 # Libraries

@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
+import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.testResources.data.ItemCategoryTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;

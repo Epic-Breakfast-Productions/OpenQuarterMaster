@@ -12,7 +12,7 @@ import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbModValidationException;
+import tech.ebp.oqm.core.api.exception.db.DbModValidationException;
 
 import java.io.File;
 import java.io.IOException;
