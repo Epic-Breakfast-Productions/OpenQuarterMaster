@@ -6,7 +6,7 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.testResources.testClasses.WebServerTest;
 import tech.ebp.oqm.core.api.model.object.MainObject;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
+import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
 
 import java.util.List;
 import java.util.Map;
