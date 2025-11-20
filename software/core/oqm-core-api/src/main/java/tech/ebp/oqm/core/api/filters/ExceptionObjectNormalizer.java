@@ -12,6 +12,7 @@ import jakarta.ws.rs.ext.Provider;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.model.rest.ErrorMessage;
 import tech.ebp.oqm.core.api.exception.db.DbModValidationException;
 import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
@@ -143,5 +144,24 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 		);
 	}
 	
-	//TODO:: mappers for other exceptions
+	@ServerExceptionMapper
+	public RestResponse<ErrorMessage> mapException(DbDeleteRelationalException x) {
+		return RestResponse.status(
+			Response.Status.BAD_REQUEST,
+			ErrorMessage.builder()
+				.displayMessage(x.getMessage())
+				.build()
+		);
+	}
+	
+	@ServerExceptionMapper
+	public RestResponse<ErrorMessage> mapException(DbNotFoundException x) {
+		return RestResponse.status(
+			Response.Status.NOT_FOUND,
+			ErrorMessage.builder()
+				.displayMessage(x.getMessage())
+				.build()
+		);
+	}
+	
 }
