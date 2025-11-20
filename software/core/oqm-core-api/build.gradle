@@ -6,7 +6,7 @@ plugins {
 	id("org.spdx.sbom") version "0.9.0"
 }
 
-group 'com.ebp.openQuarterMaster'
+group 'tech.ebp.oqm.core'
 version '4.1.0-DEV'
 
 repositories {
