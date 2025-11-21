@@ -15,6 +15,7 @@ from LogManagement import *
 from InputValidators import *
 from CertsUtils import *
 from LogUtils import *
+from SystemCheckUtils import SystemCheckUtils
 
 
 class UserInteraction:
@@ -838,6 +839,8 @@ class UserInteraction:
             # TODO:: error check
             os.system('reboot')
 
+        self.checkSystem()
+
         # Check if not installed, prompt to install
         if not PackageManagement.coreInstalled():
             UserInteraction.log.debug("OQM components not yet installed.")
@@ -915,6 +918,27 @@ class UserInteraction:
                 self.selectPluginsMenu()
 
         UserInteraction.log.debug("Done running manage install menu.")
+
+    def checkSystem(self):
+        self.log.debug("Checking system.")
+        #TODO:: wait screen
+        errs = SystemCheckUtils.checkSystem()
+
+        if not errs:
+            # TODO:: show no errs confirmation
+            return
+
+        toShow = ""
+        for curErr in errs:
+            toShow += curErr['level'] + " - " + curErr["title"] + "\n"
+            toShow += "\t" + curErr['description'] + "\n"
+            toShow += "\n\n\n"
+        self.dialog.scrollbox(toShow, title="System Issues Found",
+                              #    height=UserInteraction.TALL_HEIGHT,
+                              # width=UserInteraction.WIDE_WIDTH,
+                              #    tab_correct=True, trim=False,
+                              # cr_wrap=True
+                              )
 
     @staticmethod
     def mapPluginSelection(pluginFromPm):
