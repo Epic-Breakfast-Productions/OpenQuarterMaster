@@ -544,12 +544,12 @@ class UserInteraction:
             if choice == "(1)":
                 self.dialog.msgbox(
                     "Keycloak access information:\n\n" +
-                    "\tURL: https://" + mainCM.getConfigVal("system.hostname") + ":" + mainCM.getConfigVal(
-                        "infra.keycloak.port") + "/admin/master/console/#/oqm\n" +
+                    "\tURL: " + mainCM.getConfigVal("infra.keycloak.externalBaseUri") + "/admin/master/console/#/oqm\n" +
                     "\tAdmin user: " + mainCM.getConfigVal("infra.keycloak.adminUser") + "\n" +
                     "\tAdmin Password: " + mainCM.getConfigVal("infra.keycloak.adminPass"),
                     title="Keycloak Access",
-                    width=UserInteraction.WIDE_WIDTH
+                    width=UserInteraction.WIDE_WIDTH,
+                    height=20
                 )
 
         UserInteraction.log.debug("Done running user admin menu.")
