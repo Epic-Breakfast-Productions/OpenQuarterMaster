@@ -1,47 +1,47 @@
 {! https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Common_types !}
 {#if mimeType.startsWith("audio/")}
-	{#icons/icon icon='file-earmark-music' titleText=(mimeType.split('/')[1].toUpperCase() + " audio")}{/icons/icon}
+	{#icons/icon icon='file-earmark-music' titleText=(mimeType.split('/')[1].toUpperCase() + " audio") /}
 {#else if mimeType.startsWith("image/")}
-	{#icons/icon icon='file-earmark-image' titleText=(mimeType.split('/')[1].toUpperCase() + " image")}{/icons/icon}
+	{#icons/icon icon='file-earmark-image' titleText=(mimeType.split('/')[1].toUpperCase() + " image") /}
 {#else if mimeType.startsWith("video/")}
-	{#icons/icon icon='file-earmark-play' titleText=(mimeType.split('/')[1].toUpperCase() + " video")}{/icons/icon}
+	{#icons/icon icon='file-earmark-play' titleText=(mimeType.split('/')[1].toUpperCase() + " video") /}
 {#else if mimeType.startsWith("font/")}
-	{#icons/icon icon='file-earmark-font' titleText=(mimeType.split('/')[1].toUpperCase() + " font")}{/icons/icon}
+	{#icons/icon icon='file-earmark-font' titleText=(mimeType.split('/')[1].toUpperCase() + " font") /}
 {#else if mimeType is "text/plain"}
-	{#icons/icon icon='file-earmark-text' titleText='Plain Text'}{/icons/icon}
+	{#icons/icon icon='file-earmark-text' titleText='Plain Text' /}
 {#else if mimeType is "text/x-web-markdown"}
-	{#icons/icon icon='filetype-md' titleText='Markdown'}{/icons/icon}
+	{#icons/icon icon='filetype-md' titleText='Markdown' /}
 {#else if mimeType is "text/csv"}
-	{#icons/icon icon='filetype-csv' titleText='CSV'}{/icons/icon}
+	{#icons/icon icon='filetype-csv' titleText='CSV' /}
 {#else if mimeType is "text/css"}
-	{#icons/icon icon='filetype-css' titleText='CSS'}{/icons/icon}
+	{#icons/icon icon='filetype-css' titleText='CSS' /}
 {#else if mimeType is "text/x-yaml"}
-	{#icons/icon icon='filetype-yml' titleText='YAML'}{/icons/icon}
+	{#icons/icon icon='filetype-yml' titleText='YAML' /}
 {#else if mimeType is "application/x-sh"}
-	{#icons/icon icon='filetype-sh' titleText='Shell Script'}{/icons/icon}
+	{#icons/icon icon='filetype-sh' titleText='Shell Script' /}
 {#else if mimeType is "application/json"}
-	{#icons/icon icon='filetype-json' titleText='JSON'}{/icons/icon}
+	{#icons/icon icon='filetype-json' titleText='JSON' /}
 {#else if mimeType is "application/octet-stream"}
-	{#icons/icon icon='file-earmark-binary' titleText='Binary Data'}{/icons/icon}
+	{#icons/icon icon='file-earmark-binary' titleText='Binary Data' /}
 {#else if mimeType is "application/x-bzip" || mimeType is "application/x-bzip2" || mimeType is "application/gzip" || mimeType is "application/vnd.rar" || mimeType is "application/x-tar" || mimeType is "application/zip" || mimeType is "application/x-7z-compressed"}
-	{#icons/icon icon='file-earmark-zip' titleText=(mimeType.split('/')[1].toUpperCase() + ' File Archive')}{/icons/icon}
+	{#icons/icon icon='file-earmark-zip' titleText=(mimeType.split('/')[1].toUpperCase() + ' File Archive') /}
 {#else if mimeType is "application/msword" || mimeType is "application/vnd.openxmlformats-officedocument.wordprocessingml.document"}
-	{#icons/icon icon='file-earmark-richtext' titleText='Microsoft Word'}{/icons/icon}
+	{#icons/icon icon='file-earmark-richtext' titleText='Microsoft Word' /}
 {#else if mimeType is "application/vnd.ms-powerpoint" || mimeType is "application/vnd.openxmlformats-officedocument.presentationml.presentation"}
-	{#icons/icon icon='file-earmark-slides' titleText='Microsoft PowerPoint'}{/icons/icon}
+	{#icons/icon icon='file-earmark-slides' titleText='Microsoft PowerPoint' /}
 {#else if mimeType is "application/vnd.ms-excel" || mimeType is "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"}
-	{#icons/icon icon='file-earmark-spreadsheet' titleText='Microsoft Excel'}{/icons/icon}
+	{#icons/icon icon='file-earmark-spreadsheet' titleText='Microsoft Excel' /}
 {#else if mimeType is "application/rtf"}
-	{#icons/icon icon='file-earmark-richtext' titleText='Rich Text'}{/icons/icon}
+	{#icons/icon icon='file-earmark-richtext' titleText='Rich Text' /}
 {#else if mimeType is "application/vnd.oasis.opendocument.text"}
-	{#icons/icon icon='file-earmark-richtext' titleText='Open Document Text'}{/icons/icon}
+	{#icons/icon icon='file-earmark-richtext' titleText='Open Document Text' /}
 {#else if mimeType is "application/vnd.oasis.opendocument.spreadsheet"}
-	{#icons/icon icon='file-earmark-spreadsheet' titleText='Open Document Spreadsheet'}{/icons/icon}
+	{#icons/icon icon='file-earmark-spreadsheet' titleText='Open Document Spreadsheet' /}
 {#else if mimeType is "application/vnd.oasis.opendocument.presentation"}
-	{#icons/icon icon='file-earmark-slides' titleText='Open Document Presentation'}{/icons/icon}
+	{#icons/icon icon='file-earmark-slides' titleText='Open Document Presentation' /}
 {#else if mimeType is "application/pdf"}
-	{#icons/icon icon='file-earmark-pdf' titleText='PDF'}{/icons/icon}
+	{#icons/icon icon='file-earmark-pdf' titleText='PDF' /}
 {! TODO:: pem; "application/x-x509-cert; format=pem" !}
 {#else}
-	{#icons/icon icon='file-earmark' titleText=mimeType}{/icons/icon}
+	{#icons/icon icon='file-earmark' titleText=mimeType /}
 {/if}
