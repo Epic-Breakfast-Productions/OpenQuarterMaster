@@ -1,30 +1,43 @@
-{!{@java.util.List<tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo> productProviderInfoList}!}
-{!{@java.util.List<tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo> supportedPageScanInfoList}!}
-{!{@java.util.List<tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo> legoProviderInfoList}!}
 {#include webui/mainWebPageTemplate showTitle = true navbar = 'full' title = "Help and User Guide" page = 'help'}
 	{#pageStyle}
 	
 	{/pageStyle}
 {#pageContent}
 <ul class="nav nav-tabs" id="mainTab" role="tablist">
+{! TODO:: if/when we figure out what should go here !}
+	{!<li class="nav-item" role="presentation">!}
+		{!<button class="nav-link active" id="generalTab" data-bs-toggle="tab" data-bs-target="#generalTabContent"!}
+			{!type="button" role="tab" aria-controls="generalTabContent" aria-selected="true">!}
+			{!General!}
+		{!</button>!}
+	{!</li>!}
 	<li class="nav-item" role="presentation">
-		<button class="nav-link active" id="generalTab" data-bs-toggle="tab" data-bs-target="#generalTabContent"
-			type="button" role="tab" aria-controls="generalTabContent" aria-selected="true">
-			General
+		<button class="nav-link active" id="storageTab" data-bs-toggle="tab"
+			data-bs-target="#storageContent" type="button" role="tab"
+			aria-controls="storageContent" aria-selected="true">
+				{#icons/storageBlocks /} Storage
 		</button>
 	</li>
-<li class="nav-item" role="presentation">
-<button class="nav-link" id="itemsTab" data-bs-toggle="tab"
-	data-bs-target="#itemsContent" type="button" role="tab"
-	aria-controls="itemsContent" aria-selected="false">
-{#icons/items /} Items
-	</button>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="itemsTab" data-bs-toggle="tab"
+			data-bs-target="#itemsContent" type="button" role="tab"
+			aria-controls="itemsContent" aria-selected="false">
+				{#icons/items /} Items
+		</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="transactionsTab" data-bs-toggle="tab"
+			data-bs-target="#transactionsContent" type="button" role="tab"
+			aria-controls="transactionsContent" aria-selected="false">
+			{#icons/transaction /}
+			Transactions
+		</button>
 	</li>
 	<li class="nav-item" role="presentation">
 		<button class="nav-link" id="unitsTab" data-bs-toggle="tab"
 			data-bs-target="#unitsContent" type="button" role="tab"
 			aria-controls="unitsContent" aria-selected="false">
-			Units
+			{#icons/units /} Units
 		</button>
 	</li>
 	{!TODO:: when we have this functionality!}
@@ -44,14 +57,57 @@
 	<li class="nav-item" role="presentation">
 		<button class="nav-link" id="itemSearchProvidersTab" data-bs-toggle="tab"
 			data-bs-target="#itemSearchProvidersContent" type="button" role="tab"
-			aria-controls="itemSearchProvidersContent" aria-selected="false">Search Providers
+			aria-controls="itemSearchProvidersContent" aria-selected="false">
+			Search Providers
+		</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="feedbackTab" data-bs-toggle="tab"
+			data-bs-target="#feedbackContent" type="button" role="tab"
+			aria-controls="feedbackContent" aria-selected="false">
+			Giving Feedback
 		</button>
 	</li>
 	</ul>
 	<div class="tab-content" id="mainTabContent">
-		<div class="tab-pane fade show active" id="generalTabContent" role="tabpanel" aria-labelledby="generalTab">
+		<div class="tab-pane fade" id="generalTabContent" role="tabpanel" aria-labelledby="generalTab">
 			{! TODO:: this !}
 			TODO
+		</div>
+		<div class="tab-pane fade show active" id="storageContent" role="tabpanel" aria-labelledby="storageTab">
+			<h2>
+				{#icons/storageBlocks /} Storage
+			</h2>
+			<p>
+				{#links/storageBlocks /} describe areas and places where things are stored.
+				It can be a shelf, a bin, or anywhere you put things. We don't judge.
+			</p>
+			<p>
+				Storage blocks can also have parents, leading to a tree structure to describe a whole facility and how the storage is related.
+				An example layout:
+			</p>
+			<ul>
+				<li>
+					House
+					<ul>
+						<li>
+							Kitchen
+							<ul>
+								<li>Cabinets</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li>
+					Shed
+					<ul>
+						<li>Shelves</li>
+					</ul>
+				</li>
+				<li>
+					Garage
+				</li>
+			</ul>
 		</div>
 		<div class="tab-pane fade" id="itemsContent" role="tabpanel" aria-labelledby="itemsTab">
 			<h2>
@@ -60,6 +116,38 @@
 			<p>
 				Items are... what's stored! Items are tracked on the {#links/inventoryItems /} page.
 			</p>
+			<hr />
+			
+			<h3>
+				How Items Work
+			</h3>
+			<p>
+				"{#icons/item /} Inventory Items" describe a type of item that is stored, but not what is actually stored where. These are high level details that apply to
+				all related {#icons/stored /} Stored items.
+			</p>
+			<p>
+				"{#icons/stored /} Stored" is what describes actual physical items. These are tied to specific items and storage blocks. While most data that makes up a stored
+				item can be edited, all changes to stored that affect the number or amount of stuff stored must happen through {#icons/transaction /} Transactions (More information in the associated help tab).
+				Different storage types of the item determine what kinds of stored can be added and how they are stored.
+			</p>
+			
+			<hr />
+			
+			<h3>{#icons/stored /} Stored Types</h3>
+			<p>
+				These are the types of {#icons/stored /} Stored items. Which type an item uses are defined by the Storage Type set.
+			</p>
+			<h4>{#icons/storedTypeAmount /} Amount Stored</h4>
+			<p>
+				This type describes amounts of stuff. Used in situations where you are not tracking individual items, but amounts of stuff.
+			</p>
+			<h4>{#icons/storedTypeUnique /} Unique Stored</h4>
+			<p>
+				These describe individual physical items.
+			</p>
+			
+			<hr />
+			
 			<h3>Storage Types</h3>
 			<p>
 				There are may ways to track and store items. We facilitate this by giving you several options of types of storage:
@@ -91,10 +179,18 @@
 				This only allows a single unique item to be stored. It supports multiple blocks to be associated, just only one stored item
 				between them. Examples could include your favorite guitar, a special tool, or momento.
 			</p>
+			
+			
+		</div>
+		<div class="tab-pane fade" id="transactionsContent" role="tabpanel" aria-labelledby="transactionsTab">
+			<h2>
+				{#icons/transaction /} Transactions
+			</h2>
+			
 		</div>
 		<div class="tab-pane fade" id="unitsContent" role="tabpanel" aria-labelledby="unitsTab">
 			<h2>
-				Units
+				{#icons/units /} Units
 			</h2>
 			<p>
 				This describes what units are available to use in this system. An inventory administrator can add
@@ -126,7 +222,7 @@
 			<p>
 				For information on enabling/ configuring these providers, see
 				<a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/open-qm-base-station/docs/BuildingAndDeployment.adoc#product-search-providers">
-					our documentation on Github
+					{#icons/github /} our documentation on Github
 				</a>
 			</p>
 			{#if extSearchEnabled}
@@ -139,8 +235,7 @@
 				</p>
 				<div class="row">
 					{#for productProvider in allProviderInfo.get("product")}
-						{#providerInfoCard providerInfo = productProvider}
-						{/providerInfoCard}
+						{#providerInfoCard providerInfo = productProvider /}
 					{/for}
 				</div>
 				<hr/>
@@ -153,8 +248,7 @@
 				</p>
 				<div class="row">
 					{#for productProvider in allProviderInfo.get("webpage")}
-						{#providerInfoCard providerInfo = productProvider}
-						{/providerInfoCard}
+						{#providerInfoCard providerInfo = productProvider /}
 					{/for}
 				</div>
 				<hr/>
@@ -166,8 +260,7 @@
 				</p>
 				<div class="row">
 					{#for productProvider in allProviderInfo.get("lego")}
-						{#providerInfoCard providerInfo = productProvider}
-						{/providerInfoCard}
+						{#providerInfoCard providerInfo = productProvider /}
 					{/for}
 				</div>
 			{#else}
@@ -205,11 +298,21 @@
 					{#icons/github /} Writing Plugins on our Github
 				</a>
 			</p>
-			<hr/>
-			TODO::
-			- explain how to auth
-			- explain
-		
+		</div>
+		<div class="tab-pane fade" id="feedbackContent" role="tabpanel" aria-labelledby="feedbackTab">
+			<h2>
+				{#icons/coreApi /} Feedback
+			</h2>
+			<p>
+				Open QuarterMaster is, at its core, an open source system. If you find anything that is lacking, needs fixed, or improved, please don't hesitate to reach out!
+				Any and all suggestions and reports are welcome!
+			</p>
+			<p>
+				Find out all the ways you can help us by visiting our
+				<a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster?tab=contributing-ov-file">
+					{#icons/github /} Github Page
+				</a>!
+			</p>
 		</div>
 	</div>
 	{/pageContent}
