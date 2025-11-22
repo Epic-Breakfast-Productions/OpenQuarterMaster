@@ -16,7 +16,6 @@ const ItemView = {
 	storedMultiNoneStoredInBlock: $("#itemViewStoredMultiNonePresentBlocksList"),
 	storedMultiNumStoredDisplay: $("#itemViewStoredMultiNumStoredDisplay"),
 	storedMultiNumBlocksDisplay: $("#itemViewStoredMultiBlockNum"),
-	storedSingleAccordion: $("#itemViewStoredSingleAccordion"),
 	storedViewTabAllStoredPane: $("#itemViewStoredViewTabAllStoredContainer"),
 
 	storedBulkContainer: $("#itemViewStoredBulkContainer"),
@@ -83,6 +82,7 @@ const ItemView = {
 		ItemView.itemViewModalLabel.text("");
 		ItemView.storedMultiContainer.hide();
 		ItemView.storedSingleContainer.hide();
+		ItemView.storedSingleContainer.text("");
 		ItemView.storedBulkContainer.hide();
 		ItemView.storedBulkNumStoredDisplay.text("");
 		ItemView.storedBulkBlockNum.text("");
@@ -92,7 +92,6 @@ const ItemView = {
 
 		ItemView.storedMultiByBlockAccordion.text("");
 		ItemView.storedMultiNoneStoredInBlock.text("");
-		ItemView.storedSingleAccordion.text("");
 		ItemView.storedBulkAccordion.text("");
 		ItemView.itemViewValPerUnitDefault.hide();
 		ItemView.itemViewValPerUnit.text("");
@@ -391,8 +390,9 @@ const ItemView = {
 										})
 								);
 								await Promise.all(promises);
-								if (!storageLabel.find(".uniqueItemStoredAlsoInLabel").children().length) {
-									storageLabel.find(".uniqueItemStoredAlsoInContainer").remove();
+								if (storageLabel.find(".uniqueItemStoredAlsoInLabel").children().length === 0) {
+									// storageLabel.find(".uniqueItemStoredAlsoInContainer").remove();//for some reason this doesn't work ("find" doesn't work)
+									storageLabel.get(1).remove()
 								}
 								ItemView.storedSingleContainer.show();
 							})
