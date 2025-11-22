@@ -252,7 +252,7 @@ const ItemView = {
 
 		if (ItemView.itemViewEditButton) {
 			ItemView.itemViewEditButton.on("click", function () {
-				ItemAddEdit.setupAddEditForEdit(itemId);
+				ItemAddEdit.setupAddEditForEdit(itemId, ItemView.itemViewModal);
 			});
 		}
 
@@ -366,7 +366,13 @@ const ItemView = {
 						function () {
 							Getters.StoredItem.getSingleStoredForItem(itemId, async function (stored) {
 								let promises = [];
-								let storageLabel = $('<h3>Stored in: <span class="uniqueItemStoredInLabel"></span></h3><p class="uniqueItemStoredAlsoInContainer">Also found in: <span class="uniqueItemStoredAlsoInLabel"></span></p>');
+								let storageLabel = $(`
+									<h3>
+										Stored in: <span class="uniqueItemStoredInLabel"></span>
+									</h3>
+									<p class="uniqueItemStoredAlsoInContainer">
+										Also found in: <span class="uniqueItemStoredAlsoInLabel"></span>
+									</p>`);
 
 								itemData.storageBlocks.forEach(function (curBlock) {
 									promises.push(getStorageBlockLabel(curBlock, function (labelText) {
