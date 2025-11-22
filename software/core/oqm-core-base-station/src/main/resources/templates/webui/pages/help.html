@@ -17,7 +17,7 @@
 <button class="nav-link" id="itemsTab" data-bs-toggle="tab"
 	data-bs-target="#itemsContent" type="button" role="tab"
 	aria-controls="itemsContent" aria-selected="false">
-{#icons/items}{/icons/items} Items
+{#icons/items /} Items
 	</button>
 	</li>
 	<li class="nav-item" role="presentation">
@@ -38,7 +38,7 @@
 		<button class="nav-link" id="apiTab" data-bs-toggle="tab"
 			data-bs-target="#apiContent" type="button" role="tab"
 			aria-controls="apiContent" aria-selected="false">
-			API
+			{#icons/coreApi /} API
 		</button>
 	</li>
 	<li class="nav-item" role="presentation">
@@ -55,7 +55,7 @@
 		</div>
 		<div class="tab-pane fade" id="itemsContent" role="tabpanel" aria-labelledby="itemsTab">
 			<h2>
-				{#icons/items}{/icons/items} Items
+				{#icons/items /} Items
 			</h2>
 			<p>
 				Items are... what's stored! Items are tracked on the {#links/inventoryItems /} page.
@@ -188,15 +188,27 @@
 		</div>
 		<div class="tab-pane fade" id="apiContent" role="tabpanel" aria-labelledby="apiTab">
 			<h2>
-				Rest API
+				{#icons/coreApi /} Core API
 			</h2>
 			<p>
+				This interface (the Base Station) is a UI wrapper for the {#icons/coreApi /} Core API.
+				While all functionality is available here, the Open QuarterMaster system is intended to be extended
+				to suit your needs. You can do this by connecting to the {#icons/coreApi /} Core API from your own software.
+			</p>
+			<p>
 				Full documentation of all endpoints is available at the <a
-					href="{config:['oqm.core.api.baseUri']}" target="_blank">Core API</a>.
+					href="{config:['oqm.core.api.baseUri']}" target="_blank">{#icons/coreApi /} Core API</a>.
+			</p>
+			<p>
+				For information developing your own plugins:
+				<a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/plugins/docs/WritingPlugins.md" target="_blank">
+					{#icons/github /} Writing Plugins on our Github
+				</a>
 			</p>
 			<hr/>
 			TODO::
 			- explain how to auth
+			- explain
 		
 		</div>
 	</div>
