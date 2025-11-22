@@ -16,7 +16,7 @@ import tech.ebp.oqm.core.api.model.rest.unit.custom.NewCustomUnitRequest;
 import tech.ebp.oqm.core.api.model.units.CustomUnitEntry;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.model.rest.search.CustomUnitSearch;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 
 import javax.measure.Unit;
 import java.util.ArrayList;

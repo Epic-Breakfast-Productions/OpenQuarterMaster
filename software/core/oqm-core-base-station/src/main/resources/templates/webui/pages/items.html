@@ -56,14 +56,7 @@
 {/search/image/imageSelectFormInputHidden}
 {/pageContent}
 {#modals}
-    {#objView/itemViewModal currency=currency  rootPrefix=rootPrefix}
-        {#footerButtons}
-            <button type="button" id="itemViewEditButton" class="btn btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" >
-                {#icons/edit}{/icons/edit}
-                Edit Item
-            </button>
-        {/footerButtons}
-    {/objView/itemViewModal}
+    {#objView/itemViewModal currency=currency  rootPrefix=rootPrefix /}
 	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency /}
 	{#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
 		{#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}

@@ -115,8 +115,9 @@ const ItemAddEdit = {
 		ItemAddEdit.addEditItemFormSubmitButton.html(Icons.iconWithSub(Icons.item, Icons.add) + " Add Item");
 	},
 
-	setupAddEditForEdit: async function (itemId) {
+	setupAddEditForEdit: async function (itemId, otherModal = null) {
 		console.log("Setting up add/edit form for editing item " + itemId);
+		ModalHelpers.setReturnModal(ItemAddEdit.addEditItemModal, otherModal);
 		await ItemAddEdit.resetAddEditForm();
 		ItemAddEdit.addEditItemModalLabel.text("Item Edit");
 		ItemAddEdit.addEditItemFormMode.val("edit");

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.mongo.exception;
+package tech.ebp.oqm.core.api.exception.db;
 
 import org.bson.types.ObjectId;
 

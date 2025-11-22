@@ -1,5 +1,10 @@
 {#modal id='itemView' size='xl' title='Item View'}
-    {#titleIcon}{#icons/item}{/icons/item}{/titleIcon}
+    {#titleIcon}{#icons/item /}{/titleIcon}
+    {#footerButtons}
+    	<button type="button" class="btn btn-warning" id="itemViewEditButton" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal">
+			{#icons/edit /} Edit Item
+		</button>
+    {/footerButtons}
     <div class="row">
         <div class="col" id="itemViewMessages"></div>
     </div>
