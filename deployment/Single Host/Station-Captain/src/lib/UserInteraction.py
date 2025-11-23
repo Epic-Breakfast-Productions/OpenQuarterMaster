@@ -921,11 +921,13 @@ class UserInteraction:
 
     def checkSystem(self):
         self.log.debug("Checking system.")
-        #TODO:: wait screen
+
+        self.dialog.infobox("Checking system...")
+
         errs = SystemCheckUtils.checkSystem()
 
         if not errs:
-            # TODO:: show no errs confirmation
+            self.dialog.msgbox("System check yielded no alerts!", title="System Check")
             return
 
         toShow = ""
