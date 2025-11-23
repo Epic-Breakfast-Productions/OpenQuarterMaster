@@ -1,4 +1,4 @@
-# Plugin Interface Requirements
+# Writing Plugins
 
 ## General
 

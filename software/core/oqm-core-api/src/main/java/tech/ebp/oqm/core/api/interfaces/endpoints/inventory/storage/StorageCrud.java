@@ -6,6 +6,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -66,7 +67,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public StorageBlock create(
-		@Valid StorageBlock storageBlock
+		@NotNull @Valid StorageBlock storageBlock
 	) {
 		return super.create(storageBlock);
 	}

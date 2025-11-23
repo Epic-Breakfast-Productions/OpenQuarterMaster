@@ -5,6 +5,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -63,7 +64,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemCategory create(
-		@Valid ItemCategory itemCategory
+		@NotNull @Valid ItemCategory itemCategory
 	) {
 		return super.create(itemCategory);
 	}
