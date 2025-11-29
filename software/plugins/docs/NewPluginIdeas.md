@@ -90,3 +90,4 @@ https://www.workato.com/integrations?utm_medium=adwords&utm_source=cpc&utm_campa
 
 Generates seratonin based on usage stats
 
+## N8N Integration
