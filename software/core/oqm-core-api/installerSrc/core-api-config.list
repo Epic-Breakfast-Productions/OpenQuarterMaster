@@ -27,8 +27,8 @@ quarkus.http.proxy.enable-forwarded-prefix=true
 
 # jwt verification
 smallrye.jwt.verify.key.location={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/certs
-{% if cert.externalDefault != "acme" %} # TODO:: figure out. Supplying acme cert file results in "the trustAnchors parameter must be non-empty"
-smallrye.jwt.client.tls.certificate.path={cert.trustStore.files.acme.crt}
+{% if cert.externalDefault != "acme" %} # TODO:: #998 figure out. Supplying acme cert file results in "the trustAnchors parameter must be non-empty"
+smallrye.jwt.client.tls.certificate.path={cert.trustStore.files.selfSigned.crt}
 {% endif %}
 
 # Mongo Config:

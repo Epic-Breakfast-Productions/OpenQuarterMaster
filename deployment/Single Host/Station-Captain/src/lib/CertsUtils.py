@@ -279,6 +279,7 @@ class CertsUtils:
             )
 
         #ACME / Let's Encrypt
+        # TODO: #998 support other ACME providers
         if mainCM.getConfigVal("cert.externalDefault") == "acme":
             trust_bundle = []
 
