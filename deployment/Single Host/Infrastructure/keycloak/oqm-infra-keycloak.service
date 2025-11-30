@@ -52,8 +52,10 @@ ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_DATABASE=$(oqm-config g 'infra.key
 ExecStartPre=/bin/bash -c "printf \"KC_HEALTH_ENABLED=true\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_CERTIFICATE_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/serviceCert.crt\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_CERTIFICATE_KEY_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/serviceCertKey.pem\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/oqmSystemExternalTruststore.p12\n\" >> $ENV_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_PASSWORD=$(oqm-config g cert.trustStore.systemExternalTrustStorePass)\n\" >> $ENV_CONFIG_FILE"
+
+ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_FILE=$(oqm-config g cert.trustStore.files.selfSigned.p12)\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_TRUST_STORE_PASSWORD=$(oqm-config g cert.trustStore.files.selfSigned.p12Password)\n\" >> $ENV_CONFIG_FILE"
+
 ExecStartPre=/bin/bash -c "printf \"KC_PROXY_HEADERS=xforwarded\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HOSTNAME=$(oqm-config g infra.keycloak.externalBaseUri)\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HTTP_RELATIVE_PATH=/infra/keycloak/\n\" >> $ENV_CONFIG_FILE"
@@ -70,6 +72,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
                                  --add-host $(oqm-config g system.hostname):host-gateway \
                                  --network=oqm-internal \
                                  --env-file $ENV_CONFIG_FILE \
+                                 -v /etc/oqm/certs/trustStores:/etc/oqm/certs/trustStores:ro \
                                  -v /etc/oqm/serviceConfig/infra/keycloak/files:/etc/oqm/serviceConfig/infra/keycloak/files:ro \
                                  -v /etc/oqm/static/keycloak/import:/opt/keycloak/data/import:ro \
                                  $IMAGE_NAME:$IMAGE_VERSION start --import-realm"
