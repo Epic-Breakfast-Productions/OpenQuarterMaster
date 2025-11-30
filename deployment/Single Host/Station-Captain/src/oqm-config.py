@@ -107,7 +107,7 @@ def template(args):
                 mainCM.getConfigVal(curPlaceholder)
             )
     except Exception as e:
-        print("ERROR: Failed to template file ("+configFileToGet+"): " + str(e), file=sys.stderr)
+        print("ERROR: Failed to template file ("+str(configFileToGet)+"): " + str(e), file=sys.stderr)
         exit(1)
 
     print(output)

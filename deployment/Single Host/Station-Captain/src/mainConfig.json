@@ -51,8 +51,17 @@
 		"externalDefault": "self",
 		"additionalExternalSANs": [],
 		"trustStore": {
-			"systemExternalTrustStore": "/etc/oqm/certs/oqmSystemExternalTruststore.p12",
-			"systemExternalTrustStorePass": "<secret>"
+			"systemExternalTrustStoreDir": "/etc/oqm/certs/trustStores",
+			"files": {
+				"selfSigned": {
+					"crt": "#{cert.trustStore.systemExternalTrustStoreDir}/oqmSystemRootCert.crt",
+					"p12": "#{cert.trustStore.systemExternalTrustStoreDir}/oqmSystemRootCert.p12",
+					"p12Password": "<secret>"
+				},
+				"acme": {
+					"crt": "#{cert.trustStore.systemExternalTrustStoreDir}/acmeTrustStore.crt"
+				}
+			}
 		},
 		"selfSigned": {
 			"certs": {

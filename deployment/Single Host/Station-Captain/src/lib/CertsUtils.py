@@ -241,28 +241,48 @@ class CertsUtils:
         return CronUtils.isCronEnabled(CertsUtils.AUTO_REGEN_CERTS_CRON_NAME)
 
     @classmethod
-    def generateSystemTruststore(cls) -> (bool, str):
+    def generateSystemTruststores(cls) -> (bool, str):
         """
         Generates a new system trust store.
         :return:
         """
         cls.log.info("Generating a new system trust store")
-        # root_ca_key_path = mainCM.getConfigVal("cert.selfSigned.certs.CARootPrivateKey")
-        root_ca_cert_path = mainCM.getConfigVal("cert.selfSigned.certs.CARootCert")
-        truststoreFile = mainCM.getConfigVal("cert.trustStore.systemExternalTrustStore")
-        truststorePassword = mainCM.getConfigVal("cert.trustStore.systemExternalTrustStorePass")
 
+        trustStoreDir = mainCM.getConfigVal("cert.trustStore.systemExternalTrustStoreDir")
+        if not os.path.exists(trustStoreDir):
+            os.makedirs(trustStoreDir)
+
+        # Copy CA cert to trust store location
+        shutil.copyfile(
+            mainCM.getConfigVal("cert.selfSigned.certs.CARootCert"),
+            mainCM.getConfigVal("cert.trustStore.files.selfSigned.crt")
+        )
+
+        #write ca root cert trust store p12
         trust_bundle = []
-
         with(
-            open(root_ca_cert_path, "rb") as root_ca_cert
-            # open(root_ca_key_path, "rb") as root_ca_key
+            open(mainCM.getConfigVal("cert.selfSigned.certs.CARootCert"), "rb") as root_ca_cert
         ):
             cert = x509.load_pem_x509_certificate(root_ca_cert.read())
             trust_bundle.append(cert)
+        with (
+            open(mainCM.getConfigVal("cert.trustStore.files.selfSigned.p12"), 'wb') as cert_file
+        ):
+            cert_file.write(
+                pkcs12.serialize_key_and_certificates(
+                    name=b"OQM CA",
+                    key=None,
+                    cert=None,
+                    cas=trust_bundle,
+                    encryption_algorithm=serialization.BestAvailableEncryption(mainCM.getConfigVal("cert.trustStore.files.selfSigned.p12Password").encode('UTF-8'))
+                )
+            )
 
+        #ACME / Let's Encrypt
         if mainCM.getConfigVal("cert.externalDefault") == "acme":
-            cls.log.info("Adding LetsEncrypt CA to system trust store.")
+            trust_bundle = []
+
+            cls.log.info("Adding LetsEncrypt CA to system trust store collection.")
 
             for certName, certList in cls.LETSE_CA_SOURCES.items():
                 for i, curCertUrl in enumerate(certList):
@@ -272,22 +292,15 @@ class CertsUtils:
                         certContent = certRequest.content
                     cert = x509.load_pem_x509_certificate(certContent)
                     trust_bundle.append(cert)
-            cls.log.info("Finished adding LetsEncrypt CAs to system trust store.")
 
-        # TODO:: if provided, add provided CA
+            truststoreFile = mainCM.getConfigVal("cert.trustStore.files.acme.crt")
+            with (
+                open(truststoreFile, 'wb') as cert_file
+            ):
+                for cert in trust_bundle:
+                    cert_file.write(cert.public_bytes(serialization.Encoding.PEM))
+        cls.log.info("Finished writing new system trust stores.")
 
-        with (
-            open(truststoreFile, 'wb') as cert_file
-        ):
-            cert_file.write(
-                pkcs12.serialize_key_and_certificates(
-                    key=None,
-                    cert=None,
-                    cas=trust_bundle,
-                    encryption_algorithm=serialization.BestAvailableEncryption(truststorePassword.encode('UTF-8'))
-                )
-            )
-        cls.log.info("Finished writing new system trust store.")
 
     @classmethod
     def generateRootCA(cls) -> (bool, str):
@@ -338,7 +351,7 @@ class CertsUtils:
                 )
             )
 
-        cls.generateSystemTruststore()
+        cls.generateSystemTruststores()
         returned, caInstallOutput = CertsUtils.ensureCaInstalled()
         if not returned:
             return False, caInstallOutput
@@ -513,8 +526,8 @@ class CertsUtils:
         systemCertKeyPath = mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCertKey")
         systemCertPath = mainCM.getConfigVal("cert.selfSigned.certs.systemExternalSelfCert")
 
-        needWritten = False
-        if force or not all(os.path.exists(path) for path in [systemCertKeyPath, systemCertPath]):
+        needWritten = force
+        if not all(os.path.exists(path) for path in [systemCertKeyPath, systemCertPath]):
             cls.log.info("System Cert did NOT exist.")
             needWritten = True
         else:
@@ -525,8 +538,8 @@ class CertsUtils:
 
         if needWritten:
             CertsUtils.log.info("Writing new System Cert.")
-            cls.generateSystemTruststore()
             success, message = cls.generateSystemCert()
+            cls.generateSystemTruststores()
             return success, message, True
 
         return True, "System Cert Already Existent and not expiring soon.", False
@@ -550,7 +563,7 @@ class CertsUtils:
         :return:
         """
         CertsUtils.log.info("Writing new cert for internal service %s", host)
-        shutil.copyfile(mainCM.getConfigVal("cert.trustStore.systemExternalTrustStore"), destination + "/oqmSystemExternalTruststore.p12")
+        # shutil.copyfile(mainCM.getConfigVal("cert.trustStore.systemExternalTrustStore"), destination + "/oqmSystemExternalTruststore.p12")
         return CertsUtils.generateCert(
             destination + "/serviceCertKey.pem",
             destination + "/serviceCert.crt",
