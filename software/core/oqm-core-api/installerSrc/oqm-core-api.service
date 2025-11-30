@@ -52,6 +52,7 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --network=oqm-internal \
+                                        -v /etc/oqm/certs/trustStores:/etc/oqm/certs/trustStores:ro \
                                         -v /etc/oqm/serviceConfig/core/api/files:/etc/oqm/serviceConfig/core/api/files:ro \
                                         --add-host $(oqm-config g system.hostname):host-gateway \
                                         --env-file $MAIN_CONFIG_FILE \
