@@ -67,16 +67,17 @@ def setupAdminConfig(kcContainer: Container | None = None):
         kcContainer = getKcContainer()
 
     # Set OQM Truststore
+    log.info("Setting up oqm trust store for KC admin.")
     runResult = kcContainer.exec_run(
         [
             KC_ADM_SCRIPT, "config", "truststore",
-            "--trustpass", mainCM.getConfigVal("cert.selfSigned.internalKeystorePass"),
-            "/etc/oqm/serviceConfig/infra/keycloak/files/serviceCertKeystore.p12"
+            "--trustpass", mainCM.getConfigVal("cert.trustStore.files.selfSigned.p12Password"),
+            mainCM.getConfigVal("cert.trustStore.files.selfSigned.p12")
         ])
+
     if runResult.exit_code != 0:
         log.error("Failed to setup oqm trust store for KC admin: %s", runResult.output)
         raise ChildProcessError("Failed to setup oqm trust store for KC admin")
-
 
     runResult = kcContainer.exec_run(
         [
@@ -87,9 +88,10 @@ def setupAdminConfig(kcContainer: Container | None = None):
             "--password", mainCM.getConfigVal("infra.keycloak.adminPass")
         ])
     if runResult.exit_code != 0:
-        log.error("Failed to setup kc admin credentials: %s", runResult.output)
+        log.error("Failed to setup kc admin credentials: " + str(runResult.output))
         raise ChildProcessError("Failed to setup admin credentials")
     log.debug("Setting up KC creds output: %s", runResult.output)
+
 
 
 def getAllClientData(kcContainer: Container | None = None):
@@ -253,5 +255,5 @@ try:
     else:
         argParser.print_usage()
 except Exception as e:
-    log.error("Exception thrown: ", e)
+    log.error("Exception thrown: ", str(e))
     exit(1)
