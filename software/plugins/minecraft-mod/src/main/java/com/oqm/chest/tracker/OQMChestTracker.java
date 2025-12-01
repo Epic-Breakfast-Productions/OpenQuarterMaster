@@ -1,6 +1,7 @@
 package com.oqm.chest.tracker;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -32,6 +33,7 @@ import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
+import java.io.*;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -75,6 +77,9 @@ public class OQMChestTracker {
     public static final DeferredRegister<CreativeModeTab> CREATIVE_MODE_TABS = DeferredRegister.create(Registries.CREATIVE_MODE_TAB, MODID);
 
     public static final OqmCoreApiClient client;
+
+    public static final String itemsPath = "..\\src\\main\\java\\com\\oqm\\chest\\tracker\\itemIds.txt";
+    public static final String storagePath = "..\\src\\main\\java\\com\\oqm\\chest\\tracker\\storeIds.txt";
 
     Map<String, String> itemIdName = new HashMap<>();
     Map<String, String> storageIdName = new HashMap<>();
@@ -157,7 +162,19 @@ public class OQMChestTracker {
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
+    public void onServerStopping(ServerStoppingEvent event) {
+        // Save maps for next start up NOT SAVE INDEPENDENT
+        saveItemMap();
+        saveStorageMap();
+    }
+
+    @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
+
+        LOGGER.info(System.getProperty("user.dir"));
+        loadItemMap();
+        loadStorageMap();
+
         // Do something when the server starts
         LOGGER.info("HELLO from server starting");
 
@@ -181,6 +198,12 @@ public class OQMChestTracker {
         LOGGER.info("Item id and storage id map contents: ");
         LOGGER.info(itemIdName.toString());
         LOGGER.info(storageIdName.toString());
+
+        QueryParams params = new QueryParams();
+        HttpResponse<ObjectNode> response = client.invItemSearch(client.getDefaultCreds(), "default", params).join();
+        LOGGER.info(response.body().toPrettyString());
+
+        this.addInvItem("savetest", "BULK", "there");
     }
 
     private Map<String, Integer> collectChestItems(ChestMenu chestMenu) {
@@ -249,6 +272,9 @@ public class OQMChestTracker {
                     if (openCount != closeCount) {
                         int difference = closeCount - openCount;
                         if (difference > 0) {
+                            if (itemIdName.containsKey(itemName)) {
+
+                            }
                             LOGGER.info("Player {} added {} of item {} to chest at {}", playerName, difference, itemName, pos);
                         } else {
                             LOGGER.info("Player {} removed {} of item {} from chest at {}", playerName, -difference, itemName, pos);
@@ -262,12 +288,12 @@ public class OQMChestTracker {
     }
 
     // Adds an inventory item
-    public void addInvItem(String name, String storeType, String unit) {
+    public void addInvItem(String name, String storeType) {
         ObjectNode newItem = JacksonUtils.MAPPER.createObjectNode();
 
         newItem.put("name", name);
         newItem.put("storageType", storeType);
-        newItem.putObject("unit").put("string", unit);
+        // newItem.putObject("unit").put("string", unit);
 
         HttpResponse<ObjectNode> response = client.invItemCreate(client.getDefaultCreds(), "default", newItem).join();
         LOGGER.info("status code : {}", Integer.toString(response.statusCode()));
@@ -282,11 +308,12 @@ public class OQMChestTracker {
 
     }
 
-    public void addInvItem(String name, String storeType) {
+    public void addInvItem(String name, String storeType, String location) {
         ObjectNode newItem = JacksonUtils.MAPPER.createObjectNode();
 
         newItem.put("name", name);
         newItem.put("storageType", storeType);
+        newItem.putObject("attributes").put("location", location);
         newItem.putObject("unit").put("string", "units");
 
         HttpResponse<ObjectNode> response = client.invItemCreate(client.getDefaultCreds(), "default", newItem).join();
@@ -361,6 +388,13 @@ public class OQMChestTracker {
             LOGGER.info("Deleted stoarage block with id : {}", delRes.body().get("id").textValue());
             LOGGER.info(delRes.body().toPrettyString());
         }
+    }
+
+    public void storeItems(String name) {
+        ObjectNode transaction = JacksonUtils.MAPPER.createObjectNode();
+        transaction.put("name", name);
+
+        client.invItemStoredTransact(client.getDefaultCreds(), "default", itemIdName.get(name), transaction).join();
     }
 
     private static OqmCoreApiClient IgnoreCertIssues() throws NoSuchAlgorithmException, KeyManagementException {
@@ -450,5 +484,129 @@ public class OQMChestTracker {
             throw new RuntimeException("Failed to create uri for core api.", e);
         }
 
+    }
+
+    // saves the item map
+    public void saveItemMap() {
+        File itemFile = new File(itemsPath);
+        BufferedWriter bf = null;
+        try{
+            bf = new BufferedWriter(new FileWriter(itemFile));
+
+            // iterate map entries
+            for (Map.Entry<String, String> entry :
+                    itemIdName.entrySet()) {
+
+                // put key and value separated by a colon
+                bf.write(entry.getKey() + ":"
+                        + entry.getValue());
+
+                // new line
+                bf.newLine();
+            }
+
+            bf.flush();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+
+            try {
+
+                // always close the writer
+                bf.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    // saves the storage map
+    public void saveStorageMap() {
+        File storeFile = new File(storagePath);
+        BufferedWriter bf = null;
+        try{
+            bf = new BufferedWriter(new FileWriter(storeFile));
+
+            // iterate map entries
+            for (Map.Entry<String, String> entry :
+                    storageIdName.entrySet()) {
+
+                // put key and value separated by a colon
+                bf.write(entry.getKey() + ":"
+                        + entry.getValue());
+
+                // new line
+                bf.newLine();
+            }
+
+            bf.flush();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+        finally {
+
+            try {
+
+                // always close the writer
+                bf.close();
+            } catch (Exception e) {
+            }
+        }
+    }
+
+    // Loads the item map from the file
+    public void loadItemMap() {
+        itemIdName.clear();
+        File itemFile = new File(itemsPath);
+        BufferedReader bf = null;
+        String line = null;
+        try {
+            bf = new BufferedReader(new FileReader(itemFile));
+
+            while ((line = bf.readLine()) != null) {
+                String[] pair = line.split(":", 2);
+                if (pair.length == 2) {
+                    String key = pair[0];
+                    String value = pair[1];
+                    itemIdName.put(key, value);
+                }
+                else {
+                    LOGGER.warn("No Key:Value found in line, ignoring: " + line);
+                }
+            }
+            LOGGER.info("items loaded: " + itemIdName.size());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Loads the storages map from the file
+    public void loadStorageMap() {
+        storageIdName.clear();
+        File itemFile = new File(storagePath);
+        BufferedReader bf = null;
+        String line = null;
+        try {
+            bf = new BufferedReader(new FileReader(itemFile));
+
+            while ((line = bf.readLine()) != null) {
+                String[] pair = line.split(":", 2);
+                if (pair.length == 2) {
+                    String key = pair[0];
+                    String value = pair[1];
+                    storageIdName.put(key, value);
+                }
+                else {
+                    LOGGER.warn("No Key:Value found in line, ignoring: " + line);
+                }
+            }
+            LOGGER.info("storages loaded: " + storageIdName.size());
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
