@@ -59,7 +59,7 @@ public class OqmDatabaseService {
 		}
 		log.info("Refreshing cache of OQM databases.");
 		ArrayNode newCacheData = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
-		log.info("Got new cache of databases: {}", newCacheData);
+		log.debug("Got new cache of databases: {}", newCacheData);
 		try {
 			this.mutex.lock();
 			this.dbs = newCacheData;
