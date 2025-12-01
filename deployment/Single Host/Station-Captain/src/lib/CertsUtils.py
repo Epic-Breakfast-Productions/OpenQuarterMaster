@@ -577,9 +577,18 @@ class CertsUtils:
 
     @staticmethod
     def regenCerts() -> (bool, str):
-        CertsUtils.ensureCoreCerts(True)
-        ServiceUtils.doServiceCommand(
-            ServiceStateCommand.restart,
+        success, msg = ServiceUtils.doServiceCommand(
+            ServiceStateCommand.stop,
             ServiceUtils.SERVICE_ALL
         )
-        return True, ""
+
+        if not success:
+            return False, "FAILED to stop services before cert refresh: " + msg
+
+        success, msg = CertsUtils.ensureCoreCerts(True)
+
+        ServiceUtils.doServiceCommand(
+            ServiceStateCommand.start,
+            ServiceUtils.SERVICE_ALL
+        )
+        return success, msg
