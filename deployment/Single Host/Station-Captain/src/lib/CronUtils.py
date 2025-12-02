@@ -50,15 +50,16 @@ class CronUtils:
     def enableCron(
             name: str,
             script: str,
-            frequency: CronFrequency
+            frequency: CronFrequency,
+            scriptType: str = "!/bin/bash",
     ):
         CronUtils.disableCron(name)
         CronUtils.log.info("Enabling cron %s", name)
         fileName = CronUtils.getFileName(name)
         filePath = CronUtils.getFileDir(frequency, fileName)
         fileContent = """
-#!/bin/bash
-# Cron """ + name + """
+#""" + scriptType + """
+# OQM Cron """ + name + """
 # This script placed here by oqm-captain.
 """ + script
         with open(filePath, "w") as cronFile:
