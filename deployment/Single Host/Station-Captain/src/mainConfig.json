@@ -1,6 +1,7 @@
 {
 	"system": {
 		"hostname": "#{#mdnsHost}",
+		"altHostnameIps": [],
 		"systemDataDir": "/data",
 		"dataDir": "#{system.systemDataDir}/oqm",
 		"automaticContainerPruneFrequency": "monthly",
@@ -12,6 +13,10 @@
 		}
 	},
 	"captain": {
+		"demoMode": {
+			"frequency": "hourly",
+			"snapshotFile": ""
+		}
 	},
 	"snapshots": {
 		"location": "#{system.systemDataDir}/oqm-snapshots",
@@ -45,6 +50,19 @@
 	"cert": {
 		"externalDefault": "self",
 		"additionalExternalSANs": [],
+		"trustStore": {
+			"systemExternalTrustStoreDir": "/etc/oqm/certs/trustStores",
+			"files": {
+				"selfSigned": {
+					"crt": "#{cert.trustStore.systemExternalTrustStoreDir}/oqmSystemRootCert.crt",
+					"p12": "#{cert.trustStore.systemExternalTrustStoreDir}/oqmSystemRootCert.p12",
+					"p12Password": "<secret>"
+				},
+				"acme": {
+					"crt": "#{cert.trustStore.systemExternalTrustStoreDir}/acmeTrustStore.crt"
+				}
+			}
+		},
 		"selfSigned": {
 			"certs": {
 				"CARootPrivateKey": "/etc/oqm/certs/oqmSystemCaRootPrivateKey.pem",

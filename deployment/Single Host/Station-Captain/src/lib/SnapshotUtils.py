@@ -45,6 +45,7 @@ class SnapshotUtils:
         if not success:
             print("FAILED to create snapshot: " + message, file=sys.stderr)
             exit(2)
+        print(message)
 
     @staticmethod
     def performSnapshot(snapshotTrigger: SnapshotTrigger) -> (bool, str):
