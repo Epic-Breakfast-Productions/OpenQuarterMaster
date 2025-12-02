@@ -7,8 +7,8 @@
 [Unit]
 Description=Open QuarterMaster Base Station server for Open Quartermaster. Version ${version}.
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
-After=docker.service
 Wants=network-online.target
+After=docker.service
 Requires=docker.socket
 Requires=oqm-core-api.service
 After=oqm-core-api.service
