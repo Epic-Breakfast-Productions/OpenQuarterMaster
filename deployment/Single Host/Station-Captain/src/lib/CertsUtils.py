@@ -61,7 +61,7 @@ class CertsUtils:
 
     @classmethod
     def regenCertsFromArgs(cls, args):
-        result, message = CertsUtils.regenCerts()
+        result, message = cls.regenCerts()
         if not result:
             print("Failed to generate certs: " + message)
             exit(4)
@@ -259,12 +259,12 @@ class CertsUtils:
         )
 
         #write ca root cert trust store p12
-        trust_bundle = []
+        ca_cert = None
         with(
             open(mainCM.getConfigVal("cert.selfSigned.certs.CARootCert"), "rb") as root_ca_cert
         ):
             cert = x509.load_pem_x509_certificate(root_ca_cert.read())
-            trust_bundle.append(cert)
+            ca_cert = cert
         with (
             open(mainCM.getConfigVal("cert.trustStore.files.selfSigned.p12"), 'wb') as cert_file
         ):
@@ -272,8 +272,8 @@ class CertsUtils:
                 pkcs12.serialize_key_and_certificates(
                     name=b"OQM CA",
                     key=None,
-                    cert=None,
-                    cas=trust_bundle,
+                    cert=ca_cert,
+                    cas=None,
                     encryption_algorithm=serialization.BestAvailableEncryption(mainCM.getConfigVal("cert.trustStore.files.selfSigned.p12Password").encode('UTF-8'))
                 )
             )
@@ -552,7 +552,7 @@ class CertsUtils:
         :param force: If to write these certs anyways.
         :return: success, message, if new certs written
         """
-        CertsUtils.log.info("Ensuring core certs (CA and system certs) exist.")
+        CertsUtils.log.info("Ensuring core certs (CA and system certs) exist. Forcing? " + str(force))
         caSuccess, caMessage, caWritten = CertsUtils.ensureRootCA(force)
         sysSuccess, sysMessage, sysWritten = CertsUtils.ensureSystemCerts(force)
         return (caSuccess and sysSuccess), caMessage + " " + sysMessage, (caWritten or sysWritten)
@@ -575,17 +575,21 @@ class CertsUtils:
             mainCM.getConfigVal("cert.selfSigned.internalKeystorePass")
         )
 
-    @staticmethod
-    def regenCerts() -> (bool, str):
-        success, msg = ServiceUtils.doServiceCommand(
+    @classmethod
+    def regenCerts(cls) -> (bool, str):
+        cls.log.info("Regenerating system certs.")
+
+        success = ServiceUtils.doServiceCommand(
             ServiceStateCommand.stop,
             ServiceUtils.SERVICE_ALL
         )
 
-        if not success:
-            return False, "FAILED to stop services before cert refresh: " + msg
+        # if not success: # TODO:: invariably seems to fail
+        #     return False, "FAILED to stop services before cert refresh"
 
-        success, msg = CertsUtils.ensureCoreCerts(True)
+        success, msg, written = CertsUtils.ensureCoreCerts(True)
+
+        cls.log.info("Done Regenerating system certs.")
 
         ServiceUtils.doServiceCommand(
             ServiceStateCommand.start,
