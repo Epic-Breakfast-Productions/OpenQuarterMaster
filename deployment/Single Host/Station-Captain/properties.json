@@ -1,6 +1,6 @@
 {
 	"packageName":"oqm-manager-station+captain",
-	"version":"2.9.2",
+	"version":"2.10.0",
 	"description":"Utility for setting up and maintaining an instance of Open QuarterMaster.",
 	"maintainer": {
 		"name":"EBP"
