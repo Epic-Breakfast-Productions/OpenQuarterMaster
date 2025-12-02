@@ -67,17 +67,22 @@ def setupAdminConfig(kcContainer: Container | None = None):
         kcContainer = getKcContainer()
 
     # Set OQM Truststore
-    log.info("Setting up oqm trust store for KC admin.")
-    runResult = kcContainer.exec_run(
-        [
-            KC_ADM_SCRIPT, "config", "truststore",
-            "--trustpass", mainCM.getConfigVal("cert.trustStore.files.selfSigned.p12Password"),
-            mainCM.getConfigVal("cert.trustStore.files.selfSigned.p12")
-        ])
+    if mainCM.getConfigVal("cert.externalDefault") != "acme":
+        log.info("Setting up oqm trust store for KC admin.")
 
-    if runResult.exit_code != 0:
-        log.error("Failed to setup oqm trust store for KC admin: %s", runResult.output)
-        raise ChildProcessError("Failed to setup oqm trust store for KC admin")
+        runResult = kcContainer.exec_run(
+            [
+                KC_ADM_SCRIPT, "config", "truststore",
+                "--trustpass", mainCM.getConfigVal("cert.trustStore.files.selfSigned.p12Password"),
+                mainCM.getConfigVal("cert.trustStore.files.selfSigned.p12")
+            ])
+
+        if runResult.exit_code != 0:
+            log.error("Failed to setup oqm trust store for KC admin: %s", runResult.output)
+            raise ChildProcessError("Failed to setup oqm trust store for KC admin")
+    else:
+        # TODO: #998 support other ACME providers
+        log.info("Skipping setting up oqm trust store for KC admin due to using Let's Encrypt.")
 
     runResult = kcContainer.exec_run(
         [
@@ -255,5 +260,5 @@ try:
     else:
         argParser.print_usage()
 except Exception as e:
-    log.error("Exception thrown: ", str(e))
+    log.error("Exception thrown: {e}", exc_info=True)
     exit(1)
