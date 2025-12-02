@@ -2,6 +2,8 @@ import os
 from enum import Enum
 from ConfigManager import *
 from LogUtils import *
+import os
+import stat
 
 
 
@@ -61,6 +63,11 @@ class CronUtils:
 """ + script
         with open(filePath, "w") as cronFile:
             cronFile.write(fileContent)
+
+        current_permissions = os.stat(filePath).st_mode
+        new_permissions = current_permissions | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH
+        os.chmod(filePath, new_permissions)
+
         CronUtils.log.info("Enabled cron %s at file %s", name, filePath)
 
     @staticmethod
