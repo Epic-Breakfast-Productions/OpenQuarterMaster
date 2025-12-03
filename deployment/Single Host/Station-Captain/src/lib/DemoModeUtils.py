@@ -56,7 +56,13 @@ class DemoModeUtils:
     def doDemoReset(cls):
         snapshotFile = mainCM.getConfigVal("captain.demoMode.snapshotFile")
         cls.log.info("Demo mode resetting from snapshot file: %s", snapshotFile)
-        SnapshotUtils.restoreFromSnapshot(snapshotFile)
+        result, message = SnapshotUtils.restoreFromSnapshot(snapshotFile)
+
+        if not result:
+            print("FAILED to restore demo: " + message)
+            exit(1)
+        else:
+            print("Restored demo to snapshot from file: " + snapshotFile)
 
     @classmethod
     def enable(cls, snapshotFilePath:str):

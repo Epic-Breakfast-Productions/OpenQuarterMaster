@@ -46,22 +46,42 @@ class CronUtils:
             except OSError:
                 pass
 
-    @staticmethod
+    @classmethod
+    def getScriptContent(cls, name: str, script: str, scriptType:str) -> str:
+        output = ""
+
+        if scriptType == "bash":
+            output += """#!/bin/bash
+            # OQM Cron """ + name + """
+            # This script placed here by oqm-captain.
+            logfile=/var/log/oqm/cron-"""+name+""".log
+            
+            echo "$(date) - """ + name + """ starting." >> $logfile
+            
+            ((
+                """ + script + """
+            ) 2>&1) | tee -a "$logfile"
+            
+            echo "$(date) - """ + name + """ Finished." >> $logfile
+            """
+        else:
+            raise ValueError("Script type not supported: " + scriptType)
+
+        return output
+
+    @classmethod
     def enableCron(
+            cls,
             name: str,
             script: str,
             frequency: CronFrequency,
-            scriptType: str = "!/bin/bash",
+            scriptType: str = "bash",
     ):
         CronUtils.disableCron(name)
         CronUtils.log.info("Enabling cron %s", name)
         fileName = CronUtils.getFileName(name)
         filePath = CronUtils.getFileDir(frequency, fileName)
-        fileContent = """
-#""" + scriptType + """
-# OQM Cron """ + name + """
-# This script placed here by oqm-captain.
-""" + script
+        fileContent = cls.getScriptContent(name, script, scriptType)
         with open(filePath, "w") as cronFile:
             cronFile.write(fileContent)
 
