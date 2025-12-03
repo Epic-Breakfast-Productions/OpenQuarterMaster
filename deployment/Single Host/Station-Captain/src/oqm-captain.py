@@ -13,6 +13,7 @@ from SnapshotUtils import *
 from ContainerUtils import *
 from LogManagement import *
 from CertsUtils import *
+from DemoModeUtils import *
 import argparse
 import atexit
 import argcomplete
@@ -53,6 +54,7 @@ SnapshotUtils.setupArgParser(subparsers)
 ContainerUtils.setupArgParser(subparsers)
 LogManagement.setupArgParser(subparsers)
 CertsUtils.setupArgParser(subparsers)
+DemoModeUtils.setupArgParser(subparsers)
 
 # TODO:: registration and subscription utility
 # TODO:: plugin utilities

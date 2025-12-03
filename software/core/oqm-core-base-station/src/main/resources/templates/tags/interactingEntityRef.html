@@ -1,6 +1,6 @@
 {!{@org.bson.types.ObjectId entityRef}!}
 {!{#let entity = cdi:InteractingEntityService.get(entityRef)}!}
-<a href="/interactingEntity?view={entityRef.get("id").asText()}" class="text-decoration-none entityViewLink" target="_blank">
+<a href="{rootPrefix}/interactingEntity?view={entityRef.get("id").asText()}" class="text-decoration-none entityViewLink" target="_blank">
 	<span class="entityViewSymbol">
 		{#icons/interactingEntityType type=entityRef.get("type").asText()}{/icons/interactingEntityType}
 	</span>
