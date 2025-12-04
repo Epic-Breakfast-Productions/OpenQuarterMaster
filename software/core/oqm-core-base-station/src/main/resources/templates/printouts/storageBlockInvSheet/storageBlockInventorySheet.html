@@ -12,13 +12,16 @@
 			TODO:: table of contents
 		</p>
 		
-		{#let bulkItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'BULK') amtListItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'AMOUNT_LIST') uniqueMultiItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'UNIQUE_MULTI') uniqueSingleItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'UNIQUE_SINGLE')}
+		{#let bulkItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'BULK') amtListItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'AMOUNT_LIST') uniqueMultiItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'UNIQUE_MULTI') uniqueSingleItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'UNIQUE_SINGLE')
+		      amtListItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'AMOUNT_LIST') amtListItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'AMOUNT_LIST') uniqueMultiItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'UNIQUE_MULTI') uniqueSingleItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'UNIQUE_SINGLE')
+		}
 		<div class="section">
 			<h2>
 				{#icons/items /} Items in Block
 			</h2>
 			
 			{#printouts/storageBlockInventorySheet/itemTables/bulkStoredTable auth=auth db=db itemSearchIt=bulkItemIt storageBlock=storageBlock options=options /}
+			{#printouts/storageBlockInventorySheet/itemTables/amountListStoredTable auth=auth db=db itemSearchIt=amtListItemIt storageBlock=storageBlock options=options /}
 		
 		
 		</div> <!-- items in block section -->

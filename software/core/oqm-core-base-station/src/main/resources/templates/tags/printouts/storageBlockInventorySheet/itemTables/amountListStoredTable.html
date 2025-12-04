@@ -22,59 +22,58 @@
 
 {/tableHeaderCells}
 {#tableBodyRows}
-{#for curResult in itemSearchIt}
-{#let startIndex=curResult.get("pagingCalculations").get("pageResultIndexStart").asInt()}
-{#for curItem in curResult.get("results")}
-{#let blockStats = curItem.get("stats").get("storageBlockStats").get(storageBlock.get("id").asText())}
-{#let storedIt=cdi:PrintoutDataUtilService.searchStoredInBlockResultsIterator(auth, db, curItem.get("id").asText(), storageBlock.get("id").asText())}
-{#let numStored=storedIt.get("numResultsForEntireQuery").asInt()}
-<tr>
-	{#printouts/storageBlockInventorySheet/itemTables/itemStdRowPre options=options item=curItem resultNo=(curItem_index + startIndex) rowspan=numStored /}
-	
-	<td {#if numStored > 1}rowspan="{numStored}"{/if}>
-		{blockStats.get("total").get("value").asInt()}{blockStats.get("total").get("unit").get("symbol").asText()}
-	</td>
-	
-	{#let firstStored=storedIt }
-	
-	{/let}
-	<td>
-	</td>
-	
-	{#if options.includeConditionCol}
-	<td >
-		{#if stored??}
-		{#if !stored.get("condition").isNull()}
-		{stored.get("condition").asText()}%
-		{/if}
-		{/if}
-	</td>
-	<td>
-		{#if stored??}
-		{#if !stored.get("conditionNotes").isNull()}
-		{stored.get("conditionNotes").asText()}
-		{/if}
-		{/if}
-	</td>
-	{/if}
-	<td>
-		{#if stored??}
-		{#if !stored.get("expires").isNull()}
-		{cdi:DateTimeService.formatForUi(stored.get("expires").asText())}
-		{/if}
-		{/if}
-	</td>
-	
-	{/let}
-	
-	{#printouts/storageBlockInventorySheet/itemTables/itemStdRowPost options=options item=curItem /}
-	
-	
-	
-</tr>
-{/let}
-{/for}
-{/for}
+	{#for curResult in itemSearchIt}
+		{#let startIndex=curResult.get("pagingCalculations").get("pageResultIndexStart").asInt()}
+		{#for curItem in curResult.get("results")}
+			{#let blockStats = curItem.get("stats").get("storageBlockStats").get(storageBlock.get("id").asText())}
+			{#let storedIt=cdi:PrintoutDataUtilService.searchStoredInBlockResultsIterator(auth, db, curItem.get("id").asText(), storageBlock.get("id").asText())}
+			{#let numStored=storedIt.getCurResults().get("numResultsForEntireQuery").asInt()}
+				<tr>
+					{#printouts/storageBlockInventorySheet/itemTables/itemStdRowPre options=options item=curItem resultNo=(curItem_index + startIndex) rowspan=numStored /}
+					
+					<td {#if numStored > 1}rowspan="{numStored}"{/if}>
+						{blockStats.get("total").get("value").asInt()}{blockStats.get("total").get("unit").get("symbol").asText()}
+					</td>
+					
+					{#let firstStored=storedIt }
+					
+					{/let}
+					<td>
+					</td>
+					
+					{#if options.includeConditionCol}
+					<td>
+						{#if stored??}
+						{#if !stored.get("condition").isNull()}
+						{stored.get("condition").asText()}%
+						{/if}
+						{/if}
+					</td>
+					<td>
+						{#if stored??}
+						{#if !stored.get("conditionNotes").isNull()}
+						{stored.get("conditionNotes").asText()}
+						{/if}
+						{/if}
+					</td>
+					{/if}
+					<td>
+						{#if stored??}
+						{#if !stored.get("expires").isNull()}
+						{cdi:DateTimeService.formatForUi(stored.get("expires").asText())}
+						{/if}
+						{/if}
+					</td>
+					
+					{/let}
+					
+					{#printouts/storageBlockInventorySheet/itemTables/itemStdRowPost options=options item=curItem /}
+				
+				
+				</tr>
+			{/let}
+		{/for}
+	{/for}
 {/tableBodyRows}
 {/printouts/storageBlockInventorySheet/itemTables/itemTable}
 {/if}
