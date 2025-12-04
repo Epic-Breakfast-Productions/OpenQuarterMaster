@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import tech.units.indriya.quantity.Quantities;
@@ -23,6 +24,7 @@ public abstract class StatsWithTotalContaining extends BasicStatsContaining {
 		this();
 		this.total = Quantities.getQuantity(0, unit);
 	}
-
+	
+//	@NonNull //TODO:: this
 	private Quantity<?> total;
 }
