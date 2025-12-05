@@ -26,9 +26,9 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.rest.management.CollectionClearResult;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbDeletedException;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
+import tech.ebp.oqm.core.api.exception.db.DbDeletedException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
@@ -65,6 +65,15 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	) {
 		super(objectMapper, mongoClient, database, oqmDatabaseService, collectionName, clazz);
 	}
+	
+	/**
+	 * Any data massaging needed to do just before insertion/updates.
+	 * @param object
+	 */
+	public void massageIncomingData(String oqmDbIdOrName, @NonNull T object) {
+		//nothing to do
+	}
+	
 	
 	private FindIterable<T> find(String oqmDbIdOrName, ClientSession session, Bson filter) {
 		log.debug("Filter for find: {}", filter);
@@ -387,6 +396,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 												   .collect(Collectors.joining(", ")));
 		}
 		this.ensureObjectValid(oqmDbIdOrName, false, object, cs);
+		this.massageIncomingData(oqmDbIdOrName, object);
 		
 		if (cs == null) {
 			this.getTypedCollection(oqmDbIdOrName).findOneAndReplace(eq("_id", id), object);
@@ -410,8 +420,11 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	public T update(String oqmDbIdOrName, ClientSession clientSession, @Valid T object) throws DbNotFoundException {
-		//TODO:: review this
+		
 		this.get(oqmDbIdOrName, clientSession, object.getId());
+		this.ensureObjectValid(oqmDbIdOrName, false, object, clientSession);
+		this.massageIncomingData(oqmDbIdOrName, object);
+		
 		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (clientSession != null) {
 			return collection.findOneAndReplace(clientSession, eq("_id", object.getId()), object);
@@ -436,6 +449,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		log.debug("New object: {}", object);
 		
 		this.ensureObjectValid(oqmDbIdOrName, true, object, session);
+		this.massageIncomingData(oqmDbIdOrName, object);
 		
 		InsertOneResult result;
 		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);

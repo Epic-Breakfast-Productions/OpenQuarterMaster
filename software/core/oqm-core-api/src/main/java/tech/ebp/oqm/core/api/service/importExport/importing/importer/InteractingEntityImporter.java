@@ -39,7 +39,12 @@ public class InteractingEntityImporter extends TopLevelImporter<EntityImportResu
 	public Path getObjectDirPath(Path topLevelPath) {
 		return topLevelPath.resolve(this.interactingEntityService.getCollectionName());
 	}
-
+	
+	@Override
+	public EntityImportResult getNoObjDirPathExistValue() {
+		return EntityImportResult.builder().build();
+	}
+	
 	@Override
 	public EntityImportResult readInObjectsImpl(
 		ClientSession clientSession,

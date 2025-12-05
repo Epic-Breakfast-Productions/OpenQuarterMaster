@@ -86,3 +86,11 @@ Users create a custom workflow for items to come into and work through, and fini
 
 https://www.workato.com/integrations?utm_medium=adwords&utm_source=cpc&utm_campaign=workato_brand&utm_content=workato_specific%20keywords&utm_term=workato
 
+## Reward generator
+
+Generates seratonin based on usage stats
+
+## N8N Integration
+
+## Browser extension to add item from website
+

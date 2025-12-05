@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
@@ -17,26 +16,22 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.HistoryCollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
-import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.history.EventType;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
-import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetailType;
 import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.DeleteEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.ReCreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbHistoryNotFoundException;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbHistoryNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;

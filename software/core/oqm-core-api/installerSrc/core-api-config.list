@@ -12,6 +12,7 @@ quarkus.log.level=INFO
 # Files brought over in shared volume
 quarkus.tls.key-store.pem.0.cert=/etc/oqm/serviceConfig/core/api/files/serviceCert.crt
 quarkus.tls.key-store.pem.0.key=/etc/oqm/serviceConfig/core/api/files/serviceCertKey.pem
+
 quarkus.tls.trust-store.p12.path=/etc/oqm/serviceConfig/core/api/files/serviceCertKeystore.p12
 quarkus.tls.trust-store.p12.password={cert.selfSigned.internalKeystorePass}
 
@@ -26,7 +27,9 @@ quarkus.http.proxy.enable-forwarded-prefix=true
 
 # jwt verification
 smallrye.jwt.verify.key.location={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/certs
-smallrye.jwt.client.tls.certificate.path=/etc/oqm/serviceConfig/core/api/files/systemCA.crt
+{% if cert.externalDefault != "acme" %} # TODO:: #998 figure out. Supplying acme cert file results in "the trustAnchors parameter must be non-empty"
+smallrye.jwt.client.tls.certificate.path={cert.trustStore.files.selfSigned.crt}
+{% endif %}
 
 # Mongo Config:
 quarkus.mongodb.connection-string=mongodb://{core.api.mongodb.user}:{core.api.mongodb.pass}@{infra.mongodb.host}:{infra.mongodb.port}

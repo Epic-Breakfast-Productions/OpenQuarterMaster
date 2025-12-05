@@ -128,12 +128,35 @@
                         {#inputs/categoryInput id="addEditItemCategoriesInput" allCategorySearchResults=allCategorySearchResults multi=true /}
                     </div>
                 </div>
-                <div class="mb-3 row">
-                    <label for="addEditItemGeneralIdInput" class="col-form-label col-sm-2">General Identifiers:</label>
+                <hr />
+                <div class="mb-5 row">
+                    <label for="addEditItemGeneralIdInput" class="col-form-label col-sm-2">
+                    	{#icons/generalIds /}
+                    	General Identifiers:
+                    </label>
                     <div class="col-sm-10">
                         {#inputs/identifiers/generalIdInput id="addEditItemGeneralIdInput" /}
                     </div>
                 </div>
+                <div class="mb-5 row">
+                    <label for="addEditItemUniqueIdInput" class="col-form-label col-sm-2">
+                    	{#icons/uniqueIds /}
+                    	Unique Identifiers:
+                    </label>
+                    <div class="col-sm-10">
+                        {#inputs/identifiers/uniqueIdInput id="addEditItemUniqueIdInput" /}
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="addEditItemUniqueIdInput" class="col-form-label col-sm-2">
+                    	{#icons/idGenerators /}
+                    	Associated ID Generators:
+                    </label>
+                    <div class="col-sm-10">
+                        {#inputs/identifiers/associatedIdGeneratorInput forObject="STORED" id=(id + "-item") /}
+                    </div>
+                </div>
+                <hr />
                 {!<div class="mb-3 row" id="addEditItemPricePerUnitNameRow">!}
                     {!<label for="addEditItemPricePerUnitInput" class="col-sm-2 col-form-label">Price Per Unit</label>!}
                     {!<div class="col-sm-10">!}
@@ -143,6 +166,7 @@
                         {!</div>!}
                     {!</div>!}
                 {!</div>!}
+                
                 <div class="mb-3 row" id="addEditItemExpiryWarningThresholdRow">
                     <label for="addEditItemExpiryWarningThresholdInput" class="col-sm-2 col-form-label">Expiry Warning Threshold</label>
                     <div class="col-sm-10">
@@ -179,6 +203,7 @@
                 <hr />
                 <div class="mb-3 row">
                     <div class="col-sm-2 col-form-label">
+                    	{#icons/storageBlocks /}
                         Associated Storage
                     </div>
                     <div class="col-sm-10">

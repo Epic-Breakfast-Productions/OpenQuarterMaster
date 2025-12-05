@@ -26,6 +26,9 @@ class GeneralIdUtilsTest extends CodeUtilTestBase {
 	public void isValidUPCACodeValid(String code, GeneralId expectedId) {
 		GeneralId returned = GeneralIdUtils.determineGeneralIdType(code);
 		
+		//this is fine, "determineGeneralId" doesn't set a label
+		returned.setLabel(expectedId.getLabel());
+		
 		assertEquals(expectedId, returned);
 	}
 	

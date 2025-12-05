@@ -5,23 +5,18 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
 import io.quarkus.security.Authenticated;
+import io.smallrye.common.annotation.Blocking;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.BeanParam;
-import jakarta.ws.rs.Consumes;
-import jakarta.ws.rs.GET;
-import jakarta.ws.rs.HeaderParam;
-import jakarta.ws.rs.POST;
-import jakarta.ws.rs.PUT;
-import jakarta.ws.rs.Path;
-import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.StreamingOutput;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -35,6 +30,8 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.Histor
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ImageSearch;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
 @Slf4j
 @Path(PassthroughProvider.PASSTHROUGH_API_ROOT + "/media/image")
@@ -291,6 +288,7 @@ public class ImagePassthrough extends PassthroughProvider {
 		);
 	}
 	
+	@Blocking
 	@Path("{id}/revision/{rev}/data")
 	@GET
 	@Operation(
@@ -396,6 +394,7 @@ public class ImagePassthrough extends PassthroughProvider {
 		);
 	}
 	
+	@Blocking
 	@GET
 	@Path("/for/{type}/{id}")
 	public Uni<Response> imageForObj(@PathParam("type") String type, @PathParam("id") String objId) {

@@ -78,6 +78,9 @@ ui:
   itemsStored:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  idGenerator:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
 
 quarkus:
   application:
@@ -201,7 +204,8 @@ smallrye:
 #              refreshFrequencyEvery: "5m"
 #            unit:
 #              refreshFrequencyEvery: "5m"
-
+    rest-csrf:
+#      token-signature-key: AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow
   runningInfo:
     depotUri: "Hello World"
   service:

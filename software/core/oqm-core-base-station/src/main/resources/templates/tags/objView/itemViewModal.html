@@ -1,5 +1,10 @@
 {#modal id='itemView' size='xl' title='Item View'}
-    {#titleIcon}{#icons/item}{/icons/item}{/titleIcon}
+    {#titleIcon}{#icons/item /}{/titleIcon}
+    {#footerButtons}
+    	<button type="button" class="btn btn-warning" id="itemViewEditButton" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal">
+			{#icons/edit /} Edit Item
+		</button>
+    {/footerButtons}
     <div class="row">
         <div class="col" id="itemViewMessages"></div>
     </div>
@@ -82,19 +87,49 @@
                     </p>
                 </div>
             </div>
-            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewGeneralIdsContainer">
+            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewIdsContainer">
                 <div class="card-body">
-					<div class="accordion" id="itemViewGeneralIdsAccord">
-					  <div class="accordion-item">
+					<div class="accordion" id="itemViewIdsAccord">
+					  <div class="accordion-item" id="itemViewGeneralIdsAccord">
 						<h2 class="accordion-header">
 						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewGeneralIdsAccordCollapse" aria-expanded="false" aria-controls="itemViewGeneralIdsAccordCollapse">
-							{#icons/barcode /}
+							{#icons/generalIds /}
 							General Ids (<span id="itemViewGeneralIdsNumIdsLabel"></span>)
 						  </button>
 						</h2>
-						<div id="itemViewGeneralIdsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewGeneralIdsAccord">
+						<div id="itemViewGeneralIdsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
 						  <div class="accordion-body">
 						  	<div class="row" id="itemViewGeneralIdsAccordContent">
+						  	</div>
+						  </div>
+						</div>
+					  </div>
+					  <div class="accordion-item" id="itemViewUniqueIdsAccord">
+						<h2 class="accordion-header">
+						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewUniqueIdsAccordCollapse" aria-expanded="false" aria-controls="itemViewUniqueIdsAccordCollapse">
+							{#icons/uniqueIds /}
+							Unique Ids (<span id="itemViewUniqueIdsNumIdsLabel"></span>)
+						  </button>
+						</h2>
+						<div id="itemViewUniqueIdsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
+						  <div class="accordion-body">
+						  	<div class="row" id="itemViewUniqueIdsAccordContent">
+						  	</div>
+						  </div>
+						</div>
+					  </div>
+					  <div class="accordion-item" id="itemViewIdGeneratorsAccord">
+						<h2 class="accordion-header">
+						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewIdGeneratorsAccordCollapse" aria-expanded="false" aria-controls="itemViewIdGeneratorsAccordCollapse">
+							{#icons/idGenerators /}
+							ID Generators (<span id="itemViewIdGeneratorsNumIdsLabel"></span>)
+						  </button>
+						</h2>
+						<div id="itemViewIdGeneratorsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
+						  <div class="accordion-body">
+						  	<div class="row">
+						  		<ul id="itemViewIdGeneratorsAccordContent">
+								</ul>
 						  	</div>
 						  </div>
 						</div>

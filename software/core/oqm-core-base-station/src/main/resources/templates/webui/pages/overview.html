@@ -181,6 +181,10 @@
 	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
 	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
 	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/identifiers.js"></script>
+    <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorAddEdit.js"></script>
+    <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorSearchSelect.js"></script>
+    <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorUtils.js"></script>
     <script src="{rootPrefix}/res/js/obj/item/itemAddEdit.js"></script>
     <script src="{rootPrefix}/res/js/obj/itemStored/storedView.js"></script>
     <script src="{rootPrefix}/res/js/obj/itemStored/storedFormInput.js"></script>
@@ -233,14 +237,14 @@
 			
 			var created = { };
 
-			function getInvItemSection(invItemArr, parentId){
-				if(invItemArr.results.length === 0){
+			function getInvItemSection(invItemSearchResult, parentId){
+				if(invItemSearchResult.empty){
 					return $('<p>{#icons/item}{/icons/item} No inventory items held.</p>');
 				}
 				let accordId = "invItemAccord" + parentId;
 				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
 
-				invItemArr.results.forEach(function(invItem){
+				invItemSearchResult.results.forEach(function(invItem){
 					let accordItemId = accordId+'AccordItem'+invItem.id;
 					let accordItemHeaderId = accordItemId + "Header";
 					let accordItemCollapseId = accordItemId + "Collapse";
@@ -259,11 +263,11 @@
 
 					let accordButt = curAccord.find(".accordion-button");
 					let blockStats = invItem.stats.storageBlockStats[parentId];
-					let blockTotal = invItem.stats.storageBlockStats[parentId] == null?
+					let blockTotal = blockStats == null?
 						UnitUtils.getQuantityObj(0, invItem.unit) :
 						blockStats.total
 					;
-
+					console.debug("block total: ", blockTotal);
 					accordButt.append(
 						$('<img class="accordion-thumb" src="'+Rest.passRoot+'/media/image/for/item/'+invItem.id+'" alt="">'),
 						$('<span></span>').text(invItem.name + " - " + UnitUtils.quantityToDisplayStr(blockTotal))
@@ -272,7 +276,7 @@
 					accordion = accordion.append(curAccord);
 				});
 
-				let output = $('<h5>{#icons/item}{/icons/item} Items held ('+invItemArr.numResults+'):</h5>');
+				let output = $('<h5>{#icons/item}{/icons/item} Items held ('+invItemSearchResult.numResultsForEntireQuery+'):</h5>');
 				output = output.add(accordion);
 				return output;
 			}
@@ -368,7 +372,7 @@
 				storageBlockItems = await storageBlockItems;
 				storageBlockChildren = await storageBlockChildren;
 				
-				console.log("Got " + storageBlockItems.length + " items, " + storageBlockChildren.length + " children for storage block " + storageBlockData.id);
+				console.log("Got " + storageBlockItems.numResultsForEntireQuery + " items, " + storageBlockChildren.numResultsForEntireQuery + " children for storage block " + storageBlockData.id);
 				
 				let output = $();
 

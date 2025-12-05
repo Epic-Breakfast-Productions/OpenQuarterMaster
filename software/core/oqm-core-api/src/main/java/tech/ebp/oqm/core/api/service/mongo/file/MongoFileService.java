@@ -32,7 +32,7 @@ import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.MongoObjectService;
 import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
+import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.utils.FileContentsGet;
 import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;

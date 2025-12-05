@@ -78,8 +78,7 @@ public class OqmUnitService {
 		ObjectNode allUnits = this.oqmCoreApiClientService.unitGetAll(this.serviceAccountService.getAuthString()).await().indefinitely();
 		ObjectNode unitCompatibilityMap = this.oqmCoreApiClientService.unitGetCompatibleMap(this.serviceAccountService.getAuthString()).await().indefinitely();
 		
-		ArrayNode newCacheData = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
-		log.info("Got new cache of units: {}", newCacheData);
+		log.debug("Got new cache of units: {}", allUnits);
 		try {
 			this.mutex.lock();
 			this.allUnits = allUnits;
