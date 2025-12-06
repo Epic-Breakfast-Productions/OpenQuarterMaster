@@ -4,15 +4,17 @@ This app is meant to be a cute semi-interactable entity to play with in the back
 
 ## Features
 
+\* = doing later
+
  - Storagotchi
-   - happiness / energy level based on recent activity
+   - *happiness / energy level based on recent activity
    - animated
  - Environment
-   - Buildable, points from storage actions
- - stream changes to state via websocket
+   - *Buildable, points from storage actions
+ - *stream changes to state via websocket
  - Notifications
-   - If enabled, notify thru browser when things happen and state changes
- - Achievements
+   - *If enabled, notify thru browser when things happen and state changes
+ - *Achievements
    - achievement ideas:
      - first image
      - first storage block
@@ -23,9 +25,7 @@ This app is meant to be a cute semi-interactable entity to play with in the back
      - \# of objects
      - first transaction
 
-Game Mechanics
-
-\* = doing later 
+Game Mechanics 
 
  - Initial state:
    - boxes around the page
@@ -42,12 +42,12 @@ Game Mechanics
      - wakes up, updates scoreboard
    - goes to boxes, picks things up, carries them around
    - drops said items randomly
-   - gets overwhelmed when too cluttered (too many items on screen)
-   - receives messages on how IRL storage work is going
+   - *gets overwhelmed when too cluttered (too many items on screen)
+   - *receives messages on how IRL storage work is going
      - Updates scoreboard when received (after completing current action) 
      - gets inspired by your inventory actions, cleans up one item per action
      - received over websocket
-   - does something fun when clicked
+   - *does something fun when clicked
      - giggle
      - dance
      - (rare) quotes
@@ -55,9 +55,9 @@ Game Mechanics
  - Boxes:
    - jump / move slightly when clicked
    - "give" items to Storagotchi
-   - "take" items from Storagotchi
+   - *"take" items from Storagotchi
  - stuff
-   - wiggles when clicked
+   - *wiggles when clicked
    - Sits around
    - Rarity scale on what gets pulled out of boxes
 

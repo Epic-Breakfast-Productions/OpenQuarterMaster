@@ -1,6 +1,5 @@
-package tech.ebp.oqm.plugin.storagotchi.model;
+package tech.ebp.oqm.plugin.storagotchi.model.usersettings;
 
-import io.quarkus.hibernate.orm.panache.PanacheEntity;
 import io.smallrye.common.constraint.NotNull;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -10,7 +9,6 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 

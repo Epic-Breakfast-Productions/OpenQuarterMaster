@@ -70,14 +70,18 @@
 	<div class="window-body" id="mainWindowBody">
 		<section class="tabs"  id="mainTabs">
 			<menu role="tablist" aria-label="Navigation">
-				<button role="tab" aria-selected="true" aria-controls="tab-game">{settings.getStoragotchiName()}</button>
-				<button role="tab" aria-controls="tab-achievements">Achievements</button>
-				<button role="tab" aria-controls="tab-guide">Guide</button>
+				<button role="tab" aria-selected="true" aria-controls="tab-game" id="storagotchiTabButton">{settings.getStoragotchiName()}</button>
+				{!TODO:: these!}
+				{!<button role="tab" aria-controls="tab-achievements">Achievements</button>!}
+				{!<button role="tab" aria-controls="tab-guide">Guide</button>!}
 				<button role="tab" aria-controls="tab-options">Options <span id="optionsChangedIndicator"></span></button>
 			</menu>
 			<!-- the tab content -->
 			<article role="tabpanel" id="tab-game" class="mainTabBody">
-				<div id="gameCanvas"></div>
+				<div id="gameCanvas">
+					<h3 class="initContent">Loading...</h3>
+					<progress class="initContent"></progress>
+				</div>
 			</article>
 			<article role="tabpanel" id="tab-achievements" class="mainTabBody" hidden>
 				<h3>Achievements</h3>
@@ -89,8 +93,8 @@
 			</article>
 			<article role="tabpanel" id="tab-options" class="mainTabBody" hidden>
 				<h3>Options</h3>
-				<button>Save</button>
 				<form id="optionsForm">
+					<button type="submit" id="optionsFormSubmitButton" disabled>Save</button>
 					<fieldset>
 						<legend>Audio</legend>
 						<div class="field-row" style="width: 300px">
@@ -157,6 +161,30 @@
 </dialog>
 
 <script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+
+<script>
+	
+	function newUpdatesWebSocket(){
+		let wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+		let wsUrl = `${ wsProtocol}//${ window.location.host}${ window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/ws/updates`;
+		
+		let socket = new WebSocket(wsUrl)
+		socket.onopen = (event) => {
+			console.log('WebSocket connection opened:', event);
+			updateStatusDisplay("Connected");
+		}
+		socket.onclose = (event) => {
+			console.warn("Websocket closed connection.");
+			updateStatusDisplay("Disconnected");
+		}
+		socket.onmessage = (event) => {
+			console.info("Received a message from websocket: ", event);
+		}
+		return socket;
+	}
+	
+	const updatesSocket = newUpdatesWebSocket();
+</script>
 <script>
 	const testDialog = $("#testDialog");
 	
@@ -213,10 +241,53 @@
 		article.removeAttribute("hidden");
 	}
 	
+	let storagotchiTabButton = $("#storagotchiTabButton");
+	
+	let opsForm = $("#optionsForm");
+	let opsFormSubButton = $("#optionsFormSubmitButton");
 	let optionsChangedIndicator = $("#optionsChangedIndicator");
-	$("#optionsForm").find("input,select").on("input", function(){
+	let storagotchiOpsNameInput = opsForm.find("input[name='storagotchiName']");
+	
+	opsForm.find("input,select").on("input", function(){
 		optionsChangedIndicator.text("*");
+		opsFormSubButton.prop("disabled", false);
 	});
+	
+	opsForm.on("submit", function(e){
+		e.preventDefault();
+		console.log("Submitting options change form");
+		
+		let data = {
+			"type": "updateSettings",
+			"data": { }
+		};
+		
+		opsForm.find("input,select").each(function(i, inputJs){
+			let inputJq = $(inputJs);
+			
+			if(inputJq.attr("type") === "checkbox"){
+				data.data[inputJq.prop("name")] = inputJq.is(":checked");
+			} else {
+				data.data[inputJq.prop("name")] = inputJq.val();
+			}
+		});
+		
+		console.log("Sending update message: ", data)
+		
+		updatesSocket.send(JSON.stringify(data));
+		
+		storagotchiTabButton.text(storagotchiOpsNameInput.val());
+		optionsChangedIndicator.text("");
+		opsFormSubButton.prop("disabled", true);
+	});
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	let stateDisplay = $("#stateDisplay");
 	let stateLoadBar = $("#stateLoadBar");
@@ -268,26 +339,6 @@
 	function updateStatusDisplay(status){
 		statusDisplay.text(status);
 	}
-</script>
-<script>
-	
-	function newUpdatesWebSocket(){
-		let wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
-		let wsUrl = `${ wsProtocol}//${ window.location.host}${ window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/ws/updates`;
-		
-		let socket = new WebSocket(wsUrl)
-		socket.onopen = (event) => {
-			console.log('WebSocket connection opened:', event);
-			updateStatusDisplay("Connected");
-		}
-		socket.onclose = (event) => {
-			console.warn("Websocket closed connection.");
-			updateStatusDisplay("Disconnected");
-		}
-		return socket;
-	}
-	
-	const updatesSocket = newUpdatesWebSocket();
 </script>
 
 <script src="/lib/pixi/8.14.0/pixi.min.js"></script>
@@ -348,6 +399,10 @@
 		setupBackdrop();
 		setupBoxes();
 		setupStoragotchi();
+		
+		$(".initContent").each(function(i,content){
+			$(content).remove();
+		});
 		
 		// Listen for animate update
 		app.ticker.add((time) => {
@@ -608,10 +663,11 @@
 				storagotchi.y += directionY * storagotchi["state"]["speed"] * delta;
 			} else { // Stop when close enough
 				console.log("Storagotchi got to meander destination");
-				storagotchi.x =  storagotchi["state"]["destination"]["x"];
-				storagotchi.y =  storagotchi["state"]["destination"]["y"];
+				storagotchi.x = storagotchi["state"]["destination"]["x"];
+				storagotchi.y = storagotchi["state"]["destination"]["y"];
 				
-				if(Math.random() < 0.5) {
+				let val = randomIntFromInterval(0, 100);
+				if(val > 25) {
 					storagotchiSetDecidingState();
 				}
 			}
@@ -653,7 +709,7 @@
 			//decide what to do next
 			let val = randomIntFromInterval(0, 100);
 			
-			if(val > 50){
+			if(val > 33){
 				if(storagotchi['state']['heldItem']){
 					storagotchiDropItem(app, time, delta);
 				} else {
