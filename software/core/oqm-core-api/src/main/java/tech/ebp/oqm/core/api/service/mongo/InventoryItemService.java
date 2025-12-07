@@ -160,6 +160,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				throw new ValidationException("New unit not compatible with current unit.");
 			}
 		} else {
+			//TODO:: move to massage
 			//if new item, and stats are null, set new stats. No stored should exist so this should be representative enough to start. Maybe generate stats?
 			if (newOrChangedObject.getStats() == null) {
 				newOrChangedObject.setStats(
@@ -189,6 +190,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@Override
 	@WithSpan
 	public ObjectId add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid InventoryItem item, InteractingEntity entity, HistoryDetail... details) {
+		//TODO:: move to massage
 		item.setStats( //Build simple stats on the premise of not having any stored items
 			ItemStoredStats.builder()
 				.total((Quantities.getQuantity(0, item.getUnit())))
@@ -199,7 +201,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 					item.getStorageBlocks().stream()
 						.collect(Collectors.toMap(
 							Function.identity(),
-							(storageBlockId)->StoredInBlockStats.builder().build()
+							(storageBlockId)->new StoredInBlockStats(item.getUnit())
 						))
 				)
 				.build()
