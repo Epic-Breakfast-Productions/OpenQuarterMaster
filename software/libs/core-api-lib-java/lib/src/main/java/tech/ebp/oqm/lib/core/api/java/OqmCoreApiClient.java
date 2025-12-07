@@ -640,6 +640,7 @@ public class OqmCoreApiClient {
 				   .sendAsync(
 					   this.setupRequest(creds, PathUtils.getInventoryItemTransactionPath(oqmDbIdOrName, itemId))
 						   .POST(HttpRequest.BodyPublishers.ofString(transaction.toString()))
+						   .header("Content-Type", "application/json")
 						   .build(),
 					   HttpResponse.BodyHandlers.ofString()
 				   );

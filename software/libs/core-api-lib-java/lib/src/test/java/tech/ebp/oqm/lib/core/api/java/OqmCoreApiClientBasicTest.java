@@ -104,4 +104,47 @@ class OqmCoreApiClientBasicTest extends JwtAuthTest {
 		System.out.println(getResponse.body());
 		assertEquals(200, getResponse.statusCode(), "Unexpected response code.");
 	}
+	
+	@Test
+	void testTransaction() {
+		OqmCoreApiClient client = OqmCoreApiClient.builder()
+									  .config(getCoreApiConfig().build())
+									  .build();
+		
+		ObjectNode storageBlock = JacksonUtils.MAPPER.createObjectNode();
+		storageBlock.put("label", "testBlock");
+		HttpResponse<ObjectNode> response = client.storageBlockAdd(this.getCredentials(), "default", storageBlock).join();
+		assertEquals(200, response.statusCode(), "Unexpected response code in setup.");
+		storageBlock = response.body();
+		
+		
+		
+		
+		ObjectNode newItem = JacksonUtils.MAPPER.createObjectNode();
+		newItem.put("name", "testItem");
+		newItem.put("storageType", "BULK");
+		newItem.putObject("unit").put("string", "units");
+		newItem.putArray("storageBlocks").add(storageBlock.get("id").asText());
+		
+		response = client.invItemCreate(this.getCredentials(), "default", newItem).join();
+		
+		System.out.println(response.body());
+		assertEquals(200, response.statusCode(), "Unexpected response code in setup.");
+		newItem = response.body();
+		
+		
+		ObjectNode transaction = JacksonUtils.MAPPER.createObjectNode();
+		transaction.put("block", storageBlock.get("id").asText());
+		transaction.putObject("amount").put("value", 0)
+			.put("scale", "ABSOLUTE")
+			.putObject("unit").put("string", "units");
+		transaction.put("type", "SET_AMOUNT");
+		
+		
+		HttpResponse<String> tResponse = client.invItemStoredTransact(this.getCredentials(), "default", newItem.get("id").asText(), transaction).join();
+		
+		System.out.println(tResponse.body());
+		assertEquals(200, tResponse.statusCode(), "Unexpected response code.");
+		
+	}
 }
