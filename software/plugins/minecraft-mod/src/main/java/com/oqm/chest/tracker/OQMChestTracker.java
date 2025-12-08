@@ -2,6 +2,7 @@ package com.oqm.chest.tracker;
 
 import com.oqm.chest.tracker.item.ModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
@@ -181,6 +182,7 @@ public class OQMChestTracker {
             }
         }
         LOGGER.info(storedItems.toString());
+        player.displayClientMessage(Component.literal("Updated Chest with OQM"), true);
     }
 
     // Adds an inventory item
