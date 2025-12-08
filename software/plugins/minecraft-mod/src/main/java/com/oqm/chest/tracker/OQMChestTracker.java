@@ -28,6 +28,7 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509ExtendedTrustManager;
 import java.io.*;
+import java.util.*;
 import java.net.Socket;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -115,7 +116,6 @@ public class OQMChestTracker {
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
-        LOGGER.info(System.getProperty("user.dir"));
         loadItemMap();
         loadStorageMap();
 
@@ -147,7 +147,11 @@ public class OQMChestTracker {
         HttpResponse<ObjectNode> response = client.invItemSearch(client.getDefaultCreds(), "default", params).join();
         LOGGER.info(response.body().toPrettyString());
 
-        this.addInvItem("savetest", "BULK", "there");
+        this.addStorageBlock("here");
+        this.addInvItem("Cobblestone", "BULK", "here");
+        this.addInvItem("Redstone", "BULK", "here");
+        this.storeItems("Redstone", "here", 64);
+        //this.addStoredLocation("Redstone", "here");
     }
 
     @SubscribeEvent
@@ -191,6 +195,7 @@ public class OQMChestTracker {
         LOGGER.info("status code : {}", Integer.toString(response.statusCode()));
         if (response.statusCode() != 200) {
             LOGGER.info("Attempted to add inventory item, Unexpected response code on : {}", response.statusCode());
+            LOGGER.info(response.body().toPrettyString());
         }
         else {
             LOGGER.info("added item with id : {}", response.body().get("id").textValue());
@@ -202,10 +207,11 @@ public class OQMChestTracker {
 
     public void addInvItem(String name, String storeType, String location) {
         ObjectNode newItem = JacksonUtils.MAPPER.createObjectNode();
-
         newItem.put("name", name);
         newItem.put("storageType", storeType);
-        newItem.putObject("attributes").put("location", location);
+
+        newItem.putArray("storageBlocks").add(storageIdName.get(location));
+        //newItem.putObject("attributes").put("location", location);
         newItem.putObject("unit").put("string", "units");
 
         HttpResponse<ObjectNode> response = client.invItemCreate(client.getDefaultCreds(), "default", newItem).join();
@@ -260,7 +266,7 @@ public class OQMChestTracker {
         HttpResponse<ObjectNode> delRes = client.invItemDelete(client.getDefaultCreds(), "default", itemIdName.get(name)).join();
         LOGGER.info("status code : {}", Integer.toString(delRes.statusCode()));
         if (delRes.statusCode() != 200) {
-            LOGGER.info("Attempted to delete inventory item : {}", delRes.statusCode());
+            LOGGER.info("Attempted to delete inventory item : {}", name);
         }
         else {
             itemIdName.remove(name);
@@ -282,11 +288,70 @@ public class OQMChestTracker {
         }
     }
 
-    public void storeItems(String name) {
-        ObjectNode transaction = JacksonUtils.MAPPER.createObjectNode();
-        transaction.put("name", name);
+    public void changeItemValue(String name, String location, int value ) {
+        if (!storageIdName.containsKey(location)) {
+            addStorageBlock(location);
+        }
+        if (!itemIdName.containsKey(name)) {
+            addInvItem(name, "BULK", location);
+        }
+        if (!checkStored(name, location)) {
+            this.addStoredLocation(name, location);
+        }
+        storeItems(name, location, value);
+    }
 
-        client.invItemStoredTransact(client.getDefaultCreds(), "default", itemIdName.get(name), transaction).join();
+    public void addStoredLocation(String name, String location) {
+
+        ObjectNode itemUpdate = JacksonUtils.MAPPER.createObjectNode();
+        int arrSize = client.invItemGet(client.getDefaultCreds(), "default", itemIdName.get(name)).join()
+                .body().withArray("storageBlocks").size();
+        itemUpdate.withArray("storageBlocks").insert(arrSize, storageIdName.get(location));
+        HttpResponse<ObjectNode> res = client.invItemUpdate(client.getDefaultCreds(), "default", itemIdName.get(name), itemUpdate).join();
+        LOGGER.info("status code : {}", Integer.toString(res.statusCode()));
+        LOGGER.info(res.body().toPrettyString());
+        if (res.statusCode() != 200) {
+            LOGGER.info("Attempted to add storage block, Unexpected response code on : {}", res.statusCode());
+
+        }
+
+    }
+
+    public boolean checkStored(String name, String location) {
+
+        HttpResponse<ObjectNode> aRes = client.invItemGet(client.getDefaultCreds(), "default", itemIdName.get(name)).join();
+        LOGGER.info("TEST:");
+        //Consumer<? super JsonNode> action;
+        boolean isStored = false;
+        while (aRes.body().withArray("storageBlocks").elements().hasNext()) {
+            if (Objects.equals(aRes.body().withArray("storageBlocks").elements().next().textValue(), storageIdName.get(location))) {
+                isStored = true;
+                LOGGER.info("TRUE");
+                break;
+            }
+        }
+        return isStored;
+    }
+
+    public void storeItems(String name, String location, int amount) {
+        ObjectNode transaction = JacksonUtils.MAPPER.createObjectNode();
+        transaction.put("block", storageIdName.get(location));
+        transaction.putObject("amount").put("value", amount)
+                .put("scale", "ABSOLUTE")
+                .putObject("unit").put("string", "units");
+        transaction.put("type", "SET_AMOUNT");
+
+        HttpResponse<String> storeRes = client.invItemStoredTransact(client.getDefaultCreds(), "default", itemIdName.get(name), transaction).join();
+        LOGGER.info(storeRes.toString());
+        if (storeRes.statusCode() != 200) {
+            LOGGER.info("Attempted to update stored item : {}", storeRes.statusCode());
+            LOGGER.info(storeRes.body());
+        }
+        else {
+
+            LOGGER.info("Updated amount of item with id : {}", storeRes.body());
+            LOGGER.info(storeRes.body());
+        }
     }
 
     private static OqmCoreApiClient IgnoreCertIssues() throws NoSuchAlgorithmException, KeyManagementException {
@@ -298,7 +363,7 @@ public class OQMChestTracker {
                 new TrustManager[]{
                         new X509ExtendedTrustManager() {
                             public X509Certificate[] getAcceptedIssuers() {
-                                return new X509Certificate[0];
+                                return new java.security.cert.X509Certificate[0];
                             }
 
                             public void checkClientTrusted(

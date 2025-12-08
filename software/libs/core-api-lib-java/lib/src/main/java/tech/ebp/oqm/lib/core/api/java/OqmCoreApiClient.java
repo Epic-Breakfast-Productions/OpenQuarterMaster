@@ -515,6 +515,7 @@ public class OqmCoreApiClient {
 				   .sendAsync(
 					   this.setupRequest(creds, PathUtils.getInventoryItemPath(oqmDbIdOrName, itemId))
 						   .PUT(HttpRequest.BodyPublishers.ofString(invItemUpdates.toString()))
+                           .header("Content-Type", "application/json")
 						   .build(),
 					   JacksonObjectNodeBodyHandler.INSTANCE
 				   );
