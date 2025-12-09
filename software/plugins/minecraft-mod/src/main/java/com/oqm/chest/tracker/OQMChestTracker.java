@@ -1,5 +1,6 @@
 package com.oqm.chest.tracker;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.oqm.chest.tracker.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.player.Player;
@@ -151,6 +152,8 @@ public class OQMChestTracker {
         this.addInvItem("Cobblestone", "BULK", "here");
         this.addInvItem("Redstone", "BULK", "here");
         this.storeItems("Redstone", "here", 64);
+        this.storeItems("Redstone", "here", 0);
+        this.removeStoredLocation("Redstone", "here");
         //this.addStoredLocation("Redstone", "here");
     }
 
@@ -181,6 +184,9 @@ public class OQMChestTracker {
             }
         }
         LOGGER.info(storedItems.toString());
+        for (Map.Entry<String, Integer> entry : storedItems.entrySet()) {
+            this.changeItemValue(entry.getKey(), pos.toString(), entry.getValue());
+        }
     }
 
     // Adds an inventory item
@@ -299,6 +305,29 @@ public class OQMChestTracker {
             this.addStoredLocation(name, location);
         }
         storeItems(name, location, value);
+    }
+
+    public void removeStoredLocation(String name, String location) {
+
+        ObjectNode itemUpdate = JacksonUtils.MAPPER.createObjectNode();
+        Iterator<JsonNode> els = client.invItemGet(client.getDefaultCreds(), "default", itemIdName.get(name)).join()
+                .body().withArray("storageBlocks").elements();
+        int i = 0;
+        while (els.hasNext()) {
+            i++;
+            if (els.next().textValue() == location) {
+                break;
+            }
+        }
+        itemUpdate.withArray("storageBlocks").remove(i);
+        HttpResponse<ObjectNode> res = client.invItemUpdate(client.getDefaultCreds(), "default", itemIdName.get(name), itemUpdate).join();
+        LOGGER.info("status code : {}", Integer.toString(res.statusCode()));
+        LOGGER.info(res.body().toPrettyString());
+        if (res.statusCode() != 200) {
+            LOGGER.info("Attempted to add storage block, Unexpected response code on : {}", res.statusCode());
+
+        }
+
     }
 
     public void addStoredLocation(String name, String location) {
