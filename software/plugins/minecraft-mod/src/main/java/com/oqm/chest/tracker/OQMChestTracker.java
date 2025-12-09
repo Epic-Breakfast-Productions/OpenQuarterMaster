@@ -3,11 +3,18 @@ package com.oqm.chest.tracker;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.oqm.chest.tracker.item.ModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.ChestBlock;
 import net.minecraft.world.level.block.entity.ChestBlockEntity;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.ChestType;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import org.jetbrains.annotations.NotNull;
@@ -43,7 +50,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import tech.ebp.oqm.lib.core.api.java.OqmCoreApiClient;
-import tech.ebp.oqm.lib.core.api.java.auth.OqmCredentials;
 import tech.ebp.oqm.lib.core.api.java.config.CoreApiConfig;
 import tech.ebp.oqm.lib.core.api.java.config.KeycloakConfig;
 import tech.ebp.oqm.lib.core.api.java.search.QueryParams;
@@ -156,6 +162,27 @@ public class OQMChestTracker {
         //this.addStoredLocation("Redstone", "here");
     }
 
+    public BlockPos getLeftChestPos(BlockState blockState, BlockPos pos) {
+        if (!(blockState.getBlock() instanceof ChestBlock)) return pos;
+
+        ChestType type = blockState.getValue(ChestBlock.TYPE);
+        Direction direction = blockState.getValue(ChestBlock.FACING);
+
+        if (type == ChestType.LEFT) {
+            // This IS the left chest
+            return pos;
+        }
+
+        if (type == ChestType.RIGHT) {
+            // Move one block to the left relative to chest facing
+            Direction leftDir = direction.getCounterClockWise();
+            return pos.relative(leftDir);
+        }
+
+        // SINGLE chest, left side is itself
+        return pos;
+    }
+
     @SubscribeEvent
     public void onRightClickBlock(PlayerInteractEvent.@NotNull RightClickBlock event) {
         // clear stored items map
@@ -168,13 +195,19 @@ public class OQMChestTracker {
         Level level = event.getLevel();
         BlockPos pos = event.getPos();
         ItemStack stack = event.getItemStack();
+        BlockState blockState = level.getBlockState(pos);
 
+        if (level.isClientSide()) return;
         if (!player.isCrouching()) return;
-        if (!(level.getBlockEntity(pos) instanceof ChestBlockEntity chest)) return;
+        if (!(blockState.getBlock() instanceof ChestBlock chest)) return;
         if (stack.getItem() != ModItems.CHEST_PDA.get()) return;
 
-        for (int i = 0; i < chest.getContainerSize(); i++) {
-            ItemStack item = chest.getItem(i);
+        Container container = ChestBlock.getContainer(chest, blockState, level, pos, true);
+
+        if (container == null) return;
+
+        for (int i = 0; i < container.getContainerSize(); i++) {
+            ItemStack item = container.getItem(i);
             if (!item.isEmpty()) {
                 String name = item.getHoverName().getString();
                 count = item.getCount();
@@ -182,10 +215,14 @@ public class OQMChestTracker {
                 storedItems.put(name, currentCount + count);
             }
         }
+
+        BlockPos logPos = getLeftChestPos(blockState, pos);
+
         LOGGER.info(storedItems.toString());
+        LOGGER.info(logPos.toString());
         player.displayClientMessage(Component.literal("Updated Chest with OQM"), true);
         for (Map.Entry<String, Integer> entry : storedItems.entrySet()) {
-            this.changeItemValue(entry.getKey(), pos.toString(), entry.getValue());
+            this.changeItemValue(entry.getKey(), logPos.toString(), entry.getValue());
         }
     }
 
