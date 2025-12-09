@@ -3,6 +3,7 @@ package com.oqm.chest.tracker;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.oqm.chest.tracker.item.ModItems;
 import net.minecraft.core.BlockPos;
+import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.Level;
@@ -102,7 +103,7 @@ public class OQMChestTracker {
 
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event) {
-        if (event.getTabKey() == CreativeModeTabs.BUILDING_BLOCKS) {
+        if (event.getTabKey() == CreativeModeTabs.TOOLS_AND_UTILITIES) {
             event.accept(ModItems.CHEST_PDA);
         }
     }
@@ -152,8 +153,6 @@ public class OQMChestTracker {
         this.addInvItem("Cobblestone", "BULK", "here");
         this.addInvItem("Redstone", "BULK", "here");
         this.storeItems("Redstone", "here", 64);
-        this.storeItems("Redstone", "here", 0);
-        this.removeStoredLocation("Redstone", "here");
         //this.addStoredLocation("Redstone", "here");
     }
 
@@ -184,6 +183,7 @@ public class OQMChestTracker {
             }
         }
         LOGGER.info(storedItems.toString());
+        player.displayClientMessage(Component.literal("Updated Chest with OQM"), true);
         for (Map.Entry<String, Integer> entry : storedItems.entrySet()) {
             this.changeItemValue(entry.getKey(), pos.toString(), entry.getValue());
         }

@@ -11,7 +11,7 @@ public class ModItems {
             DeferredRegister.createItems(OQMChestTracker.MODID);
 
     public static final DeferredItem<Item> CHEST_PDA = ITEMS.register("chest_pda",
-            () -> new Item(new Item.Properties()));
+            () -> new Item(new Item.Properties().stacksTo(1)));
 
     public static void register(IEventBus bus) {
         ITEMS.register(bus);
