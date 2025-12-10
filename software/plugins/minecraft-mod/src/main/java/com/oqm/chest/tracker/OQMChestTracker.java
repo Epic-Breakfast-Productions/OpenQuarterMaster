@@ -105,6 +105,7 @@ public class OQMChestTracker {
 
         // Register our mod's ModConfigSpec so that FML can create and load the config file for us
         modContainer.registerConfig(ModConfig.Type.COMMON, Config.SPEC);
+
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
@@ -123,6 +124,8 @@ public class OQMChestTracker {
         saveItemMap();
         saveStorageMap();
     }
+
+
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
