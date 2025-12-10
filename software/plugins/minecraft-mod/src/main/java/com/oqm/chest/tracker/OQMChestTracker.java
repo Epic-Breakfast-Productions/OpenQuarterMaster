@@ -1,10 +1,14 @@
 package com.oqm.chest.tracker;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
 import com.oqm.chest.tracker.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -17,10 +21,10 @@ import net.minecraft.world.level.block.state.properties.ChestType;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mojang.logging.LogUtils;
-
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.Mod;
@@ -67,8 +71,8 @@ public class OQMChestTracker {
     public static final String itemsPath = "..\\src\\main\\java\\com\\oqm\\chest\\tracker\\itemIds.txt";
     public static final String storagePath = "..\\src\\main\\java\\com\\oqm\\chest\\tracker\\storeIds.txt";
 
-    Map<String, String> itemIdName = new HashMap<>();
-    Map<String, String> storageIdName = new HashMap<>();
+    public Map<String, String> itemIdName = new HashMap<>();
+    public Map<String, String> storageIdName = new HashMap<>();
 
     static {
         try {
@@ -234,8 +238,13 @@ public class OQMChestTracker {
         LOGGER.info(storedItems.toString());
         LOGGER.info(logPos.toString());
         player.displayClientMessage(Component.literal("Updated Chest with OQM"), true);
+        for (String removed : removedItems) {
+            deleteInvItem(removed);
+        }
+
         for (Map.Entry<String, Integer> entry : storedItems.entrySet()) {
-            this.changeItemValue(entry.getKey(), logPos.toString(), entry.getValue());
+
+            changeItemValue(entry.getKey(), logPos.toString(), entry.getValue());
         }
     }
 
@@ -258,7 +267,6 @@ public class OQMChestTracker {
             itemIdName.put(name, response.body().get("id").textValue());
             LOGGER.info(response.body().toPrettyString());
         }
-
     }
 
     public void addInvItem(String name, String storeType, String location) {
@@ -318,7 +326,6 @@ public class OQMChestTracker {
     }
 
     public void deleteInvItem(String name) {
-
         HttpResponse<ObjectNode> delRes = client.invItemDelete(client.getDefaultCreds(), "default", itemIdName.get(name)).join();
         LOGGER.info("status code : {}", Integer.toString(delRes.statusCode()));
         if (delRes.statusCode() != 200) {
