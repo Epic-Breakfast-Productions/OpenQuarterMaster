@@ -154,12 +154,6 @@ public class OQMChestTracker {
         QueryParams params = new QueryParams();
         HttpResponse<ObjectNode> response = client.invItemSearch(client.getDefaultCreds(), "default", params).join();
         LOGGER.info(response.body().toPrettyString());
-
-        this.addStorageBlock("here");
-        this.addInvItem("Cobblestone", "BULK", "here");
-        this.addInvItem("Redstone", "BULK", "here");
-        this.storeItems("Redstone", "here", 64);
-        //this.addStoredLocation("Redstone", "here");
     }
 
     public BlockPos getLeftChestPos(BlockState blockState, BlockPos pos) {
