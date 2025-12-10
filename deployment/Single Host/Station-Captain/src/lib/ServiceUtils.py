@@ -30,8 +30,9 @@ class ServiceUtils:
         result = subprocess.run(args, shell=False, capture_output=True, text=True, check=False)
 
         if result.returncode != 0:
-            # ServiceUtils.log.warning("Command was unsuccessful. Error code: {0}", result.returncode)
-            # ServiceUtils.log.debug("Erring command stderr: {0}", result.stderr)
+            ServiceUtils.log.warning("Command was unsuccessful. Error code: " + str(result.returncode))
+            ServiceUtils.log.debug("Erring command stdout: " + result.stdout)
+            ServiceUtils.log.debug("Erring command stderr: " + result.stderr)
             return False
         ServiceUtils.log.info("%s Command was successful on %s", command, service)
         return True

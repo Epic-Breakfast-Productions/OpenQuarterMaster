@@ -14,12 +14,14 @@ To be flexible to your usecase, we support several modes of how these certs are 
 
 All config related to certs are placed under `cert.*` in config. Explanation below.
 
-| Config Key             | Default | Explanation                                                                               |
-|------------------------|---------|-------------------------------------------------------------------------------------------|
-| `cert.externalDefault` | `self`  | The default cert to configure in the proxy. Must be one of `self`, `acme`, or `provided`. |
-| `cert.selfSigned`      |         | The configuration block for self signed certs. See below for info.                        |
-| `cert.acme`            |         | The configuration block for acme (Lets Encrypt) certs. See below for info.                |
-| `cert.provided`        |         | The configuration block for provided certs. See below for info.                           |
+| Config Key                                 | Default                                          | Explanation                                                                                                                |
+|--------------------------------------------|--------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------|
+| `cert.externalDefault`                     | `self`                                           | The default cert to configure in the proxy. Must be one of `self`, `acme`, or `provided`.                                  |
+| `cert.selfSigned`                          |                                                  | The configuration block for self signed certs. See below for info.                                                         |
+| `cert.acme`                                |                                                  | The configuration block for acme (Lets Encrypt) certs. See below for info.                                                 |
+| `cert.provided`                            |                                                  | The configuration block for provided certs. See below for info.                                                            |
+| `cert.trustStore.systemExternalTrustStore` | `/etc/oqm/certs/oqmSystemExternalTruststore.p12` | The trust store that can be used to interact with the system. Will contain Let's Encrypt CA's as well, if ACME is enabled. |
+| `cert.trustStore.systemExternalTrustStore` | `<secret>`                                       | The password for the system truststore.                                                                                    |
 
 ## Certs For External Use
 
@@ -32,6 +34,10 @@ There are three modes for defining and including certs for the system to use for
   `cert.externalDefault`)
 - All certs available are included in the proxy.
 - Internally used certs are all self-signed, based on the root CA generated.
+
+> [!TIP]
+> You can pull the system self-signed CA (`cert.certs.CARootCert`) to another system in order for other browsers or similar to trust the OQM system.
+> If connecting with something like Java, we generate a trust store (`cert.trustStore.systemExternalTrustStore`) for the same purpose.
 
 ### Self
 
@@ -78,9 +84,10 @@ to `self`. See "Internal Certs" below for more information.
 
 Other Relevant config:
 
-| Config Key        | Explanation                                                                                                     | Link to more info |
-|-------------------|-----------------------------------------------------------------------------------------------------------------|-------------------|
-| `system.hostname` | Used as the common name for the external system cert. Also included as a subject alternative name in that cert. |                   |
+| Config Key              | Explanation                                                                                                     | Link to more info |
+|-------------------------|-----------------------------------------------------------------------------------------------------------------|-------------------|
+| `system.hostname`       | Used as the common name for the external system cert. Also included as a subject alternative name in that cert. |                   |
+| `system.altHostnameIps` | Used to add additional valid SAN's to the system cert.                                                          |                   |
 
 ### ACME (Let's Encrypt)
 
@@ -101,9 +108,10 @@ By default, the proxy is configured to use the TLS challenge method.
 
 Other Relevant config:
 
-| Config Key        | Explanation                              | Link to more info |
-|-------------------|------------------------------------------|-------------------|
-| `system.hostname` | Used as the domain for the ACME request. |                   |
+| Config Key              | Explanation                                             | Link to more info |
+|-------------------------|---------------------------------------------------------|-------------------|
+| `system.hostname`       | Used as the domain for the ACME request.                |                   |
+| `system.altHostnameIps` | Used to add additional valid SAN's to the ACME request. |                   |
 
 ### Provided
 

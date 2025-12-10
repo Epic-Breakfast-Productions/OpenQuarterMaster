@@ -15,6 +15,7 @@ from LogManagement import *
 from InputValidators import *
 from CertsUtils import *
 from LogUtils import *
+from SystemCheckUtils import SystemCheckUtils
 
 
 class UserInteraction:
@@ -544,12 +545,12 @@ class UserInteraction:
             if choice == "(1)":
                 self.dialog.msgbox(
                     "Keycloak access information:\n\n" +
-                    "\tURL: https://" + mainCM.getConfigVal("system.hostname") + ":" + mainCM.getConfigVal(
-                        "infra.keycloak.port") + "/admin/master/console/#/oqm\n" +
+                    "\tURL: " + mainCM.getConfigVal("infra.keycloak.externalBaseUri") + "/admin/master/console/#/oqm\n" +
                     "\tAdmin user: " + mainCM.getConfigVal("infra.keycloak.adminUser") + "\n" +
                     "\tAdmin Password: " + mainCM.getConfigVal("infra.keycloak.adminPass"),
                     title="Keycloak Access",
-                    width=UserInteraction.WIDE_WIDTH
+                    width=UserInteraction.WIDE_WIDTH,
+                    height=20
                 )
 
         UserInteraction.log.debug("Done running user admin menu.")
@@ -838,6 +839,8 @@ class UserInteraction:
             # TODO:: error check
             os.system('reboot')
 
+        self.checkSystem()
+
         # Check if not installed, prompt to install
         if not PackageManagement.coreInstalled():
             UserInteraction.log.debug("OQM components not yet installed.")
@@ -915,6 +918,29 @@ class UserInteraction:
                 self.selectPluginsMenu()
 
         UserInteraction.log.debug("Done running manage install menu.")
+
+    def checkSystem(self):
+        self.log.debug("Checking system.")
+
+        self.dialog.infobox("Checking system...")
+
+        errs = SystemCheckUtils.checkSystem()
+
+        if not errs:
+            self.dialog.msgbox("System check yielded no alerts!", title="System Check")
+            return
+
+        toShow = ""
+        for curErr in errs:
+            toShow += curErr['level'] + " - " + curErr["title"] + "\n"
+            toShow += "\t" + curErr['description'] + "\n"
+            toShow += "\n\n\n"
+        self.dialog.scrollbox(toShow, title="System Issues Found",
+                              #    height=UserInteraction.TALL_HEIGHT,
+                              # width=UserInteraction.WIDE_WIDTH,
+                              #    tab_correct=True, trim=False,
+                              # cr_wrap=True
+                              )
 
     @staticmethod
     def mapPluginSelection(pluginFromPm):

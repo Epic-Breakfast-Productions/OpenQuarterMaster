@@ -21,7 +21,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.I
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ProvidedUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ToGenerateUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbModValidationException;
+import tech.ebp.oqm.core.api.exception.db.DbModValidationException;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 

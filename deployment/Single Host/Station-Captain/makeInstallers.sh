@@ -128,7 +128,7 @@ cat <<'EOT' > "$buildDir/$debDir/DEBIAN/postinst"
 #	echo "WARNING: could not run autocomplete!"
 #fi
 
-oqm-captain --ensure-certs-present
+oqm-captain certs ensure-system-present
 
 if [ ! -z "$(grep "oqm:" /etc/group)" ] ; then
 	echo 'OQM group already existent'

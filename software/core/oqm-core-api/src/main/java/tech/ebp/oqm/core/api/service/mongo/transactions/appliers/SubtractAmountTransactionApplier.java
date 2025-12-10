@@ -8,14 +8,10 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.set.SetAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubAmountTransaction;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
-import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
-import java.util.LinkedHashSet;
 import java.util.Set;
 
 public class SubtractAmountTransactionApplier extends TransactionApplier<SubAmountTransaction> {
