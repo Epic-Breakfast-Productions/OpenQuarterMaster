@@ -1,3 +1,57 @@
+# OQM Minecraft Mod
+
+This is a Minecraft mod to provide integration with the Open QuarterMaster system!
+
+## Features
+
+
+
+### Future
+
+ - Mod configuration screen
+ - OQM specific chest
+ - Chest naming / simple storage block management
+
+#### Stage 2 (turn this into an issue on github)
+
+ - (Above features)
+ - 
+
+## Installation and usage
+
+### Building / Getting the mod
+
+### Installing in Minecraft
+
+### Setting up the Mod
+
+#### OQM Setup
+
+Steps to get the OQM instance ready: (assuming Single Node Host deployment)
+
+ 1. Have an OQM instance running
+ 2. Add the following file:
+    - Name: `/etc/oqm/kcClients/McMod.json`
+    - Content:
+      ```json
+      {
+        "clientName": "minecraft-mod",
+        "displayName": "Minecraft Mod",
+        "description": "",
+        "roles": {
+        }
+      }
+      ```
+ 3. Get client secret: `oqm-config g infra.keycloak.clientSecrets.minecraft-mod`
+
+## Development Notes
+
+
+
+
+
+
+
 
 Installation information
 =======
