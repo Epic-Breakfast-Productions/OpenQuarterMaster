@@ -66,23 +66,13 @@ public class OQMChestTracker {
     // Directly reference a slf4j logger
     public static final Logger LOGGER = LogUtils.getLogger();
 
-    public static final OqmCoreApiClient client;
+    public static OqmCoreApiClient client;
 
     public static final String itemsPath = "..\\src\\main\\java\\com\\oqm\\chest\\tracker\\itemIds.txt";
     public static final String storagePath = "..\\src\\main\\java\\com\\oqm\\chest\\tracker\\storeIds.txt";
 
     public Map<String, String> itemIdName = new HashMap<>();
     public Map<String, String> storageIdName = new HashMap<>();
-
-    static {
-        try {
-            client = IgnoreCertIssues();
-        } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e);
-        } catch (KeyManagementException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     public HashMap<String, Integer> storedItems = new HashMap<>();
 
@@ -127,6 +117,18 @@ public class OQMChestTracker {
     // You can use SubscribeEvent and let the Event Bus discover methods to call
     @SubscribeEvent
     public void onServerStarting(ServerStartingEvent event) {
+        String clientId = Config.CLIENT_ID.get();
+        String clientSecret = Config.CLIENT_SECRET.get();
+        String serverIp = Config.SERVER_IP.get();
+
+        try {
+            client = IgnoreCertIssues(serverIp, clientId, clientSecret);
+        } catch (NoSuchAlgorithmException e) {
+            throw new RuntimeException(e);
+        } catch (KeyManagementException e) {
+            throw new RuntimeException(e);
+        }
+
         loadItemMap();
         loadStorageMap();
 
@@ -440,7 +442,7 @@ public class OQMChestTracker {
         }
     }
 
-    private static OqmCoreApiClient IgnoreCertIssues() throws NoSuchAlgorithmException, KeyManagementException {
+    private static OqmCoreApiClient IgnoreCertIssues(String serverIp, String clientId, String clientSecret) throws NoSuchAlgorithmException, KeyManagementException {
 
         //build SSLContext to ignore cert issues
         SSLContext context = SSLContext.getInstance("TLS");
@@ -497,6 +499,11 @@ public class OQMChestTracker {
         );
 
         boolean KcDefaultCreds = true;
+
+        // build uri strings
+        String OqmUri = "https://" + serverIp + "/core/api";
+        String KcUri = "https://" + serverIp + "/infra/keycloak";
+
         //build the client
         try {
             OqmCoreApiClient _client = OqmCoreApiClient.builder()
@@ -507,12 +514,12 @@ public class OQMChestTracker {
                             .keycloakConfig(KeycloakConfig.builder().httpClient(HttpClient.newBuilder()
                                             .sslContext(context)
                                             .build())
-                                    .baseUri(new URI("https://10.1.6.27/infra/keycloak"))
-                                    .clientId("mc-mod")
-                                    .clientSecret("HjMxFF3CqiS3qf_XJkJwvKShSdBlLzWl")
+                                    .baseUri(new URI(KcUri))
+                                    .clientId(clientId)
+                                    .clientSecret(clientSecret)
                                     .defaultCreds(KcDefaultCreds)
                                     .build())
-                            .baseUri(new URI("https://10.1.6.27/core/api")).build())
+                            .baseUri(new URI(OqmUri)).build())
                     .build();
 
 
