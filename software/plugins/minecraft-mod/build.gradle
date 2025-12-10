@@ -111,6 +111,11 @@ sourceSets.main.resources { srcDir 'src/generated/resources' }
 // "optional", meaning it will not be pulled by dependents of this mod.
 configurations {
     runtimeClasspath.extendsFrom localRuntime
+    embeddedLibs {
+        canBeResolved = true
+        canBeConsumed = false
+        extendsFrom implementation
+    }
 }
 
 dependencies {
@@ -142,6 +147,19 @@ dependencies {
     additionalRuntimeClasspath("tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-java:1.0.0-SNAPSHOT")
 }
 
+tasks.named("jar") {
+    from({
+        configurations.embeddedLibs
+            .files
+            .findAll { file ->
+                file.name.contains("core-api-lib-java")
+                || file.name.contains("jackson")
+            }
+            .collect { it.isDirectory() ? it : zipTree(it) }
+    })
+
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 
 // This block of code expands all declared replace properties in the specified resource targets.
 // A missing property will result in an error. Properties are expanded using ${} Groovy notation.
