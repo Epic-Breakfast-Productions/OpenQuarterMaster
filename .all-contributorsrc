@@ -186,6 +186,18 @@
         "plugin",
         "research"
       ]
+    },
+    {
+      "login": "simonramsey0",
+      "name": "Simon Ramsey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/149826099?v=4",
+      "profile": "https://github.com/simonramsey0",
+      "contributions": [
+        "code",
+        "content",
+        "plugin",
+        "research"
+      ]
     }
   ],
   "contributorsPerLine": 7,
