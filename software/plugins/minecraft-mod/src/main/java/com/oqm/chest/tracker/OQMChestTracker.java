@@ -8,6 +8,8 @@ import com.oqm.chest.tracker.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.saveddata.SavedData;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
@@ -19,6 +21,7 @@ import net.minecraft.world.level.block.entity.ChestBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.ChestType;
 import net.neoforged.neoforge.event.entity.player.PlayerInteractEvent;
+import net.neoforged.neoforge.event.level.BlockEvent;
 import net.neoforged.neoforge.event.server.ServerStoppingEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -180,6 +183,18 @@ public class OQMChestTracker {
 
         // SINGLE chest, left side is itself
         return pos;
+    }
+
+    @SubscribeEvent
+    public void onBlockBreak(BlockEvent.BreakEvent event) {
+        Level level = (Level) event.getLevel();
+        BlockPos pos = event.getPos();
+        BlockState blockState = level.getBlockState(pos);
+        Block block = blockState.getBlock();
+
+        if (block == Blocks.CHEST) {
+            LOGGER.info("Removing chest at pos: {}", pos.toString());
+        }
     }
 
     @SubscribeEvent
