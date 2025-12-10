@@ -11,7 +11,7 @@
 <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/releases.atom">![Rss](https://img.shields.io/badge/rss-F88900?style=for-the-badge&logo=rss&logoColor=white)</a>
 ![GitHub](https://img.shields.io/github/license/Epic-Breakfast-Productions/OpenQuarterMaster)
 [![](https://dcbadge.limes.pink/api/server/cpcVh6SyNn?style=flat)](https://discord.gg/cpcVh6SyNn)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-15-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-16-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Inventory without a catch, and all the hooks**
@@ -71,6 +71,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/simonramsey0"><img src="https://avatars.githubusercontent.com/u/149826099?v=4?s=100" width="100px;" alt="Simon Ramsey"/><br /><sub><b>Simon Ramsey</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=simonramsey0" title="Code">💻</a> <a href="#content-simonramsey0" title="Content">🖋</a> <a href="#plugin-simonramsey0" title="Plugin/utility libraries">🔌</a> <a href="#research-simonramsey0" title="Research">🔬</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thederpylama"><img src="https://avatars.githubusercontent.com/u/35352055?v=4?s=100" width="100px;" alt="Ian Lauver"/><br /><sub><b>Ian Lauver</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=thederpylama" title="Code">💻</a> <a href="#content-thederpylama" title="Content">🖋</a> <a href="#plugin-thederpylama" title="Plugin/utility libraries">🔌</a> <a href="#research-thederpylama" title="Research">🔬</a></td>
     </tr>
   </tbody>
 </table>
