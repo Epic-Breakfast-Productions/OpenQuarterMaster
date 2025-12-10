@@ -197,6 +197,10 @@ public class OQMChestTracker {
 
         if (block == Blocks.CHEST) {
             LOGGER.info("Removing chest at pos: {}", pos.toString());
+            if (storageIdName.containsKey(pos.toString())) {
+                storageIdName.remove(pos.toString());
+                deleteStorage(pos.toString());
+            }
         }
     }
 
