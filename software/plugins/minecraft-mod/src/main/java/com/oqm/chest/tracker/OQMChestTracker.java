@@ -4,8 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.oqm.chest.tracker.item.ModItems;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.nbt.ListTag;
-import net.minecraft.nbt.Tag;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.Container;
 import net.minecraft.world.entity.player.Player;
@@ -184,6 +183,8 @@ public class OQMChestTracker {
 
         int count;
         int currentCount;
+        Set<String> items = new HashSet<>(Set.of());
+        Set<String> removedItems = new HashSet<>(Set.of());
 
         Player player = event.getEntity();
         Level level = event.getLevel();
@@ -194,21 +195,39 @@ public class OQMChestTracker {
         if (level.isClientSide()) return;
         if (!player.isCrouching()) return;
         if (!(blockState.getBlock() instanceof ChestBlock chest)) return;
+        if (!(level.getBlockEntity(pos) instanceof ChestBlockEntity chestBlockEntity)) return;
         if (stack.getItem() != ModItems.CHEST_PDA.get()) return;
 
         Container container = ChestBlock.getContainer(chest, blockState, level, pos, true);
 
         if (container == null) return;
 
+        CompoundTag data = chestBlockEntity.getPersistentData();
+        if (data.contains("items")) {
+            data.getString("items");
+            items = new HashSet<>(Arrays.asList(data.getString("items").split(",")));
+        }
+
         for (int i = 0; i < container.getContainerSize(); i++) {
             ItemStack item = container.getItem(i);
             if (!item.isEmpty()) {
                 String name = item.getHoverName().getString();
+
+                items.add(name);
+
                 count = item.getCount();
                 currentCount = storedItems.getOrDefault(name, 0);
                 storedItems.put(name, currentCount + count);
             }
         }
+
+        items.removeIf(name -> {
+            boolean removed = !storedItems.containsKey(name);
+            if (removed) removedItems.add(name);
+            return removed;
+        });
+
+        data.putString("items", String.join(",", items));
 
         BlockPos logPos = getLeftChestPos(blockState, pos);
 
@@ -423,7 +442,7 @@ public class OQMChestTracker {
                 new TrustManager[]{
                         new X509ExtendedTrustManager() {
                             public X509Certificate[] getAcceptedIssuers() {
-                                return new java.security.cert.X509Certificate[0];
+                                return new X509Certificate[0];
                             }
 
                             public void checkClientTrusted(
