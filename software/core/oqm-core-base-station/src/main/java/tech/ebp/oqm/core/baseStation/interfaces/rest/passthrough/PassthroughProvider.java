@@ -89,6 +89,7 @@ public abstract class PassthroughProvider extends ApiProvider {
 						   log.debug("Final result of history search: {}", endResults);
 						   return Response.ok(
 							   historyTemplate
+								   .data("rootPrefix", this.getRootPrefix())
 								   .data("searchFormId", searchFormId)
 								   .data("searchResults", endResults),
 							   MediaType.TEXT_HTML
