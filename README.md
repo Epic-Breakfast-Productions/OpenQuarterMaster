@@ -11,7 +11,7 @@
 <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/releases.atom">![Rss](https://img.shields.io/badge/rss-F88900?style=for-the-badge&logo=rss&logoColor=white)</a>
 ![GitHub](https://img.shields.io/github/license/Epic-Breakfast-Productions/OpenQuarterMaster)
 [![](https://dcbadge.limes.pink/api/server/cpcVh6SyNn?style=flat)](https://discord.gg/cpcVh6SyNn)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-16-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-18-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Inventory without a catch, and all the hooks**
@@ -73,6 +73,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/simonramsey0"><img src="https://avatars.githubusercontent.com/u/149826099?v=4?s=100" width="100px;" alt="Simon Ramsey"/><br /><sub><b>Simon Ramsey</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=simonramsey0" title="Code">💻</a> <a href="#content-simonramsey0" title="Content">🖋</a> <a href="#plugin-simonramsey0" title="Plugin/utility libraries">🔌</a> <a href="#research-simonramsey0" title="Research">🔬</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/RaimonAbreu007"><img src="https://avatars.githubusercontent.com/u/199864098?v=4?s=100" width="100px;" alt="RaimonAbreu007"/><br /><sub><b>RaimonAbreu007</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=RaimonAbreu007" title="Code">💻</a> <a href="#content-RaimonAbreu007" title="Content">🖋</a> <a href="#plugin-RaimonAbreu007" title="Plugin/utility libraries">🔌</a> <a href="#research-RaimonAbreu007" title="Research">🔬</a> <a href="#projectManagement-RaimonAbreu007" title="Project Management">📆</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Maxf653"><img src="https://avatars.githubusercontent.com/u/189031501?v=4?s=100" width="100px;" alt="Max"/><br /><sub><b>Max</b></sub></a><br /><a href="#content-Maxf653" title="Content">🖋</a> <a href="#plugin-Maxf653" title="Plugin/utility libraries">🔌</a> <a href="#research-Maxf653" title="Research">🔬</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thederpylama"><img src="https://avatars.githubusercontent.com/u/35352055?v=4?s=100" width="100px;" alt="Ian Lauver"/><br /><sub><b>Ian Lauver</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=thederpylama" title="Code">💻</a> <a href="#content-thederpylama" title="Content">🖋</a> <a href="#plugin-thederpylama" title="Plugin/utility libraries">🔌</a> <a href="#research-thederpylama" title="Research">🔬</a></td>
     </tr>
   </tbody>
 </table>
