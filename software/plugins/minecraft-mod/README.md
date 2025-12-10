@@ -12,7 +12,7 @@ This is a Minecraft mod to provide integration with the Open QuarterMaster syste
  - OQM specific chest
  - Chest naming / simple storage block management
 
-#### Stage 2 (turn this into an issue on github)
+#### Stage 2 (Issue #1017 on github)
 
  - (Above features)
  - 
@@ -22,6 +22,10 @@ This is a Minecraft mod to provide integration with the Open QuarterMaster syste
 ### Building / Getting the mod
 
 ### Installing in Minecraft
+
+### Single Player / Server
+
+### Client
 
 ### Setting up the Mod
 
