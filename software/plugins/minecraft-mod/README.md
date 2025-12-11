@@ -4,6 +4,9 @@ This is a Minecraft mod to provide integration with the Open QuarterMaster syste
 
 ## Features
 
+### Stage 1 (Current)
+- Log items in chests to OQM server
+  - Uses custom OQM chest logging item `Chest PDA`
 
 
 ### Future
@@ -20,16 +23,35 @@ This is a Minecraft mod to provide integration with the Open QuarterMaster syste
 ## Installation and usage
 
 ### Building / Getting the mod
+1. Build the mod using `./gradlew clean build`
+2. Get the mod jar from `build/libs/`
 
 ### Installing in Minecraft
+1. Install the correct NeoForge version (Currently 21.1.216 for Minecraft 1.21.1) [NeoForge](https://neoforged.net)
+2. Place the mod jar in the `mods` folder of your Minecraft instance
 
 ### Single Player / Server
+If Single Player, no additional setup is required.
 
-### Client
+For Multiplayer, use this guide from NeoForge: [Setting up a NeoForge Server](https://docs.neoforged.net/user/docs/server/)
 
 ### Setting up the Mod
+1. From the Minecraft main menu, go to "Mods" -> "OQM Chest Tracker"
+2. Enter your OQM server IP
+3. Enter your OQM server client ID
+4. Enter your OQM server client secret
+5. Click Done
 
-#### OQM Setup
+Your OQM server can now be accessed from within Minecraft!
+
+### Mod Use in Game
+1. Get a `Chest PDA` item (can be given using `/give @p oqm:chest_pda` command)
+2. `Shift + Right Click` while holding the `Chest PDA` to open the chest logging interface
+
+#### Chest PDA Recipe
+![Chest PDA Recipe](docs/images/crafting_recipe.png)
+
+## OQM Setup
 
 Steps to get the OQM instance ready: (assuming Single Node Host deployment)
 
@@ -49,35 +71,5 @@ Steps to get the OQM instance ready: (assuming Single Node Host deployment)
  3. Get client secret: `oqm-config g infra.keycloak.clientSecrets.minecraft-mod`
 
 ## Development Notes
-
-
-
-
-
-
-
-
-Installation information
-=======
-
-This template repository can be directly cloned to get you started with a new
-mod. Simply create a new repository cloned from this one, by following the
-instructions provided by [GitHub](https://docs.github.com/en/repositories/creating-and-managing-repositories/creating-a-repository-from-a-template).
-
-Once you have your clone, simply open the repository in the IDE of your choice. The usual recommendation for an IDE is either IntelliJ IDEA or Eclipse.
-
-If at any point you are missing libraries in your IDE, or you've run into problems you can
-run `gradlew --refresh-dependencies` to refresh the local cache. `gradlew clean` to reset everything 
-{this does not affect your code} and then start the process again.
-
-Mapping Names:
-============
-By default, the MDK is configured to use the official mapping names from Mojang for methods and fields 
-in the Minecraft codebase. These names are covered by a specific license. All modders should be aware of this
-license. For the latest license text, refer to the mapping file itself, or the reference copy here:
-https://github.com/NeoForged/NeoForm/blob/main/Mojang.md
-
-Additional Resources: 
-==========
-Community Documentation: https://docs.neoforged.net/  
-NeoForged Discord: https://discord.neoforged.net/
+- Minecraft Version: 1.21.1
+- NeoForge Version: 21.1.216
