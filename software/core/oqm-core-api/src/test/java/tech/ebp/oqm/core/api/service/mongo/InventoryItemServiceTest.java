@@ -192,6 +192,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 
 		item = this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, null, newId, updates, user);
 		assertEquals(Units.MOLE, item.getUnit());
+		assertEquals(Units.MOLE, item.getStats().getTotal().getUnit());
 	}
 
 	@Test

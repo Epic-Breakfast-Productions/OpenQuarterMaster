@@ -30,6 +30,7 @@ import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
+import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import java.time.Duration;
@@ -42,6 +43,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.TimeZone;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -147,30 +149,51 @@ public class ItemStatsService {
 		return output;
 	}
 	
-	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, ObjectId itemId) {
-		FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(itemId.toHexString()));
+	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, InventoryItem item) {
+//		if(item.getId() == null){//If no id, is new and thus no stored. Don't think this is necesary?
+//			return ItemStoredStats.builder()
+//					   .total((Quantities.getQuantity(0, item.getUnit())))
+//					   .lowStock(
+//						   item.getLowStockThreshold() != null && item.getLowStockThreshold().getValue().longValue() != 0
+//					   )
+//					   .storageBlockStats(
+//						   item.getStorageBlocks().stream()
+//							   .collect(Collectors.toMap(
+//								   Function.identity(),
+//								   (storageBlockId)->StoredInBlockStats.builder().build()
+//							   ))
+//					   )
+//					   .build();
+//		}
 		
-		InventoryItem item = this.inventoryItemService.get(oqmDbIdOrName, cs, itemId);
 		ItemStoredStats output = new ItemStoredStats(item.getUnit());
 		
 		for (ObjectId storageBlock : item.getStorageBlocks()) {
 			output.getStorageBlockStats().put(storageBlock, new StoredInBlockStats(output.getTotal().getUnit()));
 		}
 		
-		try (
-			MongoCursor<Stored> storedIterator = storedInItem.iterator()
-		) {
-			while (storedIterator.hasNext()) {
-				Stored curStored = storedIterator.next();
-				
-				this.addToStats(
-					output,
-					curStored
-				);
+		if(item.getId() != null) {
+			FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+			try (
+				MongoCursor<Stored> storedIterator = storedInItem.iterator()
+			) {
+				while (storedIterator.hasNext()) {
+					Stored curStored = storedIterator.next();
+					
+					this.addToStats(
+						output,
+						curStored
+					);
+				}
 			}
 		}
 		
 		return output;
+	}
+	
+	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, ObjectId itemId) {
+		InventoryItem item = this.inventoryItemService.get(oqmDbIdOrName, cs, itemId);
+		return this.getItemStats(oqmDbIdOrName, cs, item);
 	}
 	
 	/**
@@ -257,7 +280,7 @@ public class ItemStatsService {
 		}
 		
 		if (changed) {
-			this.getStoredService().update(oqmDbIdOrName, cs, stored, entity, historyDetails);
+			this.getStoredService().update(oqmDbIdOrName, cs, stored, entity, true, historyDetails);
 			return Optional.of(curResult);
 		}
 		return Optional.empty();
@@ -367,7 +390,7 @@ public class ItemStatsService {
 		}
 		
 		if (changed) {
-			this.getInventoryItemService().update(oqmDbIdOrName, cs, item, entity, historyDetails);
+			this.getInventoryItemService().update(oqmDbIdOrName, cs, item, entity, true, historyDetails);
 			results.getEvents(transactionId).parallelStream().forEach(event->{
 				if (event.getObjectId().equals(item.getId())) {
 					this.getInventoryItemService().addHistoryFor(oqmDbIdOrName, cs, item, this.getCoreApiInteractingEntity(), event);
@@ -382,17 +405,6 @@ public class ItemStatsService {
 				   .expiryLowStockResults(results)
 				   .stats(storedStats)
 				   .build();
-	}
-	
-	public ItemPostTransactionProcessResults postItemUpdateProcess(
-		String oqmDbIdOrName,
-		ClientSession cs,
-		InventoryItem item,
-		InteractingEntity entity,
-		HistoryDetail... historyDetails
-	) {
-		//TODO
-		return null;
 	}
 	
 	/**

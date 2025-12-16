@@ -141,8 +141,8 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	}
 
 	@WithSpan
-	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
-		object = this.update(oqmDbIdOrName, cs, object);
+	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, boolean deriveApplied, HistoryDetail ... details) throws DbNotFoundException {
+		object = this.update(oqmDbIdOrName, cs, object, deriveApplied);
 		this.addHistoryFor(oqmDbIdOrName, cs, object, entity,
 			UpdateEvent.builder()
 				.objectId(object.getId())
@@ -153,9 +153,13 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		return object;
 	}
 	
-	@WithSpan
+	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
+		return this.update(oqmDbIdOrName, cs, object, entity, false, details);
+	}
+		
+		@WithSpan
 	public T update(String oqmDbIdOrName, T object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
-		return this.update(oqmDbIdOrName, null, object, entity, details);
+		return this.update(oqmDbIdOrName, null, object, entity, false, details);
 	}
 	
 	/**
