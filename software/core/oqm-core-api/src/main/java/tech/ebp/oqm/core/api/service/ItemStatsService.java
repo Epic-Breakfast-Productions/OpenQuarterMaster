@@ -150,22 +150,6 @@ public class ItemStatsService {
 	}
 	
 	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, InventoryItem item) {
-//		if(item.getId() == null){//If no id, is new and thus no stored. Don't think this is necesary?
-//			return ItemStoredStats.builder()
-//					   .total((Quantities.getQuantity(0, item.getUnit())))
-//					   .lowStock(
-//						   item.getLowStockThreshold() != null && item.getLowStockThreshold().getValue().longValue() != 0
-//					   )
-//					   .storageBlockStats(
-//						   item.getStorageBlocks().stream()
-//							   .collect(Collectors.toMap(
-//								   Function.identity(),
-//								   (storageBlockId)->StoredInBlockStats.builder().build()
-//							   ))
-//					   )
-//					   .build();
-//		}
-		
 		log.info("Getting stats for item: {}", item.getId());
 		
 		ItemStoredStats output = new ItemStoredStats(item.getUnit());
