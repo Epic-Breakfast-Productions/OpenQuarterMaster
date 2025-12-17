@@ -157,6 +157,18 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 */
 	@lombok.Builder.Default
 	private ItemStoredStats stats = null;
+	
+	/**
+	 * The default format that should be applied to new stroed items if not otherwise specified.
+	 *
+	 * See {@link tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored#labelFormat} for format details.
+	 *
+	 * TODO:: do this applying #1003
+	 */
+	@NonNull
+	@NotBlank
+	@lombok.Builder.Default
+	private String labelFormat = "{id}";
 
 	@Override
 	public int getSchemaVersion() {

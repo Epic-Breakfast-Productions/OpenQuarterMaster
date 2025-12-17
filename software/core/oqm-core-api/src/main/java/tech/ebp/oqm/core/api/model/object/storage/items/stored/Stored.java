@@ -6,8 +6,10 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -31,6 +33,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 /**
  * Describes an item stored in the system.
@@ -52,17 +55,20 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @BsonDiscriminator
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
+	
 	public static final int CUR_SCHEMA_VERSION = 3;
-
+	private static final Pattern LABEL_PARTS_PATTERN = Pattern.compile("\\{[^}]*}");
+	private static final String LABEL_PLACEHOLDER_PART_DELIM = ";";
+	
 	public abstract StoredType getType();
-
+	
 	/**
 	 * The {@link tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem} this stored is associated with.
 	 */
 	@NonNull
 	@NotNull
 	private ObjectId item;
-
+	
 	/**
 	 * The {@link tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock} this stored is stored in.
 	 */
@@ -80,13 +86,13 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 */
 	@lombok.Builder.Default
 	private LinkedHashSet<@NotNull UniqueId> uniqueIds = new LinkedHashSet<>();
-
+	
 	/**
 	 * When the item(s) held expire. Null if it does not expire.
 	 */
 	@lombok.Builder.Default
 	private ZonedDateTime expires = null;
-
+	
 	/**
 	 * Statuses about this stored object.
 	 */
@@ -94,7 +100,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	private StoredNotificationStatus notificationStatus = new StoredNotificationStatus();
-
+	
 	/**
 	 * The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.
 	 */
@@ -102,7 +108,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@Min(0)
 	@lombok.Builder.Default
 	private Integer condition = null;
-
+	
 	/**
 	 * Notes on the condition on the thing(s) stored.
 	 */
@@ -110,7 +116,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	private String conditionNotes = "";
-
+	
 	/**
 	 * List of images related to the object.
 	 */
@@ -118,12 +124,49 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	List<@NotNull ObjectId> imageIds = new ArrayList<>();
-
+	
 	@lombok.Builder.Default
 	private Set<@NotNull ObjectId> attachedFiles = new HashSet<>();
-
+	
+	/**
+	 * The format to use for the label.
+	 * <p>
+	 * To use/ set to default specified by the Item, update using `null` or blank value.
+	 * <p>
+	 * Supported format variables:
+	 * <ul>
+	 *     <li>
+	 *         id: {@code {id}}- The ID of the stored object.
+	 *     </li>
+	 *     <li>
+	 *         amt: {@code {amt}}- Use the stored amount. (only applies to amount stored)
+	 *     </li>
+	 *     <li>
+	 *         gid: {@code {gid;<name of general identifier>}}- Use a general identifier value.
+	 *     </li>
+	 *     <li>
+	 *         uid: {@code {uid;<name of unique identifier>}}- Use a use a identifier value.
+	 *     </li>
+	 *     <li>
+	 *         att: {@code {att;<key for attribute>}}-  Use an attribute value.
+	 *     </li>
+	 * </ul>
+	 * <p>
+	 * Examples:
+	 * <ul>
+	 *     <li>
+	 *         {@code {dt}-{inc}} -> {@code 01/30/2020-24:30:30-00001}
+	 *     </li>
+	 * </ul>
+	 *
+	 */
+	@NonNull
+	@NotBlank
+	@lombok.Builder.Default
+	private String labelFormat = null;
+	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	public abstract String getLabelText();
+	public abstract String getLabelText(); //TODO:: implement based on above #1003
 	
 	@Override
 	public int getSchemaVersion() {
