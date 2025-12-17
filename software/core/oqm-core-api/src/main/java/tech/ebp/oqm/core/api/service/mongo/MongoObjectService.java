@@ -373,6 +373,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		
 		T object = this.get(oqmDbIdOrName, id);
 		boolean updateDerivedAfter = this.needsDerivedUpdatesAfterUpdate(object, updateJson);
+		log.debug("Need to update derived fields after initial update? {}", updateDerivedAfter);
 		ObjectNode origJsonObj = this.getObjectMapper().valueToTree(object);
 		
 		Iterator<String> updatingFields = updateJson.fieldNames();

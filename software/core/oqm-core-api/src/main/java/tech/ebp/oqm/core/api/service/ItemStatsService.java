@@ -166,6 +166,8 @@ public class ItemStatsService {
 //					   .build();
 //		}
 		
+		log.info("Getting stats for item: {}", item.getId());
+		
 		ItemStoredStats output = new ItemStoredStats(item.getUnit());
 		
 		for (ObjectId storageBlock : item.getStorageBlocks()) {
@@ -187,6 +189,7 @@ public class ItemStatsService {
 				}
 			}
 		}
+		log.info("Finished getting stats for item: {}", item.getId());
 		
 		return output;
 	}

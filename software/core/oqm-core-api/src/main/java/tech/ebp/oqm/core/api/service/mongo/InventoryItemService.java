@@ -181,6 +181,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@Override
 	public boolean needsDerivedUpdatesAfterUpdate(InventoryItem item, ObjectNode updates) {
 		try {
+			log.debug("Was unit updated? {} vs {}", item.getUnit(), updates.get("unit"));
 			if (//unit
 				updates.has("unit") &&
 				!item.getUnit().equals(
@@ -243,7 +244,10 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		super.massageIncomingData(oqmDbIdOrName, session, item, recalculateDerived);
 		
 		if (recalculateDerived) {
+			log.debug("Calculating item stats after add/update.");
 			item.setStats(this.getItemStatsService().getItemStats(oqmDbIdOrName, session, item));
+		} else {
+			log.debug("Did not calculate item stats after add/update");
 		}
 		
 		item.setGeneralIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, item.getGeneralIds()));
@@ -257,27 +261,6 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				   .numExpireWarn(this.getNumStoredExpiryWarn(oqmDbIdOrName))
 				   .numLowStock(this.getNumLowStock(oqmDbIdOrName))
 				   .build();
-	}
-	
-	@Override
-	@WithSpan
-	public ObjectId add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid InventoryItem item, InteractingEntity entity, HistoryDetail... details) {
-		return super.add(oqmDbIdOrName, session, item, entity, details);
-	}
-	
-	@Override
-	@WithSpan
-	public InventoryItem update(String oqmDbIdOrName, ClientSession cs, InventoryItem object, InteractingEntity entity, HistoryDetail... details) throws DbNotFoundException {
-		InventoryItem output = super.update(oqmDbIdOrName, cs, object, entity, details);
-		
-		return output;
-	}
-	
-	
-	@Override
-	public InventoryItem remove(String oqmDbIdOrName, ClientSession session, ObjectId objectId, InteractingEntity entity, HistoryDetail... details) {
-		//TODO:: delete stored
-		return super.remove(oqmDbIdOrName, session, objectId, entity, details);
 	}
 	
 	@WithSpan
