@@ -21,6 +21,7 @@ import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.StoredNotificationStatus;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -52,17 +53,18 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @BsonDiscriminator
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
+	
 	public static final int CUR_SCHEMA_VERSION = 3;
-
+	
 	public abstract StoredType getType();
-
+	
 	/**
 	 * The {@link tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem} this stored is associated with.
 	 */
 	@NonNull
 	@NotNull
 	private ObjectId item;
-
+	
 	/**
 	 * The {@link tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock} this stored is stored in.
 	 */
@@ -72,21 +74,33 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	/**
 	 * The general ids that apply to this stored, but not to all stored (as specified in the associated item)
 	 */
+	@NonNull
+	@NotNull
 	@lombok.Builder.Default
 	private LinkedHashSet<@NotNull GeneralId> generalIds = new LinkedHashSet<>();
 	
 	/**
 	 * Unique ID's for this particular item.
 	 */
+	@NonNull
+	@NotNull
 	@lombok.Builder.Default
 	private LinkedHashSet<@NotNull UniqueId> uniqueIds = new LinkedHashSet<>();
-
+	
 	/**
 	 * When the item(s) held expire. Null if it does not expire.
 	 */
 	@lombok.Builder.Default
 	private ZonedDateTime expires = null;
-
+	
+	/**
+	 * Prices for this stored item.
+	 */
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	private LinkedHashSet<@NotNull Pricing> prices = new LinkedHashSet<>();
+	
 	/**
 	 * Statuses about this stored object.
 	 */
@@ -94,7 +108,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	private StoredNotificationStatus notificationStatus = new StoredNotificationStatus();
-
+	
 	/**
 	 * The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.
 	 */
@@ -102,7 +116,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@Min(0)
 	@lombok.Builder.Default
 	private Integer condition = null;
-
+	
 	/**
 	 * Notes on the condition on the thing(s) stored.
 	 */
@@ -110,7 +124,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	private String conditionNotes = "";
-
+	
 	/**
 	 * List of images related to the object.
 	 */
@@ -118,10 +132,10 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	List<@NotNull ObjectId> imageIds = new ArrayList<>();
-
+	
 	@lombok.Builder.Default
 	private Set<@NotNull ObjectId> attachedFiles = new HashSet<>();
-
+	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public abstract String getLabelText();
 	

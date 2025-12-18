@@ -15,6 +15,7 @@ import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.ItemNotificationStatus;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidItemUnit;
@@ -42,8 +43,9 @@ import java.util.Set;
 @SuperBuilder(toBuilder = true)
 @ValidItemUnit
 public class InventoryItem extends ImagedMainObject implements FileAttachmentContaining {
+	
 	public static final int CUR_SCHEMA_VERSION = 3;
-
+	
 	/**
 	 * The name of this inventory item
 	 */
@@ -51,14 +53,14 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NotNull
 	@NotBlank(message = "Name cannot be blank")
 	private String name;
-
+	
 	/**
 	 * The type of storage this item uses.
 	 */
 	@NonNull
 	@NotNull
 	private StorageType storageType;
-
+	
 	/**
 	 * Description of the item
 	 */
@@ -66,22 +68,28 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NotNull
 	@lombok.Builder.Default
 	private String description = "";
-
+	
 	/**
 	 * The general identifiers for this item
 	 */
+	@NonNull
+	@NotNull
 	@lombok.Builder.Default
 	private LinkedHashSet<@NotNull GeneralId> generalIds = new LinkedHashSet<>();
 	
 	/**
 	 * Unique ID's for this particular item.
 	 */
+	@NonNull
+	@NotNull
 	@lombok.Builder.Default
 	private LinkedHashSet<@NotNull UniqueId> uniqueIds = new LinkedHashSet<>();
 	
 	/**
 	 * ID generators for this particular item's stored.
 	 */
+	@NonNull
+	@NotNull
 	@lombok.Builder.Default
 	private LinkedHashSet<@NotNull ObjectId> idGenerators = new LinkedHashSet<>();
 	
@@ -92,7 +100,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NotNull
 	@lombok.Builder.Default
 	private List<@NotNull ObjectId> categories = new ArrayList<>();
-
+	
 	/**
 	 * The map of where the items are stored.
 	 * <p>
@@ -104,7 +112,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NotNull
 	@lombok.Builder.Default
 	private LinkedHashSet<@NotNull ObjectId> storageBlocks = new LinkedHashSet<>();
-
+	
 	/**
 	 * Files that have been attached to the item.
 	 */
@@ -112,12 +120,22 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NotNull
 	@lombok.Builder.Default
 	private Set<@NotNull ObjectId> attachedFiles = new LinkedHashSet<>();
-
+	
+	/**
+	 * Default pricing for items stored.
+	 * <p>
+	 * During pricing calculations, these are used as defaults. To override, specify that price label in the stored item.
+	 */
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	private LinkedHashSet<@NotNull Pricing> defaultPrices = new LinkedHashSet<>();
+	
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
 	private ItemNotificationStatus notificationStatus = new ItemNotificationStatus();
-
+	
 	/**
 	 * When before a stored item expired to send a warning out about that expiration.
 	 * <p>
@@ -127,7 +145,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NotNull
 	@lombok.Builder.Default
 	private Duration expiryWarningThreshold = Duration.ZERO;
-
+	
 	/**
 	 * The threshold of low stock for the entire object.
 	 * <p>
@@ -152,12 +170,12 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * The stats for the stored items.
 	 * <p>
 	 * Null if a transaction was never performed on this item.
-	 *
+	 * <p>
 	 * Populated during add/updates/transaction
 	 */
 	@lombok.Builder.Default
 	private ItemStoredStats stats = null;
-
+	
 	@Override
 	public int getSchemaVersion() {
 		return CUR_SCHEMA_VERSION;
