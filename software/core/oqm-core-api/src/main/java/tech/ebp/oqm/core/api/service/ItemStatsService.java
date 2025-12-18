@@ -17,6 +17,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemExpiryLowStockItemProcessResults;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemPostTransactionProcessResults;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.StoredExpiryLowStockProcessResult;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
@@ -85,6 +86,26 @@ public class ItemStatsService {
 		if (stored.getNotificationStatus().isExpired()) {
 			statsToAddTo.setNumExpired(statsToAddTo.getNumExpired() + 1L);
 		}
+		
+		
+		
+		for(Pricing curPricing : stored.getPrices()){
+			boolean found = false;
+			
+			for(Pricing existingPricing : statsToAddTo.getPrices()){
+				if(curPricing.getLabel().equals(existingPricing.getLabel())){
+					found = true;
+					existingPricing.setPrice(
+						existingPricing.getPrice().add(curPricing.getPrice())
+					);
+				}
+			}
+			
+			if(!found){
+				statsToAddTo.getPrices().add(curPricing);
+			}
+		}
+		
 	}
 	
 	private void addToStats(StatsWithTotalContaining statsToAddTo, Stored stored) {
