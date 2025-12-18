@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.javamoney.moneta.format.CurrencyStyle;
+import tech.ebp.oqm.core.api.model.object.Labeled;
 
 import javax.money.MonetaryAmount;
 import javax.money.format.AmountFormatQuery;
@@ -21,7 +22,7 @@ import java.util.Locale;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class Pricing {
+public class Pricing implements Labeled {
 	
 	public static final MonetaryAmountFormat FORMATTER;
 	

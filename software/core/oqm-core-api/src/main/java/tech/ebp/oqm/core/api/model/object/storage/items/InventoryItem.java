@@ -18,6 +18,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.notification.ItemNotific
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
+import tech.ebp.oqm.core.api.model.validation.annotations.UniqueLabeledCollection;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidItemUnit;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidUnit;
 
@@ -75,6 +76,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull GeneralId> generalIds = new LinkedHashSet<>();
 	
 	/**
@@ -83,6 +85,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull UniqueId> uniqueIds = new LinkedHashSet<>();
 	
 	/**
@@ -129,6 +132,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull Pricing> defaultPrices = new LinkedHashSet<>();
 	
 	@NonNull

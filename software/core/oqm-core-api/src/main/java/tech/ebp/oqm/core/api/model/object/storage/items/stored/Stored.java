@@ -22,6 +22,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.Gene
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.StoredNotificationStatus;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
+import tech.ebp.oqm.core.api.model.validation.annotations.UniqueLabeledCollection;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -77,6 +78,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull GeneralId> generalIds = new LinkedHashSet<>();
 	
 	/**
@@ -85,6 +87,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull UniqueId> uniqueIds = new LinkedHashSet<>();
 	
 	/**
@@ -99,6 +102,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull Pricing> prices = new LinkedHashSet<>();
 	
 	/**
