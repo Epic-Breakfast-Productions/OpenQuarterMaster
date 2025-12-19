@@ -87,8 +87,8 @@ public class ItemStatsService {
 			statsToAddTo.setNumExpired(statsToAddTo.getNumExpired() + 1L);
 		}
 		
-		
-		
+		//TODO:: handle default from item #1006
+		//TODO:: per unit add? #1006
 		for(Pricing curPricing : stored.getPrices()){
 			boolean found = false;
 			
@@ -136,6 +136,7 @@ public class ItemStatsService {
 		this.addToStats((StatsWithTotalContaining) itemStoredStats, stored);
 	}
 	
+	//TODO:: wtf is this
 	private void addToStats(String oqmDbIdOrName, ClientSession cs, StoredStats storedStats, Stored stored) {
 		
 		if (!storedStats.getItemStats().containsKey(stored.getId())) {

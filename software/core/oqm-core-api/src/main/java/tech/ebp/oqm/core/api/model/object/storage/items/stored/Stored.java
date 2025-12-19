@@ -105,6 +105,8 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull Pricing> prices = new LinkedHashSet<>();
 	
+	//TODO:: get calculated pricing (for amounts, etc) #1006
+	
 	/**
 	 * Statuses about this stored object.
 	 */
