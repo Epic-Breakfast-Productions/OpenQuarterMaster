@@ -83,6 +83,7 @@ cat <<'EOT' > "$buildDir/$debDir/DEBIAN/postinst"
 
 # GNOME installed, setup
 if [ -d "/usr/share/gnome-background-properties/" ]; then
+	echo "Detected Gnome install."
 	ln -s /usr/share/oqm/oqm-gnome-theme.xml /usr/share/gnome-background-properties/oqm-theme.xml
 	dconf update
 fi

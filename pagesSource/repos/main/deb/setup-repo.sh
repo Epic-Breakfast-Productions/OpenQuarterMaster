@@ -33,6 +33,22 @@ fi
 
 clear
 
+if [ -z "$AUTO_INSTALL" ]; then
+	if [[ -n "$DISPLAY" ]]; then
+		read -p "Would you like to install the OQM themes for this OS (can be done later by installing 'oqm-themes')? y/n:" -n 1 -r
+		echo;
+		if [[ $REPLY =~ ^[Yy]$ ]]; then
+			$SUDOTXT apt-get install $AUTO_INSTALL oqm-themes
+			if [ $? -ne 0 ]; then
+				echo "FAILED to install Station Captain. See above output for information."
+				exit 2;
+			fi
+		fi
+	fi
+fi
+
+clear
+
 echo "Setup of OQM repo and installation of OQM Captain utility complete."
 echo
 echo "Run 'sudo oqm-captain' to get started."
