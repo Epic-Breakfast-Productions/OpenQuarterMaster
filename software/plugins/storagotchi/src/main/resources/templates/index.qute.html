@@ -359,7 +359,7 @@
 	const STUFF_WIDTH_MOD = 0.5;
 	
 	//storagotchi
-	const SG_WIDTH_MOD = 0.03;
+	const SG_WIDTH_MOD = 0.08;
 	const SG_CPU_UPDATE_TIME = 750;
 	const SG_WAKEUP_TIME = 23_500;
 	
@@ -413,7 +413,17 @@
 	async function preload() {
 		// Create an array of asset data to load.
 		const assets = [
-			{ alias: 'storagotchi-1', src: '/media/sprites/storagotchi/storagotchi-0.png'},
+			{ alias: 'storagotchi-drop', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_DROP-Sheet.json' },
+			{ alias: 'storagotchi-idle', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_IDLE-Sheet.json' },
+			{ alias: 'storagotchi-lift-idle', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_LIFT-IDLE-Sheet.json' },
+			{ alias: 'storagotchi-lift', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_LIFT-Sheet.json' },
+			{ alias: 'storagotchi-lift-walk', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_LIFT-WALK-Sheet.json' },
+			{ alias: 'storagotchi-loading', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_LOADING-Sheet.json' },
+			{ alias: 'storagotchi-put-to-box', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_PUT-TO-BOX-Sheet.json' },
+			{ alias: 'storagotchi-rummage', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_RUMMAGE-Sheet.json' },
+			{ alias: 'storagotchi-sleeping', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_SLEEPING-Sheet.json' },
+			{ alias: 'storagotchi-sleeping-to-idle', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_SLEEPING-TO-IDLE-Sheet.json' },
+			{ alias: 'storagotchi-walk', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_WALK-Sheet.json' },
 			{ alias: 'box-1-closed', src: '/media/sprites/box/box-1-closed.png'},
 			{ alias: 'box-1-open', src: '/media/sprites/box/box-1-open.png'},
 			{ alias: 'box-2-closed', src: '/media/sprites/box/box-2-closed.png'},
@@ -459,10 +469,17 @@
 	}
 	
 	function setupBackdrop() {
-		const graphics = new PIXI.Graphics();
+		let graphics = new PIXI.Graphics();
 		
 		graphics.circle(app.screen.width / 2, app.screen.height / 2, 100)
 			.fill({ color: '#bed5ff'})
+		
+		app.stage.addChild(graphics);
+		
+		graphics = new PIXI.Graphics();
+		
+		graphics.circle(app.screen.width / 2, app.screen.height / 2, 1)
+			.fill({ color: '#000000'})
 		
 		app.stage.addChild(graphics);
 	}
@@ -545,8 +562,27 @@
 	}
 	
 	function setupStoragotchi() {
-		storagotchi = PIXI.Sprite.from('storagotchi-1');
-		storagotchi.anchor.set(0.5, 1);//bottom center of sprite
+		
+		let storagotchiSheets = {
+			"drop": PIXI.Assets.cache.get('storagotchi-drop'),
+			"idle": PIXI.Assets.cache.get('storagotchi-idle'),
+			"lift-idle": PIXI.Assets.cache.get('storagotchi-lift-idle'),
+			"lift": PIXI.Assets.cache.get('storagotchi-lift'),
+			"lift-walk": PIXI.Assets.cache.get('storagotchi-lift-walk'),
+			"loading": PIXI.Assets.cache.get('storagotchi-loading'),
+			"put-to-box": PIXI.Assets.cache.get('storagotchi-put-to-box'),
+			"rummage": PIXI.Assets.cache.get('storagotchi-rummage'),
+			"sleeping": PIXI.Assets.cache.get('storagotchi-sleeping'),
+			"sleeping-to-idle": PIXI.Assets.cache.get('storagotchi-sleeping-to-idle'),
+			"walk": PIXI.Assets.cache.get('storagotchi-walk')
+		}
+		// let tstoragotchi = PIXI.AnimatedSprite.from('storagotchi-sleeping');
+		
+		
+		// storagotchi = PIXI.Sprite.from('storagotchi-1');
+		storagotchi =  new PIXI.AnimatedSprite(storagotchiSheets["sleeping"].animations['sleeping']);
+		storagotchi["animSheets"] = storagotchiSheets;
+		storagotchi.anchor.set(0.5, 0.75);//bottom center of sprite
 		
 		console.log("Initial storagotchi height/width: ", storagotchi.height, storagotchi.width);
 		
@@ -582,11 +618,26 @@
 			'heldItem': null
 		};
 		updateStateDisplay("Asleep", 0);
+		storagotchi.animationSpeed = storagotchi["animSheets"]['sleeping']['data']['meta']['animationSpeed'];
+		storagotchi.play();
 		
 		app.stage.addChild(storagotchi);
+		console.log("Storagotchi after setup: ", storagotchi);
+	}
+	
+	function setStoragotchiAnimation(animName){
+		storagotchi.stop();
+		// Assign the new set of textures (the new animation sequence)
+		storagotchi.textures = storagotchi["animSheets"][animName].animations[animName];
+		storagotchi.animationSpeed = storagotchi["animSheets"][animName]['data']['meta']['animationSpeed'];
+		// Start playing the new animation
+		storagotchi.play();
+		
 	}
 	
 	function storagotchiSetupWakeup(app, time, delta){
+		setStoragotchiAnimation("loading");
+		
 		storagotchi["state"]["state"] = "wakeup";
 		storagotchi["state"]["cpu"]= "pinned";
 		storagotchi["state"]["start"] = performance.now();
@@ -601,7 +652,7 @@
 		
 		if(curDiff < SG_WAKEUP_TIME){
 			updateLoadBar(curDiff / SG_WAKEUP_TIME);
-			storagotchi.rotation += ((Math.random() < 0.5) ? -1 : 1) * 0.1 * delta;
+			// storagotchi.rotation += ((Math.random() < 0.5) ? -1 : 1) * 0.1 * delta;
 		} else {
 			storagotchiWakeupDone(app, time, delta);
 		}
@@ -610,6 +661,7 @@
 		console.log("Storagotchi woken up - now meandering");
 		sounds["sfx"]["dial-up"].stop();
 		storagotchi.rotation = 0;
+		//TODO:: show wake to idle anim
 		storagotchiSetupForMeander();
 	}
 	
