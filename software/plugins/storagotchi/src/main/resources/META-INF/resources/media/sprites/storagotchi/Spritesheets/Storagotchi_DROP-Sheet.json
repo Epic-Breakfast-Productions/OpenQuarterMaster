@@ -42,7 +42,7 @@
 		"animationSpeed": 0.075
 	},
 	"animations": {
-		"loading": [
+		"drop": [
 			"frame01",
 			"frame02",
 			"frame03",

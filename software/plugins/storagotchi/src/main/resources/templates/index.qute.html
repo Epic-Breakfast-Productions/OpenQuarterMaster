@@ -604,7 +604,7 @@
 					storagotchiSetupWakeup();
 					break;
 				case "wakeup":
-					storagotchiWakeupDone();
+					storagotchi["state"]["start"] = storagotchi["state"]["start"] - SG_WAKEUP_TIME;
 					break;
 				default:
 					console.log("Noting to do in this state");
@@ -625,14 +625,47 @@
 		console.log("Storagotchi after setup: ", storagotchi);
 	}
 	
-	function setStoragotchiAnimation(animName){
+	function setStoragotchiAnimation(animName, nonLoopCallback = null){
+		console.debug("Setting up new animation: ", animName);
 		storagotchi.stop();
 		// Assign the new set of textures (the new animation sequence)
 		storagotchi.textures = storagotchi["animSheets"][animName].animations[animName];
 		storagotchi.animationSpeed = storagotchi["animSheets"][animName]['data']['meta']['animationSpeed'];
+		
+		if(nonLoopCallback == null){
+			storagotchi.loop = true;
+		} else {
+			console.debug("Setting up nonlooping animation.");
+			storagotchi.loop = false;
+			storagotchi.onComplete = nonLoopCallback;
+		}
+		
 		// Start playing the new animation
 		storagotchi.play();
 		
+		console.debug("Done Setting up nonlooping animation.");
+	}
+	
+	function storagotchiFaceRight(){
+		if(storagotchi.scale.x < 0){
+			console.log("Setting to face Right.");
+			storagotchi.scale.x *= -1;
+		}
+	}
+	
+	function storagotchiFaceLeft(){
+		if(storagotchi.scale.x > 0){
+			console.log("Setting to face Left.");
+			storagotchi.scale.x *= -1;
+		}
+	}
+	
+	function storagotchiFaceXDirection(xDirection){
+		if(xDirection < 0){
+			storagotchiFaceRight();
+		} else {
+			storagotchiFaceLeft();
+		}
 	}
 	
 	function storagotchiSetupWakeup(app, time, delta){
@@ -654,18 +687,23 @@
 			updateLoadBar(curDiff / SG_WAKEUP_TIME);
 			// storagotchi.rotation += ((Math.random() < 0.5) ? -1 : 1) * 0.1 * delta;
 		} else {
-			storagotchiWakeupDone(app, time, delta);
+			storagotchi["state"]["state"] = "waitingForAnimation";
+			setStoragotchiAnimation(
+				"sleeping-to-idle",
+				storagotchiWakeupDone
+			)
 		}
 	}
-	function storagotchiWakeupDone(app, time, delta){
+	function storagotchiWakeupDone(){
 		console.log("Storagotchi woken up - now meandering");
 		sounds["sfx"]["dial-up"].stop();
 		storagotchi.rotation = 0;
-		//TODO:: show wake to idle anim
 		storagotchiSetupForMeander();
 	}
 	
 	function storagotchiSetupForMeander(){
+		setStoragotchiAnimation("walk");
+		
 		storagotchi["state"]["state"] = "meander";
 		storagotchi["state"]["cpu"] = "low";
 		storagotchi["state"]["start"] = performance.now();
@@ -705,6 +743,8 @@
 			let directionX = storagotchi["state"]["destination"]["x"] - storagotchi.x;
 			let directionY = storagotchi["state"]["destination"]["y"] - storagotchi.y;
 			
+			storagotchiFaceXDirection(directionX);
+			
 			let distance = Math.sqrt(directionX * directionX + directionY * directionY);
 			
 			if (distance > storagotchi["state"]["speed"]) { // Move if distance is greater than speed
@@ -728,6 +768,7 @@
 	}
 	
 	function storagotchiSetDecidingState(){
+		setStoragotchiAnimation("idle");//TODO:: diff if holding an item
 		storagotchi["state"]["state"] = "deciding";
 		storagotchi["state"]["cpu"] = "high";
 		storagotchi["state"]["start"] = performance.now();
@@ -783,6 +824,7 @@
 	
 	
 	function storagotchiSetupForGetThing(){
+		setStoragotchiAnimation("rummage");//TODO:: not this?
 		storagotchi["state"]["state"] = "getItem";
 		storagotchi["state"]["cpu"] = "medLow";
 		storagotchi["state"]["start"] = performance.now();
@@ -810,6 +852,8 @@
 		} else { //move to destination
 			let directionX = storagotchi["state"]["destination"]["x"] - storagotchi.x;
 			let directionY = storagotchi["state"]["destination"]["y"] - storagotchi.y;
+			
+			storagotchiFaceXDirection(directionX);
 			
 			let distance = distanceBetweenSprites(storagotchi["state"]["destination"], storagotchi);
 			
@@ -852,6 +896,7 @@
 	}
 	
 	function storagotchiSetupForRummaging(){
+		setStoragotchiAnimation("rummage");
 		storagotchi["state"]["state"] = "rummaging";
 		storagotchi["state"]["cpu"] = "pinned";
 		storagotchi["state"]["start"] = performance.now();
@@ -898,7 +943,6 @@
 	
 	
 	function animateStoragotchi(app, time, delta) {
-		
 		let curTime = performance.now();
 		let curDiff = curTime - storagotchi["state"]["cpuTimer"];
 		

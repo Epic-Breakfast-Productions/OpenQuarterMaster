@@ -42,7 +42,7 @@
 		"animationSpeed": 0.075
 	},
 	"animations": {
-		"loading": [
+		"lift-walk": [
 			"frame01",
 			"frame02",
 			"frame03",

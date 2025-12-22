@@ -42,7 +42,7 @@
 		"animationSpeed": 0.1
 	},
 	"animations": {
-		"sleeping": [
+		"sleeping-to-idle": [
 			"frame01",
 			"frame02",
 			"frame03",
