@@ -703,7 +703,11 @@
 	}
 	
 	function storagotchiSetupForMeander(){
-		setStoragotchiAnimation("walk");
+		if(storagotchi['state']['heldItem']){
+			setStoragotchiAnimation("lift-walk");
+		} else {
+			setStoragotchiAnimation("walk");
+		}
 		
 		storagotchi["state"]["state"] = "meander";
 		storagotchi["state"]["cpu"] = "low";
@@ -769,7 +773,12 @@
 	}
 	
 	function storagotchiSetDecidingState(){
-		setStoragotchiAnimation("idle");//TODO:: diff if holding an item
+		if(storagotchi['state']['heldItem']){
+			setStoragotchiAnimation("lift-idle");
+		} else {
+			setStoragotchiAnimation("idle");
+		}
+		
 		storagotchi["state"]["state"] = "deciding";
 		storagotchi["state"]["cpu"] = "high";
 		storagotchi["state"]["start"] = performance.now();
