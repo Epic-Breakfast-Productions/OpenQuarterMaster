@@ -342,6 +342,7 @@
 </script>
 
 <script src="/lib/pixi/8.14.0/pixi.min.js"></script>
+<script src="/lib/pixi/8.14.0/pixi-filters.js"></script>
 <script src="/lib/pixi/8.14.0/pixi-sound.js"></script>
 <script type="module">
 	// import * as PIXI from '/lib/pixi/8.14.0/pixi.min.mjs';
@@ -842,6 +843,8 @@
 			storagotchi["state"]["originalDistance"] = distanceBetweenSprites(storagotchi, storagotchi["state"]["destination"]);
 			storagotchi["state"]["speed"] = randomFloatFromInterval(1, 2);
 			console.log("Selected a box");
+			
+			setStoragotchiAnimation("walk");
 		}
 		
 		if( // got to destination
@@ -892,7 +895,37 @@
 		
 		let thingToPick = stuff[rarity][randomIntFromInterval(0, stuff[rarity].length - 1)];
 		console.log("Got random item: ", thingToPick);
-		return thingToPick;
+		
+		let thingSprite = PIXI.Sprite.from(thingToPick);
+		thingSprite.anchor.set(0.5, 0.5);
+		
+		let outlineColor = "#000000";
+		let alpha = 0.5;
+		
+		switch (rarity){
+			case "common":
+				outlineColor = "#D2B48C"
+				break;
+			case "uncommon":
+				outlineColor = "#00FF00"
+				break;
+			case "rare":
+				outlineColor = "#800080"
+				alpha = 0.35
+				break;
+			case "epic":
+				outlineColor = "#FFA500"
+				break;
+		}
+		
+		let outlineFilter = new PIXI.filters.OutlineFilter({
+			"thickness": 4,
+			"alpha": alpha,
+			"color": outlineColor
+		});
+		thingSprite.filters = [outlineFilter];
+		
+		return thingSprite;
 	}
 	
 	function storagotchiSetupForRummaging(){
@@ -923,8 +956,7 @@
 			storagotchi["state"]["box"].texture = storagotchi["state"]["box"]['frames']['closed'];
 			storagotchi["state"]["box"].zIndex = 4;
 			
-			let thing = PIXI.Sprite.from(getRandomItem());
-			thing.anchor.set(0.5, 0.5);
+			let thing = getRandomItem();
 			storagotchi.addChild(thing);
 			
 			// thing.width = storagotchi.width * STUFF_WIDTH_MOD;

@@ -24,6 +24,10 @@ This app is meant to be a cute semi-interactable entity to play with in the back
      - Have items of all types
      - \# of objects
      - first transaction
+ - *Command line control of the Storagotchi
+   - list status
+   - put away an item
+   - other?
 
 Game Mechanics 
 
