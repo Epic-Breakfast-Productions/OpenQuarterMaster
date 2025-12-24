@@ -136,15 +136,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 */
 	@lombok.Builder.Default
 	private Quantity<?> lowStockThreshold = null;
-
-	/**
-	 * The stats for the stored items.
-	 * <p>
-	 * Null if a transaction was never performed on this item.
-	 */
-	@lombok.Builder.Default
-	private ItemStoredStats stats = null;
-
+	
 	/**
 	 * The unit to associate with this item. Stored items can have different units, but must be compatible with this one.
 	 * <p>
@@ -155,6 +147,16 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@ValidUnit
 	@lombok.Builder.Default
 	public Unit<?> unit = OqmProvidedUnits.UNIT;
+	
+	/**
+	 * The stats for the stored items.
+	 * <p>
+	 * Null if a transaction was never performed on this item.
+	 *
+	 * Populated during add/updates/transaction
+	 */
+	@lombok.Builder.Default
+	private ItemStoredStats stats = null;
 
 	@Override
 	public int getSchemaVersion() {
