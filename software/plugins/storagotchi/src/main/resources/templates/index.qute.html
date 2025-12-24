@@ -419,6 +419,7 @@
 			{ alias: 'storagotchi-loading', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_LOADING-Sheet.json'},
 			{ alias: 'storagotchi-put-to-box', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_PUT-TO-BOX-Sheet.json'},
 			{ alias: 'storagotchi-rummage', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_RUMMAGE-Sheet.json'},
+			{ alias: 'storagotchi-salute', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_SALUTE-Sheet.json'},
 			{ alias: 'storagotchi-sleeping', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_SLEEPING-Sheet.json'},
 			{ alias: 'storagotchi-sleeping-to-idle', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_SLEEPING-TO-IDLE-Sheet.json'},
 			{ alias: 'storagotchi-walk', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_WALK-Sheet.json'},
@@ -607,6 +608,7 @@
 			"loading": PIXI.Assets.cache.get('storagotchi-loading'),
 			"put-to-box": PIXI.Assets.cache.get('storagotchi-put-to-box'),
 			"rummage": PIXI.Assets.cache.get('storagotchi-rummage'),
+			"salute": PIXI.Assets.cache.get('storagotchi-salute'),
 			"sleeping": PIXI.Assets.cache.get('storagotchi-sleeping'),
 			"sleeping-to-idle": PIXI.Assets.cache.get('storagotchi-sleeping-to-idle'),
 			"walk": PIXI.Assets.cache.get('storagotchi-walk')
@@ -732,7 +734,9 @@
 			storagotchi["state"]["state"] = "waitingForAnimation";
 			setStoragotchiAnimation(
 				"sleeping-to-idle",
-				storagotchiWakeupDone
+				()=>{
+					setStoragotchiAnimation("salute", storagotchiWakeupDone)
+				}
 			)
 		}
 	}
