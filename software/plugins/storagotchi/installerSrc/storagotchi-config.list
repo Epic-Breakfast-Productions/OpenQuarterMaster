@@ -1,0 +1,51 @@
+#
+# The Main config for Base Station. Do not edit. To adjust configuration, edit:
+# /etc/oqm/serviceConfig/plugin/storagotchi/user-config.list
+#
+
+# Basic configs
+quarkus.http.port=80
+quarkus.http.ssl.port=443
+quarkus.http.insecure-requests=enabled
+#quarkus.http.insecure-requests=redirect
+quarkus.log.level=INFO
+
+# SSL Config
+quarkus.tls.key-store.pem.0.cert=/etc/oqm/serviceConfig/plugin/storagotchi/files/serviceCert.crt
+quarkus.tls.key-store.pem.0.key=/etc/oqm/serviceConfig/plugin/storagotchi/files/serviceCertKey.pem
+
+QUARKUS_TLS__EXT_INGRESS__TRUST_STORE_PEM_CERTS={cert.trustStore.files.selfSigned.crt}{% if cert.externalDefault == "acme" %},{cert.trustStore.files.acme.crt}{% endif %}
+
+# https://quarkus.io/guides/http-reference#reverse-proxy
+quarkus.http.proxy.proxy-address-forwarding=true
+quarkus.http.proxy.allow-x-forwarded=true
+quarkus.http.proxy.enable-forwarded-host=true
+quarkus.http.proxy.enable-forwarded-prefix=true
+
+# Keycloak Config:
+quarkus.oidc.client-id=oqm-storagotchi
+quarkus.oidc.credentials.secret={infra.keycloak.clientSecrets.oqm-storagotchi}
+quarkus.oidc.auth-server-url={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}
+#quarkus.oidc.authentication.redirect-path=/plugin/storagotchi
+#quarkus.oidc.authentication.restore-path-after-redirect=false
+
+quarkus.oidc.authentication.cookie-path=/plugin/storagotchi/
+quarkus.oidc.authentication.cookie-suffix=plugin-storagotchi
+quarkus.oidc.tls.tls-configuration-name=ext.ingress
+
+# Core API config
+oqm.core.api.baseUri={core.api.internalBaseUri}
+quarkus.rest-client."oqm.core.api".tls-configuration-name=ext.ingress
+quarkus.rest-client."oqm.core.api-oidc".tls-configuration-name=ext.ingress
+
+runningInfo.protocol=https
+runningInfo.hostname={system.hostname}
+runningInfo.depotUri={infra.homepage.externalBaseUri}
+
+
+{% if metrics is defined and metrics.jaeger is defined %}
+# Jaeger Config:
+#quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
+#quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
+{% endif %}
+

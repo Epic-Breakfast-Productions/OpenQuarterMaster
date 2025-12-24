@@ -53,3 +53,14 @@ compileJava {
 compileTestJava {
 	options.encoding = 'UTF-8'
 }
+
+/**
+ * Used to print the current version of this project.
+ *
+ * Used by the `makeInstallers.sh` script to get the version.
+ */
+tasks.register('printVersion') {
+	doLast {
+		println project.version
+	}
+}

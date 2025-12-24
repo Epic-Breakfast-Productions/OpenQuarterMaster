@@ -1,0 +1,11 @@
+{
+	"plugin": {
+		"storagotchi": {
+			"internalHost": "oqm-plugin-storagotchi",
+			"internalHttpPort": 80,
+			"internalHttpsPort": 443,
+			"internalBaseUri": "http://#{plugin.storagotchi.internalHost}:#{plugin.storagotchi.internalHttpPort}",
+			"externalBaseUri": "#{infra.traefik.externalRootUri}/plugin/storagotchi"
+		}
+	}
+}
