@@ -344,16 +344,16 @@
 	// import * as PIXI from '/lib/pixi/8.14.0/pixi.min.mjs';
 	// import * as PIXIS from '/lib/pixi/8.14.0/pixi-sound.js';
 	
-	const SCREEN_BORDER = 100;
+	const DESIGN_WIDTH = 500;
+	const SCREEN_BORDER = 30;
 	
 	//boxes
 	const NUM_BOXES = 10;
-	const BOX_DISTANCE_THRESHOLD = 100;
-	const BOX_WIDTH_MOD = 0.03;
+	const BOX_DISTANCE_THRESHOLD = 30;
+	const BOX_WIDTH_MOD = 0.04;
 	
 	//stuff
-	const STUFF_DISTANCE_THRESHOLD = 100;
-	const STUFF_WIDTH_MOD = 0.5;
+	const STUFF_WIDTH_MOD = 0.015;
 	
 	//storagotchi
 	const SG_WIDTH_MOD = 0.08;
@@ -380,9 +380,10 @@
 	
 	// Create a new application
 	const app = new PIXI.Application();
+	const scalingContainer = new PIXI.Container();
 	const sounds = {
-		"sfx": {},
-		"music": {}
+		"sfx": { },
+		"music": { }
 	};
 	const boxes = [];
 	const stuffOnGround = [];
@@ -463,25 +464,53 @@
 		
 		// Append the application canvas to the document body
 		gameCanvas.appendChild(app.canvas);
+		
+		let aspectRatio = app.renderer.width / app.renderer.height;
+		let { width, height } = app.renderer;
+		
+		app.stage.addChild(scalingContainer);
+		scalingContainer.scale.set(app.renderer.width / DESIGN_WIDTH);
+		
+		let ratioHeight = DESIGN_WIDTH / aspectRatio;
+		
+		scalingContainer['design'] = {
+			"width": DESIGN_WIDTH,
+			"height": ratioHeight,
+			"aspectRatio": aspectRatio,
+			"center": {
+				"x": DESIGN_WIDTH / 2,
+				"y": ratioHeight / 2,
+			}
+		};
+		
+		let containerHeight = scalingContainer.height;
+		
+		console.log("height from renderer: ", height);
+		console.log("height from ratio: ", ratioHeight);
+		console.log("height from container: ", containerHeight);
+		
+		
 	}
 	
 	function setupBackdrop() {
 		let graphics = new PIXI.Graphics();
 		
-		graphics.circle(app.screen.width / 2, app.screen.height / 2, 100)
+		graphics.circle(
+			scalingContainer['design']['center']['x'],
+			scalingContainer['design']['center']['y'],
+			(scalingContainer['design']['width'] / 4) / 2
+		)
 			.fill({
 				color: '#bed5ff'
-			})
+			});
 		
-		app.stage.addChild(graphics);
+		scalingContainer.addChild(graphics);
 		
 		graphics = new PIXI.Graphics();
-		
 		graphics.circle(app.screen.width / 2, app.screen.height / 2, 1)
 			.fill({
 				color: '#000000'
 			})
-		
 		app.stage.addChild(graphics);
 	}
 	
@@ -515,9 +544,9 @@
 		return spriteNear(sprite1, sprite2.x, sprite2.y, radius);
 	}
 	
-	function spriteNearThings(sprite, radius = 100) {
+	function spriteNearThings(sprite, radius = 20) {
 		//not near center
-		if (spriteNear(sprite, app.screen.width / 2, app.screen.height / 2, radius)) {
+		if (spriteNear(sprite, scalingContainer['design']['width'] / 2, scalingContainer['design']['height'] / 2, radius)) {
 			console.debug("Sprite near center.");
 			return true;
 		}
@@ -542,23 +571,28 @@
 				'closed': PIXI.Assets.get(closed)
 			}
 			box.anchor.set(0.5, 0.5);
-			box.width = app.screen.width * BOX_WIDTH_MOD;
+			box.width = scalingContainer['design']['width'] * BOX_WIDTH_MOD;
 			box.scale.y = box.scale.x;
 			box.zIndex = 4;
 			
-			
+			let itCount = 0;
 			do {
-				let x = randomIntFromInterval(SCREEN_BORDER, app.screen.width - SCREEN_BORDER);
-				let y = randomIntFromInterval(SCREEN_BORDER, app.screen.height - SCREEN_BORDER);
+				let x = randomIntFromInterval(SCREEN_BORDER, scalingContainer['design']['width'] - SCREEN_BORDER);
+				let y = randomIntFromInterval(SCREEN_BORDER, scalingContainer['design']['height'] - SCREEN_BORDER);
 				
 				box.x = x;
 				box.y = y;
-			} while (spriteNearThings(box, BOX_DISTANCE_THRESHOLD));
+				itCount++;
+			} while (spriteNearThings(box, BOX_DISTANCE_THRESHOLD) && itCount <= 20);
 			
+			if(itCount > 20){
+				console.warn("Could not place box");
+				break;
+			}
 			
 			boxes.push(box);
 			
-			app.stage.addChild(box);
+			scalingContainer.addChild(box);
 		}
 	}
 	
@@ -587,11 +621,11 @@
 		
 		console.log("Initial storagotchi height/width: ", storagotchi.height, storagotchi.width);
 		
-		storagotchi.width = app.screen.width * SG_WIDTH_MOD;
+		storagotchi.width = scalingContainer['design']['width'] * SG_WIDTH_MOD;
 		storagotchi.scale.y = storagotchi.scale.x;
 		
-		storagotchi.x = app.screen.width / 2;
-		storagotchi.y = app.screen.height / 2;
+		storagotchi.x = scalingContainer['design']['center']['x'];
+		storagotchi.y = scalingContainer['design']['center']['y'];
 		storagotchi.zIndex = 5;
 		
 		console.log("Storagotchi height/width after scaling: ", storagotchi.height, storagotchi.width);
@@ -622,7 +656,7 @@
 		storagotchi.animationSpeed = storagotchi["animSheets"]['sleeping']['data']['meta']['animationSpeed'];
 		storagotchi.play();
 		
-		app.stage.addChild(storagotchi);
+		scalingContainer.addChild(storagotchi);
 		console.log("Storagotchi after setup: ", storagotchi);
 	}
 	
@@ -727,8 +761,8 @@
 	
 	function storagotchiMeander(app, time, delta) {
 		if (storagotchi["state"]["destination"] == null) {
-			let x = randomIntFromInterval(SCREEN_BORDER, app.screen.width - SCREEN_BORDER);
-			let y = randomIntFromInterval(SCREEN_BORDER, app.screen.height - SCREEN_BORDER);
+			let x = randomIntFromInterval(SCREEN_BORDER, scalingContainer['design']['width'] - SCREEN_BORDER);
+			let y = randomIntFromInterval(SCREEN_BORDER, scalingContainer['design']['height'] - SCREEN_BORDER);
 			storagotchi["state"]["destination"] = {
 				x: x,
 				y: y
@@ -803,6 +837,8 @@
 		item.x = storagotchi.x;
 		item.y = storagotchi.y;
 		item.zIndex = 8;
+		item.width = scalingContainer['design']['width'] * STUFF_WIDTH_MOD;
+		item.scale.y = item.scale.x;
 		
 		let oldState = storagotchi["state"]["state"];
 		
@@ -811,7 +847,7 @@
 			"drop",
 			() => {
 				stuffOnGround.push(item);
-				app.stage.addChild(item);
+				scalingContainer.addChild(item);
 				storagotchi["state"]["state"] = oldState;
 			},
 			true
@@ -865,8 +901,13 @@
 	function storagotchiGetThing(app, time, delta) {
 		if (storagotchi["state"]["destination"] == null) {
 			let randomIndex = Math.floor(Math.random() * boxes.length);
+			let randBox =  boxes[randomIndex];
 			
-			storagotchi["state"]["destination"] = boxes[randomIndex];
+			storagotchi["state"]["destination"] = {
+				"box": randBox,
+				"x": randBox.x + (randBox.width/2) - 2,
+				"y": randBox.y + 5
+			};
 			storagotchi["state"]["originalDistance"] = distanceBetweenSprites(storagotchi, storagotchi["state"]["destination"]);
 			storagotchi["state"]["speed"] = randomFloatFromInterval(1, 2);
 			console.log("Selected a box");
@@ -957,10 +998,11 @@
 	
 	function storagotchiSetupForRummaging() {
 		setStoragotchiAnimation("rummage");
+		storagotchiFaceRight();
 		storagotchi["state"]["state"] = "rummaging";
 		storagotchi["state"]["cpu"] = "pinned";
 		storagotchi["state"]["start"] = performance.now();
-		storagotchi["state"]["box"] = storagotchi["state"]["destination"];
+		storagotchi["state"]["box"] = storagotchi["state"]["destination"]["box"];
 		storagotchi["state"]["destination"] = null;
 		storagotchi["state"]["duration"] = randomIntFromInterval(5_000, 10_000);
 		updateStateDisplay("Rummaging", 0);
@@ -984,18 +1026,21 @@
 			storagotchi["state"]["box"].zIndex = 4;
 			
 			let thing = getRandomItem();
-			storagotchi.addChild(thing);
 			
 			// thing.width = storagotchi.width * STUFF_WIDTH_MOD;
 			// thing.scale.y = thing.scale.x;
 			thing.zIndex = storagotchi.zIndex + 1;
 			
-			thing.x = 0;// storagotchi.width * 0.5;
-			thing.y = -(storagotchi.height * 0.4);
+			thing.x = 0;
+			thing.y = -(storagotchi.height + 4);
 			
-			storagotchi['state']['heldItem'] = thing;
-			
-			storagotchiSetupForMeander();
+			setStoragotchiAnimation("lift", ()=>{
+				storagotchi.addChild(thing);
+				storagotchi['state']['heldItem'] = thing;
+				
+				storagotchiSetupForMeander();
+			});
+			storagotchi["state"]["state"] = "waitingOnLiftAnimation";
 		}
 	}
 	
