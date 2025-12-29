@@ -46,7 +46,7 @@ mkdir -p "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 mkdir -p "$buildDir/$debDir/etc/oqm/kcClients/"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 
-install -m 755 -D "$srcDir/core-storagotchi.svg" "$buildDir/$debDir/etc/oqm/static/media/plugin/storagotchi/"
+install -m 755 -D "$srcDir/plugin-storagotchi.svg" "$buildDir/$debDir/etc/oqm/static/media/plugin/storagotchi/"
 install -m 755 -D "$srcDir/uiEntry.json" "$buildDir/$debDir/etc/oqm/ui.d/oqm-plugin-storagotchi.json"
 install -m 755 -D "$srcDir/storagotchi-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/plugin/storagotchi/"
 install -m 755 -D "$srcDir/50-plugin-storagotchi.json" "$buildDir/$debDir/etc/oqm/config/configs/"

@@ -1,3 +1,7 @@
+
+runningInfo:
+  homeUrl: "#"
+
 quarkus:
   datasource:
     db-kind: postgresql

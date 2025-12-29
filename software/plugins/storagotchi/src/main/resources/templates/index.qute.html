@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+	<link rel="shortcut icon" href="/media/plugin-storagotchi.svg"/>
 	<title>Storagotchi - Open QuarterMaster</title>
 	<meta charset="UTF-8"/>
 	
@@ -51,6 +52,13 @@
 			min-height: 100%;
 			/*border: 1px solid black;*/
 		}
+		.initContent {
+			position: absolute;
+			/*display: inline;*/
+		}
+		.initLoadingDoneHidden {
+			display: none;
+		}
 	</style>
 </head>
 
@@ -62,9 +70,11 @@
 		</div>
 		<div class="title-bar-controls">
 			<button id="testModalOpenButton" aria-label="Help"></button>
-			<button aria-label="Minimize" disabled></button>
-			<button aria-label="Restore" disabled></button>
-			<button aria-label="Close" disabled></button>
+			{!<button aria-label="Minimize" disabled></button>!}
+			{!<button aria-label="Restore" disabled></button>!}
+			<a href="{config:['runningInfo.homeUrl']}">
+				<button aria-label="Close" disabled></button>
+			</a>
 		</div>
 	</div>
 	<div class="window-body" id="mainWindowBody">
@@ -79,8 +89,13 @@
 			<!-- the tab content -->
 			<article role="tabpanel" id="tab-game" class="mainTabBody">
 				<div id="gameCanvas">
-					<h3 class="initContent">Loading...</h3>
-					<progress class="initContent"></progress>
+					<div class="initContent">
+						<h3>Loading... <span class="initLoadingDone initLoadingDoneHidden">Done.</span></h3>
+						<progress id="initProgressBar"></progress>
+						<p class="initLoadingDone initLoadingDoneHidden">
+							Click on {settings.getStoragotchiName()} to start...
+						</p>
+					</div>
 				</div>
 			</article>
 			<article role="tabpanel" id="tab-achievements" class="mainTabBody" hidden>
@@ -398,9 +413,8 @@
 		setupBoxes();
 		setupStoragotchi();
 		
-		$(".initContent").each(function (i, content) {
-			$(content).remove();
-		});
+		$(".initLoadingDone").removeClass("initLoadingDoneHidden");
+		$("#initProgressBar").attr("value", "100");
 		
 		// Listen for animate update
 		app.ticker.add((time) => {
@@ -507,12 +521,13 @@
 		
 		scalingContainer.addChild(graphics);
 		
-		graphics = new PIXI.Graphics();
-		graphics.circle(app.screen.width / 2, app.screen.height / 2, 1)
-			.fill({
-				color: '#000000'
-			})
-		app.stage.addChild(graphics);
+		//debugging center dot
+		// graphics = new PIXI.Graphics();
+		// graphics.circle(app.screen.width / 2, app.screen.height / 2, 1)
+		// 	.fill({
+		// 		color: '#000000'
+		// 	})
+		// app.stage.addChild(graphics);
 	}
 	
 	function randomFloatFromInterval(min, max) { // min and max included
@@ -713,6 +728,10 @@
 	}
 	
 	function storagotchiSetupWakeup(app, time, delta) {
+		$(".initContent").each(function (i, content) {
+			$(content).remove();
+		});
+		
 		setStoragotchiAnimation("loading");
 		
 		storagotchi["state"]["state"] = "wakeup";

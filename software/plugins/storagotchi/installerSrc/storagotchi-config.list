@@ -10,6 +10,8 @@ quarkus.http.insecure-requests=enabled
 #quarkus.http.insecure-requests=redirect
 quarkus.log.level=INFO
 
+runningInfo.homeUrl={infra.homepage.externalBaseUri}
+
 # SSL Config
 quarkus.tls.key-store.pem.0.cert=/etc/oqm/serviceConfig/plugin/storagotchi/files/serviceCert.crt
 quarkus.tls.key-store.pem.0.key=/etc/oqm/serviceConfig/plugin/storagotchi/files/serviceCertKey.pem
