@@ -1,11 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-	<link rel="shortcut icon" href="/media/plugin-storagotchi.svg"/>
+	<link rel="shortcut icon" href="{rootPrefix}/media/plugin-storagotchi.svg"/>
 	<title>Storagotchi - Open QuarterMaster</title>
 	<meta charset="UTF-8"/>
 	
-	<link rel="stylesheet" href="/lib/xp.css/0.2.6/XP.css"/>
+	<link rel="stylesheet" href="{rootPrefix}/lib/xp.css/0.2.6/XP.css"/>
 	<style>
 		html {
 			height: 100%;
@@ -13,7 +13,7 @@
 		
 		body {
 			min-height: 100vh;
-			background-image: url(/media/background/windows_xp_original-wallpaper.jpg);
+			background-image: url({rootPrefix}/media/background/windows_xp_original-wallpaper.jpg);
 			background-size: cover;
 			background-repeat: no-repeat;
 		}
@@ -175,12 +175,13 @@
 	</div>
 </dialog>
 
-<script src="/webjars/jquery/3.7.1/jquery.min.js"></script>
+<script src="{rootPrefix}/webjars/jquery/3.7.1/jquery.min.js"></script>
 
 <script>
 	
 	function newUpdatesWebSocket() {
 		let wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+		//TODO:: doublecheck this (root path needed?)
 		let wsUrl = `${ wsProtocol}//${ window.location.host}${ window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/ws/updates`;
 		
 		let socket = new WebSocket(wsUrl)
@@ -352,9 +353,9 @@
 	}
 </script>
 
-<script src="/lib/pixi/8.14.0/pixi.min.js"></script>
-<script src="/lib/pixi/8.14.0/pixi-filters.js"></script>
-<script src="/lib/pixi/8.14.0/pixi-sound.js"></script>
+<script src="{rootPrefix}/lib/pixi/8.14.0/pixi.min.js"></script>
+<script src="{rootPrefix}/lib/pixi/8.14.0/pixi-filters.js"></script>
+<script src="{rootPrefix}/lib/pixi/8.14.0/pixi-sound.js"></script>
 <script type="module">
 	// import * as PIXI from '/lib/pixi/8.14.0/pixi.min.mjs';
 	// import * as PIXIS from '/lib/pixi/8.14.0/pixi-sound.js';
@@ -425,30 +426,30 @@
 	async function preload() {
 		// Create an array of asset data to load.
 		const assets = [
-			{ alias: 'storagotchi-drop', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_DROP-Sheet.json'},
-			{ alias: 'storagotchi-idle', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_IDLE-Sheet.json'},
-			{ alias: 'storagotchi-lift-idle', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_LIFT-IDLE-Sheet.json'},
-			{ alias: 'storagotchi-lift', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_LIFT-Sheet.json'},
-			{ alias: 'storagotchi-lift-walk', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_LIFT-WALK-Sheet.json'},
-			{ alias: 'storagotchi-loading', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_LOADING-Sheet.json'},
-			{ alias: 'storagotchi-put-to-box', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_PUT-TO-BOX-Sheet.json'},
-			{ alias: 'storagotchi-rummage', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_RUMMAGE-Sheet.json'},
-			{ alias: 'storagotchi-salute', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_SALUTE-Sheet.json'},
-			{ alias: 'storagotchi-sleeping', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_SLEEPING-Sheet.json'},
-			{ alias: 'storagotchi-sleeping-to-idle', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_SLEEPING-TO-IDLE-Sheet.json'},
-			{ alias: 'storagotchi-walk', src: '/media/sprites/storagotchi/Spritesheets/Storagotchi_WALK-Sheet.json'},
-			{ alias: 'box-1-closed', src: '/media/sprites/box/box-1-closed.png'},
-			{ alias: 'box-1-open', src: '/media/sprites/box/box-1-open.png'},
-			{ alias: 'box-2-closed', src: '/media/sprites/box/box-2-closed.png'},
-			{ alias: 'box-2-open', src: '/media/sprites/box/box-2-open.png'},
-			{ alias: 'box-3-closed', src: '/media/sprites/box/box-3-closed.png'},
-			{ alias: 'box-3-open', src: '/media/sprites/box/box-3-open.png'},
+			{ alias: 'storagotchi-drop', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_DROP-Sheet.json'},
+			{ alias: 'storagotchi-idle', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_IDLE-Sheet.json'},
+			{ alias: 'storagotchi-lift-idle', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_LIFT-IDLE-Sheet.json'},
+			{ alias: 'storagotchi-lift', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_LIFT-Sheet.json'},
+			{ alias: 'storagotchi-lift-walk', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_LIFT-WALK-Sheet.json'},
+			{ alias: 'storagotchi-loading', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_LOADING-Sheet.json'},
+			{ alias: 'storagotchi-put-to-box', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_PUT-TO-BOX-Sheet.json'},
+			{ alias: 'storagotchi-rummage', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_RUMMAGE-Sheet.json'},
+			{ alias: 'storagotchi-salute', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_SALUTE-Sheet.json'},
+			{ alias: 'storagotchi-sleeping', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_SLEEPING-Sheet.json'},
+			{ alias: 'storagotchi-sleeping-to-idle', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_SLEEPING-TO-IDLE-Sheet.json'},
+			{ alias: 'storagotchi-walk', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_WALK-Sheet.json'},
+			{ alias: 'box-1-closed', src: '{rootPrefix}/media/sprites/box/box-1-closed.png'},
+			{ alias: 'box-1-open', src: '{rootPrefix}/media/sprites/box/box-1-open.png'},
+			{ alias: 'box-2-closed', src: '{rootPrefix}/media/sprites/box/box-2-closed.png'},
+			{ alias: 'box-2-open', src: '{rootPrefix}/media/sprites/box/box-2-open.png'},
+			{ alias: 'box-3-closed', src: '{rootPrefix}/media/sprites/box/box-3-closed.png'},
+			{ alias: 'box-3-open', src: '{rootPrefix}/media/sprites/box/box-3-open.png'},
 			//stuff
 			{#for entry in stuffMap}
 			{#let rarity = entry.getKey() stuffList = entry.getValue()}
 			// {rarity}
 			{#for curStuff in stuffList}
-			{ alias: "stuff-{rarity}-{curStuff}", src: '/media/sprites/stuff/{rarity}/{curStuff}'},
+			{ alias: "stuff-{rarity}-{curStuff}", src: '{rootPrefix}/media/sprites/stuff/{rarity}/{curStuff}'},
 			{/for}
 			{/for}
 		];
@@ -461,7 +462,7 @@
 		//sounds
 		sounds["sfx"]['dial-up'] = PIXI.sound.Sound.from({
 			alias: 'dial-up',
-			url: '/media/audio/sfx/dial-up.mp3',
+			url: '{rootPrefix}/media/audio/sfx/dial-up.mp3',
 			preload: true
 		});
 		

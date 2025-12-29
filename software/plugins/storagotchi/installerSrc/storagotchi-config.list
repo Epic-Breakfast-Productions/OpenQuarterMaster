@@ -25,8 +25,8 @@ quarkus.http.proxy.enable-forwarded-host=true
 quarkus.http.proxy.enable-forwarded-prefix=true
 
 # Keycloak Config:
-quarkus.oidc.client-id=oqm-storagotchi
-quarkus.oidc.credentials.secret={infra.keycloak.clientSecrets.oqm-storagotchi}
+quarkus.oidc.client-id=storagotchi
+quarkus.oidc.credentials.secret={infra.keycloak.clientSecrets.storagotchi}
 quarkus.oidc.auth-server-url={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}
 #quarkus.oidc.authentication.redirect-path=/plugin/storagotchi
 #quarkus.oidc.authentication.restore-path-after-redirect=false
@@ -39,6 +39,12 @@ quarkus.oidc.tls.tls-configuration-name=ext.ingress
 oqm.core.api.baseUri={core.api.internalBaseUri}
 quarkus.rest-client."oqm.core.api".tls-configuration-name=ext.ingress
 quarkus.rest-client."oqm.core.api-oidc".tls-configuration-name=ext.ingress
+
+# Postgres Config
+quarkus.datasource.username={plugin.storagotchi.postgresUser}
+quarkus.datasource.password={plugin.storagotchi.postgresPass}
+quarkus.datasource.jdbc.url=jdbc:postgresql://{infra.postgres.host}:{infra.postgres.port}/{plugin.storagotchi.postgresDb}
+quarkus.hibernate-orm.schema-management.strategy=update
 
 runningInfo.protocol=https
 runningInfo.hostname={system.hostname}

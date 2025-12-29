@@ -3,6 +3,9 @@ runningInfo:
   homeUrl: "#"
 
 quarkus:
+  container-image:
+    name: oqm-plugin-storagotchi
+    group: ebprod
   datasource:
     db-kind: postgresql
   

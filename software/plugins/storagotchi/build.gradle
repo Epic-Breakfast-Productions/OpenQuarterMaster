@@ -26,6 +26,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-smallrye-health'
 	implementation 'io.quarkus:quarkus-websockets-next'
+	implementation 'io.quarkus:quarkus-container-image-docker'
 
 	implementation 'org.webjars:jquery:3.7.1'
 

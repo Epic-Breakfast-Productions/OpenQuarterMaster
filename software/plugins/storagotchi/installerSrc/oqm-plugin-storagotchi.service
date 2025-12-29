@@ -46,7 +46,11 @@ ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
 
 # Pull image as separate task
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
-# Run Base Station
+# Postgres setup
+ExecStartPre=/bin/bash -c "/etc/oqm/accountScripts/postgres-assert-account.sh -u \"$(oqm-config g 'plugin.storagotchi.postgresUser')\" -p \"$(oqm-config g 'plugin.storagotchi.postgresPass')\""
+ExecStartPre=/bin/bash -c "/usr/bin/docker exec oqm-infra-postgres psql postgres -U \"$(oqm-config g 'plugin.storagotchi.postgresUser')\" -tXAc \"SELECT 1 FROM pg_database WHERE datname = '$(oqm-config g 'plugin.storagotchi.postgresDb')'\" | grep -q \"^1$\" || /usr/bin/docker exec oqm-infra-postgres psql postgres -U \"$(oqm-config g 'plugin.storagotchi.postgresUser')\" -tXAc \"create database $(oqm-config g 'plugin.storagotchi.postgresDb') with encoding 'UTF8';\""
+
+# Run
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --network=oqm-internal \
                                         -v /etc/oqm/certs/trustStores:/etc/oqm/certs/trustStores:ro \
