@@ -186,6 +186,54 @@
         "plugin",
         "research"
       ]
+    },
+    {
+      "login": "simonramsey0",
+      "name": "Simon Ramsey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/149826099?v=4",
+      "profile": "https://github.com/simonramsey0",
+      "contributions": [
+        "code",
+        "content",
+        "plugin",
+        "research"
+      ]
+    },
+    {
+      "login": "RaimonAbreu007",
+      "name": "RaimonAbreu007",
+      "avatar_url": "https://avatars.githubusercontent.com/u/199864098?v=4",
+      "profile": "https://github.com/RaimonAbreu007",
+      "contributions": [
+        "code",
+        "content",
+        "plugin",
+        "research",
+        "projectManagement"
+      ]
+    },
+    {
+      "login": "Maxf653",
+      "name": "Max",
+      "avatar_url": "https://avatars.githubusercontent.com/u/189031501?v=4",
+      "profile": "https://github.com/Maxf653",
+      "contributions": [
+        "content",
+        "plugin",
+        "research"
+      ]
+    },
+    {
+      "login": "thederpylama",
+      "name": "Ian Lauver",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35352055?v=4",
+      "profile": "https://github.com/thederpylama",
+      "contributions": [
+        "code",
+        "content",
+        "plugin",
+        "research"
+      ]
     }
   ],
   "contributorsPerLine": 7,

@@ -1,0 +1,18 @@
+{
+	"packageName":"oqm-theming",
+	"version":"1.0.0",
+	"description":"OS Theming for Open QuarterMaster.",
+	"maintainer": {
+		"name":"EBP"
+	},
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/",
+	"dependencies": {
+		"deb":"",
+		"rpm":""
+	},
+	"copyright": {
+		"contact":"Greg Stewart <greg@epic-breakfast-productions.tech>",
+		"copyright":"2021-2023 Epic Breakfast Productions",
+		"licence":"GPL-3+"
+	}
+}
