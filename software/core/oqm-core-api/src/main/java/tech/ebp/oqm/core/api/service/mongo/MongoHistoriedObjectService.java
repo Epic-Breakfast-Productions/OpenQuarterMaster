@@ -21,7 +21,6 @@ import tech.ebp.oqm.core.api.model.object.history.EventType;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.history.details.FieldsAffectedHistoryDetail;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
-import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetailType;
 import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.DeleteEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.UpdateEvent;
@@ -30,8 +29,8 @@ import tech.ebp.oqm.core.api.model.rest.management.CollectionClearResult;
 import tech.ebp.oqm.core.api.model.rest.management.HistoriedCollectionClearResult;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbDeletedException;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbDeletedException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
@@ -142,8 +141,8 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	}
 
 	@WithSpan
-	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
-		object = this.update(oqmDbIdOrName, cs, object);
+	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, boolean deriveApplied, HistoryDetail ... details) throws DbNotFoundException {
+		object = this.update(oqmDbIdOrName, cs, object, deriveApplied);
 		this.addHistoryFor(oqmDbIdOrName, cs, object, entity,
 			UpdateEvent.builder()
 				.objectId(object.getId())
@@ -154,9 +153,13 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		return object;
 	}
 	
-	@WithSpan
+	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
+		return this.update(oqmDbIdOrName, cs, object, entity, false, details);
+	}
+		
+		@WithSpan
 	public T update(String oqmDbIdOrName, T object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
-		return this.update(oqmDbIdOrName, null, object, entity, details);
+		return this.update(oqmDbIdOrName, null, object, entity, false, details);
 	}
 	
 	/**

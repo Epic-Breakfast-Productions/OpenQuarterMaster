@@ -7,8 +7,8 @@
 [Unit]
 Description=Open QuarterMaster Base Station server for Open Quartermaster. Version ${version}.
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
-After=docker.service
 Wants=network-online.target
+After=docker.service
 Requires=docker.socket
 Requires=oqm-core-api.service
 After=oqm-core-api.service
@@ -49,13 +49,15 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 # Run Base Station
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --network=oqm-internal \
+                                        -v /etc/oqm/certs/trustStores:/etc/oqm/certs/trustStores:ro \
                                         -v /etc/oqm/serviceConfig/core/base+station/files:/etc/oqm/serviceConfig/core/base+station/files:ro \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/base-station-config.list \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/user-config.list \
                                         --add-host $(oqm-config g system.hostname):host-gateway \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up
-ExecStartPost=/bin/bash -c "running=\"false\"; \
+ExecStartPost=/bin/bash -c "echo \"Checking that container started.\"; \
+                            running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME 2> /dev/null)\"; \
                                 if [ \"$status\" == \"true\" ]; then \
@@ -70,7 +72,8 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 fi; \
                             done; \
                             "
-ExecStartPost=/bin/bash -c "running=\"false\"; \
+ExecStartPost=/bin/bash -c "echo \"Checking that health endpoints come up healthy.\"; \
+                            running=\"false\"; \
                             healthUri=\"$(oqm-config g core.baseStation.internalBaseUri)/q/health\"; \
                             while [ \"$running\" != \"true\" ]; do \
                                 sleep 1s; \

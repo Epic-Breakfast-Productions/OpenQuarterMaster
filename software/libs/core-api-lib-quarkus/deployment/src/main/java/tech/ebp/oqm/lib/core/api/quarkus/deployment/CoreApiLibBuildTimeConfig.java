@@ -55,7 +55,7 @@ public interface CoreApiLibBuildTimeConfig {
 		/**
 		 * The version/ tag of the core api container image
 		 */
-		@WithDefault("4.0.0")
+		@WithDefault("4.1.2-DEV")
 		String coreApiVersion();
 		
 		/**

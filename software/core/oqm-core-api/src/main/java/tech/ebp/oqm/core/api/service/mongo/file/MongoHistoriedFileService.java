@@ -125,7 +125,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 				
 				GridFSUploadOptions ops = this.getUploadOps(fileMetadata);
 				
-				this.getFileObjectService().update(dbIdOrName, clientSession, fileObject);
+				this.getFileObjectService().update(dbIdOrName, clientSession, fileObject, false);
 				bucket.uploadFromStream(clientSession, fileObject.getGridfsFileName(), is, ops);
 				
 				if (!sessionGiven) {

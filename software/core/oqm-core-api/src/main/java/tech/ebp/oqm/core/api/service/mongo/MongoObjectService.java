@@ -26,9 +26,9 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.rest.management.CollectionClearResult;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbDeletedException;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
+import tech.ebp.oqm.core.api.exception.db.DbDeletedException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
@@ -70,8 +70,16 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 * Any data massaging needed to do just before insertion/updates.
 	 * @param object
 	 */
-	public void massageIncomingData(String oqmDbIdOrName, @NonNull T object) {
+	public void massageIncomingData(String oqmDbIdOrName, ClientSession session, @NonNull T object, boolean recalculateDerived) {
 		//nothing to do
+	}
+	
+	public void massageIncomingData(String oqmDbIdOrName, ClientSession session, @NonNull T object) {
+		this.massageIncomingData(oqmDbIdOrName, session, object, true);
+	}
+	
+	public boolean needsDerivedUpdatesAfterUpdate(@NonNull T object, ObjectNode updates){
+		return false;
 	}
 	
 	
@@ -364,6 +372,8 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		}
 		
 		T object = this.get(oqmDbIdOrName, id);
+		boolean updateDerivedAfter = this.needsDerivedUpdatesAfterUpdate(object, updateJson);
+		log.debug("Need to update derived fields after initial update? {}", updateDerivedAfter);
 		ObjectNode origJsonObj = this.getObjectMapper().valueToTree(object);
 		
 		Iterator<String> updatingFields = updateJson.fieldNames();
@@ -396,7 +406,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 												   .collect(Collectors.joining(", ")));
 		}
 		this.ensureObjectValid(oqmDbIdOrName, false, object, cs);
-		this.massageIncomingData(oqmDbIdOrName, object);
+		this.massageIncomingData(oqmDbIdOrName, cs, object, updateDerivedAfter);
 		
 		if (cs == null) {
 			this.getTypedCollection(oqmDbIdOrName).findOneAndReplace(eq("_id", id), object);
@@ -419,11 +429,10 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		return this.update(oqmDbIdOrName, cs, new ObjectId(id), updateJson);
 	}
 	
-	public T update(String oqmDbIdOrName, ClientSession clientSession, @Valid T object) throws DbNotFoundException {
-		
+	public T update(String oqmDbIdOrName, ClientSession clientSession, @Valid T object, boolean deriveApplied) throws DbNotFoundException {
 		this.get(oqmDbIdOrName, clientSession, object.getId());
 		this.ensureObjectValid(oqmDbIdOrName, false, object, clientSession);
-		this.massageIncomingData(oqmDbIdOrName, object);
+		this.massageIncomingData(oqmDbIdOrName, clientSession, object, !deriveApplied);
 		
 		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (clientSession != null) {
@@ -434,7 +443,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	public T update(String oqmDbIdOrName, @Valid T object) throws DbNotFoundException {
-		return this.update(oqmDbIdOrName, null, object);
+		return this.update(oqmDbIdOrName, null, object, false);
 	}
 	
 	/**
@@ -449,7 +458,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		log.debug("New object: {}", object);
 		
 		this.ensureObjectValid(oqmDbIdOrName, true, object, session);
-		this.massageIncomingData(oqmDbIdOrName, object);
+		this.massageIncomingData(oqmDbIdOrName, session, object);
 		
 		InsertOneResult result;
 		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);

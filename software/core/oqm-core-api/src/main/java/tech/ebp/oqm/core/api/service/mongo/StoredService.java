@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.arc.Arc;
@@ -22,7 +23,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.Uniqu
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.*;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.ItemAwareSearchResult;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
@@ -164,8 +165,10 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	}
 	
 	@Override
-	public void massageIncomingData(String oqmDbIdOrName, @NonNull Stored stored) {
-		super.massageIncomingData(oqmDbIdOrName, stored);
+	public void massageIncomingData(String oqmDbIdOrName, ClientSession session, @NonNull Stored stored, boolean recalculateDerived) {
+		super.massageIncomingData(oqmDbIdOrName, session, stored, recalculateDerived);
+		
+		//TODO:: potentially trigger refresh of item stats #929
 		
 		stored.setGeneralIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, stored.getGeneralIds()));
 		stored.setUniqueIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, stored.getUniqueIds()));

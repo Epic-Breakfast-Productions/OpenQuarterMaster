@@ -1,211 +1,350 @@
-{!{@java.util.List<tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo> productProviderInfoList}!}
-{!{@java.util.List<tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo> supportedPageScanInfoList}!}
-{!{@java.util.List<tech.ebp.oqm.baseStation.model.rest.externalItemLookup.ExtItemLookupProviderInfo> legoProviderInfoList}!}
 {#include webui/mainWebPageTemplate showTitle = true navbar = 'full' title = "Help and User Guide" page = 'help'}
-    {#pageStyle}
-
-    {/pageStyle}
-    {#pageContent}
-        <ul class="nav nav-tabs" id="mainTab" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="generalTab" data-bs-toggle="tab" data-bs-target="#generalTabContent"
-                        type="button" role="tab" aria-controls="generalTabContent" aria-selected="true">
-                    General
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="itemsTab" data-bs-toggle="tab"
-                        data-bs-target="#itemsContent" type="button" role="tab"
-                        aria-controls="itemsContent" aria-selected="false">
-                    {#icons/items}{/icons/items} Items
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="unitsTab" data-bs-toggle="tab"
-                        data-bs-target="#unitsContent" type="button" role="tab"
-                        aria-controls="unitsContent" aria-selected="false">
-                    Units
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="itemListsTab" data-bs-toggle="tab"
-                        data-bs-target="#itemListsContent" type="button" role="tab"
-                        aria-controls="itemListsContent" aria-selected="false">Item Lists
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="apiTab" data-bs-toggle="tab"
-                        data-bs-target="#apiContent" type="button" role="tab"
-                        aria-controls="apiContent" aria-selected="false">
-                    API
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="itemSearchProvidersTab" data-bs-toggle="tab"
-                        data-bs-target="#itemSearchProvidersContent" type="button" role="tab"
-                        aria-controls="itemSearchProvidersContent" aria-selected="false">Search Providers
-                </button>
-            </li>
-        </ul>
-        <div class="tab-content" id="mainTabContent">
-            <div class="tab-pane fade show active" id="generalTabContent" role="tabpanel" aria-labelledby="generalTab">
-                {! TODO:: this !}
-                TODO
-            </div>
-            <div class="tab-pane fade" id="itemsContent" role="tabpanel" aria-labelledby="itemsTab">
-                <h2>
-                    {#icons/items}{/icons/items} Items
-                </h2>
-                <p>
-                    Items are... what's stored! Items are tracked on the {#links/inventoryItems}{/links/inventoryItems} page.
-                </p>
-                <h3>Storage Types</h3>
-                <p>
-                    There are may ways to track and store items. We facilitate this by giving you several options of types of storage:
-                </p>
-                <h4>Amount Based</h4>
-                <h5>Bulk</h5>
-                <p>
-                    This is meant to specify bulk items, like bolts, mulch, or other things that aren't separated by anything.
-                    Bulk items only have one stored object associated for each storage block.
-                </p>
-                <h5>Amount List</h5>
-                <p>
-                    This is meant to specify a wider array of items. It can be used to keep track of different amounts of things
-                    in one storage block, separated by condition or other attribute. It can also be used to specify different items
-                    that are identified by the amount of stuff they are, such as fresh packaged food.
-                </p>
-                <h4>Unique</h4>
-                <p>
-                    Unique items are meant to express items that are uniquely identified. These items don't have an amount associated
-                    with them, and are counted individually.
-                </p>
-                <h5>Unique - Multi</h5>
-                <p>
-                    This iteration of item allows for many unique items to be stored. Examples could be anything with a serial number,
-                    or otherwise uniquely identified.
-                </p>
-                <h5>Unique - Single</h5>
-                <p>
-                    This only allows a single unique item to be stored. It supports multiple blocks to be associated, just only one stored item
-                    between them. Examples could include your favorite guitar, a special tool, or momento.
-                </p>
-            </div>
-            <div class="tab-pane fade" id="unitsContent" role="tabpanel" aria-labelledby="unitsTab">
-                <h2>
-                    Units
-                </h2>
-                <p>
-                    This describes what units are available to use in this system. An inventory administrator can add
-                    additional units.
-                </p>
-                {#for curCategory in unitCategoryMap.fields()}
-                    <hr/>
-                    <h4>
-                        {curCategory.getKey()}
-                    </h4>
-                    <ul>
-                        {#for curUnit in curCategory.getValue()}
-                            <li>
-                                {curUnit.get("name").asText()} - ( <code>#</code>{curUnit.get("symbol").asText()} )
-                            </li>
-                        {/for}
-                    </ul>
-                {/for}
-            </div>
-            <div class="tab-pane fade" id="itemSearchProvidersContent" role="tabpanel"
-                 aria-labelledby="itemSearchProvidersTab">
-                <h2>
-                    Item Search Providers
-                </h2>
-                <p>
-                    This describes the external services supported by Open QuarterMaster to help read in data about
-                    items.
-                </p>
-                <p>
-                    For information on enabling/ configuring these providers, see <a
-                            href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/open-qm-base-station/docs/BuildingAndDeployment.adoc#product-search-providers">our
-                        documentation on Github</a>
-                </p>
-                {#if extSearchEnabled}
-                    <hr/>
-                    <h3>
-                        Products
-                    </h3>
-                    <p>
-                        Services to search for Products by UPC/Barcode
-                    </p>
-                    <div class="row">
-                        {#for productProvider in allProviderInfo.get("product")}
-                            {#providerInfoCard providerInfo = productProvider}
-                            {/providerInfoCard}
-                        {/for}
-                    </div>
-                    <hr/>
-                    <h3>
-                        Websites
-                    </h3>
-                    <p>
-                        These websites are supported to glean data from. The intent is for you to enter a specific
-                        product's page.
-                    </p>
-                    <div class="row">
-                        {#for productProvider in allProviderInfo.get("webpage")}
-                            {#providerInfoCard providerInfo = productProvider}
-                            {/providerInfoCard}
-                        {/for}
-                    </div>
-                    <hr/>
-                    <h3>
-                        Lego
-                    </h3>
-                    <p>
-                        This describes the external services to search for Lego(tm) bricks.
-                    </p>
-                    <div class="row">
-                        {#for productProvider in allProviderInfo.get("lego")}
-                            {#providerInfoCard providerInfo = productProvider}
-                            {/providerInfoCard}
-                        {/for}
-                    </div>
-                {#else}
-                    <div class="alert alert-warning" role="alert">
-                        This feature is not currently enabled. Enable it by installing the External Item Search plugin.
-                    </div>
-                {/if}
-            </div>
-            <div class="tab-pane fade" id="itemListsContent" role="tabpanel" aria-labelledby="itemListsTab">
-                <h2>
-                    Item Lists
-                </h2>
-                <p>
-                    TODO
-                </p>
-                <hr/>
-
-            </div>
-            <div class="tab-pane fade" id="apiContent" role="tabpanel" aria-labelledby="apiTab">
-                <h2>
-                    Rest API
-                </h2>
-                <p>
-                    Full documentation of all endpoints is available at the <a
-                            href="{config:['oqm.core.api.baseUri']}" target="_blank">Core API</a>.
-                </p>
-                <hr/>
-                TODO::
-                - explain logging in through api (show relevant steps for SELF or EXTERNAL auth modes)
-
-            </div>
-        </div>
-    {/pageContent}
-    {#pageScript}
-        <script>
-            const itemsTab = document.getElementById("itemsTab");
-
-            if ($(location).attr('hash') === "#items") {
-                itemsTab.click();
-            }
-        </script>
-    {/pageScript}
+	{#pageStyle}
+	
+	{/pageStyle}
+{#pageContent}
+<ul class="nav nav-tabs" id="mainTab" role="tablist">
+{! TODO:: if/when we figure out what should go here !}
+	{!<li class="nav-item" role="presentation">!}
+		{!<button class="nav-link active" id="generalTab" data-bs-toggle="tab" data-bs-target="#generalTabContent"!}
+			{!type="button" role="tab" aria-controls="generalTabContent" aria-selected="true">!}
+			{!General!}
+		{!</button>!}
+	{!</li>!}
+	<li class="nav-item" role="presentation">
+		<button class="nav-link active" id="storageTab" data-bs-toggle="tab"
+			data-bs-target="#storageContent" type="button" role="tab"
+			aria-controls="storageContent" aria-selected="true">
+				{#icons/storageBlocks /} Storage
+		</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="itemsTab" data-bs-toggle="tab"
+			data-bs-target="#itemsContent" type="button" role="tab"
+			aria-controls="itemsContent" aria-selected="false">
+				{#icons/items /} Items
+		</button>
+	</li>
+	
+	{!TODO:: when have more content to put in this section !}
+	{!<li class="nav-item" role="presentation">!}
+		{!<button class="nav-link" id="transactionsTab" data-bs-toggle="tab"!}
+			{!data-bs-target="#transactionsContent" type="button" role="tab"!}
+			{!aria-controls="transactionsContent" aria-selected="false">!}
+			{!{#icons/transaction /}!}
+			{!Transactions!}
+		{!</button>!}
+	{!</li>!}
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="unitsTab" data-bs-toggle="tab"
+			data-bs-target="#unitsContent" type="button" role="tab"
+			aria-controls="unitsContent" aria-selected="false">
+			{#icons/units /} Units
+		</button>
+	</li>
+	{!TODO:: when we have this functionality!}
+	{!<li class="nav-item" role="presentation">!}
+	{!<button class="nav-link" id="itemListsTab" data-bs-toggle="tab"!}
+	{!data-bs-target="#itemListsContent" type="button" role="tab"!}
+	{!aria-controls="itemListsContent" aria-selected="false">Item Lists!}
+	{!</button>!}
+	{!</li>!}
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="apiTab" data-bs-toggle="tab"
+			data-bs-target="#apiContent" type="button" role="tab"
+			aria-controls="apiContent" aria-selected="false">
+			{#icons/coreApi /} API
+		</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="itemSearchProvidersTab" data-bs-toggle="tab"
+			data-bs-target="#itemSearchProvidersContent" type="button" role="tab"
+			aria-controls="itemSearchProvidersContent" aria-selected="false">
+			Search Providers
+		</button>
+	</li>
+	<li class="nav-item" role="presentation">
+		<button class="nav-link" id="feedbackTab" data-bs-toggle="tab"
+			data-bs-target="#feedbackContent" type="button" role="tab"
+			aria-controls="feedbackContent" aria-selected="false">
+			Giving Feedback
+		</button>
+	</li>
+	</ul>
+	<div class="tab-content" id="mainTabContent">
+		<div class="tab-pane fade" id="generalTabContent" role="tabpanel" aria-labelledby="generalTab">
+			{! TODO:: this !}
+			TODO
+		</div>
+		<div class="tab-pane fade show active" id="storageContent" role="tabpanel" aria-labelledby="storageTab">
+			<h2 class="mt-2">
+				{#icons/storageBlocks /} Storage
+			</h2>
+			<p>
+				{#links/storageBlocks /} describe areas and places where things are stored.
+				It can be a shelf, a bin, or anywhere you put things. We don't judge.
+			</p>
+			<p>
+				Storage blocks can also have parents, leading to a tree structure to describe a whole facility and how the storage is related.
+				An example layout:
+			</p>
+			<ul>
+				<li>
+					House
+					<ul>
+						<li>
+							Kitchen
+							<ul>
+								<li>Cabinets</li>
+							</ul>
+						</li>
+					</ul>
+				</li>
+				<li>
+					Shed
+					<ul>
+						<li>Shelves</li>
+					</ul>
+				</li>
+				<li>
+					Garage
+				</li>
+			</ul>
+		</div>
+		<div class="tab-pane fade" id="itemsContent" role="tabpanel" aria-labelledby="itemsTab">
+			<h2 class="mt-2">
+				{#icons/items /} Items
+			</h2>
+			<p>
+				Items are... what's stored! Items are tracked on the {#links/inventoryItems /} page.
+			</p>
+			<hr />
+			
+			<h3>
+				How Items Work
+			</h3>
+			<p>
+				"{#icons/item /} Inventory Items" describe a type of item that is stored, but not what is actually stored where. These are high level details that apply to
+				all related {#icons/stored /} Stored items.
+			</p>
+			<p>
+				"{#icons/stored /} Stored" is what describes actual physical items. These are tied to specific items and storage blocks. While most data that makes up a stored
+				item can be edited, all changes to stored that affect the number or amount of stuff stored must happen through {#icons/transaction /} Transactions.
+				Different storage types of the item determine what kinds of stored can be added and how they are stored.
+			</p>
+			
+			<hr />
+			
+			<h3>{#icons/stored /} Stored Types</h3>
+			<p>
+				These are the types of {#icons/stored /} Stored items. Which type an item uses are defined by the Storage Type set.
+			</p>
+			<h4>{#icons/storedTypeAmount /} Amount Stored</h4>
+			<p>
+				This type describes amounts of stuff. Used in situations where you are not tracking individual items, but amounts of stuff.
+			</p>
+			<h4>{#icons/storedTypeUnique /} Unique Stored</h4>
+			<p>
+				These describe individual physical items.
+			</p>
+			
+			<hr />
+			
+			<h3>Storage Types</h3>
+			<p>
+				There are may ways to track and store items. We facilitate this by giving you several options of types of storage:
+			</p>
+			<h4>Amount Based</h4>
+			<h5>{#icons/storageTypeBulk /} Bulk</h5>
+			<p>
+				This is meant to specify bulk items, like bolts, mulch, or other things that aren't separated by anything.
+				Bulk items only have one stored object associated for each storage block.
+			</p>
+			<h5>{#icons/storageTypeAmtList /} Amount List</h5>
+			<p>
+				This is meant to specify a wider array of items. It can be used to keep track of different amounts of things
+				in one storage block, separated by condition or other attribute. It can also be used to specify different items
+				that are identified by the amount of stuff they are, such as fresh packaged food.
+			</p>
+			<h4>Unique</h4>
+			<p>
+				Unique items are meant to express items that are uniquely identified. These items don't have an amount associated
+				with them, and are counted individually.
+			</p>
+			<h5>{#icons/storageTypeUniqueMulti /} Unique - Multi</h5>
+			<p>
+				This iteration of item allows for many unique items to be stored. Examples could be anything with a serial number,
+				or otherwise uniquely identified.
+			</p>
+			<h5>{#icons/storageTypeUniqueSingle /} Unique - Single</h5>
+			<p>
+				This only allows a single unique item to be stored. It supports multiple blocks to be associated, just only one stored item
+				between them. Examples could include your favorite guitar, a special tool, or momento.
+			</p>
+		</div>
+		<div class="tab-pane fade" id="transactionsContent" role="tabpanel" aria-labelledby="transactionsTab">
+			<h2 class="mt-2">
+				{#icons/transaction /} Transactions
+			</h2>
+			<p>
+				Transactions are the only way to change the number of stored items. This is to ensure a clear, single interface for doing so, and allows for easy tracking of items over time,
+				as well as clear history of the item.
+			</p>
+			<p>
+				You can still edit stored item details, just not change anything that modifies the amount of that item.
+			</p>
+		</div>
+		<div class="tab-pane fade" id="unitsContent" role="tabpanel" aria-labelledby="unitsTab">
+			<h2 class="mt-2">
+				{#icons/units /} Units
+			</h2>
+			<p>
+				Open QuarterMaster has robust support for different units, and converting between them. For instance, an {#icons/item /} inventory item can have a unit
+				of Kilogram, and any {#icons/stored /} stored can have a unit compatible with it (any other unit in the "Mass" category).
+			</p>
+			<p>
+				Below are units available to use in this system. An inventory administrator can add additional units.
+			</p>
+			<p>
+				Units are system-wide, and not associated with a single database.
+			</p>
+			<div class="row">
+				{#for curCategory in unitCategoryMap.fields()}
+				<div class="col-md-6">
+					<div class="card mb-3">
+						<div class="card-header">
+							<h4>
+								{curCategory.getKey()}
+							</h4>
+						</div>
+						<div class="card-body">
+							<ul>
+								{#for curUnit in curCategory.getValue()}
+									<li>
+										{curUnit.get("name").asText()} - ( <code>#</code>{curUnit.get("symbol").asText()} )
+									</li>
+								{/for}
+							</ul>
+						</div>
+					</div>
+				</div>
+				{/for}
+			</div>
+			
+		</div>
+		<div class="tab-pane fade" id="itemSearchProvidersContent" role="tabpanel"
+			aria-labelledby="itemSearchProvidersTab">
+			<h2 class="mt-2">
+				Item Search Providers
+			</h2>
+			<p>
+				This describes the external services supported by Open QuarterMaster to help read in data about
+				items.
+			</p>
+			<p>
+				For information on enabling/ configuring these providers, see
+				<a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/external-item-search">
+					{#icons/github /} our documentation on Github
+				</a>
+			</p>
+			{#if extSearchEnabled}
+				<hr/>
+				<h3>
+					Products
+				</h3>
+				<p>
+					Services to search for Products by UPC/Barcode
+				</p>
+				<div class="row">
+					{#for productProvider in allProviderInfo.get("product")}
+						{#providerInfoCard providerInfo = productProvider /}
+					{/for}
+				</div>
+				<hr/>
+				<h3>
+					Websites
+				</h3>
+				<p>
+					These websites are supported to glean data from. The intent is for you to enter a specific
+					product's page.
+				</p>
+				<div class="row">
+					{#for productProvider in allProviderInfo.get("webpage")}
+						{#providerInfoCard providerInfo = productProvider /}
+					{/for}
+				</div>
+				<hr/>
+				<h3>
+					Lego
+				</h3>
+				<p>
+					This describes the external services to search for Lego(tm) bricks.
+				</p>
+				<div class="row">
+					{#for productProvider in allProviderInfo.get("lego")}
+						{#providerInfoCard providerInfo = productProvider /}
+					{/for}
+				</div>
+			{#else}
+				<div class="alert alert-warning" role="alert">
+					This feature is not currently enabled. Enable it by installing the External Item Search plugin.
+				</div>
+			{/if}
+		</div>
+		<div class="tab-pane fade" id="itemListsContent" role="tabpanel" aria-labelledby="itemListsTab">
+			<h2 class="mt-2">
+				Item Lists
+			</h2>
+			<p>
+				TODO
+			</p>
+			<hr/>
+		
+		</div>
+		<div class="tab-pane fade" id="apiContent" role="tabpanel" aria-labelledby="apiTab">
+			<h2 class="mt-2">
+				{#icons/coreApi /} Core API
+			</h2>
+			<p>
+				This interface (the Base Station) is a UI wrapper for the {#icons/coreApi /} Core API.
+				While all functionality is available here, the Open QuarterMaster system is intended to be extended
+				to suit your needs. You can do this by connecting to the {#icons/coreApi /} Core API from your own software.
+			</p>
+			<p>
+				Full documentation of all endpoints is available at the <a
+					href="{config:['oqm.core.api.baseUri']}" target="_blank">{#icons/coreApi /} Core API</a>.
+			</p>
+			<p>
+				For information developing your own plugins:
+				<a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/plugins/docs/WritingPlugins.md" target="_blank">
+					{#icons/github /} Writing Plugins on our Github
+				</a>
+			</p>
+		</div>
+		<div class="tab-pane fade" id="feedbackContent" role="tabpanel" aria-labelledby="feedbackTab">
+			<h2 class="mt-2">
+				{#icons/coreApi /} Feedback
+			</h2>
+			<p>
+				Open QuarterMaster is, at its core, an open source system. If you find anything that is lacking, needs fixed, or improved, please don't hesitate to reach out!
+				Any and all suggestions and reports are welcome!
+			</p>
+			<p>
+				Find out all the ways you can help us by visiting our
+				<a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster?tab=contributing-ov-file">
+					{#icons/github /} Github!
+				</a>
+			</p>
+		</div>
+	</div>
+	{/pageContent}
+	{#pageScript}
+		<script>
+			const itemsTab = document.getElementById("itemsTab");
+			
+			if ($(location).attr('hash') === "#items") {
+				itemsTab.click();
+			}
+		</script>
+	{/pageScript}
 {/include}

@@ -6,6 +6,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import lombok.Getter;
@@ -66,7 +67,7 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public IdentifierGenerator create(
-		@Valid IdentifierGenerator generator
+		@NotNull @Valid IdentifierGenerator generator
 	) {
 		return super.create(generator);
 	}

@@ -8,15 +8,12 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferAmountTransaction;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
-import java.util.LinkedHashSet;
-import java.util.List;
 import java.util.Set;
 
 public class TransferAmountTransactionApplier extends TransactionApplier<TransferAmountTransaction> {
