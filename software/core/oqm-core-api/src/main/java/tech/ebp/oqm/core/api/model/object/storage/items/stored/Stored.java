@@ -18,10 +18,13 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
+import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.StoredNotificationStatus;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
 import tech.ebp.oqm.core.api.model.validation.annotations.UniqueLabeledCollection;
 
 import java.time.LocalDateTime;
@@ -103,9 +106,13 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	@UniqueLabeledCollection
-	private LinkedHashSet<@NotNull Pricing> prices = new LinkedHashSet<>();
+	private LinkedHashSet<@NotNull StoredPricing> prices = new LinkedHashSet<>();
 	
-	//TODO:: get calculated pricing (for amounts, etc) #1006
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	@UniqueLabeledCollection
+	private LinkedHashSet<@NotNull CalculatedPricing> calculatedPrices = new LinkedHashSet<>();
 	
 	/**
 	 * Statuses about this stored object.
