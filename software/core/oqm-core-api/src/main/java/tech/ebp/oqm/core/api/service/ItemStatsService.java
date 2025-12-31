@@ -5,6 +5,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -17,7 +18,10 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemExpiryLowStockItemProcessResults;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemPostTransactionProcessResults;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.StoredExpiryLowStockProcessResult;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.TotalPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
@@ -39,6 +43,7 @@ import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -67,8 +72,7 @@ public class ItemStatsService {
 	StoredService storedService;
 	
 	
-	
-	private void addToStats(BasicStatsContaining statsToAddTo, Stored stored) {
+	private void addToStats(InventoryItem item, BasicStatsContaining statsToAddTo, Stored stored) {
 		
 		statsToAddTo.setNumStored(statsToAddTo.getNumStored() + 1L);
 		
@@ -87,29 +91,46 @@ public class ItemStatsService {
 			statsToAddTo.setNumExpired(statsToAddTo.getNumExpired() + 1L);
 		}
 		
-		//TODO:: handle default from item #1006
-		//TODO:: per unit add? #1006
-		for(Pricing curPricing : stored.getPrices()){
-			boolean found = false;
-			
-			for(Pricing existingPricing : statsToAddTo.getPrices()){
-				if(curPricing.getLabel().equals(existingPricing.getLabel())){
-					found = true;
-					existingPricing.setPrice(
-						existingPricing.getPrice().add(curPricing.getPrice())
-					);
-				}
-			}
-			
-			if(!found){
-				statsToAddTo.getPrices().add(curPricing);
+		/*
+		 * Prices
+		 */
+		LinkedHashSet<StoredPricing> storedPrices = new LinkedHashSet<>(stored.getPrices());
+		//add prices not in stored's from item
+		for(StoredPricing itemPrice : item.getDefaultPrices()){
+			if(
+				storedPrices.stream()
+					.anyMatch((price)->{
+						return price.getLabel().equals(itemPrice.getLabel());
+					})
+			){
+				storedPrices.add(itemPrice);
 			}
 		}
-		
+		//add each to stats
+		for(StoredPricing curPrice : storedPrices){
+			CalculatedPricing calcedPricing = curPrice.calculatePrice(stored);
+			
+			Optional<TotalPricing> existingPricing = statsToAddTo.getPrices().stream()
+				.filter((price)->{
+					return price.getLabel().equals(curPrice.getLabel());
+				})
+				.findFirst();
+			
+			if(existingPricing.isEmpty()){
+				statsToAddTo.getPrices().add(
+					TotalPricing.builder()
+						.label(curPrice.getLabel())
+						.totalPrice(calcedPricing.getTotalPrice())
+						.build()
+				);
+			} else {
+				existingPricing.get().add(calcedPricing);
+			}
+		}
 	}
 	
-	private void addToStats(StatsWithTotalContaining statsToAddTo, Stored stored) {
-		this.addToStats((BasicStatsContaining) statsToAddTo, stored);
+	private void addToStats(InventoryItem item, StatsWithTotalContaining statsToAddTo, Stored stored) {
+		this.addToStats(item, (BasicStatsContaining) statsToAddTo, stored);
 		
 		Quantity toAdd = switch (stored.getType()) {
 			case AMOUNT -> {
@@ -124,55 +145,54 @@ public class ItemStatsService {
 		);
 	}
 	
-	private void addToStats(StoredInBlockStats storedInBlockStats, Stored stored) {
+	private void addToStats(InventoryItem item, StoredInBlockStats storedInBlockStats, Stored stored) {
 		storedInBlockStats.setHasStored(true);
-		this.addToStats((StatsWithTotalContaining) storedInBlockStats, stored);
+		this.addToStats(item, (StatsWithTotalContaining) storedInBlockStats, stored);
 	}
 	
-	private void addToStats(ItemStoredStats itemStoredStats, Stored stored) {
+	private void addToStats(InventoryItem item, ItemStoredStats itemStoredStats, Stored stored) {
 		StoredInBlockStats storedInBlockStats = itemStoredStats.getStorageBlockStats().get(stored.getStorageBlock());
 		
-		this.addToStats(storedInBlockStats, stored);
-		this.addToStats((StatsWithTotalContaining) itemStoredStats, stored);
+		this.addToStats(item, storedInBlockStats, stored);
+		this.addToStats(item, (StatsWithTotalContaining) itemStoredStats, stored);
 	}
 	
 	//TODO:: wtf is this
-	private void addToStats(String oqmDbIdOrName, ClientSession cs, StoredStats storedStats, Stored stored) {
-		
-		if (!storedStats.getItemStats().containsKey(stored.getId())) {
-			storedStats.getItemStats().put(
-				stored.getId(), new ItemStoredStats(
-					this.inventoryItemService.get(oqmDbIdOrName, cs, stored.getItem()).getUnit()
-				)
-			);
-		}
-		ItemStoredStats itemStoredStats = storedStats.getItemStats().get(stored.getItem());
-		
-		this.addToStats((BasicStatsContaining) storedStats, stored);
-		this.addToStats(itemStoredStats, stored);
-	}
-	
-	public StoredStats getStoredStats(String oqmDbIdOrName, ClientSession cs, StoredSearch search) {
-		FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, search);
-		StoredStats output = new StoredStats();
-		
-		try (
-			MongoCursor<Stored> storedIterator = storedInItem.iterator()
-		) {
-			while (storedIterator.hasNext()) {
-				Stored curStored = storedIterator.next();
-				
-				this.addToStats(
-					oqmDbIdOrName,
-					cs,
-					output,
-					curStored
-				);
-			}
-		}
-		
-		return output;
-	}
+//	private void addToStats(String oqmDbIdOrName, ClientSession cs, StoredStats storedStats, Stored stored) {
+//
+//		if (!storedStats.getItemStats().containsKey(stored.getId())) {
+//			storedStats.getItemStats().put(
+//				stored.getId(), new ItemStoredStats(
+//					this.inventoryItemService.get(oqmDbIdOrName, cs, stored.getItem()).getUnit()
+//				)
+//			);
+//		}
+//		ItemStoredStats itemStoredStats = storedStats.getItemStats().get(stored.getItem());
+//
+//		this.addToStats((BasicStatsContaining) storedStats, stored);
+//		this.addToStats(itemStoredStats, stored);
+//	}
+//	public StoredStats getStoredStats(String oqmDbIdOrName, ClientSession cs, StoredSearch search) {
+//		FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, search);
+//		StoredStats output = new StoredStats();
+//
+//		try (
+//			MongoCursor<Stored> storedIterator = storedInItem.iterator()
+//		) {
+//			while (storedIterator.hasNext()) {
+//				Stored curStored = storedIterator.next();
+//
+//				this.addToStats(
+//					oqmDbIdOrName,
+//					cs,
+//					output,
+//					curStored
+//				);
+//			}
+//		}
+//
+//		return output;
+//	}
 	
 	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, InventoryItem item) {
 		log.info("Getting stats for item: {}", item.getId());
@@ -192,6 +212,7 @@ public class ItemStatsService {
 					Stored curStored = storedIterator.next();
 					
 					this.addToStats(
+						item,
 						output,
 						curStored
 					);

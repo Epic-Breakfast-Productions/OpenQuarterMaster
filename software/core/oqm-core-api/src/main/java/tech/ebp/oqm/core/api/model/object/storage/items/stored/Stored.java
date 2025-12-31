@@ -36,6 +36,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Describes an item stored in the system.
@@ -108,11 +109,10 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull StoredPricing> prices = new LinkedHashSet<>();
 	
-	@NonNull
-	@NotNull
-	@lombok.Builder.Default
-	@UniqueLabeledCollection
-	private LinkedHashSet<@NotNull CalculatedPricing> calculatedPrices = new LinkedHashSet<>();
+	public LinkedHashSet<@NotNull CalculatedPricing> getCalculatedPrices(){
+		return this.getPrices().stream()
+				   .map((p)->p.calculatePrice(this)).collect(Collectors.toCollection(LinkedHashSet::new));
+	}
 	
 	/**
 	 * Statuses about this stored object.

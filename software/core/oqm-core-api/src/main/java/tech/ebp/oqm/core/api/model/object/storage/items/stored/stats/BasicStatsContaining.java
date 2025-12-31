@@ -6,7 +6,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.TotalPricing;
 import tech.ebp.oqm.core.api.model.validation.annotations.UniqueLabeledCollection;
 
 import java.util.LinkedHashSet;
@@ -30,5 +32,5 @@ public class BasicStatsContaining {
 	private long numExpired = 0;
 	
 	@lombok.Builder.Default
-	private LinkedHashSet<@NotNull Pricing> prices = new LinkedHashSet<>();
+	private LinkedHashSet<@NotNull TotalPricing> prices = new LinkedHashSet<>();
 }
