@@ -68,7 +68,7 @@
                 <div class="card-body">
                     <h5 class="card-title d-inline">Value per Unit <span id="itemViewValPerUnitDefault">(default)</span>:</h5>
                     <p class="d-inline">
-                        {currency.getSymbol()}<span id="itemViewValPerUnit"></span>
+                        {cdi:OqmInfoService.getCurrency().getSymbol()}<span id="itemViewValPerUnit"></span>
                     </p>
                 </div>
             </div>
@@ -76,7 +76,7 @@
                 <div class="card-body">
                     <h5 class="card-title d-inline">Total Value:</h5>
                     <p class="d-inline">
-                        {currency.getSymbol()}<span id="itemViewTotalVal"></span>
+                        {cdi:OqmInfoService.getCurrency().getSymbol()}<span id="itemViewTotalVal"></span>
                     </p>
                 </div>
             </div>

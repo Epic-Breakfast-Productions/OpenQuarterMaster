@@ -56,8 +56,8 @@
 {/search/image/imageSelectFormInputHidden}
 {/pageContent}
 {#modals}
-    {#objView/itemViewModal currency=currency  rootPrefix=rootPrefix /}
-	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency /}
+    {#objView/itemViewModal rootPrefix=rootPrefix /}
+	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults /}
 	{#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
 		{#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}
 		<div class="row">
