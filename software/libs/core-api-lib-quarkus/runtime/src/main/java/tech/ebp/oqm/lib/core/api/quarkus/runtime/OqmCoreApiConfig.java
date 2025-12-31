@@ -36,6 +36,12 @@ public interface OqmCoreApiConfig {
 		 */
 		UnitConfig unit();
 		
+		/**
+		 * Cache config for the list of OQM Units.
+		 * @return
+		 */
+		InfoConfig info();
+		
 		interface OqmDatabaseConfig{
 			/**
 			 * The frequency of which to refresh the cache of oqm databases.
@@ -48,6 +54,13 @@ public interface OqmCoreApiConfig {
 			 * The frequency of which to refresh the cache of oqm databases.
 			 */
 			@WithDefault("1m")
+			String refreshFrequencyEvery();
+		}
+		interface InfoConfig{
+			/**
+			 * The frequency of which to refresh the cache of oqm databases.
+			 */
+			@WithDefault("10m")
 			String refreshFrequencyEvery();
 		}
 	}
