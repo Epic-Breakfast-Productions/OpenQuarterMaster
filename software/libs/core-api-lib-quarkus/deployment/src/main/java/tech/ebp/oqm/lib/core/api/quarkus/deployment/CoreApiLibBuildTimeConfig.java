@@ -12,17 +12,20 @@ public interface CoreApiLibBuildTimeConfig {
 	
 	/**
 	 * Configuring health options
+	 * @return The health options
 	 */
 	HealthConfig health();
 	
 	/**
 	 * Whether metrics are published in case a metrics extension is present.
+	 * @return The metrics options
 	 */
 	@WithDefault("true")
 	MetricsConfig metrics();
 	
 	/**
 	 * Config to manage the devservice stood up.
+	 * @return The devservice options
 	 */
 	DevserviceConfig devservice();
 	
@@ -30,6 +33,7 @@ public interface CoreApiLibBuildTimeConfig {
 		
 		/**
 		 * Whether a health check is published in case the smallrye-health extension is present.
+		 * @return Whether a health check is published in case the smallrye-health extension is present.
 		 */
 		@WithDefault("true")
 		boolean enabled();
@@ -39,6 +43,7 @@ public interface CoreApiLibBuildTimeConfig {
 		
 		/**
 		 * Whether a health check is published in case the smallrye-health extension is present.
+		 * @return Whether a health check is published in case the smallrye-health extension is present.
 		 */
 		@WithDefault("true")
 		boolean enabled();
