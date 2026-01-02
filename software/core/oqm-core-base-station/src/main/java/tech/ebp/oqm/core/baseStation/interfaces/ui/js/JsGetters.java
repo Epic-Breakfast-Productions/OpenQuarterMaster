@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * TODO:: rework these to standard page component calls?
+ */
 @Slf4j
 @Path("/res/js/")
 @Tags({@Tag(name = "JS Utilities")})
@@ -35,6 +38,7 @@ public class JsGetters {
 	private static String keywordInputLines;
 	private static String imageInputLines;
 	private static String fileInputLines;
+	private static String storedPricingInputLines;
 	private static String generalIdInputLines;
 	private static String generalIdAddedLines;
 	private static String uniqueIdInputLines;
@@ -84,6 +88,8 @@ public class JsGetters {
 	Template fileInputTemplate;
 	@Location("tags/copyTextButton.html")
 	Template copyButtonTemplate;
+	@Location("tags/inputs/pricing/pricingInputPrice.qute.html")
+	Template storedPricingInputTemplate;
 	@Location("tags/inputs/identifiers/generalIdInput.qute.html")
 	Template generalIdInputTemplate;
 	@Location("tags/inputs/identifiers/addedGeneralIdentifier.qute.html")
@@ -143,6 +149,13 @@ public class JsGetters {
 			copyTextButtonLines = this.templateToEscapedJs(copyButtonTemplate.instance());
 		}
 		return copyTextButtonLines;
+	}
+	
+	private String getStoredPricingInputLines() {
+		if (storedPricingInputLines == null) {
+			storedPricingInputLines = this.templateToEscapedJs(storedPricingInputTemplate.instance());
+		}
+		return storedPricingInputLines;
 	}
 	
 	private String getGeneralIdInputLines() {
@@ -225,6 +238,7 @@ public class JsGetters {
 				   .data("imageInputLines", this.getImageInputLines())
 				   .data("fileInputLines", this.getFileInputLines())
 				   .data("copyButtonLines", this.getCopyTextButtonLines())
+				   .data("storedPricingInputLines", this.getStoredPricingInputLines())
 				   .data("generalIdInputLines", this.getGeneralIdInputLines())
 				   .data("generalIdAddedLines", this.getGeneralIdAddedLines())
 				   .data("uniqueIdInputLines", this.getUniqueIdInputLines())

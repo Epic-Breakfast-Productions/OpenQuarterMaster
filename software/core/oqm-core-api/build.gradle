@@ -55,7 +55,6 @@ dependencies {
 	implementation 'org.apache.tika:tika-core:3.2.3'
 	implementation 'uk.org.okapibarcode:okapibarcode:0.5.2'
 
-//	implementation 'javax.money:money-api:1.1'
 	implementation("org.javamoney:moneta:1.4.5")
 
 	/*

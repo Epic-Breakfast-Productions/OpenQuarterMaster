@@ -1,0 +1,43 @@
+<div class="card pricingInputPrice">
+	<div class="card-body p-2">
+		<div class="mb-1">
+			<input type="text" class="form-control form-control-sm privingInputPriceLabelInput" placeholder="Label" aria-label="Label" name="label" required>
+		</div>
+		<div class="mb-1">
+			<div class="form-check form-check-inline form-switch">
+				<label class="form-check-label">
+					Per Unit
+					<input class="form-check-input privingInputPricePerUnitToggle" name="pricePerUnitToggle" type="checkbox" value="true" onchange="Pricing.PriceInput.updateInputDisplays($(this));">
+				</label>
+			</div>
+		</div>
+		<hr class="my-1"/>
+		
+		<div class="input-group">
+			<span class="input-group-text">
+				Flat amount:
+				{cdi:OqmInfoService.getCurrency().getSymbol()}
+			</span>
+			<input type="number" class="form-control privingInputPricePerFlatAmountInput" placeholder="Flat Amount" name="flatPrice" aria-label="Flat Amount in {cdi:OqmInfoService.getCurrency().getSymbol()}">
+		</div>
+		
+		<div class="pricingInputPricePerUnitContainer">
+			<div class="w-100 text-center">
+				+
+			</div>
+			
+			<div class="input-group">
+				<span class="input-group-text">
+					{cdi:OqmInfoService.getCurrency().getSymbol()}
+				</span>
+				<input type="number" class="form-control privingInputPricePerUnitAmountInput" placeholder="Amount Per Unit" name="pricePerUnitAmount" aria-label="Flat Amount">
+				<span class="input-group-text">
+					/
+				</span>
+				<select class="form-select unitInput privingInputPricePerUnitUnitInput" aria-label="Per Unit" name="pricePerUnitUnit">
+				</select>
+			</div>
+		</div>
+	
+	</div>
+</div>
