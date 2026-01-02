@@ -12,7 +12,6 @@ import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
 import org.jboss.logging.Logger;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.kafka.KafkaContainer;
 import org.testcontainers.redpanda.RedpandaContainer;
 import org.testcontainers.utility.DockerImageName;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
@@ -24,6 +23,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Processes runtime features like configs, health checks, and devservices
+ */
 class CoreApiLibQuarkusProcessor {
 	
 	private static final Logger log = Logger.getLogger(CoreApiLibQuarkusProcessor.class);

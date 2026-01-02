@@ -32,7 +32,7 @@ public class OqmInfoService {
 	KcClientAuthService serviceAccountService;
 
 	private final ReentrantLock mutex = new ReentrantLock();
-	private Currency currency = null;
+	private volatile Currency currency = null;
 	private boolean enabled = false;
 
 	@PostConstruct
@@ -69,11 +69,12 @@ public class OqmInfoService {
 
 	public Currency getCurrency() {
 		log.info("Getting cached Currency.");
-		try {
-			this.mutex.lock();
-			return this.currency;
-		} finally {
-			this.mutex.unlock();
-		}
+		return this.currency;
+//		try {
+//			this.mutex.lock();
+//			return this.currency;
+//		} finally {
+//			this.mutex.unlock();
+//		}
 	}
 }
