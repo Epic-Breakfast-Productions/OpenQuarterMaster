@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.unit.PricePerUnit;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
@@ -67,19 +68,14 @@ public class StoredPricing extends Pricing {
 		return format(this.getFlatPrice());
 	}
 	
-	
-	private MonetaryAmount pricePerUnit;
-	@SuppressWarnings("rawtypes")
-	private Unit pricePerUnitUnit;
-	
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	public String getPricePerUnitString() {
-		return format(this.getPricePerUnit());
-	}
+	/**
+	 * The price per unit. Added to the given flat pricing.
+	 */
+	private PricePerUnit pricePerUnit;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isHasPricePerUnit(){
-		return this.getPricePerUnit() != null && this.getPricePerUnitUnit() != null;
+		return this.getPricePerUnit() != null;
 	}
 	
 	//TODO:: price modifier based on condition %
@@ -89,12 +85,12 @@ public class StoredPricing extends Pricing {
 		Quantity<?> calcStored = stored;
 		
 		//normalize quantity to expected unit
-		if(!calcStored.getUnit().equals(this.getPricePerUnitUnit())){
+		if(!calcStored.getUnit().equals(this.getPricePerUnit().getUnit())){
 			//noinspection unchecked
-			calcStored = calcStored.to(this.getPricePerUnitUnit());
+			calcStored = calcStored.to(this.getPricePerUnit().getUnit());
 		}
 		
-		return this.getPricePerUnit().multiply(calcStored.getValue());
+		return this.getPricePerUnit().getPrice().multiply(calcStored.getValue());
 	}
 	
 	protected MonetaryAmount calcPriceFromUnit(Stored stored){
