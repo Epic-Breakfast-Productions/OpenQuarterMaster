@@ -17,6 +17,7 @@ const ItemAddEdit = {
 	addEditItemCategoriesInput: $("#addEditItemCategoriesInput"),
 	addEditItemTotalLowStockThresholdInput: $("#addEditItemTotalLowStockThresholdInput"),
 	addEditItemTotalLowStockThresholdUnitInput: $("#addEditItemTotalLowStockThresholdUnitInput"),
+	addEditItemPricingInput: $("#addEditItemPricingInput"),
 	addEditItemStorageTypeInput: $('#addEditItemStorageTypeInput'),
 	addEditItemUnitInput: $('#addEditItemUnitInput'),
 	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
@@ -70,7 +71,6 @@ const ItemAddEdit = {
 			whenUnique
 		);
 	},
-
 	resetAddEditForm: async function () {
 		let promises = [];
 		ExtItemSearch.hideAddEditProductSearchPane();
@@ -93,8 +93,9 @@ const ItemAddEdit = {
 		ItemAddEdit.addEditItemUnitInput.data("previous", ItemAddEdit.addEditItemUnitInput.val());
 		Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
 		FileAttachmentSearchSelect.resetInput(this.fileInput);
+		Pricing.resetInput(ItemAddEdit.addEditItemPricingInput);
 
-		promises.push(ItemAddEdit.updateLowStockUnits());
+		promises.push(ItemAddEdit.unitChanged());
 		this.associatedStorageInputContainer.html("");
 
 		// this.itemNotStoredCheck.attr("checked", false);
@@ -113,6 +114,8 @@ const ItemAddEdit = {
 		ItemAddEdit.addEditItemModalLabel.text("Item Add");
 		ItemAddEdit.addEditItemFormMode.val("add");
 		ItemAddEdit.addEditItemFormSubmitButton.html(Icons.iconWithSub(Icons.item, Icons.add) + " Add Item");
+
+		await ItemAddEdit.unitChanged();
 	},
 
 	setupAddEditForEdit: async function (itemId, otherModal = null) {
@@ -187,6 +190,8 @@ const ItemAddEdit = {
 						ItemAddEdit.storageInput.addStorage(label, curStorageBlockId);
 					});
 				});
+
+				await ItemAddEdit.unitChanged();
 			}
 		});
 	},
@@ -207,7 +212,7 @@ const ItemAddEdit = {
 				// ItemAddEdit.addEditItemStorageTypeInput.attr('data-current', "TRACKED");
 			}
 		);
-		return ItemAddEdit.updateLowStockUnits(force);
+		return ItemAddEdit.unitChanged(force);
 	},
 
 	storageInput: {
@@ -257,12 +262,22 @@ const ItemAddEdit = {
 				}).get();
 		}
 	},
-	updateLowStockUnits(force = false) {
+	unitChanged: async function(force = false){
 		let itemUnit = (force || ItemAddEdit.addEditItemUnitNameRow.is(":visible")) ?
 			ItemAddEdit.addEditItemUnitInput.val() :
 			"units";
 
-		console.debug("Item unit: ", itemUnit);
+		console.log("Item Unit Changed to ", itemUnit);
+
+		let lowStockUnitPromise = ItemAddEdit.updateLowStockUnits(itemUnit, force);
+		let pricingUnitPromise = Pricing.setUnit(
+			ItemAddEdit.addEditItemPricingInput,
+			itemUnit
+		);
+
+		await Promise.all([lowStockUnitPromise, pricingUnitPromise]);
+	},
+	updateLowStockUnits(itemUnit, force = false) {
 		return UnitUtils.getCompatibleUnitOptions(itemUnit)
 			.then(function (options) {
 				ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.html(options);
@@ -272,7 +287,7 @@ const ItemAddEdit = {
 
 ItemAddEdit.addEditItemUnitInput.on("change", function () {
 	console.log("Changed unit!");
-	ItemAddEdit.updateLowStockUnits();
+	ItemAddEdit.unitChanged();
 });
 
 // //prevent enter from submitting form on barcode; barcode scanners can add enter key automatically

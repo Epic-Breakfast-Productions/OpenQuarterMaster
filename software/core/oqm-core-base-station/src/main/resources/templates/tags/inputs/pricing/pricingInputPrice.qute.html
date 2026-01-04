@@ -1,7 +1,10 @@
 <div class="card pricingInputPrice">
 	<div class="card-body p-2">
-		<div class="mb-1">
+		<div class="input-group mb-1">
 			<input type="text" class="form-control form-control-sm privingInputPriceLabelInput" placeholder="Label" aria-label="Label" name="label" required>
+			<button class="btn btn-outline-danger" type="button" title="Remove this price" onclick="Pricing.removePrice($(this));">
+				{#icons/remove /}
+			</button>
 		</div>
 		<div class="mb-1">
 			<div class="form-check form-check-inline form-switch">
@@ -11,7 +14,7 @@
 				</label>
 			</div>
 		</div>
-		<hr class="my-1"/>
+		<hr class="my-1 mx-3"/>
 		
 		<div class="input-group">
 			<span class="input-group-text">
@@ -28,6 +31,7 @@
 			
 			<div class="input-group">
 				<span class="input-group-text">
+					Per Unit:
 					{cdi:OqmInfoService.getCurrency().getSymbol()}
 				</span>
 				<input type="number" class="form-control privingInputPricePerUnitAmountInput" placeholder="Amount Per Unit" name="pricePerUnitAmount" aria-label="Flat Amount">
