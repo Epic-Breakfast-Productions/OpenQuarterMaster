@@ -54,7 +54,7 @@ class CoreApiLibQuarkusProcessor {
 	
 	@BuildStep
 	HealthBuildItem addHealthCheck(CoreApiLibBuildTimeConfig buildTimeConfig) {
-		return new HealthBuildItem("tech.ebp.oqm.lib.core.api.quarkus.runtime.CoreApiHealthCheck", buildTimeConfig.health().enabled());
+		return new HealthBuildItem("tech.ebp.oqm.lib.core.api.quarkus.runtime.health.CoreApiHealthCheck", buildTimeConfig.health().enabled());
 	}
 	
 	private MongoDBContainer newMongoDbContainer() {

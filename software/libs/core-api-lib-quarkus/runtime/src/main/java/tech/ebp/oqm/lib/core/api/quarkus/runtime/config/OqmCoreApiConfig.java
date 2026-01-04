@@ -1,10 +1,10 @@
-package tech.ebp.oqm.lib.core.api.quarkus.runtime;
+package tech.ebp.oqm.lib.core.api.quarkus.runtime.config;
 
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
-import io.smallrye.mutiny.Uni;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 
 /**
  * https://github.com/quarkusio/quarkus/blob/main/extensions/mongodb-client/runtime/src/main/java/io/quarkus/mongodb/runtime/MongodbConfig.java

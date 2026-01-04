@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.api.quarkus.runtime;
+package tech.ebp.oqm.lib.core.api.quarkus.runtime.dataHelpers;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.quarkus.scheduler.Scheduled;
@@ -9,10 +9,10 @@ import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 
-import java.util.Currency;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
@@ -20,27 +20,18 @@ import java.util.concurrent.locks.ReentrantLock;
  *
  * Maybe move to core api extension?
  */
-@Named("OqmInfoService")
+@Named("OqmDatabaseService")
 @Slf4j
 @ApplicationScoped
-public class OqmInfoService {
-
-	@RestClient
-	OqmCoreApiClientService oqmCoreApiClientService;
-
-	@Inject
-	KcClientAuthService serviceAccountService;
+public class OqmDatabaseService extends DataHelperService {
 
 	private final ReentrantLock mutex = new ReentrantLock();
-	private volatile Currency currency = null;
+	private ArrayNode dbs = null;
 	private boolean enabled = false;
 
 	@PostConstruct
 	public void setup(){
-		if(
-			ConfigProvider.getConfig().getOptionalValue("quarkus.oidc.client-id", String.class).isEmpty() ||
-			ConfigProvider.getConfig().getOptionalValue("quarkus.oidc.credentials.secret", String.class).isEmpty()
-		){
+		if(!oidcSetup()){
 			log.info("No OIDC creds. Disabled.");
 			return;
 		}
@@ -51,30 +42,29 @@ public class OqmInfoService {
 	}
 
 	//TODO:: instead of this, watch for message? Both?
-	@Scheduled(every = "{" + Constants.CONFIG_ROOT_NAME + ".caching.info.refreshFrequencyEvery}")
+	@Scheduled(every = "{" + Constants.CONFIG_ROOT_NAME + ".caching.oqmDatabase.refreshFrequencyEvery}")
 	public void refreshCache(){
 		if(!enabled){
 			return;
 		}
 		log.info("Refreshing cache of OQM databases.");
-		Currency newCurrency = this.oqmCoreApiClientService.getCurrency(this.serviceAccountService.getAuthString()).await().indefinitely();
-		log.debug("Got new currency listing: {}", newCurrency);
+		ArrayNode newCacheData = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
+		log.debug("Got new cache of databases: {}", newCacheData);
 		try {
 			this.mutex.lock();
-			this.currency = newCurrency;
+			this.dbs = newCacheData;
 		} finally {
 			this.mutex.unlock();
 		}
 	}
 
-	public Currency getCurrency() {
-		log.info("Getting cached Currency.");
-		return this.currency;
-//		try {
-//			this.mutex.lock();
-//			return this.currency;
-//		} finally {
-//			this.mutex.unlock();
-//		}
+	public ArrayNode getDatabases() {
+		log.info("Getting cached OQM databases.");
+		try {
+			this.mutex.lock();
+			return this.dbs;
+		} finally {
+			this.mutex.unlock();
+		}
 	}
 }
