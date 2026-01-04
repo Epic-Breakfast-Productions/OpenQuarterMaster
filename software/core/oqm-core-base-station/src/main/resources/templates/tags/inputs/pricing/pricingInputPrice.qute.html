@@ -1,4 +1,4 @@
-<div class="card pricingInputPrice">
+<div class="card pricingInputPrice" data-currency="{cdi:OqmInfoService.getCurrency().getCurrencyCode()}">
 	<div class="card-body p-2">
 		<div class="input-group mb-1">
 			<input type="text" class="form-control form-control-sm privingInputPriceLabelInput" placeholder="Label" aria-label="Label" name="label" required>
@@ -21,7 +21,7 @@
 				Flat amount:
 				{cdi:OqmInfoService.getCurrency().getSymbol()}
 			</span>
-			<input type="number" class="form-control privingInputPricePerFlatAmountInput" placeholder="Flat Amount" name="flatPrice" aria-label="Flat Amount in {cdi:OqmInfoService.getCurrency().getSymbol()}">
+			<input type="number" class="form-control privingInputPricePerFlatAmountInput" placeholder="Flat Amount" name="flatPrice" aria-label="Flat Amount in {cdi:OqmInfoService.getCurrency().getSymbol()}" value="0.00">
 		</div>
 		
 		<div class="pricingInputPricePerUnitContainer">
@@ -34,7 +34,7 @@
 					Per Unit:
 					{cdi:OqmInfoService.getCurrency().getSymbol()}
 				</span>
-				<input type="number" class="form-control privingInputPricePerUnitAmountInput" placeholder="Amount Per Unit" name="pricePerUnitAmount" aria-label="Flat Amount">
+				<input type="number" class="form-control privingInputPricePerUnitAmountInput" placeholder="Amount Per Unit" name="pricePerUnitAmount" aria-label="Amount Per Unit" value="0.00">
 				<span class="input-group-text">
 					/
 				</span>

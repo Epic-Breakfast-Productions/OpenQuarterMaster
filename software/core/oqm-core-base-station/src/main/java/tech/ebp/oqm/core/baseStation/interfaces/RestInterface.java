@@ -22,7 +22,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.interfaces.ui.pages.UiProvider;
 import tech.ebp.oqm.core.baseStation.model.UserInfo;
 import tech.ebp.oqm.core.baseStation.utils.JwtUtils;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmDatabaseService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.dataHelpers.OqmDatabaseService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 
 import java.util.Optional;

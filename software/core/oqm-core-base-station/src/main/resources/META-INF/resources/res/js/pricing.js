@@ -20,18 +20,37 @@ Pricing = {
 			});
 
 			if (data != null) {
-				//TODO:: populate data
+				Pricing.PriceInput.getLabelInput(newInput).val(data.label);
+				Pricing.PriceInput.getFlatPriceInput(newInput).val(data.flatPrice.amount);
+
+				if(data.pricePerUnit){
+					Pricing.PriceInput.getPerUnitSwitch(newInput).attr("checked", true);
+					Pricing.PriceInput.getPerUnitAmountInput(newInput).val(data.pricePerUnit.price.amount);
+					Pricing.PriceInput.getPerUnitUnitInput(newInput).val(data.pricePerUnit.unit.string);
+				}
 			}
 
 			Pricing.PriceInput.updateInputDisplays(newInput);
 
 			return newInput;
 		},
+		getLabelInput: function (priceInputJq) {
+			return priceInputJq.find("input[name='label']");
+		},
+		getCurrency: function (priceInputJq) {
+			return priceInputJq.data("currency");
+		},
+		getFlatPriceInput: function (priceInputJq) {
+			return priceInputJq.find("input[name='flatPrice']");
+		},
 		getPerUnitSwitch: function (priceInputJq) {
 			return priceInputJq.find("input[name='pricePerUnitToggle']");
 		},
 		getPerUnitInputContainer: function (priceInputJq) {
 			return priceInputJq.find(".pricingInputPricePerUnitContainer");
+		},
+		getPerUnitAmountInput: function (priceInputJq) {
+			return priceInputJq.find("input[name='pricePerUnitAmount']");
 		},
 		getPerUnitUnitInput: function (priceInputJq) {
 			return priceInputJq.find("select[name='pricePerUnitUnit']");
@@ -54,24 +73,23 @@ Pricing = {
 			}
 		},
 		getData: function (priceInputPriceJq) {
-			//TODO
 			let data = {
-				label: "",
+				label: Pricing.PriceInput.getLabelInput(priceInputPriceJq).val(),
 				flatPrice: {
-					"valueStr": "",
-					"currency": ""
+					"amount": Pricing.PriceInput.getFlatPriceInput(priceInputPriceJq).val(),
+					"currency": Pricing.PriceInput.getCurrency(priceInputPriceJq)
 				}
 			};
 
-			if (true) {
-
-				//TODO:: per unit
+			if (Pricing.PriceInput.getPerUnitSwitch(priceInputPriceJq).is(":checked")) {
 				data["pricePerUnit"] = {
-					"price": "",
-					"unit": ""
+					"price": {
+						"amount": Pricing.PriceInput.getPerUnitAmountInput(priceInputPriceJq).val(),
+						"currency": Pricing.PriceInput.getCurrency(priceInputPriceJq)
+					},
+					"unit": UnitUtils.getUnitObj(Pricing.PriceInput.getPerUnitUnitInput(priceInputPriceJq).val())
 				}
 			}
-
 
 			return data;
 		}
@@ -164,19 +182,23 @@ Pricing = {
 
 		let prices = Pricing.getPrices(priceInputJq);
 
-		prices.forEach(function (i, priceJq) {
-			output.append(
-				Pricing.PriceInput.getData(priceJq)
+		prices.each(function (i, priceJs) {
+			output.push(
+				Pricing.PriceInput.getData($(priceJs))
 			);
 		});
 
 		return output;
 	},
-	populateInput: function (priceInputJq, unit, priceList) {
-		Pricing.setUnit(priceInputJq, unit);
+	populateInput: async function (priceInputJq, unit, priceList) {
+		let tasks = [];
 
-		priceList.foreach(function (curPriceData) {
-			Pricing.addPrice(curPriceData);
+		tasks.push(Pricing.setUnit(priceInputJq, unit));
+
+		priceList.forEach(function (curPriceData) {
+			Pricing.addPrice(priceInputJq, curPriceData);
 		});
+
+		await Promise.all(tasks);
 	}
 };

@@ -11,7 +11,6 @@ const ItemAddEdit = {
 	addEditItemIdInput: $("#addEditItemIdInput"),
 	addEditItemNameInput: $('#addEditItemNameInput'),
 	addEditItemDescriptionInput: $('#addEditItemDescriptionInput'),
-	addEditItemPricePerUnitInput: $('#addEditItemPricePerUnitInput'),
 	addEditItemExpiryWarningThresholdInput: $('#addEditItemExpiryWarningThresholdInput'),
 	addEditItemExpiryWarningThresholdUnitInput: $('#addEditItemExpiryWarningThresholdUnitInput'),
 	addEditItemCategoriesInput: $("#addEditItemCategoriesInput"),
@@ -36,7 +35,6 @@ const ItemAddEdit = {
 	associatedStorageInputContainer: $("#addEditItemAssociatedStorageInputContainer"),
 	addEditItemTrackedItemIdentifierNameRow: $('#addEditItemTrackedItemIdentifierNameRow'),
 	addEditItemUnitNameRow: $('#addEditItemUnitNameRow'),
-	addEditItemPricePerUnitNameRow: $('#addEditItemPricePerUnitNameRow'),
 	compatibleUnitOptions: "",
 
 
@@ -82,7 +80,6 @@ const ItemAddEdit = {
 		UniqueIdentifiers.reset(ItemAddEdit.uniqueIdInputContainer);
 		IdGeneratorSearchSelect.AssociatedInput.resetAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput);
 		ItemAddEdit.addEditItemModalLabel.text("Item");
-		// ItemAddEdit.addEditItemPricePerUnitInput.val("0.00");
 		ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(0);
 		ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 3);
 		ItemAddEdit.addEditItemTotalLowStockThresholdInput.val("");
@@ -191,6 +188,12 @@ const ItemAddEdit = {
 					});
 				});
 
+				await Pricing.populateInput(
+					ItemAddEdit.addEditItemPricingInput,
+					ItemAddEdit.getUnit(),
+					data.defaultPrices
+				);
+
 				await ItemAddEdit.unitChanged();
 			}
 		});
@@ -200,16 +203,10 @@ const ItemAddEdit = {
 			function () {
 				ItemAddEdit.addEditItemUnitNameRow.show();
 				ItemAddEdit.addEditItemUnitInput.prop('required', true);
-				// ItemAddEdit.addEditItemPricePerUnitNameRow.show();
-				// ItemAddEdit.addEditItemPricePerUnitInput.prop('required', true);
 			},
 			function () {
 				ItemAddEdit.addEditItemUnitNameRow.hide();
 				ItemAddEdit.addEditItemUnitInput.prop('required', false);
-				// ItemAddEdit.addEditItemPricePerUnitNameRow.hide();
-				// ItemAddEdit.addEditItemPricePerUnitInput.prop('required', false);
-
-				// ItemAddEdit.addEditItemStorageTypeInput.attr('data-current', "TRACKED");
 			}
 		);
 		return ItemAddEdit.unitChanged(force);
@@ -262,10 +259,13 @@ const ItemAddEdit = {
 				}).get();
 		}
 	},
-	unitChanged: async function(force = false){
-		let itemUnit = (force || ItemAddEdit.addEditItemUnitNameRow.is(":visible")) ?
+	getUnit(force = false){
+		return (force || ItemAddEdit.addEditItemUnitNameRow.is(":visible")) ?
 			ItemAddEdit.addEditItemUnitInput.val() :
 			"units";
+	},
+	unitChanged: async function(force = false){
+		let itemUnit = ItemAddEdit.getUnit();
 
 		console.log("Item Unit Changed to ", itemUnit);
 
@@ -323,14 +323,12 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 		) : null),
 		categories: ItemCategoryInput.getValueFromInput(ItemAddEdit.addEditItemCategoriesInput),
 		storageBlocks: ItemAddEdit.storageInput.selectedStorageList(),
-		attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(ItemAddEdit.fileInput)
+		attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(ItemAddEdit.fileInput),
+		defaultPrices: Pricing.getPricingData(ItemAddEdit.addEditItemPricingInput)
 	};
 
 	let setAmountStoredVars = function () {
-		addEditData["unit"] = {
-			string: ItemAddEdit.addEditItemUnitInput.val()
-		};
-		addEditData["valuePerUnit"] = ItemAddEdit.addEditItemPricePerUnitInput.val();
+		addEditData["unit"] = UnitUtils.getUnitObj(ItemAddEdit.addEditItemUnitInput.val());
 	};
 
 	ItemAddEdit.foreachStorageTypeFromInput(
