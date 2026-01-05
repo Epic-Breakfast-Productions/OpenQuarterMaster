@@ -21,12 +21,12 @@
 				Flat amount:
 				{cdi:OqmInfoService.getCurrency().getSymbol()}
 			</span>
-			<input type="number" class="form-control privingInputPricePerFlatAmountInput" placeholder="Flat Amount" name="flatPrice" aria-label="Flat Amount in {cdi:OqmInfoService.getCurrency().getSymbol()}" value="0.00">
+			<input type="number" class="form-control privingInputPricePerFlatAmountInput" placeholder="Flat Amount" min="0.00" step="any" name="flatPrice" aria-label="Flat Amount in {cdi:OqmInfoService.getCurrency().getSymbol()}" value="0.00">
 		</div>
 		
 		<div class="pricingInputPricePerUnitContainer">
 			<div class="w-100 text-center">
-				+
+				{#icons/icon icon="plus" titleText="+" /}
 			</div>
 			
 			<div class="input-group">
@@ -34,7 +34,7 @@
 					Per Unit:
 					{cdi:OqmInfoService.getCurrency().getSymbol()}
 				</span>
-				<input type="number" class="form-control privingInputPricePerUnitAmountInput" placeholder="Amount Per Unit" name="pricePerUnitAmount" aria-label="Amount Per Unit" value="0.00">
+				<input type="number" class="form-control privingInputPricePerUnitAmountInput" placeholder="Amount Per Unit" name="pricePerUnitAmount" min="0.00" step="any" aria-label="Amount Per Unit" value="0.00" required>
 				<span class="input-group-text">
 					/
 				</span>

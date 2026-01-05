@@ -11,7 +11,7 @@ Pricing = {
 			return output;
 		},
 		newInput: async function (unit, data = null) {
-			let newInput = $(PageComponents.Inputs.storedPricing);
+			let newInput = $(PageComponents.Inputs.Pricing.storedPricing);
 
 			await UnitUtils.getCompatibleUnitOptions(unit).then(function (options) {
 				console.log("Populating price per unit units: ", unit, options);
@@ -94,6 +94,13 @@ Pricing = {
 			return data;
 		}
 	},
+	newInput: async function(unit, data = null){
+		let newInput = $(PageComponents.Inputs.Pricing.priceInput);
+
+		await Pricing.populateInput(newInput, unit, data);
+
+		return newInput;
+	},
 	getInput: function (innerElem) {
 		let output = innerElem;
 		if (!output.jquery) {
@@ -166,7 +173,8 @@ Pricing = {
 			Pricing.getUnit(priceInputJq),
 			priceData
 		);
-		pricesContainer.append(await newInput);
+		newInput = await newInput;
+		pricesContainer.append(newInput);
 
 		return newInput;
 	},
@@ -190,14 +198,17 @@ Pricing = {
 
 		return output;
 	},
-	populateInput: async function (priceInputJq, unit, priceList) {
+	populateInput: async function (priceInputJq, unit, priceList = null) {
+		console.log("Populating pricing input: ",  priceInputJq, unit, priceList);
 		let tasks = [];
 
 		tasks.push(Pricing.setUnit(priceInputJq, unit));
 
-		priceList.forEach(function (curPriceData) {
-			Pricing.addPrice(priceInputJq, curPriceData);
-		});
+		if(priceList) {
+			priceList.forEach(function (curPriceData) {
+				Pricing.addPrice(priceInputJq, curPriceData);
+			});
+		}
 
 		await Promise.all(tasks);
 	}

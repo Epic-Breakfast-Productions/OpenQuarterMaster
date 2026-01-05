@@ -10,8 +10,12 @@ const PageComponents = {
 ',
 		copyButton: '{copyButtonLines}\
 ',
-		storedPricing: '{storedPricingInputLines}\
+		Pricing: {
+			priceInput: '{storedPricingInputLines}\
 ',
+			storedPricing: '{storedPricingInputPriceLines}\
+'
+		},
 		GeneralIds: {
 			generalIdInput: '{generalIdInputLines}\
 ',
