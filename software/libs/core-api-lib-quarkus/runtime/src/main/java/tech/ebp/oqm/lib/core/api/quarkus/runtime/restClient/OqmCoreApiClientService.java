@@ -470,7 +470,7 @@ public interface OqmCoreApiClientService {
 	@POST
 	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/transaction")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> invItemStoredTransact(
+	Uni<ObjectNode> invItemStoredTransact(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("itemId") String itemId,
