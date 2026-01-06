@@ -44,9 +44,9 @@ public class HasParentImporterHistoried<T extends MainObject & HasParent, S exte
 		List<ObjectId> addedList
 	) {
 		ObjectId oldId = curObj.getId();
-		ObjectId newId;
+		T newObj;
 		try {
-			newId = this.getObjectService().add(dbId, clientSession, curObj, importingEntity);
+			newObj = this.getObjectService().add(dbId, clientSession, curObj, importingEntity);
 		} catch(DbModValidationException e){
 			if(e.getMessage().contains("No parent exists")){
 				ObjectId curParent = ((StorageBlock)curObj).getParent();
@@ -58,8 +58,8 @@ public class HasParentImporterHistoried<T extends MainObject & HasParent, S exte
 			log.error("Failed to import object: ", e);
 			throw e;
 		}
-		log.info("Read in object. new id == old? {}", newId.equals(oldId));
-		assert newId.equals(oldId); //TODO:: better check?
+		log.info("Read in object. new id == old? {}", newObj.getId().equals(oldId));
+		assert newObj.getId().equals(oldId); //TODO:: better check?
 		addedList.add(oldId);
 	}
 	

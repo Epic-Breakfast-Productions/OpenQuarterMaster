@@ -52,6 +52,9 @@ const ItemView = {
 	assocIdGensNumIds: $("#itemViewIdGeneratorsNumIdsLabel"),
 	assocIdGensContent: $("#itemViewIdGeneratorsAccordContent"),
 
+	pricesContainer: $("#itemViewPricesContainer"),
+	pricesTotalsContainer: $("#itemViewPricesTotalsContainer"),
+
 	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
 	itemViewTotalLowStockThreshold: $("#itemViewTotalLowStockThreshold"),
 	itemViewExpiryWarnThresholdContainer: $("#itemViewExpiryWarnThresholdContainer"),
@@ -124,6 +127,10 @@ const ItemView = {
 		ItemView.itemViewTotalLowStockThresholdContainer.hide();
 		ItemView.itemViewExpiryWarnThreshold.text("");
 		ItemView.itemViewExpiryWarnThresholdContainer.hide();
+
+		ItemView.pricesContainer.hide();
+		ItemView.pricesTotalsContainer.hide();
+		ItemView.pricesTotalsContainer.text("");
 
 		ItemView.itemViewCheckedOutResultsContainer.html("");
 
@@ -420,6 +427,13 @@ const ItemView = {
 					} else {
 						ItemView.storedNonePresentNoStorageContainer.show();
 					}
+				}
+
+				if(itemData.stats.prices.length){
+					Pricing.View.TotalPricing.showInDiv(ItemView.pricesTotalsContainer);
+
+					ItemView.pricesContainer.show();
+					ItemView.pricesTotalsContainer.show();
 				}
 
 				if (itemData.categories.length) {

@@ -211,5 +211,52 @@ Pricing = {
 		}
 
 		await Promise.all(tasks);
+	},
+	View: {
+		newPriceContainer: function () {
+			return $(`
+			<div class="prceDisplay card">
+				
+			</div>
+			`);
+		},
+
+		StoredPricing: {
+			showInDiv(divJq, pricingArray) {
+				//TODO
+			}
+		},
+		CalculatedPricing: {
+			showInDiv(divJq, storedData) {
+				storedData.calculatedPrices.forEach(function (curPriceData) {
+					let newDisplay = Pricing.View.newPriceContainer();
+					newDisplay.append(
+						$(`<h5></h5>`).text(curPriceData.label)
+					);
+					newDisplay.append(
+						$(`<p></p>`).text(curPriceData.totalPriceString)
+					);
+					divJq.append(newDisplay);
+
+					//TODO:: more, detail
+				});
+			}
+		},
+		TotalPricing: {
+			showInDiv(divJq, pricingArray) {
+				pricingArray.each(function (curTotalPriceData) {
+					let newDisplay = Pricing.View.newPriceContainer();
+					newDisplay.append(
+						$(`<h5></h5>`).text(curTotalPriceData.label)
+					);
+					newDisplay.append(
+						$(`<p></p>`).text(curTotalPriceData.totalPriceString)
+					);
+					divJq.append(newDisplay);
+
+					//TODO:: more, detail
+				});
+			}
+		}
 	}
 };

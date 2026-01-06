@@ -176,7 +176,7 @@ class DataImportServiceTest extends RunningServerTest {
 				curCategory.setParent(itemCategoryIds.get(rand.nextInt(itemCategoryIds.size())));
 			}
 
-			itemCategoryIds.add(this.itemCategoryService.add(DEFAULT_TEST_DB_NAME, curCategory, testUser));
+			itemCategoryIds.add(this.itemCategoryService.add(DEFAULT_TEST_DB_NAME, curCategory, testUser).getId());
 		}
 		//add storage blocks
 		List<ObjectId> storageIds = new ArrayList<>();
@@ -193,7 +193,7 @@ class DataImportServiceTest extends RunningServerTest {
 
 			storageBlock.getAttributes().put("key", "val");
 			storageBlock.getKeywords().add("hello world");
-			storageIds.add(this.storageBlockService.add(DEFAULT_TEST_DB_NAME, storageBlock, testUser));
+			storageIds.add(this.storageBlockService.add(DEFAULT_TEST_DB_NAME, storageBlock, testUser).getId());
 		}
 
 		for (int i = 0; i < StorageType.values().length*2; i++) {
@@ -216,7 +216,7 @@ class DataImportServiceTest extends RunningServerTest {
 
 			item.getAttributes().put("key", "val");
 			item.getKeywords().add("hello world");
-			ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, testUser);
+			ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, testUser).getId();
 			itemIds.add(newId);
 			items.add(item);
 		}

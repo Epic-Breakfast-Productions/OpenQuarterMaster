@@ -39,10 +39,10 @@ const StoredFormInput = {
 	<div class="mb-3">
 		<label class="form-label">
 			` + Icons.pricing + `
-			Default Pricing:
+			Pricing (adds to and overrides prices set on the item):
 		</label>
 		` + PageComponents.Inputs.Pricing.priceInput + `
-		</div>
+	</div>
 	
 	` + PageComponents.Inputs.image + `
 	` + PageComponents.Inputs.file + `

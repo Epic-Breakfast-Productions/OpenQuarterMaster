@@ -110,7 +110,6 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		try (
 			InputStream is = new FileInputStream(file)
 		) {
-			ObjectId newId = null;
 			GridFSBucket bucket = this.getGridFSBucket(dbIdOrName);
 			
 			boolean sessionGiven = clientSession != null;
@@ -121,7 +120,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 					clientSession = session;
 				}
 				
-				newId = this.getFileObjectService().add(dbIdOrName, clientSession, fileObject, interactingEntity);
+				this.getFileObjectService().add(dbIdOrName, clientSession, fileObject, interactingEntity);
 				
 				GridFSUploadOptions ops = this.getUploadOps(fileMetadata);
 				

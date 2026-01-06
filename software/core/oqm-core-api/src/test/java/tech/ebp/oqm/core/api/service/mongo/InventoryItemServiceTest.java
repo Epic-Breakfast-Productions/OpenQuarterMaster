@@ -86,7 +86,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	public void updatePassTest() {
 		User user = this.getTestUserService().getTestUser();
 		InventoryItem item = this.getTestObject();
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		InventoryItem newItem = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updates.put("name", FAKER.name().name());
@@ -94,8 +94,8 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		updates.put("storageType", item.getStorageType().name());
 		//TODO:: finish; storage blocks, files?, images?
 
-		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, null, newId, updates, user);
-		item = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newId);
+		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, null, newItem.getId(), updates, user);
+		item = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newItem.getId());
 
 		assertEquals(updates.get("name").asText(), item.getName());
 		assertEquals(updates.get("description").asText(), item.getDescription());
@@ -106,7 +106,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	public void testInvalidNameUpdateNull() {
 		User user = this.getTestUserService().getTestUser();
 		InventoryItem item = this.getTestObject();
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user).getId();
 
 		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updates.put("name", (String) null);
@@ -129,8 +129,8 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		User user = this.getTestUserService().getTestUser();
 		InventoryItem item = this.getTestObject();
 		InventoryItem other = this.getTestObject();
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
-		ObjectId otherId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, other, user);
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user).getId();
+		ObjectId otherId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, other, user).getId();
 
 		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updates.put("name", "");
@@ -144,7 +144,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		User user = this.getTestUserService().getTestUser();
 		InventoryItem other = this.getTestObject();
 		InventoryItem item = this.getTestObject().setName(other.getName());
-		ObjectId otherId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, other, user);
+		ObjectId otherId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, other, user).getId();
 
 		Exception exception = assertThrows(ValidationException.class, () -> this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user));
 		log.info("Exception: {}", exception.getMessage());
@@ -155,8 +155,8 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		User user = this.getTestUserService().getTestUser();
 		InventoryItem item = this.getTestObject();
 		InventoryItem other = this.getTestObject();
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
-		ObjectId otherId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, other, user);
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user).getId();
+		this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, other, user);
 
 		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updates.put("name", other.getName());
@@ -169,7 +169,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	public void testInvalidUpdateStorageType() {
 		User user = this.getTestUserService().getTestUser();
 		InventoryItem item = this.getTestObject();
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user).getId();
 
 		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updates.put("storageType", StorageType.AMOUNT_LIST.name());
@@ -182,7 +182,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	public void testUpdateUnit() throws JsonProcessingException {
 		User user = this.getTestUserService().getTestUser();
 		InventoryItem item = this.getTestObject();
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user).getId();
 
 		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updates.put(
@@ -199,7 +199,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 	public void testInvalidUpdateUnit() throws JsonProcessingException {
 		User user = this.getTestUserService().getTestUser();
 		InventoryItem item = this.getTestObject();
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user).getId();
 
 		ObjectNode updates = ObjectUtils.OBJECT_MAPPER.createObjectNode();
 		updates.put(
@@ -216,14 +216,14 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		User user = this.getTestUserService().getTestUser();
 		InventoryItem item = this.getTestObject();
 		
-		ObjectId uig = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
+		ObjectId uig = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), user).getId();
 		
 		item.getUniqueIds().add(
 			ToGenerateUniqueId.builder().generateFrom(uig)
 				.label("SKU").build()
 		);
 		
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user).getId();
 		
 		item = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newId);
 		
@@ -240,20 +240,20 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		InventoryItem item1 = this.getTestObject();
 		InventoryItem item2 = this.getTestObject();
 		
-		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
-		ObjectId uig2 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test2").generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
+		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), user).getId();
+		ObjectId uig2 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test2").generates(Generates.UNIQUE).idFormat("{inc}").build(), user).getId();
 		
 		item1.getUniqueIds().add(
 			ToGenerateUniqueId.builder().generateFrom(uig1)
 				.label("SKU").build()
 		);
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item1, user);
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item1, user).getId();
 		
 		item2.getUniqueIds().add(
 			ToGenerateUniqueId.builder().generateFrom(uig2)
 				.label("SKU").build()
 		);
-		newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item2, user);
+		newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item2, user).getId();
 		
 		//		item1 = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newId);
 		//
@@ -270,13 +270,13 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		InventoryItem item1 = this.getTestObject();
 		InventoryItem item2 = this.getTestObject();
 		
-		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), user);
+		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), user).getId();
 		
 		item1.getUniqueIds().add(
 			ToGenerateUniqueId.builder().generateFrom(uig1)
 				.label("SKU").build()
 		);
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item1, user);
+		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item1, user).getId();
 		item1 = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newId);
 		
 		item2.getUniqueIds().add(
