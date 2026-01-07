@@ -53,6 +53,7 @@ public class CalculatedPricing extends Pricing {
 		return format(this.getPerUnitPrice());
 	}
 	
+	@lombok.Builder.Default
 	private MonetaryAmount totalPrice = null;
 	
 	public MonetaryAmount getTotalPrice(){

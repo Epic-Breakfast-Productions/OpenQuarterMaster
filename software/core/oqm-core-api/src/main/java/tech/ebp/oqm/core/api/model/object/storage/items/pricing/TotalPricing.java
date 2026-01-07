@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,7 +19,6 @@ import javax.money.MonetaryAmount;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
-@Setter(AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 /**
@@ -31,7 +31,8 @@ public class TotalPricing extends Pricing {
 	
 	@NonNull
 	@NotNull
-	private MonetaryAmount totalPrice;
+	@lombok.Builder.Default
+	private MonetaryAmount totalPrice = null;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public String getTotalPriceString() {

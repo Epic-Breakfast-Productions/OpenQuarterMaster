@@ -150,7 +150,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	public InventoryItem get(
 		@PathParam("itemId") String id
 	) {
-		return super.get(id);
+		InventoryItem item = super.get(id);
+		return item;
 	}
 	
 	@PUT

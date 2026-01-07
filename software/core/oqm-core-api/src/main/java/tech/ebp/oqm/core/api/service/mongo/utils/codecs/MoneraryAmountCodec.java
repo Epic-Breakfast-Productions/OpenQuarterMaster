@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.service.mongo.utils.codecs;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.inject.Singleton;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonReader;
 import org.bson.BsonType;
 import org.bson.BsonWriter;
@@ -18,7 +19,7 @@ import javax.money.NumberValue;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
-
+@Slf4j
 @Singleton
 public class MoneraryAmountCodec implements Codec<MonetaryAmount> {
 	private static NumberFormat NUMBER_FORMATTER = NumberFormat.getInstance();
@@ -45,7 +46,9 @@ public class MoneraryAmountCodec implements Codec<MonetaryAmount> {
 		}
 		bsonReader.readEndDocument();
 		
-		return amountFactory.create();
+		MonetaryAmount amount = amountFactory.create();
+		
+		return amount;
 	}
 	
 	@Override

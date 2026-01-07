@@ -99,7 +99,7 @@ public class ItemStatsService {
 		for(StoredPricing itemPrice : item.getDefaultPrices()){
 			if(
 				storedPrices.stream()
-					.anyMatch((price)->{
+					.noneMatch((price)->{
 						return price.getLabel().equals(itemPrice.getLabel());
 					})
 			){

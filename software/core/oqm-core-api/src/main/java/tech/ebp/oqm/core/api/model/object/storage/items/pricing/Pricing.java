@@ -39,6 +39,7 @@ import javax.money.format.AmountFormatQuery;
 import javax.money.format.AmountFormatQueryBuilder;
 import javax.money.format.MonetaryAmountFormat;
 import javax.money.format.MonetaryFormats;
+import java.time.ZonedDateTime;
 import java.util.Locale;
 
 @Data
@@ -52,7 +53,6 @@ import java.util.Locale;
  *  - perUnit both null or not null
  */
 public class Pricing implements Labeled {
-	
 	public static final MonetaryAmountFormat FORMATTER;
 	
 	static {
@@ -80,4 +80,9 @@ public class Pricing implements Labeled {
 	@NotNull
 	@NotBlank
 	private String label;
+	
+	/**
+	 * When this pricing is valid as of
+	 */
+	private ZonedDateTime asOfDate;
 }
