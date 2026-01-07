@@ -52,8 +52,9 @@ const ItemView = {
 	assocIdGensNumIds: $("#itemViewIdGeneratorsNumIdsLabel"),
 	assocIdGensContent: $("#itemViewIdGeneratorsAccordContent"),
 
-	pricesContainer: $("#itemViewPricesContainer"),
-	pricesTotalsContainer: $("#itemViewPricesTotalsContainer"),
+	priceTotalsContainer: $("#itemViewPriceTotalsContainer"),
+	priceTotalsNumLabel: $("#itemViewPriceTotalsNumLabel"),
+	priceTotalsContent: $("#itemViewPriceTotalsContent"),
 
 	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
 	itemViewTotalLowStockThreshold: $("#itemViewTotalLowStockThreshold"),
@@ -128,9 +129,9 @@ const ItemView = {
 		ItemView.itemViewExpiryWarnThreshold.text("");
 		ItemView.itemViewExpiryWarnThresholdContainer.hide();
 
-		ItemView.pricesContainer.hide();
-		ItemView.pricesTotalsContainer.hide();
-		ItemView.pricesTotalsContainer.text("");
+		ItemView.priceTotalsContainer.hide();
+		ItemView.priceTotalsNumLabel.text("");
+		ItemView.priceTotalsContent.text("");
 
 		ItemView.itemViewCheckedOutResultsContainer.html("");
 
@@ -430,10 +431,14 @@ const ItemView = {
 				}
 
 				if(itemData.stats.prices.length){
-					Pricing.View.TotalPricing.showInDiv(ItemView.pricesTotalsContainer);
 
-					ItemView.pricesContainer.show();
-					ItemView.pricesTotalsContainer.show();
+					ItemView.priceTotalsNumLabel.text(itemData.stats.prices.length);
+					Pricing.View.TotalPricing.showInDiv(
+						ItemView.priceTotalsContent,
+						itemData.stats.prices
+					);
+
+					ItemView.priceTotalsContainer.show();
 				}
 
 				if (itemData.categories.length) {

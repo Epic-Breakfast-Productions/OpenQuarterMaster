@@ -213,12 +213,28 @@ Pricing = {
 		await Promise.all(tasks);
 	},
 	View: {
-		newPriceContainer: function () {
-			return $(`
-			<div class="prceDisplay card">
-				
+		newPriceContainer: function (priceData, extraClasses="") {
+			let output = $(`
+			<div class="priceDisplay card `+extraClasses+`">
+				<div class="card-header">
+					<span class="priceLabel h4"></span> -
+					<span class="pricePrice h4"></span>
+					<span class="priceAsOfDateContainer"></span>
+				</div>
+				<div class="card-body priceBreakdownContainer d-none">
+				</div>
 			</div>
 			`);
+
+			output.find(".priceLabel").text(priceData.label);
+
+			if(priceData.asOfDate){
+				let dateDisplay = output.find(".priceAsOfDateContainer");
+				dateDisplay.text(priceData.asOfDate);
+				dateDisplay.show();
+			}
+
+			return output;
 		},
 
 		StoredPricing: {
@@ -229,32 +245,22 @@ Pricing = {
 		CalculatedPricing: {
 			showInDiv(divJq, storedData) {
 				storedData.calculatedPrices.forEach(function (curPriceData) {
-					let newDisplay = Pricing.View.newPriceContainer();
-					newDisplay.append(
-						$(`<h5></h5>`).text(curPriceData.label)
-					);
-					newDisplay.append(
-						$(`<p></p>`).text(curPriceData.totalPriceString)
-					);
+					let newDisplay = Pricing.View.newPriceContainer(curPriceData);
+					newDisplay.find(".pricePrice").text(curPriceData.totalPriceString);
 					divJq.append(newDisplay);
 
-					//TODO:: more, detail
+					//TODO:: more, detail?
 				});
 			}
 		},
 		TotalPricing: {
 			showInDiv(divJq, pricingArray) {
-				pricingArray.each(function (curTotalPriceData) {
-					let newDisplay = Pricing.View.newPriceContainer();
-					newDisplay.append(
-						$(`<h5></h5>`).text(curTotalPriceData.label)
-					);
-					newDisplay.append(
-						$(`<p></p>`).text(curTotalPriceData.totalPriceString)
-					);
-					divJq.append(newDisplay);
+				pricingArray.forEach(function (curTotalPriceData) {
+					let newDisplay = Pricing.View.newPriceContainer(curTotalPriceData);
 
-					//TODO:: more, detail
+					newDisplay.find(".pricePrice").text(curTotalPriceData.totalPriceString);
+
+					divJq.append(newDisplay);
 				});
 			}
 		}

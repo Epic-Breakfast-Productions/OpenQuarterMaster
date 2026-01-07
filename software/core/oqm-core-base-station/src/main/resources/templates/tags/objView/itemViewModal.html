@@ -64,22 +64,6 @@
                     </p>
                 </div>
             </div>
-            <div class="card col-sm-12 col-md-6 col-lg-4">
-                <div class="card-body">
-                    <h5 class="card-title d-inline">Value per Unit <span id="itemViewValPerUnitDefault">(default)</span>:</h5>
-                    <p class="d-inline">
-                        {cdi:OqmInfoService.getCurrency().getSymbol()}<span id="itemViewValPerUnit"></span>
-                    </p>
-                </div>
-            </div>
-            <div class="card col-sm-12 col-md-6 col-lg-4">
-                <div class="card-body">
-                    <h5 class="card-title d-inline">Total Value:</h5>
-                    <p class="d-inline">
-                        {cdi:OqmInfoService.getCurrency().getSymbol()}<span id="itemViewTotalVal"></span>
-                    </p>
-                </div>
-            </div>
             <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewIdentifyingAttContainer">{!TODO:: remove? !}
                 <div class="card-body">
                     <h5 class="card-title d-inline">Identifying Attribute:</h5>
@@ -137,9 +121,24 @@
 					</div>
                 </div>
             </div>
-            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewPricesContainer">
-                <div class="card-body" id="itemViewPricesTotalsContainer">
-                
+            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewPriceTotalsContainer">
+                <div class="card-body" id="">
+					<div class="accordion" id="itemViewPriceTotalsAccord">
+						<div class="accordion-item" id="itemViewPriceTotalsAccordItem">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewPriceTotalsAccordCollapse" aria-expanded="false" aria-controls="itemViewPriceTotalsAccordCollapse">
+									{#icons/pricing /}
+									Price Totals (<span id="itemViewPriceTotalsNumLabel"></span>)
+								</button>
+							</h2>
+							<div id="itemViewPriceTotalsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewPriceTotalsAccord">
+								<div class="accordion-body">
+									<div class="row" id="itemViewPriceTotalsContent">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
                 </div>
             </div>
 			<div class="card col-sm-12 col-md-6" id="itemViewFilesContainer">
