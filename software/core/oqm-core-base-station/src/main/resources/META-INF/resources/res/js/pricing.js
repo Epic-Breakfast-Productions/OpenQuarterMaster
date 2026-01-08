@@ -243,9 +243,9 @@ Pricing = {
 			}
 		},
 		CalculatedPricing: {
-			showInDiv(divJq, storedData) {
+			showInDiv(divJq, storedData, extraClasses="") {
 				storedData.calculatedPrices.forEach(function (curPriceData) {
-					let newDisplay = Pricing.View.newPriceContainer(curPriceData);
+					let newDisplay = Pricing.View.newPriceContainer(curPriceData, extraClasses);
 					newDisplay.find(".pricePrice").text(curPriceData.totalPriceString);
 					divJq.append(newDisplay);
 
@@ -254,9 +254,9 @@ Pricing = {
 			}
 		},
 		TotalPricing: {
-			showInDiv(divJq, pricingArray) {
+			showInDiv(divJq, pricingArray, extraClasses="") {
 				pricingArray.forEach(function (curTotalPriceData) {
-					let newDisplay = Pricing.View.newPriceContainer(curTotalPriceData);
+					let newDisplay = Pricing.View.newPriceContainer(curTotalPriceData, extraClasses);
 
 					newDisplay.find(".pricePrice").text(curTotalPriceData.totalPriceString);
 
