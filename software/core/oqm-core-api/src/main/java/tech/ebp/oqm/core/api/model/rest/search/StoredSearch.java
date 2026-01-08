@@ -34,6 +34,7 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 	@QueryParam("hasLowStockThreshold") Boolean hasLowStockThreshold;
 	
 	@QueryParam("generalId") String generalId;
+	@QueryParam("uniqueId") String uniqueId;
 
 	//TODO:: are these outdated?
 	@QueryParam("expired") Boolean hasExpired;
@@ -117,6 +118,11 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 		if(this.hasValue(this.getGeneralId())){
 			filters.add(
 				eq("generalIds.value", this.getGeneralId())
+			);
+		}
+		if(this.hasValue(this.getUniqueId())){
+			filters.add(
+				eq("uniqueIds.value", this.getUniqueId())
 			);
 		}
 		
