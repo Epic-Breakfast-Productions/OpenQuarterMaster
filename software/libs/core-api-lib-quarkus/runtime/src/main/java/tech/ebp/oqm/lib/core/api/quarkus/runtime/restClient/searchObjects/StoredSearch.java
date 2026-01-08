@@ -30,4 +30,5 @@ public class StoredSearch extends SearchKeyAttObject {
 	@QueryParam("expiryWarn") Boolean hasExpiryWarn;
 	@QueryParam("lowStock") Boolean hasLowStock;
 	@QueryParam("generalId") String generalId;
+	@QueryParam("uniqueId") String uniqueId;
 }
