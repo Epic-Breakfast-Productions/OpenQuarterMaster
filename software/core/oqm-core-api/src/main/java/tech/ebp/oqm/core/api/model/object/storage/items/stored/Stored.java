@@ -7,11 +7,14 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
@@ -25,6 +28,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.notification.StoredNotif
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.TotalPricing;
 import tech.ebp.oqm.core.api.model.validation.annotations.UniqueLabeledCollection;
 
 import java.time.LocalDateTime;
@@ -35,6 +39,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -109,9 +114,30 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull StoredPricing> prices = new LinkedHashSet<>();
 	
-	public LinkedHashSet<@NotNull CalculatedPricing> getCalculatedPrices(){
-		return this.getPrices().stream()
-				   .map((p)->p.calculatePrice(this)).collect(Collectors.toCollection(LinkedHashSet::new));
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	@Setter(AccessLevel.PRIVATE)
+	@lombok.Builder.Default
+	private LinkedHashSet<@NotNull CalculatedPricing> calculatedPrices = null;
+	
+	protected boolean calculatePrices(InventoryItem item){
+		LinkedHashSet<CalculatedPricing> storedPrices = this.getPrices().stream()
+														.map((p)->p.calculatePrice(this)).collect(Collectors.toCollection(LinkedHashSet::new));
+		//add prices not in stored's from item
+		for(StoredPricing itemPrice : item.getDefaultPrices()){
+			if(
+				storedPrices.stream()
+					.noneMatch((price)->{
+						return price.getLabel().equals(itemPrice.getLabel());
+					})
+			){
+				storedPrices.add(itemPrice.calculatePrice(this).setFromDefault(true));
+			}
+		}
+		
+		boolean output = !this.getCalculatedPrices().equals(storedPrices);
+		this.setCalculatedPrices(storedPrices);
+		
+		return output;
 	}
 	
 	/**
@@ -151,6 +177,13 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public abstract String getLabelText();
+	
+	public void applyDefaultsFromItem(InventoryItem item){
+		if(!this.getItem().equals(item.getId())){
+			throw new IllegalArgumentException("Item ID's do not match");
+		}
+		this.calculatePrices(item);
+	}
 	
 	@Override
 	public int getSchemaVersion() {

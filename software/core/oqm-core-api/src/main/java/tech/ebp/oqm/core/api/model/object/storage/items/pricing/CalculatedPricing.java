@@ -19,7 +19,6 @@ import javax.money.MonetaryAmount;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
-@Setter(AccessLevel.PROTECTED)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 /**
@@ -29,6 +28,12 @@ import javax.money.MonetaryAmount;
  *  - perUnit both null or not null
  */
 public class CalculatedPricing extends Pricing {
+	
+	/**
+	 * If this pricing was calculated from default values from a stored's item
+	 */
+	private boolean fromDefault = false;
+	
 	
 	/**
 	 * The actual price described.
