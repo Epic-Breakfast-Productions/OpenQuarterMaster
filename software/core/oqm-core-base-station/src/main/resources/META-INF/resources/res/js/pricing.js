@@ -217,6 +217,7 @@ Pricing = {
 			let output = $(`
 			<div class="priceDisplay card `+extraClasses+`">
 				<div class="card-header">
+					<span class="card-body priceFromDefaultInd px-0 d-none" title="Default from item">*</span>
 					<span class="priceLabel h4"></span> -
 					<span class="pricePrice h4"></span>
 					<span class="priceAsOfDateContainer"></span>
@@ -243,11 +244,15 @@ Pricing = {
 			}
 		},
 		CalculatedPricing: {
-			showInDiv(divJq, storedData, extraClasses="") {
-				storedData.calculatedPrices.forEach(function (curPriceData) {
+			showInDiv(divJq, pricingArray, extraClasses="") {
+				pricingArray.forEach(function (curPriceData) {
 					let newDisplay = Pricing.View.newPriceContainer(curPriceData, extraClasses);
 					newDisplay.find(".pricePrice").text(curPriceData.totalPriceString);
 					divJq.append(newDisplay);
+
+					if(curPriceData.fromDefault){
+						newDisplay.find(".priceFromDefaultInd").removeClass("d-none");
+					}
 
 					//TODO:: more, detail?
 				});
