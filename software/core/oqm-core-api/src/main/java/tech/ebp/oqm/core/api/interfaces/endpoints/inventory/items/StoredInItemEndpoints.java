@@ -59,7 +59,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 
 	public InventoryItem getInventoryItem() {
 		if(inventoryItem == null) {
-			this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
+			this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
 		}
 		return inventoryItem;
 	}

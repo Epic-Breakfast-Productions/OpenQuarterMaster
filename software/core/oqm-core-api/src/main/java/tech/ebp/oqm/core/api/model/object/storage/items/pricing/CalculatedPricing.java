@@ -32,6 +32,7 @@ public class CalculatedPricing extends Pricing {
 	/**
 	 * If this pricing was calculated from default values from a stored's item
 	 */
+	@lombok.Builder.Default
 	private boolean fromDefault = false;
 	
 	
