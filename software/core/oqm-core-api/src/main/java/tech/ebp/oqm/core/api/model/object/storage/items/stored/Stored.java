@@ -134,7 +134,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 			}
 		}
 		
-		boolean output = !this.getCalculatedPrices().equals(storedPrices);
+		boolean output = this.getCalculatedPrices() == null || !this.getCalculatedPrices().equals(storedPrices);
 		this.setCalculatedPrices(storedPrices);
 		
 		return output;

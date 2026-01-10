@@ -94,32 +94,19 @@ public class ItemStatsService {
 		/*
 		 * Prices
 		 */
-		LinkedHashSet<StoredPricing> storedPrices = new LinkedHashSet<>(stored.getPrices());
-		//add prices not in stored's from item
-		for(StoredPricing itemPrice : item.getDefaultPrices()){
-			if(
-				storedPrices.stream()
-					.noneMatch((price)->{
-						return price.getLabel().equals(itemPrice.getLabel());
-					})
-			){
-				storedPrices.add(itemPrice);
-			}
-		}
+		stored.applyDefaultsFromItem(item);//TODO:: this might want to happen earlier
 		//add each to stats
-		for(StoredPricing curPrice : storedPrices){
-			CalculatedPricing calcedPricing = curPrice.calculatePrice(stored);
-			
+		for(CalculatedPricing calcedPricing : stored.getCalculatedPrices()){
 			Optional<TotalPricing> existingPricing = statsToAddTo.getPrices().stream()
 				.filter((price)->{
-					return price.getLabel().equals(curPrice.getLabel());
+					return price.getLabel().equals(calcedPricing.getLabel());
 				})
 				.findFirst();
 			
 			if(existingPricing.isEmpty()){
 				statsToAddTo.getPrices().add(
 					TotalPricing.builder()
-						.label(curPrice.getLabel())
+						.label(calcedPricing.getLabel())
 						.totalPrice(calcedPricing.getTotalPrice())
 						.build()
 				);
