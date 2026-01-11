@@ -3,6 +3,7 @@ const Icons = {
 	add: '{#icons/add /}',
 	copy: '{#icons/copy /}',
 	copyChecked: '{#icons/copyChecked /}',
+	dropdown: '{#icons/dropdown /}',
 	itemCheckin: '',
 	itemCheckout: '',
 	itemCheckinout: '{#icons/checkinout /}',
