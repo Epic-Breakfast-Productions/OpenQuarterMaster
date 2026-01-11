@@ -7,20 +7,29 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
+import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
+import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.StoredNotificationStatus;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricing;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.TotalPricing;
+import tech.ebp.oqm.core.api.model.validation.annotations.UniqueLabeledCollection;
 
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -30,7 +39,9 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Describes an item stored in the system.
@@ -52,17 +63,18 @@ import java.util.Set;
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @BsonDiscriminator
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
+	
 	public static final int CUR_SCHEMA_VERSION = 3;
-
+	
 	public abstract StoredType getType();
-
+	
 	/**
 	 * The {@link tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem} this stored is associated with.
 	 */
 	@NonNull
 	@NotNull
 	private ObjectId item;
-
+	
 	/**
 	 * The {@link tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock} this stored is stored in.
 	 */
@@ -72,21 +84,62 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	/**
 	 * The general ids that apply to this stored, but not to all stored (as specified in the associated item)
 	 */
+	@NonNull
+	@NotNull
 	@lombok.Builder.Default
+	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull GeneralId> generalIds = new LinkedHashSet<>();
 	
 	/**
 	 * Unique ID's for this particular item.
 	 */
+	@NonNull
+	@NotNull
 	@lombok.Builder.Default
+	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull UniqueId> uniqueIds = new LinkedHashSet<>();
-
+	
 	/**
 	 * When the item(s) held expire. Null if it does not expire.
 	 */
 	@lombok.Builder.Default
 	private ZonedDateTime expires = null;
-
+	
+	/**
+	 * Prices for this stored item.
+	 */
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	@UniqueLabeledCollection
+	private LinkedHashSet<@NotNull StoredPricing> prices = new LinkedHashSet<>();
+	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	@Setter(AccessLevel.PRIVATE)
+	@lombok.Builder.Default
+	private LinkedHashSet<@NotNull CalculatedPricing> calculatedPrices = null;
+	
+	protected boolean calculatePrices(InventoryItem item){
+		LinkedHashSet<CalculatedPricing> storedPrices = this.getPrices().stream()
+														.map((p)->p.calculatePrice(this)).collect(Collectors.toCollection(LinkedHashSet::new));
+		//add prices not in stored's from item
+		for(StoredPricing itemPrice : item.getDefaultPrices()){
+			if(
+				storedPrices.stream()
+					.noneMatch((price)->{
+						return price.getLabel().equals(itemPrice.getLabel());
+					})
+			){
+				storedPrices.add(itemPrice.calculatePrice(this).setFromDefault(true));
+			}
+		}
+		
+		boolean output = this.getCalculatedPrices() == null || !this.getCalculatedPrices().equals(storedPrices);
+		this.setCalculatedPrices(storedPrices);
+		
+		return output;
+	}
+	
 	/**
 	 * Statuses about this stored object.
 	 */
@@ -94,7 +147,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	private StoredNotificationStatus notificationStatus = new StoredNotificationStatus();
-
+	
 	/**
 	 * The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.
 	 */
@@ -102,7 +155,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@Min(0)
 	@lombok.Builder.Default
 	private Integer condition = null;
-
+	
 	/**
 	 * Notes on the condition on the thing(s) stored.
 	 */
@@ -110,7 +163,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	private String conditionNotes = "";
-
+	
 	/**
 	 * List of images related to the object.
 	 */
@@ -118,12 +171,19 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	List<@NotNull ObjectId> imageIds = new ArrayList<>();
-
+	
 	@lombok.Builder.Default
 	private Set<@NotNull ObjectId> attachedFiles = new HashSet<>();
-
+	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public abstract String getLabelText();
+	
+	public void applyDefaultsFromItem(InventoryItem item){
+		if(!this.getItem().equals(item.getId())){
+			throw new IllegalArgumentException("Item ID's do not match");
+		}
+		this.calculatePrices(item);
+	}
 	
 	@Override
 	public int getSchemaVersion() {

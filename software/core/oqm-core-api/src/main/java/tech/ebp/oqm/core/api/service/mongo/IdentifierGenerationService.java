@@ -50,8 +50,8 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 	private static final String PLACEHOLDER_PART_DELIM = ";";
 	private static final String PLACEHOLDER_ARG_DELIM = PLACEHOLDER_PART_DELIM;
 	private static final DateTimeFormatter DT_DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy-HH:mm:ss");
-	private static final int RAND_DEFAULT_LENGTH = 5;
-	private static final int INC_DEFAULT_PADDING = 5;
+	private static final int RAND_DEFAULT_LENGTH = 6;
+	private static final int INC_DEFAULT_PADDING = 6;
 	private static final int INC_DEFAULT_BASE = 10;
 	
 	/**
@@ -66,13 +66,13 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 	 *         Uuid: {@code {uuid}}- a standard java-generated uuid
 	 *     </li>
 	 *     <li>
-	 *         Random: {@code {rand;length}}- a random series of digits and letters. Min length is 1, max length is 50. Length defaults to {@code 5}.
+	 *         Random: {@code {rand;length}}- a random series of digits and letters. Min length is 1, max length is 50. Length defaults to {@code 6}.
 	 *     </li>
 	 *     <li>
 	 *         Increment: {@code {inc;padding;base}}- an auto-incrementing number. Options:
 	 *         <ol>
 	 *             <li>
-	 *                 Padding: How many digits to pad out to. For example, a value of {@code 5} produces {@code 00001}. Defaults to {@code 5}
+	 *                 Padding: How many digits to pad out to. For example, a value of {@code 6} produces {@code 000001}. Defaults to {@code 6}
 	 *             </li>
 	 *             <li>
 	 *                 Base: what base of number to use to increment; {@code 10} for standard digits, {@code 16} for base 16, etc. Defaults to {@code 10}

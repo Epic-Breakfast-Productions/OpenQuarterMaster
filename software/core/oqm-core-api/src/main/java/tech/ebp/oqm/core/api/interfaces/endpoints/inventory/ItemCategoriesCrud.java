@@ -81,7 +81,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 			mediaType = "application/json",
 			schema = @Schema(
 				type = SchemaType.ARRAY,
-				implementation = ObjectId.class
+				implementation = ItemCategory.class
 			)
 		)
 	)
@@ -94,7 +94,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public List<ObjectId> createBulk(
+	public List<ItemCategory> createBulk(
 		@Valid List<ItemCategory> itemCategories
 	) {
 		return super.createBulk(itemCategories);

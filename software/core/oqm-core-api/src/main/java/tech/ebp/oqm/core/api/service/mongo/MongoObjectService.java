@@ -453,7 +453,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 *
 	 * @return The id of the newly added object.
 	 */
-	public ObjectId add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid T object) {
+	public T add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid T object) {
 		log.info("Adding new {}", this.getCollectionName());
 		log.debug("New object: {}", object);
 		
@@ -471,15 +471,15 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		object.setId(result.getInsertedId().asObjectId().getValue());
 		
 		log.info("Added. Id: {}", object.getId());
-		return object.getId();
+		return object;
 	}
 	
-	public ObjectId add(String oqmDbIdOrName, @NonNull @Valid T object) {
+	public T add(String oqmDbIdOrName, @NonNull @Valid T object) {
 		return this.add(oqmDbIdOrName, null, object);
 	}
 	
-	public List<ObjectId> addBulk(String oqmDbIdOrName, ClientSession clientSession, @NonNull List<@Valid @NonNull T> objects) {
-		List<ObjectId> output = new ArrayList<>(objects.size());
+	public List<T> addBulk(String oqmDbIdOrName, ClientSession clientSession, @NonNull List<@Valid @NonNull T> objects) {
+		List<T> output = new ArrayList<>(objects.size());
 		try (
 			MongoSessionWrapper w = new MongoSessionWrapper(clientSession, this);
 		) {
@@ -505,7 +505,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		return output;
 	}
 	
-	public List<ObjectId> addBulk(String oqmDbIdOrName, @NonNull List<@Valid @NonNull T> objects) {
+	public List<T> addBulk(String oqmDbIdOrName, @NonNull List<@Valid @NonNull T> objects) {
 		return this.addBulk(oqmDbIdOrName, null, objects);
 	}
 	

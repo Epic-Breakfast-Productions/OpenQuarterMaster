@@ -1,5 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo.search;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -58,10 +60,12 @@ public class PagingCalculations {
 		return this.onPage((long) curPage);
 	}
 	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isHasPages() {
 		return getNumPages() > 1;
 	}
 	
+	@JsonIgnore
 	public Iterator<Long> getPageIterator() {
 		return new Iterator<>() {
 			private final long end = getNumPages();
@@ -78,5 +82,4 @@ public class PagingCalculations {
 			}
 		};
 	}
-	
 }

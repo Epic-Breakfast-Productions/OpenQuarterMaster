@@ -189,12 +189,12 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	public void testAdd() {
 		TestMainObject original = new TestMainObject("Hello world");
 		
-		ObjectId returned = this.testMongoService.add(DEFAULT_TEST_DB_NAME, original);
+		TestMainObject returned = this.testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		assertEquals(1, this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 		
 		assertNotNull(original.getId());
-		assertEquals(returned, original.getId());
+		assertEquals(returned, original);
 		
 		TestMainObject gotten = this.testMongoService.get(DEFAULT_TEST_DB_NAME, original.getId());
 		
@@ -209,14 +209,14 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 			originals.add(new TestMainObject("Hello world " + i));
 		}
 		
-		List<ObjectId> returned = this.testMongoService.addBulk(DEFAULT_TEST_DB_NAME, originals);
+		List<TestMainObject> returned = this.testMongoService.addBulk(DEFAULT_TEST_DB_NAME, originals);
 		
 		assertEquals(originals.size(), this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 		
 		for (TestMainObject original : originals) {
 			assertNotNull(original.getId());
 			
-			assertTrue(returned.contains(original.getId()));
+			assertTrue(returned.contains(original));
 			
 			TestMainObject gotten = this.testMongoService.get(DEFAULT_TEST_DB_NAME, original.getId());
 			

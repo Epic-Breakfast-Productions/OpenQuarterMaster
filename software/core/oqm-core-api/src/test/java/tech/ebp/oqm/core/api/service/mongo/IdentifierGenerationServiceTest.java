@@ -64,17 +64,17 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 				"^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
 			),
 			//random
-			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{rand}").build(), "^[0-9a-zA-Z]{5}$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{rand}").build(), "^[0-9a-zA-Z]{6}$"),
 			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{rand;1}").build(), "^[0-9a-zA-Z]{1}$"),
 			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{rand;5}").build(), "^[0-9a-zA-Z]{5}$"),
 			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{rand;50}").build(), "^[0-9a-zA-Z]{50}$"),
 			//increment
-			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), "^00001$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), "^000001$"),
 			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;1}").build(), "^1$"),
 			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;50}").build(), "^0{49}1$"),
 			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;3;2}").build(), "^001$"),
 			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;3;36}").build(), "^001$"),
-			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").lastIncremented(BigInteger.TWO).build(), "^00003$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").lastIncremented(BigInteger.TWO).build(), "^000003$"),
 			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;2}").lastIncremented(new BigInteger("100", 10)).build(), "^101$"),
 			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;2;36}").lastIncremented(new BigInteger("34", 10)).build(), "^0Z$"),
 			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc;2;36}").lastIncremented(new BigInteger("35", 10)).build(), "^10$"),
@@ -82,19 +82,19 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 			 * Combined
 			 */
 			//prefix/suffix
-			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}").build(), "^foo-00001$"),
-			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}-foo").build(), "^00001-foo$"),
-			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("bar-{inc}-foo").build(), "^bar-00001-foo$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}").build(), "^foo-000001$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}-foo").build(), "^000001-foo$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("bar-{inc}-foo").build(), "^bar-000001-foo$"),
 			//multiple
-			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}{rand}").build(), "^00001[0-9a-zA-Z]{5}$"),
-			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}{rand}-bar").build(), "^foo-00001[0-9a-zA-Z]{5}-bar$"),
-			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}-{rand}-bar").build(), "^foo-00001-[0-9a-zA-Z]{5}-bar$"),
-			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}-some-{rand}-bar").build(), "^foo-00001-some-[0-9a-zA-Z]{5}-bar$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}{rand}").build(), "^000001[0-9a-zA-Z]{6}$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}{rand}-bar").build(), "^foo-000001[0-9a-zA-Z]{6}-bar$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}-{rand}-bar").build(), "^foo-000001-[0-9a-zA-Z]{6}-bar$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}-some-{rand}-bar").build(), "^foo-000001-some-[0-9a-zA-Z]{6}-bar$"),
 			/*
 			 * Other
 			 */
 			//encoding
-			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}").encoded(true).build(), "^Zm9vLTAwMDAx$")
+			Arguments.of(IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("foo-{inc}").encoded(true).build(), "^Zm9vLTAwMDAwMQ$")
 		);
 	}
 	
@@ -242,13 +242,13 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 		
 		log.info("Generated ID: {}", output);
 		
-		assertEquals("00001", output.getGeneratedIds().getFirst().getValue());
+		assertEquals("000001", output.getGeneratedIds().getFirst().getValue());
 		
 		output = (IdGenResult<GeneratedUniqueId>) this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1, Generates.UNIQUE);
 		
 		log.info("Second Generated ID: {}", output);
 		
-		assertEquals("00002", output.getGeneratedIds().getFirst().getValue());
+		assertEquals("000002", output.getGeneratedIds().getFirst().getValue());
 	}
 	
 	
@@ -379,8 +379,8 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 					this.add(ToGenerateUniqueId.builder().generateFrom(uniqueGen.getId()).label("second").build());
 				}},
 				new LinkedHashSet<>() {{
-					this.add(GeneratedUniqueId.builder().generatedFrom(uniqueGen.getId()).value("00001").barcode(false).label(uniqueGen.getLabel()).build());
-					this.add(GeneratedUniqueId.builder().generatedFrom(uniqueGen.getId()).value("00002").barcode(false).label("second").build());
+					this.add(GeneratedUniqueId.builder().generatedFrom(uniqueGen.getId()).value("000001").barcode(false).label(uniqueGen.getLabel()).build());
+					this.add(GeneratedUniqueId.builder().generatedFrom(uniqueGen.getId()).value("000002").barcode(false).label("second").build());
 				}}
 			),
 			Arguments.of(
@@ -391,9 +391,9 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 					this.add(ToGenerateUniqueId.builder().generateFrom(uniqueGen.getId()).label("second").build());
 				}},
 				new LinkedHashSet<>() {{
-					this.add(GeneratedUniqueId.builder().generatedFrom(uniqueGen.getId()).value("00001").barcode(false).label(uniqueGen.getLabel()).build());
+					this.add(GeneratedUniqueId.builder().generatedFrom(uniqueGen.getId()).value("000001").barcode(false).label(uniqueGen.getLabel()).build());
 					this.add(ProvidedUniqueId.builder().value("foobar").label("foobar").build());
-					this.add(GeneratedUniqueId.builder().generatedFrom(uniqueGen.getId()).value("00002").barcode(false).label("second").build());
+					this.add(GeneratedUniqueId.builder().generatedFrom(uniqueGen.getId()).value("000002").barcode(false).label("second").build());
 				}}
 			)
 		);

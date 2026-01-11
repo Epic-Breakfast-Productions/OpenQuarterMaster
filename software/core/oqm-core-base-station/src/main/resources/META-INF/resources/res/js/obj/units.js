@@ -1,7 +1,12 @@
 const UnitUtils = {
+	compatibleUnitMap: null,
 	allUnitOptionsCache: null,
 	compatibleUnitOptionsCache: {},
 
+	newUnitCompatible(unitSelectJq, newUnit){
+		let found = unitSelectJq.find("option[value='"+newUnit+"']").length;
+		return !!found;
+	},
 	getAllUnitOptions: async function (selectedVal = null) {
 		if (this.allUnitOptionsCache == null) {
 			await Rest.call({
@@ -31,6 +36,10 @@ const UnitUtils = {
 		if (typeof unitStrOrAmtStored === 'object' && unitStrOrAmtStored !== null && !Array.isArray(unitStrOrAmtStored)) {
 			wasStored = true;
 			unitStr = unitStrOrAmtStored.amount.unit.string;
+		}
+		if(unitStrOrAmtStored == null){
+			console.warn("Empty unit given. Can't get compatible unit options.");
+			return null;
 		}
 		console.log("Getting compatible inputs for unit: ", unitStr, unitStrOrAmtStored);
 
