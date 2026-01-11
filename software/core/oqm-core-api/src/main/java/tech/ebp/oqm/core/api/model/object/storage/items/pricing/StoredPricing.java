@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.unit.CalculatedPricePerUnit;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.unit.PricePerUnit;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
@@ -109,7 +110,11 @@ public class StoredPricing extends Pricing {
 		
 		if(isHasPricePerUnit()){
 			output = output.perUnitPrice(
-				this.calcPriceFromUnit(stored)
+				CalculatedPricePerUnit.builder()
+					.price(this.getPricePerUnit().getPrice())
+					.unit(this.getPricePerUnit().getUnit())
+					.totalPrice(this.calcPriceFromUnit(stored))
+					.build()
 			);
 		}
 		

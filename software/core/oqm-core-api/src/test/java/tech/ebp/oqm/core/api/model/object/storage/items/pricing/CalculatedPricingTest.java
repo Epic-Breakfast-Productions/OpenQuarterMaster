@@ -2,7 +2,9 @@ package tech.ebp.oqm.core.api.model.object.storage.items.pricing;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.provider.Arguments;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.unit.CalculatedPricePerUnit;
 import tech.ebp.oqm.core.api.model.testUtils.ObjectSerializationTest;
+import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 
 import javax.money.Monetary;
 
@@ -38,6 +40,7 @@ public class CalculatedPricingTest extends ObjectSerializationTest<CalculatedPri
 				.build().getTotalPrice()
 		);
 	}
+	
 	@Test
 	public void testTotalWithUnit(){
 		assertEquals(
@@ -45,7 +48,13 @@ public class CalculatedPricingTest extends ObjectSerializationTest<CalculatedPri
 			CalculatedPricing.builder()
 				.label(FAKER.name().name())
 				.flatPrice(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create())
-				.perUnitPrice(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create())
+				.perUnitPrice(
+					CalculatedPricePerUnit.builder()
+						.unit(OqmProvidedUnits.UNIT)
+						.price(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create())
+						.totalPrice(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create())
+						.build()
+				)
 				.build().getTotalPrice()
 		);
 	}

@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.unit.CalculatedPricePerUnit;
 
 import javax.money.MonetaryAmount;
 
@@ -52,11 +53,14 @@ public class CalculatedPricing extends Pricing {
 	 * The actual price described.
 	 */
 	@lombok.Builder.Default
-	private MonetaryAmount perUnitPrice = null;
+	private CalculatedPricePerUnit perUnitPrice = null;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public String getPerUnitPriceString() {
-		return format(this.getPerUnitPrice());
+		if(this.perUnitPrice == null){
+			return null;
+		}
+		return this.getPerUnitPrice().getTotalPriceWithPerUnitString();
 	}
 	
 	@lombok.Builder.Default
@@ -73,7 +77,7 @@ public class CalculatedPricing extends Pricing {
 		MonetaryAmount sum = this.getFlatPrice();
 		
 		if(this.getPerUnitPrice() != null){
-			sum = sum.add(this.getPerUnitPrice());
+			sum = sum.add(this.getPerUnitPrice().getTotalPrice());
 		}
 		
 		return sum;
