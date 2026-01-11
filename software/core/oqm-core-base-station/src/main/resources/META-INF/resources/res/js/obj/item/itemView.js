@@ -249,6 +249,35 @@ const ItemView = {
 						)
 				)
 		);
+		if(itemData.stats.storageBlockStats[blockId].prices.length){
+			let pricesAccord = $(`
+			<div class="accordion" id="itemViewBlock-`+blockId+`-PriceTotalsAccord">
+				<div class="accordion-item" id="itemViewBlock-`+blockId+`-PriceTotalsAccordItem">
+					<h2 class="accordion-header">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewBlock-`+blockId+`-PriceTotalsAccordCollapse" aria-expanded="false" aria-controls="itemViewBlock-`+blockId+`-PriceTotalsAccordCollapse">
+							<i class="bi bi-cash-stack "></i>
+							Price Totals (<span class="priceTotalsNumLabel"></span>)
+						</button>
+					</h2>
+					<div id="itemViewBlock-`+blockId+`-PriceTotalsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewBlock-`+blockId+`-PriceTotalsAccord" style="">
+						<div class="accordion-body">
+							<div class="row priceTotalsContent">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			`);
+
+			pricesAccord.find(".priceTotalsNumLabel").text(itemData.stats.storageBlockStats[blockId].prices.length);
+
+			Pricing.View.TotalPricing.showInDiv(
+				pricesAccord.find(".priceTotalsContent"),
+				itemData.stats.storageBlockStats[blockId].prices
+			)
+
+			dataRow.append(pricesAccord);
+		}
 
 		output.append(ItemView.getStoredInBlockSearch(itemData.id, blockId));
 		return output;
