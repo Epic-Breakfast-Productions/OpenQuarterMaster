@@ -141,7 +141,7 @@
 				</button>
 			{/footerButtons}
 		{/objView/itemViewModal}
-		{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency /}
+		{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency rootPrefix=rootPrefix /}
 		{#search/storage/searchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
 		{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
 		{#search/item/itemSearchSelectModal rootPrefix=rootPrefix /}
@@ -239,7 +239,7 @@
 
 			function getInvItemSection(invItemSearchResult, parentId){
 				if(invItemSearchResult.empty){
-					return $('<p>{#icons/item}{/icons/item} No inventory items held.</p>');
+					return $('<p>{#icons/items /} No inventory items held.</p>');
 				}
 				let accordId = "invItemAccord" + parentId;
 				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
@@ -276,7 +276,7 @@
 					accordion = accordion.append(curAccord);
 				});
 
-				let output = $('<h5>{#icons/item}{/icons/item} Items held ('+invItemSearchResult.numResultsForEntireQuery+'):</h5>');
+				let output = $('<h5>{#icons/items /} Items held ('+invItemSearchResult.numResultsForEntireQuery+'):</h5>');
 				output = output.add(accordion);
 				return output;
 			}

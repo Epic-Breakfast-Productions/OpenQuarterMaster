@@ -10,7 +10,7 @@ const ItemAddEdit = {
 
 	addEditItemIdInput: $("#addEditItemIdInput"),
 	addEditItemNameInput: $('#addEditItemNameInput'),
-	addEditItemDescriptionInput: $('#addEditItemDescriptionInput'),
+	addEditItemDescriptionInput: Markdown.Editor.initInput("#addEditItemDescriptionInput")[0][0],
 	addEditItemExpiryWarningThresholdInput: $('#addEditItemExpiryWarningThresholdInput'),
 	addEditItemExpiryWarningThresholdUnitInput: $('#addEditItemExpiryWarningThresholdUnitInput'),
 	addEditItemCategoriesInput: $("#addEditItemCategoriesInput"),
@@ -75,7 +75,7 @@ const ItemAddEdit = {
 		this.addEditItemIdInput.val("");
 		this.addEditItemFormMode.val("");
 		ItemAddEdit.addEditItemNameInput.val("");
-		ItemAddEdit.addEditItemDescriptionInput.val("");
+		ItemAddEdit.addEditItemDescriptionInput.setValue("");
 		GeneralIdentifiers.reset(ItemAddEdit.generalIdInputContainer);
 		UniqueIdentifiers.reset(ItemAddEdit.uniqueIdInputContainer);
 		IdGeneratorSearchSelect.AssociatedInput.resetAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput);
@@ -143,7 +143,7 @@ const ItemAddEdit = {
 
 				ItemAddEdit.addEditItemIdInput.val(data.id);
 				ItemAddEdit.addEditItemNameInput.val(data.name);
-				ItemAddEdit.addEditItemDescriptionInput.val(data.description);
+				ItemAddEdit.addEditItemDescriptionInput.setValue(data.description);
 				ItemAddEdit.addEditItemStorageTypeInput.val(data.storageType);
 				Dselect.setValues(ItemAddEdit.addEditItemUnitInput, data.unit.string);
 				Dselect.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
@@ -311,7 +311,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 
 	let addEditData = {
 		name: ItemAddEdit.addEditItemNameInput.val(),
-		description: ItemAddEdit.addEditItemDescriptionInput.val(),
+		description: ItemAddEdit.addEditItemDescriptionInput.getValue(),
 		generalIds: GeneralIdentifiers.getGeneralIdData(ItemAddEdit.generalIdInputContainer),
 		uniqueIds: UniqueIdentifiers.getUniqueIdData(ItemAddEdit.uniqueIdInputContainer),
 		idGenerators: IdGeneratorSearchSelect.AssociatedInput.getAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput),

@@ -120,7 +120,7 @@ Ingests:
 						</a>
 						{#if userInfo.getRoles().contains('inventoryEdit')}
 						<a class="dropdown-item {#if page is 'itemCheckout'}active{/if}" href="{rootPrefix}/itemCheckout">
-							{#icons/checkinout}{/icons/checkinout} Checkouts
+							{#icons/itemCheckouts /} Checkouts
 							{#if page is 'itemCheckout'}
 							<span class="visually-hidden">(current)</span>
 							{/if}
@@ -277,8 +277,16 @@ Ingests:
 	<div class="row">
 		<div class="col-sm-4">
 			<span class="h5">Open QuarterMaster Base Station</span><br/>
-			Version <a href="{config:['service.gitLink']}" target="_blank">{config:['service.version']}</a>, &copy; 2026 <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP <img src="{rootPrefix}/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a><br/>
-			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
+			
+			
+			Version <b>{config:['service.version']}</b>,
+			<a href="{config:['service.gitLink']}" target="_blank">{#icons/github /} Github</a>
+			<br/>
+			
+			&copy; 2026 <a href="https://epic-breakfast-productions.tech/" title="Epic Breakfast Productions" target="_blank">EBP <img src="{rootPrefix}/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a>,
+			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a>
+			<br/>
+			
 			<div class="dropup color-modes" id="theme-picker">
 				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
 						id="bd-theme"
@@ -386,6 +394,7 @@ Ingests:
 <script src="{rootPrefix}/lib/dselect/1.0.4/dist/js/dselect.js"></script>
 <script src="{rootPrefix}/lib/DOMPurify/3.3.1/DOMPurify.min.js"></script>
 <script src="{rootPrefix}/lib/Marked/17.0.1/marked.min.js"></script>
+<script src="{rootPrefix}/lib/overtype/2.1.0/overtype.min.js"></script>
 <script src="{rootPrefix}/res/js/Markdown.js"></script>
 <script src="{rootPrefix}/res/js/constants.js"></script>
 <script src="{rootPrefix}/res/js/main.js"></script>

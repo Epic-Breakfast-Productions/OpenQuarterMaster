@@ -6,7 +6,7 @@ const Icons = {
 	dropdown: '{#icons/dropdown /}',
 	itemCheckin: '',
 	itemCheckout: '',
-	itemCheckinout: '{#icons/checkinout /}',
+	itemCheckouts: '{#icons/itemCheckouts /}',
 	edit: '{#icons/edit /}',
 	info: '{#icons/info /}',
 	locked: '{#icons/locked /}',
