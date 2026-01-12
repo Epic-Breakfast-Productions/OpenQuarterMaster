@@ -15,18 +15,14 @@ import lombok.experimental.SuperBuilder;
 
 import javax.money.MonetaryAmount;
 
+/**
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-/**
- * Validators TODO:
- *
- *  - MonetaryAmounts have same currency?
- *  - perUnit both null or not null
- */
 public class TotalPricing extends Pricing {
 	
 	@NonNull

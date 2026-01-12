@@ -26,7 +26,6 @@ import javax.money.MonetaryAmount;
  * Validators TODO:
  *
  *  - MonetaryAmounts have same currency?
- *  - perUnit both null or not null
  */
 public class CalculatedPricing extends Pricing {
 	

@@ -19,42 +19,14 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import javax.money.MonetaryAmount;
 
+/**
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-//@JsonTypeInfo(
-//	use = JsonTypeInfo.Id.NAME,
-//	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
-//)
-//@JsonSubTypes(value = {
-//	@JsonSubTypes.Type(value = AddAmountTransaction.class, name = "ADD_AMOUNT"),
-//	@JsonSubTypes.Type(value = AddWholeTransaction.class, name = "ADD_WHOLE"),
-//})
-//@JsonInclude(JsonInclude.Include.ALWAYS)
-//@BsonDiscriminator
-//@Schema(oneOf = {
-//	AddAmountTransaction.class,
-//	AddWholeTransaction.class,
-//	CheckinPartTransaction.class,
-//	CheckinFullTransaction.class,
-//	CheckinLossTransaction.class,
-//	CheckoutAmountTransaction.class,
-//	CheckoutWholeTransaction.class,
-//	SetAmountTransaction.class,
-//	SubAmountTransaction.class,
-//	SubWholeTransaction.class,
-//	TransferAmountTransaction.class,
-//	TransferWholeTransaction.class
-//})
-/**
- * Validators TODO:
- *
- *  - MonetaryAmounts have same currency?
- *  - perUnit both null or not null
- */
 public class StoredPricing extends Pricing {
 	
 	/**

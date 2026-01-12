@@ -53,7 +53,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 /**
- * TODO:: update to include pricing #1006
+ *
  */
 @Slf4j
 @ApplicationScoped
@@ -73,7 +73,6 @@ public class ItemStatsService {
 	
 	
 	private void addToStats(InventoryItem item, BasicStatsContaining statsToAddTo, Stored stored) {
-		
 		statsToAddTo.setNumStored(statsToAddTo.getNumStored() + 1L);
 		
 		if (stored.getType() == StoredType.AMOUNT) {

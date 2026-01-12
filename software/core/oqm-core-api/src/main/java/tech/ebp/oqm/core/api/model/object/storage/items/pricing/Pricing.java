@@ -42,16 +42,13 @@ import javax.money.format.MonetaryFormats;
 import java.time.ZonedDateTime;
 import java.util.Locale;
 
+/**
+ *
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
-/**
- * Validators TODO:
- *
- *  - MonetaryAmounts have same currency?
- *  - perUnit both null or not null
- */
 public class Pricing implements Labeled {
 	public static final MonetaryAmountFormat FORMATTER;
 	
