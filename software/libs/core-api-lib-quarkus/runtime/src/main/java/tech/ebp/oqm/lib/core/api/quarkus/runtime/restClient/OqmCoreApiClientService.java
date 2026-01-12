@@ -496,7 +496,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("itemId") String itemId,
 		@PathParam("transactionId") String transactionId
 	);
-	
+
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -505,7 +505,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@BeanParam StoredSearch storedSearch
 	);
-	
+
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}/history")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -515,7 +515,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("storedId") String storedId,
 		HistorySearch search
 	);
-	
+
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -524,7 +524,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("storedId") String storedId
 	);
-	
+
 	@PUT
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -534,7 +534,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("storedId") String storedId,
 		ObjectNode updateObject
 	);
-	
+
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/history")
 	@Produces(MediaType.APPLICATION_JSON)

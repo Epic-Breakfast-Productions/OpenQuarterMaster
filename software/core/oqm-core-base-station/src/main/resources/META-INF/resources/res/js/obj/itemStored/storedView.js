@@ -231,7 +231,7 @@ const StoredView = {
 			);
 		}
 
-		if (includeIdentifier) {//TODO:: likely remove, after label rework
+		if (includeIdentifier) {//TODO:: likely remove, after label rework #1003
 			newContent.append(
 				StoredView.getStorageBlockTrackedIdentifierView(stored)
 			);
