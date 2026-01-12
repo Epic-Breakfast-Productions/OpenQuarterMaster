@@ -13,7 +13,6 @@ import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.core.baseStation.interfaces.RestInterface;
-import tech.ebp.oqm.core.baseStation.model.UserInfo;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.SearchObject;
 
 import java.util.*;

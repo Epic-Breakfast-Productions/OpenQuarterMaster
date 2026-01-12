@@ -84,7 +84,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 			mediaType = "application/json",
 			schema = @Schema(
 				type = SchemaType.ARRAY,
-				implementation = ObjectId.class
+				implementation = StorageBlock.class
 			)
 		)
 	)
@@ -97,7 +97,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public List<ObjectId> createBulk(
+	public List<StorageBlock> createBulk(
 		@Valid List<StorageBlock> storageBlocks
 	) {
 		return super.createBulk(storageBlocks);

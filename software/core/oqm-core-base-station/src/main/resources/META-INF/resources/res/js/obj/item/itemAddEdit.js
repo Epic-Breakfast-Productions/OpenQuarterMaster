@@ -11,12 +11,12 @@ const ItemAddEdit = {
 	addEditItemIdInput: $("#addEditItemIdInput"),
 	addEditItemNameInput: $('#addEditItemNameInput'),
 	addEditItemDescriptionInput: $('#addEditItemDescriptionInput'),
-	addEditItemPricePerUnitInput: $('#addEditItemPricePerUnitInput'),
 	addEditItemExpiryWarningThresholdInput: $('#addEditItemExpiryWarningThresholdInput'),
 	addEditItemExpiryWarningThresholdUnitInput: $('#addEditItemExpiryWarningThresholdUnitInput'),
 	addEditItemCategoriesInput: $("#addEditItemCategoriesInput"),
 	addEditItemTotalLowStockThresholdInput: $("#addEditItemTotalLowStockThresholdInput"),
 	addEditItemTotalLowStockThresholdUnitInput: $("#addEditItemTotalLowStockThresholdUnitInput"),
+	addEditItemPricingInput: $("#addEditItemPricingInput"),
 	addEditItemStorageTypeInput: $('#addEditItemStorageTypeInput'),
 	addEditItemUnitInput: $('#addEditItemUnitInput'),
 	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
@@ -35,7 +35,6 @@ const ItemAddEdit = {
 	associatedStorageInputContainer: $("#addEditItemAssociatedStorageInputContainer"),
 	addEditItemTrackedItemIdentifierNameRow: $('#addEditItemTrackedItemIdentifierNameRow'),
 	addEditItemUnitNameRow: $('#addEditItemUnitNameRow'),
-	addEditItemPricePerUnitNameRow: $('#addEditItemPricePerUnitNameRow'),
 	compatibleUnitOptions: "",
 
 
@@ -70,7 +69,6 @@ const ItemAddEdit = {
 			whenUnique
 		);
 	},
-
 	resetAddEditForm: async function () {
 		let promises = [];
 		ExtItemSearch.hideAddEditProductSearchPane();
@@ -82,7 +80,6 @@ const ItemAddEdit = {
 		UniqueIdentifiers.reset(ItemAddEdit.uniqueIdInputContainer);
 		IdGeneratorSearchSelect.AssociatedInput.resetAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput);
 		ItemAddEdit.addEditItemModalLabel.text("Item");
-		// ItemAddEdit.addEditItemPricePerUnitInput.val("0.00");
 		ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(0);
 		ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 3);
 		ItemAddEdit.addEditItemTotalLowStockThresholdInput.val("");
@@ -93,8 +90,9 @@ const ItemAddEdit = {
 		ItemAddEdit.addEditItemUnitInput.data("previous", ItemAddEdit.addEditItemUnitInput.val());
 		Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
 		FileAttachmentSearchSelect.resetInput(this.fileInput);
+		Pricing.resetInput(ItemAddEdit.addEditItemPricingInput);
 
-		promises.push(ItemAddEdit.updateLowStockUnits());
+		promises.push(ItemAddEdit.unitChanged());
 		this.associatedStorageInputContainer.html("");
 
 		// this.itemNotStoredCheck.attr("checked", false);
@@ -113,6 +111,8 @@ const ItemAddEdit = {
 		ItemAddEdit.addEditItemModalLabel.text("Item Add");
 		ItemAddEdit.addEditItemFormMode.val("add");
 		ItemAddEdit.addEditItemFormSubmitButton.html(Icons.iconWithSub(Icons.item, Icons.add) + " Add Item");
+
+		await ItemAddEdit.unitChanged();
 	},
 
 	setupAddEditForEdit: async function (itemId, otherModal = null) {
@@ -187,6 +187,14 @@ const ItemAddEdit = {
 						ItemAddEdit.storageInput.addStorage(label, curStorageBlockId);
 					});
 				});
+
+				await Pricing.populateInput(
+					ItemAddEdit.addEditItemPricingInput,
+					ItemAddEdit.getUnit(),
+					data.defaultPrices
+				);
+
+				await ItemAddEdit.unitChanged();
 			}
 		});
 	},
@@ -195,19 +203,13 @@ const ItemAddEdit = {
 			function () {
 				ItemAddEdit.addEditItemUnitNameRow.show();
 				ItemAddEdit.addEditItemUnitInput.prop('required', true);
-				// ItemAddEdit.addEditItemPricePerUnitNameRow.show();
-				// ItemAddEdit.addEditItemPricePerUnitInput.prop('required', true);
 			},
 			function () {
 				ItemAddEdit.addEditItemUnitNameRow.hide();
 				ItemAddEdit.addEditItemUnitInput.prop('required', false);
-				// ItemAddEdit.addEditItemPricePerUnitNameRow.hide();
-				// ItemAddEdit.addEditItemPricePerUnitInput.prop('required', false);
-
-				// ItemAddEdit.addEditItemStorageTypeInput.attr('data-current', "TRACKED");
 			}
 		);
-		return ItemAddEdit.updateLowStockUnits(force);
+		return ItemAddEdit.unitChanged(force);
 	},
 
 	storageInput: {
@@ -257,12 +259,25 @@ const ItemAddEdit = {
 				}).get();
 		}
 	},
-	updateLowStockUnits(force = false) {
-		let itemUnit = (force || ItemAddEdit.addEditItemUnitNameRow.is(":visible")) ?
+	getUnit(force = false){
+		return (force || ItemAddEdit.addEditItemUnitNameRow.is(":visible")) ?
 			ItemAddEdit.addEditItemUnitInput.val() :
 			"units";
+	},
+	unitChanged: async function(force = false){
+		let itemUnit = ItemAddEdit.getUnit();
 
-		console.debug("Item unit: ", itemUnit);
+		console.log("Item Unit Changed to ", itemUnit);
+
+		let lowStockUnitPromise = ItemAddEdit.updateLowStockUnits(itemUnit, force);
+		let pricingUnitPromise = Pricing.setUnit(
+			ItemAddEdit.addEditItemPricingInput,
+			itemUnit
+		);
+
+		await Promise.all([lowStockUnitPromise, pricingUnitPromise]);
+	},
+	updateLowStockUnits(itemUnit, force = false) {
 		return UnitUtils.getCompatibleUnitOptions(itemUnit)
 			.then(function (options) {
 				ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.html(options);
@@ -272,7 +287,7 @@ const ItemAddEdit = {
 
 ItemAddEdit.addEditItemUnitInput.on("change", function () {
 	console.log("Changed unit!");
-	ItemAddEdit.updateLowStockUnits();
+	ItemAddEdit.unitChanged();
 });
 
 // //prevent enter from submitting form on barcode; barcode scanners can add enter key automatically
@@ -308,14 +323,12 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 		) : null),
 		categories: ItemCategoryInput.getValueFromInput(ItemAddEdit.addEditItemCategoriesInput),
 		storageBlocks: ItemAddEdit.storageInput.selectedStorageList(),
-		attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(ItemAddEdit.fileInput)
+		attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(ItemAddEdit.fileInput),
+		defaultPrices: Pricing.getPricingData(ItemAddEdit.addEditItemPricingInput)
 	};
 
 	let setAmountStoredVars = function () {
-		addEditData["unit"] = {
-			string: ItemAddEdit.addEditItemUnitInput.val()
-		};
-		addEditData["valuePerUnit"] = ItemAddEdit.addEditItemPricePerUnitInput.val();
+		addEditData["unit"] = UnitUtils.getUnitObj(ItemAddEdit.addEditItemUnitInput.val());
 	};
 
 	ItemAddEdit.foreachStorageTypeFromInput(

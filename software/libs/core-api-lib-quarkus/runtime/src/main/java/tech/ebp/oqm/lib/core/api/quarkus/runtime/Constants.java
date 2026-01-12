@@ -1,5 +1,8 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime;
 
+/**
+ * Constants for use around the client.
+ */
 public class Constants {
 	public static final String CONFIG_ROOT_NAME = "oqm.core.api";
 
