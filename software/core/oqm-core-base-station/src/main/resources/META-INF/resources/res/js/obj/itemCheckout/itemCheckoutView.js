@@ -39,7 +39,7 @@ const ItemCheckoutView = {
 				<div class="row">
 					<div class="card col-sm-12 col-md-6 itemCheckoutViewStatusLabelContainer">
 						<div class="card-body">
-							<h5 class="card-title d-inline">` + Icons.itemCheckinout + ` Checkout status:</h5>
+							<h5 class="card-title d-inline">` + Icons.itemCheckouts + ` Checkout status:</h5>
 							<p class="d-inline itemCheckoutViewStatusLabel">
 							</p>
 						</div>
