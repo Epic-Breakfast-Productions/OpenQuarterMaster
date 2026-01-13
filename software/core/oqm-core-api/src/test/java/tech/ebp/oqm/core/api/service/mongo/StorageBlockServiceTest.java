@@ -100,7 +100,7 @@ class StorageBlockServiceTest extends MongoHistoriedServiceTest<StorageBlock, St
 			//parent
 			StorageBlock subBlock = this.getTestObject();
 			subBlock.setParent(storageBlock.getId());
-			ObjectId subBlockId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, subBlock, testUser);
+			ObjectId subBlockId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, subBlock, testUser).getId();
 			expectedRefs.put(this.storageBlockService.getClazz().getSimpleName(), new TreeSet<>(List.of(subBlockId)));
 			
 			//Inventory item, basic
@@ -110,7 +110,7 @@ class StorageBlockServiceTest extends MongoHistoriedServiceTest<StorageBlock, St
 				new LinkedHashSet<>(List.of(storageBlock.getId()))
 			).build();
 
-			ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, sai, testUser);
+			ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, sai, testUser).getId();
 			expectedRefs.put(this.inventoryItemService.getClazz().getSimpleName(), new TreeSet<>(List.of(itemId)));
 		}
 		

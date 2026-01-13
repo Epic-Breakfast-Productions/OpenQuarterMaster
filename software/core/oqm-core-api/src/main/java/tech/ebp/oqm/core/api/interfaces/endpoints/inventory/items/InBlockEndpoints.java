@@ -84,6 +84,16 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 		return this.inventoryItem;
 	}
 	
+	private Stored applyDefaults(Stored stored){
+		stored.applyDefaultsFromItem(this.getInventoryItem());
+		return stored;
+	}
+	
+	private SearchResult<Stored> applyDefaults(SearchResult<Stored> searchResult){
+		searchResult.getResults().forEach(this::applyDefaults);
+		return searchResult;
+	}
+	
 	@GET
 	@Path("stored")
 	@Operation(
@@ -107,6 +117,6 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	public SearchResult<Stored> search(
 		@BeanParam StoredSearch storedSearch
 	) {
-		return super.search(storedSearch);
+		return this.applyDefaults(super.search(storedSearch));
 	}
 }

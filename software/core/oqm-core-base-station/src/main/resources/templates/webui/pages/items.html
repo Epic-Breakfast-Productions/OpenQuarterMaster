@@ -52,12 +52,11 @@
         </table>
     </div>
 </div>
-{#search/image/imageSelectFormInputHidden}
-{/search/image/imageSelectFormInputHidden}
+{#search/image/imageSelectFormInputHidden /}
 {/pageContent}
 {#modals}
-    {#objView/itemViewModal currency=currency  rootPrefix=rootPrefix /}
-	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency /}
+    {#objView/itemViewModal rootPrefix=rootPrefix /}
+	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults rootPrefix=rootPrefix /}
 	{#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
 		{#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}
 		<div class="row">
@@ -115,6 +114,7 @@
     <script src="{rootPrefix}/res/js/obj/getters.js"></script>
     <script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
     <script src="{rootPrefix}/res/js/carousel.js"></script>
+    <script src="{rootPrefix}/res/js/pricing.js"></script>
     <script src="{rootPrefix}/res/js/obj/storageBlock/storageBlockTree.js"></script>
     <script src="{rootPrefix}/res/js/obj/itemCategoryView.js"></script>
     <script src="{rootPrefix}/res/js/textCopy.js"></script>

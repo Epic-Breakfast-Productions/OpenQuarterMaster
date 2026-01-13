@@ -6,8 +6,11 @@ const Carousel = {
 		return new Promise(async (done, fail) => {
 			let newCarousel = $(Carousel.carouselTemplate);
 			newCarousel.prop("id", id);
-			newCarousel.find("button").prop("id", id);
 
+			//prev/next setup
+			newCarousel.find(".carousel-control-prev-next").attr("data-bs-target", "#"+id);
+
+			//populate
 			let promises = [];
 
 			if(objectData) {

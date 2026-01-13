@@ -56,19 +56,19 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 	public void testAdd() throws JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
 		
-		ObjectId objectId = this.testMongoService.add(
+		TestMainObject newObject = this.testMongoService.add(
 			DEFAULT_TEST_DB_NAME,
 			new TestMainObject(FAKER.lorem().paragraph()),
 			testUser
 		);
 		
 		assertEquals(1, this.testMongoService.getHistoryService().count(DEFAULT_TEST_DB_NAME));
-		List<ObjectHistoryEvent> events = this.testMongoService.getHistoryFor(DEFAULT_TEST_DB_NAME, objectId);
+		List<ObjectHistoryEvent> events = this.testMongoService.getHistoryFor(DEFAULT_TEST_DB_NAME, newObject);
 		assertEquals(1, events.size());
 		
 		CreateEvent createEvent = (CreateEvent) events.get(0);
 		
-		assertEquals(objectId, createEvent.getObjectId());
+		assertEquals(newObject.getId(), createEvent.getObjectId());
 		assertNotNull(createEvent.getEntity());
 		assertEquals(testUser.getId(), createEvent.getEntity());
 
