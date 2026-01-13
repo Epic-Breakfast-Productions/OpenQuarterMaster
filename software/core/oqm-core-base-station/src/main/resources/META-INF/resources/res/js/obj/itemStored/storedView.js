@@ -111,9 +111,10 @@ const StoredView = {
 
 	getStoredImages(stored){
 		if(stored.imageIds.length) {
-			let output = $('<div class="col-sm-6 col-md-6 col-lg-3">'+Carousel.carouselTemplate+'</div>');
 
-			Carousel.processImagedObjectImages(stored, output.find(".carousel"));
+			let output = $('<div class="col-sm-6 col-md-6 col-lg-3"></div>');
+
+			Carousel.newCarousel(stored.id + "-image-carousel", stored, output);
 
 			return output;
 		}
