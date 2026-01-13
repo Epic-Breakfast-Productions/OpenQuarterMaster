@@ -143,10 +143,9 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 *
 	 * See {@link tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored#parseLabel(Stored, String)} for format details.
 	 */
-	@NonNull
 	@lombok.Builder.Default
 	@ValidStoredLabelFormat
-	private String defaultLabelFormat = "{id}";
+	private String defaultLabelFormat = null;
 	
 	@NonNull
 	@NotNull

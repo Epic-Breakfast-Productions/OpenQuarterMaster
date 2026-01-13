@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.stored;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
@@ -23,7 +24,9 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
+import tech.ebp.oqm.core.api.model.object.Labeled;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.StoredNotificationStatus;
@@ -31,15 +34,20 @@ import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricin
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.TotalPricing;
+import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
+import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.model.validation.annotations.UniqueLabeledCollection;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidStoredLabelFormat;
 
+import javax.measure.Quantity;
+import java.awt.*;
 import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
+import java.util.List;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.MatchResult;
@@ -72,6 +80,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	private static final Pattern LABEL_PARTS_PATTERN = Pattern.compile("\\{[^}]*}");
 	private static final String LABEL_PLACEHOLDER_PART_DELIM = ";";
 	private static final String LABEL_PLACEHOLDER_ARG_DELIM = LABEL_PLACEHOLDER_PART_DELIM;
+	private static final String LABEL_ERROR = "#E#";
 	
 	/**
 	 *
@@ -91,7 +100,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 *         uid: {@code {uid;<name of unique identifier>}}- Use a unique identifier value.
 	 *     </li>
 	 *     <li>
-	 *         price: {@code {price;<name of calculated price>}}- Use a price value.
+	 *         price: {@code {price;<name of calculated price>}}- Use a price value. Does not include price label.
 	 *     </li>
 	 *     <li>
 	 *         att: {@code {att;<key for attribute>}}-  Use an attribute value.
@@ -101,7 +110,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 * Examples:
 	 * <ul>
 	 *     <li>
-	 *         {@code {dt}-{inc}} -> {@code 01/30/2020-24:30:30-00001}
+	 *         {@code {id}} -> {@code 01/30/2020-24:30:30-00001}
 	 *     </li>
 	 * </ul>
 	 *
@@ -145,11 +154,56 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 						sb.append(stored.getId());
 						break;
 					case "amt":
-						sb.append(stored.getId());//TODO
+						Quantity<?> amount;
+						if (stored instanceof AmountStored) {
+							amount = ((AmountStored) stored).getAmount();
+						} else {
+							amount = UnitUtils.Quantities.UNIT_ONE;
+						}
+						
+						sb.append(amount.toString());
 						break;
-						//TODO:: rest
+					
+					case "gid":
+					case "uid":
+					case "price":
+						if (args.length != 1) {
+							throw new IllegalArgumentException("Must specify exactly one argument for 'gid' and 'uid'.");
+						}
+						
+						String label = args[0];
+						Optional<Labeled> foundLabel = Labeled.findLabeledInSet(
+							label,
+							(Collection<Labeled>) switch (placeholderType) {
+								case "gid" -> stored.getGeneralIds();
+								case "uid" -> stored.getUniqueIds();
+								case "price" -> stored.getCalculatedPrices();
+								default -> new ArrayList<Identifier>(0);
+							}
+						);
+						
+						if (foundLabel.isPresent()) {
+							Labeled cur = foundLabel.get();
+							
+							if (cur instanceof Identifier) {
+								sb.append(((Identifier) cur).getValue());
+							} else if (cur instanceof CalculatedPricing) {
+								sb.append(((CalculatedPricing) cur).getTotalPriceString());
+							}
+						} else {
+							sb.append(LABEL_ERROR);
+						}
+						break;
+					case "att":
+						if (args.length != 1) {
+							throw new IllegalArgumentException("Must specify exactly one argument for 'att'.");
+						}
+						
+						sb.append(stored.getAttributes().getOrDefault(args[0], LABEL_ERROR));
+						
+						break;
 					default:
-						throw new IllegalArgumentException("Unknown placeholder type: " + placeholderType);
+						throw new IllegalArgumentException("Unknown placeholder type: '" + placeholderType + "'");
 				}
 			});
 		
@@ -167,14 +221,14 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	public abstract StoredType getType();
 	
 	/**
-	 * The {@link tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem} this stored is associated with.
+	 * The {@link InventoryItem} this stored is associated with.
 	 */
 	@NonNull
 	@NotNull
 	private ObjectId item;
 	
 	/**
-	 * The {@link tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock} this stored is stored in.
+	 * The {@link StorageBlock} this stored is stored in.
 	 */
 	//TODO:: determine if we can use null for 'no block in particular'
 	private ObjectId storageBlock;
@@ -284,6 +338,14 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@ValidStoredLabelFormat
 	private String labelFormat = null;
 	
+	/**
+	 * Label format to use if there is not one specified in this stored, or one in the item.
+	 *
+	 * @return
+	 */
+	@JsonIgnore
+	protected abstract String getDefaultLabelFormat();
+	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PRIVATE)
 	@lombok.Builder.Default
@@ -293,6 +355,9 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		String labelFormat = this.getLabelFormat();
 		if (labelFormat == null) {
 			labelFormat = item.getDefaultLabelFormat();
+		}
+		if (labelFormat == null) {
+			labelFormat = this.getDefaultLabelFormat();
 		}
 		
 		this.label = parseLabel(this, labelFormat);
