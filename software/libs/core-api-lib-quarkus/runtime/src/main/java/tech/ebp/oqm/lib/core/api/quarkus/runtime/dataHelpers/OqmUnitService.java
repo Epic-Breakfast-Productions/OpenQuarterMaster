@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.api.quarkus.runtime;
+package tech.ebp.oqm.lib.core.api.quarkus.runtime.dataHelpers;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
@@ -10,6 +10,7 @@ import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 
@@ -21,13 +22,7 @@ import java.util.concurrent.locks.ReentrantLock;
 @Named("OqmUnitService")
 @Slf4j
 @ApplicationScoped
-public class OqmUnitService {
-	
-	@RestClient
-	OqmCoreApiClientService oqmCoreApiClientService;
-	
-	@Inject
-	KcClientAuthService serviceAccountService;
+public class OqmUnitService extends DataHelperService {
 	
 	/**
 	 * The mutex to protect held cache
@@ -51,10 +46,7 @@ public class OqmUnitService {
 	
 	@PostConstruct
 	public void setup() {
-		if (
-			ConfigProvider.getConfig().getOptionalValue("quarkus.oidc.client-id", String.class).isEmpty() ||
-			ConfigProvider.getConfig().getOptionalValue("quarkus.oidc.credentials.secret", String.class).isEmpty()
-		) {
+		if(!oidcSetup()){
 			log.warn("No OIDC creds. Caching units disabled.");
 			return;
 		}

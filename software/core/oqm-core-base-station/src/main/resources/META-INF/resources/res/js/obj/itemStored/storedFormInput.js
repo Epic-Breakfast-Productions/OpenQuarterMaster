@@ -22,40 +22,49 @@ const StoredFormInput = {
 
 	<div class="mb-3">
 		<label class="form-label">
-			`+Icons.generalIds+`
+			` + Icons.generalIds + `
 			General Ids
 		</label>
-		`+ PageComponents.Inputs.GeneralIds.generalIdInput + `
+		` + PageComponents.Inputs.GeneralIds.generalIdInput + `
 	</div>
 	
 	<div class="mb-3">
 		<label class="form-label">
-			`+Icons.uniqueIds+`
+			` + Icons.uniqueIds + `
 			Unique Ids
 		</label>
-		`+ PageComponents.Inputs.UniqueIds.uniqueIdInput + `
+		` + PageComponents.Inputs.UniqueIds.uniqueIdInput + `
 	</div>
 	
-	`+PageComponents.Inputs.image+`
-	`+PageComponents.Inputs.file+`
-	`+ PageComponents.Inputs.keywords + `
-	`+ PageComponents.Inputs.attribute + `
+	<div class="mb-3">
+		<label class="form-label">
+			` + Icons.pricing + `
+			Pricing (adds to and overrides prices set on the item):
+		</label>
+		` + PageComponents.Inputs.Pricing.priceInput + `
+	</div>
+	
+	` + PageComponents.Inputs.image + `
+	` + PageComponents.Inputs.file + `
+	` + PageComponents.Inputs.keywords + `
+	` + PageComponents.Inputs.attribute + `
 </div>`);
 
 		let generalIdInputContainer = output.find(".generalIdInputContainer");
 		let uniqueIdInputContainer = output.find(".uniqueIdInputContainer");
 
-		if(stored != null){
-			if(stored.barcode){
+
+		if (stored != null) {
+			if (stored.barcode) {
 				output.find(".storedBarcodeInput").val(stored.barcode);
 			}
-			if(stored.condition){
+			if (stored.condition) {
 				output.find(".storedConditionPercentageInput").val(stored.condition);
 			}
-			if(stored.conditionNotes){
+			if (stored.conditionNotes) {
 				output.find(".storedConditionNotesInput").val(stored.conditionNotes);
 			}
-			if(stored.expires){
+			if (stored.expires) {
 				TimeHelpers.setDatetimelocalInput(
 					output.find(".storedExpiredInput"),
 					stored.expires
@@ -65,17 +74,24 @@ const StoredFormInput = {
 			GeneralIdentifiers.getAssociateButton(generalIdInputContainer).data("forobject", "STORED").attr("id", "generatorSelect-" + window.crypto.getRandomValues(new Uint8Array(5)).join(""));
 			UniqueIdentifiers.getAssociateButton(uniqueIdInputContainer).data("forobject", "STORED").attr("id", "generatorSelect-" + window.crypto.getRandomValues(new Uint8Array(5)).join(""));
 
-			GeneralIdentifiers.populateEdit(generalIdInputContainer, stored.generalIds, (item==null?null:item.idGenerators));
-			UniqueIdentifiers.populateEdit(uniqueIdInputContainer, stored.uniqueIds, (item==null?null:item.idGenerators));
+			GeneralIdentifiers.populateEdit(generalIdInputContainer, stored.generalIds, (item == null ? null : item.idGenerators));
+			UniqueIdentifiers.populateEdit(uniqueIdInputContainer, stored.uniqueIds, (item == null ? null : item.idGenerators));
 			KeywordAttEdit.addKeywordInputs(output.find(".keywordInputDiv"), stored.keywords);
 			KeywordAttEdit.addAttInputs(output.find(".attInputDiv"), stored.attributes);
 			ImageSearchSelect.addSelectedImages(output.find(".imagesSelected"), stored.imageIds);
 			FileAttachmentSearchSelect.populateFileInputFromObject(output, stored.attachedFiles);
 		}
 
-		if(item !== null){
+		if (item !== null) {
 			GeneralIdentifiers.setupForAssociated(generalIdInputContainer, item.idGenerators);
 			UniqueIdentifiers.setupForAssociated(uniqueIdInputContainer, item.idGenerators);
+
+			let pricingInput = output.find(".pricingInput");
+			Pricing.populateInput(
+				pricingInput,
+				item.unit.string,
+				stored ? stored.prices : null
+			);
 		}
 
 		return output;
@@ -98,7 +114,7 @@ const StoredFormInput = {
 
 			let unitOps = null;
 			let unit = null;
-			if(stored == null){
+			if (stored == null) {
 				console.debug("No stored given basing units off of item.");
 				unit = item.unit.string;
 				unitOps = await UnitUtils.getCompatibleUnitOptions(
@@ -116,7 +132,7 @@ const StoredFormInput = {
 			let unitInput = output.find(".unitInput");
 			unitInput.append(unitOps).val(unit);
 
-			if(stored != null && maxFromStored){
+			if (stored != null && maxFromStored) {
 				console.debug("Setting up amount input to adapt to max specified by stored.")
 				unitInput.on("change", function (event) {
 					StoredFormInput.updateMaxAmount($(event.target));
@@ -127,7 +143,7 @@ const StoredFormInput = {
 
 		return output;
 	},
-	updateMaxAmount(unitInputJq){
+	updateMaxAmount(unitInputJq) {
 		console.log("Updating max value for amount input.");
 		let amountStoredInputGroup = unitInputJq.parent();
 		let amountStoredValueInput = amountStoredInputGroup.find(".amountStoredValueInput");
@@ -139,7 +155,7 @@ const StoredFormInput = {
 
 		return output;
 	},
-	getStoredInputs: async function (forStoredType, stored = null, item = null, forEdit=true) {
+	getStoredInputs: async function (forStoredType, stored = null, item = null, forEdit = true) {
 		let output = $('<div class="storedInputs"></div>');
 
 		StoredTypeUtils.runForType(forStoredType,
@@ -156,10 +172,10 @@ const StoredFormInput = {
 
 		return output;
 	},
-	dataFromInputs(dataToAddTo, containerJq){
+	dataFromInputs(dataToAddTo, containerJq) {
 		//common inputs
 		let commonInputsContainer = containerJq.find(".commonStoredFormElements");
-		if(commonInputsContainer.length && commonInputsContainer.is(":visible")){
+		if (commonInputsContainer.length && commonInputsContainer.is(":visible")) {
 			console.log("Had common form elements section.");
 			dataToAddTo["generalIds"] = GeneralIdentifiers.getGeneralIdData(commonInputsContainer.find('.generalIdInputContainer'));
 			dataToAddTo["uniqueIds"] = UniqueIdentifiers.getUniqueIdData(commonInputsContainer.find('.uniqueIdInputContainer'));
@@ -169,21 +185,22 @@ const StoredFormInput = {
 			KeywordAttEdit.addKeywordAttData(dataToAddTo, commonInputsContainer.find(".keywordInputDiv"), commonInputsContainer.find(".attInputDiv"));
 			ImageSearchSelect.addImagesToData(dataToAddTo, commonInputsContainer.find(".imagesSelected"));
 			dataToAddTo["attachedFiles"] = FileAttachmentSearchSelect.getFileListFromInput(commonInputsContainer.find(".fileAttachmentSelectInputTableContent"));
+			dataToAddTo["prices"] = Pricing.getPricingData(commonInputsContainer.find(".pricingInput"));
 		}
 		//amount inputs
 		let amountInputsContainer = containerJq.find(".amountStoredFormElements");
-		if(amountInputsContainer.length && amountInputsContainer.is(":visible")){
+		if (amountInputsContainer.length && amountInputsContainer.is(":visible")) {
 			console.log("Had amount form elements section.");
 			dataToAddTo["type"] = "AMOUNT";
 			let amountStoredInput = amountInputsContainer.find(".amountStoredInput");
-			if(amountStoredInput.length && amountStoredInput.is(":visible")){
+			if (amountStoredInput.length && amountStoredInput.is(":visible")) {
 				console.log("Had amount form elements.");
 				dataToAddTo.amount = UnitUtils.getQuantityFromInputs(amountInputsContainer);
 			}
 		}
 		//unique inputs
 		let uniqueInputsContainer = containerJq.find(".uniqueStoredFormInputs");
-		if(uniqueInputsContainer.length && uniqueInputsContainer.is(":visible")){
+		if (uniqueInputsContainer.length && uniqueInputsContainer.is(":visible")) {
 			console.log("Had unique form elements section.");
 			dataToAddTo["type"] = "UNIQUE";
 			//TODO

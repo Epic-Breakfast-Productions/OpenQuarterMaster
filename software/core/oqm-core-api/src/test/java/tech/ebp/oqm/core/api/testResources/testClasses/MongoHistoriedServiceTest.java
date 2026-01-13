@@ -50,20 +50,21 @@ public abstract class MongoHistoriedServiceTest<T extends MainObject, S extends 
 	protected void defaultGetObjectIdTest(S service) {
 		T item = this.getTestObject();
 		
-		ObjectId id = service.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
+		T newItem = service.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
 		
-		T itemGot = service.get(DEFAULT_TEST_DB_NAME, id);
+		T itemGot = service.get(DEFAULT_TEST_DB_NAME, newItem.getId());
 		
 		assertNotNull(itemGot);
 		assertEquals(item, itemGot);
+		assertEquals(newItem, itemGot);
 	}
 	
 	protected void defaultGetStringTest(S service) {
 		T item = this.getTestObject();
 		
-		String id = service.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser()).toHexString();
+		T itemAdded = service.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
 		
-		T itemGot = service.get(DEFAULT_TEST_DB_NAME, id);
+		T itemGot = service.get(DEFAULT_TEST_DB_NAME, itemAdded.getId().toHexString());
 		
 		assertNotNull(itemGot);
 		assertEquals(item, itemGot);
@@ -72,10 +73,10 @@ public abstract class MongoHistoriedServiceTest<T extends MainObject, S extends 
 	protected void defaultAddTest(S service) {
 		T item = getTestObject(false);
 		
-		ObjectId id = service.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
+		T itemAdded = service.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
 		
 		assertNotNull(item.getId());
-		assertEquals(id, item.getId());
+		assertEquals(item, itemAdded);
 		
 		log.info("num in collection: {}", service.count(DEFAULT_TEST_DB_NAME));
 		assertEquals(1, service.count(DEFAULT_TEST_DB_NAME));

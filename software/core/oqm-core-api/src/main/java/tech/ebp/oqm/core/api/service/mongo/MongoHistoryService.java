@@ -178,22 +178,22 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	}
 
 	@WithSpan
-	public ObjectId addHistoryFor(String oqmDbIdOrName, ClientSession session, ObjectId objectReferred, InteractingEntity entity, ObjectHistoryEvent history) {
+	public ObjectHistoryEvent addHistoryFor(String oqmDbIdOrName, ClientSession session, ObjectId objectReferred, InteractingEntity entity, ObjectHistoryEvent history) {
 		history.setObjectId(objectReferred);
 		if (entity != null) {
 			history.setEntity(entity.getId());
 		}
-		ObjectId output = this.add(oqmDbIdOrName, session, history);
+		ObjectHistoryEvent output = this.add(oqmDbIdOrName, session, history);
 		this.getHens().sendEvents(this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName).getDbId(), this.clazzForObjectHistoryIsFor, history);
 		return output;
 	}
 
-	public ObjectId addHistoryFor(String oqmDbIdOrName, ClientSession session, T objectReferred, InteractingEntity entity, ObjectHistoryEvent history) {
+	public ObjectHistoryEvent addHistoryFor(String oqmDbIdOrName, ClientSession session, T objectReferred, InteractingEntity entity, ObjectHistoryEvent history) {
 		return this.addHistoryFor(oqmDbIdOrName, session, objectReferred.getId(), entity, history);
 	}
 
 	@WithSpan
-	public ObjectId objectCreated(String oqmDbIdOrName, ClientSession session, T created, InteractingEntity entity, HistoryDetail... details) {
+	public ObjectHistoryEvent objectCreated(String oqmDbIdOrName, ClientSession session, T created, InteractingEntity entity, HistoryDetail... details) {
 		ObjectHistoryEvent.Builder<?,?> eventBuilder;
 		try {
 			this.getHistoryFor(oqmDbIdOrName, session, created);
@@ -219,7 +219,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	}
 
 	@WithSpan
-	public ObjectId objectUpdated(
+	public ObjectHistoryEvent objectUpdated(
 		String oqmDbIdOrName,
 		ClientSession clientSession,
 		T updated,
@@ -240,7 +240,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	}
 
 	@WithSpan
-	public ObjectId objectDeleted(String oqmDbIdOrName, ClientSession clientSession, T updated, InteractingEntity entity, HistoryDetail... details) {
+	public ObjectHistoryEvent objectDeleted(String oqmDbIdOrName, ClientSession clientSession, T updated, InteractingEntity entity, HistoryDetail... details) {
 		return this.addHistoryFor(
 			oqmDbIdOrName,
 			clientSession,

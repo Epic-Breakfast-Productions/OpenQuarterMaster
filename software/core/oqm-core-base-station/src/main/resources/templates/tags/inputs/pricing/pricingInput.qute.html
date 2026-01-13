@@ -1,0 +1,9 @@
+<div class="pricingInput" {#if id?? }id="{id}"{/if}>
+	<div class="pricesContainer pb-2"></div>
+	<div class="d-grid gap-2">
+		<button class="btn btn-outline-success btn-sm" type="button" onclick="Pricing.addPrice(Pricing.getInput(this));">
+			{#icons/add /}
+			Add Pricing
+		</button>
+	</div>
+</div>

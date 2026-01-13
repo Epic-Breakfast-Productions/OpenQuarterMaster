@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo.search;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -45,10 +46,12 @@ public class SearchResult<T extends MainObject> {
 		);
 	}
 	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isEmpty() {
 		return this.results.isEmpty();
 	}
 	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isHasPages() {
 		return this.pagingCalculations.isHasPages();
 	}

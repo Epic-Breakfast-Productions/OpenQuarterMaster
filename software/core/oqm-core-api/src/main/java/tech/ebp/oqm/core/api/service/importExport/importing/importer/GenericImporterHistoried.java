@@ -37,15 +37,15 @@ public class GenericImporterHistoried<T extends MainObject, S extends SearchObje
 			T curObj = ObjectUtils.OBJECT_MAPPER.readValue(curFile, this.getObjectService().getClazz());
 			
 			ObjectId oldId = curObj.getId();
-			ObjectId newId;
+			T newObj;
 			try {
-				newId = this.getObjectService().add(dbId, clientSession, curObj, importingEntity);
+				newObj = this.getObjectService().add(dbId, clientSession, curObj, importingEntity);
 			} catch(Throwable e) {
 				log.error("Failed to import object: ", e);
 				throw e;
 			}
-			log.info("Read in object. new id == old? {}", newId.equals(oldId));
-			assert newId.equals(oldId); //TODO:: better check?
+			log.info("Read in object. new id == old? {}", newObj.getId().equals(oldId));
+			assert newObj.getId().equals(oldId); //TODO:: better check?
 			
 		} catch(Throwable e){
 			log.error("Failed to process object file {}: ", curFile, e);

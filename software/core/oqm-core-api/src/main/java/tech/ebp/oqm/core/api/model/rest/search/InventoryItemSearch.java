@@ -31,6 +31,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("hasLowStock") Boolean hasLowStock;
 	@QueryParam("hasNoLowStock") Boolean hasNoLowStock;
 	@QueryParam("generalId") String generalId;
+	@QueryParam("uniqueId") String uniqueId;
 	
 	//TODO:: object specific fields, add to bson filter list
 	
@@ -115,6 +116,11 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 		if(this.hasValue(this.getGeneralId())){
 			filters.add(
 				eq("generalIds.value", this.getGeneralId())
+			);
+		}
+		if(this.hasValue(this.getUniqueId())){
+			filters.add(
+				eq("uniqueIds.value", this.getUniqueId())
 			);
 		}
 		

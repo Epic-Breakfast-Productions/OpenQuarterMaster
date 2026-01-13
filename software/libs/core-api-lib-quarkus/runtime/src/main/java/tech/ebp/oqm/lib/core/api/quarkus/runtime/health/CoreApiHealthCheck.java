@@ -1,10 +1,9 @@
-package tech.ebp.oqm.lib.core.api.quarkus.runtime;
+package tech.ebp.oqm.lib.core.api.quarkus.runtime.health;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.health.api.AsyncHealthCheck;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
-import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;
 import org.eclipse.microprofile.health.HealthCheckResponseBuilder;
 import org.eclipse.microprofile.health.Readiness;

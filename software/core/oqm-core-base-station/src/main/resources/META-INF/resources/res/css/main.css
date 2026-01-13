@@ -111,3 +111,20 @@
 	max-width: 100%;
 	border: 2px solid white;
 }
+
+
+/*
+Overtype tweaks
+ */
+
+.overtype-toolbar {
+	border-bottom: 1px solid black !important;
+}
+
+.overtype-input {
+	padding-top: 4px !important;
+}
+
+.overtype-container {
+	border: 1px solid black !important;
+}
