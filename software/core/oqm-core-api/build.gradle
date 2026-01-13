@@ -7,7 +7,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '4.1.2-DEV'
+version '4.2.0-DEV'
 
 repositories {
 	mavenCentral()
@@ -38,6 +38,7 @@ dependencies {
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
 
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-javax-money:2.20.1"
 	implementation 'com.fasterxml.jackson.module:jackson-module-blackbird'
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
@@ -53,6 +54,8 @@ dependencies {
 	implementation("commons-validator:commons-validator:1.10.1")
 	implementation 'org.apache.tika:tika-core:3.2.3'
 	implementation 'uk.org.okapibarcode:okapibarcode:0.5.2'
+
+	implementation("org.javamoney:moneta:1.4.5")
 
 	/*
 	Test Dependencies

@@ -81,7 +81,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 	 *
 	 * @return
 	 */
-	public <T extends ItemStoredTransaction> ObjectId apply(
+	public <T extends ItemStoredTransaction> AppliedTransaction apply(
 		String oqmDbIdOrName,
 		ClientSession cs,
 		@NotNull InventoryItem inventoryItem,
@@ -138,20 +138,20 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				));
 				
 				AppliedTransaction appliedTransaction = appliedTransactionBuilder.build();
-				ObjectId newId = this.add(oqmDbIdOrName, appliedTransaction);
+				appliedTransaction = this.add(oqmDbIdOrName, appliedTransaction);
 				
-				log.info("Completed transaction. Applied transaction id: {}", newId);
+				log.info("Completed transaction. Applied transaction id: {}", appliedTransaction.getId());
 				log.debug("Applied transaction: {}", appliedTransaction);
 				
-				if (!newId.equals(appliedTransactionId)) {
+				if (!appliedTransaction.getId().equals(appliedTransactionId)) {
 					log.warn(
 						"New id after adding applied transaction DIFFERENT from one generated previously; Original: {} / From Mongo: {}",
 						appliedTransactionId,
-						newId
+						appliedTransaction.getId()
 					);
 				}
 				
-				return newId;
+				return appliedTransaction;
 			});
 		} catch(Exception e) {
 			log.error("Failed to apply transaction: ", e);

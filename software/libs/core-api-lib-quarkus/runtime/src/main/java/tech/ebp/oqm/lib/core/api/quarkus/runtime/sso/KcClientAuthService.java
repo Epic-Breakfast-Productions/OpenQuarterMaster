@@ -8,6 +8,7 @@ import io.vertx.ext.auth.impl.jose.JWT;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
@@ -16,12 +17,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.concurrent.locks.ReentrantLock;
 
 @Slf4j
-@ApplicationScoped
+@Singleton
 public class KcClientAuthService {
 	public static final String SERVICE_ACCOUNT_TOKEN_REFRESH_JOB_NAME = "Service Account Token Refresh";
 
 	@RestClient
 	KeycloakRestClient keycloakRestClient;
+	
 	@Inject
 	Scheduler scheduler;
 
@@ -51,7 +53,7 @@ public class KcClientAuthService {
 	}
 
 	@PostConstruct
-	public void setup(){
+	public synchronized void setup(){
 		log.info("Initializing KC Auth Service.");
 		ObjectNode result = this.getSetNewToken(null);
 

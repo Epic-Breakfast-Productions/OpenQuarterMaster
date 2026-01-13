@@ -7,15 +7,15 @@ import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
+/**
+ * Search for applied transactions.
+ */
 @NoArgsConstructor
 @ToString(callSuper = true)
 @Getter
 @Setter
 @SuperBuilder(toBuilder = true)
 public class AppliedTransactionSearch extends SearchKeyAttObject {
-	public static AppliedTransactionSearch newInstance(){
-		return new AppliedTransactionSearch();
-	}
 
 	@PathParam("itemId") String inventoryItemId;
 }

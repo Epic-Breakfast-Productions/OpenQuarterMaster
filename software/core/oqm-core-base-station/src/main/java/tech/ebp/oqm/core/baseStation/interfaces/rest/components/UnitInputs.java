@@ -20,7 +20,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.baseStation.interfaces.rest.ApiProvider;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmUnitService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.dataHelpers.OqmUnitService;
 
 @Slf4j
 @Path("/api/pageComponents/unit/inputs")

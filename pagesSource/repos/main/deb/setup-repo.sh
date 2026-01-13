@@ -35,10 +35,10 @@ clear
 
 if [ -z "$AUTO_INSTALL" ]; then
 	if [[ -n "$DISPLAY" ]]; then
-		read -p "Would you like to install the OQM themes for this OS (can be done later by installing 'oqm-themes')? y/n:" -n 1 -r
+		read -p "Would you like to install the OQM themes for this OS (can be done later by installing 'oqm-theming')? y/n:" -n 1 -r
 		echo;
 		if [[ $REPLY =~ ^[Yy]$ ]]; then
-			$SUDOTXT apt-get install $AUTO_INSTALL oqm-themes
+			$SUDOTXT apt-get install $AUTO_INSTALL oqm-theming
 			if [ $? -ne 0 ]; then
 				echo "FAILED to install Station Captain. See above output for information."
 				exit 2;

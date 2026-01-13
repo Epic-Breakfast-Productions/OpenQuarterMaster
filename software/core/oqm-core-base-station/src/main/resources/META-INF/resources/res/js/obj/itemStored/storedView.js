@@ -153,6 +153,17 @@ const StoredView = {
 		return "";
 	},
 
+	getStoredPricing(stored){
+		if(Object.keys(stored.calculatedPrices).length) {
+			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row pricingContainer"></div></div>');
+
+			Pricing.View.CalculatedPricing.showInDiv(output.find(".pricingContainer"), stored.calculatedPrices, "col-6");
+
+			return output;
+		}
+		return "";
+	},
+
 	//TODO: finish figuring this out
 	getTransactBlockLink(stored, small = false,
 						 {
@@ -220,7 +231,7 @@ const StoredView = {
 			);
 		}
 
-		if (includeIdentifier) {
+		if (includeIdentifier) {//TODO:: likely remove, after label rework #1003
 			newContent.append(
 				StoredView.getStorageBlockTrackedIdentifierView(stored)
 			);
@@ -236,9 +247,9 @@ const StoredView = {
 			StoredView.getStoredAtts(stored),
 			StoredView.getStoredGeneralIds(stored),
 			StoredView.getStoredUniqueIds(stored),
+			StoredView.getStoredPricing(stored),
 			StoredView.getStoredAttachedFiles(stored)
 		);
-		//TODO:: images, files
 
 		newContentButtons.append(StoredView.getTransactBlockLink(stored, true, {
 			showAddTransaction: showAddTransaction,

@@ -231,6 +231,10 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 					}
 				}
 			}
+			
+			if(updates.has("defaultPrices")){
+				//TODO:: this #929
+			}
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException("Failed to process update node. This likely shouldn't happen here.", e);
 		}
