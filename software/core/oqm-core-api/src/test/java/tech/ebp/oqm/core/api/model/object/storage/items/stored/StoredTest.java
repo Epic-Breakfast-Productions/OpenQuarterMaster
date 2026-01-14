@@ -98,8 +98,6 @@ public class StoredTest extends BasicTest {
 				" - $1.00" +
 				" - " + atts.get(att)
 			)
-			
-			
 		);
 	}
 	

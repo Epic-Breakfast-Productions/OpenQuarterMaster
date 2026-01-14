@@ -349,7 +349,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PRIVATE)
 	@lombok.Builder.Default
-	private String label = null;
+	private String labelText = null;
 	
 	private void processLabel(InventoryItem item) {
 		String labelFormat = this.getLabelFormat();
@@ -360,7 +360,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 			labelFormat = this.getDefaultLabelFormat();
 		}
 		
-		this.label = parseLabel(this, labelFormat);
+		this.labelText = parseLabel(this, labelFormat);
 	}
 	
 	public void applyDefaultsFromItem(InventoryItem item) {
@@ -368,6 +368,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 			throw new IllegalArgumentException("Item ID's do not match");
 		}
 		this.calculatePrices(item);
+		this.processLabel(item);
 	}
 	
 	@Override
