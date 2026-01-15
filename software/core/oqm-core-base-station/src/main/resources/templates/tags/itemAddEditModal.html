@@ -242,7 +242,7 @@
                 </div>
                 <div class="row mt-3">
                     <label for="addEditItemDefaultStoredLabelInput" class="col-form-label col-sm-2">
-                    	Default Stored Label:
+                    	Default Stored Label Format:
                     </label>
                     <div class="col-sm-10">
                     	<input type="text" class="form-control" id="addEditItemDefaultStoredLabelInput" placeholder="Default Stored Label" aria-describedby="addEditItemDefaultStoredLabelInputHelp" />
@@ -261,48 +261,51 @@
 								  is a particular shirt print design, you could differentiate between shirt sizes.
 							  </p>
 							  <h5>
+							  Examples:
+							  </h5>
+							  <ul>
+								  <li>
+									  <code class="user-select-all">\{id}</code> {#icons/arrowRight /} <code>69685a30ed9db4170b717e10</code> (the id of the stored item)
+								  </li>
+								  <li>
+									  <code class="user-select-all">\{amt} - \{id}</code> {#icons/arrowRight /} <code>1 units - 69685a30ed9db4170b717e10</code>
+								  </li>
+								  <li>
+									  <code class="user-select-all">Size: \{att:size}</code> {#icons/arrowRight /} <code>Size: L</code> (for a stored item with a <code>size</code> attribute of <code>L</code>)
+								  </li>
+								  <li>
+									  <code class="user-select-all">Expires: \{exp:LLL/yyyy}</code> {#icons/arrowRight /} <code>Expires: Jul/2024</code> (for a stored item with an expiration date in July 2024)
+								  </li>
+							  </ul>
+							  <h5>
 							    Format placeholders:
 							  </h5>
 							  <ul>
 							      <li>
-							          Id: <code>\{id;number of digits, startting from the end (optional)}</code> - The ID of the stored object. Parameter to specify the number of characters to actually
+							          Id: <code class="user-select-all">\{id;number of digits, startting from the end (optional)}</code> - The ID of the stored object. Parameter to specify the number of characters to actually
 							          display. Defaults to full Id.
 							      </li>
 							      <li>
-							          Amount: <code>\{amt}</code> - Use the stored amount. Defaults to "1 units" for unique stored.
+							          Amount: <code class="user-select-all">\{amt}</code> - Use the stored amount. Defaults to "1 units" for unique stored.
 							      </li>
 							      <li>
-							          Condition: <code>\{cnd}</code> - Use the condition as a percentage.
+							          Condition: <code class="user-select-all">\{cnd}</code> - Use the condition as a percentage.
 							      </li>
 							      <li>
-									  Expiration: <code>\{exp;datetime format}</code> - Writes out the expiration for this stored. Format should match standard Java datetime syntax. Default format is <code>MM/dd/yyyy</code>
+									  Expiration: <code class="user-select-all">\{exp;datetime format}</code> - Writes out the expiration for this stored. Format should match standard <a href="https://www.digitalocean.com/community/tutorials/java-simpledateformat-java-date-format#patterns" target="_blank">Java datetime syntax</a>. Default format is <code>MM/dd/yyyy</code>
 							      </li>
 							      <li>
-							          General Id: <code>\{gid;name of general identifier}</code> - Use a general identifier value.
+							          General Id: <code class="user-select-all">\{gid;name of general identifier}</code> - Use a general identifier value.
 							      </li>
 							      <li>
-							          Unique Id: <code>\{uid;name of unique identifier}</code> - Use a unique identifier value.
+							          Unique Id: <code class="user-select-all">\{uid;name of unique identifier}</code> - Use a unique identifier value.
 							      </li>
 							      <li>
-							          Price: <code>\{price;name of calculated price}</code> - Use a price value. Does not include price label.
+							          Price: <code class="user-select-all">\{price;name of calculated price}</code> - Use a price value. Does not include price label.
 							      </li>
 							      <li>
-							          Attribute: <code>\{att;key for attribute}</code> - Use an attribute value.
+							          Attribute: <code class="user-select-all">\{att;key for attribute}</code> - Use an attribute value.
 							      </li>
-							  </ul>
-							  <p>
-							  Examples:
-							  </p>
-							  <ul>
-								  <li>
-									  <code>\{id}</code> -> <code>69685a30ed9db4170b717e10</code> (the id of the stored item)
-								  </li>
-								  <li>
-									  <code>\{amt} - {id}</code> -> <code>1 units - 69685a30ed9db4170b717e10</code>
-								  </li>
-								  <li>
-									  <code>Size: \{att:size}</code> -> <code>Size: L</code> (for a stored item with a <code>size</code> attribute of <code>L</code>)
-								  </li>
 							  </ul>
 							</div>
                         </div>
