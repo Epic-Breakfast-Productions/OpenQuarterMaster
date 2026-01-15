@@ -111,9 +111,10 @@ const StoredView = {
 
 	getStoredImages(stored){
 		if(stored.imageIds.length) {
-			let output = $('<div class="col-sm-6 col-md-6 col-lg-3">'+Carousel.carouselTemplate+'</div>');
 
-			Carousel.processImagedObjectImages(stored, output.find(".carousel"));
+			let output = $('<div class="col-sm-6 col-md-6 col-lg-3"></div>');
+
+			Carousel.newCarousel(stored.id + "-image-carousel", stored, output);
 
 			return output;
 		}
@@ -147,6 +148,17 @@ const StoredView = {
 			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row uniqueIdContainer"></div></div>');
 
 			UniqueIdentifiers.View.showInDiv(output.find(".uniqueIdContainer"), stored.uniqueIds);
+
+			return output;
+		}
+		return "";
+	},
+
+	getStoredPricing(stored){
+		if(Object.keys(stored.calculatedPrices).length) {
+			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row pricingContainer"></div></div>');
+
+			Pricing.View.CalculatedPricing.showInDiv(output.find(".pricingContainer"), stored.calculatedPrices, "col-6");
 
 			return output;
 		}
@@ -220,7 +232,7 @@ const StoredView = {
 			);
 		}
 
-		if (includeIdentifier) {
+		if (includeIdentifier) {//TODO:: likely remove, after label rework #1003
 			newContent.append(
 				StoredView.getStorageBlockTrackedIdentifierView(stored)
 			);
@@ -236,9 +248,9 @@ const StoredView = {
 			StoredView.getStoredAtts(stored),
 			StoredView.getStoredGeneralIds(stored),
 			StoredView.getStoredUniqueIds(stored),
+			StoredView.getStoredPricing(stored),
 			StoredView.getStoredAttachedFiles(stored)
 		);
-		//TODO:: images, files
 
 		newContentButtons.append(StoredView.getTransactBlockLink(stored, true, {
 			showAddTransaction: showAddTransaction,

@@ -77,19 +77,19 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	) {
 		log.info("Creating new {} ({}) from REST interface.", this.getObjectClass().getSimpleName(), object.getClass());
 		
-		ObjectId newId = this.getObjectService().add(this.getOqmDbIdOrName(), object, this.getInteractingEntity());
+		T newObj = this.getObjectService().add(this.getOqmDbIdOrName(), object, this.getInteractingEntity());
 		
-		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), newId);
+		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), newObj.getId());
 		return object;
 	}
 	
 	@WithSpan
-	public List<ObjectId> createBulk(
+	public List<T> createBulk(
 		@Valid List<T> objects
 	) {
 		log.info("Creating new {} (bulk) from REST interface.", this.getObjectClass().getSimpleName());
 		
-		List<ObjectId> output = this.getObjectService().addBulk(this.getOqmDbIdOrName(), objects, this.getInteractingEntity());
+		List<T> output = this.getObjectService().addBulk(this.getOqmDbIdOrName(), objects, this.getInteractingEntity());
 		log.info("{} {} created with ids: {}", output.size(), this.getObjectClass().getSimpleName(), output);
 		return output;
 	}

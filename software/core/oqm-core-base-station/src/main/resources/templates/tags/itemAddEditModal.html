@@ -88,13 +88,17 @@
                 <input type="hidden" id="addEditItemFormMode" value="">
                 <input type="hidden" id="addEditItemIdInput" value="">
                 <div class="mb-3 row">
-                    <label for="addEditItemNameInput" class="col-sm-2 col-form-label">Name</label>
+                    <label for="addEditItemNameInput" class="col-sm-2 col-form-label">
+                    	Name:
+                    </label>
                     <div class="col-sm-10">
                         <input type="text" class="form-control" id="addEditItemNameInput" placeholder="Name" required>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="addEditItemStorageTypeInput" class="col-sm-2 col-form-label">Storage Type</label>
+                    <label for="addEditItemStorageTypeInput" class="col-sm-2 col-form-label">
+                    	Storage Type:
+                    </label>
                     <div class="col-sm-10">
                         <select class="form-select form-select-lg" id="addEditItemStorageTypeInput" data-current="BULK" onchange="ItemAddEdit.addEditStoredTypeInputChanged()" aria-describedby="addEditItemStorageTypeHelp">
                             <option value="BULK" selected>Bulk</option>
@@ -103,29 +107,57 @@
                             <option value="UNIQUE_SINGLE">Unique - Single</option>
                         </select>
                         <div id="addEditItemStorageTypeHelp" class="form-text">
-                            For details on each type of storage, see <a href="/help#items" target="_blank">{#icons/help /} Help</a><br />
+                            For details on each type of storage, see <a href="{rootPrefix}/help#items" target="_blank">{#icons/help /} Help</a><br />
                             This cannot be changed after item creation.
                         </div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="addEditItemDescriptionInput" class="col-sm-2 col-form-label">Description</label>
+                    <label for="addEditItemDescriptionInput" class="col-sm-2 col-form-label">
+                    	Description:
+                    </label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" id="addEditItemDescriptionInput" placeholder="Description"></textarea>
+                    	<div id="addEditItemDescriptionInput" data-ot-placeholder="Description"></div>
                     </div>
                 </div>
                 <div class="mb-3 row" id="addEditItemUnitNameRow">
-                    <label for="addEditItemUnitInput" class="col-sm-2 col-form-label">Unit</label>
+                    <label for="addEditItemUnitInput" class="col-sm-2 col-form-label">
+                    	{#icons/units /} Unit:
+                    </label>
                     <div class="col-sm-10">
-                        <select class="form-select dselect-select" id="addEditItemUnitInput">
+                        <select class="form-select dselect-select" id="addEditItemUnitInput" aria-describedby="addEditItemUnitInputHelp">
                             {#inputs/units/unitOptionsGroups allUnitMap=allUnitMap /}
                         </select>
+                        <div id="addEditItemUnitInputHelp" class="form-text">
+                            This cannot be changed to an incompatible unit after item creation.<br />
+                            For details on the units and what are available, see <a href="{rootPrefix}/help#units" target="_blank">{#icons/help /} Help</a>
+                        </div>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="addEditItemCategoriesInput" class="col-form-label col-sm-2">Categories:</label>
+                    <label for="addEditItemCategoriesInput" class="col-form-label col-sm-2">
+                    	{#icons/categories /} Categories:
+                    </label>
                     <div class="col-sm-10">
                         {#inputs/categoryInput id="addEditItemCategoriesInput" allCategorySearchResults=allCategorySearchResults multi=true /}
+                    </div>
+                </div>
+                <hr />
+                <div class="mb-3 row">
+                    <div class="col-sm-2 col-form-label">
+                    	{#icons/storageBlocks /}
+                        Associated Storage:
+                    </div>
+                    <div class="col-sm-10">
+                        <div class="row mt-2" id="addEditItemAssociatedStorageInputContainer">
+                        </div>
+                        <div class="col d-grid gap-2 mt-3">
+                            <button type="button" class="btn btn-sm btn-success mt-2" id="addEditItemAssociatedStorageAddButton" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.storageSearchSelectForm.submit();">
+                                {#icons/add}{/icons/add} Add Associated Storage
+                            </button>
+                            <div class="form-text">
+                            </div>
+                        </div>
                     </div>
                 </div>
                 <hr />
@@ -157,18 +189,11 @@
                     </div>
                 </div>
                 <hr />
-                {!<div class="mb-3 row" id="addEditItemPricePerUnitNameRow">!}
-                    {!<label for="addEditItemPricePerUnitInput" class="col-sm-2 col-form-label">Price Per Unit</label>!}
-                    {!<div class="col-sm-10">!}
-                        {!<div class="input-group">!}
-                            {!<span class="input-group-text" id="addon-wrapping">{currency.getSymbol()}</span>!}
-                            {!<input type="number" min="0.00" step="any" class="form-control" id="addEditItemPricePerUnitInput" placeholder="Price Per Unit" required>!}
-                        {!</div>!}
-                    {!</div>!}
-                {!</div>!}
                 
                 <div class="mb-3 row" id="addEditItemExpiryWarningThresholdRow">
-                    <label for="addEditItemExpiryWarningThresholdInput" class="col-sm-2 col-form-label">Expiry Warning Threshold</label>
+                    <label for="addEditItemExpiryWarningThresholdInput" class="col-sm-2 col-form-label">
+                    	Expiry Warning Threshold:
+                    </label>
                     <div class="col-sm-10">
                         <div class="input-group">
                             <input type="number" min="0" class="form-control" id="addEditItemExpiryWarningThresholdInput" placeholder="Expiry Warning Threshold" required value="0" aria-describedby="addEditExpiryWarningThresholdHelp">
@@ -188,7 +213,9 @@
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="addEditItemTotalLowStockThresholdInput" class="col-sm-2 col-form-label">Total Low Stock Threshold</label>
+                    <label for="addEditItemTotalLowStockThresholdInput" class="col-sm-2 col-form-label">
+                    	Total Low Stock Threshold:
+                    </label>
                     <div class="col-sm-10">
                         <div class="input-group mt-2 mb-3">
                             <input type="number" class="form-control amountStoredValueInput" id="addEditItemTotalLowStockThresholdInput" placeholder="Value" min="0.00" step="any">
@@ -201,24 +228,90 @@
                     </div>
                 </div>
                 <hr />
-                <div class="mb-3 row">
-                    <div class="col-sm-2 col-form-label">
-                    	{#icons/storageBlocks /}
-                        Associated Storage
-                    </div>
+                <div class="row">
+                    <label for="addEditItemPricingInput" class="col-form-label col-sm-2">
+                    	{#icons/pricing /}
+                    	Default Pricing:
+                    </label>
                     <div class="col-sm-10">
-                        <div class="row mt-2" id="addEditItemAssociatedStorageInputContainer">
-                        </div>
-                        <div class="col d-grid gap-2 mt-3">
-                            <button type="button" class="btn btn-sm btn-success mt-2" id="addEditItemAssociatedStorageAddButton" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.storageSearchSelectForm.submit();">
-                                {#icons/add}{/icons/add} Add Associated Storage
-                            </button>
-                            <div class="form-text">
-
-                            </div>
+                        {#inputs/pricing/pricingInput id='addEditItemPricingInput' /}
+                        <div class="form-text">
+                            These prices are automatically counted for all stored items. To override, set the price in the individual stored.
                         </div>
                     </div>
                 </div>
+                <div class="row mt-3">
+                    <label for="addEditItemDefaultStoredLabelInput" class="col-form-label col-sm-2">
+                    	Default Stored Label Format:
+                    </label>
+                    <div class="col-sm-10">
+                    	<input type="text" class="form-control" id="addEditItemDefaultStoredLabelInput" placeholder="Default Stored Label" aria-describedby="addEditItemDefaultStoredLabelInputHelp" />
+                        <div class="form-text" id="addEditItemDefaultStoredLabelInputHelp">
+                            This label format is used when stored items aren't supplied with their own.
+                            <button class="btn btn-link btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#addEditItemDefaultStoredLabelInputHelpCollapse" aria-expanded="false" aria-controls="addEditItemDefaultStoredLabelInputHelpCollapse">
+                              {#icons/info /}
+                            </button>
+                            <div class="collapse" id="addEditItemDefaultStoredLabelInputHelpCollapse">
+							  <h4>Stored Label Formatting:</h4>
+							  <p>
+							    You can specify any label format you like to stored items, and include from a selection of different dynamic inclusions. Leave blank for default label format.
+							  </p>
+							  <p>
+								  This is used mostly in stored search results. The goal is to help differentiate between stored items in that search. An example would be for an item that
+								  is a particular shirt print design, you could differentiate between shirt sizes.
+							  </p>
+							  <h5>
+							  Examples:
+							  </h5>
+							  <ul>
+								  <li>
+									  <code class="user-select-all">\{id}</code> {#icons/arrowRight /} <code>69685a30ed9db4170b717e10</code> (the id of the stored item)
+								  </li>
+								  <li>
+									  <code class="user-select-all">\{amt} - \{id}</code> {#icons/arrowRight /} <code>1 units - 69685a30ed9db4170b717e10</code>
+								  </li>
+								  <li>
+									  <code class="user-select-all">Size: \{att:size}</code> {#icons/arrowRight /} <code>Size: L</code> (for a stored item with a <code>size</code> attribute of <code>L</code>)
+								  </li>
+								  <li>
+									  <code class="user-select-all">Expires: \{exp:LLL/yyyy}</code> {#icons/arrowRight /} <code>Expires: Jul/2024</code> (for a stored item with an expiration date in July 2024)
+								  </li>
+							  </ul>
+							  <h5>
+							    Format placeholders:
+							  </h5>
+							  <ul>
+							      <li>
+							          Id: <code class="user-select-all">\{id;number of digits, startting from the end (optional)}</code> - The ID of the stored object. Parameter to specify the number of characters to actually
+							          display. Defaults to full Id.
+							      </li>
+							      <li>
+							          Amount: <code class="user-select-all">\{amt}</code> - Use the stored amount. Defaults to "1 units" for unique stored.
+							      </li>
+							      <li>
+							          Condition: <code class="user-select-all">\{cnd}</code> - Use the condition as a percentage.
+							      </li>
+							      <li>
+									  Expiration: <code class="user-select-all">\{exp;datetime format}</code> - Writes out the expiration for this stored. Format should match standard <a href="https://www.digitalocean.com/community/tutorials/java-simpledateformat-java-date-format#patterns" target="_blank">Java datetime syntax</a>. Default format is <code>MM/dd/yyyy</code>
+							      </li>
+							      <li>
+							          General Id: <code class="user-select-all">\{gid;name of general identifier}</code> - Use a general identifier value.
+							      </li>
+							      <li>
+							          Unique Id: <code class="user-select-all">\{uid;name of unique identifier}</code> - Use a unique identifier value.
+							      </li>
+							      <li>
+							          Price: <code class="user-select-all">\{price;name of calculated price}</code> - Use a price value. Does not include price label.
+							      </li>
+							      <li>
+							          Attribute: <code class="user-select-all">\{att;key for attribute}</code> - Use an attribute value.
+							      </li>
+							  </ul>
+							</div>
+                        </div>
+                    </div>
+                </div>
+                
                 {!<div class="mb-3 row">!} {!TODO:: 460 !}
                     {!<label class="col-sm-2 col-form-label">Not Stored</label>!}
                     {!<div class="col-sm-10">!}

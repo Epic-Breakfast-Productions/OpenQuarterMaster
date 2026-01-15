@@ -18,7 +18,7 @@ Restart=always
 TimeoutSec=5m
 Environment="CONTAINER_NAME=oqm-infra-homepage"
 Environment="IMAGE_NAME=ghcr.io/gethomepage/homepage"
-Environment="IMAGE_VERSION=v1.2"
+Environment="IMAGE_VERSION=v1.8"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/homepage/env.list"
 
 ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"

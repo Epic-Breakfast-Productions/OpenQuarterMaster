@@ -8,7 +8,7 @@
 		<label for="{id}-nameInput" class="form-label">Name</label>
 		<input type="text" class="form-control" id="{id}-nameInput" name="name" placeholder="Name" aria-describedby="{id}-nameInputHelp" required>
 		<div id="{id}-nameInputHelp" class="form-text">
-			Not required. A helpful name to give the generator. Must be unique.
+			Required. A helpful name to give the generator. Must be unique.
 		</div>
 	</div>
 	
@@ -48,7 +48,7 @@
 				<div id="{id}-encodedInputHelp" class="form-text">
 					If to encode the resulting text. This obfuscates the real value while remaining unique.<br />
 					Not changeable after generator creation.<br />
-					Example: <code>foo-\{inc}</code> -> <code>Zm9vLTAwMDAx</code>
+					Example: <code>foo-\{inc}</code> {#icons/arrowRight /} <code>Zm9vLTAwMDAx</code>
 				</div>
 			</div>
 		</div>
@@ -99,10 +99,10 @@
 			Examples:
 			<ul>
 				<li>
-					Possible SKU of a shirt (<code>C</code> for "clothing", <code>S</code> for shirt, <code>L</code> for Large): <code>C-S-L-\{inc}</code> -> <code>C-S-L-00001</code>
+					Possible SKU of a shirt (<code>C</code> for "clothing", <code>S</code> for shirt, <code>L</code> for Large): <code>C-S-L-\{inc}</code> {#icons/arrowRight /} <code>C-S-L-00001</code>
 				</li>
 				<li>
-					<code>\{dt}-\{inc}</code> -> <code>01/30/2020-24:30:30-00001</code>
+					<code>\{dt}-\{inc}</code> {#icons/arrowRight /} <code>01/30/2020-24:30:30-00001</code>
 				</li>
 			</ul>
 		</div>
