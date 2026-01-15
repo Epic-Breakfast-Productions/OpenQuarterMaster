@@ -16,6 +16,7 @@ import tech.ebp.oqm.core.api.model.units.UnitUtils;
 
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -51,6 +52,11 @@ public class StoredTest extends BasicTest {
 		String att = FAKER.name().name();
 		Map<String, String> atts = Map.of(att, FAKER.idNumber().valid());
 		
+		Integer condition = 20;
+		
+		ZonedDateTime expires = ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]");
+		
+		
 		
 		AmountStored fullAmountStored = AmountStored.builder()
 											.id(ObjectId.get())
@@ -61,6 +67,8 @@ public class StoredTest extends BasicTest {
 											.uniqueIds(uniqueIds)
 											.calculatedPrices(pricingSet)
 											.attributes(atts)
+											.condition(condition)
+											.expires(expires)
 											.build();
 		UniqueStored fullUniqueStored = UniqueStored.builder()
 											.id(ObjectId.get())
@@ -75,6 +83,13 @@ public class StoredTest extends BasicTest {
 			//amounts
 			Arguments.of(fullAmountStored, "{amt}", "1 units"),
 			Arguments.of(fullUniqueStored, "{amt}", "1 units"),
+			//condition
+			Arguments.of(fullAmountStored, "{cnd}", "20%"),
+			Arguments.of(fullUniqueStored, "{cnd}", "-%"),
+			//expiration
+			Arguments.of(fullAmountStored, "{exp}", "12/03/2007"),
+			Arguments.of(fullAmountStored, "{exp;LLL/yyyy}", "Dec/2007"),
+			Arguments.of(fullUniqueStored, "{exp}", "-"),
 			//general Ids
 			Arguments.of(fullAmountStored, "{gid;"+gid.getLabel()+"}", gid.getValue()),
 			Arguments.of(fullAmountStored, "{gid;foo}", "#E#"),
@@ -90,9 +105,10 @@ public class StoredTest extends BasicTest {
 			//combined
 			Arguments.of(
 				fullAmountStored,
-				"-{id} - {amt} - {gid;"+gid.getLabel()+"} - {uid;"+uid.getLabel()+"} - {price;"+pricing.getLabel()+"} - {att;"+att+"}",
+				"-{id} - {amt} - {cnd} - {gid;"+gid.getLabel()+"} - {uid;"+uid.getLabel()+"} - {price;"+pricing.getLabel()+"} - {att;"+att+"}",
 				"-" + fullAmountStored.getId().toHexString() +
 				" - 1 units" +
+				" - 20%" +
 				" - " + gid.getValue() +
 				" - " + uid.getValue() +
 				" - $1.00" +

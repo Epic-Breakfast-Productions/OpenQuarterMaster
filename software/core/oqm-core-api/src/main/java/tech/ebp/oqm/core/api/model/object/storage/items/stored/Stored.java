@@ -81,6 +81,8 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	private static final String LABEL_PLACEHOLDER_PART_DELIM = ";";
 	private static final String LABEL_PLACEHOLDER_ARG_DELIM = LABEL_PLACEHOLDER_PART_DELIM;
 	private static final String LABEL_ERROR = "#E#";
+	private static final DateTimeFormatter LABEL_DT_DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+	
 	
 	/**
 	 *
@@ -91,7 +93,13 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 *         display. Defaults to full Id.
 	 *     </li>
 	 *     <li>
-	 *         amt: {@code {amt}}- Use the stored amount. (only applies to amount stored)
+	 *         amt: {@code {amt}}- Use the stored amount.
+	 *     </li>
+	 *     <li>
+	 *         cnd: {@code {cnd}}- Use the condition as a percentage.
+	 *     </li>
+	 *     <li>
+	 *         exp: {@code {exp;<datetime format>}}- Writes out the expiration for this stored. Format should match standard Java datetime syntax. Default format is {@code MM/dd/yyyy}
 	 *     </li>
 	 *     <li>
 	 *         gid: {@code {gid;<name of general identifier>}}- Use a general identifier value.
@@ -163,7 +171,29 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 						
 						sb.append(amount.toString());
 						break;
-					
+					case "cnd":
+						Integer condition = stored.getCondition();
+						
+						sb.append(
+							condition == null ?
+								"-" :
+								condition.toString()
+						);
+						sb.append('%');
+						break;
+					case "exp":
+						DateTimeFormatter formatter = LABEL_DT_DEFAULT_FORMATTER;
+						
+						if (args.length > 0) {
+							formatter = DateTimeFormatter.ofPattern(args[0]);
+						}
+						
+						sb.append(
+							stored.getExpires() == null?
+								'-' :
+							stored.getExpires().format(formatter)
+						);
+						break;
 					case "gid":
 					case "uid":
 					case "price":
