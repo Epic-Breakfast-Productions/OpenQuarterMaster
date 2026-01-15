@@ -17,10 +17,12 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.Uniqu
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.ItemNotificationStatus;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.model.validation.annotations.UniqueLabeledCollection;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidItemUnit;
+import tech.ebp.oqm.core.api.model.validation.annotations.ValidStoredLabelFormat;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidUnit;
 
 import javax.measure.Quantity;
@@ -136,6 +138,15 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull StoredPricing> defaultPrices = new LinkedHashSet<>();
 	
+	/**
+	 * The default format that should be applied to new stored items if not otherwise specified.
+	 *
+	 * See {@link tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored#parseLabel(Stored, String)} for format details.
+	 */
+	@lombok.Builder.Default
+	@ValidStoredLabelFormat
+	private String defaultLabelFormat = null;
+	
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
@@ -181,6 +192,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@lombok.Builder.Default
 	private ItemStoredStats stats = null;
 	
+
 	@Override
 	public int getSchemaVersion() {
 		return CUR_SCHEMA_VERSION;
