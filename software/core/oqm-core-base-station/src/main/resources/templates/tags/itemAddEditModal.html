@@ -240,6 +240,74 @@
                         </div>
                     </div>
                 </div>
+                <div class="row mt-3">
+                    <label for="addEditItemDefaultStoredLabelInput" class="col-form-label col-sm-2">
+                    	Default Stored Label:
+                    </label>
+                    <div class="col-sm-10">
+                    	<input type="text" class="form-control" id="addEditItemDefaultStoredLabelInput" placeholder="Default Stored Label" aria-describedby="addEditItemDefaultStoredLabelInputHelp" />
+                        <div class="form-text" id="addEditItemDefaultStoredLabelInputHelp">
+                            This label format is used when stored items aren't supplied with their own.
+                            <button class="btn btn-link btn-sm" type="button" data-bs-toggle="collapse" data-bs-target="#addEditItemDefaultStoredLabelInputHelpCollapse" aria-expanded="false" aria-controls="addEditItemDefaultStoredLabelInputHelpCollapse">
+                              {#icons/info /}
+                            </button>
+                            <div class="collapse" id="addEditItemDefaultStoredLabelInputHelpCollapse">
+							  <h4>Stored Label Formatting:</h4>
+							  <p>
+							    You can specify any label format you like to stored items, and include from a selection of different dynamic inclusions. Leave blank for default label format.
+							  </p>
+							  <p>
+								  This is used mostly in stored search results. The goal is to help differentiate between stored items in that search. An example would be for an item that
+								  is a particular shirt print design, you could differentiate between shirt sizes.
+							  </p>
+							  <h5>
+							    Format placeholders:
+							  </h5>
+							  <ul>
+							      <li>
+							          Id: <code>\{id;number of digits, startting from the end (optional)}</code> - The ID of the stored object. Parameter to specify the number of characters to actually
+							          display. Defaults to full Id.
+							      </li>
+							      <li>
+							          Amount: <code>\{amt}</code> - Use the stored amount. Defaults to "1 units" for unique stored.
+							      </li>
+							      <li>
+							          Condition: <code>\{cnd}</code> - Use the condition as a percentage.
+							      </li>
+							      <li>
+									  Expiration: <code>\{exp;datetime format}</code> - Writes out the expiration for this stored. Format should match standard Java datetime syntax. Default format is <code>MM/dd/yyyy</code>
+							      </li>
+							      <li>
+							          General Id: <code>\{gid;name of general identifier}</code> - Use a general identifier value.
+							      </li>
+							      <li>
+							          Unique Id: <code>\{uid;name of unique identifier}</code> - Use a unique identifier value.
+							      </li>
+							      <li>
+							          Price: <code>\{price;name of calculated price}</code> - Use a price value. Does not include price label.
+							      </li>
+							      <li>
+							          Attribute: <code>\{att;key for attribute}</code> - Use an attribute value.
+							      </li>
+							  </ul>
+							  <p>
+							  Examples:
+							  </p>
+							  <ul>
+								  <li>
+									  <code>\{id}</code> -> <code>69685a30ed9db4170b717e10</code> (the id of the stored item)
+								  </li>
+								  <li>
+									  <code>\{amt} - {id}</code> -> <code>1 units - 69685a30ed9db4170b717e10</code>
+								  </li>
+								  <li>
+									  <code>Size: \{att:size}</code> -> <code>Size: L</code> (for a stored item with a <code>size</code> attribute of <code>L</code>)
+								  </li>
+							  </ul>
+							</div>
+                        </div>
+                    </div>
+                </div>
                 
                 {!<div class="mb-3 row">!} {!TODO:: 460 !}
                     {!<label class="col-sm-2 col-form-label">Not Stored</label>!}
