@@ -90,10 +90,13 @@
 
 .itemCatBadge {
 	border-radius: 3px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #8B8B8B;
 }
 
 .itemCatBadgeImage {
-	max-height: 50px;
+	max-height: 30px;
 	margin-right: 3px;
 }
 
