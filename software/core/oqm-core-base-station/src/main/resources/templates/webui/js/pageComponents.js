@@ -30,6 +30,8 @@ const PageComponents = {
 		}
 	},
 	View: {
+		itemCatBadge: '{itemCatBadgeLines}\
+',
 		attachedFileList: '{attachedFileListLines}\
 ',
 	}
