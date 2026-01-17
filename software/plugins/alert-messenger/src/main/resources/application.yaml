@@ -2,9 +2,13 @@
 quarkus:
   log:
     level: DEBUG
+    category:
+      "io.quarkus.mailer":
+        level: DEBUG
   oidc:
-    application-type: web_app
-    token-state-manager:
+    application-type: WEB_APP
+    token-state-manager: 
+      encryption-secret: "7Ko5m4wII/c8iJxWeNQRIwJ1AIaE5XVfTsA8oiI5Z4IAMrGa24wfuZRiCa6nTELZ"
       split-tokens: true
   oqmCoreApi:
     devservice:
@@ -24,6 +28,30 @@ quarkus:
       resource-mappings:
         systemCert: /opt/keycloak/certs/devTest-cert-cert.pem
         systemCertKey: /opt/keycloak/certs/devTest-cert-key.pem
+  # Mailer configuration for Gmail SMTP server.
+  # Configures the SMTP server for sending email notifications.
+  mailer:
+    auth-methods: "DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN"
+    from: "oqm.alert.messenger@gmail.com"
+    host: "smtp.gmail.com"
+    port: 587
+    ssl: false
+    start-tls: REQUIRED
+    username: "${SMTP_USERNAME}"
+    password: "${SMTP_PASSWORD}"
+    mock: false
+
+  # Database configuration below (for user credentials and preferences).
+  # Configures the PostgreSQL database for storing user information and preferences.
+  datasource:
+    db-kind: postgresql
+    jdbc:
+      url: jdbc:postgresql://localhost:5432/oqm_db
+    username: ${DB_USERNAME:defaultUsername}
+    password: ${DB_PASSWORD:defaultPassword}
+  hibernate-orm:
+    database:
+      generation: update
 
 mp:
   messaging:
@@ -39,6 +67,8 @@ mp:
 smallrye:
   jwt:
     always-check-authorization: true
+    require-scope: false
+
 
 "%dev":
   quarkus:
