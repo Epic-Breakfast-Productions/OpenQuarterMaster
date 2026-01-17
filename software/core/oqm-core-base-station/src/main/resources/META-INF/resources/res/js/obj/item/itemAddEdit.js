@@ -1,6 +1,8 @@
 const ItemAddEdit = {
 	addEditItemForm: $('#addEditItemForm'),
 	addEditItemFormSubmitButton: $('#addEditItemFormSubmitButton'),
+	addEditItemFormSubmitAndAddAnotherButton: $('#addEditItemFormSubmitAndAddAnotherButton'),
+	submitAndAddAnother: false,
 	addEditItemModal: $("#addEditItemModal"),
 	addEditItemModalBs: new bootstrap.Modal("#addEditItemModal"),
 	addEditItemFormMessages: $("#addEditItemFormMessages"),
@@ -309,6 +311,14 @@ StorageSearchSelect.selectStorageBlock = function (blockName, blockId, inputIdPr
 	Main.processStop();
 }
 
+ItemAddEdit.addEditItemFormSubmitAndAddAnotherButton.click(function () {
+	ItemAddEdit.submitAndAddAnother = true;
+});
+
+ItemAddEdit.addEditItemFormSubmitButton.click(function () {
+	ItemAddEdit.submitAndAddAnother = false;
+});
+
 ItemAddEdit.addEditItemForm.submit(async function (event) {
 	event.preventDefault();
 	console.log("Submitting add/edit form.");
@@ -385,6 +395,12 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 	if (!result) {
 		PageMessages.addMessageToDiv(ItemAddEdit.addEditItemFormMessages, "danger", "Failed to do " + verb + " item.", "Failed", null);
 	} else {
-		PageMessages.reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
+		if (ItemAddEdit.submitAndAddAnother && ItemAddEdit.addEditItemFormMode.val() === "add") {
+			PageMessages.addMessageToDiv(ItemAddEdit.addEditItemFormMessages, "success", verb + " item successfully!", "Success!", null);
+			await ItemAddEdit.setupAddEditForAdd();
+			ItemAddEdit.submitAndAddAnother = false;
+		} else {
+			PageMessages.reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
+		}
 	}
 });
