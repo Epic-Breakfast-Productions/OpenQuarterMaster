@@ -9,6 +9,7 @@ import com.mongodb.client.model.Sorts;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
+import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -49,7 +50,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	public static final String COLLECTION_HISTORY_APPEND = "-history";
 
 	private final Class<T> clazzForObjectHistoryIsFor;
-
+	
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
 
@@ -62,6 +63,8 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 	) {
 		super(objectMapper, mongoClient, database, oqmDatabaseService, getCollectionNameFromClass(clazzForObjectHistoryIsFor) + COLLECTION_HISTORY_APPEND, ObjectHistoryEvent.class);
 		this.clazzForObjectHistoryIsFor = clazzForObjectHistoryIsFor;
+		
+		//Need to get directly from Arc as this class is not injected downstream, but directly created in this constructor
 		try (InstanceHandle<HistoryEventNotificationService> container = Arc.container().instance(HistoryEventNotificationService.class)) {
 			this.hens = container.get();
 		}

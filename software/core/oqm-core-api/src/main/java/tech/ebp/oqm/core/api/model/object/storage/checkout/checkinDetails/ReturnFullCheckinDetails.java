@@ -7,9 +7,9 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.CheckInType;
 
+@Data
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
-@Data
 //@AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
