@@ -1,16 +1,14 @@
 
 const ImageAddFromSelect = {
-	formMessages: $("addImageFormMessages"),
+	formMessages: $("#addImageFormMessages"),
 	imageSearchSelectModalLabelCloseButton: $("#imageSearchSelectModalLabelCloseButton"),
 	imageAddImageForm: $("#addImageForm"),
-	imageAddTitleInput: $("#addTitleInput"),
 	imageAddDescriptionInput: $("#addDescriptionInput"),
 	imageUploadInput: $("#imageUploadInput"),
 	imageAddKeywordInputDiv: $("#addImageForm").find(".keywordInputDiv"),
 	imageAddAttInputDiv: $("#addImageForm").find(".attInputDiv"),
 	resetImageAdd(){
 		ImageAddFromSelect.imageAddImageForm.trigger("reset");
-		ImageAddFromSelect.imageAddTitleInput.text("");
 		ImageAddFromSelect.imageAddDescriptionInput.html("");
 		ImageAddFromSelect.imageUploadInput.html("");
 		ImageAddFromSelect.imageAddKeywordInputDiv.html("");
@@ -43,7 +41,8 @@ ImageAddFromSelect.imageAddImageForm.submit(function (ev) {
 			async: false,
 			done: function(data) {
 				console.log("New image id: " + data.id)
-				ImageSearchSelect.selectImage(addData.title, data.id);
+				let fileName = ImageAddFromSelect.imageUploadInput[0].files[0].name;
+				ImageSearchSelect.selectImage(fileName, data.id);
 				ImageAddFromSelect.imageSearchSelectModalLabelCloseButton.click();
 				ImageAddFromSelect.resetImageAdd();
 			},
