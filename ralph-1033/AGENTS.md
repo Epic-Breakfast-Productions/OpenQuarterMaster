@@ -122,14 +122,15 @@ git checkout software/core/oqm-core-api/src/main/java/tech/ebp/oqm/core/api/mode
 - Concrete classes extend and also use `@SuperBuilder`
 - Generic type parameters used in intermediate classes
 
-## Verified Findings (Latest: 2026-01-17 - Session 2)
+## Verified Findings (Latest: 2026-01-17 - Session 3)
 
 ### Error Reproduction
-- **Intermittent failure rate**: ~50-60% (varies between 5-6 out of 10 builds fail)
+- **Intermittent failure rate**: ~44-60% (varies between 4-6 out of 9-10 builds fail)
 - **Error message**: `error: wrong number of type arguments; required 2`
 - **Root cause**: `lombok.builder.className = Builder` in lombok.config conflicts with @SuperBuilder generics
 - **Verification method**: Run 10 consecutive Docker builds with `clean build -x test --no-daemon`
 - **Java version verified**: eclipse-temurin:21-jdk (Java 21.0.9+10-LTS)
+- **Session 3 Results**: 4 out of 9 valid builds failed (44%); 1 build excluded due to network timeout
 
 ### Affected Files (aggregated from multiple sessions)
 All 5 concrete classes extending generic @SuperBuilder parents have been observed failing:

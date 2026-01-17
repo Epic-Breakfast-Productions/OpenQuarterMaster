@@ -2,7 +2,67 @@
 
 ## Current Status: Phase 2 COMPLETE - Root Cause Confirmed, Ready for Fix
 
-## Latest Investigation (2026-01-17 - Session 2)
+## Latest Investigation (2026-01-17 - Session 3)
+
+### Error Reproduction: CONFIRMED - 44% Failure Rate (4 out of 9 valid builds)
+
+**Note**: Run 5 failed due to network timeout (Gradle download), not a build error, and is excluded from failure rate calculation.
+
+**Test Results**: 4 out of 9 valid builds failed (44% intermittent failure rate)
+
+| Run | Result | Affected Files |
+|-----|--------|----------------|
+| 1 | SUCCESS | - |
+| 2 | SUCCESS | - |
+| 3 | **FAILED** | CheckinLossTransaction.java:17, CheckinFullTransaction.java:18 |
+| 4 | SUCCESS | - |
+| 5 | SKIP | Network timeout (Gradle download issue, not build failure) |
+| 6 | SUCCESS | - |
+| 7 | **FAILED** | CheckinPartTransaction.java:17, CheckinLossTransaction.java:17, ItemAmountCheckout.java:22 |
+| 8 | **FAILED** | CheckinFullTransaction.java:18, CheckinPartTransaction.java:17, CheckinLossTransaction.java:17 |
+| 9 | SUCCESS | - |
+| 10 | **FAILED** | ItemAmountCheckout.java:22, CheckinPartTransaction.java:17, CheckinFullTransaction.java:18 |
+
+**Exact Error Messages Captured** (from this session):
+```
+/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/items/transactions/transactions/checkin/CheckinLossTransaction.java:17: error: wrong number of type arguments; required 2
+@SuperBuilder(toBuilder = true)
+^
+/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/items/transactions/transactions/checkin/CheckinPartTransaction.java:17: error: wrong number of type arguments; required 2
+@SuperBuilder(toBuilder = true)
+^
+/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/items/transactions/transactions/checkin/CheckinFullTransaction.java:18: error: wrong number of type arguments; required 2
+@SuperBuilder(toBuilder = true)
+^
+/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/checkout/ItemAmountCheckout.java:22: error: wrong number of type arguments; required 2
+@SuperBuilder(toBuilder = true)
+^
+```
+
+### Session 3 Verification Summary
+
+1. **Source Files Re-Verified**:
+   - `ItemStoredTransaction.java`: Confirmed @SuperBuilder, NO generics (line 65)
+   - `CheckinTransaction.java`: Confirmed @SuperBuilder, HAS generic `<T extends CheckInDetails>` (line 23)
+   - `CheckinFullTransaction.java`: Confirmed extends `CheckinTransaction<ReturnFullCheckinDetails>` (line 20)
+
+2. **Configuration Files Re-Verified**:
+   - `lombok.config`: Contains `lombok.builder.className = Builder` (line 4) - ROOT CAUSE
+   - `build.gradle`: Lombok plugin 9.1.0, Java 21 toolchain
+
+3. **Build Environment Verified**:
+   - Docker eclipse-temurin:21-jdk (Java 21.0.9+10-LTS)
+   - Error detection verified with intentional syntax error test
+
+4. **Affected Files from This Session**:
+   - CheckinLossTransaction.java:17 (failed 4x)
+   - CheckinPartTransaction.java:17 (failed 3x)
+   - CheckinFullTransaction.java:18 (failed 3x)
+   - ItemAmountCheckout.java:22 (failed 2x)
+
+---
+
+## Previous Investigation (2026-01-17 - Session 2)
 
 ### Error Reproduction: CONFIRMED - 60% Failure Rate
 
@@ -273,6 +333,25 @@ Rationale: This is the root cause configuration that conflicts with @SuperBuilde
    - CheckinFullTransaction, CheckinPartTransaction, CheckinLossTransaction (CheckinTransaction hierarchy)
    - ItemWholeCheckout, ItemAmountCheckout (ItemCheckout hierarchy)
 6. **Root Cause Analysis Reinforced**: The random nature of which files fail confirms the annotation processor race condition hypothesis
+
+### 2026-01-17 Investigation Session 3 Results
+
+1. **Error Confirmed**: 44% failure rate (4 out of 9 valid builds; Run 5 excluded due to network timeout)
+2. **Source Files Re-Verified**:
+   - `ItemStoredTransaction.java`: @SuperBuilder, NO generics (line 65)
+   - `CheckinTransaction.java`: @SuperBuilder, HAS generic `<T extends CheckInDetails>` (line 23)
+   - `CheckinFullTransaction.java`: extends `CheckinTransaction<ReturnFullCheckinDetails>` (line 20)
+3. **Configuration Re-Verified**:
+   - `lombok.config`: Contains `lombok.builder.className = Builder` (line 4) - ROOT CAUSE
+   - `build.gradle`: Lombok plugin 9.1.0, Java 21 toolchain
+4. **Affected Files from This Session**:
+   - CheckinLossTransaction.java:17 (failed 4x)
+   - CheckinPartTransaction.java:17 (failed 3x)
+   - CheckinFullTransaction.java:18 (failed 3x)
+   - ItemAmountCheckout.java:22 (failed 2x)
+5. **Build Environment**: Docker with eclipse-temurin:21-jdk (Java 21.0.9+10-LTS)
+6. **Error Detection**: Verified working via intentional syntax error test
+7. **Cumulative Failure Rate Across All Sessions**: ~44-60% (highly consistent with annotation processor race condition)
 
 ### Source Files Verified
 
