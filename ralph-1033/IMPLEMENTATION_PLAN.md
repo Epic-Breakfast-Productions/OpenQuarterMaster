@@ -2,7 +2,45 @@
 
 ## Current Status: Phase 2 COMPLETE - Root Cause Confirmed, Ready for Fix
 
-## Latest Investigation (2026-01-17)
+## Latest Investigation (2026-01-17 - Session 2)
+
+### Error Reproduction: CONFIRMED - 60% Failure Rate
+
+**Test Results**: 6 out of 10 builds failed (60% intermittent failure rate)
+
+| Run | Result | Affected Files |
+|-----|--------|----------------|
+| 1 | **FAILED** | CheckinLossTransaction.java:17, CheckinPartTransaction.java:17, CheckinFullTransaction.java:18 |
+| 2 | SUCCESS | - |
+| 3 | SUCCESS | - |
+| 4 | **FAILED** | CheckinLossTransaction.java:17, CheckinPartTransaction.java:17 |
+| 5 | **FAILED** | ItemWholeCheckout.java:19 |
+| 6 | SUCCESS | - |
+| 7 | **FAILED** | ItemAmountCheckout.java:22 |
+| 8 | **FAILED** | ItemWholeCheckout.java:19, CheckinFullTransaction.java:18 |
+| 9 | **FAILED** | CheckinLossTransaction.java:17 |
+| 10 | SUCCESS | - |
+
+**Exact Error Messages Captured** (from this session):
+```
+/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/items/transactions/transactions/checkin/CheckinLossTransaction.java:17: error: wrong number of type arguments; required 2
+@SuperBuilder(toBuilder = true)
+^
+/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/items/transactions/transactions/checkin/CheckinPartTransaction.java:17: error: wrong number of type arguments; required 2
+@SuperBuilder(toBuilder = true)
+^
+/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/items/transactions/transactions/checkin/CheckinFullTransaction.java:18: error: wrong number of type arguments; required 2
+@SuperBuilder(toBuilder = true)
+^
+/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/checkout/ItemWholeCheckout.java:19: error: wrong number of type arguments; required 2
+@SuperBuilder(toBuilder = true)
+^
+/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/checkout/ItemAmountCheckout.java:22: error: wrong number of type arguments; required 2
+@SuperBuilder(toBuilder = true)
+^
+```
+
+## Previous Investigation (2026-01-17 - Session 1)
 
 ### Error Reproduction: CONFIRMED - 50% Failure Rate
 
@@ -208,7 +246,7 @@ Rationale: This is the root cause configuration that conflicts with @SuperBuilde
 4. **Build Environment Verified**: Docker with eclipse-temurin:21-jdk works correctly
 5. **Error Detection Verified**: Compilation errors properly detected with non-zero exit codes
 
-### 2026-01-17 Latest Investigation Results
+### 2026-01-17 Investigation Session 1 Results
 
 1. **Error Confirmed**: 50% failure rate (5/10 builds)
 2. **Affected Files Confirmed**:
@@ -219,6 +257,22 @@ Rationale: This is the root cause configuration that conflicts with @SuperBuilde
 3. **Build Environment**: Docker with eclipse-temurin:21-jdk (Java 21.0.9+10-LTS)
 4. **Error Detection**: Verified working via intentional syntax error test
 5. **Ready for Phase 3**: Root cause confirmed, recommended fix is Option A (remove `lombok.builder.className = Builder`)
+
+### 2026-01-17 Investigation Session 2 Results
+
+1. **Error Confirmed**: 60% failure rate (6/10 builds)
+2. **Affected Files from This Session**:
+   - CheckinLossTransaction.java:17 (failed 3x)
+   - ItemWholeCheckout.java:19 (failed 2x)
+   - CheckinPartTransaction.java:17 (failed 2x)
+   - CheckinFullTransaction.java:18 (failed 2x)
+   - ItemAmountCheckout.java:22 (failed 1x)
+3. **Build Environment**: Docker with eclipse-temurin:21-jdk (Java 21.0.9+10-LTS)
+4. **Error Detection**: Verified working via intentional syntax error test
+5. **All 5 Affected Concrete Classes Confirmed**:
+   - CheckinFullTransaction, CheckinPartTransaction, CheckinLossTransaction (CheckinTransaction hierarchy)
+   - ItemWholeCheckout, ItemAmountCheckout (ItemCheckout hierarchy)
+6. **Root Cause Analysis Reinforced**: The random nature of which files fail confirms the annotation processor race condition hypothesis
 
 ### Source Files Verified
 
