@@ -6,7 +6,22 @@
 
 **Validation**: Multiple rounds of 10 consecutive Docker builds passed (0% failure rate vs 20-60% before the fix).
 
-### Final Validation (Session 7 - 2026-01-17)
+### Final Validation (Session 8 - 2026-01-17)
+- ✅ 10 consecutive Docker builds: **ALL PASSED** (0% failure rate)
+- ✅ Class files verified:
+  - `CheckinFullTransaction$CheckinFullTransactionBuilder.class`
+  - `CheckinFullTransaction$CheckinFullTransactionBuilderImpl.class`
+  - `CheckinTransaction$CheckinTransactionBuilder.class`
+  - `ItemAmountCheckout$ItemAmountCheckoutBuilder.class`
+  - `ItemWholeCheckout$ItemWholeCheckoutBuilder.class`
+- ✅ Java compiler confirmed running (Java 21.0.9+10-LTS via Docker eclipse-temurin:21-jdk)
+- ✅ CI Build job passes (`CI - Core - API` build step succeeded)
+- ⚠️ Full test suite: Pre-existing infrastructure issues (tests fail on main branch too)
+  - Tests fail with `OutOfMemoryError` during Quarkus build phase
+  - This is NOT related to the Lombok fix - tests have been failing on main branch since at least 2026-01-15
+- ✅ PR #1054 open and ready for merge
+
+### Previous Validation (Session 7 - 2026-01-17)
 - ✅ 10 consecutive Docker builds: **ALL PASSED** (0% failure rate)
 - ✅ Class files verified:
   - `CheckinFullTransaction$CheckinFullTransactionBuilder.class`
