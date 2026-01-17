@@ -24,8 +24,6 @@ import java.util.Set;
 
 /**
  * Class responsible for describing entities that interact with this system.
- * <p>
- * TODO:: make tolerant to not all fields being specified for users; #868
  */
 @Slf4j
 @JsonTypeInfo(
@@ -64,16 +62,17 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 	
 	public static InteractingEntity createEntity(JsonWebToken jwt) {
 		InteractingEntity newEntity;
-		
+
 		//TODO:: support services better. Probably should setup keycloak to set some of these values.
-		if (((String) jwt.getClaim(Claims.upn)).startsWith("service-account-")) {
+		String upn = JwtUtils.getUpn(jwt);
+		if (upn != null && upn.startsWith("service-account-")) {
 			GeneralService newService = new GeneralService();
-			
-			newService.setName(jwt.getClaim(Claims.upn));
+
+			newService.setName(upn);
 			newService.setDescription("Service account from OIDC provider.");
 			newService.setDeveloperEmail("foo@bar.com");
 			newService.setDeveloperName("Developers");
-			
+
 			newEntity = newService;
 		} else {
 			User newUser = new User();
