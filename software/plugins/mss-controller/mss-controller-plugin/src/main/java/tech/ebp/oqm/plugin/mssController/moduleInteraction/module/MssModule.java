@@ -66,15 +66,28 @@ public abstract class MssModule {
 		return response;
 	}
 	
+	/**
+	 * Clears all highlighted lights on the module by sending a highlight command
+	 * with an empty block list and carry=false.
+	 */
+	public void clearAllLights() {
+		HighlightBlocksCommand clearCommand = new HighlightBlocksCommand();
+		clearCommand.setCarry(false);
+		clearCommand.setBeep(false);
+		clearCommand.setDuration(0);
+		this.sendCommand(clearCommand, CommandResponse.class);
+	}
+
 	public CommandResponse sendModuleIdentifyCommand(){
+		clearAllLights();
 		return this.sendCommand(IdentifyModCommand.getInstance(), CommandResponse.class);
 	}
-	
+
 	public CommandResponse sendModuleBlockIdentifyCommand(int blockNum){
-		//TODO:: make identify command for block
+		clearAllLights();
 		HighlightBlocksCommand command = new HighlightBlocksCommand();
 		command.getStorageBlocks().add(new HighlightBlocksCommand.BlockHighlightSettings(blockNum));
-		
+
 		return this.sendCommand(command, CommandResponse.class);
 	}
 	

@@ -14,6 +14,8 @@ import tech.ebp.oqm.core.api.model.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.core.api.model.rest.tree.itemCategory.ItemCategoryTree;
 import tech.ebp.oqm.core.api.model.rest.tree.itemCategory.ItemCategoryTreeNode;
 import tech.ebp.oqm.core.api.model.rest.search.ItemCategorySearch;
+import tech.ebp.oqm.core.api.exception.db.DbModValidationException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 
 import java.util.Map;
 import java.util.Set;
@@ -45,7 +47,28 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, ItemCategory newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
-		//TODO:: this
+
+		//ensure parent exists, not infinite loop
+		if (newOrChangedObject.getId() != null && newOrChangedObject.hasParent()) {
+			if (newOrChangedObject.getId().equals(newOrChangedObject.getParent())) {
+				throw new DbModValidationException("Item category cannot be a parent to itself.");
+			}
+
+			//exists
+			ItemCategory curParent;
+			try {
+				curParent = this.get(oqmDbIdOrName, clientSession, newOrChangedObject.getParent());
+			} catch (DbNotFoundException e) {
+				throw new DbModValidationException("No parent exists for parent given.", e);
+			}
+			//no inf loop
+			while (curParent.hasParent()) {
+				if (newOrChangedObject.getId().equals(curParent.getParent())) {
+					throw new DbModValidationException("Not allowed to make parental loop.");
+				}
+				curParent = this.get(oqmDbIdOrName, clientSession, curParent.getParent());
+			}
+		}
 	}
 	
 	@Override
