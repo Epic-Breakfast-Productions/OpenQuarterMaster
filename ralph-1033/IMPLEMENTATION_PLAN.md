@@ -2,7 +2,57 @@
 
 ## Current Status: Phase 2 COMPLETE - Root Cause Confirmed, Ready for Fix
 
-## Latest Investigation (2026-01-17 - Session 3)
+## Latest Investigation (2026-01-17 - Session 4)
+
+### Error Reproduction: CONFIRMED - 30% Failure Rate (3 out of 10 builds)
+
+**Test Results**: 3 out of 10 builds failed (30% intermittent failure rate)
+
+| Run | Result | Affected Files |
+|-----|--------|----------------|
+| 1 | SUCCESS | - |
+| 2 | SUCCESS | - |
+| 3 | **FAILED** | ItemAmountCheckout.java:22, ItemWholeCheckout.java:19 |
+| 4 | SUCCESS | - |
+| 5 | SUCCESS | - |
+| 6 | **FAILED** | ItemWholeCheckout.java:19 |
+| 7 | SUCCESS | - |
+| 8 | SUCCESS | - |
+| 9 | **FAILED** | ItemWholeCheckout.java:19 |
+| 10 | SUCCESS | - |
+
+**Exact Error Messages Captured** (from this session):
+```
+/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/checkout/ItemAmountCheckout.java:22: error: wrong number of type arguments; required 2
+@SuperBuilder(toBuilder = true)
+^
+/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/checkout/ItemWholeCheckout.java:19: error: wrong number of type arguments; required 2
+@SuperBuilder(toBuilder = true)
+^
+```
+
+### Session 4 Verification Summary
+
+1. **Source Files Re-Verified**:
+   - `ItemStoredTransaction.java`: Confirmed @SuperBuilder, NO generics (line 29)
+   - `CheckinTransaction.java`: Confirmed @SuperBuilder, HAS generic `<T extends CheckInDetails>` (line 21-23)
+   - `CheckinFullTransaction.java`: Confirmed extends `CheckinTransaction<ReturnFullCheckinDetails>` (line 18-20)
+
+2. **Configuration Re-Verified**:
+   - `lombok.config`: Contains `lombok.builder.className = Builder` (line 4) - ROOT CAUSE
+   - `build.gradle`: Lombok plugin 9.1.0, Java 21 toolchain
+
+3. **Build Environment Verified**:
+   - Docker eclipse-temurin:21-jdk (Java 21.0.9+10-LTS)
+   - Error detection verified with intentional syntax error test
+
+4. **Affected Files from This Session**:
+   - ItemWholeCheckout.java:19 (failed 3x)
+   - ItemAmountCheckout.java:22 (failed 1x)
+
+---
+
+## Previous Investigation (2026-01-17 - Session 3)
 
 ### Error Reproduction: CONFIRMED - 44% Failure Rate (4 out of 9 valid builds)
 
@@ -352,6 +402,18 @@ Rationale: This is the root cause configuration that conflicts with @SuperBuilde
 5. **Build Environment**: Docker with eclipse-temurin:21-jdk (Java 21.0.9+10-LTS)
 6. **Error Detection**: Verified working via intentional syntax error test
 7. **Cumulative Failure Rate Across All Sessions**: ~44-60% (highly consistent with annotation processor race condition)
+
+### 2026-01-17 Investigation Session 4 Results
+
+1. **Error Confirmed**: 30% failure rate (3/10 builds)
+2. **Affected Files from This Session**:
+   - ItemWholeCheckout.java:19 (failed 3x)
+   - ItemAmountCheckout.java:22 (failed 1x)
+3. **Build Environment**: Docker with eclipse-temurin:21-jdk (Java 21.0.9+10-LTS)
+4. **Error Detection**: Verified working via intentional syntax error test
+5. **Observation**: This session saw only ItemCheckout hierarchy failures (no CheckinTransaction hierarchy failures)
+6. **Cumulative Failure Rate Across All Sessions**: 20-60% (varies by session, confirms intermittent nature)
+7. **Total Investigation Runs**: 4 sessions, 39+ builds completed
 
 ### Source Files Verified
 
