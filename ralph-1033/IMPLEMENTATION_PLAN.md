@@ -2,26 +2,34 @@
 
 ## Current Status: Phase 2 COMPLETE - Root Cause Confirmed, Ready for Fix
 
-## Investigation Summary (2026-01-17 - Verification Run)
+## Latest Investigation (2026-01-17)
 
-### Error Reproduction: RE-VERIFIED
+### Error Reproduction: CONFIRMED - 50% Failure Rate
 
-**Failure Rate**: 3 out of 10 builds failed (~30% intermittent failure rate)
+**Test Results**: 5 out of 10 builds failed (50% intermittent failure rate)
 
-This verification run confirms the error persists and is reproducible.
+| Run | Result | Affected Files |
+|-----|--------|----------------|
+| 1 | SUCCESS | - |
+| 2 | **FAILED** | ItemWholeCheckout.java:19, CheckinFullTransaction.java:18 |
+| 3 | **FAILED** | ItemWholeCheckout.java:19, CheckinPartTransaction.java:17, ItemAmountCheckout.java:22 |
+| 4 | SUCCESS | - |
+| 5 | **FAILED** | ItemWholeCheckout.java:19 |
+| 6 | SUCCESS | - |
+| 7 | SUCCESS | - |
+| 8 | **FAILED** | CheckinFullTransaction.java:18 |
+| 9 | SUCCESS | - |
+| 10 | **FAILED** | ItemAmountCheckout.java:22 |
 
 **Exact Error Messages Captured**:
 ```
-/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/items/transactions/transactions/checkin/CheckinLossTransaction.java:17: error: wrong number of type arguments; required 2
-@SuperBuilder(toBuilder = true)
-^
-/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/items/transactions/transactions/checkin/CheckinPartTransaction.java:17: error: wrong number of type arguments; required 2
-@SuperBuilder(toBuilder = true)
-^
 /app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/checkout/ItemWholeCheckout.java:19: error: wrong number of type arguments; required 2
 @SuperBuilder(toBuilder = true)
 ^
 /app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/items/transactions/transactions/checkin/CheckinFullTransaction.java:18: error: wrong number of type arguments; required 2
+@SuperBuilder(toBuilder = true)
+^
+/app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/items/transactions/transactions/checkin/CheckinPartTransaction.java:17: error: wrong number of type arguments; required 2
 @SuperBuilder(toBuilder = true)
 ^
 /app/src/main/java/tech/ebp/oqm/core/api/model/object/storage/checkout/ItemAmountCheckout.java:22: error: wrong number of type arguments; required 2
@@ -99,20 +107,21 @@ lombok.builder.className = Builder
 - [x] Document: Does the error occur? **YES** - 2 out of 10 runs failed (20%)
 - [x] Documented exact error messages captured
 
-### 1.5 Verification Run (2026-01-17) [DONE]
+### 1.5 Latest Verification Run (2026-01-17) [DONE]
 - [x] Re-ran 10 consecutive builds to re-verify the issue
-- [x] **Results**: 3 out of 10 builds failed (30% failure rate)
-  - Run 1: **FAILED** - ItemAmountCheckout.java:22
-  - Run 2: **FAILED** - CheckinFullTransaction.java:18
-  - Run 3: SUCCESS
+- [x] **Results**: 5 out of 10 builds failed (50% failure rate)
+  - Run 1: SUCCESS
+  - Run 2: **FAILED** - ItemWholeCheckout.java:19, CheckinFullTransaction.java:18
+  - Run 3: **FAILED** - ItemWholeCheckout.java:19, CheckinPartTransaction.java:17, ItemAmountCheckout.java:22
   - Run 4: SUCCESS
-  - Run 5: SUCCESS
+  - Run 5: **FAILED** - ItemWholeCheckout.java:19
   - Run 6: SUCCESS
   - Run 7: SUCCESS
-  - Run 8: SUCCESS
+  - Run 8: **FAILED** - CheckinFullTransaction.java:18
   - Run 9: SUCCESS
   - Run 10: **FAILED** - ItemAmountCheckout.java:22
 - [x] Error detection verified with intentional syntax error - works correctly
+- [x] Build environment verified: Docker eclipse-temurin:21-jdk (Java 21.0.9+10-LTS)
 
 ---
 
@@ -199,12 +208,22 @@ Rationale: This is the root cause configuration that conflicts with @SuperBuilde
 4. **Build Environment Verified**: Docker with eclipse-temurin:21-jdk works correctly
 5. **Error Detection Verified**: Compilation errors properly detected with non-zero exit codes
 
-### 2026-01-17 Verification Run Results
+### 2026-01-17 Latest Investigation Results
 
-1. **Error Re-Verified**: 30% failure rate (3/10 builds)
+1. **Error Confirmed**: 50% failure rate (5/10 builds)
 2. **Affected Files Confirmed**:
+   - ItemWholeCheckout.java:19 (failed 3x)
+   - CheckinFullTransaction.java:18 (failed 2x)
    - ItemAmountCheckout.java:22 (failed 2x)
-   - CheckinFullTransaction.java:18 (failed 1x)
+   - CheckinPartTransaction.java:17 (failed 1x)
 3. **Build Environment**: Docker with eclipse-temurin:21-jdk (Java 21.0.9+10-LTS)
 4. **Error Detection**: Verified working via intentional syntax error test
 5. **Ready for Phase 3**: Root cause confirmed, recommended fix is Option A (remove `lombok.builder.className = Builder`)
+
+### Source Files Verified
+
+1. **ItemStoredTransaction.java**: Abstract class with `@SuperBuilder(toBuilder = true)`, NO generics
+2. **CheckinTransaction.java**: Abstract class with `@SuperBuilder(toBuilder = true)`, HAS generic `<T extends CheckInDetails>`
+3. **CheckinFullTransaction.java**: Concrete class extending `CheckinTransaction<ReturnFullCheckinDetails>` with `@SuperBuilder(toBuilder = true)`
+4. **lombok.config**: Contains `lombok.builder.className = Builder` (root cause)
+5. **build.gradle**: Lombok plugin version 9.1.0, Java 21 toolchain

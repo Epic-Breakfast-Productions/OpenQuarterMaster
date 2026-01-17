@@ -122,14 +122,20 @@ git checkout software/core/oqm-core-api/src/main/java/tech/ebp/oqm/core/api/mode
 - Concrete classes extend and also use `@SuperBuilder`
 - Generic type parameters used in intermediate classes
 
-## Verified Findings (2024-01-17, Re-verified 2026-01-17)
+## Verified Findings (Latest: 2026-01-17)
 
 ### Error Reproduction
-- **Intermittent failure rate**: ~20-30% (2-3 out of 10 builds fail)
+- **Intermittent failure rate**: ~50% (5 out of 10 builds fail)
 - **Error message**: `error: wrong number of type arguments; required 2`
 - **Root cause**: `lombok.builder.className = Builder` in lombok.config conflicts with @SuperBuilder generics
 - **Verification method**: Run 10 consecutive Docker builds with `clean build -x test --no-daemon`
 - **Java version verified**: eclipse-temurin:21-jdk (Java 21.0.9+10-LTS)
+
+### Most Frequently Affected Files (from latest run)
+- ItemWholeCheckout.java:19 (3 failures)
+- CheckinFullTransaction.java:18 (2 failures)
+- ItemAmountCheckout.java:22 (2 failures)
+- CheckinPartTransaction.java:17 (1 failure)
 
 ### Affected Class Hierarchies
 
