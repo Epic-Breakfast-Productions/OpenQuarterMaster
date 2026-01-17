@@ -89,7 +89,11 @@ public class SubtractAmountTransactionApplier extends TransactionApplier<SubAmou
 		if(toSubtract == null){
 			throw new IllegalStateException("Cannot subtract an amount from a null value. Should not get here.");
 		}
-		
+
+		if (toSubtract.getValue().equals(0)) {
+			throw new IllegalArgumentException("Amount to subtract must be greater than zero.");
+		}
+
 		stored.subtract(toSubtract);
 
 		affectedStored.add(stored);
