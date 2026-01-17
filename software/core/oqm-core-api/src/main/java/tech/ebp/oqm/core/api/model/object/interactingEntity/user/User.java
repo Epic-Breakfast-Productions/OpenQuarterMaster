@@ -69,27 +69,23 @@ public class User extends InteractingEntity {
 	@Override
 	public boolean updateFrom(JsonWebToken jwt) {
 		boolean updated = false;
-		String jwtEmail = JwtUtils.getEmail(jwt);
-		if (!JwtUtils.safeEquals(this.getEmail(), jwtEmail)) {
-			this.setEmail(jwtEmail);
+		if(!this.getEmail().equals(JwtUtils.getEmail(jwt))){
+			this.setEmail(JwtUtils.getEmail(jwt));
 			updated = true;
 		}
-		String jwtName = JwtUtils.getName(jwt);
-		if (!JwtUtils.safeEquals(this.getName(), jwtName)) {
-			this.setName(jwtName);
+		if(!this.getName().equals(JwtUtils.getName(jwt))){
+			this.setName(JwtUtils.getName(jwt));
 			updated = true;
 		}
-		String jwtUsername = JwtUtils.getUserName(jwt);
-		if (!JwtUtils.safeEquals(this.getUsername(), jwtUsername)) {
-			this.setUsername(jwtUsername);
+		if(!this.getUsername().equals(JwtUtils.getUserName(jwt))){
+			this.setName(JwtUtils.getName(jwt));
 			updated = true;
 		}
-		Set<String> jwtRoles = JwtUtils.getRoles(jwt);
-		if (!JwtUtils.safeEquals(this.getRoles(), jwtRoles)) {
-			this.setRoles(jwtRoles);
+		if(!this.getRoles().equals(JwtUtils.getRoles(jwt))){
+			this.setRoles(JwtUtils.getRoles(jwt));
 			updated = true;
 		}
-
+		
 		return updated;
 	}
 }
