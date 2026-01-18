@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.model.object.storage.checkout;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;

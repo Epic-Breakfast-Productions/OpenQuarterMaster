@@ -5,6 +5,7 @@ import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.SecurityContext;
@@ -32,21 +33,22 @@ import static com.mongodb.client.model.Filters.eq;
 @Named("InteractingEntityService")
 @ApplicationScoped
 public class InteractingEntityService extends TopLevelMongoService<InteractingEntity, InteractingEntitySearch, CollectionStats> {
-
+	
 	@ConfigProperty(name = "quarkus.http.auth.basic", defaultValue = "false")
 	boolean basicAuthEnabled;
-
+	
 	/**
 	 * Lock to ensure concurrency when ensuring a user exists.
 	 */
 	private final ReentrantLock ensureUserLock = new ReentrantLock();
-
+	
 	public InteractingEntityService() {
 		super(InteractingEntity.class);
 	}
-
+	
 	@PostConstruct
 	public void setup() {
+		//TODO:: ponder if CDI really necessary?
 		CoreApiInteractingEntity coreApiInteractingEntityArc;
 		try (InstanceHandle<CoreApiInteractingEntity> container = Arc.container().instance(CoreApiInteractingEntity.class)) {
 			coreApiInteractingEntityArc = container.get();
@@ -55,9 +57,7 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 			return;
 		}
 		//force getting around Arc subclassing out the injected class
-		CoreApiInteractingEntity coreApiInteractingEntity = new CoreApiInteractingEntity(
-			coreApiInteractingEntityArc.getEmail()
-		);
+		CoreApiInteractingEntity coreApiInteractingEntity = new CoreApiInteractingEntity(coreApiInteractingEntityArc.getEmail());
 		//ensure we have the base station in the db
 		CoreApiInteractingEntity gotten = (CoreApiInteractingEntity) this.get(coreApiInteractingEntity.getId());
 		if (gotten == null) {
@@ -68,8 +68,8 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 			log.info("Updated core api interacting entity entry.");
 		}
 	}
-
-
+	
+	
 	private Optional<InteractingEntity> get(SecurityContext securityContext, JsonWebToken jwt) {
 		Bson query;
 		if (this.basicAuthEnabled) {
@@ -91,23 +91,23 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 				.first()
 		);
 	}
-
+	
 	public InteractingEntity get(ObjectId id) {
 		return this.getTypedCollection().find(eq("_id", id)).limit(1).first();
 	}
-
+	
 	public InteractingEntity get(String id) {
 		return this.get(new ObjectId(id));
 	}
-
+	
 	public ObjectId add(@Valid InteractingEntity entity) {
 		return this.getTypedCollection().insertOne(entity).getInsertedId().asObjectId().getValue();
 	}
-
+	
 	protected void update(InteractingEntity entity) {
 		this.getTypedCollection().findOneAndReplace(eq("_id", entity.getId()), entity);
 	}
-
+	
 	/**
 	 * Ensures the entity exists in the system. Retrieves the entity from the request data given.
 	 * <p>
@@ -115,6 +115,7 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	 *
 	 * @param context
 	 * @param jwt
+	 *
 	 * @return The entity that is interacting with the system, guaranteed to be in the database and updated based on request data.
 	 */
 	@WithSpan
@@ -122,7 +123,7 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 		InteractingEntity entity = null;
 		try { //TODO:: test this for performance. Any way around making the whole thing a critical section?
 			this.ensureUserLock.lock();
-
+			
 			Optional<InteractingEntity> returningEntityOp = this.get(context, jwt);
 			if (returningEntityOp.isEmpty()) {
 				log.info("New entity interacting with system.");
@@ -135,7 +136,7 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 				log.debug("Existing entity interacting with system.");
 				entity = returningEntityOp.get();
 			}
-
+			
 			if (entity.getId() == null) {
 				this.add(entity);
 			} else if (!this.basicAuthEnabled && entity.updateFrom(jwt)) {
@@ -145,13 +146,15 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 		} finally {
 			this.ensureUserLock.unlock();
 		}
-
+		
 		return entity;
 	}
-
+	
 	/**
 	 * Gets the entity behind a particular event.
+	 *
 	 * @param e The event in question
+	 *
 	 * @return The entity that performed the event.
 	 */
 	@WithSpan

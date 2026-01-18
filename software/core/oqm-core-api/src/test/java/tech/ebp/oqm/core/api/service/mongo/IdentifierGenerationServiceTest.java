@@ -290,7 +290,7 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 		
 		StopWatch sw;
 		try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
-			TestThread.Builder threadBuilder = TestThread.builder()
+			TestThread.TestThreadBuilder threadBuilder = TestThread.builder()
 												   .generatorId(gen.getId())
 												   .numIterations(numIterations)
 												   .numPerIteration(numPerIteration)

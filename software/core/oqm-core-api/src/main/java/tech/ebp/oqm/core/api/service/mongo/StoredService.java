@@ -58,9 +58,9 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	@Getter(AccessLevel.PRIVATE)
 	ItemCheckoutService itemCheckoutService;
 	
+	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
-	
 	
 	@Override
 	public Set<String> getDisallowedUpdateFields() {
@@ -74,9 +74,6 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	
 	public StoredService() {
 		super(Stored.class, false);
-		try (InstanceHandle<HistoryEventNotificationService> container = Arc.container().instance(HistoryEventNotificationService.class)) {
-			this.hens = container.get();
-		}
 	}
 	
 	@WithSpan

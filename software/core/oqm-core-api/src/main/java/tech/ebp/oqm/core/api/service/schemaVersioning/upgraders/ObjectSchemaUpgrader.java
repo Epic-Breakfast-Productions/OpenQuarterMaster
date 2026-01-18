@@ -110,7 +110,7 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 
 	public ObjectUpgradeResult<T> upgrade(ObjectNode oldObj){
 		int curVersion = oldObj.get("schemaVersion").asInt(1);
-		ObjectUpgradeResult.Builder<T> resultBuilder = ObjectUpgradeResult.builder();
+		ObjectUpgradeResult.ObjectUpgradeResultBuilder<T> resultBuilder = ObjectUpgradeResult.builder();
 		resultBuilder.objectId(this.getObjectId(oldObj));
 		resultBuilder.oldVersion(curVersion);
 		UpgradeCreatedObjectsResults upgradeCreatedObjects = new UpgradeCreatedObjectsResults();

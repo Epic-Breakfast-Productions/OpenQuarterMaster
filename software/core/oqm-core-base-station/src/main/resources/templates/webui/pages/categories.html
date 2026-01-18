@@ -1,4 +1,8 @@
 {#include webui/mainWebPageTemplate navbar="full" showTitle=true title="Categories" page='categories'}
+
+	{#styleSheets}
+		<link rel="stylesheet" href="{rootPrefix}/lib/Croppie-2.6.4/croppie.css"/>
+	{/styleSheets}
     {#pageStyle}
     
     {/pageStyle}
@@ -76,22 +80,18 @@
                         <div class="mb-3 row">
                             <label for="addEditItemCategoryParentInput" class=" col-form-label col-sm-2">Parent Category:</label>
                             <div class="col-sm-10">
-								{#inputs/categoryInput id="addEditItemCategoryParentInput" allCategorySearchResults=allCategorySearchResults}
-								{/inputs/categoryInput}
+								{#inputs/categoryInput id="addEditItemCategoryParentInput" allCategorySearchResults=allCategorySearchResults /}
                             </div>
                         </div>
-                        {#search/image/imageSelectFormInput}
-                        {/search/image/imageSelectFormInput}
-                        {#inputs/keywordInput}
-                        {/inputs/keywordInput}
-                        {#inputs/attInput}
-                        {/inputs/attInput}
+                        {#search/image/imageSelectFormInput /}
+                        {#inputs/keywordInput /}
+                        {#inputs/attInput /}
                     </form>
                 </div>
             </div>
         {/modal}
         {#modal id='itemCategoryView' size='xl' title='Item Category View'}
-            {#titleIcon}{#icons/categories}{/icons/categories}{/titleIcon}
+            {#titleIcon}{#icons/categories /}{/titleIcon}
             <div class="row">
                 {#carousel id='itemCategoryViewCarousel' carouselCss='col'}{/carousel}
                 <div class="col">
@@ -145,7 +145,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    {#objView/history/objHistoryView containerId='itemCategoryHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item-category/')}{/objView/history/objHistoryView}
+                    {#objView/history/objHistoryView containerId='itemCategoryHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item-category/') /}
                 </div>
             </div>
         {/modal}

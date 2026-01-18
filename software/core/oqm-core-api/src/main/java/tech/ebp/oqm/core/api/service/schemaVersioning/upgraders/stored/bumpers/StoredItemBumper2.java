@@ -32,7 +32,7 @@ public class StoredItemBumper2 extends ObjectSchemaVersionBumper<Stored> {
 	
 	@Override
 	protected SingleUpgradeResult bumpObjectSchema(ObjectNode oldObj) {
-		SingleUpgradeResult.Builder resultBuilder = SingleUpgradeResult.builder()
+		SingleUpgradeResult.SingleUpgradeResultBuilder resultBuilder = SingleUpgradeResult.builder()
 														.upgradedObject(oldObj);
 		UpgradingUtils.normalizeObjectId(oldObj, "item");
 		UpgradingUtils.normalizeObjectId(oldObj, "storageBlock");

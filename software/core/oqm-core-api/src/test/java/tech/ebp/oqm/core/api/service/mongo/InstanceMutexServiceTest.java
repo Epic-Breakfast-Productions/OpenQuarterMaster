@@ -64,7 +64,7 @@ public class InstanceMutexServiceTest extends RunningServerTest {
 		SortedSet<ThreadResult> results = new TreeSet<>();
 		ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
-		TestThread.Builder threadBuilder = TestThread.builder()
+		TestThread.TestThreadBuilder threadBuilder = TestThread.builder()
 			.mutexId(mutexId)
 			.numIterations(numIterations)
 			.durationOfWork(workDuration)
@@ -150,7 +150,7 @@ public class InstanceMutexServiceTest extends RunningServerTest {
 					Thread.sleep(50);
 				}
 				log.info("Thread {} got lock on iteration {}/{}", this.threadId, i, this.numIterations);
-				ThreadResult.Builder resultBuilder = ThreadResult.builder()
+				ThreadResult.ThreadResultBuilder resultBuilder = ThreadResult.builder()
 					.threadId(this.threadId)
 					.start(LocalDateTime.now());
 

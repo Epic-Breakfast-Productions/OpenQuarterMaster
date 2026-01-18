@@ -268,7 +268,7 @@ public class ObjectSchemaUpgradeService {
 		MongoCollection<Document> documentCollection,
 		MongoCollection<T> typedCollection,
 		Class<T> objectClass,
-		CollectionUpgradeResult.Builder<?, ?> outputBuilder
+		CollectionUpgradeResult.CollectionUpgradeResultBuilder<?, ?> outputBuilder
 	) throws ClassUpgraderNotFoundException {
 		ObjectSchemaUpgrader<T> objectVersionBumper = this.getUpgrader(objectClass);
 		outputBuilder.collectionClass(objectClass);
@@ -389,7 +389,7 @@ public class ObjectSchemaUpgradeService {
 		log.info("Updating schema of oqm database service {} in db {}", service.getClass(), oqmDb.getName());
 		String oqmDbId = oqmDb.getId().toHexString();
 		//TODO:: hande upgrading history
-		CollectionUpgradeResult.Builder<?, ?> outputBuilder = historiedService ? HistoriedCollectionUpgradeResult.builder() : CollectionUpgradeResult.builder();
+		CollectionUpgradeResult.CollectionUpgradeResultBuilder<?, ?> outputBuilder = historiedService ? HistoriedCollectionUpgradeResult.builder() : CollectionUpgradeResult.builder();
 		CompletableFuture<CollectionUpgradeResult> collectionFuture = CompletableFuture.supplyAsync(()->{
 			return this.upgradeOqmCollection(
 				upgradeId,
@@ -426,7 +426,7 @@ public class ObjectSchemaUpgradeService {
 		collectionFuture.get();
 		
 		if (histCollOp.isPresent()) {
-			((HistoriedCollectionUpgradeResult.Builder<?, ?>) outputBuilder).historyCollectionUpgradeResult(histCollOp.get().get());
+			((HistoriedCollectionUpgradeResult.HistoriedCollectionUpgradeResultBuilder<?, ?>) outputBuilder).historyCollectionUpgradeResult(histCollOp.get().get());
 		}
 		
 		log.info("DONE Updating schema of oqm database service {} in ", service.getClass());
@@ -462,7 +462,7 @@ public class ObjectSchemaUpgradeService {
 	 */
 	private OqmDbUpgradeResult upgradeOqmDb(String upgradeId, OqmMongoDatabase oqmDb) {
 		log.info("Updating schema of oqm database: {}", oqmDb);
-		OqmDbUpgradeResult.Builder outputBuilder = OqmDbUpgradeResult.builder()
+		OqmDbUpgradeResult.OqmDbUpgradeResultBuilder outputBuilder = OqmDbUpgradeResult.builder()
 													   .dbName(oqmDb.getName());
 		List<CollectionUpgradeResult> upgradeResults = new ArrayList<>();
 		outputBuilder.collectionUpgradeResults(upgradeResults);
@@ -529,7 +529,7 @@ public class ObjectSchemaUpgradeService {
 		AtomicReference<TotalUpgradeResult> result = new AtomicReference<>();
 		try (MongoSessionWrapper csw = new MongoSessionWrapper(this.oqmDatabaseService)) {
 			csw.runTransaction(true, (ClientSession cs)->{
-				TotalUpgradeResult.Builder totalResultBuilder = TotalUpgradeResult.builder()
+				TotalUpgradeResult.TotalUpgradeResultBuilder totalResultBuilder = TotalUpgradeResult.builder()
 																	.id(upgradeId)
 																	.instanceId(this.instanceUuid);
 				StopWatch totalTime = StopWatch.createStarted();

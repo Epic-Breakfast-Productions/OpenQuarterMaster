@@ -22,7 +22,7 @@ public class StoredItemBumper3 extends ObjectSchemaVersionBumper<Stored> {
 	@Override
 	protected SingleUpgradeResult bumpObjectSchema(ObjectNode oldObj) {
 		UpgradeCreatedObjectsResults createdObjectsResults = new UpgradeCreatedObjectsResults();
-		SingleUpgradeResult.Builder resultBuilder = SingleUpgradeResult.builder()
+		SingleUpgradeResult.SingleUpgradeResultBuilder resultBuilder = SingleUpgradeResult.builder()
 														.upgradedObject(oldObj)
 														.createdObjects(createdObjectsResults);
 		

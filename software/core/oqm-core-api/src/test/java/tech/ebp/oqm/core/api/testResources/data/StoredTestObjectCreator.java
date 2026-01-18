@@ -28,7 +28,7 @@ public class StoredTestObjectCreator extends TestObjectCreator<Stored> {
 
 	@Override
 	public Stored getTestObject() {
-		Stored.Builder<?, ?> builder = switch (item.getStorageType()) {
+		Stored.StoredBuilder<?, ?> builder = switch (item.getStorageType()) {
 			case BULK, AMOUNT_LIST -> AmountStored.builder().amount(Quantities.getQuantity(0, this.item.getUnit()));
 			case UNIQUE_MULTI, UNIQUE_SINGLE -> UniqueStored.builder();
 		};
