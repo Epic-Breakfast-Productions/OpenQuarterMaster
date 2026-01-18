@@ -55,7 +55,6 @@ import tech.ebp.oqm.core.api.service.notification.EventNotificationWrapper;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.StorageBlockTestObjectCreator;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoObjectServiceTest;
 import tech.units.indriya.quantity.Quantities;
 
@@ -72,7 +71,6 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
  */
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 @QuarkusTestResource(value = KafkaCompanionResource.class, restrictToAnnotatedClass = true)
 class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransaction, AppliedTransactionService> {
 
