@@ -11,11 +11,11 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 /**
  * Checkin transaction to only checkin a part of the amount checked out.
  */
+@Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Data
-@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
+@SuperBuilder(toBuilder = true)
 public class CheckinPartTransaction extends CheckinTransaction<ReturnPartCheckinDetails> {
 	
 	@Override
