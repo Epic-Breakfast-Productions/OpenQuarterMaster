@@ -59,9 +59,19 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 
 	public InventoryItem getInventoryItem() {
 		if(inventoryItem == null) {
-			this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
+			this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
 		}
 		return inventoryItem;
+	}
+	
+	private Stored applyDefaults(Stored stored){
+		stored.applyDefaultsFromItem(this.getInventoryItem());
+		return stored;
+	}
+	
+	private SearchResult<Stored> applyDefaults(SearchResult<Stored> searchResult){
+		searchResult.getResults().forEach(this::applyDefaults);
+		return searchResult;
 	}
 
 	@GET
@@ -77,7 +87,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	public SearchResult<Stored> search(
 		@BeanParam StoredSearch storedSearch
 	) {
-		return super.search(storedSearch);
+		return this.applyDefaults(super.search(storedSearch));
 	}
 	
 	@Path("{storedItemId}")
@@ -113,7 +123,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Stored get(@PathParam("storedItemId") String id) {
-		return super.get(id);
+		return this.applyDefaults(super.get(id));
 	}
 	
 	@PUT
@@ -128,7 +138,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = InventoryItem.class
+				implementation = Stored.class
 			)
 		)
 	)
@@ -153,7 +163,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 		@PathParam("storedItemId") String id,
 		ObjectNode updates
 	) {
-		return super.update(id, updates);
+		return this.applyDefaults(super.update(id, updates));
 	}
 	
 	@GET

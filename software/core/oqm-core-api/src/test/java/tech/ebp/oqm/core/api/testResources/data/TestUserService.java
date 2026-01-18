@@ -118,9 +118,9 @@ public class TestUserService {
 	}
 	
 	public User getTestUser(Set<String> roles, boolean create) {
-		User.Builder builder = User.builder();
+		User.UserBuilder builder = User.builder();
 		
-		builder.username(FAKER.name().username());
+		builder.username(FAKER.credentials().username());
 		builder.email(FAKER.internet().emailAddress());
 		builder.name(FAKER.name().fullName());
 		builder.roles(roles);

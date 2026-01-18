@@ -5,11 +5,13 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
@@ -70,24 +72,24 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@Consumes(MediaType.APPLICATION_JSON)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	@WithSpan
-	public ObjectId create(
-		@Valid T object
+	public T create(
+		@NotNull @Valid T object
 	) {
 		log.info("Creating new {} ({}) from REST interface.", this.getObjectClass().getSimpleName(), object.getClass());
 		
-		ObjectId output = this.getObjectService().add(this.getOqmDbIdOrName(), object, this.getInteractingEntity());
+		T newObj = this.getObjectService().add(this.getOqmDbIdOrName(), object, this.getInteractingEntity());
 		
-		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), output);
-		return output;
+		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), newObj.getId());
+		return object;
 	}
 	
 	@WithSpan
-	public List<ObjectId> createBulk(
+	public List<T> createBulk(
 		@Valid List<T> objects
 	) {
 		log.info("Creating new {} (bulk) from REST interface.", this.getObjectClass().getSimpleName());
 		
-		List<ObjectId> output = this.getObjectService().addBulk(this.getOqmDbIdOrName(), objects, this.getInteractingEntity());
+		List<T> output = this.getObjectService().addBulk(this.getOqmDbIdOrName(), objects, this.getInteractingEntity());
 		log.info("{} {} created with ids: {}", output.size(), this.getObjectClass().getSimpleName(), output);
 		return output;
 	}

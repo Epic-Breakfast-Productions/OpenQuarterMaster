@@ -3,14 +3,16 @@ const Icons = {
 	add: '{#icons/add /}',
 	copy: '{#icons/copy /}',
 	copyChecked: '{#icons/copyChecked /}',
+	dropdown: '{#icons/dropdown /}',
 	itemCheckin: '',
 	itemCheckout: '',
-	itemCheckinout: '{#icons/checkinout /}',
+	itemCheckouts: '{#icons/itemCheckouts /}',
 	edit: '{#icons/edit /}',
 	info: '{#icons/info /}',
 	locked: '{#icons/locked /}',
 	item: '{#icons/item /}',
 	items: '{#icons/items /}',
+	pricing: '{#icons/pricing /}',
 	stored: '{#icons/stored /}',
 	newTab: '{#icons/newTab /}',
 	remove: '{#icons/remove /}',
@@ -28,6 +30,9 @@ const Icons = {
 	checkinTransaction: '{#icons/transactionCheckin /}',
 	transferTransaction: '{#icons/transactionTransfer /}',
 	setTransaction: '{#icons/transactionSet /}',
+	uniqueIds: '{#icons/uniqueIds /}',
+	generalIds: '{#icons/generalIds /}',
+	idGenerators: '{#icons/idGenerators /}',
 
 	iconWithSub(icon, subIcon){
 		return icon + '<sup>' + subIcon + '</sup>';

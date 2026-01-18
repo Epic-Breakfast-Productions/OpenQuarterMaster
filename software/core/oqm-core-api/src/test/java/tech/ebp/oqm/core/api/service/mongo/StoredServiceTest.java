@@ -91,10 +91,10 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		);
+		).getId();
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
 		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
-		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
 
@@ -102,7 +102,7 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			DEFAULT_TEST_DB_NAME,
 			stored,
 			user
-		);
+		).getId();
 
 		assertNotNull(storedId);
 		assertEquals(stored, this.storedService.get(DEFAULT_TEST_DB_NAME, storedId));
@@ -115,10 +115,10 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		);
+		).getId();
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
 		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
-		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
 		stored.setItem(new ObjectId());
@@ -137,10 +137,10 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		);
+		).getId();
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
 		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
-		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
 		stored.setStorageBlock(new ObjectId());
@@ -159,17 +159,17 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		);
+		).getId();
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
 		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
-		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
 		stored.setStorageBlock(this.storageBlockService.add(
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		));
+		).getId());
 
 		Exception exception = assertThrows(ValidationException.class, () -> this.storedService.add(
 			DEFAULT_TEST_DB_NAME,
@@ -185,10 +185,10 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		);
+		).getId();
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
 		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
-		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user).getId();
 
 		Stored stored = UniqueStored.builder().item(itemId).storageBlock(blockId).build();
 
@@ -206,10 +206,10 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		);
+		).getId();
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
 		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
-		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
 		((AmountStored)stored).setAmount(Quantities.getQuantity(0, OqmProvidedUnits.WATT_HOURS));
@@ -228,10 +228,10 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		);
+		).getId();
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
 		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
-		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		this.storedService.add(DEFAULT_TEST_DB_NAME, this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject(), user);
 
@@ -249,10 +249,10 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		);
+		).getId();
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
 		item.setStorageType(StorageType.UNIQUE_SINGLE).setStorageBlocks(new LinkedHashSet<>(List.of(blockId)));
-		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		this.storedService.add(DEFAULT_TEST_DB_NAME, this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject(), user);
 
@@ -270,15 +270,15 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		);
+		).getId();
 		ObjectId blockIdTwo = this.storageBlockService.add(
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		);
+		).getId();
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
 		item.setStorageType(StorageType.UNIQUE_SINGLE).setStorageBlocks(new LinkedHashSet<>(List.of(blockIdOne)));
-		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		this.storedService.add(DEFAULT_TEST_DB_NAME, this.storedTestObjectCreator.setItem(item).setStorageBlock(blockIdOne).getTestObject(), user);
 
@@ -297,15 +297,15 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		);
+		).getId();
 		ObjectId otherBlockId = this.storageBlockService.add(
 			DEFAULT_TEST_DB_NAME,
 			new StorageBlock().setLabel(FAKER.location().building()),
 			user
-		);
+		).getId();
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();
 		item.setStorageType(StorageType.BULK).setStorageBlocks(new LinkedHashSet<>(List.of(blockId, otherBlockId)));
-		ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
+		this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user);
 
 		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
 		Stored otherStored = this.storedTestObjectCreator.setItem(item).setStorageBlock(otherBlockId).getTestObject();

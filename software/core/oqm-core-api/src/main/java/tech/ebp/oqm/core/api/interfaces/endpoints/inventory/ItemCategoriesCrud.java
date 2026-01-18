@@ -5,6 +5,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -51,13 +52,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "Object added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -68,8 +63,8 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public ObjectId create(
-		@Valid ItemCategory itemCategory
+	public ItemCategory create(
+		@NotNull @Valid ItemCategory itemCategory
 	) {
 		return super.create(itemCategory);
 	}
@@ -86,7 +81,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 			mediaType = "application/json",
 			schema = @Schema(
 				type = SchemaType.ARRAY,
-				implementation = ObjectId.class
+				implementation = ItemCategory.class
 			)
 		)
 	)
@@ -99,7 +94,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public List<ObjectId> createBulk(
+	public List<ItemCategory> createBulk(
 		@Valid List<ItemCategory> itemCategories
 	) {
 		return super.createBulk(itemCategories);

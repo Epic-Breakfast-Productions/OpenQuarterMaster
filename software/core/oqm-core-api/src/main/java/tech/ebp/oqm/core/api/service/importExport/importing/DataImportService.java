@@ -32,6 +32,7 @@ import tech.ebp.oqm.core.api.model.rest.dataImportExport.EntityImportResult;
 import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
 import tech.ebp.oqm.core.api.model.rest.search.*;
 import tech.ebp.oqm.core.api.service.importExport.exporting.DataImportExportUtils;
+import tech.ebp.oqm.core.api.service.importExport.exporting.DatabaseExportService;
 import tech.ebp.oqm.core.api.service.importExport.importing.importer.*;
 import tech.ebp.oqm.core.api.service.importExport.importing.options.DataImportOptions;
 import tech.ebp.oqm.core.api.service.mongo.*;
@@ -169,7 +170,7 @@ public class DataImportService {
 		DataImportOptions importOptions
 	) throws IOException {
 		log.info("Importing bundle {}", fileName);
-		if (!fileName.endsWith(".tar.gz")) {
+		if (!fileName.endsWith(DatabaseExportService.OQM_EXPORT_FILE_EXT)) {
 			throw new IllegalArgumentException("Invalid file type given.");
 		}
 
@@ -250,7 +251,7 @@ public class DataImportService {
 
 		log.info("Starting the reading in of object data.");
 		sw = StopWatch.createStarted();
-		DataImportResult.Builder<?, ?> resultBuilder = DataImportResult.builder();
+		DataImportResult.DataImportResultBuilder<?, ?> resultBuilder = DataImportResult.builder();
 
 		try (
 			ClientSession session = this.imageService.getNewClientSession(true);//shouldn't matter which mongo service to grab session from
@@ -295,7 +296,7 @@ public class DataImportService {
 					Path curDbPath = dbsDirPath.resolve(curDb.getName());
 					OqmMongoDatabase finalCurDb = curDb;//cause dumb
 					resultMap.put(curDb, CompletableFuture.supplyAsync(() -> {
-						DbImportResult.Builder dbResultBuilder = DbImportResult.builder();
+						DbImportResult.DbImportResultBuilder dbResultBuilder = DbImportResult.builder();
 
 						try {
 							dbResultBuilder.numFileAttachments(this.fileImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));

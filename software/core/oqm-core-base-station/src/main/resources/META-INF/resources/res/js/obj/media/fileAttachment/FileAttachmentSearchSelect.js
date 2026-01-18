@@ -84,8 +84,8 @@ FileAttachmentSearchSelect.selectSearch.on("submit", function (e){
 	});
 });
 
-FileAttachmentAddEdit.fileAttachmentAdded = function (newFileId, name){
-	console.log("Selecting newly addd file attachment: ", newFileId);
-	FileAttachmentSearchSelect.selectFile(newFileId, name);
+FileAttachmentAddEdit.fileAttachmentAdded = function (newFile, name){
+	console.log("Selecting newly addd file attachment: ", newFile);
+	FileAttachmentSearchSelect.selectFile(newFile.id, name);
 	FileAttachmentSearchSelect.modalCloseButton.click();
 }

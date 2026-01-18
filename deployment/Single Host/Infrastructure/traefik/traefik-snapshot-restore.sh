@@ -8,7 +8,7 @@ source /etc/oqm/snapshots/snapshot-restore-base.sh
 #echo "$mode"
 #echo "$targetDir"
 
-dataDir="/data/oqm/traefik"
+dataDir="$(oqm-config g 'system.dataDir')/traefik"
 targetDir="$targetDir/data/infra/traefik"
 
 if [ "$mode" == "snapshot" ]; then

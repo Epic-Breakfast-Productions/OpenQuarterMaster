@@ -80,29 +80,35 @@ def get(args):
 
 def template(args):
     configFileToGet = args.templateFile
-    configFileToGetPath, configFileToGetFilename = os.path.split(configFileToGet)
+    try:
+        configFileToGetPath, configFileToGetFilename = os.path.split(configFileToGet)
 
-    environment = jinja2.Environment(loader=FileSystemLoader(configFileToGetPath))
-    # template = environment.from_string(output)
-    template = environment.get_template(configFileToGetFilename)
-    output = template.render(mainCM.getFilledOutData())
+        environment = jinja2.Environment(loader=FileSystemLoader(configFileToGetPath))
+        # template = environment.from_string(output)
+        template = environment.get_template(configFileToGetFilename)
+        output = template.render(mainCM.getFilledOutData())
 
 
-    # output = ""
-    # try:
-    #     with open(configFileToGet, 'r') as file:
-    #         output = file.read()
-    # except OSError as e:
-    #     print("Failed to read file: ", e, file=sys.stderr)
-    #     exit(EXIT_CANT_READ_FILE)
+        # output = ""
+        # try:
+        #     with open(configFileToGet, 'r') as file:
+        #         output = file.read()
+        # except OSError as e:
+        #     print("Failed to read file: ", e, file=sys.stderr)
+        #     exit(EXIT_CANT_READ_FILE)
 
-    placeholders = re.findall(r'\{(.*?)}', output)
-    for curPlaceholder in placeholders:
-        # print("debug: resolving placeholder: " + curPlaceholder)
-        output = output.replace(
-            "{" + curPlaceholder + "}",
-            mainCM.getConfigVal(curPlaceholder)
-        )
+        placeholders = re.findall(r'\{(.*?)}', output)
+        for curPlaceholder in placeholders:
+            if not curPlaceholder.strip():
+                continue
+            # print("debug: resolving placeholder: " + curPlaceholder)
+            output = output.replace(
+                "{" + curPlaceholder + "}",
+                mainCM.getConfigVal(curPlaceholder)
+            )
+    except Exception as e:
+        print("ERROR: Failed to template file ("+str(configFileToGet)+"): " + str(e), file=sys.stderr)
+        exit(1)
 
     print(output)
 

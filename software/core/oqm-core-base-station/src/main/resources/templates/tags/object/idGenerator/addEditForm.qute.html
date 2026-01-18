@@ -1,0 +1,111 @@
+{#let id=(id.or("idGeneratorAddEditForm"))}
+<form id="{id}" class="idGeneratorAddEditForm">
+	<input type="hidden" name="generatorId" value="">
+	
+	<div class="formMessages"></div>
+	
+	<div class="mb-3">
+		<label for="{id}-nameInput" class="form-label">Name</label>
+		<input type="text" class="form-control" id="{id}-nameInput" name="name" placeholder="Name" aria-describedby="{id}-nameInputHelp" required>
+		<div id="{id}-nameInputHelp" class="form-text">
+			Required. A helpful name to give the generator. Must be unique.
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col mb-3">
+			<label for="{id}-generatesInput" class="form-label">Generates:</label>
+			<select class="form-select" id="{id}-generatesInput" name="generates" required>
+				<option value="UNIQUE">Unique IDs</option>
+				<option value="GENERAL">General IDs</option>
+			</select>
+			<div id="{id}-genForInputHelp" class="form-text">
+				What kind of ids this generator will generate.<br />
+				Not changeable after generator creation.
+			</div>
+		</div>
+		<div class="col mb-3">
+			<label for="{id}-genForInput" class="form-label">Generator For:</label>
+			<select class="form-select dselect-select" id="{id}-genForInput" name="generatesFor" aria-describedby="{id}-genForInputHelp" multiple>
+				<option value="ITEM">Items</option>
+				<option value="STORED">Stored</option>
+			</select>
+			<div id="{id}-genForInputHelp" class="form-text">
+				What this generator generates id's for. Informs what generators appear in generator searches in different contexts.<br />
+				Specify none for any usages.<br />
+				Not changeable after generator creation.
+			</div>
+		</div>
+	</div>
+	
+	<div class="row">
+		<div class="col mb-3">
+			<div class="form-check">
+				<input class="form-check-input" type="checkbox" value="true" name="encoded" id="{id}-encodedInput" aria-describedby="{id}-encodedInputHelp">
+				<label class="form-check-label" for="{id}-encodedInput">
+					Encoded
+				</label>
+				<div id="{id}-encodedInputHelp" class="form-text">
+					If to encode the resulting text. This obfuscates the real value while remaining unique.<br />
+					Not changeable after generator creation.<br />
+					Example: <code>foo-\{inc}</code> {#icons/arrowRight /} <code>Zm9vLTAwMDAx</code>
+				</div>
+			</div>
+		</div>
+		<div class="col mb-3">
+			<div class="form-check mb-3">
+				<input class="form-check-input" type="checkbox" value="true" name="barcode" id="{id}-barcodeInput" aria-describedby="{id}-barcodeInputHelp">
+				<label class="form-check-label" for="{id}-barcodeInput">
+					Barcode
+				</label>
+				<div id="{id}-barcodeInputHelp" class="form-text">
+					If the resulting generated ids will be barcodes or not.
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<div class="mb-3">
+		<label for="{id}-formatInput" class="form-label">Format</label>
+		<input type="text" class="form-control" id="{id}-formatInput" name="format" placeholder="Format" aria-describedby="{id}-formatInputHelp" required>
+		<div id="{id}-formatInputHelp" class="form-text">
+			The format for the generator. <br />
+			Required, not changeable after generator creation.
+			<br />
+			Supported format placeholders:
+			<ul>
+				<li>
+					Datetime: <code>\{dt;format}</code>- Insert a formatted local datetime. Format should match standard Java datetime syntax. Default format is <code>MM/dd/yyyy-HH:mm:ss</code>
+				</li>
+				<li>
+					Uuid: <code>\{uuid}</code>- a standard java-generated uuid, which will look like: <code>62db9e28-8ec1-4064-b691-b8e667bbf181</code>
+				</li>
+				<li>
+					Random: <code>\{rand;length}</code>- a random series of digits and letters. Min length is 1, max length is 50. Length defaults to <code>5</code>.
+				</li>
+				<li>
+					Increment: <code>\{inc;padding;base}</code>- an auto-incrementing number. Options:
+					<ol>
+						<li>
+							Padding: How many digits to pad out to. For example, a value of <code>5</code> produces <code>00001</code>. Defaults to <code>5</code>
+						</li>
+						<li>
+							Base: what base of number to use to increment; <code>10</code> for standard digits, <code>16</code> for base 16, etc. Defaults to <code>10</code>
+						</li>
+					</ol>
+				</li>
+			</ul>
+			
+			Examples:
+			<ul>
+				<li>
+					Possible SKU of a shirt (<code>C</code> for "clothing", <code>S</code> for shirt, <code>L</code> for Large): <code>C-S-L-\{inc}</code> {#icons/arrowRight /} <code>C-S-L-00001</code>
+				</li>
+				<li>
+					<code>\{dt}-\{inc}</code> {#icons/arrowRight /} <code>01/30/2020-24:30:30-00001</code>
+				</li>
+			</ul>
+		</div>
+	</div>
+	
+</form>

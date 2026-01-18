@@ -5,6 +5,25 @@ const Rest = {
 	apiRoot: Constants.rootPrefix + "/api",
 	passRoot: Constants.rootPrefix + "/api/passthrough",
 	componentRoot: Constants.rootPrefix + "/api/pageComponents",
+	csrfHeader: null,
+	csrfToken: null,
+	getCsrfHeader: function () {
+		if(Rest.csrfHeader == null){
+			Rest.csrfHeader = $('body').data('csrfh');
+		}
+		return Rest.csrfHeader;
+	},
+	getCsrfToken: function () {
+		if(Rest.csrfToken == null){
+			Rest.csrfToken = $('body').data('csrft');
+		}
+		return Rest.csrfToken;
+	},
+	addcsrf(data){
+		if(data instanceof FormData){
+			data.append("csrf-token", Rest.getCsrfToken());
+		}
+	},
 	buildErrorMessageFromResponse(response, statusMessage){
 		let output = "";
 
@@ -71,6 +90,7 @@ const Rest = {
 			failMessagesDiv = null,
 			failNoResponse = null,
 			failNoResponseCheckStatus = true,
+			csrt = Rest.getCsrfToken()
 		} = {}
 	) {
 		console.log("Making "+ method +" rest call to " + url);
@@ -88,7 +108,11 @@ const Rest = {
 				ajaxOps.cache = false;
 				ajaxOps.contentType = false;
 				ajaxOps.processData = false;
+
+				Rest.addcsrf(data);
+
 				ajaxOps.data = data;
+
 				console.log("Sending form data.");
 			} else {
 				ajaxOps.contentType = "application/json; charset=UTF-8";
@@ -112,6 +136,15 @@ const Rest = {
 			extraHeaders = {
 				...extraHeaders,
 				...{'Access-Control-Allow-Origin': "*"},
+			}
+		}
+
+		if(csrt){
+			let csrfHeaders = {}
+			csrfHeaders[Rest.getCsrfHeader()] = csrt;
+			extraHeaders = {
+				...extraHeaders,
+				...csrfHeaders
 			}
 		}
 

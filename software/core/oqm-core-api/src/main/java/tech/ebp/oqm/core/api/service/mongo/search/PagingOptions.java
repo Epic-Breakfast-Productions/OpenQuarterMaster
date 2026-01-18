@@ -1,14 +1,20 @@
 package tech.ebp.oqm.core.api.service.mongo.search;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 
 /**
  * Object to describe paging options.
  */
 @Data
+@Setter(AccessLevel.PRIVATE)
 @AllArgsConstructor
+@NoArgsConstructor
 public class PagingOptions {
 	
 	public static final int DEFAULT_PAGE_SIZE = Integer.MAX_VALUE;
@@ -37,11 +43,11 @@ public class PagingOptions {
 		return new PagingOptions(pageSize, pageNum);
 	}
 	
-	public final boolean doPaging;
+	public boolean doPaging;
 	/** The size of the pages */
-	public final int pageSize;
+	public int pageSize;
 	/** The number of the page we are on */
-	public final int pageNum;
+	public int pageNum;
 	
 	public PagingOptions(int pageSize, int pageNum) {
 		if (pageSize < 1) {
@@ -55,6 +61,7 @@ public class PagingOptions {
 		this.pageNum = pageNum;
 	}
 	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public int getSkipVal() {
 		return this.pageSize * (this.pageNum - 1);
 	}

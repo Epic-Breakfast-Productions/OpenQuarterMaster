@@ -9,7 +9,7 @@ source /etc/oqm/snapshots/snapshot-restore-base.sh
 #echo "$mode"
 #echo "$targetDir"
 
-mongoDataDir="/data/oqm/db/mongo"
+mongoDataDir="$(oqm-config g 'system.dataDir')/db/mongo"
 mongoTargetDir="$targetDir/data/infra/mongodb"
 
 if [ "$mode" == "snapshot" ]; then

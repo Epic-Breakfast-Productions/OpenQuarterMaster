@@ -38,7 +38,7 @@ class MongoHistoriedObjectServiceNoKafkaTest extends RunningServerTest {
 	public void testAdd() throws JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
 		
-		ObjectId objectId = this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.lorem().paragraph()), testUser);
+		ObjectId objectId = this.testMongoService.add(DEFAULT_TEST_DB_NAME, new TestMainObject(FAKER.lorem().paragraph()), testUser).getId();
 		
 		assertEquals(1, this.testMongoService.getHistoryService().count(DEFAULT_TEST_DB_NAME));
 		List<ObjectHistoryEvent> events = this.testMongoService.getHistoryFor(DEFAULT_TEST_DB_NAME, objectId);

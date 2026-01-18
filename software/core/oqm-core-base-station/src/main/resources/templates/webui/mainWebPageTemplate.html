@@ -25,8 +25,8 @@ Ingests:
 	<title>{#if title??}{title} - {/if}{config:['service.nameFull']}</title>
 	
 	<!-- CSS -->
-	<link href="{rootPrefix}/lib/bootstrap/5.3.3/bootswatch.yeti.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="{rootPrefix}/lib/bootstrap-icons/1.11.1/bootstrap-icons.min.css">
+	<link href="{rootPrefix}/lib/bootstrap/5.3.8/bootswatch.yeti.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="{rootPrefix}/lib/bootstrap-icons/1.13.1/bootstrap-icons.min.css">
 	<link rel="stylesheet" href="{rootPrefix}/lib/spin.js/spin.css">
 	<link rel="stylesheet" href="{rootPrefix}/lib/dselect/1.0.4/dist/css/dselect.min.css">
 	<link rel="stylesheet" href="{rootPrefix}/res/css/bootstrap-adjust.css">
@@ -39,7 +39,7 @@ Ingests:
 	<!--  At top in order to prevent flashing -->
 	<script src="{rootPrefix}/res/js/theme.js"></script>
 </head>
-<body class="min-vh-100 vstack">
+<body class="min-vh-100 vstack" data-csrft="{inject:csrf.token}" data-csrfh="{inject:csrf.headerName}">
 <span id="oqmPageInfo" data-page-initted="false"></span>
 
 <!-- nav here -->
@@ -120,12 +120,18 @@ Ingests:
 						</a>
 						{#if userInfo.getRoles().contains('inventoryEdit')}
 						<a class="dropdown-item {#if page is 'itemCheckout'}active{/if}" href="{rootPrefix}/itemCheckout">
-							{#icons/checkinout}{/icons/checkinout} Checkouts
+							{#icons/itemCheckouts /} Checkouts
 							{#if page is 'itemCheckout'}
 							<span class="visually-hidden">(current)</span>
 							{/if}
 						</a>
 						{/if}
+						<a class="dropdown-item {#if page is 'idGenerators'}active{/if}" href="{rootPrefix}/idGenerators">
+							{#icons/idGenerators /} Id Generators
+							{#if page is 'uniqueIdGenerators'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
 					</div>
 				</li>
 				<li class="nav-item dropdown">
@@ -164,7 +170,7 @@ Ingests:
 			<form class="d-flex me-auto" method="get" action="{rootPrefix}/items" id="navSearchForm">
 				<div class="input-group">
 					<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name" style="max-width:150px;">
-					<button class="btn btn-outline-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchTypeSelect">{#icons/items}{/icons/items}</button>
+					<button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchTypeSelect">{#icons/items}{/icons/items}</button>
 					<ul class="dropdown-menu dropdown-menu-end">
 						<li><a class="dropdown-item" href="#" onclick="updateNavSearchDestination('{rootPrefix}/items', Icons.items, 'name')">{#icons/items}{/icons/items} Items</a></li>
 						<li><a class="dropdown-item" href="#" onclick="updateNavSearchDestination('{rootPrefix}/storage', Icons.storageBlocks, 'labelOrNickname')">{#icons/storageBlocks}{/icons/storageBlocks} Storage Blocks</a></li>
@@ -271,8 +277,16 @@ Ingests:
 	<div class="row">
 		<div class="col-sm-4">
 			<span class="h5">Open QuarterMaster Base Station</span><br/>
-			Version <a href="{config:['service.gitLink']}" target="_blank">{config:['service.version']}</a>, &copy; 2024 <a href="https://epic-breakfast-productions.tech/" target="_blank">EBP <img src="{rootPrefix}/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a><br/>
-			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a><br/>
+			
+			
+			Version <b>{config:['service.version']}</b>,
+			<a href="{config:['service.gitLink']}" target="_blank">{#icons/github /} Github</a>
+			<br/>
+			
+			&copy; 2026 <a href="https://epic-breakfast-productions.tech/" title="Epic Breakfast Productions" target="_blank">EBP <img src="{rootPrefix}/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a>,
+			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a>
+			<br/>
+			
 			<div class="dropup color-modes" id="theme-picker">
 				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
 						id="bd-theme"
@@ -322,7 +336,7 @@ Ingests:
 					</li>
 				</ul>
 			</div>
-			<a href="/help">{#icons/help}{/icons/help} Help & User Guide</a><br />
+			<a href="{rootPrefix}/help">{#icons/help /} Help & User Guide</a><br />
 			<small class="fw-lighter fst-italic text-muted">
 				<div class="d-grid gap-2">
 					<button class="btn btn-outline-success btn-sm" type="button" data-bs-toggle="collapse"
@@ -373,11 +387,15 @@ Ingests:
 
 <!-- scripts -->
 <script src="{rootPrefix}/webjars/jquery/3.7.1/jquery.min.js"></script>
-<script src="{rootPrefix}/webjars/bootstrap/5.3.3/js/bootstrap.bundle.min.js"></script>
+<script src="{rootPrefix}/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
 <script src="{rootPrefix}/lib/luxon/3.3.0/luxon.min.js"></script>
 <script src="{rootPrefix}/lib/js-cookie/3.0.5/js.cookie.min.js"></script>
 <script src="{rootPrefix}/lib/spin.js/spin.umd.js"></script>
 <script src="{rootPrefix}/lib/dselect/1.0.4/dist/js/dselect.js"></script>
+<script src="{rootPrefix}/lib/DOMPurify/3.3.1/DOMPurify.min.js"></script>
+<script src="{rootPrefix}/lib/Marked/17.0.1/marked.min.js"></script>
+<script src="{rootPrefix}/lib/overtype/2.1.0/overtype.min.js"></script>
+<script src="{rootPrefix}/res/js/Markdown.js"></script>
 <script src="{rootPrefix}/res/js/constants.js"></script>
 <script src="{rootPrefix}/res/js/main.js"></script>
 <script src="{rootPrefix}/res/js/spinnerHelpers.js"></script>
@@ -389,6 +407,7 @@ Ingests:
 <script src="{rootPrefix}/res/js/OqmDb.js"></script>
 <script src="{rootPrefix}/res/js/icons.js"></script>
 <script src="{rootPrefix}/res/js/links.js"></script>
+<script src="{rootPrefix}/res/js/modalHelpers.js"></script>
 <script>
 
 </script>

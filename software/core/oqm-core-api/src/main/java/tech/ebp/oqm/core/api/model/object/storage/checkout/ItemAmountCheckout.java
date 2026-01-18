@@ -13,13 +13,14 @@ import javax.measure.Quantity;
 /**
  * The details used to describe a checked out item
  */
+@SuppressWarnings("rawtypes")
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
-public class ItemAmountCheckout extends ItemCheckout<Quantity<?>> {
+public class ItemAmountCheckout extends ItemCheckout<Quantity> {
 	public static final int CUR_SCHEMA_VERSION = 2;
 
 	private ObjectId fromStored;

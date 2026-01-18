@@ -7,11 +7,12 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.utils.FileContentsGet;
 import tech.ebp.oqm.core.api.testResources.data.TestMainFileObject;
 import tech.ebp.oqm.core.api.testResources.data.TestMainFileObjectGet;
 import tech.ebp.oqm.core.api.testResources.data.TestMongoHistoriedFileService;
+import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
@@ -52,7 +53,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 			testMainObject,
 			testFileOne,
 			testUser
-		);
+		).getId();
 		
 		assertEquals(1, this.testMongoFileService.count(DEFAULT_TEST_DB_NAME));
 		assertNotNull(testMainObject.getId());

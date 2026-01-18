@@ -232,8 +232,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.build();
 
 		this.clearQueues();
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -282,9 +281,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.amount(Quantities.getQuantity(5, item.getUnit()))
 			.toBlock(item.getStorageBlocks().getFirst())
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -322,9 +320,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.amount(Quantities.getQuantity(5, item.getUnit()))
 			.toBlock(item.getStorageBlocks().getFirst())
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -370,9 +367,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toBlock(item.getStorageBlocks().getFirst())
 			.toStored(originalStored.getId())
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -481,7 +477,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
 
 		ObjectId origBlock = item.getStorageBlocks().getFirst();
-		ObjectId otherBlockId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, StorageBlock.builder().label(FAKER.location().building()).build(), entity);
+		ObjectId otherBlockId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, StorageBlock.builder().label(FAKER.location().building()).build(), entity).getId();
 
 		item.getStorageBlocks().add(otherBlockId);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
@@ -522,9 +518,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			)
 			.toBlock(item.getStorageBlocks().getFirst())
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -566,9 +561,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			)
 			.toBlock(item.getStorageBlocks().getFirst())
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -609,9 +603,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			)
 			.toBlock(item.getStorageBlocks().getFirst())
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -673,7 +666,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toBlock(item.getStorageBlocks().getFirst())
 			.build();
 
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+		this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		ValidationException e = assertThrows(ValidationException.class, () -> this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
 		assertEquals("Cannot add more than one stored held for type UNIQUE_SINGLE", e.getMessage());
@@ -764,15 +757,16 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.amount(Quantities.getQuantity(5, item.getUnit()))
 			.build();
 		this.storedService.add(DEFAULT_TEST_DB_NAME, initialStored, entity);
-
-		ObjectId checkoutTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item,
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item,
 			CheckoutAmountTransaction.builder()
 				.fromStored(initialStored.getId())
 				.amount(Quantities.getQuantity(4, item.getUnit()))
 				.checkoutDetails(CheckoutDetails.builder().checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build()).build())
 				.build(),
 			entity);
-		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
+		ObjectId checkoutId =
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(appliedTransaction.getId().toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
 		ReturnFullCheckinDetails details = ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).checkedInBy(CheckedInByOqmEntity.builder().entity(entity.getId()).build()).build();
@@ -781,9 +775,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toBlock(blockId)
 			.details(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -815,7 +808,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 
-		assertEquals(appliedTransactionId, resultingCheckout.getCheckInTransaction());
+		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckInTransaction());
 		assertEquals(details, resultingCheckout.getCheckInDetails());
 	}
 
@@ -824,7 +817,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		InteractingEntity entity = this.getTestUserService().getTestUser();
 		InventoryItem item = setupItem(StorageType.BULK, entity);
 		ObjectId origBlockId = item.getStorageBlocks().getFirst();
-		ObjectId newBlockId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, StorageBlock.builder().label(FAKER.location().building()).build(), entity);
+		ObjectId newBlockId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, StorageBlock.builder().label(FAKER.location().building()).build(), entity).getId();
 		item.getStorageBlocks().add(newBlockId);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -841,7 +834,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(4, item.getUnit()))
 				.checkoutDetails(CheckoutDetails.builder().checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build()).build())
 				.build(),
-			entity);
+			entity).getId();
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
@@ -851,9 +844,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toBlock(newBlockId)
 			.details(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -885,7 +877,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 
-		assertEquals(appliedTransactionId, resultingCheckout.getCheckInTransaction());
+		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckInTransaction());
 		assertEquals(details, resultingCheckout.getCheckInDetails());
 	}
 
@@ -908,7 +900,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(4, item.getUnit()))
 				.checkoutDetails(CheckoutDetails.builder().checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build()).build())
 				.build(),
-			entity);
+			entity).getId();
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
@@ -918,9 +910,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toStored(initialStored.getId())
 			.details(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -952,7 +943,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 
-		assertEquals(appliedTransactionId, resultingCheckout.getCheckInTransaction());
+		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckInTransaction());
 		assertEquals(details, resultingCheckout.getCheckInDetails());
 	}
 
@@ -975,7 +966,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(4, item.getUnit()))
 				.checkoutDetails(CheckoutDetails.builder().checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build()).build())
 				.build(),
-			entity);
+			entity).getId();
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
@@ -986,9 +977,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toStored(initialStored.getId())
 			.details(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -1020,7 +1010,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 
-		assertEquals(appliedTransactionId, resultingCheckout.getCheckInTransaction());
+		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckInTransaction());
 		assertEquals(details, resultingCheckout.getCheckInDetails());
 	}
 
@@ -1043,7 +1033,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(4, item.getUnit()))
 				.checkoutDetails(CheckoutDetails.builder().checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build()).build())
 				.build(),
-			entity);
+			entity).getId();
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
@@ -1053,9 +1043,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toBlock(blockId)
 			.details(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -1087,7 +1076,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 
-		assertEquals(appliedTransactionId, resultingCheckout.getCheckInTransaction());
+		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckInTransaction());
 		assertEquals(details, resultingCheckout.getCheckInDetails());
 	}
 
@@ -1109,7 +1098,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.toCheckout(initialStored.getId())
 				.checkoutDetails(CheckoutDetails.builder().checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build()).build())
 				.build(),
-			entity);
+			entity).getId();
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
@@ -1119,9 +1108,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toBlock(blockId)
 			.details(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -1153,7 +1141,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
 
-		assertEquals(appliedTransactionId, resultingCheckout.getCheckInTransaction());
+		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckInTransaction());
 		assertEquals(details, resultingCheckout.getCheckInDetails());
 	}
 
@@ -1174,7 +1162,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.toCheckout(initialStored.getId())
 				.checkoutDetails(CheckoutDetails.builder().checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build()).build())
 				.build(),
-			entity);
+			entity).getId();
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
@@ -1184,9 +1172,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toBlock(blockId)
 			.details(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -1217,7 +1204,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
 
-		assertEquals(appliedTransactionId, resultingCheckout.getCheckInTransaction());
+		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckInTransaction());
 		assertEquals(details, resultingCheckout.getCheckInDetails());
 	}
 
@@ -1238,7 +1225,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.toCheckout(initialStored.getId())
 				.checkoutDetails(CheckoutDetails.builder().checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build()).build())
 				.build(),
-			entity);
+			entity).getId();
 		ObjectId checkoutId = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
 //		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 
@@ -1248,9 +1235,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toBlock(blockId)
 			.details(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -1281,7 +1267,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
 
-		assertEquals(appliedTransactionId, resultingCheckout.getCheckInTransaction());
+		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckInTransaction());
 		assertEquals(details, resultingCheckout.getCheckInDetails());
 	}
 
@@ -1315,7 +1301,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1325,9 +1311,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.fromBlock(blockId)
 			.checkoutDetails(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -1378,7 +1363,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1388,9 +1373,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.fromStored(initialStoredId)
 			.checkoutDetails(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -1441,7 +1425,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1451,9 +1435,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.fromStored(initialStoredId)
 			.checkoutDetails(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -1504,7 +1487,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1532,7 +1515,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1560,7 +1543,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1589,7 +1572,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1619,7 +1602,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1649,7 +1632,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1678,7 +1661,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.storageBlock(blockId)
 				.build(),
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1707,7 +1690,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.storageBlock(blockId)
 				.build(),
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1743,7 +1726,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			initialStored,
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1752,9 +1735,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toCheckout(initialStoredId)
 			.checkoutDetails(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -1800,7 +1782,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			initialStored,
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1809,9 +1791,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toCheckout(initialStoredId)
 			.checkoutDetails(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -1856,7 +1837,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			initialStored,
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1865,9 +1846,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toCheckout(initialStoredId)
 			.checkoutDetails(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -1912,7 +1892,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			initialStored,
 			entity
-		);
+		).getId();
 
 		CheckoutDetails details = CheckoutDetails.builder()
 			.checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
@@ -1921,9 +1901,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toCheckout(initialStoredId)
 			.checkoutDetails(details)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -1967,9 +1946,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.amount(Quantities.getQuantity(5, item.getUnit()))
 			.block(item.getStorageBlocks().getFirst())
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -2014,9 +1992,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.amount(Quantities.getQuantity(6, item.getUnit()))
 			.block(item.getStorageBlocks().getFirst())
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -2064,9 +2041,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.block(item.getStorageBlocks().getFirst())
 			.stored(originalStored.getId())
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -2175,7 +2151,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
 
 		ObjectId origBlock = item.getStorageBlocks().getFirst();
-		ObjectId otherBlockId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, StorageBlock.builder().label(FAKER.location().building()).build(), entity);
+		ObjectId otherBlockId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, StorageBlock.builder().label(FAKER.location().building()).build(), entity).getId();
 
 		item.getStorageBlocks().add(otherBlockId);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
@@ -2233,9 +2209,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.amount(Quantities.getQuantity(5, item.getUnit()))
 			.fromBlock(item.getStorageBlocks().getFirst())
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -2284,9 +2259,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.fromBlock(item.getStorageBlocks().getFirst())
 			.fromStored(initialStored.getId())
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -2335,9 +2309,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.fromBlock(item.getStorageBlocks().getFirst())
 			.fromStored(initialStored.getId())
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -2668,7 +2641,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -2679,16 +2652,15 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(5, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferAmountTransaction.builder()
 			.amount(Quantities.getQuantity(5, item.getUnit()))
 			.fromBlock(firstBlock)
 			.toBlock(secondBlock)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -2739,7 +2711,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -2750,7 +2722,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(5, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 		ObjectId destinationStoredId = this.storedService.add(
 			DEFAULT_TEST_DB_NAME, AmountStored.builder()
 				.item(item.getId())
@@ -2758,16 +2730,15 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(0, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferAmountTransaction.builder()
 			.amount(Quantities.getQuantity(5, item.getUnit()))
 			.fromBlock(firstBlock)
 			.toBlock(secondBlock)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -2818,7 +2789,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -2829,7 +2800,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(5, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 		ObjectId destinationStoredId = this.storedService.add(
 			DEFAULT_TEST_DB_NAME, AmountStored.builder()
 				.item(item.getId())
@@ -2837,7 +2808,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(0, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferAmountTransaction.builder()
 			.amount(Quantities.getQuantity(5, item.getUnit()))
@@ -2845,9 +2816,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toBlock(secondBlock)
 			.toStored(destinationStoredId)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -2898,7 +2868,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -2909,7 +2879,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(5, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 		ObjectId destinationStoredId = this.storedService.add(
 			DEFAULT_TEST_DB_NAME, AmountStored.builder()
 				.item(item.getId())
@@ -2917,7 +2887,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(0, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferAmountTransaction.builder()
 			.amount(Quantities.getQuantity(5, item.getUnit()))
@@ -2925,9 +2895,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.fromStored(initialStoredId)
 			.toBlock(secondBlock)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -2978,7 +2947,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -2989,7 +2958,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(5, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 		ObjectId destinationStoredId = this.storedService.add(
 			DEFAULT_TEST_DB_NAME, AmountStored.builder()
 				.item(item.getId())
@@ -2997,7 +2966,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(0, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferAmountTransaction.builder()
 			.amount(Quantities.getQuantity(5, item.getUnit()))
@@ -3006,9 +2975,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.toBlock(secondBlock)
 			.toStored(destinationStoredId)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -3059,7 +3027,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -3070,7 +3038,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(5, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferAmountTransaction.builder()
 			.amount(Quantities.getQuantity(5, item.getUnit()))
@@ -3078,9 +3046,8 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			.fromStored(initialStoredId)
 			.toBlock(secondBlock)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -3132,7 +3099,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferAmountTransaction.builder()
 			.amount(Quantities.getQuantity(5, item.getUnit()))
@@ -3154,7 +3121,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferAmountTransaction.builder()
 			.amount(Quantities.getQuantity(5, item.getUnit()))
@@ -3176,7 +3143,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -3187,7 +3154,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(5, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferAmountTransaction.builder()
 			.amount(Quantities.getQuantity(6, item.getUnit()))
@@ -3208,7 +3175,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -3219,7 +3186,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(5, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferAmountTransaction.builder()
 			.amount(Quantities.getQuantity(6, item.getUnit()))
@@ -3241,7 +3208,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -3252,7 +3219,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(5, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 		ObjectId destinationStoredId = this.storedService.add(
 			DEFAULT_TEST_DB_NAME, AmountStored.builder()
 				.item(item.getId())
@@ -3260,7 +3227,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(0, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferAmountTransaction.builder()
 			.amount(Quantities.getQuantity(6, item.getUnit()))
@@ -3282,7 +3249,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -3293,7 +3260,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(5, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 		ObjectId destinationStoredId = this.storedService.add(
 			DEFAULT_TEST_DB_NAME, AmountStored.builder()
 				.item(item.getId())
@@ -3301,7 +3268,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(0, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferAmountTransaction.builder()
 			.amount(Quantities.getQuantity(6, item.getUnit()))
@@ -3327,7 +3294,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -3338,15 +3305,14 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(5, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
 			.fromBlock(firstBlock)
 			.toBlock(secondBlock)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -3384,7 +3350,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -3395,16 +3361,15 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.amount(Quantities.getQuantity(5, item.getUnit()))
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
 			.fromBlock(firstBlock)
 			.storedToTransfer(initialStoredId)
 			.toBlock(secondBlock)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -3442,7 +3407,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -3452,16 +3417,15 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.storageBlock(firstBlock)
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
 			.fromBlock(firstBlock)
 			.storedToTransfer(initialStoredId)
 			.toBlock(secondBlock)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
@@ -3499,7 +3463,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			DEFAULT_TEST_DB_NAME,
 			StorageBlock.builder().label(FAKER.location().building()).build(),
 			entity
-		);
+		).getId();
 		item.getStorageBlocks().add(secondBlock);
 		this.inventoryItemService.update(DEFAULT_TEST_DB_NAME, item, entity);
 
@@ -3509,16 +3473,15 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 				.storageBlock(firstBlock)
 				.build(),
 			entity
-		);
+		).getId();
 
 		ItemStoredTransaction preApplyTransaction = TransferWholeTransaction.builder()
 			.fromBlock(firstBlock)
 			.storedToTransfer(initialStoredId)
 			.toBlock(secondBlock)
 			.build();
-
-		ObjectId appliedTransactionId = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		AppliedTransaction appliedTransaction = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
+		
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());

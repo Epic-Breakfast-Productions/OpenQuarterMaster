@@ -46,23 +46,25 @@ public class GeneralIdPassthrough extends PassthroughProvider {
 		@PathParam("identifier") String code,
 		@HeaderParam("Accept") String acceptType
 	) {
-		return this.getOqmCoreApiClient().generalIdGetObj(this.getBearerHeaderStr(), code)
-				   .map((ObjectNode generalIdentifier)->{
-					   log.debug("Got general identifier: {}", generalIdentifier);
-					   //noinspection SwitchStatementWithTooFewBranches
-					   return switch (acceptType) {
-						   case MediaType.TEXT_HTML -> Response.ok(
-							   newIdentifierTemplate
-								   .data("rootPrefix", this.getRootPrefix())
-								   .data("generalId", generalIdentifier)
-						   ).build();
-						   default -> Response.ok(generalIdentifier).build();
-					   };
-				   });
+		return this.handleCall(
+			this.getOqmCoreApiClient().generalIdGetObj(this.getBearerHeaderStr(), code)
+				.map((ObjectNode generalIdentifier)->{
+					log.debug("Got general identifier: {}", generalIdentifier);
+					//noinspection SwitchStatementWithTooFewBranches
+					return switch (acceptType) {
+						case MediaType.TEXT_HTML -> Response.ok(
+							newIdentifierTemplate
+								.data("rootPrefix", this.getRootPrefix())
+								.data("generalId", generalIdentifier)
+						).build();
+						default -> Response.ok(generalIdentifier).build();
+					};
+				})
+		);
 	}
 	
 	@GET
-	@Path("barcode/{type}/{value}")
+	@Path("barcode/{type}/{value}/{label}")
 	@Operation(
 		summary = "A barcode that represents the string given."
 	)
@@ -73,16 +75,19 @@ public class GeneralIdPassthrough extends PassthroughProvider {
 	@Produces("image/svg+xml")
 	public Uni<Response> getBarcode(
 		@PathParam("type") String type,
-		@PathParam("value") String data
+		@PathParam("value") String data,
+		@PathParam("label") String label
 	) {
-		return this.getOqmCoreApiClient()
-				   .generalIdGetBarcodeImage(this.getBearerHeaderStr(), type, data)
-				   .map((String xmlData)->{
-					   return Response.status(Response.Status.OK)
-								  .entity(xmlData)
-								  .header("Content-Disposition", "attachment;filename=" + type + "_"+data+".svg")
-								  .type("image/svg+xml")
-								  .build();
-				   });
+		return this.handleCall(
+			this.getOqmCoreApiClient()
+				.generalIdGetBarcodeImage(this.getBearerHeaderStr(), type, data, label)
+				.map((String xmlData)->{
+					return Response.status(Response.Status.OK)
+							   .entity(xmlData)
+							   .header("Content-Disposition", "attachment;filename=" + type + "_" + data + ".svg")
+							   .type("image/svg+xml")
+							   .build();
+				})
+		);
 	}
 }

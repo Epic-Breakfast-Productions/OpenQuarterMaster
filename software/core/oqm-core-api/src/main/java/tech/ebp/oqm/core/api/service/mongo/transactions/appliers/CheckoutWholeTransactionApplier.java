@@ -47,7 +47,7 @@ public class CheckoutWholeTransactionApplier extends CheckinOutTransactionApplie
 			throw new IllegalArgumentException("Stored is not associated with the item.");
 		}
 		
-		ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemWholeCheckout.builder()
+		ItemCheckout.ItemCheckoutBuilder<?, ?, ?> checkoutBuilder = ItemWholeCheckout.builder()
 															.checkedOutByEntity(interactingEntity.getId())
 															.checkoutDetails(transaction.getCheckoutDetails())
 															.checkOutTransaction(appliedTransactionId)

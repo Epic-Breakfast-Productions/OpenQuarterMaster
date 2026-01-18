@@ -8,7 +8,7 @@ import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
+import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.testResources.data.ItemCategoryTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
@@ -104,7 +104,7 @@ class ItemCategoryServiceTest extends MongoHistoriedServiceTest<ItemCategory, It
 		{//setup referencing data
 			ItemCategory subCategory = this.getTestObject();
 			subCategory.setParent(itemCategory.getId());
-			ObjectId catId = this.itemCategoryService.add(DEFAULT_TEST_DB_NAME, subCategory, testUser);
+			ObjectId catId = this.itemCategoryService.add(DEFAULT_TEST_DB_NAME, subCategory, testUser).getId();
 			expectedRefs.put(this.itemCategoryService.getClazz().getSimpleName(), new TreeSet<>(List.of(catId)));
 			
 			//Inventory item, basic
@@ -119,14 +119,14 @@ class ItemCategoryServiceTest extends MongoHistoriedServiceTest<ItemCategory, It
 
 			InventoryItem sai = InventoryItem.builder().name(FAKER.name().name()).storageType(StorageType.BULK).unit(OqmProvidedUnits.UNIT).build();
 			sai.setCategories(List.of(itemCategory.getId()));
-			ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, sai, testUser);
+			ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, sai, testUser).getId();
 			expectedRefs.put(this.inventoryItemService.getClazz().getSimpleName(), new TreeSet<>(List.of(itemId)));
 			//Storage Block
 			this.storageBlockService.add(DEFAULT_TEST_DB_NAME, new StorageBlock().setLabel(FAKER.name().fullName()), testUser);
 			
 			StorageBlock storageBlock =new StorageBlock().setLabel(FAKER.name().fullName());
 			storageBlock.setStoredCategories(List.of(itemCategory.getId()));
-			itemId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, storageBlock, testUser);
+			itemId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, storageBlock, testUser).getId();
 			expectedRefs.put(this.storageBlockService.getClazz().getSimpleName(), new TreeSet<>(List.of(itemId)));
 		}
 		

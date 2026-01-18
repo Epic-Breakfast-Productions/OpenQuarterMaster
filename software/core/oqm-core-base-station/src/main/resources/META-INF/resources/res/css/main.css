@@ -90,10 +90,13 @@
 
 .itemCatBadge {
 	border-radius: 3px;
+	border-width: 1px;
+	border-style: solid;
+	border-color: #8B8B8B;
 }
 
 .itemCatBadgeImage {
-	max-height: 50px;
+	max-height: 30px;
 	margin-right: 3px;
 }
 
@@ -110,4 +113,21 @@
 .barcodeViewImg {
 	max-width: 100%;
 	border: 2px solid white;
+}
+
+
+/*
+Overtype tweaks
+ */
+
+.overtype-toolbar {
+	border-bottom: 1px solid black !important;
+}
+
+.overtype-input {
+	padding-top: 4px !important;
+}
+
+.overtype-container {
+	border: 1px solid black !important;
 }

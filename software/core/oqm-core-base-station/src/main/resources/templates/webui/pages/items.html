@@ -38,8 +38,7 @@
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/item/itemSearchForm id='mainPageSearch' rootPrefix=rootPrefix}
-                    {/search/item/itemSearchForm}
+                    {#search/item/itemSearchForm id='mainPageSearch' rootPrefix=rootPrefix /}
                 </div>
             </div>
         </div>
@@ -53,19 +52,11 @@
         </table>
     </div>
 </div>
-{#search/image/imageSelectFormInputHidden}
-{/search/image/imageSelectFormInputHidden}
+{#search/image/imageSelectFormInputHidden /}
 {/pageContent}
 {#modals}
-    {#objView/itemViewModal currency=currency  rootPrefix=rootPrefix}
-        {#footerButtons}
-            <button type="button" id="itemViewEditButton" class="btn btn-warning" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" >
-                {#icons/edit}{/icons/edit}
-                Edit Item
-            </button>
-        {/footerButtons}
-    {/objView/itemViewModal}
-	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults currency=currency /}
+    {#objView/itemViewModal rootPrefix=rootPrefix /}
+	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults rootPrefix=rootPrefix /}
 	{#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
 		{#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}
 		<div class="row">
@@ -98,6 +89,7 @@
 	{#CodeScannerModal /}
 	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal" /}
 	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal' /}
+	{#object/idGenerator/searchSelectModal rootPrefix=rootPrefix /}
 {/modals}
 
 {#scripts}
@@ -122,6 +114,7 @@
     <script src="{rootPrefix}/res/js/obj/getters.js"></script>
     <script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
     <script src="{rootPrefix}/res/js/carousel.js"></script>
+    <script src="{rootPrefix}/res/js/pricing.js"></script>
     <script src="{rootPrefix}/res/js/obj/storageBlock/storageBlockTree.js"></script>
     <script src="{rootPrefix}/res/js/obj/itemCategoryView.js"></script>
     <script src="{rootPrefix}/res/js/textCopy.js"></script>
@@ -138,10 +131,11 @@
     <script src="{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
     <script src="{rootPrefix}/res/js/pageComponents.js"></script>
 	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearch.js"></script>
-	<script src="{rootPrefix}/res/js/modalHelpers.js"></script>
 	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredTransaction.js"></script>
 	<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
 	<script src="{rootPrefix}/res/js/entityRef.js"></script>
+	<script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorAddEdit.js"></script>
+	<script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorSearchSelect.js"></script>
 {/scripts}
 
 

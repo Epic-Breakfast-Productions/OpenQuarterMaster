@@ -6,6 +6,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -49,13 +50,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Item added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "Item added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -65,8 +60,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ObjectId create(
-		@Valid InventoryItem item
+	public InventoryItem create(
+		@NotNull @Valid InventoryItem item
 	) {
 		return super.create(item);
 	}
@@ -155,7 +150,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	public InventoryItem get(
 		@PathParam("itemId") String id
 	) {
-		return super.get(id);
+		InventoryItem item = super.get(id);
+		return item;
 	}
 	
 	@PUT
