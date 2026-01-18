@@ -6,24 +6,37 @@
 
 **Validation**: Multiple rounds of 10 consecutive Docker builds passed (0% failure rate vs 20-60% before the fix).
 
-### Final Validation (Session 9 - 2026-01-18)
+### Final Validation (Session 10 - 2026-01-18)
 - ✅ 10 consecutive Docker builds: **ALL PASSED** (0% failure rate)
-- ✅ Class files verified:
-  - `CheckinFullTransaction$CheckinFullTransactionBuilder.class`
-  - `CheckinFullTransaction$CheckinFullTransactionBuilderImpl.class`
-  - `CheckinTransaction$CheckinTransactionBuilder.class`
-  - `CheckinLossTransaction$CheckinLossTransactionBuilder.class`
-  - `CheckinPartTransaction$CheckinPartTransactionBuilder.class`
-  - `ItemAmountCheckout$ItemAmountCheckoutBuilder.class`
-  - `ItemWholeCheckout$ItemWholeCheckoutBuilder.class`
-  - `ItemCheckout$ItemCheckoutBuilder.class`
+- ✅ Class files verified for both affected hierarchies:
+  - CheckinTransaction hierarchy:
+    - `CheckinFullTransaction$CheckinFullTransactionBuilder.class`
+    - `CheckinFullTransaction$CheckinFullTransactionBuilderImpl.class`
+    - `CheckinTransaction$CheckinTransactionBuilder.class`
+    - `CheckinLossTransaction$CheckinLossTransactionBuilder.class`
+    - `CheckinLossTransaction$CheckinLossTransactionBuilderImpl.class`
+    - `CheckinPartTransaction$CheckinPartTransactionBuilder.class`
+    - `CheckinPartTransaction$CheckinPartTransactionBuilderImpl.class`
+  - ItemCheckout hierarchy:
+    - `ItemCheckout$ItemCheckoutBuilder.class`
+    - `ItemAmountCheckout$ItemAmountCheckoutBuilder.class`
+    - `ItemAmountCheckout$ItemAmountCheckoutBuilderImpl.class`
+    - `ItemWholeCheckout$ItemWholeCheckoutBuilder.class`
+    - `ItemWholeCheckout$ItemWholeCheckoutBuilderImpl.class`
+- ✅ Java compiler confirmed running (Java 21.0.9+10-LTS via Docker eclipse-temurin:21-jdk)
+- ✅ CI Build job passes (PR #1054)
+- ⚠️ Full test suite: Pre-existing infrastructure issues (tests fail on main branch too)
+  - Tests fail with `OutOfMemoryError: Java heap space` during Quarkus build phase
+  - Testcontainers requires Docker-in-Docker access for MongoDB/Kafka containers
+  - This is NOT related to the Lombok fix - main branch CI shows same failures
+- ✅ PR #1054 open and ready for merge
+
+### Previous Validation (Session 9 - 2026-01-18)
+- ✅ 10 consecutive Docker builds: **ALL PASSED** (0% failure rate)
+- ✅ Class files verified
 - ✅ Java compiler confirmed running (Java 21.0.9+10-LTS via Docker eclipse-temurin:21-jdk)
 - ✅ CI Build job passes (`build / build` step succeeded in 1m44s on PR #1054)
 - ⚠️ Full test suite: Pre-existing infrastructure issues (tests fail on main branch too)
-  - Tests fail with `OutOfMemoryError` during Quarkus build phase
-  - Testcontainers requires Docker-in-Docker access for MongoDB/Kafka containers
-  - This is NOT related to the Lombok fix - main branch CI shows same failures since at least 2026-01-15
-- ✅ PR #1054 open and ready for merge
 
 ### Previous Validation (Session 8 - 2026-01-17)
 - ✅ 10 consecutive Docker builds: **ALL PASSED** (0% failure rate)
