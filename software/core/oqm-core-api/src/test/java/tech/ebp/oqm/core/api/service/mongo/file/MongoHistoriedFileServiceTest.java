@@ -12,7 +12,6 @@ import tech.ebp.oqm.core.api.service.mongo.utils.FileContentsGet;
 import tech.ebp.oqm.core.api.testResources.data.TestMainFileObject;
 import tech.ebp.oqm.core.api.testResources.data.TestMainFileObjectGet;
 import tech.ebp.oqm.core.api.testResources.data.TestMongoHistoriedFileService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
