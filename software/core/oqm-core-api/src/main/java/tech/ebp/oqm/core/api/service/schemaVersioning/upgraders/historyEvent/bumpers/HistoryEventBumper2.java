@@ -30,9 +30,9 @@ public class HistoryEventBumper2 extends ObjectSchemaVersionBumper<ObjectHistory
 	
 	@Override
 	protected SingleUpgradeResult bumpObjectSchema(ObjectNode oldObj) {
-		SingleUpgradeResult.Builder resultBuilder = SingleUpgradeResult.builder()
+		SingleUpgradeResult.SingleUpgradeResultBuilder resultBuilder = SingleUpgradeResult.builder()
 														.upgradedObject(oldObj);
-		
+
 		if(!availableTypes.contains(oldObj.get("type").asText())){
 			resultBuilder.delObj(true);
 		} else {

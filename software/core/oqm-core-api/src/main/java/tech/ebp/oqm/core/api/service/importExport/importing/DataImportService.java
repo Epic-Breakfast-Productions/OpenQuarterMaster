@@ -251,7 +251,7 @@ public class DataImportService {
 
 		log.info("Starting the reading in of object data.");
 		sw = StopWatch.createStarted();
-		DataImportResult.Builder<?, ?> resultBuilder = DataImportResult.builder();
+		DataImportResult.DataImportResultBuilder<?, ?> resultBuilder = DataImportResult.builder();
 
 		try (
 			ClientSession session = this.imageService.getNewClientSession(true);//shouldn't matter which mongo service to grab session from
@@ -296,7 +296,7 @@ public class DataImportService {
 					Path curDbPath = dbsDirPath.resolve(curDb.getName());
 					OqmMongoDatabase finalCurDb = curDb;//cause dumb
 					resultMap.put(curDb, CompletableFuture.supplyAsync(() -> {
-						DbImportResult.Builder dbResultBuilder = DbImportResult.builder();
+						DbImportResult.DbImportResultBuilder dbResultBuilder = DbImportResult.builder();
 
 						try {
 							dbResultBuilder.numFileAttachments(this.fileImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));

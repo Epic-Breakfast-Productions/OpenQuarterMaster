@@ -197,7 +197,7 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 
 	@WithSpan
 	public ObjectHistoryEvent objectCreated(String oqmDbIdOrName, ClientSession session, T created, InteractingEntity entity, HistoryDetail... details) {
-		ObjectHistoryEvent.Builder<?,?> eventBuilder;
+		ObjectHistoryEvent.ObjectHistoryEventBuilder<?,?> eventBuilder;
 		try {
 			this.getHistoryFor(oqmDbIdOrName, session, created);
 			//object is being re-created, probably
