@@ -101,7 +101,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 					deetsCollection.add(new ItemTransactionDetail(appliedTransactionId));
 					historyDetails = deetsCollection.toArray(new HistoryDetail[0]);
 				}
-				AppliedTransaction.Builder<?, ?> appliedTransactionBuilder = AppliedTransaction.builder()
+				AppliedTransaction.AppliedTransactionBuilder<?, ?> appliedTransactionBuilder = AppliedTransaction.builder()
 																				 .id(appliedTransactionId)
 																				 .inventoryItem(inventoryItem.getId())
 																				 .transaction(itemStoredTransaction)

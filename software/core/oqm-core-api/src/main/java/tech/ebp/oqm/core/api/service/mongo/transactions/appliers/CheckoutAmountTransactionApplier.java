@@ -92,7 +92,7 @@ public class CheckoutAmountTransactionApplier extends CheckinOutTransactionAppli
 			throw new IllegalArgumentException("Amount to checkout must be greater than zero.");
 		}
 
-		ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
+		ItemCheckout.ItemCheckoutBuilder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
 															.checkedOutByEntity(interactingEntity.getId())
 															.item(inventoryItem.getId())
 															.checkoutDetails(transaction.getCheckoutDetails())
