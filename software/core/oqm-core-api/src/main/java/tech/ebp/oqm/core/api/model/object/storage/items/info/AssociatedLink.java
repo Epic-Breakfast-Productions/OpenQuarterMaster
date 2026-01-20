@@ -10,7 +10,6 @@ import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.Labeled;
 
 import java.net.URI;
-import java.net.URL;
 
 @Data
 @SuperBuilder(toBuilder = true)
