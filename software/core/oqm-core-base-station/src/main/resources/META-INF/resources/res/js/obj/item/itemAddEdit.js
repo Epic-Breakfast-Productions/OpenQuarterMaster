@@ -17,6 +17,7 @@ const ItemAddEdit = {
 	addEditItemTotalLowStockThresholdInput: $("#addEditItemTotalLowStockThresholdInput"),
 	addEditItemTotalLowStockThresholdUnitInput: $("#addEditItemTotalLowStockThresholdUnitInput"),
 	addEditItemPricingInput: $("#addEditItemPricingInput"),
+	defaultStoredLabelInput: $("#addEditItemDefaultStoredLabelInput"),
 	addEditItemStorageTypeInput: $('#addEditItemStorageTypeInput'),
 	addEditItemUnitInput: $('#addEditItemUnitInput'),
 	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
@@ -91,6 +92,7 @@ const ItemAddEdit = {
 		Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
 		FileAttachmentSearchSelect.resetInput(this.fileInput);
 		Pricing.resetInput(ItemAddEdit.addEditItemPricingInput);
+		ItemAddEdit.defaultStoredLabelInput.val("");
 
 		promises.push(ItemAddEdit.unitChanged());
 		this.associatedStorageInputContainer.html("");
@@ -188,6 +190,8 @@ const ItemAddEdit = {
 					});
 				});
 
+
+				ItemAddEdit.defaultStoredLabelInput.val(data.defaultLabelFormat);
 				await Pricing.populateInput(
 					ItemAddEdit.addEditItemPricingInput,
 					ItemAddEdit.getUnit(),
@@ -324,7 +328,8 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 		categories: ItemCategoryInput.getValueFromInput(ItemAddEdit.addEditItemCategoriesInput),
 		storageBlocks: ItemAddEdit.storageInput.selectedStorageList(),
 		attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(ItemAddEdit.fileInput),
-		defaultPrices: Pricing.getPricingData(ItemAddEdit.addEditItemPricingInput)
+		defaultPrices: Pricing.getPricingData(ItemAddEdit.addEditItemPricingInput),
+		defaultLabelFormat: ItemAddEdit.defaultStoredLabelInput.val() ? ItemAddEdit.defaultStoredLabelInput.val() : null
 	};
 
 	let setAmountStoredVars = function () {

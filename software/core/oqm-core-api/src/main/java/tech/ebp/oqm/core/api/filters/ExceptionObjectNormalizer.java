@@ -28,7 +28,7 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 	@Context
 	UriInfo uriInfo;
 	
-	private ErrorMessage.Builder<?, ?> buildOutputForHibViolation(ViolationReport report) {
+	private ErrorMessage.ErrorMessageBuilder<?, ?> buildOutputForHibViolation(ViolationReport report) {
 		log.debug("Violation Report type. Mapping to standard error object.");
 		
 		StringBuilder sb = new StringBuilder("Data validation errors (" + report.getViolations().size() + "): ");
@@ -86,7 +86,7 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 			return;
 		}
 		
-		ErrorMessage.Builder<?, ?> outputBuilder = null;
+		ErrorMessage.ErrorMessageBuilder<?, ?> outputBuilder = null;
 		log.debug("Type of response object: {}", responseContext.getEntityType());
 		
 		if (responseContext.getEntity() instanceof ViolationReport) {

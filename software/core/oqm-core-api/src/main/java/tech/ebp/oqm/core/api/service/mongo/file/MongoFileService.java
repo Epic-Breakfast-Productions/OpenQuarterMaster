@@ -296,7 +296,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		int revisionIndex = revisionNum - 1;
 		T fileObj = this.getObject(dbIdOrName, clientSession, id);
 		
-		FileContentsGet.Builder<?, ?> outputBuilder = FileContentsGet.builder();
+		FileContentsGet.FileContentsGetBuilder<?, ?> outputBuilder = FileContentsGet.builder();
 		
 		List<FileMetadata> revisions = this.getRevisions(dbIdOrName, clientSession, id);
 		

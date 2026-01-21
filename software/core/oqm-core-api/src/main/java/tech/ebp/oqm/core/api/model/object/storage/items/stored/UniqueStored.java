@@ -17,8 +17,7 @@ public class UniqueStored extends Stored {
 	}
 	
 	@Override
-	public String getLabelText() {
-		//TODO:: something better
-		return this.getId().toHexString();
+	public String getDefaultLabelFormat() {
+		return "{id}";
 	}
 }

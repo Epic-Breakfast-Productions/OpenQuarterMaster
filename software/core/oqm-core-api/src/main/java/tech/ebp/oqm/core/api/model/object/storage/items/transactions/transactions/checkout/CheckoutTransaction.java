@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -16,8 +17,9 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredT
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder(toBuilder = true)
 public abstract class CheckoutTransaction extends ItemStoredTransaction {
 	
 	/**

@@ -159,7 +159,7 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 		}
 	}
 	
-	protected <X extends CollectionStats.Builder<?,?>> X addBaseStats(String oqmDbIdOrName, X builder){
+	protected <X extends CollectionStats.CollectionStatsBuilder<?,?>> X addBaseStats(String oqmDbIdOrName, X builder){
 		return (X) builder.size(this.getTypedCollection(oqmDbIdOrName).countDocuments());
 	}
 	

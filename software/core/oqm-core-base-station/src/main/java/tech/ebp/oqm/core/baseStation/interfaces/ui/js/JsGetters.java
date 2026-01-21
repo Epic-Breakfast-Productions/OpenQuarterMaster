@@ -46,6 +46,7 @@ public class JsGetters {
 	private static String uniqueIdAddedLines;
 	private static String copyTextButtonLines;
 	
+	private static String itemCatBadgeLines;
 	private static String attachedFileListLines;
 	
 	@Getter
@@ -103,6 +104,8 @@ public class JsGetters {
 	Template uniqueIdInputTemplate;
 	@Location("tags/fileAttachment/FileAttachmentObjectView.html")
 	Template fileAttachmentObjectViewTemplate;
+	@Location("tags/objView/itemCatBadge.qute.html")
+	Template itemCatBadgeTemplate;
 	
 	private String templateToEscapedJs(TemplateInstance templateInstance) {
 		return templateInstance
@@ -203,6 +206,13 @@ public class JsGetters {
 		return attachedFileListLines;
 	}
 	
+	private String getItemCatBadgeLines() {
+		if (itemCatBadgeLines == null) {
+			itemCatBadgeLines = this.templateToEscapedJs(itemCatBadgeTemplate.instance());
+		}
+		return itemCatBadgeLines;
+	}
+	
 	@GET
 	@Path("constants.js")
 	@PermitAll
@@ -254,6 +264,7 @@ public class JsGetters {
 				   .data("generalIdAddedLines", this.getGeneralIdAddedLines())
 				   .data("uniqueIdInputLines", this.getUniqueIdInputLines())
 				   .data("uniqueIdAddedLines", this.getUniqueIdAddedLines())
+				   .data("itemCatBadgeLines", this.getItemCatBadgeLines())
 				   .data("attachedFileListLines", this.getAttachedFileListLines())
 				   .createUni();
 	}

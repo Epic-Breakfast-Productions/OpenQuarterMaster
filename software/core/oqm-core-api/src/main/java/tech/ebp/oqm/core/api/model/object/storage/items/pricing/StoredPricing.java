@@ -75,7 +75,7 @@ public class StoredPricing extends Pricing {
 	}
 	
 	public CalculatedPricing calculatePrice(Stored stored){
-		CalculatedPricing.Builder<?,?> output = CalculatedPricing.builder()
+		CalculatedPricing.CalculatedPricingBuilder<?,?> output = CalculatedPricing.builder()
 													.label(this.getLabel());
 		
 		output.flatPrice(this.getFlatPrice());

@@ -13,9 +13,9 @@ public class IntEntBumper2 extends ObjectSchemaVersionBumper<InteractingEntity> 
 	
 	@Override
 	protected SingleUpgradeResult bumpObjectSchema(ObjectNode oldObj) {
-		SingleUpgradeResult.Builder resultBuilder = SingleUpgradeResult.builder()
+		SingleUpgradeResult.SingleUpgradeResultBuilder resultBuilder = SingleUpgradeResult.builder()
 														.upgradedObject(oldObj);
-		
+
 		oldObj.put("type", oldObj.get("interactingEntityType"));
 		oldObj.remove("interactingEntityType");
 		
