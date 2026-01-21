@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.service.importExport.importing;
 
 import com.mongodb.client.ClientSession;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -162,7 +161,6 @@ public class DataImportService {
 		this.itemCheckoutImporter = new GenericImporterHistoried<>(this.itemCheckoutService);
 	}
 
-	@WithSpan
 	public DataImportResult importBundle(
 		InputStream bundleInputStream,
 		String fileName,

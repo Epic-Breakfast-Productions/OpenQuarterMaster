@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints.inventory.storage;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -138,7 +137,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	public CollectionStats getCollectionStats(
 	) {
 		return super.getCollectionStats();
