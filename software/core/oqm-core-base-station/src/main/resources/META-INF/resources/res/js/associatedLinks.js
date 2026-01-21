@@ -130,38 +130,19 @@ AssociatedLinks = {
 	},
 
 	View: {
-		newPriceContainer: function (priceData, extraClasses="") {
-			let output = $(`
-			<div class="priceDisplayContainer p-1 `+extraClasses+`">
-				<div class="priceDisplay card">
-					<div class="card-header">
-						<span class="card-body priceFromDefaultInd px-0 d-none" title="Default from item">*</span>
-						<span class="priceLabel h4"></span> -
-						<span class="pricePrice h4"></span>
-						<span class="priceAsOfDateContainer"></span>
-						<button class="btn btn-sm btn-link float-end showPriceDropdownButton d-none" type="button" title="Show Price Breakdown" onclick="Pricing.View.toggleBreakdownView($(this))">`+Icons.dropdown+`</button>
-					</div>
-					<div class="card-body priceBreakdownContainer d-none">
-						<div class="mb-1 priceBreakdownFixedPriceContainer">
-							<span class="h5">Fixed Price:</span>
-							<span class="priceBreakdownFixedPrice"></span>
-						</div>
-						<div class="mb-1 priceBreakdownPerUnitPriceContainer d-none">
-							+
-							<span class="h5">Per-Unit Price:</span>
-							<span class="priceBreakdownPerUnitPrice"></span>
-						</div>
-					</div>
-				</div>
-			</div>
-			`);
+		newLinksContainer: function (linkData) {
+			let output = $(`<li class="linkViewLink"></li>`);
 
-			output.find(".priceLabel").text(priceData.label);
+			output.append(
+				$('<a target="_blank"></a>')
+					.html(Icons.link)
+					.append($('<span></span>').text(linkData.label))
+					.attr("href", linkData.link)
+			);
 
-			if(priceData.asOfDate){
-				let dateDisplay = output.find(".priceAsOfDateContainer");
-				dateDisplay.text(priceData.asOfDate);
-				dateDisplay.show();
+			if(linkData.description){
+				output.append($('<br />'));
+				output.append($('<span class="linkViewLinkDesc fw-lighter"></span>').text(linkData.description));
 			}
 
 			return output;
@@ -170,8 +151,15 @@ AssociatedLinks = {
 			breakdownButtonJq.parent().parent().find(".priceBreakdownContainer").toggleClass("d-none");
 		},
 
-		display(conainerJq, extraClasses= ""){
+		showInDiv(containerJq, linkArray, extraClasses= ""){
+			let output = $("<ul class='linkViewList'></ul>");
 
+			linkArray.forEach(function (linkData) {
+				output.append(AssociatedLinks.View.newLinksContainer(linkData));
+			});
+
+			containerJq.append(output);
+			return output;
 		}
 	}
 };
