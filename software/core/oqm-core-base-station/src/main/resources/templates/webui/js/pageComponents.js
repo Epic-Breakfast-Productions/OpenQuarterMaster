@@ -27,6 +27,10 @@ const PageComponents = {
 ',
 			uniqueIdAdded: '{uniqueIdAddedLines}\
 '
+		},
+		AssociatedLinks: {
+			linkInput: '{assocLinkLinkInputLines}\
+'
 		}
 	},
 	View: {
