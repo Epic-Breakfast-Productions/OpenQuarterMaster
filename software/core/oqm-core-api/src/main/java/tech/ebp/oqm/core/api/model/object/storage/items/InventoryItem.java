@@ -14,6 +14,7 @@ import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.info.AssociatedLink;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.ItemNotificationStatus;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
@@ -137,6 +138,15 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@lombok.Builder.Default
 	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull StoredPricing> defaultPrices = new LinkedHashSet<>();
+	
+	/**
+	 * Links to external resources related to the item
+	 */
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	@UniqueLabeledCollection
+	private LinkedHashSet<@NotNull AssociatedLink> associatedLinks = new LinkedHashSet<>();
 	
 	/**
 	 * The default format that should be applied to new stored items if not otherwise specified.
