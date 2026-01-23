@@ -1,7 +1,5 @@
 package tech.ebp.oqm.core.api.scheduled;
 
-import com.mongodb.client.FindIterable;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -21,7 +19,6 @@ public class ExpiryProcessor {
 	@Inject
 	ItemStatsService itemStatsService;
 	
-	@WithSpan
 	@Scheduled(
 		identity = "searchAndProcessExpiredItems",
 		cron = "{service.item.expiryCheck.cron}",

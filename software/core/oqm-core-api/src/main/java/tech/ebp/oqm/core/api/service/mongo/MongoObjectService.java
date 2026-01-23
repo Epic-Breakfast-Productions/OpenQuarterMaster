@@ -11,7 +11,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -214,7 +213,6 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 *
 	 * @return The search results for the search given
 	 */
-	@WithSpan
 	public SearchResult<T> search(String oqmDbIdOrName, ClientSession cs, @NonNull S searchObject) {
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 		

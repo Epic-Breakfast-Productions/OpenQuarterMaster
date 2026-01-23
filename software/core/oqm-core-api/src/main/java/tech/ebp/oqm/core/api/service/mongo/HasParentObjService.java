@@ -2,7 +2,6 @@ package tech.ebp.oqm.core.api.service.mongo;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.model.Filters;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.HasParent;
@@ -26,17 +25,14 @@ HasParentObjService<T extends MainObject & HasParent, S extends SearchObject<T>,
 		super(clazz, allowNullEntityForCreate);
 	}
 	
-	@WithSpan
 	public List<T> getTopParents(String oqmDbIdOrName) {
 		return this.list(oqmDbIdOrName, Filters.exists("parent", false), null, null);
 	}
 	
-	@WithSpan
 	public List<T> getChildrenIn(String oqmDbIdOrName, ObjectId parentId) {
 		return this.list(oqmDbIdOrName, Filters.eq("parent", parentId), null, null);
 	}
 	
-	@WithSpan
 	public List<T> getChildrenIn(String oqmDbIdOrName, String parentId) {
 		return this.getChildrenIn(oqmDbIdOrName, new ObjectId(parentId));
 	}

@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.api.service.notification;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.smallrye.reactive.messaging.annotations.Broadcast;
 import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -55,7 +54,6 @@ public class HistoryEventNotificationService {
 	/**
 	 * Don't call this directly, use the other one(s)
 	 */
-	@WithSpan
 	@Incoming(INTERNAL_EVENT_CHANNEL)
 	void sendEventOutgoing(EventNotificationWrapper notificationWrapper) {
 		if (!this.outgoingEnabled()) {

@@ -11,7 +11,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 
 import jakarta.inject.Inject;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
@@ -28,7 +27,6 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class ImageServiceTest extends RunningServerTest { //extends MongoHistoriedFileServiceTest<Image, ImageService> {
 	private static final Color COLOR_CENTER = new Color(255, 0, 0);
 	private static final Color COLOR_TOP_LEFT = new Color(0, 255, 0);

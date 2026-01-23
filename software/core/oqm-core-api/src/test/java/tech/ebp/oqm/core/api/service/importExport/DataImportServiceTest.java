@@ -21,7 +21,6 @@ import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
 import tech.ebp.oqm.core.api.service.mongo.file.FileAttachmentService;
 import tech.ebp.oqm.core.api.service.mongo.transactions.AppliedTransactionService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.media.Image;
@@ -55,7 +54,6 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class DataImportServiceTest extends RunningServerTest {
 
 	@Inject

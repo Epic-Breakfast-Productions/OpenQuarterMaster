@@ -2,9 +2,6 @@ package tech.ebp.oqm.core.api.service.mongo;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
-import io.quarkus.arc.Arc;
-import io.quarkus.arc.InstanceHandle;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -76,7 +73,6 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		super(Stored.class, false);
 	}
 	
-	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, Stored newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);

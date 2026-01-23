@@ -23,7 +23,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-rest-jackson'
 	implementation 'io.quarkus:quarkus-smallrye-openapi'
 	implementation 'io.quarkus:quarkus-smallrye-health'
-	implementation 'io.quarkus:quarkus-opentelemetry'
+//	implementation 'io.quarkus:quarkus-opentelemetry'
 	implementation 'io.quarkus:quarkus-hibernate-validator'
 	implementation 'io.quarkus:quarkus-container-image-docker'
 	implementation 'io.quarkus:quarkus-scheduler'

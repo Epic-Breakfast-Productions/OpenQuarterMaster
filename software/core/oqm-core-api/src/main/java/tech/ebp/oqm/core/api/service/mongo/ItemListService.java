@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 import com.mongodb.client.ClientSession;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,6 @@ public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemL
 				   .build();
 	}
 	
-	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, ItemList list, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, list, clientSession);

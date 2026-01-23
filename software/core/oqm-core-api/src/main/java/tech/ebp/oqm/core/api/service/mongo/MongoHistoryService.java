@@ -6,10 +6,8 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Sorts;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
-import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +68,6 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		}
 	}
 
-	@WithSpan
 	public DeleteEvent isDeleted(String oqmDbIdOrName, ClientSession clientSession, ObjectId id) {
 		MongoCollection<ObjectHistoryEvent> collection = this.getTypedCollection(oqmDbIdOrName);
 		DeleteEvent found;
@@ -103,7 +100,6 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return this.isDeleted(oqmDbIdOrName, null, id);
 	}
 
-	@WithSpan
 	public ObjectHistoryEvent getLatestHistoryEventFor(String oqmDbIdOrName, ClientSession clientSession, ObjectId id) {
 		ObjectHistoryEvent found;
 		MongoCollection<ObjectHistoryEvent> collection = this.getTypedCollection(oqmDbIdOrName);
@@ -130,7 +126,6 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return this.getLatestHistoryEventFor(oqmDbIdOrName, null, id);
 	}
 
-	@WithSpan
 	public boolean hasHistoryFor(String oqmDbIdOrName, ClientSession clientSession, ObjectId id) {
 		ObjectHistoryEvent found;
 		MongoCollection<ObjectHistoryEvent> collection = this.getTypedCollection(oqmDbIdOrName);
@@ -152,7 +147,6 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return this.hasHistoryFor(oqmDbIdOrName, null, id);
 	}
 
-	@WithSpan
 	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, ClientSession clientSession, ObjectId id) {
 		List<ObjectHistoryEvent> output = this.list(
 			oqmDbIdOrName,
@@ -180,7 +174,6 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return this.getHistoryFor(oqmDbIdOrName, null, object);
 	}
 
-	@WithSpan
 	public ObjectHistoryEvent addHistoryFor(String oqmDbIdOrName, ClientSession session, ObjectId objectReferred, InteractingEntity entity, ObjectHistoryEvent history) {
 		history.setObjectId(objectReferred);
 		if (entity != null) {
@@ -195,7 +188,6 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		return this.addHistoryFor(oqmDbIdOrName, session, objectReferred.getId(), entity, history);
 	}
 
-	@WithSpan
 	public ObjectHistoryEvent objectCreated(String oqmDbIdOrName, ClientSession session, T created, InteractingEntity entity, HistoryDetail... details) {
 		ObjectHistoryEvent.ObjectHistoryEventBuilder<?,?> eventBuilder;
 		try {
@@ -221,7 +213,6 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		);
 	}
 
-	@WithSpan
 	public ObjectHistoryEvent objectUpdated(
 		String oqmDbIdOrName,
 		ClientSession clientSession,
@@ -242,7 +233,6 @@ public class MongoHistoryService<T extends MainObject> extends MongoObjectServic
 		);
 	}
 
-	@WithSpan
 	public ObjectHistoryEvent objectDeleted(String oqmDbIdOrName, ClientSession clientSession, T updated, InteractingEntity entity, HistoryDetail... details) {
 		return this.addHistoryFor(
 			oqmDbIdOrName,

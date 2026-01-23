@@ -1,11 +1,9 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.SecurityContext;
@@ -118,7 +116,6 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	 *
 	 * @return The entity that is interacting with the system, guaranteed to be in the database and updated based on request data.
 	 */
-	@WithSpan
 	public InteractingEntity ensureEntity(SecurityContext context, JsonWebToken jwt) {
 		InteractingEntity entity = null;
 		try { //TODO:: test this for performance. Any way around making the whole thing a critical section?
@@ -157,7 +154,6 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	 *
 	 * @return The entity that performed the event.
 	 */
-	@WithSpan
 	public InteractingEntity get(ObjectHistoryEvent e) {
 		return this.get(e.getEntity());
 	}

@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 import com.mongodb.client.ClientSession;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -36,7 +35,6 @@ public class ItemCheckoutService extends MongoHistoriedObjectService<ItemCheckou
 		super(ItemCheckout.class, false);
 	}
 	
-	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, ItemCheckout newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
