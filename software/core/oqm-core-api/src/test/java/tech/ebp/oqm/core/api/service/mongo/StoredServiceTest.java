@@ -177,7 +177,7 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 		Stored stored = this.storedTestObjectCreator.setItem(item).setStorageBlock(blockId).getTestObject();
 		stored.setStorageBlock(this.storageBlockService.add(
 			DEFAULT_TEST_DB_NAME,
-			new StorageBlock().setLabel(FAKER.location().building()),
+			new StorageBlock().setLabel(FAKER.location().building() + "-2"),
 			user
 		).getId());
 
@@ -310,7 +310,7 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 		).getId();
 		ObjectId otherBlockId = this.storageBlockService.add(
 			DEFAULT_TEST_DB_NAME,
-			new StorageBlock().setLabel(FAKER.location().building()),
+			new StorageBlock().setLabel(FAKER.location().building() + "-2"),
 			user
 		).getId();
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();

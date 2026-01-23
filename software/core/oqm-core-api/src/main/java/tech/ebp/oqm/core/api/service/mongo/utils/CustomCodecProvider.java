@@ -11,6 +11,7 @@ import tech.ebp.oqm.core.api.service.mongo.utils.codecs.ColorCodec;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.DurationCodec;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.MoneraryAmountCodec;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.QuantityCodec;
+import tech.ebp.oqm.core.api.service.mongo.utils.codecs.URICodec;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.UUIDCodec;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.UnitCodec;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.ZonedDateTimeCodec;
@@ -23,6 +24,7 @@ public class CustomCodecProvider implements CodecProvider {
 	@SuppressWarnings("deprecation")
 	List<Codec<?>> codecs = List.of(
 		new UUIDCodec(),
+		new URICodec(),
 		new QuantityCodec(),
 		new UnitCodec(),
 		new ColorCodec(),

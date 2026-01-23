@@ -41,7 +41,7 @@
   <tr class="itemStoredResultRow align-middle">
     <td>
       {#if !result.get("imageIds").isEmpty()}
-      <img src="/api/passthrough/media/image/for/item_stored/{id}" class="searchResultImage">{! TODO:: fix this url !}
+      <img src="{rootPrefix}/api/passthrough/media/image/for/item_stored/{id}" class="searchResultImage">
       {/if}
     </td>
     <td class="">{labelText}</td>

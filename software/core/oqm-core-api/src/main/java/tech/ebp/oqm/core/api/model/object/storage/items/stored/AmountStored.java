@@ -83,11 +83,7 @@ public class AmountStored extends Stored {
 	}
 	
 	@Override
-	public String getLabelText() {
-		StringBuilder sb = new StringBuilder(this.getAmount().toString());
-		
-		//TODO:: add more attributes
-		
-		return sb.toString();
+	public String getDefaultLabelFormat() {
+		return "{amt}";
 	}
 }
