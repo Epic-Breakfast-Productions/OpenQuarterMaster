@@ -9,6 +9,7 @@ const Icons = {
 	itemCheckouts: '{#icons/itemCheckouts /}',
 	edit: '{#icons/edit /}',
 	info: '{#icons/info /}',
+	link: '{#icons/link /}',
 	locked: '{#icons/locked /}',
 	item: '{#icons/item /}',
 	items: '{#icons/items /}',
