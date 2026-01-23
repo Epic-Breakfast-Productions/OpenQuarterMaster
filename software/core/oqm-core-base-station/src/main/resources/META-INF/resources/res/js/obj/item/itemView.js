@@ -56,6 +56,10 @@ const ItemView = {
 	priceTotalsNumLabel: $("#itemViewPriceTotalsNumLabel"),
 	priceTotalsContent: $("#itemViewPriceTotalsContent"),
 
+	linksContainer: $("#itemViewLinksContainer"),
+	linksNumLabel: $("#itemViewLinksNumLabel"),
+	linksContent: $("#itemViewLinkContent"),
+
 	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
 	itemViewTotalLowStockThreshold: $("#itemViewTotalLowStockThreshold"),
 	itemViewExpiryWarnThresholdContainer: $("#itemViewExpiryWarnThresholdContainer"),
@@ -132,6 +136,10 @@ const ItemView = {
 		ItemView.priceTotalsContainer.hide();
 		ItemView.priceTotalsNumLabel.text("");
 		ItemView.priceTotalsContent.text("");
+
+		ItemView.linksContainer.hide();
+		ItemView.linksNumLabel.text("");
+		ItemView.linksContent.text("");
 
 		ItemView.itemViewCheckedOutResultsContainer.html("");
 
@@ -473,6 +481,13 @@ const ItemView = {
 				if (itemData.categories.length) {
 					ItemView.itemViewCategoriesContainer.show();
 					promises.push(ItemCategoryView.setupItemCategoryView(ItemView.itemViewCategories, itemData.categories));
+				}
+
+				if(itemData.associatedLinks.length){
+					ItemView.linksNumLabel.text(itemData.associatedLinks.length);
+					AssociatedLinks.View.showInDiv(ItemView.linksContent, itemData.associatedLinks);
+
+					ItemView.linksContainer.show();
 				}
 
 				KeywordAttUtils.processKeywordDisplay(ItemView.viewKeywordsSection, itemData.keywords);

@@ -40,6 +40,7 @@ public class JsGetters {
 	private static String fileInputLines;
 	private static String storedPricingInputLines;
 	private static String storedPricingInputPriceLines;
+	private static String assocLinkLinkInputLines;
 	private static String generalIdInputLines;
 	private static String generalIdAddedLines;
 	private static String uniqueIdInputLines;
@@ -90,6 +91,8 @@ public class JsGetters {
 	Template fileInputTemplate;
 	@Location("tags/copyTextButton.html")
 	Template copyButtonTemplate;
+	@Location("tags/inputs/assocLink/assocLinkInputLink.qute.html")
+	Template assocLinkInputLinkTemplate;
 	@Location("tags/inputs/pricing/pricingInput.qute.html")
 	Template storedPricingInputTemplate;
 	@Location("tags/inputs/pricing/pricingInputPrice.qute.html")
@@ -213,6 +216,13 @@ public class JsGetters {
 		return itemCatBadgeLines;
 	}
 	
+	private String getAssocLinkLinkInputLines() {
+		if (assocLinkLinkInputLines == null) {
+			assocLinkLinkInputLines = this.templateToEscapedJs(assocLinkInputLinkTemplate.instance());
+		}
+		return assocLinkLinkInputLines;
+	}
+	
 	@GET
 	@Path("constants.js")
 	@PermitAll
@@ -258,6 +268,7 @@ public class JsGetters {
 				   .data("imageInputLines", this.getImageInputLines())
 				   .data("fileInputLines", this.getFileInputLines())
 				   .data("copyButtonLines", this.getCopyTextButtonLines())
+				   .data("assocLinkLinkInputLines", this.getAssocLinkLinkInputLines())
 				   .data("storedPricingInputLines", this.getStoredPricingInputLines())
 				   .data("storedPricingInputPriceLines", this.getStoredPricingInputPriceLines())
 				   .data("generalIdInputLines", this.getGeneralIdInputLines())

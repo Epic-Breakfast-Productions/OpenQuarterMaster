@@ -105,7 +105,7 @@ public class CheckoutBumper2 extends ObjectSchemaVersionBumper<ItemCheckout> {
 	@Override
 	protected SingleUpgradeResult bumpObjectSchema(ObjectNode oldObj) {
 		UpgradeCreatedObjectsResults createdObjectsResults = new UpgradeCreatedObjectsResults();
-		SingleUpgradeResult.Builder resultBuilder = SingleUpgradeResult.builder()
+		SingleUpgradeResult.SingleUpgradeResultBuilder resultBuilder = SingleUpgradeResult.builder()
 														.createdObjects(createdObjectsResults)
 														.upgradedObject(oldObj);
 		ObjectNode checkedOut = (ObjectNode) oldObj.get("checkedOut");

@@ -83,6 +83,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@Getter(AccessLevel.PRIVATE)
 	IdentifierGenerationService identifierGenerationService;
 	
+	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
 	
@@ -94,9 +95,6 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	public InventoryItemService() {
 		super(InventoryItem.class, false);
-		try (InstanceHandle<HistoryEventNotificationService> container = Arc.container().instance(HistoryEventNotificationService.class)) {
-			this.hens = container.get();
-		}
 	}
 	
 	//TODO:: this better

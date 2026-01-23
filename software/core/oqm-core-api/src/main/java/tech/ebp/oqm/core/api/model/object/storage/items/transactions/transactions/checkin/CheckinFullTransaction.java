@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,11 +13,12 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 /**
  * Transaction to checkin the entirety of a checkout.
  */
+@Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Data
-@SuperBuilder(toBuilder = true)
 @NoArgsConstructor
+@AllArgsConstructor
+@SuperBuilder(toBuilder = true)
 public class CheckinFullTransaction extends CheckinTransaction<ReturnFullCheckinDetails> {
 
 

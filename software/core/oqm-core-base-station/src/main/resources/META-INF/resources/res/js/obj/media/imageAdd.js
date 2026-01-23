@@ -1,4 +1,4 @@
-var defaultCroppieImage = "/media/logoSymbolSquare.svg";
+var defaultCroppieImage = Rest.webroot + "/media/logoSymbolSquare.svg";
 
 $uploadCrop = $('#imageUploadCroppieDiv').croppie({
 	enableExif: true,
@@ -12,9 +12,12 @@ $uploadCrop = $('#imageUploadCroppieDiv').croppie({
 		height: 300
 	}
 });
+console.log("Created croppie instance: ", $uploadCrop);
+
 var cropSlider = $uploadCrop.find(":input.cr-slider");
 
 function bindCroppie(bindVal){
+	console.log("Binding croppie to image: ", bindVal);
 	return $uploadCrop.croppie('bind', {
 		url: bindVal
 	}).then(function(){
@@ -40,5 +43,6 @@ $('#imageUploadInput').on('change', function () {
 
 
 function resetCroppie(){
+	console.log("Resetting croppie.");
 	bindCroppie(defaultCroppieImage);
 }

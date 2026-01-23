@@ -34,7 +34,7 @@ public class InvItemBumper3 extends ObjectSchemaVersionBumper<InventoryItem> {
 	@Override
 	protected SingleUpgradeResult bumpObjectSchema(ObjectNode oldObj) {
 		UpgradeCreatedObjectsResults createdObjectsResults = new UpgradeCreatedObjectsResults();
-		SingleUpgradeResult.Builder resultBuilder = SingleUpgradeResult.builder()
+		SingleUpgradeResult.SingleUpgradeResultBuilder resultBuilder = SingleUpgradeResult.builder()
 														.upgradedObject(oldObj)
 														.createdObjects(createdObjectsResults);
 		
