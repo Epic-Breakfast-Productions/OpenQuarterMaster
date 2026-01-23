@@ -146,7 +146,7 @@ quarkus:
   keycloak:
     devservices:
       port: 9328
-      realm-path: "../../../../dev/oqm-realm.json"
+      realm-path: "dev/oqm-realm.json"
       realm-name: oqm
 #      users:
 #        alice: alice
