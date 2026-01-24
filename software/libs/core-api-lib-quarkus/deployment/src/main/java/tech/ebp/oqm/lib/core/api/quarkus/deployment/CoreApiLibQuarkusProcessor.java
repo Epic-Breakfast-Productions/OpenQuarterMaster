@@ -1,6 +1,8 @@
 package tech.ebp.oqm.lib.core.api.quarkus.deployment;
 
+import io.quarkus.deployment.IsLocalDevelopment;
 import io.quarkus.deployment.IsNormal;
+import io.quarkus.deployment.annotations.BuildProducer;
 import io.quarkus.deployment.annotations.BuildStep;
 import io.quarkus.deployment.builditem.CuratedApplicationShutdownBuildItem;
 import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
@@ -8,12 +10,16 @@ import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
 import io.quarkus.deployment.dev.devservices.DevServicesConfig;
+import io.quarkus.devui.spi.page.CardPageBuildItem;
+import io.quarkus.devui.spi.page.Page;
 import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
 import org.jboss.logging.Logger;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.redpanda.RedpandaContainer;
 import org.testcontainers.utility.DockerImageName;
+import tech.ebp.oqm.lib.core.api.quarkus.deployment.config.CoreApiLibBuildTimeConfig;
+import tech.ebp.oqm.lib.core.api.quarkus.deployment.testContainers.OqmCoreApiWebServiceContainer;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 
 import java.io.Closeable;
@@ -188,5 +194,23 @@ class CoreApiLibQuarkusProcessor {
 		}
 		
 		return output;
+	}
+	
+	@BuildStep(onlyIf = IsLocalDevelopment.class)
+	void setupDevUiCard(BuildProducer<CardPageBuildItem> cardsProducer) {
+		
+		CardPageBuildItem cardPageBuildItem = new CardPageBuildItem();
+		cardPageBuildItem.setLogo("oqm-icon.svg", "oqm-icon.svg");
+		
+		
+		
+		cardPageBuildItem.addPage(
+			Page.webComponentPageBuilder()
+				.title("OQM Core API")
+				.icon("font-awesome-solid:cubes")
+				.componentLink("qwc-core-api-lib-quarkus.js")
+		);
+		
+		cardsProducer.produce(cardPageBuildItem);
 	}
 }
