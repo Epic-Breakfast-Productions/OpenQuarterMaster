@@ -1,11 +1,14 @@
 package tech.ebp.oqm.core.characteristics.model.characteristics;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.nio.file.Path;
 
 @Data
 @Setter(AccessLevel.PRIVATE)
@@ -23,11 +26,12 @@ public class RunBy {
 	@Builder.Default
 	private String website = null;
 	
+	@JsonIgnore
 	@Builder.Default
-	private boolean hasLogo = false;
+	private Path logoPath = null;
+	@JsonIgnore
 	@Builder.Default
-	private boolean hasBanner = false;
-	
+	private Path bannerPath = null;
 	
 	public boolean isHasName() {
 		return Characteristics.hasValue(this.name);
@@ -41,9 +45,17 @@ public class RunBy {
 	public boolean isHasWebsite() {
 		return Characteristics.hasValue(this.website);
 	}
+	public boolean isHasLogo() {
+		return Characteristics.hasValue(this.logoPath);
+	}
+	public boolean isHasBanner() {
+		return Characteristics.hasValue(this.bannerPath);
+	}
 	
 	public boolean isHasAny() {
-		return (this.isHasName() || this.isHasEmail() || this.isHasPhone() || this.isHasWebsite()
-		|| this.isHasLogo() || this.isHasBanner());
+		return (
+			this.isHasName() || this.isHasEmail() || this.isHasPhone() || this.isHasWebsite()
+		|| this.isHasLogo() || this.isHasBanner() || this.isHasLogo() || this.isHasBanner()
+		);
 	}
 }

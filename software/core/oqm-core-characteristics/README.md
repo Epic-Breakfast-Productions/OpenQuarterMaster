@@ -3,12 +3,17 @@
 TODOS:
 
  - [ ] Error mapper for reading in config errors
- - [ ] Characteristic reading/ parsing
+ - [ ] Characteristic imagry validaition
  - [ ] Characteristic imagry serving
  - [ ] UI Reading / parsing
  - [ ] UI serving
  - [ ] Tests
- - 
+    - [ ] Characteristics read in JSON
+    - [ ] Characteristics read in YAML
+    - [ ] Characteristics re-loaded on change
+    - [ ] UI read in Base Station format
+    - [ ] UI read in json format
+    - [ ] UI re-loaded on change
 
 
 This service is responsible for serving:
@@ -31,6 +36,9 @@ Schema of this file (shown in `yaml` for comments, all fields optional, except w
 
 # What to call this instance
 title:
+   
+# A message to display
+motd:
 
 # Information directly about who's running the system
 runBy:
@@ -47,8 +55,6 @@ runBy:
    # The path to where to load the banner image *
   bannerImg:
   
-# A message to display
-motd:
 
 # Defines a banner to be displayed at the top of the screen. Example would be a classification marking. All fields are mandatory if specifying a banner.
 banner:
@@ -62,7 +68,7 @@ banner:
 
 \* = Paths can be given either in full (`/path/to/file.jpg`) or relative to where the configuration file is located (`file.jpg`, will be looked for in `/path/to/file.jpg` if the config file is `/path/to/conf.yaml`)
 
-\+ = Colors are specified by either names of hex (`#000000`) values.
+\+ = Colors are specified by either names or hex (`#000000`) values.
 
 
 

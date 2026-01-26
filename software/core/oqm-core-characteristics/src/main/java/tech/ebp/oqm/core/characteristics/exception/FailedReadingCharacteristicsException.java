@@ -1,5 +1,8 @@
 package tech.ebp.oqm.core.characteristics.exception;
 
+/**
+ * TODO:: make handler for this exception
+ */
 public class FailedReadingCharacteristicsException extends RuntimeException {
 	
 	public FailedReadingCharacteristicsException() {

@@ -7,6 +7,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.nio.file.Path;
+
 @Data
 @Setter(AccessLevel.PRIVATE)
 @AllArgsConstructor
@@ -16,15 +18,18 @@ public class Characteristics {
 	public static boolean hasValue(String value){
 		return (value != null && !value.isBlank());
 	}
+	public static boolean hasValue(Path value){
+		return (value != null);
+	}
 	
 	@Builder.Default
 	private String title = null;
 	
 	@Builder.Default
-	private RunBy runBy = null;
+	private String motd = null;
 	
 	@Builder.Default
-	private String motd = null;
+	private RunBy runBy = null;
 	
 	@Builder.Default
 	private Banner banner = null;
