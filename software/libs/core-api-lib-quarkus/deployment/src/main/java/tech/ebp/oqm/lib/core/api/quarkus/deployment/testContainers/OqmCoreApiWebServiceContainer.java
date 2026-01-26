@@ -11,7 +11,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.deployment.config.CoreApiLibBuildTimeCo
 
 public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServiceContainer> {
 	
-	static final int PORT = 8123;
+	public static final int PORT = 8123;
 	
 	private final CoreApiLibBuildTimeConfig.DevserviceConfig devserviceConfig;
 	
@@ -29,6 +29,7 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 		Testcontainers.exposeHostPorts(this.devserviceConfig.keycloak().port());
 		
 		addExposedPorts(PORT);
+		addFixedExposedPort(PORT, PORT);
 		// Tell the dev service how to know the container is ready
 		waitingFor(Wait.forLogMessage(".*Open QuarterMaster Web Server starting.*", 1));
 		waitingFor(Wait.forHttp("/q/health").forResponsePredicate((String response)->{

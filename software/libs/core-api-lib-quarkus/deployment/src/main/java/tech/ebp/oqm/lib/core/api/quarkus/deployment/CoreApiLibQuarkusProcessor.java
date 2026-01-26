@@ -10,6 +10,7 @@ import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
 import io.quarkus.deployment.dev.devservices.DevServicesConfig;
+import io.quarkus.devui.spi.JsonRPCProvidersBuildItem;
 import io.quarkus.devui.spi.page.CardPageBuildItem;
 import io.quarkus.devui.spi.page.Page;
 import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
@@ -202,15 +203,27 @@ class CoreApiLibQuarkusProcessor {
 		CardPageBuildItem cardPageBuildItem = new CardPageBuildItem();
 		cardPageBuildItem.setLogo("oqm-icon.svg", "oqm-icon.svg");
 		
+		//show oqm core api ui
+		cardPageBuildItem.addPage(
+			Page.externalPageBuilder("OQM Core API UI")
+				.url("http://localhost:" + OqmCoreApiWebServiceContainer.PORT)
+				.doNotEmbed()//needed as embedded fails due to CORS
+		);
 		
-		
+		//page for managing core api data
 		cardPageBuildItem.addPage(
 			Page.webComponentPageBuilder()
-				.title("OQM Core API")
-				.icon("font-awesome-solid:cubes")
-				.componentLink("qwc-core-api-lib-quarkus.js")
+				.title("DB Management")
+				.icon("font-awesome-solid:database")
+//				.componentName("oqm-core-api-lib-db-management")
+				.componentLink("qwc-oqm-core-api-lib-db-management.js")
 		);
 		
 		cardsProducer.produce(cardPageBuildItem);
+	}
+	
+	@BuildStep(onlyIf = IsLocalDevelopment.class)
+	JsonRPCProvidersBuildItem createJsonRPCService() {
+		return new JsonRPCProvidersBuildItem(tech.ebp.oqm.lib.core.api.quarkus.runtime.dev.CoreApiDevDbManagementService.class);
 	}
 }
