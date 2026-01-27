@@ -63,12 +63,18 @@ public class CoreApiDevDbManagementService {
 				   .put("label", "Storage Block " + (++blockNum));
 	}
 	
+	private ObjectNode newItem(String storageType) {
+		return objectMapper.createObjectNode()
+				   .put("name", "Inventory Item " + (++itemNum));
+	}
+	
 	
 	public String resetDb() {
 		log.info("Resetting all OQM DB's.");
 		
 		this.oqmCoreApiClient.manageDbClearAll(this.serviceAccountService.getAuthString()).await().indefinitely();
 		
+		this.fileNum = 0;
 		this.blockNum = 0;
 		this.itemNum = 0;
 		
@@ -107,7 +113,13 @@ public class CoreApiDevDbManagementService {
 		
 		//TODO:: categories
 		
-		
+		{// item - bulk
+			ObjectNode item = this.oqmCoreApiClient.invItemCreate(
+				this.serviceAccountService.getAuthString(),
+				db,
+				this.newItem("BULK")
+			).await().indefinitely();
+		}
 		//TODO:: item - bulk
 		//TODO:: item - amt list
 		//TODO:: item - unique multi
