@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.api.quarkus.deployment;
+package tech.ebp.oqm.lib.core.api.quarkus.deployment.config;
 
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;

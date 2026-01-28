@@ -123,8 +123,8 @@ public class DatabaseExportService {
 		sw.stop();
 		log.info("Took {} to write all data for {}", sw, dataTypeName);
 	}
-	
-	private static <T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> void recordRecords(
+
+	private static <T extends FileMainObject, S extends SearchObject<T>, G extends MainObject & FileGet> void recordRecords(
 		String oqmDbIdOrName,
 		File tempDir,
 		MongoFileService<T, S, ?, G> fileService,
