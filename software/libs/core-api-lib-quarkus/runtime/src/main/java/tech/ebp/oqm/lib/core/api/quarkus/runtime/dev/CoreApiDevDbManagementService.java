@@ -65,7 +65,30 @@ public class CoreApiDevDbManagementService {
 	
 	private ObjectNode newItem(String storageType) {
 		return objectMapper.createObjectNode()
+				   .put("storageType", storageType)
 				   .put("name", "Inventory Item " + (++itemNum));
+	}
+	
+	private ObjectNode newStored(String storedType, ObjectNode item) {
+		ObjectNode output = objectMapper.createObjectNode()
+				   .put("type", storedType)
+				   .set("item", item.get("id"))
+			;
+		
+		switch (storedType){
+			case "AMOUNT":
+				ObjectNode amt = output.putObject("amount");
+				amt.put("value", 0);
+				amt.set("unit", item.get("unit"));
+				amt.put("scale", "ABSOLUTE");
+				
+				break;
+			case "UNIQUE":
+				
+				break;
+		}
+		
+		return output;
 	}
 	
 	
@@ -113,17 +136,97 @@ public class CoreApiDevDbManagementService {
 		
 		//TODO:: categories
 		
+		//TODO:: id generators
+		
+		
 		{// item - bulk
+			ArrayNode blocks = objectMapper.createArrayNode()
+								   .add(storageBlock1.get("id"))
+								   .add(storageBlock2.get("id"));
 			ObjectNode item = this.oqmCoreApiClient.invItemCreate(
 				this.serviceAccountService.getAuthString(),
 				db,
 				this.newItem("BULK")
+					.set("storageBlocks", blocks)
 			).await().indefinitely();
+			
+			ObjectNode newStored = this.newStored("AMOUNT", item);
+			
+			ObjectNode curTransaction = objectMapper.createObjectNode().put("type", "ADD_AMOUNT");
+			curTransaction.set("toBlock", storageBlock1.get("id"));
+			
+			ObjectNode amt = curTransaction.putObject("amount");
+			amt.put("value", 5);
+			amt.set("unit", item.get("unit"));
+			amt.put("scale", "ABSOLUTE");
+			
+			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
 		}
-		//TODO:: item - bulk
-		//TODO:: item - amt list
-		//TODO:: item - unique multi
-		//TODO:: item - unique single
+		{// item - Amt list
+			ArrayNode blocks = objectMapper.createArrayNode()
+								   .add(storageBlock1.get("id"))
+								   .add(storageBlock2.get("id"));
+			ObjectNode item = this.oqmCoreApiClient.invItemCreate(
+				this.serviceAccountService.getAuthString(),
+				db,
+				this.newItem("AMOUNT_LIST")
+					.set("storageBlocks", blocks)
+			).await().indefinitely();
+			
+			ObjectNode newStored = this.newStored("AMOUNT", item);
+			
+			((ObjectNode)newStored.get("amount")).put("value", 5);
+			
+			ObjectNode curTransaction = objectMapper.createObjectNode().put("type", "ADD_WHOLE");
+			curTransaction.set("toBlock", storageBlock1.get("id"));
+			curTransaction.set("toAdd", newStored);
+			
+			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
+			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
+			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
+			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
+		}
+		{// item - Unique Multi
+			ArrayNode blocks = objectMapper.createArrayNode()
+								   .add(storageBlock1.get("id"))
+								   .add(storageBlock2.get("id"));
+			ObjectNode item = this.oqmCoreApiClient.invItemCreate(
+				this.serviceAccountService.getAuthString(),
+				db,
+				this.newItem("UNIQUE_MULTI")
+					.set("storageBlocks", blocks)
+			).await().indefinitely();
+			
+			ObjectNode newStored = this.newStored("UNIQUE", item);
+			
+			ObjectNode curTransaction = objectMapper.createObjectNode().put("type", "ADD_WHOLE");
+			curTransaction.set("toBlock", storageBlock1.get("id"));
+			curTransaction.set("toAdd", newStored);
+			
+			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
+			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
+			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
+			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
+		}
+		{// item - Unique Single
+			ArrayNode blocks = objectMapper.createArrayNode()
+								   .add(storageBlock1.get("id"))
+								   .add(storageBlock2.get("id"));
+			ObjectNode item = this.oqmCoreApiClient.invItemCreate(
+				this.serviceAccountService.getAuthString(),
+				db,
+				this.newItem("UNIQUE_SINGLE")
+					.set("storageBlocks", blocks)
+			).await().indefinitely();
+			
+			ObjectNode newStored = this.newStored("UNIQUE", item);
+			
+			ObjectNode curTransaction = objectMapper.createObjectNode().put("type", "ADD_WHOLE");
+			curTransaction.set("toBlock", storageBlock1.get("id"));
+			curTransaction.set("toAdd", newStored);
+			
+			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
+		}
 		
 		//TODO:: checkouts
 		
