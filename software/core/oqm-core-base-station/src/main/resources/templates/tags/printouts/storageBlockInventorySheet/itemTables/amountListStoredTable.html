@@ -1,0 +1,50 @@
+{#if itemSearchIt.hasResults()}
+	<h3>
+		{#icons/storageTypeAmtList / } Amount List Items
+	</h3>
+	{#printouts/storageBlockInventorySheet/itemTables/itemTable auth=auth db=db options=options itemSearchIt=itemSearchIt storageBlock=storageBlock}
+		{#tableHeaderCells}
+
+			{#printouts/storageBlockInventorySheet/itemTables/itemStdHeaderPre options=options /}
+			<th>
+				# Stored
+			</th>
+
+			{#printouts/storageBlockInventorySheet/itemTables/stored/storedHeaders storageType='AMOUNT_LIST' options=options /}
+			
+			{#printouts/storageBlockInventorySheet/itemTables/itemStdHeaderPost options=options /}
+
+		{/tableHeaderCells}
+		{#tableBodyRows}
+			{#for curItemResult in itemSearchIt}
+				{#let startIndex=curItemResult.get("pagingCalculations").get("pageResultIndexStart").asInt()}
+				{#for curItem in curItemResult.get("results")}
+					{#let blockStats = curItem.get("stats").get("storageBlockStats").get(storageBlock.get("id").asText())}
+					{#let storedIt=cdi:PrintoutDataUtilService.searchStoredInBlockResultsIterator(auth, db, curItem.get("id").asText(), storageBlock.get("id").asText())}
+						{#let numStored=storedIt.getCurResults().get("numResultsForEntireQuery").asInt()}
+						{#for curStoredResult in storedIt}
+							{#for curStored in curStoredResult.get("results")}
+								<tr>
+									{#if curStored_isFirst}
+										{#printouts/storageBlockInventorySheet/itemTables/itemStdRowPre options=options item=curItem resultNo=(curItem_index + startIndex) rowspan=numStored /}
+									
+										<td rowspan="{numStored}">
+											{blockStats.get("total").get("value").asInt()}{blockStats.get("total").get("unit").get("symbol").asText()}
+										</td>
+									
+									{/if}
+									
+									
+									{#printouts/storageBlockInventorySheet/itemTables/stored/storedData storageType='AMOUNT_LIST' stored=curStored options=options /}
+									
+									{#printouts/storageBlockInventorySheet/itemTables/itemStdRowPost options=options item=curItem /}
+								</tr>
+							{/for}
+						{/for}
+						{/let}
+					{/let}
+				{/for}
+			{/for}
+		{/tableBodyRows}
+	{/printouts/storageBlockInventorySheet/itemTables/itemTable}
+{/if}

@@ -34,6 +34,10 @@
 			<artifactId>quarkus-smallrye-health-spi</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>io.quarkus</groupId>
+			<artifactId>quarkus-devui-deployment-spi</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>tech.epic-breakfast-productions.openquartermaster.lib.core</groupId>
 			<artifactId>core-api-lib-quarkus</artifactId>
 			<version>${project.version}</version>
