@@ -8,9 +8,9 @@
 
 		{!<p>Total Items: {searchResult.get("numResultsForEntireQuery").asText()}</p> TODO!}
 		
-		<p>
-			TODO:: table of contents
-		</p>
+		{!<p>!}
+			{!TODO:: table of contents!}
+		{!</p>!}
 		
 		{#let bulkItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'BULK')
 		      amtListItemIt=cdi:PrintoutDataUtilService.getItemInBlockResultsIterator(auth, db, storageBlock.get("id").asText(), 'AMOUNT_LIST')
