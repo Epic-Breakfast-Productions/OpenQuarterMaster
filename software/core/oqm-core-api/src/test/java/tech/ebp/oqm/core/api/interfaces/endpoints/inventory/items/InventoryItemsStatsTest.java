@@ -17,6 +17,8 @@ import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.TotalPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.unit.PricePerUnit;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.StoredInBlockStats;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddWholeTransaction;
@@ -29,6 +31,7 @@ import tech.ebp.oqm.core.api.testResources.data.StorageBlockTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
+import tech.units.indriya.quantity.Quantities;
 
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
@@ -37,7 +40,9 @@ import java.util.Set;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 
@@ -54,6 +59,139 @@ class InventoryItemsStatsTest extends RunningServerTest {
 	
 	@Inject
 	InventoryItemService inventoryItemService;
+	
+	
+	@Test
+	public void testItemStatsNoStored() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser();
+		
+		StorageBlock block = OBJECT_MAPPER.readValue(
+			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+				.body(OBJECT_MAPPER.writeValueAsString(testBlockCreator.getTestObject()))
+				.contentType(ContentType.JSON)
+				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/storage-block")
+				.then().statusCode(200)
+				.extract().body().asString(),
+			StorageBlock.class
+		);
+		
+		InventoryItem item = OBJECT_MAPPER.readValue(
+			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+				.body(
+					OBJECT_MAPPER.writeValueAsString(
+						testObjectCreator.getTestObject()
+							.setStorageType(StorageType.AMOUNT_LIST)
+							.setStorageBlocks(new LinkedHashSet<>() {{add(block.getId());}})
+					)
+				)
+				.contentType(ContentType.JSON)
+				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item")
+				.then().statusCode(200)
+				.extract().body().asString(),
+			InventoryItem.class
+		);
+		
+		
+		ItemStoredStats itemStats = item.getStats();
+		
+		assertEquals(0, itemStats.getNumStored());
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), itemStats.getTotal());
+		assertTrue(itemStats.getStorageBlockStats().containsKey(block.getId()));
+		
+		
+		StoredInBlockStats blockStats = itemStats.getStorageBlockStats().get(block.getId());
+		
+		assertFalse(blockStats.isHasStored());
+	}
+	
+	@Test
+	public void testItemStatsWithStored() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser();
+		
+		StorageBlock block = OBJECT_MAPPER.readValue(
+			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+				.body(OBJECT_MAPPER.writeValueAsString(testBlockCreator.getTestObject()))
+				.contentType(ContentType.JSON)
+				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/storage-block")
+				.then().statusCode(200)
+				.extract().body().asString(),
+			StorageBlock.class
+		);
+		
+		InventoryItem item = OBJECT_MAPPER.readValue(
+			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+				.body(
+					OBJECT_MAPPER.writeValueAsString(
+						testObjectCreator.getTestObject()
+							.setStorageType(StorageType.AMOUNT_LIST)
+							.setStorageBlocks(new LinkedHashSet<>() {{add(block.getId());}})
+					)
+				)
+				.contentType(ContentType.JSON)
+				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item")
+				.then().statusCode(200)
+				.extract().body().asString(),
+			InventoryItem.class
+		);
+		
+		//add stored
+		
+		AmountStored stored = AmountStored.builder()
+								  .amount(UnitUtils.Quantities.UNIT_ONE)
+								  .item(item.getId())
+								  .storageBlock(block.getId())
+								  .build();
+		
+		AppliedTransaction transaction =
+			OBJECT_MAPPER.readValue(
+				setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+					.body(
+						OBJECT_MAPPER.writeValueAsString(
+							AddWholeTransaction.builder()
+								.toAdd(stored)
+								.toBlock(block.getId())
+								.build()
+						)
+					)
+					.contentType(ContentType.JSON)
+					.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item/" + item.getId() + "/stored/transaction")
+					.then().statusCode(200)
+					.extract().body().asString(),
+				AppliedTransaction.class
+			);
+		
+		//get back item for latest
+		item = OBJECT_MAPPER.readValue(
+			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+				.contentType(ContentType.JSON)
+				.get("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item/" + item.getId())
+				.then().statusCode(200)
+				.extract().body().asString(),
+			InventoryItem.class
+		);
+		
+		
+		ItemStoredStats itemStats = item.getStats();
+		
+		assertEquals(itemStats, transaction.getPostApplyResults().getStats());
+		
+		assertEquals(1, itemStats.getNumStored());
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), itemStats.getTotal());
+		assertTrue(itemStats.getStorageBlockStats().containsKey(block.getId()));
+		
+		
+		StoredInBlockStats blockStats = itemStats.getStorageBlockStats().get(block.getId());
+		assertTrue(blockStats.isHasStored());
+		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), blockStats.getTotal());
+	}
+	
+	
+	
+	//TODO:: test stats, update item, no stored
+	//TODO:: test stats, update item, stored
+	//TODO:: test stats, update stored; non-triggering
+	//TODO:: test stats, update stored; unit
+	
 	
 	@Test
 	public void testPricingTotals() throws JsonProcessingException {
@@ -98,7 +236,7 @@ class InventoryItemsStatsTest extends RunningServerTest {
 													.price(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create())
 													.unit(OqmProvidedUnits.UNIT)
 													.build()
-												
+											
 											)
 											.build());
 								}})
@@ -150,7 +288,7 @@ class InventoryItemsStatsTest extends RunningServerTest {
 						)
 					)
 					.contentType(ContentType.JSON)
-					.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item/"+item.getId()+"/stored/transaction")
+					.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item/" + item.getId() + "/stored/transaction")
 					.then().statusCode(200)
 					.extract().body().asString(),
 				AppliedTransaction.class
@@ -166,7 +304,7 @@ class InventoryItemsStatsTest extends RunningServerTest {
 									  )
 								  )
 								  .contentType(ContentType.JSON)
-								  .get("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item/"+item.getId())
+								  .get("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item/" + item.getId())
 								  .then().statusCode(200)
 								  .extract().body().asString();
 		item =
@@ -192,24 +330,34 @@ class InventoryItemsStatsTest extends RunningServerTest {
 			
 			assertEquals(
 				Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create(),
-				prices.stream().filter((p)->{return p.getLabel().equals("fromDefaultFlat");}).findFirst().get().getTotalPrice()
+				prices.stream().filter((p)->{
+					return p.getLabel().equals("fromDefaultFlat");
+				}).findFirst().get().getTotalPrice()
 			);
 			assertEquals(
 				Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(2).create(),
-				prices.stream().filter((p)->{return p.getLabel().equals("fromDefaultFlatOverridden");}).findFirst().get().getTotalPrice()
+				prices.stream().filter((p)->{
+					return p.getLabel().equals("fromDefaultFlatOverridden");
+				}).findFirst().get().getTotalPrice()
 			);
 			assertEquals(
 				Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create(),
-				prices.stream().filter((p)->{return p.getLabel().equals("fromDefaultPerAmount");}).findFirst().get().getTotalPrice()
+				prices.stream().filter((p)->{
+					return p.getLabel().equals("fromDefaultPerAmount");
+				}).findFirst().get().getTotalPrice()
 			);
 			
 			assertEquals(
 				Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create(),
-				prices.stream().filter((p)->{return p.getLabel().equals("fromStoredFlat");}).findFirst().get().getTotalPrice()
+				prices.stream().filter((p)->{
+					return p.getLabel().equals("fromStoredFlat");
+				}).findFirst().get().getTotalPrice()
 			);
 			assertEquals(
 				Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create(),
-				prices.stream().filter((p)->{return p.getLabel().equals("fromStoredPerAmount");}).findFirst().get().getTotalPrice()
+				prices.stream().filter((p)->{
+					return p.getLabel().equals("fromStoredPerAmount");
+				}).findFirst().get().getTotalPrice()
 			);
 			
 		}
@@ -221,5 +369,4 @@ class InventoryItemsStatsTest extends RunningServerTest {
 		
 		//TODO:: verify pricing in item stats
 	}
-	
 }
