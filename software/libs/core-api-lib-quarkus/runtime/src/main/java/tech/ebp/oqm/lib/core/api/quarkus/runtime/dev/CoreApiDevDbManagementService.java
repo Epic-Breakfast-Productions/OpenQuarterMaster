@@ -182,8 +182,14 @@ public class CoreApiDevDbManagementService {
 			curTransaction.set("toAdd", newStored);
 			
 			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
+			
+			((ObjectNode)newStored.get("amount")).put("value", 4);
 			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
+			
+			((ObjectNode)newStored.get("amount")).put("value", 3);
 			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
+			
+			((ObjectNode)newStored.get("amount")).put("value", 2);
 			this.oqmCoreApiClient.invItemStoredTransact(this.serviceAccountService.getAuthString(), db, item.get("id").asText(), curTransaction).await().indefinitely();
 		}
 		{// item - Unique Multi
