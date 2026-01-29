@@ -215,7 +215,6 @@ class CoreApiLibQuarkusProcessor {
 			Page.webComponentPageBuilder()
 				.title("DB Management")
 				.icon("font-awesome-solid:database")
-//				.componentName("oqm-core-api-lib-db-management")
 				.componentLink("qwc-oqm-core-api-lib-db-management.js")
 		);
 		
