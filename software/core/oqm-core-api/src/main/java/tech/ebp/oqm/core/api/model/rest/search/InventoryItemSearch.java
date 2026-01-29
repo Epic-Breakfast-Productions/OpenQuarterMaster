@@ -44,7 +44,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 				SearchUtils.getBasicSearchFilter("name", this.getName())
 			);
 		}
-		if (this.getCategories() != null && !this.getStorageTypes().isEmpty()) {
+		if (this.getStorageTypes() != null && !this.getStorageTypes().isEmpty()) {
 			List<Bson> typeFilterList = new ArrayList<>(this.getStorageTypes().size());
 			for (StorageType curType : this.getStorageTypes()) {
 				typeFilterList.add(eq(
