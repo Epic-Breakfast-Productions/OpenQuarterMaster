@@ -3,7 +3,7 @@ package tech.ebp.oqm.core.api.service.mongo;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
-import org.junit.Ignore;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
@@ -85,7 +85,7 @@ class StorageBlockServiceTest extends MongoHistoriedServiceTest<StorageBlock, St
 		this.defaultRemoveAllTest(this.storageBlockService);
 	}
 	
-	@Ignore
+	@Disabled("Not yet implemented")
 	@Test
 	public void testDeleteWithRelational(){
 		User testUser = this.getTestUserService().getTestUser();

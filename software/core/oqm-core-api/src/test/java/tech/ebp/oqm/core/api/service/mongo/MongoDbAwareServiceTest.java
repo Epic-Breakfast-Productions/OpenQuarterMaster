@@ -8,7 +8,6 @@ import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
@@ -176,7 +175,7 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	// <editor-fold desc="Adding">
 	@Test
 	public void testAddNullObj() {
-		Assert.assertThrows(
+		assertThrows(
 			NullPointerException.class,
 			()->this.testMongoService.add(DEFAULT_TEST_DB_NAME, null)
 		);

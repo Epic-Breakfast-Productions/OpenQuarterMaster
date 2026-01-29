@@ -264,11 +264,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//		description = "Object requested has already been deleted.",
 	//		content = @Content(mediaType = "text/plain")
 	//	)
-	//	@APIResponse(
-	//		responseCode = "404",
-	//		description = "No object found to delete.",
-	//		content = @Content(mediaType = "text/plain")
-	//	)
 	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	public T delete(

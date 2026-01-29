@@ -219,11 +219,6 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		description = "Object requested has already been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No object found to delete.",
-		content = @Content(mediaType = "text/plain")
-	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem delete(
