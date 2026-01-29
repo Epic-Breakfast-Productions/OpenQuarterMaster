@@ -1,11 +1,11 @@
 {#if options.includeNumCol}
-	<td class="text-center">
+	<td class="text-center" {#if rowspan??}rowspan="{rowspan}"{/if}>
 		{resultNo}
 	</td>
 {/if}
 {#if options.includeImageCol}
 	{#if ! item.get("imageIds").isEmpty()}
-		<td class="imageTableCell">
+		<td class="imageTableCell" {#if rowspan??}rowspan="{rowspan}"{/if}>
 			{!TODO:: this !}
 			{!{#let curImage = imageService.get(item.getImageIds().get(0))}!}
 				{!<img src="data:{curImage.getMimeType()};base64, {curImage.getData()}" alt="Image for item {item.get("name").asText()}"!}
@@ -13,10 +13,10 @@
 			{!{/let}!}
 		</td>
 	{#else}
-		<td></td>
+		<td {#if rowspan??}rowspan="{rowspan}"{/if}></td>
 	{/if}
 {/if}
-<td>
+<td {#if rowspan??}rowspan="{rowspan}"{/if}>
 	{item.get("name").asText()}
 </td>
 

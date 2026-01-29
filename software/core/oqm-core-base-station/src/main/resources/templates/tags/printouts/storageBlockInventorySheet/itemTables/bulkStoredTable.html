@@ -1,22 +1,14 @@
 {#if itemSearchIt.hasResults()}
+	<h3>
+		{#icons/storageTypeBulk / } Bulk Items
+	</h3>
 	{#printouts/storageBlockInventorySheet/itemTables/itemTable auth=auth db=db options=options itemSearchIt=itemSearchIt storageBlock=storageBlock}
 		{#tableHeaderCells}
 			
 			{#printouts/storageBlockInventorySheet/itemTables/itemStdHeaderPre options=options /}
-			<th>
-				Amount
-			</th>
-			{#if options.includeConditionCol}
-			<th>
-				Cond.
-			</th>
-			<th>
-				Cond. Notes
-			</th>
-			{/if}
-			<th>
-				Exp.?
-			</th>
+
+			{#printouts/storageBlockInventorySheet/itemTables/stored/storedHeaders storageType='BULK' options=options /}
+			
 
 			{#printouts/storageBlockInventorySheet/itemTables/itemStdHeaderPost options=options /}
 
@@ -29,32 +21,9 @@
 						<tr>
 							{#printouts/storageBlockInventorySheet/itemTables/itemStdRowPre options=options item=curItem resultNo=(curItem_index + startIndex) /}
 							
-							<td>{blockStats.get("total").get("value").asInt()}{blockStats.get("total").get("unit").get("symbol").asText()}</td>
-							
 							{#let stored=cdi:PrintoutDataUtilService.getSingleStoredInBlockPage(auth, db, curItem.get("id").asText(), storageBlock.get("id").asText())}
-								{#if options.includeConditionCol}
-								<td>
-									{#if stored??}
-										{#if !stored.get("condition").isNull()}
-											{stored.get("condition").asText()}%
-										{/if}
-									{/if}
-								</td>
-								<td>
-									{#if stored??}
-										{#if !stored.get("conditionNotes").isNull()}
-											{stored.get("conditionNotes").asText()}
-										{/if}
-									{/if}
-								</td>
-								{/if}
-								<td>
-									{#if stored??}
-										{#if !stored.get("expires").isNull()}
-											{cdi:DateTimeService.formatForUi(stored.get("expires").asText())}
-										{/if}
-									{/if}
-								</td>
+								
+								{#printouts/storageBlockInventorySheet/itemTables/stored/storedData storageType='BULK' stored=stored options=options /}
 								
 							{/let}
 							

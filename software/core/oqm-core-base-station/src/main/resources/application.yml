@@ -177,7 +177,8 @@ smallrye:
     log:
       level: INFO
       category:
-        "tech.ebp.oqm.core.baseStation": DEBUG
+        "tech.ebp.oqm.core.baseStation":
+          level: DEBUG
     #    opentelemetry:
 #      enabled: true
 #      tracer:

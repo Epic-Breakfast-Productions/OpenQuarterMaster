@@ -15,6 +15,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.model.UserInfo;
@@ -26,6 +27,9 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.Storag
 
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
+import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -140,7 +144,20 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 				block,
 				options
 			).render();
+			log.info("Completed rendering html.");
 			log.debug("Html generated: {}", html);
+			
+			if (log.isDebugEnabled()) {
+				File htmlDebugFile = new File(outputFile.getAbsolutePath().replace(".pdf", ".html"));
+				try (
+					OutputStream os = Files.newOutputStream(htmlDebugFile.toPath());
+				) {
+					IOUtils.write(html, os, Charset.defaultCharset());
+				}
+				log.debug("Html written to file: {}", htmlDebugFile.getAbsolutePath());
+			}
+			
+			
 			HtmlConverter.convertToPdf(html, doc, CONVERTER_PROPERTIES);
 		}
 		return outputFile;
