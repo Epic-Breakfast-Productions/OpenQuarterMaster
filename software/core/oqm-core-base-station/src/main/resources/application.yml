@@ -38,6 +38,7 @@ runningInfo:
   
 ui:
   defaults:
+    indexRedirect: /overview
     search:
       defaultPageSize: 25
   pagination:

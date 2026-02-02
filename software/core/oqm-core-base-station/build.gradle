@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.12.0'
+version '1.12.1-DEV'
 
 repositories {
     mavenCentral()
