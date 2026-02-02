@@ -1,0 +1,92 @@
+# This compose file stands up a basic instance of Open QuarterMaster.
+# More information available here:
+#
+version: '3.8'
+
+# Define the internal network
+networks:
+  oqm_internal:
+    driver: bridge
+
+# Define the persistent volumes
+#volumes:
+#  mongo_data:
+#  postgres_data:
+
+services:
+  mongo:
+    image: mongo:${MONGO_IMAGE_TAG}
+    container_name: oqm-infra-mongo
+    restart: ${SYS_RESTART}
+    networks:
+      - oqm_internal
+    volumes:
+      # Mounts the container's internal data directory to a named volume
+      - ${SYS_DATA_DIR}/mongo:/data/db
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
+      # This will create the database immediately upon startup
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+
+  postgres:
+    image: postgres:${POSTGRES_IMAGE_TAG}
+    container_name: oqm-infra-postgres
+    restart: ${SYS_RESTART}
+    networks:
+      - oqm_internal
+    volumes:
+      # Mounts the container's internal data directory to a named volume
+      - ${SYS_DATA_DIR}/postgres:/var/lib/postgresql
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # This will create the database immediately upon startup
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:${KEYCLOAK_IMAGE_TAG}
+    container_name: keycloak_container
+    restart: ${SYS_RESTART}
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - oqm_internal
+    ports:
+      - "${KEYCLOAK_PORT}:8080"
+    volumes:
+      - ${KEYCLOAK_REALM_FILE}:/opt/keycloak/data/import/oqm-realm.json
+    command: start --import-realm
+    environment:
+      KC_HTTP_ENABLED: "true"
+      KC_HOSTNAME_STRICT: "false"
+      KEYCLOAK_ADMIN: ${KEYCLOAK_ADMIN_USER}
+      KEYCLOAK_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DATABASE}
+      KC_DB_USERNAME: ${POSTGRES_USER}
+      KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+  core-api:
+    image: docker.io/ebprod/oqm-core-api:${CORE_API_PORT_IMAGE_TAG}
+    container_name: oqm-core-api
+    restart: ${SYS_RESTART}
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongo:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks:
+      - oqm_internal
+    ports:
+      - "${KEYCLOAK_PORT}:8080"
+    environment:
+      
