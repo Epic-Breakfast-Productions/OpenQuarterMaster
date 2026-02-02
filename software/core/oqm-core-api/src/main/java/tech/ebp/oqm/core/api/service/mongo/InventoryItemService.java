@@ -1,5 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
@@ -14,9 +16,10 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
+import tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items.StoredInItemEndpoints;
 import tech.ebp.oqm.core.api.model.collectionStats.InvItemCollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
@@ -24,20 +27,23 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.StoredInBlockStats;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
-import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
-import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
-import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.ItemStatsService;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
+import javax.measure.Unit;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -73,18 +79,22 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@Getter(AccessLevel.PRIVATE)
 	StoredService storedService;
 	
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
+	IdentifierGenerationService identifierGenerationService;
+	
+	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
 	
 	@Getter(AccessLevel.PRIVATE)
 	@Inject
 	ItemStatsService itemStatsService;
+	@Inject
+	StoredInItemEndpoints storedInItemEndpoints;
 	
 	public InventoryItemService() {
 		super(InventoryItem.class, false);
-		try (InstanceHandle<HistoryEventNotificationService> container = Arc.container().instance(HistoryEventNotificationService.class)) {
-			this.hens = container.get();
-		}
 	}
 	
 	//TODO:: this better
@@ -130,6 +140,25 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			}
 		}
 		
+		for (UniqueId curUniqueId : newOrChangedObject.getUniqueIds()) {
+			if (curUniqueId.getType() == UniqueIdType.TO_GENERATE) {
+				continue;
+			}
+			
+			List<InventoryItem> uniqueIdresults = this.getItemsWithUniqueId(oqmDbIdOrName, clientSession, curUniqueId);
+			if (!uniqueIdresults.isEmpty()) {
+				if (newObject) {
+					throw new ValidationException("Item with unique id '" + curUniqueId + "' already exists.");
+				} else {
+					for (InventoryItem curMatcingName : uniqueIdresults) {
+						if (!curMatcingName.getId().equals(newOrChangedObject.getId())) {
+							throw new ValidationException("Item with unique id '" + curUniqueId + "' already exists.");
+						}
+					}
+				}
+			}
+		}
+		
 		if (!newObject) {
 			//TODO:: in try?
 			InventoryItem existing = this.get(oqmDbIdOrName, newOrChangedObject.getId());
@@ -138,6 +167,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				throw new ValidationException("New unit not compatible with current unit.");
 			}
 		} else {
+			//TODO:: move to massage
 			//if new item, and stats are null, set new stats. No stored should exist so this should be representative enough to start. Maybe generate stats?
 			if (newOrChangedObject.getStats() == null) {
 				newOrChangedObject.setStats(
@@ -148,52 +178,92 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	}
 	
 	@Override
+	public boolean needsDerivedUpdatesAfterUpdate(InventoryItem item, ObjectNode updates) {
+		try {
+			log.debug("Was unit updated? {} vs {}", item.getUnit(), updates.get("unit"));
+			if (//unit
+				updates.has("unit") &&
+				!item.getUnit().equals(
+					this.getObjectMapper().treeToValue(updates.get("unit"), Unit.class)
+				)
+			) {
+				return true;
+			}
+			
+			
+			if (updates.has("expiryWarningThreshold")) {
+				if (item.getExpiryWarningThreshold() == null) {
+					if (!updates.get("expiryWarningThreshold").isNull()) {
+						return true;
+					}
+				} else {
+					if (updates.get("expiryWarningThreshold").isNull()) {
+						return true;
+					}
+					
+					if (
+						!item.getExpiryWarningThreshold().equals(
+							Duration.of(updates.get("expiryWarningThreshold").asLong(), ChronoUnit.SECONDS)
+						)
+					) {
+						return true;
+					}
+				}
+			}
+			
+			if (updates.has("lowStockThreshold")) {
+				if (item.getLowStockThreshold() == null) {
+					if (!updates.get("lowStockThreshold").isNull()) {
+						return true;
+					}
+				} else {
+					if (updates.get("lowStockThreshold").isNull()) {
+						return true;
+					}
+					
+					if (
+						!item.getLowStockThreshold().equals(
+							this.getObjectMapper().treeToValue(updates.get("lowStockThreshold"), Quantity.class)
+						)
+					) {
+						return true;
+					}
+				}
+			}
+			
+			if(updates.has("defaultPrices")){
+				//TODO:: this #929
+			}
+		} catch(JsonProcessingException e) {
+			throw new RuntimeException("Failed to process update node. This likely shouldn't happen here.", e);
+		}
+		
+		
+		return super.needsDerivedUpdatesAfterUpdate(item, updates);
+	}
+	
+	@Override
+	public void massageIncomingData(String oqmDbIdOrName, ClientSession session, @NonNull InventoryItem item, boolean recalculateDerived) {
+		super.massageIncomingData(oqmDbIdOrName, session, item, recalculateDerived);
+		
+		if (recalculateDerived) {
+			log.debug("Calculating item stats after add/update.");
+			item.setStats(this.getItemStatsService().getItemStats(oqmDbIdOrName, session, item));
+		} else {
+			log.debug("Did not calculate item stats after add/update");
+		}
+		
+		item.setGeneralIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, item.getGeneralIds()));
+		item.setUniqueIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, item.getUniqueIds()));
+	}
+	
+	@Override
 	public InvItemCollectionStats getStats(String oqmDbIdOrName) {
 		return super.addBaseStats(oqmDbIdOrName, InvItemCollectionStats.builder())
 				   .numExpired(this.getNumStoredExpired(oqmDbIdOrName))
 				   .numExpireWarn(this.getNumStoredExpiryWarn(oqmDbIdOrName))
 				   .numLowStock(this.getNumLowStock(oqmDbIdOrName))
 				   .build();
-	}
-	
-	@Override
-	@WithSpan
-	public ObjectId add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid InventoryItem item, InteractingEntity entity, HistoryDetail... details) {
-		item.setStats( //Build simple stats on the premise of not having any stored items
-			ItemStoredStats.builder()
-				.total((Quantities.getQuantity(0, item.getUnit())))
-				.lowStock(
-					item.getLowStockThreshold() != null && item.getLowStockThreshold().getValue().longValue() != 0
-				)
-				.storageBlockStats(
-					item.getStorageBlocks().stream()
-						.collect(Collectors.toMap(
-							Function.identity(),
-							(storageBlockId)->StoredInBlockStats.builder().build()
-						))
-				)
-				.build()
-		);
-		
-		return super.add(oqmDbIdOrName, session, item, entity, details);
-	}
-	
-	@Override
-	@WithSpan
-	public InventoryItem update(String oqmDbIdOrName, ClientSession cs, InventoryItem object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
-		InventoryItem output = super.update(oqmDbIdOrName, cs, object, entity, details);
-		
-		//TODO:: update again if necessary #929
-		this.getItemStatsService().postItemUpdateProcess(oqmDbIdOrName, cs, object, entity, details);
-		
-		return output;
-	}
-	
-	
-	@Override
-	public InventoryItem remove(String oqmDbIdOrName, ClientSession session, ObjectId objectId, InteractingEntity entity, HistoryDetail... details) {
-		//TODO:: delete stored
-		return super.remove(oqmDbIdOrName, session, objectId, entity, details);
 	}
 	
 	@WithSpan
@@ -224,6 +294,39 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@WithSpan
 	public long getNumLowStock(String oqmDbIdOrName) {
 		return this.getSumOfIntField(oqmDbIdOrName, "numLowStock");
+	}
+	
+	public List<InventoryItem> getItemsWithUniqueId(String oqmDbIdOrName, ClientSession clientSession, UniqueId id) {
+		
+		Bson filter;
+		
+		switch (id.getType()) {
+			case GENERATED -> {
+				filter = and(
+					eq("uniqueIds.generatedFrom", ((GeneratedUniqueId) id).getGeneratedFrom()),
+					eq("uniqueIds.value", id.getValue())
+				);
+			}
+			case PROVIDED -> {
+				filter = and(
+					eq("uniqueIds.value", id.getValue())
+				);
+			}
+			default -> {
+				return Collections.emptyList();
+			}
+		}
+		
+		List<InventoryItem> list = new ArrayList<>();
+		this.listIterator(
+			oqmDbIdOrName,
+			clientSession,
+			filter,
+			null,
+			null
+		).into(list);
+		
+		return list;
 	}
 	
 	public Set<ObjectId> getItemsReferencing(String oqmDbIdOrName, ClientSession clientSession, Image image) {

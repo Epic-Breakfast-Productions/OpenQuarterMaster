@@ -5,7 +5,14 @@ const Rest = {
 	apiRoot: Constants.rootPrefix + "/api",
 	passRoot: Constants.rootPrefix + "/api/passthrough",
 	componentRoot: Constants.rootPrefix + "/api/pageComponents",
+	csrfHeader: null,
 	csrfToken: null,
+	getCsrfHeader: function () {
+		if(Rest.csrfHeader == null){
+			Rest.csrfHeader = $('body').data('csrfh');
+		}
+		return Rest.csrfHeader;
+	},
 	getCsrfToken: function () {
 		if(Rest.csrfToken == null){
 			Rest.csrfToken = $('body').data('csrft');
@@ -133,9 +140,11 @@ const Rest = {
 		}
 
 		if(csrt){
+			let csrfHeaders = {}
+			csrfHeaders[Rest.getCsrfHeader()] = csrt;
 			extraHeaders = {
 				...extraHeaders,
-				...{'X-CSRF-TOKEN': csrt}
+				...csrfHeaders
 			}
 		}
 

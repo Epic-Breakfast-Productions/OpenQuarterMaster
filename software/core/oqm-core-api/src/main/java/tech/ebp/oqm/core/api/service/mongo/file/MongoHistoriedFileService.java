@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.service.mongo.media.FileObjectService;
 import tech.ebp.oqm.core.api.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
@@ -37,7 +38,7 @@ import java.util.concurrent.atomic.AtomicLong;
  * @param <T> The type of object stored.
  */
 @Slf4j
-public abstract class MongoHistoriedFileService<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends FileGet>
+public abstract class MongoHistoriedFileService<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends MainObject & FileGet>
 	extends MongoFileService<T, S, CollectionStats, G> {
 	
 	public static final String NULL_USER_EXCEPT_MESSAGE = "User must exist to perform action.";
@@ -100,7 +101,7 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 	}
 	
 	@WithSpan
-	public ObjectId add(String dbIdOrName, ClientSession clientSession, T fileObject, File file, String fileName, InteractingEntity interactingEntity) throws IOException {
+	public T add(String dbIdOrName, ClientSession clientSession, T fileObject, File file, String fileName, InteractingEntity interactingEntity) throws IOException {
 		FileMetadata fileMetadata = new FileMetadata(file);
 		fileMetadata.setOrigName(FilenameUtils.getName(fileName));
 		fileObject.setFileName(fileName);
@@ -110,7 +111,6 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		try (
 			InputStream is = new FileInputStream(file)
 		) {
-			ObjectId newId = null;
 			GridFSBucket bucket = this.getGridFSBucket(dbIdOrName);
 			
 			boolean sessionGiven = clientSession != null;
@@ -121,11 +121,11 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 					clientSession = session;
 				}
 				
-				newId = this.getFileObjectService().add(dbIdOrName, clientSession, fileObject, interactingEntity);
+				this.getFileObjectService().add(dbIdOrName, clientSession, fileObject, interactingEntity);
 				
 				GridFSUploadOptions ops = this.getUploadOps(fileMetadata);
 				
-				this.getFileObjectService().update(dbIdOrName, clientSession, fileObject);
+				this.getFileObjectService().update(dbIdOrName, clientSession, fileObject, false);
 				bucket.uploadFromStream(clientSession, fileObject.getGridfsFileName(), is, ops);
 				
 				if (!sessionGiven) {
@@ -133,16 +133,16 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 				}
 			}
 			
-			return newId;
+			return fileObject;
 		}
 	}
 	
-	public ObjectId add(String dbIdOrName, ClientSession clientSession, T fileObject, File file, InteractingEntity interactingEntity) throws IOException {
+	public T add(String dbIdOrName, ClientSession clientSession, T fileObject, File file, InteractingEntity interactingEntity) throws IOException {
 		return this.add(dbIdOrName, clientSession, fileObject, file, file.getName(), interactingEntity);
 	}
 	
 	@WithSpan
-	public ObjectId add(String dbIdOrName, ClientSession clientSession, T fileObject, U uploadBody, InteractingEntity interactingEntity) throws IOException {
+	public T add(String dbIdOrName, ClientSession clientSession, T fileObject, U uploadBody, InteractingEntity interactingEntity) throws IOException {
 		File tempFile = this.getTempFileService().getTempFile(
 			FilenameUtils.removeExtension(uploadBody.fileName),
 			FilenameUtils.getExtension(uploadBody.fileName),
@@ -151,20 +151,20 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		
 		FileUtils.copyInputStreamToFile(uploadBody.file, tempFile);
 		
-		ObjectId id = this.add(dbIdOrName, clientSession, fileObject, tempFile, uploadBody.fileName, interactingEntity);
+		T newObj = this.add(dbIdOrName, clientSession, fileObject, tempFile, uploadBody.fileName, interactingEntity);
 		
 		if (!tempFile.delete()) {
 			log.warn("Failed to delete temporary upload file: {}", tempFile);
 		}
 		
-		return id;
+		return newObj;
 	}
 	
-	public ObjectId add(String dbIdOrName, T fileObject, U uploadBody, InteractingEntity interactingEntity) throws IOException {
+	public T add(String dbIdOrName, T fileObject, U uploadBody, InteractingEntity interactingEntity) throws IOException {
 		return this.add(dbIdOrName, null, fileObject, uploadBody, interactingEntity);
 	}
 	
-	public ObjectId add(String dbIdOrName, T fileObject, File file, InteractingEntity interactingEntity) throws IOException {
+	public T add(String dbIdOrName, T fileObject, File file, InteractingEntity interactingEntity) throws IOException {
 		return this.add(dbIdOrName, null, fileObject, file, interactingEntity);
 	}
 	

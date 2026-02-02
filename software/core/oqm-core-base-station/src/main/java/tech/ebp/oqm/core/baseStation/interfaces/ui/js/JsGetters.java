@@ -23,6 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * TODO:: rework these to standard page component calls?
+ */
 @Slf4j
 @Path("/res/js/")
 @Tags({@Tag(name = "JS Utilities")})
@@ -35,10 +38,16 @@ public class JsGetters {
 	private static String keywordInputLines;
 	private static String imageInputLines;
 	private static String fileInputLines;
+	private static String storedPricingInputLines;
+	private static String storedPricingInputPriceLines;
+	private static String assocLinkLinkInputLines;
 	private static String generalIdInputLines;
 	private static String generalIdAddedLines;
+	private static String uniqueIdInputLines;
+	private static String uniqueIdAddedLines;
 	private static String copyTextButtonLines;
 	
+	private static String itemCatBadgeLines;
 	private static String attachedFileListLines;
 	
 	@Getter
@@ -82,12 +91,24 @@ public class JsGetters {
 	Template fileInputTemplate;
 	@Location("tags/copyTextButton.html")
 	Template copyButtonTemplate;
+	@Location("tags/inputs/assocLink/assocLinkInputLink.qute.html")
+	Template assocLinkInputLinkTemplate;
+	@Location("tags/inputs/pricing/pricingInput.qute.html")
+	Template storedPricingInputTemplate;
+	@Location("tags/inputs/pricing/pricingInputPrice.qute.html")
+	Template storedPricingInputPriceTemplate;
 	@Location("tags/inputs/identifiers/generalIdInput.qute.html")
 	Template generalIdInputTemplate;
 	@Location("tags/inputs/identifiers/addedGeneralIdentifier.qute.html")
 	Template generalIdAddedTemplate;
+	@Location("tags/inputs/identifiers/addedUniqueIdentifier.qute.html")
+	Template uniqueIdAddedTemplate;
+	@Location("tags/inputs/identifiers/uniqueIdInput.qute.html")
+	Template uniqueIdInputTemplate;
 	@Location("tags/fileAttachment/FileAttachmentObjectView.html")
 	Template fileAttachmentObjectViewTemplate;
+	@Location("tags/objView/itemCatBadge.qute.html")
+	Template itemCatBadgeTemplate;
 	
 	private String templateToEscapedJs(TemplateInstance templateInstance) {
 		return templateInstance
@@ -139,6 +160,20 @@ public class JsGetters {
 		return copyTextButtonLines;
 	}
 	
+	private String getStoredPricingInputLines() {
+		if (storedPricingInputLines == null) {
+			storedPricingInputLines = this.templateToEscapedJs(storedPricingInputTemplate.instance());
+		}
+		return storedPricingInputLines;
+	}
+	
+	private String getStoredPricingInputPriceLines() {
+		if (storedPricingInputPriceLines == null) {
+			storedPricingInputPriceLines = this.templateToEscapedJs(storedPricingInputPriceTemplate.instance());
+		}
+		return storedPricingInputPriceLines;
+	}
+	
 	private String getGeneralIdInputLines() {
 		if (generalIdInputLines == null) {
 			generalIdInputLines = this.templateToEscapedJs(generalIdInputTemplate.data("id", ""));
@@ -153,11 +188,39 @@ public class JsGetters {
 		return generalIdAddedLines;
 	}
 	
+	private String getUniqueIdInputLines() {
+		if (uniqueIdInputLines == null) {
+			uniqueIdInputLines = this.templateToEscapedJs(uniqueIdInputTemplate.data("id", ""));
+		}
+		return uniqueIdInputLines;
+	}
+	
+	private String getUniqueIdAddedLines() {
+		if (uniqueIdAddedLines == null) {
+			uniqueIdAddedLines = this.templateToEscapedJs(uniqueIdAddedTemplate.data("rootPrefix", this.forwardedPrefix.orElse("")));
+		}
+		return uniqueIdAddedLines;
+	}
+	
 	private String getAttachedFileListLines() {
 		if (attachedFileListLines == null) {
 			attachedFileListLines = this.templateToEscapedJs(fileAttachmentObjectViewTemplate.instance());
 		}
 		return attachedFileListLines;
+	}
+	
+	private String getItemCatBadgeLines() {
+		if (itemCatBadgeLines == null) {
+			itemCatBadgeLines = this.templateToEscapedJs(itemCatBadgeTemplate.instance());
+		}
+		return itemCatBadgeLines;
+	}
+	
+	private String getAssocLinkLinkInputLines() {
+		if (assocLinkLinkInputLines == null) {
+			assocLinkLinkInputLines = this.templateToEscapedJs(assocLinkInputLinkTemplate.instance());
+		}
+		return assocLinkLinkInputLines;
 	}
 	
 	@GET
@@ -205,8 +268,14 @@ public class JsGetters {
 				   .data("imageInputLines", this.getImageInputLines())
 				   .data("fileInputLines", this.getFileInputLines())
 				   .data("copyButtonLines", this.getCopyTextButtonLines())
+				   .data("assocLinkLinkInputLines", this.getAssocLinkLinkInputLines())
+				   .data("storedPricingInputLines", this.getStoredPricingInputLines())
+				   .data("storedPricingInputPriceLines", this.getStoredPricingInputPriceLines())
 				   .data("generalIdInputLines", this.getGeneralIdInputLines())
 				   .data("generalIdAddedLines", this.getGeneralIdAddedLines())
+				   .data("uniqueIdInputLines", this.getUniqueIdInputLines())
+				   .data("uniqueIdAddedLines", this.getUniqueIdAddedLines())
+				   .data("itemCatBadgeLines", this.getItemCatBadgeLines())
 				   .data("attachedFileListLines", this.getAttachedFileListLines())
 				   .createUni();
 	}

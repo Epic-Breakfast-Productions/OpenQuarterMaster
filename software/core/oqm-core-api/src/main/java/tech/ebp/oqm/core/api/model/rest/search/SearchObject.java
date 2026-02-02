@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.model.rest.search;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.Setter;
@@ -26,14 +27,17 @@ public class SearchObject<T extends MainObject> {
 	@QueryParam("sortBy") String sortField;
 	@QueryParam("sortType") SortType sortType;
 	
+	@JsonIgnore
 	public Bson getSortBson(){
 		return SearchUtils.getSortBson(this.sortField, this.sortType);
 	}
 	
+	@JsonIgnore
 	public PagingOptions getPagingOptions(){
 		return PagingOptions.from(this);
 	}
 	
+	@JsonIgnore
 	public List<Bson> getSearchFilters(){
 		return new ArrayList<>();
 	}
@@ -47,6 +51,10 @@ public class SearchObject<T extends MainObject> {
 	}
 	
 	protected boolean hasValue(ObjectId val){
+		return val != null;
+	}
+	
+	protected boolean hasValue(Enum<?> val){
 		return val != null;
 	}
 	

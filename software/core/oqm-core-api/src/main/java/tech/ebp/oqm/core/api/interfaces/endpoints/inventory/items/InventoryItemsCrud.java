@@ -6,6 +6,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -60,7 +61,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem create(
-		@Valid InventoryItem item
+		@NotNull @Valid InventoryItem item
 	) {
 		return super.create(item);
 	}
@@ -149,7 +150,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	public InventoryItem get(
 		@PathParam("itemId") String id
 	) {
-		return super.get(id);
+		InventoryItem item = super.get(id);
+		return item;
 	}
 	
 	@PUT

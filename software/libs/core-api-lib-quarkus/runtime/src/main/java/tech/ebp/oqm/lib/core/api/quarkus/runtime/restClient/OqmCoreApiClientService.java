@@ -12,8 +12,10 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.ImportBundleFileBody;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.otherQueries.DbExportQuery;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.*;
 
+import java.io.InputStream;
 import java.util.Currency;
 import java.util.List;
 
@@ -34,6 +36,72 @@ public interface OqmCoreApiClientService {
 	Uni<Currency> getCurrency(@HeaderParam(Constants.AUTH_HEADER_NAME) String token);
 	//</editor-fold>
 	
+	//<editor-fold desc="ID Generators">
+	@GET
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/generator")
+	Uni<ObjectNode> idGeneratorSearch(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@BeanParam IdGeneratorSearch storageBlockSearch
+	);
+	
+	@POST
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/generator")
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> idGeneratorAdd(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		ObjectNode newIdGenerator
+	);
+	
+	@GET
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/generator/{generatorId}")
+	Uni<ObjectNode> idGeneratorGet(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("generatorId") String storageBlockId
+	);
+	
+	@PUT
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/generator/{generatorId}")
+	Uni<ObjectNode> idGeneratorUpdate(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("generatorId") String generatorId,
+		ObjectNode updates
+	);
+	
+	@DELETE
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/generator/{generatorId}")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> idGeneratorDelete(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("generatorId") String generatorId
+	);
+	
+	@GET
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/generator/{generatorId}/history")
+	Uni<ObjectNode> idGeneratorGetHistory(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("generatorId") String storageBlockId,
+		@BeanParam HistorySearch historySearch
+	);
+	
+	@GET
+	@Path(INV_DB_ROOT_ENDPOINT + "/identifiers/generator/{generatorId}/generate")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> idGenerate(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("generatorId") String generatorId,
+		@QueryParam("num") Integer numToGenerate
+	);
+	
+	//</editor-fold>
+	
 	//<editor-fold desc="General Identifiers">
 	@GET
 	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/general/validate/{type}/{identifier}")
@@ -46,9 +114,18 @@ public interface OqmCoreApiClientService {
 	Uni<ObjectNode> generalIdGetObj(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("identifier") String code);
 	
 	@GET
-	@Path("/api/media/code/generalId/{type}/{value}")
+	@Path(ROOT_API_ENDPOINT_V1 + "/media/code/identifier/general/{type}/{value}/{label}")
 	@Produces("image/svg+xml")
-	Uni<String> generalIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String generalIdType, @PathParam("value") String data);
+	Uni<String> generalIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String generalIdType, @PathParam("value") String data, @PathParam("label") String label);
+	//</editor-fold>
+	
+	//<editor-fold desc="Unique IDs">
+	
+	@GET
+	@Path(ROOT_API_ENDPOINT_V1 + "/media/code/identifier/unique/{value}/{label}")
+	@Produces("image/svg+xml")
+	Uni<String> uniqueIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("value") String data, @PathParam("label") String label);
+	
 	//</editor-fold>
 	
 	//<editor-fold desc="Interacting Entity">
@@ -141,7 +218,7 @@ public interface OqmCoreApiClientService {
 	@Path(STORAGE_BLOCK_ROOT_ENDPOINT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> storageBlockAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ObjectNode newStorageBlock);
+	Uni<ObjectNode> storageBlockAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ObjectNode newStorageBlock);
 	
 	@POST
 	@Path(STORAGE_BLOCK_ROOT_ENDPOINT + "/bulk")
@@ -211,7 +288,7 @@ public interface OqmCoreApiClientService {
 	@Path(ITEM_CAT_ROOT_ENDPOINT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> itemCatAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ObjectNode newItemCategory);
+	Uni<ObjectNode> itemCatAdd(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("oqmDbIdOrName") String oqmDbIdOrName, ObjectNode newItemCategory);
 	
 	@GET
 	@Path(ITEM_CAT_ROOT_ENDPOINT + "/{catId}")
@@ -256,7 +333,7 @@ public interface OqmCoreApiClientService {
 	@Path(INV_ITEM_ROOT_ENDPOINT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> invItemCreate(
+	Uni<ObjectNode> invItemCreate(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		ObjectNode item
@@ -393,7 +470,7 @@ public interface OqmCoreApiClientService {
 	@POST
 	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/transaction")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> invItemStoredTransact(
+	Uni<ObjectNode> invItemStoredTransact(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("itemId") String itemId,
@@ -419,7 +496,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("itemId") String itemId,
 		@PathParam("transactionId") String transactionId
 	);
-	
+
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -428,7 +505,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@BeanParam StoredSearch storedSearch
 	);
-	
+
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}/history")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -438,7 +515,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("storedId") String storedId,
 		HistorySearch search
 	);
-	
+
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -447,7 +524,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("storedId") String storedId
 	);
-	
+
 	@PUT
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -457,7 +534,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("storedId") String storedId,
 		ObjectNode updateObject
 	);
-	
+
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/history")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -483,7 +560,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> imageAdd(
+	Uni<ObjectNode> imageAdd(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@BeanParam FileUploadBody body
@@ -536,7 +613,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/revision/{rev}/data")
 	@GET
 	@Produces("*/*")
-	Uni<Response> imageGetRevisionData(
+	Uni<InputStream> imageGetRevisionData(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("id")
@@ -568,10 +645,10 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(IMAGE_ROOT_ENDPOINT + "/for/{type}/{id}")
 	@Produces({
-		"image/png",
+		"image/*",
 		"text/plain"
 	})
-	Uni<Response> imageForObject(
+	Uni<InputStream> imageForObject(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("type") String type,
@@ -593,7 +670,7 @@ public interface OqmCoreApiClientService {
 	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> fileAttachmentAdd(
+	Uni<ObjectNode> fileAttachmentAdd(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@BeanParam FileUploadBody body
@@ -646,7 +723,7 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}/revision/{rev}/data")
 	@Produces("*/*")
-	Uni<Response> fileAttachmentGetRevisionData(
+	Uni<InputStream> fileAttachmentGetRevisionData(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("id")
@@ -734,17 +811,19 @@ public interface OqmCoreApiClientService {
 	);
 	//</editor-fold>
 	
+	
+	
 	//<editor-fold desc="Inventory Management">
 	@GET
-	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/export")
+	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db/export")
 	@Produces("application/tar+gzip")
 	Uni<Response> manageExportData(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-		@QueryParam("excludeHistory") boolean excludeHistory
+		@BeanParam DbExportQuery exportQuery
 	);
 	
 	@POST
-	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/import/file/bundle")
+	@Path(INVENTORY_MANAGE_ROOT_ENDPOINT + "/db/import/file/bundle")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ObjectNode> manageImportData(

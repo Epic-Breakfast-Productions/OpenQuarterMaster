@@ -6,6 +6,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -66,7 +67,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public StorageBlock create(
-		@Valid StorageBlock storageBlock
+		@NotNull @Valid StorageBlock storageBlock
 	) {
 		return super.create(storageBlock);
 	}
@@ -83,7 +84,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 			mediaType = "application/json",
 			schema = @Schema(
 				type = SchemaType.ARRAY,
-				implementation = ObjectId.class
+				implementation = StorageBlock.class
 			)
 		)
 	)
@@ -96,7 +97,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public List<ObjectId> createBulk(
+	public List<StorageBlock> createBulk(
 		@Valid List<StorageBlock> storageBlocks
 	) {
 		return super.createBulk(storageBlocks);

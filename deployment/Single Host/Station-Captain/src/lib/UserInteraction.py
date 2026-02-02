@@ -15,6 +15,7 @@ from LogManagement import *
 from InputValidators import *
 from CertsUtils import *
 from LogUtils import *
+from SystemCheckUtils import SystemCheckUtils
 
 
 class UserInteraction:
@@ -67,39 +68,47 @@ class UserInteraction:
         """
         UserInteraction.log.info("Prompting to change config key " + configKey)
 
-        if secret:
-            code, value = self.dialog.passwordbox(text + "\n\n(No input will be shown when typing)", title=title)
-        else:
-            code, value = self.dialog.inputbox(
-                text,
-                title=title,
-                init=mainCM.getConfigVal(configKey, exceptOnNotPresent=False),
-                width=75
-            )
+        gotValue = False
 
-        if code != self.dialog.OK:
-            self.dialog.msgbox("Canceled Setting value.")
-            return
+        while not gotValue:
+            if secret:
+                code, value = self.dialog.passwordbox(text + "\n\n(No input will be shown when typing)", title=title)
+            else:
+                code, value = self.dialog.inputbox(
+                    text,
+                    title=title,
+                    init=mainCM.getConfigVal(configKey, exceptOnNotPresent=False),
+                    width=75
+                )
 
-        for validator in validators:
-            validationErr = validator(value)
-            if validationErr is not None:
-                UserInteraction.log.warning("Got validation error from value given from user.")
-                self.dialog.msgbox("Invalid value given. Error: \n\t" + validationErr)
+            if code != self.dialog.OK:
+                self.dialog.msgbox("Canceled Setting value.")
                 return
 
-        try:
-            if secret:
-                mainCM.setSecretValInFile(configKey, value, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
-            else:
-                mainCM.setConfigValInFile(configKey, value, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
-        except Exception:
-            UserInteraction.log.error("FAILED to set config value.")
-            self.dialog.msgbox("FAILED Setting value. Please try again.")
-            return
+            failed = False
+            for validator in validators:
+                validationErr = validator(value)
+                if validationErr is not None:
+                    failed = True
+                    UserInteraction.log.warning("Got validation error from value given from user.")
+                    self.dialog.msgbox("Invalid value given. Error: \n\t" + validationErr)
+                    break
+            if failed:
+                continue
 
-        mainCM.rereadConfigData()
-        self.dialog.msgbox("Set new value")
+            try:
+                if secret:
+                    mainCM.setSecretValInFile(configKey, value, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+                else:
+                    mainCM.setConfigValInFile(configKey, value, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+            except Exception:
+                UserInteraction.log.error("FAILED to set config value.")
+                self.dialog.msgbox("FAILED Setting value. Please try again.")
+                continue
+
+            gotValue = True
+            mainCM.rereadConfigData()
+            self.dialog.msgbox("Set new value")
 
         UserInteraction.log.info("Done prompting to change config key " + configKey)
 
@@ -544,12 +553,12 @@ class UserInteraction:
             if choice == "(1)":
                 self.dialog.msgbox(
                     "Keycloak access information:\n\n" +
-                    "\tURL: https://" + mainCM.getConfigVal("system.hostname") + ":" + mainCM.getConfigVal(
-                        "infra.keycloak.port") + "/admin/master/console/#/oqm\n" +
+                    "\tURL: " + mainCM.getConfigVal("infra.keycloak.externalBaseUri") + "/admin/master/console/#/oqm\n" +
                     "\tAdmin user: " + mainCM.getConfigVal("infra.keycloak.adminUser") + "\n" +
                     "\tAdmin Password: " + mainCM.getConfigVal("infra.keycloak.adminPass"),
                     title="Keycloak Access",
-                    width=UserInteraction.WIDE_WIDTH
+                    width=UserInteraction.WIDE_WIDTH,
+                    height=20
                 )
 
         UserInteraction.log.debug("Done running user admin menu.")
@@ -838,6 +847,23 @@ class UserInteraction:
             # TODO:: error check
             os.system('reboot')
 
+        self.checkSystem()
+
+        code = self.dialog.yesno(
+            "Set hostname used by OQM?\n\nThis defaults to the system's hostname, plus '.local'.",
+            title="Set Hostname? - Setup Wizard"
+        )
+        if code != self.dialog.OK:
+            UserInteraction.log.info("User chose not to automatically perform snapshots.")
+        else:
+            UserInteraction.log.info("User chose to update the hostname.")
+            self.promptForConfigChange(
+                "Use '#{#mdnsHost}', to use this host's hostname plus '.local', for use with mdns. (This is the default, but will display the resolved hostname here)",
+                "Set Hostname - Setup Wizard",
+                "system.hostname",
+                validators=[InputValidators.isValidHostname]
+            )
+
         # Check if not installed, prompt to install
         if not PackageManagement.coreInstalled():
             UserInteraction.log.debug("OQM components not yet installed.")
@@ -883,7 +909,8 @@ class UserInteraction:
             UserInteraction.log.info("User chose to encrypt snapshots.")
             mainCM.setConfigValInFile("snapshots.encryption.enabled", True, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
             self.dialog.msgbox(
-                "Snapshot encryption was enabled!\n\nPlease keep the following text saved. It is the password to decrypt, and will be required to unpack the snapshots on a different system.\n\n" + mainCM.getConfigVal("snapshots.encryption.pass"),
+                "Snapshot encryption was enabled!\n\nPlease keep the following text saved. It is the password to decrypt, and will be required to unpack the snapshots on a different system.\n\n" +
+                mainCM.getConfigVal("snapshots.encryption.pass"),
                 title="Snapshot encryption enabled! - Setup Wizard"
             )
 
@@ -915,6 +942,29 @@ class UserInteraction:
                 self.selectPluginsMenu()
 
         UserInteraction.log.debug("Done running manage install menu.")
+
+    def checkSystem(self):
+        self.log.debug("Checking system.")
+
+        self.dialog.infobox("Checking system...")
+
+        errs = SystemCheckUtils.checkSystem()
+
+        if not errs:
+            self.dialog.msgbox("System check yielded no alerts!", title="System Check")
+            return
+
+        toShow = ""
+        for curErr in errs:
+            toShow += curErr['level'] + " - " + curErr["title"] + "\n"
+            toShow += "\t" + curErr['description'] + "\n"
+            toShow += "\n\n\n"
+        self.dialog.scrollbox(toShow, title="System Issues Found",
+                              #    height=UserInteraction.TALL_HEIGHT,
+                              # width=UserInteraction.WIDE_WIDTH,
+                              #    tab_correct=True, trim=False,
+                              # cr_wrap=True
+                              )
 
     @staticmethod
     def mapPluginSelection(pluginFromPm):

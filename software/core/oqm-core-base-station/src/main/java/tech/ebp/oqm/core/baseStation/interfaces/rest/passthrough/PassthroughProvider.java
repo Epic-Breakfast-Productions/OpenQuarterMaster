@@ -12,14 +12,17 @@ import io.smallrye.mutiny.groups.UniJoin;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
+import jakarta.ws.rs.core.StreamingOutput;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import org.jboss.resteasy.reactive.client.impl.ClientResponseImpl;
 import tech.ebp.oqm.core.baseStation.interfaces.rest.ApiProvider;
 
+import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
@@ -86,6 +89,7 @@ public abstract class PassthroughProvider extends ApiProvider {
 						   log.debug("Final result of history search: {}", endResults);
 						   return Response.ok(
 							   historyTemplate
+								   .data("rootPrefix", this.getRootPrefix())
 								   .data("searchFormId", searchFormId)
 								   .data("searchResults", endResults),
 							   MediaType.TEXT_HTML
@@ -154,14 +158,22 @@ public abstract class PassthroughProvider extends ApiProvider {
 	}
 	
 	protected Uni<Response> handleCall(Uni<?> uni) {
-		return uni.map(
-				response->{
-					if (response instanceof Response){
-						return (Response) response;
-					}
-					return Response.ok(response).build();
-				}
-			)
+		return uni
+				   .map(response -> {
+					   if(response instanceof InputStream) {
+						   return (StreamingOutput) output->{
+							   IOUtils.copy((InputStream) response, output);
+						   };
+					   }
+					   return response;
+				   })
+				   .map(response->{
+						   if (response instanceof Response) {
+							   return (Response) response;
+						   }
+						   return Response.ok(response).build();
+					   }
+				   )
 				   .onFailure().recoverWithItem(this::handleApiError);
 	}
 	

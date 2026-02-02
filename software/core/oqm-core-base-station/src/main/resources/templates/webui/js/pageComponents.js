@@ -10,14 +10,32 @@ const PageComponents = {
 ',
 		copyButton: '{copyButtonLines}\
 ',
+		Pricing: {
+			priceInput: '{storedPricingInputLines}\
+',
+			storedPricing: '{storedPricingInputPriceLines}\
+'
+		},
 		GeneralIds: {
 			generalIdInput: '{generalIdInputLines}\
 ',
 			generalIdAdded: '{generalIdAddedLines}\
 '
+		},
+		UniqueIds: {
+			uniqueIdInput: '{uniqueIdInputLines}\
+',
+			uniqueIdAdded: '{uniqueIdAddedLines}\
+'
+		},
+		AssociatedLinks: {
+			linkInput: '{assocLinkLinkInputLines}\
+'
 		}
 	},
 	View: {
+		itemCatBadge: '{itemCatBadgeLines}\
+',
 		attachedFileList: '{attachedFileListLines}\
 ',
 	}

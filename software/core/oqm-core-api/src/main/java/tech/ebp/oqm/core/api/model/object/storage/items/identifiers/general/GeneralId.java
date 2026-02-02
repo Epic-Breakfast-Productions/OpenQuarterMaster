@@ -38,6 +38,8 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.
 	@JsonSubTypes.Type(value = UPC_A.class, name = "UPC_A"),
 	@JsonSubTypes.Type(value = UPC_E.class, name = "UPC_E"),
 	@JsonSubTypes.Type(value = Generic.class, name = "GENERIC"),
+	@JsonSubTypes.Type(value = GeneralGeneratedId.class, name = "GENERATED"),
+	@JsonSubTypes.Type(value = ToGenerateGeneralId.class, name = "TO_GENERATE"),
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @BsonDiscriminator

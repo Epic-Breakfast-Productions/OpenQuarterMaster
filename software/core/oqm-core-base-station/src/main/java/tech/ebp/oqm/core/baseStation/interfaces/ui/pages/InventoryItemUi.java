@@ -19,6 +19,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.core.baseStation.service.modelTweak.SearchResultTweak;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
@@ -46,6 +47,9 @@ public class InventoryItemUi extends UiProvider {
 	@ConfigProperty(name="ui.inventoryItem.search.defaultPageSize")
 	int defaultPageSize;
 	
+	@Inject
+	SearchResultTweak searchResultTweak;
+	
 	@GET
 	@Path("items")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -57,8 +61,8 @@ public class InventoryItemUi extends UiProvider {
 				.data("showSearch", false),
 			Map.of(
 				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), new ItemCategorySearch()),
-				"searchResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search),
-				"currency", this.coreApiClient.getCurrency(this.getBearerHeaderStr()),
+				"searchResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search)
+									 .call(results->searchResultTweak.addCategoriesObjectsToSearchResult(results, this.getSelectedDb(), "categories", this.getBearerHeaderStr())),
 				"allUnitMap", this.coreApiClient.unitGetAll(this.getBearerHeaderStr())
 			)
 		);

@@ -8,9 +8,10 @@ const ItemCategoryView = {
 				method: "GET",
 				async: false,
 				done: function (data) {
-					let curCat = $('<a class="badge m-1 itemCatBadge text-decoration-none" href="'+Rest.webroot+'/itemCategories?view='+data.id+'"></a>');
+					let curCat = $(PageComponents.View.itemCatBadge);
 
-					curCat.text(data.name);
+					curCat.prop('href', Rest.webroot+'/itemCategories?view='+data.id);
+					curCat.find(".itemCatBadgeText").text(data.name);
 
 					if(data.color){
 						curCat.css({"background-color":data.color, "color":data.textColor});
@@ -19,7 +20,9 @@ const ItemCategoryView = {
 					}
 
 					if(data.imageIds.length){
-						curCat.prepend('<img class="itemCatBadgeImage" src="'+Rest.passRoot+'/media/image/for/item_category/'+data.id+'" />');
+						let badgeImage = curCat.find(".itemCatBadgeImage");
+						badgeImage.prop('src', Rest.passRoot+'/media/image/for/item_category/'+data.id);
+						badgeImage.removeClass("d-none");
 					}
 					if(data.description){
 						curCat.attr("title", data.description);

@@ -78,6 +78,9 @@ ui:
   itemsStored:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  idGenerator:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
 
 quarkus:
   application:
@@ -92,7 +95,6 @@ quarkus:
       url: " "
       scope: jakarta.inject.Singleton
   log:
-    level: DEBUG
     console:
       format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t]():: %s%e%n"
   smallrye-health:
@@ -143,7 +145,7 @@ quarkus:
   keycloak:
     devservices:
       port: 9328
-      realm-path: "../../../../dev/oqm-realm.json"
+      realm-path: "dev/oqm-realm.json"
       realm-name: oqm
 #      users:
 #        alice: alice
@@ -173,13 +175,16 @@ smallrye:
     application:
       name: ${service.nameShort} - V${service.apiVersion} - DEV
     log:
-      level: DEBUG
-    opentelemetry:
-      enabled: true
-      tracer:
-        exporter:
-          otlp:
-            endpoint: http://localhost:8096
+      level: INFO
+      category:
+        "tech.ebp.oqm.core.baseStation":
+          level: DEBUG
+    #    opentelemetry:
+#      enabled: true
+#      tracer:
+#        exporter:
+#          otlp:
+#            endpoint: http://localhost:8096
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
     http:
@@ -201,7 +206,8 @@ smallrye:
 #              refreshFrequencyEvery: "5m"
 #            unit:
 #              refreshFrequencyEvery: "5m"
-
+    rest-csrf:
+#      token-signature-key: AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow
   runningInfo:
     depotUri: "Hello World"
   service:

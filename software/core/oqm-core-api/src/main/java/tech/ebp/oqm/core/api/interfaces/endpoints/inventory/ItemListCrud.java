@@ -5,6 +5,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -64,7 +65,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemList create(
-		@Valid ItemList itemList
+		@NotNull @Valid ItemList itemList
 	) {
 		return super.create(itemList);
 	}
@@ -81,7 +82,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 			mediaType = "application/json",
 			schema = @Schema(
 				type = SchemaType.ARRAY,
-				implementation = ObjectId.class
+				implementation = ItemList.class
 			)
 		)
 	)
@@ -94,7 +95,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public List<ObjectId> createBulk(
+	public List<ItemList> createBulk(
 		@Valid List<ItemList> itemLists
 	) {
 		return super.createBulk(itemLists);

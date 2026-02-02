@@ -16,7 +16,6 @@ const ItemView = {
 	storedMultiNoneStoredInBlock: $("#itemViewStoredMultiNonePresentBlocksList"),
 	storedMultiNumStoredDisplay: $("#itemViewStoredMultiNumStoredDisplay"),
 	storedMultiNumBlocksDisplay: $("#itemViewStoredMultiBlockNum"),
-	storedSingleAccordion: $("#itemViewStoredSingleAccordion"),
 	storedViewTabAllStoredPane: $("#itemViewStoredViewTabAllStoredContainer"),
 
 	storedBulkContainer: $("#itemViewStoredBulkContainer"),
@@ -41,8 +40,25 @@ const ItemView = {
 	itemViewBarcodeContainer: $('#itemViewBarcodeContainer'),
 	itemViewBarcode: $("#itemViewBarcode"),
 
+	idsAccord: $("#itemViewIdsContainer"),
+	generalIdsAccord: $("#itemViewGeneralIdsAccord"),
 	generalIdNumIds: $("#itemViewGeneralIdsNumIdsLabel"),
 	generalIdContent: $("#itemViewGeneralIdsAccordContent"),
+	uniqueIdsAccord: $("#itemViewUniqueIdsAccord"),
+	uniqueIdNumIds: $("#itemViewUniqueIdsNumIdsLabel"),
+	uniqueIdContent: $("#itemViewUniqueIdsAccordContent"),
+
+	assocIdGensAccord: $("#itemViewIdGeneratorsAccord"),
+	assocIdGensNumIds: $("#itemViewIdGeneratorsNumIdsLabel"),
+	assocIdGensContent: $("#itemViewIdGeneratorsAccordContent"),
+
+	priceTotalsContainer: $("#itemViewPriceTotalsContainer"),
+	priceTotalsNumLabel: $("#itemViewPriceTotalsNumLabel"),
+	priceTotalsContent: $("#itemViewPriceTotalsContent"),
+
+	linksContainer: $("#itemViewLinksContainer"),
+	linksNumLabel: $("#itemViewLinksNumLabel"),
+	linksContent: $("#itemViewLinkContent"),
 
 	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
 	itemViewTotalLowStockThreshold: $("#itemViewTotalLowStockThreshold"),
@@ -74,6 +90,7 @@ const ItemView = {
 		ItemView.itemViewModalLabel.text("");
 		ItemView.storedMultiContainer.hide();
 		ItemView.storedSingleContainer.hide();
+		ItemView.storedSingleContainer.text("");
 		ItemView.storedBulkContainer.hide();
 		ItemView.storedBulkNumStoredDisplay.text("");
 		ItemView.storedBulkBlockNum.text("");
@@ -83,7 +100,6 @@ const ItemView = {
 
 		ItemView.storedMultiByBlockAccordion.text("");
 		ItemView.storedMultiNoneStoredInBlock.text("");
-		ItemView.storedSingleAccordion.text("");
 		ItemView.storedBulkAccordion.text("");
 		ItemView.itemViewValPerUnitDefault.hide();
 		ItemView.itemViewValPerUnit.text("");
@@ -99,13 +115,31 @@ const ItemView = {
 		ItemView.itemViewStorageType.text("");
 		ItemView.itemViewDescriptionContainer.hide();
 		ItemView.itemViewDescription.text("");
+
+		ItemView.idsAccord.hide();
+		ItemView.generalIdsAccord.hide();
 		ItemView.generalIdNumIds.text("");
 		ItemView.generalIdContent.text("");
+		ItemView.uniqueIdsAccord.hide();
+		ItemView.uniqueIdNumIds.text("");
+		ItemView.uniqueIdContent.text("");
+		ItemView.assocIdGensAccord.hide();
+		ItemView.assocIdGensNumIds.text("");
+		ItemView.assocIdGensContent.text("");
+
 		ItemView.itemViewTotal.text("");
 		ItemView.itemViewTotalLowStockThreshold.text("");
 		ItemView.itemViewTotalLowStockThresholdContainer.hide();
 		ItemView.itemViewExpiryWarnThreshold.text("");
 		ItemView.itemViewExpiryWarnThresholdContainer.hide();
+
+		ItemView.priceTotalsContainer.hide();
+		ItemView.priceTotalsNumLabel.text("");
+		ItemView.priceTotalsContent.text("");
+
+		ItemView.linksContainer.hide();
+		ItemView.linksNumLabel.text("");
+		ItemView.linksContent.text("");
 
 		ItemView.itemViewCheckedOutResultsContainer.html("");
 
@@ -223,6 +257,35 @@ const ItemView = {
 						)
 				)
 		);
+		if(itemData.stats.storageBlockStats[blockId].prices.length){
+			let pricesAccord = $(`
+			<div class="accordion" id="itemViewBlock-`+blockId+`-PriceTotalsAccord">
+				<div class="accordion-item" id="itemViewBlock-`+blockId+`-PriceTotalsAccordItem">
+					<h2 class="accordion-header">
+						<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewBlock-`+blockId+`-PriceTotalsAccordCollapse" aria-expanded="false" aria-controls="itemViewBlock-`+blockId+`-PriceTotalsAccordCollapse">
+							<i class="bi bi-cash-stack "></i>
+							Price Totals (<span class="priceTotalsNumLabel"></span>)
+						</button>
+					</h2>
+					<div id="itemViewBlock-`+blockId+`-PriceTotalsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewBlock-`+blockId+`-PriceTotalsAccord" style="">
+						<div class="accordion-body">
+							<div class="row priceTotalsContent">
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			`);
+
+			pricesAccord.find(".priceTotalsNumLabel").text(itemData.stats.storageBlockStats[blockId].prices.length);
+
+			Pricing.View.TotalPricing.showInDiv(
+				pricesAccord.find(".priceTotalsContent"),
+				itemData.stats.storageBlockStats[blockId].prices
+			)
+
+			dataRow.append(pricesAccord);
+		}
 
 		output.append(ItemView.getStoredInBlockSearch(itemData.id, blockId));
 		return output;
@@ -234,7 +297,7 @@ const ItemView = {
 
 		if (ItemView.itemViewEditButton) {
 			ItemView.itemViewEditButton.on("click", function () {
-				ItemAddEdit.setupAddEditForEdit(itemId);
+				ItemAddEdit.setupAddEditForEdit(itemId, ItemView.itemViewModal);
 			});
 		}
 
@@ -348,7 +411,13 @@ const ItemView = {
 						function () {
 							Getters.StoredItem.getSingleStoredForItem(itemId, async function (stored) {
 								let promises = [];
-								let storageLabel = $('<h3>Stored in: <span class="uniqueItemStoredInLabel"></span></h3><p class="uniqueItemStoredAlsoInContainer">Also found in: <span class="uniqueItemStoredAlsoInLabel"></span></p>');
+								let storageLabel = $(`
+									<h3>
+										Stored in: <span class="uniqueItemStoredInLabel"></span>
+									</h3>
+									<p class="uniqueItemStoredAlsoInContainer">
+										Also found in: <span class="uniqueItemStoredAlsoInLabel"></span>
+									</p>`);
 
 								itemData.storageBlocks.forEach(function (curBlock) {
 									promises.push(getStorageBlockLabel(curBlock, function (labelText) {
@@ -372,8 +441,9 @@ const ItemView = {
 										})
 								);
 								await Promise.all(promises);
-								if (!storageLabel.find(".uniqueItemStoredAlsoInLabel").children().length) {
-									storageLabel.find(".uniqueItemStoredAlsoInContainer").remove();
+								if (storageLabel.find(".uniqueItemStoredAlsoInLabel").children().length === 0) {
+									// storageLabel.find(".uniqueItemStoredAlsoInContainer").remove();//for some reason this doesn't work ("find" doesn't work)
+									storageLabel.get(1).remove()
 								}
 								ItemView.storedSingleContainer.show();
 							})
@@ -397,9 +467,27 @@ const ItemView = {
 					}
 				}
 
+				if(itemData.stats.prices.length){
+
+					ItemView.priceTotalsNumLabel.text(itemData.stats.prices.length);
+					Pricing.View.TotalPricing.showInDiv(
+						ItemView.priceTotalsContent,
+						itemData.stats.prices
+					);
+
+					ItemView.priceTotalsContainer.show();
+				}
+
 				if (itemData.categories.length) {
 					ItemView.itemViewCategoriesContainer.show();
 					promises.push(ItemCategoryView.setupItemCategoryView(ItemView.itemViewCategories, itemData.categories));
+				}
+
+				if(itemData.associatedLinks.length){
+					ItemView.linksNumLabel.text(itemData.associatedLinks.length);
+					AssociatedLinks.View.showInDiv(ItemView.linksContent, itemData.associatedLinks);
+
+					ItemView.linksContainer.show();
 				}
 
 				KeywordAttUtils.processKeywordDisplay(ItemView.viewKeywordsSection, itemData.keywords);
@@ -411,12 +499,40 @@ const ItemView = {
 				FileAttachmentView.setupObjectView(ItemView.itemViewFiles, itemData.attachedFiles, ItemView.itemViewMessages);
 
 				if (itemData.description) {
-					ItemView.itemViewDescription.text(itemData.description);
+					Markdown.Parsing.displayInDiv(
+						itemData.description,
+						ItemView.itemViewDescription
+					);
 					ItemView.itemViewDescriptionContainer.show();
 				}
 
-				ItemView.generalIdNumIds.text(itemData.generalIds.length);
-				GeneralIdentifiers.View.showInDiv(ItemView.generalIdContent, itemData.generalIds);
+				if(itemData.generalIds.length || itemData.uniqueIds.length || itemData.idGenerators.length) {
+					console.debug("Had ids to show");
+					if(itemData.generalIds.length){
+						ItemView.generalIdsAccord.show();
+						ItemView.generalIdNumIds.text(itemData.generalIds.length);
+						GeneralIdentifiers.View.showInDiv(ItemView.generalIdContent, itemData.generalIds);
+					}
+					if(itemData.uniqueIds.length){
+						ItemView.uniqueIdsAccord.show();
+						ItemView.uniqueIdNumIds.text(itemData.uniqueIds.length);
+						UniqueIdentifiers.View.showInDiv(ItemView.uniqueIdContent, itemData.uniqueIds);
+					}
+					if(itemData.idGenerators.length){
+						ItemView.assocIdGensAccord.show();
+						ItemView.assocIdGensNumIds.text(itemData.idGenerators.length);
+
+						itemData.idGenerators.forEach(function (idGenerator, i) {
+							Getters.Identifiers.generator(idGenerator).then(function (generator) {
+								let newEntry = $('<li></li>');
+								newEntry.text(generator.name + " / " + generator.idFormat);
+
+								ItemView.assocIdGensContent.append(newEntry);
+							});
+						});
+					}
+					ItemView.idsAccord.show();
+				}
 
 				if (itemData.lowStockThreshold) {
 					ItemView.itemViewTotalLowStockThreshold.text(itemData.lowStockThreshold.value + "" + itemData.lowStockThreshold.unit.symbol);

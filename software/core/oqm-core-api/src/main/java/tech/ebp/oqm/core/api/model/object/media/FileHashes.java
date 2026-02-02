@@ -41,7 +41,7 @@ public class FileHashes {
 	 * https://stackoverflow.com/questions/304268/getting-a-files-md5-checksum-in-java
 	 */
 	public static FileHashes fromFile(File file) {
-		FileHashes.Builder<?, ?> builder = FileHashes.builder();
+		FileHashes.FileHashesBuilder<?, ?> builder = FileHashes.builder();
 		
 		try (FileInputStream is = new FileInputStream(file)) {
 			builder.md5(DigestUtils.md5Hex(is));
