@@ -88,7 +88,7 @@ public class CheckoutAmountTransactionApplier extends CheckinOutTransactionAppli
 			amount = stored.getAmount();
 		}
 		
-		ItemCheckout.Builder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
+		ItemCheckout.ItemCheckoutBuilder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
 															.checkedOutByEntity(interactingEntity.getId())
 															.item(inventoryItem.getId())
 															.checkoutDetails(transaction.getCheckoutDetails())

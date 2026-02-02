@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.baseStation.interfaces.rest;
 
+import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
@@ -43,6 +44,7 @@ public class Printouts extends ApiProvider {
 		description = "Bad request given. Data given could not pass validation.",
 		content = @Content(mediaType = "text/plain")
 	)
+	@Blocking
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces("application/pdf")
 	public Response getSheetPdf(

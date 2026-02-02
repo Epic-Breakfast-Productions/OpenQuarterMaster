@@ -24,7 +24,7 @@ import java.util.Optional;
 @Slf4j
 @ApplicationScoped
 public class HistoryEventNotificationService {
-
+	
 	public static final String INTERNAL_EVENT_CHANNEL = "events-internal";
 	public static final String OUTGOING_EVENT_CHANNEL = "events-outgoing";
 	public static final String TOPIC_PREPEND = "oqm-core-";
@@ -38,20 +38,20 @@ public class HistoryEventNotificationService {
 	Optional<String> outgoingServers;
 	@ConfigProperty(name = "kafka.bootstrap.servers")
 	Optional<String> kafkaServers;
-
+	
 	@Inject
 	@Broadcast
 	@Channel(INTERNAL_EVENT_CHANNEL)
 	@OnOverflow(value = OnOverflow.Strategy.DROP)
 	Emitter<EventNotificationWrapper> internalEventEmitter;
-
+	
 	@Inject
 	OutgoingNotificationService outgoingEventService;
-
+	
 	private boolean outgoingEnabled() {
 		return this.outgoingServersEnabled && (this.outgoingServers.isPresent() || this.kafkaServers.isPresent());
 	}
-
+	
 	/**
 	 * Don't call this directly, use the other one(s)
 	 */
@@ -59,15 +59,17 @@ public class HistoryEventNotificationService {
 	@Incoming(INTERNAL_EVENT_CHANNEL)
 	void sendEventOutgoing(EventNotificationWrapper notificationWrapper) {
 		if (!this.outgoingEnabled()) {
-			log.info("NOT Sending event to external channels (no outgoing servers configured): {}/{}", notificationWrapper.getClass().getSimpleName(),
-				notificationWrapper.getEvent().getId());
+			log.info(
+				"NOT Sending event to external channels (no outgoing servers configured): {}/{}", notificationWrapper.getClass().getSimpleName(),
+				notificationWrapper.getEvent().getId()
+			);
 			return;
 		}
 		log.info("Sending event to external channels: {}/{}", notificationWrapper.getClass().getSimpleName(), notificationWrapper.getEvent().getId());
 		try {
 			Headers headers = new RecordHeaders()
-				.add("database", notificationWrapper.getDatabase().toHexString().getBytes())
-				.add("object", notificationWrapper.getObjectName().getBytes());
+								  .add("database", notificationWrapper.getDatabase().toHexString().getBytes())
+								  .add("object", notificationWrapper.getObjectName().getBytes());
 			this.outgoingEventService.sendEvent(
 				Message.of(notificationWrapper)
 					.addMetadata(
@@ -77,44 +79,53 @@ public class HistoryEventNotificationService {
 							.build()
 					));
 			//TODO:: maybe support in future
-//			this.outgoingEventEmitter.send(
-//				Message.of(
-//					notificationWrapper
-//				).addMetadata(
-//					OutgoingKafkaRecordMetadata.<String>builder()
-//						.withTopic(
-//							TOPIC_PREPEND + (notificationWrapper.getDatabase() == null ? "" : notificationWrapper.getDatabase().toHexString() + "-") + ALL_EVENT_TOPIC_LABEL
-//						)
-//						.withHeaders(headers)
-//						.build()
-//				));
-
-
+			//			this.outgoingEventEmitter.send(
+			//				Message.of(
+			//					notificationWrapper
+			//				).addMetadata(
+			//					OutgoingKafkaRecordMetadata.<String>builder()
+			//						.withTopic(
+			//							TOPIC_PREPEND + (notificationWrapper.getDatabase() == null ? "" : notificationWrapper.getDatabase().toHexString() + "-") + ALL_EVENT_TOPIC_LABEL
+			//						)
+			//						.withHeaders(headers)
+			//						.build()
+			//				));
+			
+			
 			//TODO:: maybe support this in future
-//			this.outgoingEventEmitter.send(
-//				Message.of(notificationWrapper.getEvent()).addMetadata(
-//					OutgoingKafkaRecordMetadata.<String>builder()
-//						.withTopic(
-//							TOPIC_PREPEND + (notificationWrapper.getDatabase() == null ? "" : notificationWrapper.getDatabase().toHexString() + "-") + notificationWrapper.getObjectName() + "-" + notificationWrapper.getEvent().getType()
-//						)
-//						.withHeaders(headers)
-//						.build()
-//				));
+			//			this.outgoingEventEmitter.send(
+			//				Message.of(notificationWrapper.getEvent()).addMetadata(
+			//					OutgoingKafkaRecordMetadata.<String>builder()
+			//						.withTopic(
+			//							TOPIC_PREPEND + (notificationWrapper.getDatabase() == null ? "" : notificationWrapper.getDatabase().toHexString() + "-") + notificationWrapper.getObjectName() + "-" + notificationWrapper.getEvent().getType()
+			//						)
+			//						.withHeaders(headers)
+			//						.build()
+			//				));
 			log.debug("Sent event to external channels: {}/{}", notificationWrapper.getClass().getSimpleName(), notificationWrapper.getEvent().getId());
-		} catch (Throwable e) {
+		} catch(Throwable e) {
 			log.error("FAILED to send event to external channels: {}/{}:", notificationWrapper.getClass().getSimpleName(), notificationWrapper.getEvent().getId(), e);
 			throw e;
 		}
 	}
-
+	
 	public void sendEvent(ObjectId oqmDatabase, Class<?> objectClass, ObjectHistoryEvent event) {
 		this.sendEvents(oqmDatabase, objectClass, event);
 	}
-
+	
 	public void sendEvents(ObjectId oqmDatabase, Class<?> objectClass, ObjectHistoryEvent... events) {
 		this.sendEvents(oqmDatabase, objectClass, Arrays.asList(events));
 	}
-
+	
+	/**
+	 * Call this method (or wrappers) to send out event messages.
+	 * <p>
+	 * Sends messages to an internal queue to get it off of the current thread without blocking it.
+	 *
+	 * @param oqmDatabase
+	 * @param objectClass
+	 * @param events
+	 */
 	public void sendEvents(ObjectId oqmDatabase, Class<?> objectClass, Collection<ObjectHistoryEvent> events) {
 		for (ObjectHistoryEvent event : events) {
 			log.info("Sending event to internal channel: {}/{}", objectClass.getSimpleName(), event.getId());
@@ -124,5 +135,5 @@ public class HistoryEventNotificationService {
 			this.internalEventEmitter.send(new EventNotificationWrapper(oqmDatabase, objectClass.getSimpleName(), event));
 		}
 	}
-
+	
 }

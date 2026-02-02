@@ -141,6 +141,26 @@
 					</div>
                 </div>
             </div>
+            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewLinksContainer">
+                <div class="card-body" id="">
+					<div class="accordion" id="itemViewLinksAccord">
+						<div class="accordion-item" id="itemViewLinksAccordItem">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewLinkAccordCollapse" aria-expanded="false" aria-controls="itemViewLinksAccordCollapse">
+									{#icons/link /}
+									Links (<span id="itemViewLinksNumLabel"></span>)
+								</button>
+							</h2>
+							<div id="itemViewLinkAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewLinkAccord">
+								<div class="accordion-body">
+									<div class="row" id="itemViewLinkContent">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+                </div>
+            </div>
 			<div class="card col-sm-12 col-md-6" id="itemViewFilesContainer">
 				<div class="card-body" style="padding: 2px 0;">
 					{#fileAttachment/FileAttachmentObjectView id='itemViewFiles' /}

@@ -83,6 +83,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	@Getter(AccessLevel.PRIVATE)
 	IdentifierGenerationService identifierGenerationService;
 	
+	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
 	
@@ -94,9 +95,6 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	
 	public InventoryItemService() {
 		super(InventoryItem.class, false);
-		try (InstanceHandle<HistoryEventNotificationService> container = Arc.container().instance(HistoryEventNotificationService.class)) {
-			this.hens = container.get();
-		}
 	}
 	
 	//TODO:: this better
@@ -169,6 +167,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				throw new ValidationException("New unit not compatible with current unit.");
 			}
 		} else {
+			//TODO:: move to massage
 			//if new item, and stats are null, set new stats. No stored should exist so this should be representative enough to start. Maybe generate stats?
 			if (newOrChangedObject.getStats() == null) {
 				newOrChangedObject.setStats(
