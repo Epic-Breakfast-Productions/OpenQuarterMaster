@@ -13,10 +13,12 @@ import jakarta.ws.rs.core.Response;
 import jakarta.ws.rs.core.UriBuilder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
 import java.net.MalformedURLException;
+import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Optional;
 
@@ -26,21 +28,18 @@ import java.util.Optional;
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class IndexUi {
-
-	@Getter
-	@HeaderParam("x-forwarded-prefix")
-	Optional<String> forwardedPrefix;
-
-	protected String getRootPrefix(){
-		return this.forwardedPrefix.orElse("");
-	}
+	
+	@ConfigProperty(name = "ui.defaults.indexRedirect", defaultValue = "/overview")
+	URI redirectPath;
 	
 	@GET
 	@PermitAll
 	@Produces(MediaType.TEXT_HTML)
 	public Response index() throws MalformedURLException, URISyntaxException {
-		return Response.seeOther(
-			UriBuilder.fromUri(this.getRootPrefix() + "/overview").build()
-		).build();
+		URI uri = this.redirectPath;
+		
+		log.info("User navigated to index. Redirecting to: {}", uri);
+		
+		return Response.seeOther(uri).build();
 	}
 }

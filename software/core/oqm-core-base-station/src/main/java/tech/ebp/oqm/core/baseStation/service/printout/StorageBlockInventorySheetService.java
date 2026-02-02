@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.baseStation.service.printout;
 
-import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.itextpdf.html2pdf.ConverterProperties;
 import com.itextpdf.html2pdf.HtmlConverter;
@@ -13,7 +12,6 @@ import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.IOUtils;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -22,22 +20,16 @@ import tech.ebp.oqm.core.baseStation.model.UserInfo;
 import tech.ebp.oqm.core.baseStation.model.printouts.InventorySheetsOptions;
 import tech.ebp.oqm.core.baseStation.model.printouts.PageOrientation;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
-import java.io.OutputStreamWriter;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
-import java.util.function.Predicate;
-import java.util.stream.StreamSupport;
 
 @Slf4j
 @ApplicationScoped
@@ -50,8 +42,10 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 	private static final ConverterProperties CONVERTER_PROPERTIES;
 	
 	static {
+		String baseUri = "http://localhost:" + ConfigProvider.getConfig().getValue("quarkus.http.port", String.class);
 		CONVERTER_PROPERTIES = new ConverterProperties()
-								   .setBaseUri(ConfigProvider.getConfig().getValue("runningInfo.baseUrl", String.class));
+								   .setBaseUri(baseUri);
+		log.debug("Base uri for PDF generation set to: {}", baseUri);
 	}
 	
 	@RestClient
