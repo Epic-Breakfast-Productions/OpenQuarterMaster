@@ -42,8 +42,10 @@ public class StorageBlockInventorySheetService extends PrintoutDataService {
 	private static final ConverterProperties CONVERTER_PROPERTIES;
 	
 	static {
+		String baseUri = "http://localhost:" + ConfigProvider.getConfig().getValue("quarkus.http.port", String.class);
 		CONVERTER_PROPERTIES = new ConverterProperties()
-								   .setBaseUri(ConfigProvider.getConfig().getValue("runningInfo.baseUrl", String.class));
+								   .setBaseUri(baseUri);
+		log.debug("Base uri for PDF generation set to: {}", baseUri);
 	}
 	
 	@RestClient
