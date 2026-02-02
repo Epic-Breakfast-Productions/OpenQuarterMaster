@@ -2,7 +2,6 @@ package tech.ebp.oqm.plugin.imageSearch;
 //TEST NEW FUNCTION
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.google.common.io.FileBackedOutputStream;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.Response;
@@ -18,8 +17,6 @@ import tech.ebp.oqm.plugin.imageSearch.testResources.testClasses.RunningServerTe
 import java.io.*;
 import java.net.URISyntaxException;
 import java.util.Objects;
-
-import static com.google.common.io.MoreFiles.listFiles;
 
 @Slf4j
 @QuarkusTest
@@ -114,20 +111,19 @@ public class BasicSetupTest extends RunningServerTest {
         try(
            InputStream inputStream = BasicSetupTest.class.getClassLoader().getResourceAsStream("testImages/" + resourceLocation);
            ){
-           FileUploadBody testImageUploadObj = new FileUploadBody();
-           testImageUploadObj.file = inputStream;
-           testImageUploadObj.fileName = resourceLocation;
-           testImageUploadObj.description = FAKER.lorem().sentence();
-           testImageUploadObj.source = resourceLocation;
-
+           FileUploadBody testImageUploadObj = FileUploadBody.builder()
+                                                   .file(inputStream)
+                                                   .fileName(resourceLocation)
+                                                   .description(FAKER.lorem().sentence())
+                                                   .source(resourceLocation)
+                                                   .build();
            imageId = this.oqmCoreApiClientService.imageAdd(
                    this.serviceAccountService.getAuthString(),
                    "default",
                    testImageUploadObj
-           ).subscribeAsCompletionStage().join();
+           ).subscribeAsCompletionStage().join().get("id").asText();
         }
 
-        imageId = imageId.replace("\"", "");
         log.info("imageId: {}", imageId);
 
         //create an item object for the image
@@ -138,12 +134,8 @@ public class BasicSetupTest extends RunningServerTest {
         item.putArray("imageIds").add(imageId);
 
         //make item id
-        String itemId = this.oqmCoreApiClientService.invItemCreate(serviceAccountService.getAuthString(), "default", item).subscribeAsCompletionStage().join();
-        log.info("itemId: {}", itemId);
-
-        //establish item object
-        ObjectNode newItem = this.oqmCoreApiClientService.invItemGet(serviceAccountService.getAuthString(), "default", itemId.replace("\"", "")).subscribeAsCompletionStage().join();
-        log.info("Item: {}", newItem);
+        ObjectNode newItem = this.oqmCoreApiClientService.invItemCreate(serviceAccountService.getAuthString(), "default", item).subscribeAsCompletionStage().join();
+        log.info("item: {}", newItem);
 
         //check to make sure image object is good
         ObjectNode imageObj = this.oqmCoreApiClientService.imageGet(serviceAccountService.getAuthString(), "default", imageId).subscribeAsCompletionStage().join();
@@ -151,19 +143,19 @@ public class BasicSetupTest extends RunningServerTest {
 
 
         //Get image object data, don't fully understand this part
-        Response response = this.oqmCoreApiClientService.imageGetRevisionData(
+        InputStream response = this.oqmCoreApiClientService.imageGetRevisionData(
             this.serviceAccountService.getAuthString(),
             "default",
             imageId,
             "latest"
-        ).subscribeAsCompletionStage().join();
+        ).await().indefinitely();
         log.info("Response: {}", response);
 
         //Pull the image data back down into a test image in a new folder
         try(
              OutputStream outputStream = new FileOutputStream("build/test-results/" + outputFilename);
         ){
-            ((InputStream)response.getEntity()).transferTo(outputStream);
+            response.transferTo(outputStream);
         }
 
     }
