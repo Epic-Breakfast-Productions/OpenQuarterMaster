@@ -5,7 +5,6 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Sorts;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
@@ -16,7 +15,6 @@ import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
-import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -173,7 +171,6 @@ public abstract class TopLevelMongoService<T extends MainObject, S extends Searc
 		return this.count(null, filter);
 	}
 	
-	@WithSpan
 	public SearchResult<T> search(@NonNull S searchObject) {
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 		

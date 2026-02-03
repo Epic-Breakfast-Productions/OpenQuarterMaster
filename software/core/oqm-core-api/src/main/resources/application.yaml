@@ -63,21 +63,15 @@ quarkus:
   log:
     level: DEBUG
     console:
-      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t] %s%e%n"
+#      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t] %s%e%n"
     category:
       "org.mongodb.driver":
         level: INFO
   mongodb:
     database: openQuarterMaster
-    tracing:
-      enabled: true
-    metrics:
-      enabled: true
   #  package:
   #    type: uber-jar
   scheduler:
-    metrics:
-      enabled: true
   smallrye-health:
     openapi:
       included: true
@@ -119,8 +113,6 @@ quarkus:
   messaging:
     health:
       enabled: true
-#    metrics:
-#      enabled: true
 
 mp:
   messaging:
@@ -142,12 +134,6 @@ smallrye:
       name: ${service.nameShort} - V${service.apiVersion} - DEV
     log:
       level: DEBUG
-    opentelemetry:
-      enabled: true
-      tracer:
-        exporter:
-          otlp:
-            endpoint: http://localhost:8096
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
       security-scheme: basic

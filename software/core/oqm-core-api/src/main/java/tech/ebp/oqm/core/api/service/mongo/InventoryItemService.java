@@ -4,13 +4,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
-import io.quarkus.arc.Arc;
-import io.quarkus.arc.InstanceHandle;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.validation.Valid;
 import jakarta.validation.ValidationException;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,8 +17,6 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items.StoredInItemEndpoints;
 import tech.ebp.oqm.core.api.model.collectionStats.InvItemCollectionStats;
-import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
-import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
@@ -31,22 +25,18 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.Gener
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.StoredInBlockStats;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
 import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.core.api.service.ItemStatsService;
 import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
-import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 import static com.mongodb.client.model.Filters.*;
 
@@ -106,7 +96,6 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return output;
 	}
 	
-	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, InventoryItem newOrChangedObject, ClientSession clientSession) throws ValidationException {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
@@ -266,7 +255,6 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				   .build();
 	}
 	
-	@WithSpan
 	public List<InventoryItem> getItemsInBlock(String oqmDbIdOrName, ObjectId storageBlockId) {
 		return this.list(
 			oqmDbIdOrName,
@@ -276,22 +264,18 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		);
 	}
 	
-	@WithSpan
 	public List<InventoryItem> getItemsInBlock(String oqmDbIdOrName, String storageBlockId) {
 		return this.getItemsInBlock(oqmDbIdOrName, new ObjectId(storageBlockId));
 	}
 	
-	@WithSpan
 	public long getNumStoredExpired(String oqmDbIdOrName) {
 		return this.getSumOfIntField(oqmDbIdOrName, "numExpired");
 	}
 	
-	@WithSpan
 	public long getNumStoredExpiryWarn(String oqmDbIdOrName) {
 		return this.getSumOfIntField(oqmDbIdOrName, "numExpiryWarn");
 	}
 	
-	@WithSpan
 	public long getNumLowStock(String oqmDbIdOrName) {
 		return this.getSumOfIntField(oqmDbIdOrName, "numLowStock");
 	}

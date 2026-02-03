@@ -6,11 +6,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.assertions.Assertions;
 import org.junit.jupiter.api.Test;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import jakarta.inject.Inject;
-import tech.ebp.oqm.core.api.service.TempFileService;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,7 +18,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class TempFileServiceTest extends RunningServerTest {
 	
 	@Inject

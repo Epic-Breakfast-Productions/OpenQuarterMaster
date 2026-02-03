@@ -64,7 +64,11 @@ AssociatedLinks = {
 					description: AssociatedLinks.Form.Input ?
 						AssociatedLinks.Form.Input.getDescInput(linkInputJq).val() : null
 				};
-			}
+			},
+			remove(removeButtonJq) {
+				if (confirm("Are you sure you want to remove this link?") === false) return;
+				SelectedObjectDivUtils.removeSelected(removeButtonJq.closest('.assocLinkInputLink'));
+			},
 		},
 		getInput: function (innerElem) {
 			let output = innerElem;
