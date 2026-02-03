@@ -16,7 +16,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import jakarta.inject.Inject;
@@ -29,7 +28,7 @@ import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 @Tag("integration")
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(value = TestResourceLifecycleManager.class)
+@TestHTTPEndpoint(InventoryItemsCrud.class)
 class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Inject
@@ -54,7 +53,8 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		String json = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 						  .body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
 						  .contentType(ContentType.JSON)
-						  .post("/api/v1/db/"+DEFAULT_TEST_DB_NAME+"/inventory/item")
+						  .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
+						  .post()
 						  .then().statusCode(200)
 						  .extract().body().asString();
 		
@@ -72,7 +72,8 @@ class InventoryItemsCrudTest extends RunningServerTest {
 										   .body(updates)
 										   .contentType(ContentType.JSON)
 										   .accept(ContentType.JSON)
-										   .put("/api/v1/db/"+DEFAULT_TEST_DB_NAME+"/inventory/item/"+id)
+										   .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
+										   .put(id)
 										   .then()
 										   .statusCode(200);
 		
@@ -88,7 +89,8 @@ class InventoryItemsCrudTest extends RunningServerTest {
 					   .when()
 					   .body(updates)
 					   .accept(ContentType.JSON)
-					   .get("/api/v1/db/"+DEFAULT_TEST_DB_NAME+"/inventory/item/"+id)
+					   .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
+					   .get(id)
 					   .then()
 					   .statusCode(200);
 		
