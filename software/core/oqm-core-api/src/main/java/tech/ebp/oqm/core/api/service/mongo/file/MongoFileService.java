@@ -25,6 +25,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.FileMainObject;
+import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.media.FileHashes;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
 import tech.ebp.oqm.core.api.model.rest.management.CollectionClearResult;
@@ -67,7 +68,8 @@ import static com.mongodb.client.model.Filters.and;
  * @param <G>
  */
 @Slf4j
-public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>, X extends CollectionStats, G extends FileGet> extends MongoDbAwareService<T, S, X> {
+public abstract class MongoFileService<T extends FileMainObject, S extends SearchObject<T>, X extends CollectionStats, G extends MainObject & FileGet> extends MongoDbAwareService<T, S,
+																																											  X> {
 	
 	private Map<ObjectId, GridFSBucket> gridBuckets = new HashMap<>();
 	
@@ -199,9 +201,10 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		
 		return new SearchResult<>(
 			results,
-			this.getFileObjectService().count(dbIdOrName, filter),
+			(int) this.getFileObjectService().count(dbIdOrName, filter),
 			!filters.isEmpty(),
-			search.getPagingOptions()
+			search.getPagingOptions(),
+			search
 		);
 	}
 	

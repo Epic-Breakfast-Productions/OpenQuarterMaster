@@ -102,6 +102,49 @@ public class DataImportService {
 		}
 		return List.of();
 	}
+	
+	private static File decompressBundle(String fileName, InputStream bundleInputStream) throws IOException {
+		if (!fileName.endsWith(DatabaseExportService.OQM_EXPORT_FILE_EXT)) {
+			throw new IllegalArgumentException("Invalid file type given.");
+		}
+		
+		Path tempArchiveDirPath = Files.createTempDirectory(IMPORT_TEMP_DIR_PREFIX);
+		File tempArchiveDir = tempArchiveDirPath.toFile();
+		tempArchiveDir.deleteOnExit();
+		
+		StopWatch sw = StopWatch.createStarted();
+		long numFiles = 0;
+		log.info("Decompressing given bundle.");
+		try (
+			BufferedInputStream bi = new BufferedInputStream(bundleInputStream);
+			GzipCompressorInputStream gzi = new GzipCompressorInputStream(bi);
+			TarArchiveInputStream ti = new TarArchiveInputStream(gzi)
+		) {
+			ArchiveEntry entry;
+			while ((entry = ti.getNextEntry()) != null) {
+				// create a new path, zip slip validate
+				Path newPath = zipSlipProtect(entry, tempArchiveDirPath);
+				if (entry.isDirectory()) {
+					Files.createDirectories(newPath);
+				} else {
+					// check parent folder again
+					Path parent = newPath.getParent();
+					if (parent != null) {
+						if (Files.notExists(parent)) {
+							Files.createDirectories(parent);
+						}
+					}
+					// copy TarArchiveInputStream to Path newPath
+					Files.copy(ti, newPath, StandardCopyOption.REPLACE_EXISTING);
+					log.debug("Decompressed file {}", newPath);
+					numFiles++;
+				}
+			}
+		}
+		sw.stop();
+		log.info("Finished decompressing bundle, numFiles: {}, took {}", numFiles, sw);
+		return tempArchiveDir;
+	}
 
 	@Inject
 	OqmDatabaseService oqmDatabaseService;
@@ -168,45 +211,7 @@ public class DataImportService {
 		DataImportOptions importOptions
 	) throws IOException {
 		log.info("Importing bundle {}", fileName);
-		if (!fileName.endsWith(DatabaseExportService.OQM_EXPORT_FILE_EXT)) {
-			throw new IllegalArgumentException("Invalid file type given.");
-		}
-
-		Path tempArchiveDirPath = Files.createTempDirectory(IMPORT_TEMP_DIR_PREFIX);
-		File tempArchiveDir = tempArchiveDirPath.toFile();
-		tempArchiveDir.deleteOnExit();
-
-		StopWatch sw = StopWatch.createStarted();
-		long numFiles = 0;
-		log.info("Decompressing given bundle.");
-		try (
-			BufferedInputStream bi = new BufferedInputStream(bundleInputStream);
-			GzipCompressorInputStream gzi = new GzipCompressorInputStream(bi);
-			TarArchiveInputStream ti = new TarArchiveInputStream(gzi)
-		) {
-			ArchiveEntry entry;
-			while ((entry = ti.getNextEntry()) != null) {
-				// create a new path, zip slip validate
-				Path newPath = zipSlipProtect(entry, tempArchiveDirPath);
-				if (entry.isDirectory()) {
-					Files.createDirectories(newPath);
-				} else {
-					// check parent folder again
-					Path parent = newPath.getParent();
-					if (parent != null) {
-						if (Files.notExists(parent)) {
-							Files.createDirectories(parent);
-						}
-					}
-					// copy TarArchiveInputStream to Path newPath
-					Files.copy(ti, newPath, StandardCopyOption.REPLACE_EXISTING);
-					log.debug("Decompressed file {}", newPath);
-					numFiles++;
-				}
-			}
-		}
-		sw.stop();
-		log.info("Finished decompressing bundle, numFiles: {}, took {}", numFiles, sw);
+		File tempArchiveDir = decompressBundle(fileName, bundleInputStream);
 
 		File topLevelDir = new File(tempArchiveDir, TOP_LEVEL_DIR_NAME);
 		Path topLevelDirPath = topLevelDir.toPath();
@@ -219,7 +224,7 @@ public class DataImportService {
 			.collect(Collectors.toSet());
 
 		log.info("Database directories found: {}", dbDirs);
-
+		
 		// check dbs
 		//TODO: gracefully handle case of no dbs in bundle
 		List<OqmMongoDatabase> databasesToImport = dbDirs.stream()
@@ -248,7 +253,7 @@ public class DataImportService {
 			.toList();
 
 		log.info("Starting the reading in of object data.");
-		sw = StopWatch.createStarted();
+		StopWatch sw = StopWatch.createStarted();
 		DataImportResult.DataImportResultBuilder<?, ?> resultBuilder = DataImportResult.builder();
 
 		try (
@@ -266,9 +271,9 @@ public class DataImportService {
 					topLevelStopwatch.stop();
 					log.info("Done reading in top level objects. Took {}", topLevelStopwatch);
 				}
-
-				Map<OqmMongoDatabase, CompletableFuture<DbImportResult>> resultMap = new HashMap<>();
-
+				
+				
+				Map<String, DbImportResult> dbImportResults = new HashMap<>();
 				// import db data
 				for (OqmMongoDatabase curDb : databasesToImport) {
 					log.info("Importing database {}", curDb);
@@ -293,35 +298,25 @@ public class DataImportService {
 
 					Path curDbPath = dbsDirPath.resolve(curDb.getName());
 					OqmMongoDatabase finalCurDb = curDb;//cause dumb
-					resultMap.put(curDb, CompletableFuture.supplyAsync(() -> {
-						DbImportResult.DbImportResultBuilder dbResultBuilder = DbImportResult.builder();
-
-						try {
-							dbResultBuilder.numFileAttachments(this.fileImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-							dbResultBuilder.numImages(this.imageImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-							dbResultBuilder.numItemCategories(this.itemCategoryImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-							dbResultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-							dbResultBuilder.numInventoryItems(this.itemImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-							dbResultBuilder.numStored(this.storedImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-							dbResultBuilder.numTransactions(this.appliedTransactionImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-							dbResultBuilder.numItemLists(this.itemListImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-							dbResultBuilder.numItemCheckouts(this.itemCheckoutImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
-						} catch (IOException e) {
-							throw new DataImportException("Failed to read in database " + finalCurDb.getName(), e);
-						}
-
-						return dbResultBuilder.build();
-					}));
-				}
-
-				Map<String, DbImportResult> dbImportResults = new HashMap<>();
-				resultMap.forEach((OqmMongoDatabase db, CompletableFuture<DbImportResult> future) -> {
+					
+					DbImportResult.DbImportResultBuilder dbResultBuilder = DbImportResult.builder();
+					
 					try {
-						dbImportResults.put(db.getName(), future.get());
-					} catch (Throwable e) {
-						throw new DataImportException("Failed to import database \"" + db.getName() + "\" service(s) data.", e);
+						dbResultBuilder.numFileAttachments(this.fileImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+						dbResultBuilder.numImages(this.imageImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+						dbResultBuilder.numItemCategories(this.itemCategoryImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+						dbResultBuilder.numStorageBlocks(this.storageBlockImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+						dbResultBuilder.numInventoryItems(this.itemImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+						dbResultBuilder.numStored(this.storedImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+						dbResultBuilder.numTransactions(this.appliedTransactionImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+						dbResultBuilder.numItemLists(this.itemListImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+						dbResultBuilder.numItemCheckouts(this.itemCheckoutImporter.readInObjects(finalCurDb.getId(), session, curDbPath, importingEntity, importOptions, entityIdMap));
+					} catch (IOException e) {
+						throw new DataImportException("Failed to read in database " + finalCurDb.getName(), e);
 					}
-				});
+					
+					dbImportResults.put(curDb.getName(), dbResultBuilder.build());
+				}
 				resultBuilder.dbResults(dbImportResults);
 
 			} catch (Throwable e) {

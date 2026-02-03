@@ -187,9 +187,10 @@ public abstract class TopLevelMongoService<T extends MainObject, S extends Searc
 		
 		return new SearchResult<>(
 			list,
-			this.count(filter),
+			(int) this.count(filter),
 			!filters.isEmpty(),
-			pagingOptions
+			pagingOptions,
+			searchObject
 		);
 	}
 	

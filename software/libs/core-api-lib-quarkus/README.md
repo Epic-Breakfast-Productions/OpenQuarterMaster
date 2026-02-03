@@ -31,7 +31,9 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
             - inventoryView
             - inventoryEdit
             - itemCheckout
-   oqm.core.api:
+   oqm:
+     core:
+       api:
          baseUri:
    ```
 

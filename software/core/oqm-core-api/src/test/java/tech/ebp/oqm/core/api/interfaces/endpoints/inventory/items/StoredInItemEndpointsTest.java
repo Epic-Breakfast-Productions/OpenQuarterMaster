@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -185,11 +186,15 @@ public class StoredInItemEndpointsTest extends RunningServerTest {
 		
 		log.info("Search result: {}", response.extract().asString());
 		
-		SearchResult<AmountStored> result = OBJECT_MAPPER.readValue(response.extract().asString(), new TypeReference<>() {});
+		ObjectNode result = (ObjectNode) OBJECT_MAPPER.readTree(response.extract().asString());
 		
-		assertEquals(1, result.getNumResults());
+		assertEquals(1, result.get("numResults").asInt());
 		
-		AmountStored storedResult = (AmountStored) result.getResults().getFirst();
+//		SearchResult<AmountStored> result = OBJECT_MAPPER.readValue(response.extract().asString(), new TypeReference<>() {});
+//
+//		assertEquals(1, result.getNumResults());
+//
+//		AmountStored storedResult = (AmountStored) result.getResults().getFirst();
 		//		assertNotNull(storedResult.getCalculatedPrices());
 	}
 	

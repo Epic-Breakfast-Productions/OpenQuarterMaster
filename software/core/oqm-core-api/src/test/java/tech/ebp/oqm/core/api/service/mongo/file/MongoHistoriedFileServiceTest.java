@@ -226,11 +226,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 		
 		FileMetadata gotten = this.testMongoFileService.getFileMetadata(DEFAULT_TEST_DB_NAME, null, mainFileObject.getId(), 2);
 		
-		//TODO:: compare duration between, not stamps?
-		Comparator<ZonedDateTime> comparator = Comparator.comparing(
-			zdt -> zdt.truncatedTo(ChronoUnit.MINUTES)
-		);
-		assertEquals(0, comparator.compare(expected.getUploadDateTime(), gotten.getUploadDateTime()), "Unexpected upload datetime");
+		assertEquals(0, ChronoUnit.MINUTES.between(expected.getUploadDateTime(), gotten.getUploadDateTime()), "Unexpected upload datetime");
 		
 		gotten.setUploadDateTime(expected.getUploadDateTime());
 		

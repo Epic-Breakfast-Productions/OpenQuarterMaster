@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.core.api.model.object.FileMainObject;
+import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
 import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
@@ -31,7 +32,7 @@ import java.io.IOException;
  */
 @Slf4j
 @NoArgsConstructor
-public abstract class MainFileObjectProvider<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends FileGet> extends ObjectProvider {
+public abstract class MainFileObjectProvider<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends MainObject & FileGet> extends ObjectProvider {
 	
 	
 	@Getter

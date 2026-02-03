@@ -1,7 +1,5 @@
-package tech.ebp.oqm.lib.core.api.quarkus.deployment;
+package tech.ebp.oqm.lib.core.api.quarkus.deployment.testContainers;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testcontainers.Testcontainers;
@@ -9,10 +7,11 @@ import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.utility.DockerImageName;
+import tech.ebp.oqm.lib.core.api.quarkus.deployment.config.CoreApiLibBuildTimeConfig;
 
-class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServiceContainer> {
+public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServiceContainer> {
 	
-	static final int PORT = 8123;
+	public static final int PORT = 8123;
 	
 	private final CoreApiLibBuildTimeConfig.DevserviceConfig devserviceConfig;
 	
@@ -30,6 +29,7 @@ class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServic
 		Testcontainers.exposeHostPorts(this.devserviceConfig.keycloak().port());
 		
 		addExposedPorts(PORT);
+		addFixedExposedPort(PORT, PORT);
 		// Tell the dev service how to know the container is ready
 		waitingFor(Wait.forLogMessage(".*Open QuarterMaster Web Server starting.*", 1));
 		waitingFor(Wait.forHttp("/q/health").forResponsePredicate((String response)->{
