@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints.identifiers;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -107,7 +106,6 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	public CollectionStats getCollectionStats(
 	) {
 		return super.getCollectionStats();
@@ -216,11 +214,6 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	@APIResponse(
 		responseCode = "410",
 		description = "Object requested has already been deleted.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No object found to delete.",
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)

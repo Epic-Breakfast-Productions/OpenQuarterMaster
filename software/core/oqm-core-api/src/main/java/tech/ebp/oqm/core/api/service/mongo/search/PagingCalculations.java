@@ -17,19 +17,21 @@ import java.util.Iterator;
 public class PagingCalculations {
 	private boolean onFirstPage;
 	private boolean onLastPage;
-	private long numPages;
-	private long lastPage;
-	private long curPage;
-	private long nextPage;
-	private long previousPage;
-	private long pageResultIndexStart;
-	private long pageResultIndexEnd;
+	private int numPages;
+	private int pageSize;
+	private int lastPage;
+	private int curPage;
+	private int nextPage;
+	private int previousPage;
+	private int pageResultIndexStart;
+	private int pageResultIndexEnd;
 	
-	protected PagingCalculations(long curPageNum, long numPages, long startIndex, long endIndex) {
+	protected PagingCalculations(int curPageNum, int numPages, int pageSize, int startIndex, int endIndex) {
 		this(
 			curPageNum <= 1,
 			curPageNum == numPages,
 			numPages,
+			pageSize,
 			numPages,
 			curPageNum,
 			(Math.min(curPageNum + 1, numPages)),
@@ -39,12 +41,13 @@ public class PagingCalculations {
 		);
 	}
 	
-	public PagingCalculations(PagingOptions options, long numResults) {
+	public PagingCalculations(PagingOptions options, int numResults) {
 		this(
 			options.getPageNum(),
-			(long) Math.ceil((double) numResults / (double) options.getPageSize()),
+			(int) Math.ceil((double) numResults / (double) options.getPageSize()),
+			options.getPageSize(),
 			options.getSkipVal(),
-			options.getSkipVal() + options.pageSize - 1
+			options.getSkipVal() + options.getPageSize() - 1
 		);
 	}
 	

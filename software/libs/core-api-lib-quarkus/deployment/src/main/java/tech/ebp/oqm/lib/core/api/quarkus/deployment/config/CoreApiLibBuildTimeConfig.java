@@ -1,4 +1,4 @@
-package tech.ebp.oqm.lib.core.api.quarkus.deployment;
+package tech.ebp.oqm.lib.core.api.quarkus.deployment.config;
 
 import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
@@ -76,7 +76,7 @@ public interface CoreApiLibBuildTimeConfig {
 		 * The version/ tag of the core api container image
 		 * @return The version/ tag of the core api container image
 		 */
-		@WithDefault("4.2.0")
+		@WithDefault("4.3.0")
 		String coreApiVersion();
 		
 		/**

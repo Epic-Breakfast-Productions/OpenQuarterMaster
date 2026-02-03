@@ -7,6 +7,7 @@ import io.quarkus.test.kafka.InjectKafkaCompanion;
 import io.quarkus.test.kafka.KafkaCompanionResource;
 import io.smallrye.reactive.messaging.kafka.companion.ConsumerTask;
 import io.smallrye.reactive.messaging.kafka.companion.KafkaCompanion;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
@@ -16,7 +17,7 @@ import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationServic
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 import tech.ebp.oqm.core.api.testResources.data.TestMainObject;
 import tech.ebp.oqm.core.api.testResources.data.TestMongoHistoriedService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
+import tech.ebp.oqm.core.api.testResources.testClasses.KafkaTest;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
@@ -31,9 +32,8 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 @QuarkusTestResource(value = KafkaCompanionResource.class, restrictToAnnotatedClass = true)
-class MongoHistoriedObjectServiceTest extends RunningServerTest {
+class MongoHistoriedObjectServiceTest extends RunningServerTest implements KafkaTest {
 
 	@Inject
 	OqmDatabaseService oqmDatabaseService;
@@ -44,6 +44,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 	@Inject
 	InteractingEntityService interactingEntityService;
 	
+	@Getter
 	@InjectKafkaCompanion
 	KafkaCompanion kafkaCompanion;
 	
@@ -80,6 +81,10 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest {
 		createFromAll.awaitCompletion();
 		assertEquals(1, createFromAll.count());
 		EventNotificationWrapper createEventFromMessage = ObjectUtils.OBJECT_MAPPER.readValue(createFromAll.getFirstRecord().value(), EventNotificationWrapper.class);
+		
+		log.info("Received event from Kafka: {}", createEventFromMessage);
+		
+		assertEquals("TestMainObject", createEventFromMessage.getObjectName());
 		assertEquals(createEvent, createEventFromMessage.getEvent());
 
 		// TODO: more when we want to

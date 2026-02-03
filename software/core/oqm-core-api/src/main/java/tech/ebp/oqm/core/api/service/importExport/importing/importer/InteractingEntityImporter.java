@@ -53,7 +53,7 @@ public class InteractingEntityImporter extends TopLevelImporter<EntityImportResu
 		DataImportOptions options
 	) throws IOException {
 //		Path entityDirectory = directory.resolve(this.interactingEntityService.getCollectionName());
-		EntityImportResult.Builder resultBuilder = EntityImportResult.builder();
+		EntityImportResult.EntityImportResultBuilder resultBuilder = EntityImportResult.builder();
 		List<InteractingEntity> existentUsers = interactingEntityService.listIterator().into(new ArrayList<>());
 		Set<ObjectId> existentUserIds = existentUsers.stream().map(MainObject::getId).collect(Collectors.toSet());
 		Map<String, ObjectId> existentEmailsToIds = existentUsers.stream().collect(Collectors.toMap(InteractingEntity::getEmail, MainObject::getId));

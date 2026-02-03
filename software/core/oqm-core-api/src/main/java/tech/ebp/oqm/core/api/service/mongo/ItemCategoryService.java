@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 import com.mongodb.client.ClientSession;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -41,7 +40,6 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 				   .build();
 	}
 	
-	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, ItemCategory newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
@@ -65,7 +63,6 @@ public class ItemCategoryService extends HasParentObjService<ItemCategory, ItemC
 		return list;
 	}
 	
-	@WithSpan
 	@Override
 	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession cs, ItemCategory itemCategory) {
 		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(oqmDbIdOrName, cs, itemCategory);

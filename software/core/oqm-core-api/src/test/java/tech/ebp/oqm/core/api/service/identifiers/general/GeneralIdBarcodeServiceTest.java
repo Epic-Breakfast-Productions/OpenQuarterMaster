@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.api.service.identifiers.general;
 
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -11,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -22,7 +20,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class GeneralIdBarcodeServiceTest extends CodeUtilTestBase {
 	
 	private static void writeToFile(String data, String dir, String fileName) {

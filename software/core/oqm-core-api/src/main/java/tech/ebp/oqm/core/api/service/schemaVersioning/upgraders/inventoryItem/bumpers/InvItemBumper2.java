@@ -67,7 +67,7 @@ public class InvItemBumper2 extends ObjectSchemaVersionBumper<InventoryItem> {
 	protected SingleUpgradeResult bumpObjectSchema(ObjectNode oldObj) {
 		String itemId = oldObj.get("id").asText();
 		UpgradeCreatedObjectsResults createdObjectsResults = new UpgradeCreatedObjectsResults();
-		SingleUpgradeResult.Builder resultBuilder = SingleUpgradeResult.builder()
+		SingleUpgradeResult.SingleUpgradeResultBuilder resultBuilder = SingleUpgradeResult.builder()
 														.upgradedObject(oldObj)
 														.createdObjects(createdObjectsResults);
 		

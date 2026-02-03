@@ -1,0 +1,37 @@
+{#if itemSearchIt.hasResults()}
+	<h3>
+		{#icons/storageTypeUniqueSingle /} Unique Single Items
+	</h3>
+	{#printouts/storageBlockInventorySheet/itemTables/itemTable auth=auth db=db options=options itemSearchIt=itemSearchIt storageBlock=storageBlock}
+		{#tableHeaderCells}
+			
+			{#printouts/storageBlockInventorySheet/itemTables/itemStdHeaderPre options=options /}
+
+			{#printouts/storageBlockInventorySheet/itemTables/stored/storedHeaders storageType='UNIQUE_SINGLE' options=options /}
+			
+
+			{#printouts/storageBlockInventorySheet/itemTables/itemStdHeaderPost options=options /}
+
+		{/tableHeaderCells}
+		{#tableBodyRows}
+			{#for curResult in itemSearchIt}
+				{#let startIndex=curResult.get("pagingCalculations").get("pageResultIndexStart").asInt()}
+				{#for curItem in curResult.get("results")}
+					{#let blockStats = curItem.get("stats").get("storageBlockStats").get(storageBlock.get("id").asText())}
+						<tr>
+							{#printouts/storageBlockInventorySheet/itemTables/itemStdRowPre options=options item=curItem resultNo=(curItem_index + startIndex) /}
+							
+							{#let stored=cdi:PrintoutDataUtilService.getSingleStoredInBlockPage(auth, db, curItem.get("id").asText(), storageBlock.get("id").asText())}
+								
+								{#printouts/storageBlockInventorySheet/itemTables/stored/storedData storageType='UNIQUE_SINGLE' stored=stored options=options /}
+								
+							{/let}
+							
+							{#printouts/storageBlockInventorySheet/itemTables/itemStdRowPost options=options item=curItem /}
+						</tr>
+					{/let}
+				{/for}
+			{/for}
+		{/tableBodyRows}
+	{/printouts/storageBlockInventorySheet/itemTables/itemTable}
+{/if}
