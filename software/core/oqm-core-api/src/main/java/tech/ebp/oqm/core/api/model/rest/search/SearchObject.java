@@ -16,6 +16,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
+
 @ToString
 @Getter
 @Setter
@@ -26,20 +29,30 @@ public class SearchObject<T extends MainObject> {
 	//sorting
 	@QueryParam("sortBy") String sortField;
 	@QueryParam("sortType") SortType sortType;
-	
-	@JsonIgnore
+  
+	//id search
+	@QueryParam("id") List<ObjectId> objectIds;
+
 	public Bson getSortBson(){
 		return SearchUtils.getSortBson(this.sortField, this.sortType);
 	}
-	
-	@JsonIgnore
+
 	public PagingOptions getPagingOptions(){
 		return PagingOptions.from(this);
 	}
-	
+ 
 	@JsonIgnore
 	public List<Bson> getSearchFilters(){
-		return new ArrayList<>();
+		List<Bson> filters = new ArrayList<>();
+		
+		if (this.hasValue(this.objectIds)) {
+			List<Bson> idFilters = new ArrayList<>();
+			for(ObjectId curId : this.objectIds) {
+				idFilters.add(eq("_id", curId));
+			}
+			filters.add(or(idFilters));
+		}
+		return filters;
 	}
 	
 	protected boolean hasValue(String val){
