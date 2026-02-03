@@ -63,6 +63,7 @@ quarkus:
   log:
     level: DEBUG
     console:
+#      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t] %s%e%n"
     category:
       "org.mongodb.driver":
         level: INFO
