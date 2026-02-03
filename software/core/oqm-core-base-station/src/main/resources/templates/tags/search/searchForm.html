@@ -11,12 +11,12 @@ Ingests:
 {!{@tech.ebp.oqm.baseStation.rest.search.SearchObject searchObject}!}
 <form id="{id}" action="{action}" method="get" class="pagingSearchForm {#if searchFormClasses??}{searchFormClasses}{/if}" {#if onSubmit??}onsubmit="{onSubmit}"{/if}>
     <div class="row">
-        <div class="mb-3 col col-2">
-            <label for="{id}-objectIdInput" class="form-label">ID</label>
-            <input type="text" class="form-control" name="id" id="{id}-objectIdInput" aria-describedby="{id}-objectIdInputHelp" placeholder="Object ID">
-            <div id="{id}-objectIdInputHelp" class="form-text">Search by exact object ID.</div>
-        </div>
         {#insert inputs}<!-- No additional inputs -->{/}
+		<div class="mb-3 col col-2">
+			<label for="{id}-objectIdInput" class="form-label">ID</label>
+			<input type="text" pattern="^[a-fA-F\d]\{24}$" class="form-control" name="id" id="{id}-objectIdInput" aria-describedby="{id}-objectIdInputHelp" placeholder="ID">
+			<div id="{id}-objectIdInputHelp" class="form-text">Search by exact ID.</div>
+		</div>
         {#if showKeywords?? && showKeywords == true}
         <div class="col">
             {#inputs/keywordInput}
