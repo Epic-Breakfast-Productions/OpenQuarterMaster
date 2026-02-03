@@ -17,7 +17,7 @@ quarkus:
   keycloak:
     devservices:
       port: 9328
-      realm-path: "../../../../dev/oqm-realm.json"
+      realm-path: "dev/oqm-realm.json"
       realm-name: oqm
 
 "%dev":
@@ -30,7 +30,3 @@ quarkus:
       client-id: oqm-app
       credentials:
         secret: "**********"
-oqm:
-  core:
-    api:
-      baseUri:
