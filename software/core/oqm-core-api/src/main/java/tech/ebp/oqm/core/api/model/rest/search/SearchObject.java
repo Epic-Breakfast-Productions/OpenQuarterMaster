@@ -17,6 +17,7 @@ import java.util.Collection;
 import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.or;
 
 @ToString
 @Getter
@@ -30,7 +31,7 @@ public class SearchObject<T extends MainObject> {
 	@QueryParam("sortType") SortType sortType;
   
 	//id search
-	@QueryParam("id") ObjectId objectId;
+	@QueryParam("id") List<ObjectId> objectIds;
 
 	public Bson getSortBson(){
 		return SearchUtils.getSortBson(this.sortField, this.sortType);
@@ -39,11 +40,17 @@ public class SearchObject<T extends MainObject> {
 	public PagingOptions getPagingOptions(){
 		return PagingOptions.from(this);
 	}
-  
+ 
+	@JsonIgnore
 	public List<Bson> getSearchFilters(){
 		List<Bson> filters = new ArrayList<>();
-		if (this.hasValue(this.objectId)) {
-			filters.add(eq("_id", this.objectId));
+		
+		if (this.hasValue(this.objectIds)) {
+			List<Bson> idFilters = new ArrayList<>();
+			for(ObjectId curId : this.objectIds) {
+				idFilters.add(eq("_id", curId));
+			}
+			filters.add(or(idFilters));
 		}
 		return filters;
 	}

@@ -9,6 +9,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
@@ -19,6 +20,8 @@ import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import jakarta.inject.Inject;
+
+import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -39,12 +42,48 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	
 	@Inject
 	InventoryItemService inventoryItemService;
-
-
 	
-
-	//TODO:: this
 	
+	@Test
+	public void testItemSearchId() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser();
+		
+		String json = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+						  .body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
+						  .contentType(ContentType.JSON)
+						  .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
+						  .post()
+						  .then().statusCode(200)
+						  .extract().body().asString();
+		
+		String id = OBJECT_MAPPER.readValue(json, InventoryItem.class).getId().toHexString();
+		
+		String resultStr = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+			.body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
+			.contentType(ContentType.JSON)
+			.pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
+			.params(Map.of("id", id))
+			.get()
+			.then().statusCode(200)
+			.extract().body().asString();
+		
+		ObjectNode resultNode = (ObjectNode) OBJECT_MAPPER.readTree(resultStr);
+		
+		assertEquals(1, resultNode.get("numResults").asInt());
+		
+		resultStr = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+							   .body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
+							   .contentType(ContentType.JSON)
+							   .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
+							   .params(Map.of("id", new ObjectId().toHexString()))
+							   .get()
+							   .then().statusCode(200)
+							   .extract().body().asString();
+		
+		resultNode = (ObjectNode) OBJECT_MAPPER.readTree(resultStr);
+		
+		assertEquals(0, resultNode.get("numResults").asInt());
+	}
 	
 	@Test
 	public void testItemUpdatesUnit() throws JsonProcessingException {
