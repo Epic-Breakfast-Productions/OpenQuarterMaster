@@ -15,16 +15,16 @@ import java.io.IOException;
 @RequestScoped
 @Path("/imageSearch")
 public class ImageSearch {
-    
-    @Inject
-    ImageSearchService imageSearchService;
-    
-    @GET
-    @Produces(MediaType.TEXT_PLAIN)
-    public Response search(
-        @QueryParam("q") String queryImage
-    ) throws IOException {
-        return Response.ok(this.imageSearchService.search(queryImage))
-                   .build();
-    }
+	
+	@Inject
+	ImageSearchService imageSearchService;
+	
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response search(
+		@QueryParam("q") String queryImage
+	) throws IOException {
+		return Response.ok(this.imageSearchService.search(queryImage))
+				   .build();
+	}
 }

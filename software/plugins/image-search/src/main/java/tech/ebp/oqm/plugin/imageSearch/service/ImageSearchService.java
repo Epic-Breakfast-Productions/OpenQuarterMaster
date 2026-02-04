@@ -64,7 +64,6 @@ public class ImageSearchService {
 	 * @param query
 	 * @return
 	 */
-	public static File queryImage;
 	public static ImageData queryData;
 	public static int numSimilar;
 	public static HashMap<String, ImageData> jsonMap;
@@ -74,13 +73,20 @@ public class ImageSearchService {
 		log.info("Searching for query: " + query);
 		
 		jsonFile = generateJson();
-		queryImage = new File("./dev/testImages/Screw.jpg");
+		File queryImage = new File("./dev/testImages/" + query);
+		
+		if(!queryImage.exists() || !queryImage.isFile()){
+			log.warn("Query Image does not exist: {}", queryImage.getAbsolutePath());
+			return null;
+		}
+		
+		
 		//queryImage = new File(query);
 		queryData = getImageData(queryImage);
 		numSimilar = jsonMap.size();
 		
 		if (queryData == null) {
-			System.out.println("Query Image could not be processed");
+			log.warn("Query Image could not be processed");
 			return null;
 		}
 		
