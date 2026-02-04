@@ -1,15 +1,11 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import jakarta.validation.ValidationException;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
-import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
@@ -22,23 +18,17 @@ import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.StoredTestObjectCreator;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;
 import tech.units.indriya.quantity.Quantities;
-import tech.units.indriya.unit.Units;
 
-import javax.measure.Quantity;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.SequencedSet;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService> {
 
 	@Inject

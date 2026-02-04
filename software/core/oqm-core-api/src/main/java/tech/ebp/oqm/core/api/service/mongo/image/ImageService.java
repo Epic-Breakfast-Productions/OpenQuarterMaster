@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo.image;
 
 import com.mongodb.client.ClientSession;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
@@ -164,7 +163,6 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 				   .build();
 	}
 	
-	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, Image newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
@@ -175,7 +173,6 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 		return ImageGet.fromImage(obj, this.getRevisions(oqmDbIdOrName, obj.getId()));
 	}
 	
-	@WithSpan
 	@Override
 	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession cs, Image objectToRemove) {
 		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(oqmDbIdOrName, cs, objectToRemove);

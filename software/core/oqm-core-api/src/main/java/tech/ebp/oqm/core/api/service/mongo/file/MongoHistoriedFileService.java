@@ -5,7 +5,6 @@ import com.mongodb.client.gridfs.GridFSBucket;
 import com.mongodb.client.gridfs.model.GridFSFile;
 import com.mongodb.client.gridfs.model.GridFSUploadOptions;
 import com.mongodb.client.model.Filters;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -100,7 +99,6 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		}
 	}
 	
-	@WithSpan
 	public T add(String dbIdOrName, ClientSession clientSession, T fileObject, File file, String fileName, InteractingEntity interactingEntity) throws IOException {
 		FileMetadata fileMetadata = new FileMetadata(file);
 		fileMetadata.setOrigName(FilenameUtils.getName(fileName));
@@ -141,7 +139,6 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		return this.add(dbIdOrName, clientSession, fileObject, file, file.getName(), interactingEntity);
 	}
 	
-	@WithSpan
 	public T add(String dbIdOrName, ClientSession clientSession, T fileObject, U uploadBody, InteractingEntity interactingEntity) throws IOException {
 		File tempFile = this.getTempFileService().getTempFile(
 			FilenameUtils.removeExtension(uploadBody.fileName),
@@ -168,7 +165,6 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		return this.add(dbIdOrName, null, fileObject, file, interactingEntity);
 	}
 	
-	@WithSpan
 	public int updateFile(String dbIdOrName, ClientSession clientSession, ObjectId id, File file, InteractingEntity interactingEntity) throws IOException {
 		FileMetadata fileMetadata = new FileMetadata(file);
 		
@@ -206,7 +202,6 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		return this.updateFile(dbIdOrName, null, id, file, interactingEntity);
 	}
 	
-	@WithSpan
 	public int updateFile(String dbIdOrName, ClientSession clientSession, ObjectId id, U uploadBody, InteractingEntity interactingEntity) throws IOException {
 		File tempFile = this.getTempFileService().getTempFile(
 			FilenameUtils.removeExtension(uploadBody.fileName),
@@ -228,7 +223,6 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		return this.updateFile(dbIdOrName, clientSession, new ObjectId(id), uploadBody, interactingEntity);
 	}
 	
-	@WithSpan
 	public long removeAll(String dbIdOrName, ClientSession clientSession, InteractingEntity entity) {
 		AtomicLong numRemoved = new AtomicLong();
 		boolean sessionGiven = clientSession != null;

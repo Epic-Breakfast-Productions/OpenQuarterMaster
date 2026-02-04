@@ -1,6 +1,6 @@
 ## How to contribute to Open QuarterMaster
 
-#### **Did you find a bug?**
+### **Did you find a bug?**
 
 * **Do not open up a GitHub issue if the bug is a security vulnerability
   in Open QuarterMaster**, and instead to refer to our [security policy](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/security/policy).
@@ -11,18 +11,21 @@
 
 * If possible, use the relevant bug report templates to create the issue.
 
-#### **Did you write a patch that fixes a bug?**
+### **Did you write a patch that fixes a bug?**
 
 * Open a new GitHub pull request with the patch.
 
 * Ensure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.
 
-#### **Do you intend to add a new feature or change an existing one?**
+* Ensure you are working off of the `development` branch, and making your PR merge into that branch.
+
+### **Do you intend to add a new feature or change an existing one?**
 
 * Suggest your change in the form of a Github discussion, then if positive feedback, add a new feature request and start writing code.
 
 * Do not open an issue on GitHub until you have collected positive feedback about the change. GitHub issues are primarily intended for bug reports and fixes.
 
-#### **Do you have questions about the source code?**
+### **Do you have questions about the source code?**
 
 * Ask any question in [Github Discussions](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/discussions)
+

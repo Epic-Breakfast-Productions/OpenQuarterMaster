@@ -5,7 +5,6 @@ import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.provider.Arguments;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;
 import tech.ebp.oqm.core.api.model.units.CustomUnitEntry;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
