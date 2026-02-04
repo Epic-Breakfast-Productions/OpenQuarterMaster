@@ -170,6 +170,41 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		assertEquals(1, result.getNumResultsForEntireQuery());
 		assertEquals("" + 3, result.getResults().get(0).getTestField());
 	}
+	
+	@Test
+	public void testSearchId() {
+		List<TestMainObject> objs = new ArrayList<>();
+		for (int i = 4; i >= 0; i--) {
+			objs.add(
+				this.testMongoService.add(
+					DEFAULT_TEST_DB_NAME,
+					(TestMainObject) new TestMainObject()
+										 .setTestField("" + i)
+										 .setAttributes(Map.of("key", "" + i))
+										 .setKeywords(List.of("" + i))
+				)
+			);
+		}
+		//test id
+		for(TestMainObject obj : objs){
+			SearchResult<TestMainObject> result = this.testMongoService.search(
+				DEFAULT_TEST_DB_NAME,
+				(TestMainObjectSearch) new TestMainObjectSearch()
+										   .setObjectIds(List.of(obj.getId()))
+			);
+			assertEquals(1, result.getNumResultsForEntireQuery());
+			assertEquals(obj, result.getResults().get(0));
+		}
+		//test all ids
+		SearchResult<TestMainObject> result = this.testMongoService.search(
+			DEFAULT_TEST_DB_NAME,
+			(TestMainObjectSearch) new TestMainObjectSearch()
+									   .setObjectIds(objs.stream().map(TestMainObject::getId).toList())
+		);
+		
+		assertEquals(objs.size(), result.getNumResultsForEntireQuery());
+		assertEquals(objs, result.getResults().reversed());
+	}
 	// </editor-fold>
 	
 	// <editor-fold desc="Adding">
