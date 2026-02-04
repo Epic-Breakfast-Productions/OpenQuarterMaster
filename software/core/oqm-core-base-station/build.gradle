@@ -49,7 +49,7 @@ dependencies {
     testImplementation 'net.datafaker:datafaker:2.5.3'
 
     testImplementation 'com.microsoft.playwright:playwright:1.57.0'
-    testImplementation 'com.deque.html.axe-core:playwright:4.11.0'
+    testImplementation 'com.deque.html.axe-core:playwright:4.11.1'
 }
 
 java {
