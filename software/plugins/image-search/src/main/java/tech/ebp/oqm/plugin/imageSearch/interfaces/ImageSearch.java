@@ -24,8 +24,7 @@ public class ImageSearch {
     public Response search(
         @QueryParam("q") String queryImage
     ) throws IOException {
-        return Response.ok(
-            this.imageSearchService.search(queryImage)
-        ).build();
+        return Response.ok(this.imageSearchService.search(queryImage))
+                   .build();
     }
 }

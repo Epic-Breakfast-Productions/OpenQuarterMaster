@@ -2,9 +2,10 @@ package tech.ebp.oqm.plugin.imageSearch.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.util.LinkedHashMap;
+import java.net.URL;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import nu.pattern.OpenCV;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -24,53 +25,56 @@ import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
+import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
 
 @Slf4j
 @ApplicationScoped
 public class ImageSearchService {
+	private static final String RESNET_V2_MODEL_PATH = "models/resnetV2";
+	public static final String inputTensorName = "serving_default_inputs";
+	public static final String outputTensorName = "StatefulPartitionedCall";
+	private static final URL dir = ImageSearchService.class.getClassLoader().getResource(RESNET_V2_MODEL_PATH);
+	public static final SavedModelBundle model;
+	public static final Size modelImageSize = new Size(500, 500);
+	
+	//stuff to cleanup
+	public static final String jsonPath = "./build/imageData.json";
+	public static String imageFolderPath = "./dev/testImages";
+	public static File imageFolder = new File(imageFolderPath);
+	public static File jsonFile;
+	
+	
+	
+	static {
+		log.info("Loading OpenCV");
+		OpenCV.loadLocally();
+		log.info("OpenCV loaded");
+		
+		model = SavedModelBundle.load(dir.getFile());
+	}
 	
 	@RestClient
 	OqmCoreApiClientService coreApiClient;
+	
+	@Inject
+	ResnetVectorService resnetVectorService;
 	
 	/**
 	 *
 	 * @param query
 	 * @return
 	 */
-	public static SavedModelBundle model;
-	public static String inputTensorName = "serving_default_inputs";
-	public static String outputTensorName = "StatefulPartitionedCall";
 	public static File queryImage;
 	public static ImageData queryData;
-	public static String imageFolderPath;
-	public static File imageFolder;
-	public static String jsonPath;
-	public static File jsonFile;
 	public static int numSimilar;
-	public static Size modelImageSize;
 	public static HashMap<String, ImageData> jsonMap;
 	
 	
-	public LinkedHashMap<Double, String> search(String query) throws IOException {
-		
-//		coreApiClient.imageGetRevisionData();
-		
-		
-		
-		
-		
-		
-		
+	public Map<Double, String> search(String query) throws IOException {
 		log.info("Searching for query: " + query);
-		OpenCV.loadLocally();
 		
-		model = SavedModelBundle.load("../../../resources/main/models/resnetV2");
-		modelImageSize = new Size(500, 500);
-		imageFolderPath = "../../../resources/main/testImages";
-		imageFolder = new File(imageFolderPath);
-		jsonPath = "../../../resources/main/imageData.json";
 		jsonFile = generateJson();
-		queryImage = new File("../../../resources/main/testImages/Screw.jpg");
+		queryImage = new File("./dev/testImages/Screw.jpg");
 		//queryImage = new File(query);
 		queryData = getImageData(queryImage);
 		numSimilar = jsonMap.size();
@@ -83,14 +87,14 @@ public class ImageSearchService {
 		TreeMap<Double, String> tree = getSimilarities(queryData);
 		int tmpIter = 0;
 		for (Map.Entry<Double, String> entry : tree.entrySet()) {
-			System.out.println("Filename: " + entry.getValue() + ", Score: " + entry.getKey());
+			log.info("Filename: {}, Score: {}", entry.getValue(), entry.getKey());
 			tmpIter++;
 			if (tmpIter > numSimilar) {
 				break;
 			}
 		}
 		
-		return null;
+		return tree;
 	}
 	
 	//Checks if there is a pre-existing json file
