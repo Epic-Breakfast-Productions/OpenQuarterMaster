@@ -15,7 +15,7 @@ networks:
 
 services:
   mongo:
-    image: mongo:${MONGO_IMAGE_TAG}
+    image: docker.io/mongo:${MONGO_IMAGE_TAG}
     container_name: oqm-infra-mongo
     restart: ${SYS_RESTART}
     networks:
@@ -28,9 +28,15 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD}
       # This will create the database immediately upon startup
       MONGO_INITDB_DATABASE: ${MONGO_DATABASE}
+    healthcheck:
+      test: [ "CMD", "mongosh", "--quiet", "--eval", "db.runCommand({ping: 1}).ok" ]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 20s
 
   postgres:
-    image: postgres:${POSTGRES_IMAGE_TAG}
+    image: docker.io/postgres:${POSTGRES_IMAGE_TAG}
     container_name: oqm-infra-postgres
     restart: ${SYS_RESTART}
     networks:
@@ -52,7 +58,7 @@ services:
 
   keycloak:
     image: quay.io/keycloak/keycloak:${KEYCLOAK_IMAGE_TAG}
-    container_name: keycloak_container
+    container_name: oqm-infra-keycloak
     restart: ${SYS_RESTART}
     depends_on:
       postgres:
@@ -73,13 +79,18 @@ services:
       KC_DB_URL: jdbc:postgresql://postgres:5432/${POSTGRES_DATABASE}
       KC_DB_USERNAME: ${POSTGRES_USER}
       KC_DB_PASSWORD: ${POSTGRES_PASSWORD}
+      KC_HEALTH_ENABLED: "true"
+    healthcheck:
+      test: [ "CMD-SHELL", "{ printf 'HEAD /health/ready HTTP/1.0\r\n\r\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/9000" ]
+      start_period: 30s
+      interval: 10s
+      timeout: 10s
+      retries: 5
   core-api:
     image: docker.io/ebprod/oqm-core-api:${CORE_API_PORT_IMAGE_TAG}
     container_name: oqm-core-api
     restart: ${SYS_RESTART}
     depends_on:
-      postgres:
-        condition: service_healthy
       mongo:
         condition: service_healthy
       keycloak:
@@ -87,6 +98,43 @@ services:
     networks:
       - oqm_internal
     ports:
-      - "${KEYCLOAK_PORT}:8080"
+      - "${CORE_API_PORT}:80"
     environment:
+      "smallrye.jwt.verify.key.location": http://oqm-infra-keycloak:8080/realms/oqm/protocol/openid-connect/certs
+      QUARKUS_MONGODB_CONNECTION-STRING: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@oqm-infra-mongo:27017
+      QUARKUS_MONGODB_DATABASE: ${MONGO_DATABASE}
+      "mp.messaging.outgoing.events-outgoing.enabled": "false"
+    healthcheck:
+      test: [ "CMD-SHELL", "{ printf 'HEAD /q/health HTTP/1.0\r\n\r\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/80" ]
+      start_period: 30s
+      interval: 10s
+      timeout: 10s
+      retries: 5
+    
+  core-base_station:
+    image: docker.io/ebprod/oqm-core-base_station:${CORE_BASE_STATION_IMAGE_TAG}
+    container_name: oqm-core-base_station
+    restart: ${SYS_RESTART}
+    depends_on:
+      core-api:
+        condition: service_healthy
+      keycloak:
+        condition: service_healthy
+    networks:
+      - oqm_internal
+    ports:
+      - "${CORE_BASE_STATION_PORT}:80"
+    environment:
+      QUARKUS_OIDC_CLIENT-ID: ${CORE_BASE_STATION_CLIENT}
+      QUARKUS_OIDC_CREDENTIALS_SECRET: ${CORE_BASE_STATION_CLIENT_SECRET}
+      QUARKUS_OIDC_AUTH-SERVER-URL: http://localhost:${KEYCLOAK_PORT}/auth/realms/oqm
       
+      OQM_CORE_API_BASEURI: http://oqm-core-api:${CORE_API_PORT}
+      
+      "mp.messaging.outgoing.events-outgoing.enabled": "false"
+    healthcheck:
+      test: [ "CMD-SHELL", "{ printf 'HEAD /q/health HTTP/1.0\r\n\r\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/80" ]
+      start_period: 30s
+      interval: 10s
+      timeout: 10s
+      retries: 5
