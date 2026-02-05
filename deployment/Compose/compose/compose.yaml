@@ -1,5 +1,5 @@
 # This compose file stands up a basic instance of Open QuarterMaster.
-# More information available here:
+# More information available here: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/deployment/Compose/README.md
 #
 version: '3.8'
 
@@ -7,11 +7,6 @@ version: '3.8'
 networks:
   oqm_internal:
     driver: bridge
-
-# Define the persistent volumes
-#volumes:
-#  mongo_data:
-#  postgres_data:
 
 services:
   mongo:
@@ -127,9 +122,6 @@ services:
       QUARKUS_OIDC_CREDENTIALS_SECRET: ${CORE_BASE_STATION_CLIENT_SECRET}
       QUARKUS_OIDC_AUTH-SERVER-URL: http://localhost:${KEYCLOAK_PORT}/realms/oqm
       OQM_CORE_API_BASEURI: http://localhost:${CORE_API_PORT}
-      
-      
-      "mp.messaging.outgoing.events-outgoing.enabled": "false"
     healthcheck:
       test: [ "CMD-SHELL", "{ printf 'HEAD /q/health HTTP/1.0\r\n\r\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/80" ]
       start_period: 30s
