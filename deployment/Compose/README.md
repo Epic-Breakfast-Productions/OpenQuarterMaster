@@ -39,6 +39,8 @@ To run the compose file, you can run:
 docker-compose up
 ```
 
+This will bring things up, and the system will be available at http://localhost:8102 by default. You will be sent to Keycloak and need to create an account for yourself.
+
 To run it in the background:
 
 ```bash
