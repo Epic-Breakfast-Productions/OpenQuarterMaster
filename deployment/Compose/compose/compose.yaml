@@ -120,16 +120,14 @@ services:
         condition: service_healthy
       keycloak:
         condition: service_healthy
-    networks:
-      - oqm_internal
-    ports:
-      - "${CORE_BASE_STATION_PORT}:80"
+    network_mode: host
     environment:
+      QUARKUS_HTTP_PORT: ${CORE_BASE_STATION_PORT}
       QUARKUS_OIDC_CLIENT-ID: ${CORE_BASE_STATION_CLIENT}
       QUARKUS_OIDC_CREDENTIALS_SECRET: ${CORE_BASE_STATION_CLIENT_SECRET}
-      QUARKUS_OIDC_AUTH-SERVER-URL: http://localhost:${KEYCLOAK_PORT}/auth/realms/oqm
+      QUARKUS_OIDC_AUTH-SERVER-URL: http://localhost:${KEYCLOAK_PORT}/realms/oqm
+      OQM_CORE_API_BASEURI: http://localhost:${CORE_API_PORT}
       
-      OQM_CORE_API_BASEURI: http://oqm-core-api:${CORE_API_PORT}
       
       "mp.messaging.outgoing.events-outgoing.enabled": "false"
     healthcheck:
