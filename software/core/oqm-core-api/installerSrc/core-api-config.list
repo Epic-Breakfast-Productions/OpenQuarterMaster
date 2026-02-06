@@ -49,8 +49,3 @@ mp.messaging.outgoing.events-outgoing.enabled=false
 #quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
 #quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
 {% endif %}
-
-runningInfo.protocol=https
-runningInfo.hostname={core.api.externalBaseUri}
-runningInfo.depotUri={infra.homepage.externalBaseUri}
-
