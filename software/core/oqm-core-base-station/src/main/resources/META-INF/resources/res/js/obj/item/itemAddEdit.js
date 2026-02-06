@@ -17,6 +17,7 @@ const ItemAddEdit = {
 	addEditItemTotalLowStockThresholdInput: $("#addEditItemTotalLowStockThresholdInput"),
 	addEditItemTotalLowStockThresholdUnitInput: $("#addEditItemTotalLowStockThresholdUnitInput"),
 	addEditItemPricingInput: $("#addEditItemPricingInput"),
+	defaultStoredLabelInput: $("#addEditItemDefaultStoredLabelInput"),
 	addEditItemStorageTypeInput: $('#addEditItemStorageTypeInput'),
 	addEditItemUnitInput: $('#addEditItemUnitInput'),
 	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
@@ -28,6 +29,7 @@ const ItemAddEdit = {
 	// itemNotStoredCheck: $("#addEditItemNotStoredCheck"),
 	// itemNotStoredInputContainer: $("#addEditItemNotStoredInputContainer"),
 
+	linkInput: $('#addEditItemLinksInput'),
 	fileInput: $('#addEditItemForm').find(".fileAttachmentSelectInputTable"),
 	addEditKeywordDiv: $('#addEditItemForm').find(".keywordInputDiv"),
 	addEditAttDiv: $('#addEditItemForm').find(".attInputDiv"),
@@ -91,6 +93,7 @@ const ItemAddEdit = {
 		Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
 		FileAttachmentSearchSelect.resetInput(this.fileInput);
 		Pricing.resetInput(ItemAddEdit.addEditItemPricingInput);
+		ItemAddEdit.defaultStoredLabelInput.val("");
 
 		promises.push(ItemAddEdit.unitChanged());
 		this.associatedStorageInputContainer.html("");
@@ -99,6 +102,7 @@ const ItemAddEdit = {
 		// this.updateItemNotStored();
 		// this.itemNotStoredInputContainer.text("");
 
+		AssociatedLinks.Form.reset(ItemAddEdit.linkInput);
 		ItemAddEdit.addEditItemImagesSelected.text("");
 		ItemAddEdit.addEditKeywordDiv.text("");
 		ItemAddEdit.addEditAttDiv.text("");
@@ -188,6 +192,9 @@ const ItemAddEdit = {
 					});
 				});
 
+
+				ItemAddEdit.defaultStoredLabelInput.val(data.defaultLabelFormat);
+				AssociatedLinks.Form.populateInput(ItemAddEdit.linkInput, data.associatedLinks);
 				await Pricing.populateInput(
 					ItemAddEdit.addEditItemPricingInput,
 					ItemAddEdit.getUnit(),
@@ -321,10 +328,12 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 			ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(),
 			ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val()
 		) : null),
+		associatedLinks: AssociatedLinks.Form.getLinkData(ItemAddEdit.linkInput),
 		categories: ItemCategoryInput.getValueFromInput(ItemAddEdit.addEditItemCategoriesInput),
 		storageBlocks: ItemAddEdit.storageInput.selectedStorageList(),
 		attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(ItemAddEdit.fileInput),
-		defaultPrices: Pricing.getPricingData(ItemAddEdit.addEditItemPricingInput)
+		defaultPrices: Pricing.getPricingData(ItemAddEdit.addEditItemPricingInput),
+		defaultLabelFormat: ItemAddEdit.defaultStoredLabelInput.val() ? ItemAddEdit.defaultStoredLabelInput.val() : null
 	};
 
 	let setAmountStoredVars = function () {

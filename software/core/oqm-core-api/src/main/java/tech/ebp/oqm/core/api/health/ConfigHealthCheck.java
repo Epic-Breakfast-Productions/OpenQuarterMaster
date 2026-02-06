@@ -13,24 +13,19 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This left as a placeholder for future use.
+ */
 @Slf4j
 @Startup
 @ApplicationScoped
 public class ConfigHealthCheck implements HealthCheck {
+	
 	private static final String HEALTH_CHECK_NAME = "Config Sanity health check";
 	
-	private Map<String, String> checkRunningInfoConfig(){
+	private Map<String, String> checkRunningInfoConfig() {
 		Map<String, String> invalidConfigs = new HashMap<>();
 		
-		try {
-			log.debug(
-				"Built self-referencing url: {}",
-				new URL(ConfigProvider.getConfig().getValue("runningInfo.baseUrl", String.class))
-			);
-		} catch(IllegalArgumentException|MalformedURLException e){
-			log.error("Failed to build url to reference self: ", e);
-			invalidConfigs.put("runningInfo.baseUrl", "Could not build a self-referencing url from config:: " + e.getMessage());
-		}
 		
 		return invalidConfigs;
 	}
@@ -42,14 +37,14 @@ public class ConfigHealthCheck implements HealthCheck {
 		
 		invalidConfigs.putAll(checkRunningInfoConfig());
 		
-		if(invalidConfigs.isEmpty()) {
+		if (invalidConfigs.isEmpty()) {
 			return HealthCheckResponse.up(HEALTH_CHECK_NAME);
 		}
 		HealthCheckResponseBuilder builder = HealthCheckResponse.named(HEALTH_CHECK_NAME);
 		
 		builder.down();
 		
-		for(Map.Entry<String, String> curInv : invalidConfigs.entrySet()){
+		for (Map.Entry<String, String> curInv : invalidConfigs.entrySet()) {
 			builder.withData(curInv.getKey(), curInv.getValue());
 		}
 		

@@ -158,7 +158,7 @@ const StoredFormInput = {
 	getStoredInputs: async function (forStoredType, stored = null, item = null, forEdit = true) {
 		let output = $('<div class="storedInputs"></div>');
 
-		StoredTypeUtils.runForType(forStoredType,
+		await StoredTypeUtils.runForType(forStoredType,
 			async function () {
 				let amountInputs = await StoredFormInput.getAmountInputs(item, stored, !forEdit);
 				output.append(amountInputs);

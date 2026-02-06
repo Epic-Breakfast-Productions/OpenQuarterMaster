@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import lombok.*;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import java.time.Duration;
@@ -24,7 +22,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 public class InstanceMutexServiceTest extends RunningServerTest {
 
 	public static Stream<Arguments> getParams() {
@@ -64,7 +61,7 @@ public class InstanceMutexServiceTest extends RunningServerTest {
 		SortedSet<ThreadResult> results = new TreeSet<>();
 		ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
 
-		TestThread.Builder threadBuilder = TestThread.builder()
+		TestThread.TestThreadBuilder threadBuilder = TestThread.builder()
 			.mutexId(mutexId)
 			.numIterations(numIterations)
 			.durationOfWork(workDuration)
@@ -150,7 +147,7 @@ public class InstanceMutexServiceTest extends RunningServerTest {
 					Thread.sleep(50);
 				}
 				log.info("Thread {} got lock on iteration {}/{}", this.threadId, i, this.numIterations);
-				ThreadResult.Builder resultBuilder = ThreadResult.builder()
+				ThreadResult.ThreadResultBuilder resultBuilder = ThreadResult.builder()
 					.threadId(this.threadId)
 					.start(LocalDateTime.now());
 

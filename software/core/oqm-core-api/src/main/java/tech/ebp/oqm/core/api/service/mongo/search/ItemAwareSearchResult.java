@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo.search;
 
 import lombok.*;
+import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.List;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ItemAwareSearchResult<T> extends SearchResult<T> {
+public class ItemAwareSearchResult<T extends MainObject> extends SearchResult<T> {
 
 	private InventoryItem inventoryItem;
 
@@ -21,7 +22,8 @@ public class ItemAwareSearchResult<T> extends SearchResult<T> {
 			searchResult.getNumResultsForEntireQuery(),
 			searchResult.isHadSearchQuery(),
 			searchResult.getPagingOptions(),
-			searchResult.getPagingCalculations()
+			searchResult.getPagingCalculations(),
+			searchResult.getSearchObject()
 		);
 		this.inventoryItem = inventoryItem;
 	}

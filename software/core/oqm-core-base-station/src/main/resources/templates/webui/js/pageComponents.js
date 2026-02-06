@@ -27,9 +27,15 @@ const PageComponents = {
 ',
 			uniqueIdAdded: '{uniqueIdAddedLines}\
 '
+		},
+		AssociatedLinks: {
+			linkInput: '{assocLinkLinkInputLines}\
+'
 		}
 	},
 	View: {
+		itemCatBadge: '{itemCatBadgeLines}\
+',
 		attachedFileList: '{attachedFileListLines}\
 ',
 	}

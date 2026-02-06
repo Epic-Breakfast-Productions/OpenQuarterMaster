@@ -2,9 +2,6 @@ package tech.ebp.oqm.core.api.service.mongo;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
-import io.quarkus.arc.Arc;
-import io.quarkus.arc.InstanceHandle;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -58,9 +55,9 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	@Getter(AccessLevel.PRIVATE)
 	ItemCheckoutService itemCheckoutService;
 	
+	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
-	
 	
 	@Override
 	public Set<String> getDisallowedUpdateFields() {
@@ -74,12 +71,8 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	
 	public StoredService() {
 		super(Stored.class, false);
-		try (InstanceHandle<HistoryEventNotificationService> container = Arc.container().instance(HistoryEventNotificationService.class)) {
-			this.hens = container.get();
-		}
 	}
 	
-	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, Stored newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
