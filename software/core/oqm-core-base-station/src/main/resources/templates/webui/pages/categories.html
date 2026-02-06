@@ -27,8 +27,7 @@
                 <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                         aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                     <div class="accordion-body">
-                        {#search/category/searchForm id='mainCategorySearch' rootPrefix=rootPrefix}
-                        {/search/category/searchForm}
+                        {#search/category/searchForm id='mainCategorySearch' rootPrefix=rootPrefix /}
                     </div>
                 </div>
             </div>
@@ -80,7 +79,7 @@
                         <div class="mb-3 row">
                             <label for="addEditItemCategoryParentInput" class=" col-form-label col-sm-2">Parent Category:</label>
                             <div class="col-sm-10">
-								{#inputs/categoryInput id="addEditItemCategoryParentInput" allCategorySearchResults=allCategorySearchResults /}
+								{#inputs/categoryInput id="addEditItemCategoryParentInput" allCategorySearchResults=allCategorySearchResults placeholder='Parent' name='itemCategoryParent' /}
                             </div>
                         </div>
                         {#search/image/imageSelectFormInput /}

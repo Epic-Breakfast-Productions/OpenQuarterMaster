@@ -11,7 +11,7 @@
         </button>
     </div>
     <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemFromFileModal">{#icons/addFile}{/icons/addFile} Add Item(s) from file
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addItemFromFileModal">{#icons/addFile /} Add Item(s) from file
         </button>
     </div>
     <div class="col d-grid gap-2">
@@ -19,7 +19,7 @@
     </div>
     <!--
     <div class="col d-grid gap-2">
-        <button type="button" class="btn btn-info">{#icons/view}{/icons/view} Item stats</button>
+        <button type="button" class="btn btn-info">{#icons/view /} Item stats</button>
     </div>
     -->
 </div>
@@ -31,14 +31,14 @@
                 <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
                         data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
                         aria-controls="searchCollapse">
-                    {#icons/search}{/icons/search}
+                    {#icons/search /}
                     Search Fields
                 </button>
             </h2>
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/item/itemSearchForm id='mainPageSearch' rootPrefix=rootPrefix /}
+                    {#search/item/itemSearchForm id='mainPageSearch' rootPrefix=rootPrefix allCategorySearchResults=allCategorySearchResults /}
                 </div>
             </div>
         </div>
@@ -47,8 +47,7 @@
 <div class="row">
     <div class="col">
         <table id="mainPageSearchResults" class="table table-bordered table-striped table-hover table-sm">
-            {#search/item/itemSearchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' rootPrefix=rootPrefix}
-            {/search/item/itemSearchResults}
+            {#search/item/itemSearchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' rootPrefix=rootPrefix /}
         </table>
     </div>
 </div>
@@ -80,7 +79,7 @@
 	{/modal}
 	{#search/storage/searchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
 	{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
-	{#search/item/itemSearchSelectModal rootPrefix=rootPrefix /}
+	{#search/item/itemSearchSelectModal rootPrefix=rootPrefix allCategorySearchResults=allCategorySearchResults /}
 	{#search/itemStored/itemStoredSearchSelectModal rootPrefix=rootPrefix /}
 	{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal" rootPrefix=rootPrefix /}
 	{#itemStored/itemStoredViewModal rootPrefix=rootPrefix /}
