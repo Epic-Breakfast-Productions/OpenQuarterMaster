@@ -142,38 +142,39 @@ smallrye:
             adminUser: "inventoryView,inventoryEdit,inventoryAdmin"
 
 "%intTest":
+  service:
+    tempDir: "/tmp/oqmTest/baseStation"
+  
+  #messaging:
+  #  connector: smallrye-amqp
+  
+  quarkus:
+    http:
+      port: 8081
+    log:
+      level: INFO
+      category:
+    
+    mongodb:
+      database: openQuarterMasterTest
+      write-concern:
+        journal: false
+    jaeger:
+      enabled: true
+    smallrye-openapi:
+      info-title: Open QuarterMaster Base Station API (TEST)
+    reactive-messaging:
+      health:
+        enabled: true
+  
   mp:
     jwt:
       verify:
         issuer: "oqm-test"
         publickey:
-          ~: |
-            -----BEGIN CERTIFICATE-----
-            MIIDjTCCAnWgAwIBAgIUFzebIFKwMPXy7YsKhPxsmN4tXzswDQYJKoZIhvcNAQEL
-            BQAwVjELMAkGA1UEBhMCVVMxEjAQBgNVBAgMCVRlc3RTdGF0ZTERMA8GA1UEBwwI
-            VGVzdFRvd24xDDAKBgNVBAoMA09RTTESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTIz
-            MDUwMTIzNTc0OFoXDTMzMDQyODIzNTc0OFowVjELMAkGA1UEBhMCVVMxEjAQBgNV
-            BAgMCVRlc3RTdGF0ZTERMA8GA1UEBwwIVGVzdFRvd24xDDAKBgNVBAoMA09RTTES
-            MBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-            AQEA5R08l7EUl8iY/CjnROeSSZQIg/162KLlpeoWCfdZlJd8QoAumMgGHMrfqzAz
-            z+QPHY6Yx1xs5Gk3C8OO/FBKuiMCG6V4oDTl4QNlf6pb79IxXUUVosqYFR4tNDfH
-            kpCS17bhxZArhqz807LuaCxdPR1fYJtekvGMhXni/R3wKjDFvfjhHKIAf1OdVK+2
-            +sLgC5kLKe19K7GlqYc1X5VTGnRx6euwxibmjPc/5bIScuByTpRYiMfSLJiYkXCL
-            DBxY552JaHzqdHcaSm01KR9WcggmyuiFJna7/nBTILPI7IbJi7xUDG972wZYqf5r
-            x+nvJpZ9X5rRg0hToioIJEpQTwIDAQABo1MwUTAdBgNVHQ4EFgQU0TZ64jMAa8K0
-            MhK17W0KCG3PP2wwHwYDVR0jBBgwFoAU0TZ64jMAa8K0MhK17W0KCG3PP2wwDwYD
-            VR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEATdG4bppK2qWBVikNlMW8
-            J1rCMElZ/qCpFhmfrcTxx8tdIXeGHIA3Ebj4WiwXhlZ5DVChBI5hplqaR32Engho
-            yEveNEaRMUUZzjc+U63XrLJaCBMMVeEXWewrUiptJDufriapWjVf4FKmdSA8p0yc
-            0+YK7+fNguWEriiYt/iR60TN1n8suKYxhozDYuPER4nqmeBUFtH9WHxYjU0rZm12
-            8/KpeHe8F0mITkUC63rJAFMh3mB3MpAwTLcyJgtq84devt2O0vPMViD3GUsMzQvu
-            eDMmFNd0Cwl1lMJA3rqbZ0n0x3FjFkZdJUcz0tG3gKKKzcK7K0oF+Smd42M2JfuS
-            YQ==
-            -----END CERTIFICATE-----
-#          location: dev/devTest-cert-cert.pem
+          location: dev/devTest-cert-cert.pem
   smallrye:
     jwt:
       sign:
         key:
-          #        location: dev/devTest-cert-key.pem
           location: dev/devTest-cert-key.pem

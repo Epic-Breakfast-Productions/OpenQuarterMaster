@@ -1,16 +1,6 @@
 service:
   tempDir: "/tmp/oqmTest/core/api"
 
-externalService:
-  extServices:
-    testService:
-      secret: dadasdadadasdadasdasdasdsa
-#    "test Service Two":
-#      secret: 234dfs 234f 32fwervdfdgw54y5wb
-
-#messaging:
-#  connector: smallrye-amqp
-  
 quarkus:
   test:
     integration-test-profile: intTest
