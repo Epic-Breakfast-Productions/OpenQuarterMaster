@@ -1,9 +1,4 @@
 service:
-  runBy:
-    name: The Testing Org
-    email: test@test.org
-    phone: 999-888-7777
-    website: https://test.org
   tempDir: "/tmp/oqmTest/core/api"
 
 externalService:
@@ -19,6 +14,8 @@ externalService:
 quarkus:
   test:
     integration-test-profile: intTest
+  jacoco:
+  
   http:
     port: 8081
   log:
