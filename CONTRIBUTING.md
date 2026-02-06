@@ -18,6 +18,8 @@
 * Ensure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.
 
 * Ensure you are working off of the `development` branch, and making your PR merge into that branch.
+  
+* Typically, working branches are structured as `dev/<issue # / name>`, to help denote the branch flow
 
 ### **Do you intend to add a new feature or change an existing one?**
 
