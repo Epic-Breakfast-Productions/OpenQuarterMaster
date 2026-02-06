@@ -2,7 +2,6 @@ package tech.ebp.oqm.core.api.service.mongo;
 
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.model.Filters;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
@@ -215,7 +214,6 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 		super(IdentifierGenerator.class, false);
 	}
 	
-	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, IdentifierGenerator generator, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, generator, clientSession);

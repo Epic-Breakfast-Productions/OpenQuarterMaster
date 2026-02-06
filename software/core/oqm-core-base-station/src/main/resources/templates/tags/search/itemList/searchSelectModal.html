@@ -5,8 +5,7 @@ Ingests:
 - otherModalId - the modal to return to when closing, if any
 !}
 {#modal id='itemListSearchSelect' large=true title='Select an Inventory Item' otherModalId=otherModalId}
-{#search/itemList/itemSearchForm id='itemListSearchSelectForm' searchObject=tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteSearchUtils:newItemListSearchInstance() rootPrefix=rootPrefix}
-{/search/itemList/itemSearchForm}
+{#search/itemList/itemSearchForm id='itemListSearchSelectForm' searchObject=tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteSearchUtils:newItemListSearchInstance() allCategorySearchResults=allCategorySearchResults rootPrefix=rootPrefix}
 <div class="col table-responsive">
   <table class=" table table-bordered table-striped table-hover table-sm" id="itemListSearchSelectResults">
 
