@@ -2,23 +2,9 @@
 service:
   version: ${quarkus.application.version}
   apiVersion: 1.0.0
-  nameShort: OQMapi
+  nameShort: oqm-core-api
   nameFull: Open Quarter Master Core API
   gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
-  # TODO:: move data that doesn't need to be here
-  auth:
-    userSettingsUrl: ${quarkus.oidc.auth-server-url}/account/
-  runBy:
-    name: " "
-    email: " "
-    phone: " "
-    website: " "
-    logo: " "
-    banner: ${service.runBy.logo}
-    motd: >
-      Your privacy is important to the original project. It only creates minor cookies, and that is for the login
-      functionality. The project also only collects what you give it, and it is up to the people running the server to
-      ensure it is handled well. Please contact the folks running the server for more information.
   ops:
     currency: "USD" # anything that works with `Currency.getInstance("<value>")`
   item:
@@ -38,15 +24,6 @@ service:
       displayName: "Default"
       description: "The default database, automatically created if there are no other databases at startup."
 
-# TODO:: move this into `service` config
-runningInfo:
-  protocol: http
-  hostname: localhost
-  port: ${quarkus.http.port}
-  hostnamePort: ${runningInfo.hostname}:${runningInfo.port}
-  baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
-  depotUri: " "
-
 externalService:
   secretSizeMin: 50
   secretSizeMax: 100
@@ -63,21 +40,15 @@ quarkus:
   log:
     level: DEBUG
     console:
-      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t] %s%e%n"
+#      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t] %s%e%n"
     category:
       "org.mongodb.driver":
         level: INFO
   mongodb:
     database: openQuarterMaster
-    tracing:
-      enabled: true
-    metrics:
-      enabled: true
   #  package:
   #    type: uber-jar
   scheduler:
-    metrics:
-      enabled: true
   smallrye-health:
     openapi:
       included: true
@@ -119,8 +90,6 @@ quarkus:
   messaging:
     health:
       enabled: true
-#    metrics:
-#      enabled: true
 
 mp:
   messaging:
@@ -142,12 +111,6 @@ smallrye:
       name: ${service.nameShort} - V${service.apiVersion} - DEV
     log:
       level: DEBUG
-    opentelemetry:
-      enabled: true
-      tracer:
-        exporter:
-          otlp:
-            endpoint: http://localhost:8096
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
       security-scheme: basic
@@ -178,48 +141,40 @@ smallrye:
             regularUser: "inventoryView,inventoryEdit"
             adminUser: "inventoryView,inventoryEdit,inventoryAdmin"
 
-  runningInfo:
-  service:
-    runBy:
-      name: The Developers
-      email: dev@devlopment.dev
-      phone: 111-222-3333
-      website: http://devlopment.dev
-      logo: ../../../../dev/developers.jpeg
-
 "%intTest":
+  service:
+    tempDir: "/tmp/oqmTest/baseStation"
+  
+  #messaging:
+  #  connector: smallrye-amqp
+  
+  quarkus:
+    http:
+      port: 8081
+    log:
+      level: INFO
+      category:
+    
+    mongodb:
+      database: openQuarterMasterTest
+      write-concern:
+        journal: false
+    jaeger:
+      enabled: true
+    smallrye-openapi:
+      info-title: Open QuarterMaster Base Station API (TEST)
+    reactive-messaging:
+      health:
+        enabled: true
+  
   mp:
     jwt:
       verify:
         issuer: "oqm-test"
         publickey:
-          ~: |
-            -----BEGIN CERTIFICATE-----
-            MIIDjTCCAnWgAwIBAgIUFzebIFKwMPXy7YsKhPxsmN4tXzswDQYJKoZIhvcNAQEL
-            BQAwVjELMAkGA1UEBhMCVVMxEjAQBgNVBAgMCVRlc3RTdGF0ZTERMA8GA1UEBwwI
-            VGVzdFRvd24xDDAKBgNVBAoMA09RTTESMBAGA1UEAwwJbG9jYWxob3N0MB4XDTIz
-            MDUwMTIzNTc0OFoXDTMzMDQyODIzNTc0OFowVjELMAkGA1UEBhMCVVMxEjAQBgNV
-            BAgMCVRlc3RTdGF0ZTERMA8GA1UEBwwIVGVzdFRvd24xDDAKBgNVBAoMA09RTTES
-            MBAGA1UEAwwJbG9jYWxob3N0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKC
-            AQEA5R08l7EUl8iY/CjnROeSSZQIg/162KLlpeoWCfdZlJd8QoAumMgGHMrfqzAz
-            z+QPHY6Yx1xs5Gk3C8OO/FBKuiMCG6V4oDTl4QNlf6pb79IxXUUVosqYFR4tNDfH
-            kpCS17bhxZArhqz807LuaCxdPR1fYJtekvGMhXni/R3wKjDFvfjhHKIAf1OdVK+2
-            +sLgC5kLKe19K7GlqYc1X5VTGnRx6euwxibmjPc/5bIScuByTpRYiMfSLJiYkXCL
-            DBxY552JaHzqdHcaSm01KR9WcggmyuiFJna7/nBTILPI7IbJi7xUDG972wZYqf5r
-            x+nvJpZ9X5rRg0hToioIJEpQTwIDAQABo1MwUTAdBgNVHQ4EFgQU0TZ64jMAa8K0
-            MhK17W0KCG3PP2wwHwYDVR0jBBgwFoAU0TZ64jMAa8K0MhK17W0KCG3PP2wwDwYD
-            VR0TAQH/BAUwAwEB/zANBgkqhkiG9w0BAQsFAAOCAQEATdG4bppK2qWBVikNlMW8
-            J1rCMElZ/qCpFhmfrcTxx8tdIXeGHIA3Ebj4WiwXhlZ5DVChBI5hplqaR32Engho
-            yEveNEaRMUUZzjc+U63XrLJaCBMMVeEXWewrUiptJDufriapWjVf4FKmdSA8p0yc
-            0+YK7+fNguWEriiYt/iR60TN1n8suKYxhozDYuPER4nqmeBUFtH9WHxYjU0rZm12
-            8/KpeHe8F0mITkUC63rJAFMh3mB3MpAwTLcyJgtq84devt2O0vPMViD3GUsMzQvu
-            eDMmFNd0Cwl1lMJA3rqbZ0n0x3FjFkZdJUcz0tG3gKKKzcK7K0oF+Smd42M2JfuS
-            YQ==
-            -----END CERTIFICATE-----
-#          location: dev/devTest-cert-cert.pem
+          location: dev/devTest-cert-cert.pem
   smallrye:
     jwt:
       sign:
         key:
-          #        location: dev/devTest-cert-key.pem
           location: dev/devTest-cert-key.pem

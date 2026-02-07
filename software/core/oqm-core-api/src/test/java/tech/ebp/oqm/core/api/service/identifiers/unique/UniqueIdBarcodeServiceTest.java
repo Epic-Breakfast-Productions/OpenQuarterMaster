@@ -13,7 +13,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ProvidedUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.WebServerTest;
 
 import java.io.IOException;
@@ -24,7 +23,6 @@ import java.util.stream.Stream;
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class UniqueIdBarcodeServiceTest extends WebServerTest {
 	
 	private static void writeToFile(String data, String dir, String fileName) {

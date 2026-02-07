@@ -53,7 +53,7 @@ public class InventoryItemUi extends UiProvider {
 	@GET
 	@Path("items")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Uni<Response> storagePage(@BeanParam InventoryItemSearch search) {
+	public Uni<Response> itemsPage(@BeanParam InventoryItemSearch search) {
 		this.ensureSearchDefaults(search);
 		
 		return this.getUni(

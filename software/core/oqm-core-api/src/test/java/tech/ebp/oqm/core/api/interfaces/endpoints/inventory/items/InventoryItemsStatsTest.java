@@ -29,7 +29,6 @@ import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.StorageBlockTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.units.indriya.quantity.Quantities;
 
@@ -49,7 +48,6 @@ import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 @Tag("integration")
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(value = TestResourceLifecycleManager.class)
 class InventoryItemsStatsTest extends RunningServerTest {
 	
 	@Inject

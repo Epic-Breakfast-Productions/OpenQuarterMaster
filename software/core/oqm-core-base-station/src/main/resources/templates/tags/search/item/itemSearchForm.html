@@ -1,10 +1,3 @@
-{!
-Template for the search form for storage blocks
-
-Ingests:
-- id - the id to give the form
-!}
-{!{@tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch searchObject}!}
 {#include tags/search/searchForm id=id action=(rootPrefix + '/items') showKeywords=true showAttributes=true defaultPageSize=config:['ui.inventoryItem.search.defaultPageSize']}
 {#inputs}
 <div class="mb-3 col col-3">
@@ -25,7 +18,7 @@ Ingests:
 <div class="mb-3 col col-3">
     {#let id=(id + '-itemCategoryInput')}
     <label for="{id}" class="form-label">{#icons/categories}{/icons/categories} Categories</label>
-        {!{#inputs/categoryInput name="itemCategories" id=id allCategorySearchResults=allCategorySearchResults}{/inputs/categoryInput}!}
+        {#inputs/categoryInput name="itemCategories" id=id allCategorySearchResults=allCategorySearchResults /}
         <div id="{id}-help" class="form-text">Find items of these {#links/itemCategory}{/links/itemCategory}.</div>
     {/let}
 </div>
