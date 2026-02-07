@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general;
+package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +8,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -15,7 +16,7 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class Generic extends GeneralId {
+public class GenericIdentifier extends Identifier {
 	
 	@NotBlank
 	private String value;
@@ -25,7 +26,7 @@ public class Generic extends GeneralId {
 	private boolean barcode = false;
 	
 	@Override
-	public GeneralIdType getType() {
-		return GeneralIdType.GENERIC;
+	public IdentifierType getType() {
+		return IdentifierType.GENERIC;
 	}
 }

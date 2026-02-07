@@ -3,15 +3,15 @@ package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Generated;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated.Generated;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
 
 import java.util.LinkedHashSet;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class IdGenResult<T extends Identifier & Generated> {
+public class IdGenResult<T extends GenericIdentifier & Generated> {
 	
 	private LinkedHashSet<T> generatedIds = new LinkedHashSet<>();
 	

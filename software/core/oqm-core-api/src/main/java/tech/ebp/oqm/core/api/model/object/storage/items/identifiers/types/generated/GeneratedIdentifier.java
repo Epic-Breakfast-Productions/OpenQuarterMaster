@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general;
+package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,8 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Generated;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -17,15 +18,14 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Generated;
 @SuperBuilder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class GeneralGeneratedId extends Generic implements Generated {
+public class GeneratedIdentifier extends GenericIdentifier implements Generated {
 	
 	@NonNull
 	@NotNull
 	private ObjectId generatedFrom;
 	
-	
 	@Override
-	public GeneralIdType getType() {
-		return GeneralIdType.GENERATED;
+	public IdentifierType getType() {
+		return IdentifierType.GENERATED;
 	}
 }

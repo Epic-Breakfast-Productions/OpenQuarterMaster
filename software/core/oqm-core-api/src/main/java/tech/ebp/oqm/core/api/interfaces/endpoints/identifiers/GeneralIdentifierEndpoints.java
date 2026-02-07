@@ -14,8 +14,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
 import tech.ebp.oqm.core.api.service.identifiers.general.GeneralIdUtils;
 
 @Slf4j
@@ -40,7 +40,7 @@ public class GeneralIdentifierEndpoints extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response validateCode(
-		@PathParam("type") GeneralIdType type,
+		@PathParam("type") IdentifierType type,
 		@PathParam("identifier") String code
 	) {
 		try{
@@ -63,7 +63,7 @@ public class GeneralIdentifierEndpoints extends EndpointProvider {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public GeneralId getIdObject(
+	public Identifier getIdObject(
 		@PathParam("identifier") String code
 	) {
 		return GeneralIdUtils.determineGeneralIdType(code);

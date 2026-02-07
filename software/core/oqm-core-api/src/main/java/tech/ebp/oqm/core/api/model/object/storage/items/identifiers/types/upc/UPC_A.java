@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc;
+package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.upc;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,10 +8,9 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
 import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidUPCA;
-import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidUPCE;
 
 @Data
 @EqualsAndHashCode(callSuper = true)
@@ -19,15 +18,15 @@ import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidUPCE;
 @SuperBuilder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class UPC_E extends GeneralId {
+public class UPC_A extends Identifier {
 	
 	@NonNull
 	@NotNull
-	@ValidUPCE
+	@ValidUPCA
 	private String value;
 	
 	@Override
-	public GeneralIdType getType() {
-		return GeneralIdType.UPC_E;
+	public IdentifierType getType() {
+		return IdentifierType.UPC_A;
 	}
 }

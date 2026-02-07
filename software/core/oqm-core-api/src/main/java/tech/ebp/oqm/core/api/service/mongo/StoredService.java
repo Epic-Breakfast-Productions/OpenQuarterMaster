@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -163,7 +162,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		
 		//TODO:: potentially trigger refresh of item stats #929
 		
-		stored.setGeneralIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, stored.getGeneralIds()));
+		stored.setIdentifiers(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, stored.getIdentifiers()));
 		stored.setUniqueIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, stored.getUniqueIds()));
 	}
 	

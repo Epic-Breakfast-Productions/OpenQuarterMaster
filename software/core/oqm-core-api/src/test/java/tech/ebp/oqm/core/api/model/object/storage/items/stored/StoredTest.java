@@ -1,13 +1,12 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.stored;
 
-import io.smallrye.mutiny.Uni;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.Generic;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ProvidedUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricing;
@@ -15,9 +14,7 @@ import tech.ebp.oqm.core.api.model.testUtils.BasicTest;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 
 import javax.money.Monetary;
-import javax.money.MonetaryAmount;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -28,11 +25,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class StoredTest extends BasicTest {
 
 	public static Stream<Arguments> getParseLabelTests(){
-		GeneralId gid = Generic.builder()
+		Identifier gid = GenericIdentifier.builder()
 							.label(FAKER.name().name())
 							.value(FAKER.idNumber().valid())
 							.build();
-		LinkedHashSet<GeneralId> generalIds = new LinkedHashSet<>(){{
+		LinkedHashSet<Identifier> identifiers = new LinkedHashSet<>(){{
 			add(gid);
 		}};
 		UniqueId uid = ProvidedUniqueId.builder()
@@ -63,7 +60,7 @@ public class StoredTest extends BasicTest {
 											.item(ObjectId.get())
 											.storageBlock(ObjectId.get())
 											.amount(UnitUtils.Quantities.UNIT_ONE)
-											.generalIds(generalIds)
+											.identifiers(identifiers)
 											.uniqueIds(uniqueIds)
 											.calculatedPrices(pricingSet)
 											.attributes(atts)
@@ -74,7 +71,7 @@ public class StoredTest extends BasicTest {
 											.id(ObjectId.get())
 											.item(ObjectId.get())
 											.storageBlock(ObjectId.get())
-											.generalIds(generalIds)
+											.identifiers(identifiers)
 											.build();
 		
 		return Stream.of(

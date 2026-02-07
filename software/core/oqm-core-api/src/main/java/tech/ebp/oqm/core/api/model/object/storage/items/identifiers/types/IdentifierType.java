@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general;
+package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types;
 
 /**
  *
@@ -7,7 +7,7 @@ package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general;
  * https://www.computalabel.com/m/UPCexamplesM.htm
  *
  */
-public enum GeneralIdType {
+public enum IdentifierType {
 	UPC_A,
 	UPC_E,
 	ISBN_10,
@@ -27,12 +27,12 @@ public enum GeneralIdType {
 	public final boolean isBarcode;
 	public final boolean displayInBarcode;
 	
-	GeneralIdType() {
+	IdentifierType() {
 		this.isBarcode = true;
 		this.displayInBarcode = true;
 	}
 	
-	GeneralIdType(boolean isBarcode, boolean displayInBarcode) {
+	IdentifierType(boolean isBarcode, boolean displayInBarcode) {
 		this.isBarcode = isBarcode;
 		this.displayInBarcode = displayInBarcode;
 	}

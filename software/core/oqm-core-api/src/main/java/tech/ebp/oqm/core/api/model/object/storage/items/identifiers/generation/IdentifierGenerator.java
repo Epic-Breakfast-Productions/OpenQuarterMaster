@@ -51,13 +51,6 @@ public class IdentifierGenerator extends MainObject {
 	}
 	
 	/**
-	 * What kind of identifier this generates
-	 */
-	@NonNull
-	@NotNull
-	private Generates generates;
-	
-	/**
 	 * What kind of objects this generator is intended for.
 	 */
 	@NonNull

@@ -2,22 +2,12 @@ package tech.ebp.oqm.core.api.service.identifiers.unique;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdType;
 import tech.ebp.oqm.core.api.service.identifiers.IdBarcodeService;
 import uk.org.okapibarcode.backend.Code128;
-import uk.org.okapibarcode.backend.Code2Of5;
-import uk.org.okapibarcode.backend.Ean;
 import uk.org.okapibarcode.backend.HumanReadableLocation;
 import uk.org.okapibarcode.backend.Symbol;
-import uk.org.okapibarcode.backend.Upc;
-import uk.org.okapibarcode.graphics.Color;
-import uk.org.okapibarcode.output.SvgRenderer;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * Service to generate barcode images for unique ids and objects.

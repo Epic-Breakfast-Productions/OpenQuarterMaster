@@ -13,7 +13,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralGeneratedId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated.GeneratedIdentifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.Generates;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdGenResult;
@@ -45,7 +45,7 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 @QuarkusTest
-class IdentifierGenerationServiceTest extends RunningServerTest {
+class GenericGeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 	
 	@Inject
 	IdentifierGenerationService identifierGenerationService;
@@ -157,16 +157,16 @@ class IdentifierGenerationServiceTest extends RunningServerTest {
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
 		
-		IdGenResult<GeneralGeneratedId>
+		IdGenResult<GeneratedIdentifier>
 			output =
-			(IdGenResult<GeneralGeneratedId>) this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1, Generates.GENERAL);
+			(IdGenResult<GeneratedIdentifier>) this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1, Generates.GENERAL);
 		
 		log.info("Generated ID: {}", output);
 		
 		assertNotNull(output);
 		assertEquals(1, output.getGeneratedIds().size());
 		
-		GeneralGeneratedId id = output.getGeneratedIds().getFirst();
+		GeneratedIdentifier id = output.getGeneratedIds().getFirst();
 		
 		assertEquals(gen.getId(), id.getGeneratedFrom());
 		assertEquals(gen.getName(), id.getLabel());

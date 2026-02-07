@@ -1,16 +1,16 @@
 package tech.ebp.oqm.core.api.service.identifiers.general;
 
 import org.junit.jupiter.params.provider.Arguments;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.Generic;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.ean.EAN_13;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.ean.EAN_8;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.gtin.GTIN_14;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.isbn.ISBN_10;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.isbn.ISBN_13;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.UPC_A;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.UPC_E;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.ean.EAN_13;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.ean.EAN_8;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.gtin.GTIN_14;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.isbn.ISBN_10;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.isbn.ISBN_13;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.upc.UPC_A;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.upc.UPC_E;
 
 import java.util.List;
 import java.util.function.Function;
@@ -87,7 +87,7 @@ public abstract class CodeUtilTestBase {
 				   .map(Arguments::of);
 	}
 	
-	private static <T extends GeneralId> Stream<Arguments> getArgs(List<String> codes, Function<String, T> generalBuilderFunc) {
+	private static <T extends Identifier> Stream<Arguments> getArgs(List<String> codes, Function<String, T> generalBuilderFunc) {
 		return codes.stream().map(code->Arguments.of(code, generalBuilderFunc.apply(code)));
 	}
 	
@@ -100,15 +100,15 @@ public abstract class CodeUtilTestBase {
 				getArgs(EAN13_CODES, (code)->EAN_13.builder().value(code).build()),
 				getArgs(EAN8_CODES, (code)->EAN_8.builder().value(code).build()),
 				getArgs(GTIN14_CODES, (code)->GTIN_14.builder().value(code).build()),
-				getArgs(GENERIC_IDENTIFIERS, (code)->Generic.builder().value(code).build()),
-				getArgs(UPCA_CODES, (code)->UPC_A.builder().label(GeneralIdType.UPC_A.name()).value(code).build()),
-				getArgs(UPCE_CODES, (code)->UPC_E.builder().label(GeneralIdType.UPC_E.name()).value(code).build()),
-				getArgs(ISBN13_CODES, (code)->ISBN_13.builder().label(GeneralIdType.ISBN_13.name()).value(code).build()),
-				getArgs(ISBN10_CODES, (code)->ISBN_10.builder().label(GeneralIdType.ISBN_10.name()).value(code).build()),
-				getArgs(EAN13_CODES, (code)->EAN_13.builder().label(GeneralIdType.EAN_13.name()).value(code).build()),
-				getArgs(EAN8_CODES, (code)->EAN_8.builder().label(GeneralIdType.EAN_8.name()).value(code).build()),
-				getArgs(GTIN14_CODES, (code)->GTIN_14.builder().label(GeneralIdType.GTIN_14.name()).value(code).build()),
-				getArgs(GENERIC_IDENTIFIERS, (code)->Generic.builder().label(GeneralIdType.GENERIC.name()).value(code).build()),
+				getArgs(GENERIC_IDENTIFIERS, (code)->GenericIdentifier.builder().value(code).build()),
+				getArgs(UPCA_CODES, (code)->UPC_A.builder().label(IdentifierType.UPC_A.name()).value(code).build()),
+				getArgs(UPCE_CODES, (code)->UPC_E.builder().label(IdentifierType.UPC_E.name()).value(code).build()),
+				getArgs(ISBN13_CODES, (code)->ISBN_13.builder().label(IdentifierType.ISBN_13.name()).value(code).build()),
+				getArgs(ISBN10_CODES, (code)->ISBN_10.builder().label(IdentifierType.ISBN_10.name()).value(code).build()),
+				getArgs(EAN13_CODES, (code)->EAN_13.builder().label(IdentifierType.EAN_13.name()).value(code).build()),
+				getArgs(EAN8_CODES, (code)->EAN_8.builder().label(IdentifierType.EAN_8.name()).value(code).build()),
+				getArgs(GTIN14_CODES, (code)->GTIN_14.builder().label(IdentifierType.GTIN_14.name()).value(code).build()),
+				getArgs(GENERIC_IDENTIFIERS, (code)->GenericIdentifier.builder().label(IdentifierType.GENERIC.name()).value(code).build()),
 				getArgs(UPCA_CODES, (code)->UPC_A.builder().label("test").value(code).build()),
 				getArgs(UPCE_CODES, (code)->UPC_E.builder().label("test").value(code).build()),
 				getArgs(ISBN13_CODES, (code)->ISBN_13.builder().label("test").value(code).build()),
@@ -116,7 +116,7 @@ public abstract class CodeUtilTestBase {
 				getArgs(EAN13_CODES, (code)->EAN_13.builder().label("test").value(code).build()),
 				getArgs(EAN8_CODES, (code)->EAN_8.builder().label("test").value(code).build()),
 				getArgs(GTIN14_CODES, (code)->GTIN_14.builder().label("test").value(code).build()),
-				getArgs(GENERIC_IDENTIFIERS, (code)->Generic.builder().label("test").value(code).build())
+				getArgs(GENERIC_IDENTIFIERS, (code)->GenericIdentifier.builder().label("test").value(code).build())
 			).reduce(Stream::concat)
 				   .orElseGet(Stream::empty);
 	}

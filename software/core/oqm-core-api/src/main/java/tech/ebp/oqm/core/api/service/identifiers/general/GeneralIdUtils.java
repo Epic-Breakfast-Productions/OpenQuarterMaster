@@ -1,15 +1,15 @@
 package tech.ebp.oqm.core.api.service.identifiers.general;
 
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.ean.EAN_13;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.ean.EAN_8;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.Generic;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.gtin.GTIN_14;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.isbn.ISBN_10;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.isbn.ISBN_13;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.UPC_A;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.upc.UPC_E;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.ean.EAN_13;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.ean.EAN_8;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.gtin.GTIN_14;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.isbn.ISBN_10;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.isbn.ISBN_13;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.upc.UPC_A;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.upc.UPC_E;
 import tech.ebp.oqm.core.api.service.identifiers.general.upc.EANCodeUtilities;
 import tech.ebp.oqm.core.api.service.identifiers.general.upc.GTINCodeUtilities;
 import tech.ebp.oqm.core.api.service.identifiers.general.upc.ISBNCodeUtilities;
@@ -22,7 +22,7 @@ import tech.ebp.oqm.core.api.service.identifiers.general.upc.UpcCodeUtilities;
  */
 public class GeneralIdUtils {
 	
-	public static GeneralId determineGeneralIdType(String code) {
+	public static Identifier determineGeneralIdType(String code) {
 		if(UpcCodeUtilities.isValidUPCACode(code)){
 			return UPC_A.builder().value(code).build();
 		}
@@ -45,13 +45,13 @@ public class GeneralIdUtils {
 			return GTIN_14.builder().value(code).build();
 		}
 		if(GenericIdUtils.isValidGenericId(code)) {
-			return Generic.builder().value(code).build();
+			return GenericIdentifier.builder().value(code).build();
 		}
 		
 		throw new IllegalArgumentException("Code given does not fit into any category of id.");
 	}
 	
-	public static boolean isValidCode(GeneralIdType type, String code) {
+	public static boolean isValidCode(IdentifierType type, String code) {
 		switch (type){
 			case UPC_A -> {
 				return UpcCodeUtilities.isValidUPCACode(code);
@@ -81,7 +81,7 @@ public class GeneralIdUtils {
 		throw new IllegalArgumentException("Unknown id type: " + type);
 	}
 	
-	public static GeneralId objFromParts(GeneralIdType type, String code) {
+	public static Identifier objFromParts(IdentifierType type, String code) {
 		switch (type){
 			case UPC_A -> {
 				if(UpcCodeUtilities.isValidUPCACode(code)){
@@ -127,7 +127,7 @@ public class GeneralIdUtils {
 			}
 			case GENERIC -> {
 				if(GenericIdUtils.isValidGenericId(code)) {
-					return Generic.builder().value(code).build();
+					return GenericIdentifier.builder().value(code).build();
 				}
 				throw new IllegalArgumentException("Invalid generic code: " + code);
 			}

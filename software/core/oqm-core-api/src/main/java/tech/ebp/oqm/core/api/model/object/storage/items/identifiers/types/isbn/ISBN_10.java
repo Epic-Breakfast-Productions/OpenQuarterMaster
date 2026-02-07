@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.isbn;
+package tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.isbn;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -8,8 +8,8 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
 import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidISBN10;
 
 @Data
@@ -18,7 +18,7 @@ import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidISBN1
 @SuperBuilder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-public class ISBN_10 extends GeneralId {
+public class ISBN_10 extends Identifier {
 	
 	@NonNull
 	@NotNull
@@ -26,7 +26,7 @@ public class ISBN_10 extends GeneralId {
 	private String value;
 	
 	@Override
-	public GeneralIdType getType() {
-		return GeneralIdType.ISBN_10;
+	public IdentifierType getType() {
+		return IdentifierType.ISBN_10;
 	}
 }

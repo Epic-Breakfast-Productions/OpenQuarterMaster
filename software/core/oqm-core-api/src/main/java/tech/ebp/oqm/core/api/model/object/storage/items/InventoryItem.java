@@ -12,11 +12,9 @@ import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.info.AssociatedLink;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.ItemNotificationStatus;
-import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
@@ -30,11 +28,8 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 /**
@@ -81,16 +76,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NotNull
 	@lombok.Builder.Default
 	@UniqueLabeledCollection
-	private LinkedHashSet<@NotNull GeneralId> generalIds = new LinkedHashSet<>();
-	
-	/**
-	 * Unique ID's for this particular item.
-	 */
-	@NonNull
-	@NotNull
-	@lombok.Builder.Default
-	@UniqueLabeledCollection
-	private LinkedHashSet<@NotNull UniqueId> uniqueIds = new LinkedHashSet<>();
+	private LinkedHashSet<@NotNull Identifier> identifiers = new LinkedHashSet<>();
 	
 	/**
 	 * ID generators for this particular item's stored.

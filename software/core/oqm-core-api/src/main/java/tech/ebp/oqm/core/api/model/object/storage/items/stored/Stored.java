@@ -7,11 +7,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -19,36 +17,28 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.Labeled;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.StoredNotificationStatus;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricing;
-import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
-import tech.ebp.oqm.core.api.model.object.storage.items.pricing.TotalPricing;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.model.validation.annotations.UniqueLabeledCollection;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidStoredLabelFormat;
 
 import javax.measure.Quantity;
-import java.awt.*;
-import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
@@ -194,29 +184,27 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 							stored.getExpires().format(formatter)
 						);
 						break;
-					case "gid":
-					case "uid":
+					case "ident":
 					case "price":
 						if (args.length != 1) {
-							throw new IllegalArgumentException("Must specify exactly one argument for 'gid' and 'uid'.");
+							throw new IllegalArgumentException("Must specify exactly one argument for 'ident', and 'price'.");
 						}
 						
 						String label = args[0];
 						Optional<Labeled> foundLabel = Labeled.findLabeledInSet(
 							label,
 							(Collection<Labeled>) switch (placeholderType) {
-								case "gid" -> stored.getGeneralIds();
-								case "uid" -> stored.getUniqueIds();
+								case "ident" -> stored.getIdentifiers();
 								case "price" -> stored.getCalculatedPrices();
-								default -> new ArrayList<Identifier>(0);
+								default -> new ArrayList<GenericIdentifier>(0);
 							}
 						);
 						
 						if (foundLabel.isPresent()) {
 							Labeled cur = foundLabel.get();
 							
-							if (cur instanceof Identifier) {
-								sb.append(((Identifier) cur).getValue());
+							if (cur instanceof GenericIdentifier) {
+								sb.append(((GenericIdentifier) cur).getValue());
 							} else if (cur instanceof CalculatedPricing) {
 								sb.append(((CalculatedPricing) cur).getTotalPriceString());
 							}
@@ -270,16 +258,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	@UniqueLabeledCollection
-	private LinkedHashSet<@NotNull GeneralId> generalIds = new LinkedHashSet<>();
-	
-	/**
-	 * Unique ID's for this particular item.
-	 */
-	@NonNull
-	@NotNull
-	@lombok.Builder.Default
-	@UniqueLabeledCollection
-	private LinkedHashSet<@NotNull UniqueId> uniqueIds = new LinkedHashSet<>();
+	private LinkedHashSet<@NotNull Identifier> identifiers = new LinkedHashSet<>();
 	
 	/**
 	 * When the item(s) held expire. Null if it does not expire.

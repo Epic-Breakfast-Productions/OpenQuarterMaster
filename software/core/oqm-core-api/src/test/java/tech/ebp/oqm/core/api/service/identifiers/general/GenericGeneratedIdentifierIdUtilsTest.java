@@ -9,7 +9,7 @@ import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-class GenericIdUtilsTest extends CodeUtilTestBase {
+class GenericGeneratedIdentifierIdUtilsTest extends CodeUtilTestBase {
 	private static Stream<Arguments> genericValid() {
 		return validCodes(GENERIC_IDENTIFIERS);
 	}

@@ -2,9 +2,8 @@ package tech.ebp.oqm.core.api.service.identifiers.general;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
 import tech.ebp.oqm.core.api.service.identifiers.IdBarcodeService;
 import uk.org.okapibarcode.backend.Code128;
 import uk.org.okapibarcode.backend.Code2Of5;
@@ -12,11 +11,6 @@ import uk.org.okapibarcode.backend.Ean;
 import uk.org.okapibarcode.backend.HumanReadableLocation;
 import uk.org.okapibarcode.backend.Symbol;
 import uk.org.okapibarcode.backend.Upc;
-import uk.org.okapibarcode.graphics.Color;
-import uk.org.okapibarcode.output.SvgRenderer;
-
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 
 /**
  * Service to generate barcode images.
@@ -28,7 +22,7 @@ import java.io.IOException;
 @ApplicationScoped
 public class GeneralIdBarcodeService extends IdBarcodeService {
 	
-	public String getGeneralIdData(GeneralIdType type, String data, String label){
+	public String getGeneralIdData(IdentifierType type, String data, String label){
 		String dataIn = data;
 		int hQuietZone = 10;
 		
@@ -110,7 +104,7 @@ public class GeneralIdBarcodeService extends IdBarcodeService {
 		);
 	}
 	
-	public String getGeneralIdData(GeneralId identifier){
+	public String getGeneralIdData(Identifier identifier){
 		return this.getGeneralIdData(identifier.getType(), identifier.getValue(), identifier.getLabel());
 	}
 	

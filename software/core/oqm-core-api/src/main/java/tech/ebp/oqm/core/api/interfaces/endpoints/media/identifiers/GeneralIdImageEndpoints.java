@@ -15,8 +15,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralIdType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 import tech.ebp.oqm.core.api.service.identifiers.general.GeneralIdBarcodeService;
 import tech.ebp.oqm.core.api.service.identifiers.general.GeneralIdUtils;
@@ -44,7 +44,7 @@ public class GeneralIdImageEndpoints extends EndpointProvider {
 	)
 	@Produces(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
 	public Response getBarcode(
-		@PathParam("type") GeneralIdType type,
+		@PathParam("type") IdentifierType type,
 		@PathParam("value") String data,
 		@PathParam("label") String label
 	) {
@@ -68,12 +68,12 @@ public class GeneralIdImageEndpoints extends EndpointProvider {
 	)
 	@Produces(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
 	public Response getBarcode(
-		GeneralId generalId
+		Identifier identifier
 	) {
 		return this.getBarcode(
-			generalId.getType(),
-			generalId.getValue(),
-			generalId.getLabel()
+			identifier.getType(),
+			identifier.getValue(),
+			identifier.getLabel()
 		);
 	}
 }

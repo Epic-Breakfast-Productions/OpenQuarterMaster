@@ -3,11 +3,9 @@ package tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.inventoryItem.b
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 import tech.ebp.oqm.core.api.model.object.upgrade.SingleUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeCreatedObjectsResults;
 import tech.ebp.oqm.core.api.service.identifiers.general.GeneralIdUtils;
@@ -17,12 +15,6 @@ import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.UpgradingUtils;
 import javax.measure.Quantity;
 import javax.measure.Unit;
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Spliterator;
-import java.util.Spliterators;
-import java.util.stream.StreamSupport;
 
 public class InvItemBumper3 extends ObjectSchemaVersionBumper<InventoryItem> {
 	
@@ -44,8 +36,8 @@ public class InvItemBumper3 extends ObjectSchemaVersionBumper<InventoryItem> {
 			ArrayNode generalIds = oldObj.putArray("generalIds");
 			
 			if (oldBarcode != null && !oldBarcode.isBlank()) {
-				GeneralId generalId = GeneralIdUtils.determineGeneralIdType(oldBarcode);
-				generalIds.add(ObjectUtils.OBJECT_MAPPER.valueToTree(generalId));
+				Identifier identifier = GeneralIdUtils.determineGeneralIdType(oldBarcode);
+				generalIds.add(ObjectUtils.OBJECT_MAPPER.valueToTree(identifier));
 			}
 		}
 		oldObj.remove("barcode");

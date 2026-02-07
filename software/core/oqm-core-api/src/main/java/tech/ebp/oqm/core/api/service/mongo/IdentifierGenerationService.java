@@ -9,9 +9,9 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Generated;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralGeneratedId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated.Generated;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated.GeneratedIdentifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.Generates;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.ToGenerate;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
@@ -261,7 +261,7 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 		return IdentifierGenerator.CUR_SCHEMA_VERSION;
 	}
 	
-	private <T extends Identifier & Generated> T getIdObjectFromNewValue(IdentifierGenerator generator, String newVal) {
+	private <T extends GenericIdentifier & Generated> T getIdObjectFromNewValue(IdentifierGenerator generator, String newVal) {
 		//noinspection unchecked
 		return (T) switch (generator.getGenerates()) {
 			case UNIQUE -> GeneratedUniqueId.builder()
@@ -270,7 +270,7 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 							   .value(newVal)
 							   .barcode(generator.isBarcode())
 							   .build();
-			case GENERAL -> GeneralGeneratedId.builder()
+			case GENERAL -> GeneratedIdentifier.builder()
 								.label(generator.getLabel())
 								.generatedFrom(generator.getId())
 								.value(newVal)
@@ -294,7 +294,7 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 		
 		IdGenResult<?> output = switch (gen.getGenerates()){
 			case UNIQUE -> new IdGenResult<GeneratedUniqueId>();
-			case GENERAL -> new IdGenResult<GeneralGeneratedId>();
+			case GENERAL -> new IdGenResult<GeneratedIdentifier>();
 		};
 		
 		log.debug("Getting next id from generator: {}", gen.getId());
@@ -356,7 +356,7 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 	}
 	
 	
-	public <I extends Identifier> LinkedHashSet<I> replaceIdPlaceholders(String oqmDbIdOrName, Set<I> identifiers){
+	public <I extends GenericIdentifier> LinkedHashSet<I> replaceIdPlaceholders(String oqmDbIdOrName, Set<I> identifiers){
 		log.debug("Generating placeholders for identifiers: {}.", identifiers);
 		LinkedHashSet<I> output = new LinkedHashSet<>(identifiers.size());
 		
