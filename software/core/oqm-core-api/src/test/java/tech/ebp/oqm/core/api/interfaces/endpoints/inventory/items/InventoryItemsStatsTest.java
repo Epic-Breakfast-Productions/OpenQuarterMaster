@@ -184,8 +184,60 @@ class InventoryItemsStatsTest extends RunningServerTest {
 	}
 	
 	
+	@Test
+	public void testItemStatsItemUpdateNoStored() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser();
+		
+		StorageBlock block = OBJECT_MAPPER.readValue(
+			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+				.body(OBJECT_MAPPER.writeValueAsString(testBlockCreator.getTestObject()))
+				.contentType(ContentType.JSON)
+				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/storage-block")
+				.then().statusCode(200)
+				.extract().body().asString(),
+			StorageBlock.class
+		);
+		
+		InventoryItem item = OBJECT_MAPPER.readValue(
+			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+				.body(
+					OBJECT_MAPPER.writeValueAsString(
+						testObjectCreator.getTestObject()
+							.setStorageType(StorageType.AMOUNT_LIST)
+							.setStorageBlocks(new LinkedHashSet<>() {{add(block.getId());}})
+					)
+				)
+				.contentType(ContentType.JSON)
+				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item")
+				.then().statusCode(200)
+				.extract().body().asString(),
+			InventoryItem.class
+		);
+		
+		//TODO:: send update to unit
+		
+		item = OBJECT_MAPPER.readValue(
+			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+				.contentType(ContentType.JSON)
+				.get("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item/" + item.getId())
+				.then().statusCode(200)
+				.extract().body().asString(),
+			InventoryItem.class
+		);
+		
+		ItemStoredStats itemStats = item.getStats();
+		
+		assertEquals(0, itemStats.getNumStored());
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), itemStats.getTotal());
+		assertTrue(itemStats.getStorageBlockStats().containsKey(block.getId()));
+		
+		
+		StoredInBlockStats blockStats = itemStats.getStorageBlockStats().get(block.getId());
+		
+		assertFalse(blockStats.isHasStored());
+	}
 	
-	//TODO:: test stats, update item, no stored
+	
 	//TODO:: test stats, update item, stored
 	//TODO:: test stats, update stored; non-triggering
 	//TODO:: test stats, update stored; unit
