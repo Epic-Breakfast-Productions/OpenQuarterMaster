@@ -92,10 +92,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 *         exp: {@code {exp;<datetime format>}}- Writes out the expiration for this stored. Format should match standard Java datetime syntax. Default format is {@code MM/dd/yyyy}
 	 *     </li>
 	 *     <li>
-	 *         gid: {@code {gid;<name of general identifier>}}- Use a general identifier value.
-	 *     </li>
-	 *     <li>
-	 *         uid: {@code {uid;<name of unique identifier>}}- Use a unique identifier value.
+	 *         ident: {@code {ident;<name of general identifier>}}- Use an identifier value.
 	 *     </li>
 	 *     <li>
 	 *         price: {@code {price;<name of calculated price>}}- Use a price value. Does not include price label.

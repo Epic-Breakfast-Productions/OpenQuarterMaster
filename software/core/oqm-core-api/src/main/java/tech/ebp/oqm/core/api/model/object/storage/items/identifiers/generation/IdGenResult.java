@@ -5,17 +5,18 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated.Generated;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated.GeneratedIdentifier;
 
 import java.util.LinkedHashSet;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class IdGenResult<T extends GenericIdentifier & Generated> {
+public class IdGenResult {
 	
-	private LinkedHashSet<T> generatedIds = new LinkedHashSet<>();
+	private LinkedHashSet<GeneratedIdentifier> generatedIds = new LinkedHashSet<>();
 	
-	public boolean addGeneratedId(T id) {
+	public boolean addGeneratedId(GeneratedIdentifier id) {
 		return this.generatedIds.add(id);
 	}
 }
