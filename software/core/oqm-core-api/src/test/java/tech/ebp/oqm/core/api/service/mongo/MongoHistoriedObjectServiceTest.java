@@ -87,7 +87,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest implements Kafka
 		assertEquals("TestMainObject", createEventFromMessage.getObjectName());
 		assertEquals(createEvent, createEventFromMessage.getEvent());
 
-		// TODO: more when we want to
+		// TODO: more when we want to #1080
 //		ConsumerTask<String, String> createFromAllInDb = this.kafkaCompanion.consumeStrings().fromTopics(
 //			HistoryEventNotificationService.TOPIC_PREPEND + this.oqmDatabaseService.getDatabaseCache().getFromName(DEFAULT_TEST_DB_NAME).get().getDbId().toHexString() + "-" + HistoryEventNotificationService.ALL_EVENT_TOPIC_LABEL,
 //			1

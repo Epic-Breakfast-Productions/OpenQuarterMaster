@@ -55,7 +55,7 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 			return;
 		}
 		//force getting around Arc subclassing out the injected class
-		CoreApiInteractingEntity coreApiInteractingEntity = new CoreApiInteractingEntity(coreApiInteractingEntityArc.getEmail());
+		CoreApiInteractingEntity coreApiInteractingEntity = new CoreApiInteractingEntity();
 		//ensure we have the base station in the db
 		CoreApiInteractingEntity gotten = (CoreApiInteractingEntity) this.get(coreApiInteractingEntity.getId());
 		if (gotten == null) {
