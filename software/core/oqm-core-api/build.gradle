@@ -2,12 +2,13 @@ plugins {
 	id 'java'
 	id 'io.quarkus'
 	id "io.freefair.lombok" version "9.2.0"
+	id 'jacoco'
 	id 'org.cyclonedx.bom' version '2.3.1'
 	id("org.spdx.sbom") version "0.9.0"
 }
 
 group 'com.ebp.openQuarterMaster'
-version '4.3.1-DEV'
+version '4.3.1'
 
 repositories {
 	mavenCentral()
@@ -96,6 +97,16 @@ test {
 		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
 	)
 	testLogging.showStandardStreams = true
+	finalizedBy jacocoTestReport
+	jacoco {
+		excludeClassLoaders = ["*QuarkusClassLoader"]
+		destinationFile = layout.buildDirectory.file("jacoco-quarkus.exec").get().asFile
+	}
+	jacocoTestReport.enabled = false
+}
+
+check {
+	finalizedBy quarkusIntTest
 }
 
 // https://github.com/CycloneDX/cyclonedx-gradle-plugin
