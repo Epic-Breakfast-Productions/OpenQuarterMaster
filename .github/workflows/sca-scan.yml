@@ -15,8 +15,8 @@ jobs:
 
     - name: Run Trivy vulnerability scanner in fs mode
       uses: aquasecurity/trivy-action@0.33.1
-      working-directory: software/core/oqm-core-api
+      # working-directory: software/core/oqm-core-api
       with:
         scan-type: 'fs'
-        scan-ref: '.'
+        scan-ref: 'software/core/oqm-core-api'
         trivy-config: trivy.yaml
