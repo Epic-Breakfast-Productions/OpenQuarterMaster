@@ -1,0 +1,22 @@
+name: Trivy Scan
+on:
+  push:
+    branches:
+    - main
+  pull_request:
+  workflow_dispatch:
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run Trivy vulnerability scanner in fs mode
+      uses: aquasecurity/trivy-action@0.33.1
+      working-directory: software/core/oqm-core-api
+      with:
+        scan-type: 'fs'
+        scan-ref: '.'
+        trivy-config: trivy.yaml
