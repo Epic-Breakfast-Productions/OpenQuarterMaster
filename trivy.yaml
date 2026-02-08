@@ -1,4 +1,4 @@
-format: github
+format: sarif
 # exit-code: 1
 severity: CRITICAL
 # secret:
