@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.identifiers.general;
+package tech.ebp.oqm.core.api.service.identifiers;
 
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @QuarkusTest
-class GeneratedIdentifierBarcodeServiceTest extends CodeUtilTestBase {
+class IdentifierBarcodeServiceTest extends CodeUtilTestBase {
 	
 	private static void writeToFile(String data, String dir, String fileName) {
 		Path outputPath = Path.of(
@@ -39,13 +39,13 @@ class GeneratedIdentifierBarcodeServiceTest extends CodeUtilTestBase {
 	}
 	
 	@Inject
-	GeneralIdBarcodeService generalIdBarcodeService;
+	IdentifierBarcodeService identifierBarcodeService;
 	
 	@ParameterizedTest
 	@MethodSource("getCodes")
 	public void generalIdBarcodeGenTest(String code, Identifier identifier) {
 		StopWatch sw = StopWatch.createStarted();
-		String data = generalIdBarcodeService.getGeneralIdData(identifier);
+		String data = identifierBarcodeService.getGeneralIdData(identifier);
 		sw.stop();
 		log.info("Generated barcode for {} in {}", identifier, sw);
 		

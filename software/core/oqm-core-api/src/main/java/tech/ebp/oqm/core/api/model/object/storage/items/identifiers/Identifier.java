@@ -54,12 +54,6 @@ public abstract class Identifier implements Labeled {
 	@lombok.Builder.Default
 	private boolean unique = true;
 	
-	/**
-	 * Abstract to allow attachment of appropriate validation annotation
-	 * TODO:: move to this class level annotation, switch case based on type?
-	 *
-	 * @return
-	 */
 	public abstract IdentifierType getType();
 	
 	public abstract String getValue();
@@ -67,5 +61,12 @@ public abstract class Identifier implements Labeled {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isBarcode() {
 		return this.getType().isBarcode;
+	}
+	
+	public String getLabel(){
+		if(this.label == null){
+			return this.getType().prettyName();
+		}
+		return this.label;
 	}
 }

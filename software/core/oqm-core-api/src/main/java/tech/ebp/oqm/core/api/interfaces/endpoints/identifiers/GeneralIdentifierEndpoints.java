@@ -16,7 +16,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
-import tech.ebp.oqm.core.api.service.identifiers.general.GeneralIdUtils;
+import tech.ebp.oqm.core.api.service.identifiers.IdentifierUtils;
 
 @Slf4j
 @Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/identifiers/general")
@@ -45,7 +45,7 @@ public class GeneralIdentifierEndpoints extends EndpointProvider {
 	) {
 		try{
 			return Response.ok(
-				GeneralIdUtils.objFromParts(type, code)
+				IdentifierUtils.objFromParts(type, code)
 			).build();
 		} catch(IllegalArgumentException e){
 			return Response.status(Response.Status.BAD_REQUEST).entity(e.getMessage()).build();
@@ -66,7 +66,7 @@ public class GeneralIdentifierEndpoints extends EndpointProvider {
 	public Identifier getIdObject(
 		@PathParam("identifier") String code
 	) {
-		return GeneralIdUtils.determineGeneralIdType(code);
+		return IdentifierUtils.determineGeneralIdType(code);
 	}
 	
 }

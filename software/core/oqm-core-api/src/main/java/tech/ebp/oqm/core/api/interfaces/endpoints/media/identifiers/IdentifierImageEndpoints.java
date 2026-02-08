@@ -15,25 +15,26 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
-import tech.ebp.oqm.core.api.service.identifiers.general.GeneralIdBarcodeService;
-import tech.ebp.oqm.core.api.service.identifiers.unique.UniqueIdBarcodeService;
+import tech.ebp.oqm.core.api.service.identifiers.IdentifierBarcodeService;
+import tech.ebp.oqm.core.api.service.identifiers.IdentifierUtils;
 
 /**
  */
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/media/code/identifier/unique")
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/media/code/identifier/")
 @Tags({@Tag(name = "Media", description = "Endpoints for media CRUD")})
 @RolesAllowed(Roles.INVENTORY_VIEW)
 @RequestScoped
-public class UniqueIdImageEndpoints extends EndpointProvider {
+public class IdentifierImageEndpoints extends EndpointProvider {
 	
 	@Inject
-	UniqueIdBarcodeService uniqueIdBarcodeService;
+	IdentifierBarcodeService identifierBarcodeService;
 	
 	@GET
-	@Path("{value}/{label}")
+	@Path("{type}/{value}/{label}")
 	@Operation(
 		summary = "A barcode that represents the string given."
 	)
@@ -41,33 +42,38 @@ public class UniqueIdImageEndpoints extends EndpointProvider {
 		responseCode = "200",
 		description = "Got the currency."
 	)
-	@Produces(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
+	@Produces(IdentifierBarcodeService.DATA_MEDIA_TYPE)
 	public Response getBarcode(
+		@PathParam("type") IdentifierType type,
 		@PathParam("value") String data,
 		@PathParam("label") String label
 	) {
-		log.info("Getting barcode for unique id value: {}", data);
-		
+		log.info("Getting {} barcode.", type);
+		if(!IdentifierUtils.isValidCode(type, data)){
+			return Response.status(Response.Status.BAD_REQUEST).entity("Value not a valid " + type).build();
+		}
 		return Response.status(Response.Status.OK)
-				   .entity(this.uniqueIdBarcodeService.getUniqueIdData(data, label))
+				   .entity(this.identifierBarcodeService.getGeneralIdData(type, data, label))
 				   .header("Content-Disposition", "attachment;filename="+label+"_"+data+".svg")
-				   .type(UniqueIdBarcodeService.DATA_MEDIA_TYPE)
+				   .type(IdentifierBarcodeService.DATA_MEDIA_TYPE)
 				   .build();
 	}
 	
 	@POST
 	@Operation(
-		summary = "A barcode that represents the string given."
+		summary = "A barcode that represents the general id given."
 	)
 	@APIResponse(
 		responseCode = "200"
 	)
-	@Produces(GeneralIdBarcodeService.DATA_MEDIA_TYPE)
+	@Produces(IdentifierBarcodeService.DATA_MEDIA_TYPE)
 	public Response getBarcode(
-		UniqueId id
+		Identifier identifier
 	) {
-		log.info("Getting barcode for unique id: {}", id);
-		return this.getBarcode(id.getValue(), id.getLabel());
+		return this.getBarcode(
+			identifier.getType(),
+			identifier.getValue(),
+			identifier.getLabel()
+		);
 	}
-	
 }

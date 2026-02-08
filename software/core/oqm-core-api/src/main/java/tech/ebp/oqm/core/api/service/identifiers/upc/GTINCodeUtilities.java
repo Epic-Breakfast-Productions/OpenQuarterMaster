@@ -1,5 +1,5 @@
 
-package tech.ebp.oqm.core.api.service.identifiers.general.upc;
+package tech.ebp.oqm.core.api.service.identifiers.upc;
 
 import lombok.NonNull;
 

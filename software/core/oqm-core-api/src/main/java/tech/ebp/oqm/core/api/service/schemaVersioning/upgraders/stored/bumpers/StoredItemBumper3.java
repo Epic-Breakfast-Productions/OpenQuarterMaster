@@ -7,7 +7,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.upgrade.SingleUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeCreatedObjectsResults;
-import tech.ebp.oqm.core.api.service.identifiers.general.GeneralIdUtils;
+import tech.ebp.oqm.core.api.service.identifiers.IdentifierUtils;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectSchemaVersionBumper;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.UpgradingUtils;
 
@@ -31,7 +31,7 @@ public class StoredItemBumper3 extends ObjectSchemaVersionBumper<Stored> {
 			ArrayNode generalIds = oldObj.putArray("generalIds");
 			
 			if (oldBarcode != null && !oldBarcode.isBlank()) {
-				Identifier identifier = GeneralIdUtils.determineGeneralIdType(oldBarcode);
+				Identifier identifier = IdentifierUtils.determineGeneralIdType(oldBarcode);
 				generalIds.add(ObjectUtils.OBJECT_MAPPER.valueToTree(identifier));
 			}
 		}

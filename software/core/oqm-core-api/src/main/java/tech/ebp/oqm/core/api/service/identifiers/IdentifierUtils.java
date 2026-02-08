@@ -1,5 +1,6 @@
-package tech.ebp.oqm.core.api.service.identifiers.general;
+package tech.ebp.oqm.core.api.service.identifiers;
 
+import lombok.NonNull;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.ean.EAN_13;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.ean.EAN_8;
@@ -10,17 +11,17 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.isbn.I
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.isbn.ISBN_13;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.upc.UPC_A;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.upc.UPC_E;
-import tech.ebp.oqm.core.api.service.identifiers.general.upc.EANCodeUtilities;
-import tech.ebp.oqm.core.api.service.identifiers.general.upc.GTINCodeUtilities;
-import tech.ebp.oqm.core.api.service.identifiers.general.upc.ISBNCodeUtilities;
-import tech.ebp.oqm.core.api.service.identifiers.general.upc.UpcCodeUtilities;
+import tech.ebp.oqm.core.api.service.identifiers.upc.EANCodeUtilities;
+import tech.ebp.oqm.core.api.service.identifiers.upc.GTINCodeUtilities;
+import tech.ebp.oqm.core.api.service.identifiers.upc.ISBNCodeUtilities;
+import tech.ebp.oqm.core.api.service.identifiers.upc.UpcCodeUtilities;
 
 
 /**
  *
  * https://www.computalabel.com/m/UPCexamplesM.htm
  */
-public class GeneralIdUtils {
+public class IdentifierUtils {
 	
 	public static Identifier determineGeneralIdType(String code) {
 		if(UpcCodeUtilities.isValidUPCACode(code)){
@@ -44,7 +45,7 @@ public class GeneralIdUtils {
 		if(GTINCodeUtilities.isValidGTIN14Code(code)) {
 			return GTIN_14.builder().value(code).build();
 		}
-		if(GenericIdUtils.isValidGenericId(code)) {
+		if(isValidGenericId(code)) {
 			return GenericIdentifier.builder().value(code).build();
 		}
 		
@@ -75,7 +76,7 @@ public class GeneralIdUtils {
 				return GTINCodeUtilities.isValidGTIN14Code(code);
 			}
 			case GENERIC -> {
-				return GenericIdUtils.isValidGenericId(code);
+				return isValidGenericId(code);
 			}
 		}
 		throw new IllegalArgumentException("Unknown id type: " + type);
@@ -126,12 +127,16 @@ public class GeneralIdUtils {
 				throw new IllegalArgumentException("Invalid GTIN-14 code: " + code);
 			}
 			case GENERIC -> {
-				if(GenericIdUtils.isValidGenericId(code)) {
+				if(isValidGenericId(code)) {
 					return GenericIdentifier.builder().value(code).build();
 				}
 				throw new IllegalArgumentException("Invalid generic code: " + code);
 			}
 		}
 		throw new IllegalArgumentException("Unknown id type: " + type);
+	}
+	
+	public static boolean isValidGenericId(@NonNull String id) {
+		return !id.isBlank();
 	}
 }

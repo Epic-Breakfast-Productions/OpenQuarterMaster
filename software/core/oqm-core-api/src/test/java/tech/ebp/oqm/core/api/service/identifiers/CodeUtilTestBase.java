@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.identifiers.general;
+package tech.ebp.oqm.core.api.service.identifiers;
 
 import org.junit.jupiter.params.provider.Arguments;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;

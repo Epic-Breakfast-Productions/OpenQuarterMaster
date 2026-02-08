@@ -1,9 +1,9 @@
-package tech.ebp.oqm.core.api.service.identifiers.general.upc;
+package tech.ebp.oqm.core.api.service.identifiers.upc;
 
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import tech.ebp.oqm.core.api.service.identifiers.general.CodeUtilTestBase;
+import tech.ebp.oqm.core.api.service.identifiers.CodeUtilTestBase;
 
 import java.util.stream.Stream;
 
