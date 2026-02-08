@@ -18,5 +18,5 @@ jobs:
       # working-directory: software/core/oqm-core-api
       with:
         scan-type: 'fs'
-        scan-ref: '.'
+        scan-ref: './software/core/oqm-core-api'
         trivy-config: trivy.yaml
