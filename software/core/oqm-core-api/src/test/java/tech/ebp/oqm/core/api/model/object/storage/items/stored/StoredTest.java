@@ -7,8 +7,6 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ProvidedUniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricing;
 import tech.ebp.oqm.core.api.model.testUtils.BasicTest;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
@@ -32,13 +30,6 @@ public class StoredTest extends BasicTest {
 		LinkedHashSet<Identifier> identifiers = new LinkedHashSet<>(){{
 			add(gid);
 		}};
-		UniqueId uid = ProvidedUniqueId.builder()
-							.label(FAKER.name().name())
-							.value(FAKER.idNumber().valid())
-							.build();
-		LinkedHashSet<UniqueId> uniqueIds = new LinkedHashSet<>(){{
-			add(uid);
-		}};
 		CalculatedPricing pricing = CalculatedPricing.builder()
 										.label(FAKER.name().name())
 										.flatPrice(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create())
@@ -61,7 +52,6 @@ public class StoredTest extends BasicTest {
 											.storageBlock(ObjectId.get())
 											.amount(UnitUtils.Quantities.UNIT_ONE)
 											.identifiers(identifiers)
-											.uniqueIds(uniqueIds)
 											.calculatedPrices(pricingSet)
 											.attributes(atts)
 											.condition(condition)
@@ -88,11 +78,8 @@ public class StoredTest extends BasicTest {
 			Arguments.of(fullAmountStored, "{exp;LLL/yyyy}", "Dec/2007"),
 			Arguments.of(fullUniqueStored, "{exp}", "-"),
 			//general Ids
-			Arguments.of(fullAmountStored, "{gid;"+gid.getLabel()+"}", gid.getValue()),
-			Arguments.of(fullAmountStored, "{gid;foo}", "#E#"),
-			//unique Ids
-			Arguments.of(fullAmountStored, "{uid;"+uid.getLabel()+"}", uid.getValue()),
-			Arguments.of(fullAmountStored, "{uid;foo}", "#E#"),
+			Arguments.of(fullAmountStored, "{ident;"+gid.getLabel()+"}", gid.getValue()),
+			Arguments.of(fullAmountStored, "{ident;foo}", "#E#"),
 			//Pricing
 			Arguments.of(fullAmountStored, "{price;"+pricing.getLabel()+"}", "$1.00"),
 			Arguments.of(fullAmountStored, "{price;foo}", "#E#"),
@@ -102,12 +89,11 @@ public class StoredTest extends BasicTest {
 			//combined
 			Arguments.of(
 				fullAmountStored,
-				"-{id} - {amt} - {cnd} - {gid;"+gid.getLabel()+"} - {uid;"+uid.getLabel()+"} - {price;"+pricing.getLabel()+"} - {att;"+att+"}",
+				"-{id} - {amt} - {cnd} - {gid;"+gid.getLabel()+"} - {price;"+pricing.getLabel()+"} - {att;"+att+"}",
 				"-" + fullAmountStored.getId().toHexString() +
 				" - 1 units" +
 				" - 20%" +
 				" - " + gid.getValue() +
-				" - " + uid.getValue() +
 				" - $1.00" +
 				" - " + atts.get(att)
 			)

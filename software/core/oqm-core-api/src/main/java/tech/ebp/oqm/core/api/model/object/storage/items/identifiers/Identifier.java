@@ -11,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.jetbrains.annotations.NotNull;
 import tech.ebp.oqm.core.api.model.object.Labeled;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
@@ -46,13 +47,14 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.upc.UP
 @BsonDiscriminator
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class Identifier implements Labeled {
+public abstract class Identifier implements Labeled, Comparable<Identifier> {
 	
 	@lombok.Builder.Default
 	private String label = null;
 	
-	@lombok.Builder.Default
-	private boolean unique = true;
+	//TODO:: contemplate
+	//	@lombok.Builder.Default
+	//	private boolean unique = true;
 	
 	public abstract IdentifierType getType();
 	
@@ -63,10 +65,34 @@ public abstract class Identifier implements Labeled {
 		return this.getType().isBarcode;
 	}
 	
-	public String getLabel(){
-		if(this.label == null){
+	public String getLabel() {
+		if (this.label == null) {
 			return this.getType().prettyName();
 		}
 		return this.label;
+	}
+	
+	@Override
+	public int compareTo(@NotNull Identifier identifier) {
+		{
+			int typeComp = this.getType().compareTo(identifier.getType());
+			if (typeComp != 0) {
+				return typeComp;
+			}
+		}
+		{
+			int labelComp = this.getLabel().compareTo(identifier.getLabel());
+			if (labelComp != 0) {
+				return labelComp;
+			}
+		}
+		{
+			int valueComp = this.getValue().compareTo(identifier.getValue());
+			if (valueComp != 0) {
+				return valueComp;
+			}
+		}
+		
+		return 0;
 	}
 }
