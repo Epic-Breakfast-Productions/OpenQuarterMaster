@@ -25,6 +25,5 @@ public class InventoryItemSearch extends SearchKeyAttObject {
 	@QueryParam("hasNoExpiryWarn") Boolean hasNoExpiryWarn;
 	@QueryParam("hasLowStock") Boolean hasLowStock;
 	@QueryParam("hasNoLowStock") Boolean hasNoLowStock;
-	@QueryParam("generalId") String generalId;
-	@QueryParam("uniqueId") String uniqueId;
+	@QueryParam("identifier") List<String> identifiers;
 }
