@@ -65,8 +65,12 @@ public abstract class Identifier implements Labeled, Comparable<Identifier> {
 		return this.getType().isBarcode;
 	}
 	
+	public boolean hasLabel() {
+		return this.label != null;
+	}
+	
 	public String getLabel() {
-		if (this.label == null) {
+		if (!this.hasLabel()) {
 			return this.getType().prettyName();
 		}
 		return this.label;

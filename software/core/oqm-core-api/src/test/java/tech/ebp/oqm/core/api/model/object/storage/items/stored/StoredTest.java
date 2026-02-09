@@ -89,7 +89,7 @@ public class StoredTest extends BasicTest {
 			//combined
 			Arguments.of(
 				fullAmountStored,
-				"-{id} - {amt} - {cnd} - {gid;"+gid.getLabel()+"} - {price;"+pricing.getLabel()+"} - {att;"+att+"}",
+				"-{id} - {amt} - {cnd} - {ident;"+gid.getLabel()+"} - {price;"+pricing.getLabel()+"} - {att;"+att+"}",
 				"-" + fullAmountStored.getId().toHexString() +
 				" - 1 units" +
 				" - 20%" +

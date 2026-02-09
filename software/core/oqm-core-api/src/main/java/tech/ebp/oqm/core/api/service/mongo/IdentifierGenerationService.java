@@ -350,7 +350,7 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 				
 //				generatedId.setUnique(curId.isUnique());
 				
-				if(curId.getLabel() != null ){
+				if(curId.hasLabel()){
 					generatedId.setLabel(curId.getLabel());
 				}
 				

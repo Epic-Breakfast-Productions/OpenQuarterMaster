@@ -43,7 +43,7 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 @QuarkusTest
-class GenericGeneratedIdentifierGenerationServiceTest extends RunningServerTest {
+class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 	
 	@Inject
 	IdentifierGenerationService identifierGenerationService;
