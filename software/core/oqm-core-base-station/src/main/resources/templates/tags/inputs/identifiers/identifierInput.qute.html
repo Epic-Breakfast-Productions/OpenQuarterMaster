@@ -1,7 +1,36 @@
-<div class="input-group input-group-sm">
-	<button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#codeScannerModal" title="Click to open a scan window">{#icons/barcode /}</button>
-	<input type="text" class="form-control generalIdNewInput" placeholder="UPC, ISBN..." id="{id}" name="{#if name??}{name}{/if}" aria-describedby="{id}Help" onkeydown="if(event.keyCode === 13) { {#if showAdd.or(true)} {idClass}.addIdentifier({idClass}.getInputContainer($(this)));{/if} return false; }" {#if required??}{required}{/if}>
-	{#if showAdd.or(true)}
-	<button class="btn btn-outline-success" type="button" title="Add this identifier" onclick="{idClass}.addIdentifier({idClass}.getInputContainer($(this)));">{#icons/add /}</button>
-	{/if}
+<div class="generalIdInputContainer identifierInputContainer">
+	<div class="row">
+		<div class="col">
+			<div class="input-group input-group-sm">
+				<button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#codeScannerModal" title="Click to open a scan window">
+					{#icons/barcode /}
+				</button>
+				<input type="text" class="form-control generalIdNewInput" placeholder="UPC, ISBN..." id="{id}" name="{#if name??}{name}{/if}" aria-describedby="{id}Help" onkeydown="if(event.keyCode === 13) { {#if showAdd.or(true)} {idClass}.addIdentifier({idClass}.getInputContainer($(this)));{/if} return false; }" {#if required??}{required}{/if}>
+				{#if showAdd.or(true)}
+				<button class="btn btn-outline-success" type="button" title="Add this identifier" onclick="{idClass}.addIdentifier({idClass}.getInputContainer($(this)));">{#icons/add /}</button>
+				{/if}
+			</div>
+		</div>
+		
+		<div class="col">
+			<div class="d-grid gap-2 mb-1">
+				<button
+					type="button"
+					id="{id}-generateButton"
+					class="btn btn-sm btn-outline-success idGeneratorGenerateButton"
+					data-bs-toggle="modal"
+					data-bs-target="#idGeneratorSearchSelectModal"
+					data-generates="GENERAL"
+					data-forobject="ITEM"
+					onclick="IdGeneratorSearchSelect.GenerateInput.generateButtonClicked(this);"
+				>
+					{#icons/idGenerators /} Generate Id
+				</button>
+			</div>
+		</div>
+	</div>
+	<div class="identifierMessagesContainer"></div>
+	<div class="row identifiersContainer mt-1">
+		{!where things go !}
+	</div>
 </div>
