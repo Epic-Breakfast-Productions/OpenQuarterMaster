@@ -14,13 +14,13 @@
 			
 			<div class="input-group">
 				<div class="form-floating">
-					<input type="text" class="form-control" name="label" value="{#if identifier??}{#if identifier.get("label").isNull()}{identifier.get("type").asText()}{#else}{identifier.get("label").asText()}{/if}{/if}" onchange="GeneralIdentifiers.handleIsBarcodeNeedUpdate($(this));" aria-label="Identifier Label" required>
+					<input type="text" class="form-control" name="label" value="{#if identifier??}{#if identifier.get("label").isNull()}{identifier.get("type").asText()}{#else}{identifier.get("label").asText()}{/if}{/if}" onchange="Identifiers.handleIsBarcodeNeedUpdate($(this));" aria-label="Identifier Label" required>
 					<label>Identifier Label</label>
 				</div>
 				
 				<div class="input-group-text px-1 identifierIsBarcodeSelectContainer {#if identifier??}{#if identifier.get("type").asText() != "GENERIC"}d-none{/if}{/if}">
 					{#icons/barcode /}
-					<input class="form-check-input ms-1 mt-0" type="checkbox" value="" name="identifierIsBarcode" aria-label="Checkbox for if barcode or not." onchange="GeneralIdentifiers.handleIsBarcodeNeedUpdate($(this));" {#if identifier??}{#if identifier.get("barcode").asBoolean()}checked{/if}{/if}>
+					<input class="form-check-input ms-1 mt-0" type="checkbox" value="" name="identifierIsBarcode" aria-label="Checkbox for if barcode or not." onchange="Identifiers.handleIsBarcodeNeedUpdate($(this));" {#if identifier??}{#if identifier.get("barcode").asBoolean()}checked{/if}{/if}>
 				</div>
 			</div>
 			
@@ -28,10 +28,10 @@
 			
 			<div class="mt-1 d-flex justify-content-center">
 				<div class="input-group m-1 p-1">
-					<button type="button" title="Move identifier up" class="btn btn-sm btn-outline-dark" onclick="GeneralIdentifiers.moveUp($(this))">{#icons/left /}</button>
-					<button type="button" title="Move identifier down" class="btn btn-sm btn-outline-dark" onclick="GeneralIdentifiers.moveDown($(this))">{#icons/right /}</button>
+					<button type="button" title="Move identifier up" class="btn btn-sm btn-outline-dark" onclick="Identifiers.moveUp($(this))">{#icons/left /}</button>
+					<button type="button" title="Move identifier down" class="btn btn-sm btn-outline-dark" onclick="Identifiers.moveDown($(this))">{#icons/right /}</button>
 				</div>
-				<button type="button" title="Remove this identifier" class="btn btn-sm btn-outline-danger" onclick="GeneralIdentifiers.removeIdentifier($(this))">{#icons/remove /}</button>
+				<button type="button" title="Remove this identifier" class="btn btn-sm btn-outline-danger" onclick="Identifiers.removeIdentifier($(this))">{#icons/remove /}</button>
 			</div>
 		</div>
 		

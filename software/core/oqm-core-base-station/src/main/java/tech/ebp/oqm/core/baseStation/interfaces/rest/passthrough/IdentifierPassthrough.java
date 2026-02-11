@@ -20,16 +20,15 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 
 @Slf4j
-@Path(PassthroughProvider.PASSTHROUGH_API_ROOT + "/identifier/general")
+@Path(PassthroughProvider.PASSTHROUGH_API_ROOT + "/identifier/")
 @Authenticated
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
-public class GeneralIdPassthrough extends PassthroughProvider {
-	
+public class IdentifierPassthrough extends PassthroughProvider {
 	
 	@Getter
 	@Inject
-	@Location("tags/inputs/identifiers/addedGeneralIdentifier.qute.html")
+	@Location("tags/inputs/identifiers/addedIdentifier.qute.html")
 	Template newIdentifierTemplate;
 	
 	@GET
@@ -47,7 +46,7 @@ public class GeneralIdPassthrough extends PassthroughProvider {
 		@HeaderParam("Accept") String acceptType
 	) {
 		return this.handleCall(
-			this.getOqmCoreApiClient().generalIdGetObj(this.getBearerHeaderStr(), code)
+			this.getOqmCoreApiClient().identifierGetObj(this.getBearerHeaderStr(), code)
 				.map((ObjectNode generalIdentifier)->{
 					log.debug("Got general identifier: {}", generalIdentifier);
 					//noinspection SwitchStatementWithTooFewBranches
@@ -79,8 +78,7 @@ public class GeneralIdPassthrough extends PassthroughProvider {
 		@PathParam("label") String label
 	) {
 		return this.handleCall(
-			this.getOqmCoreApiClient()
-				.generalIdGetBarcodeImage(this.getBearerHeaderStr(), type, data, label)
+			this.getOqmCoreApiClient().identifierGetBarcodeImage(this.getBearerHeaderStr(), type, data, label)
 				.map((String xmlData)->{
 					return Response.status(Response.Status.OK)
 							   .entity(xmlData)

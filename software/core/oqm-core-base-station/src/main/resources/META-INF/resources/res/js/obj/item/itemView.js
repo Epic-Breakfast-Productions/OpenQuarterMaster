@@ -511,7 +511,7 @@ const ItemView = {
 					if(itemData.generalIds.length){
 						ItemView.generalIdsAccord.show();
 						ItemView.generalIdNumIds.text(itemData.generalIds.length);
-						GeneralIdentifiers.View.showInDiv(ItemView.generalIdContent, itemData.generalIds);
+						Identifiers.View.showInDiv(ItemView.generalIdContent, itemData.generalIds);
 					}
 					if(itemData.uniqueIds.length){
 						ItemView.uniqueIdsAccord.show();

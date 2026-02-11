@@ -131,11 +131,11 @@ const IdGeneratorSearchSelect = {
 					break;
 				case "GENERAL":
 					addedToGenerate.addClass("generalIdentifierContainer");
-					addedToGenerate.find(".moveUpButton").on("click", function(e){GeneralIdentifiers.moveUp($(this))});
-					addedToGenerate.find(".moveDownButton").on("click", function(e){GeneralIdentifiers.moveDown($(this))});
-					addedToGenerate.find(".removeButton").on("click", function(e){GeneralIdentifiers.removeIdentifier($(this))});
+					addedToGenerate.find(".moveUpButton").on("click", function(e){Identifiers.moveUp($(this))});
+					addedToGenerate.find(".moveDownButton").on("click", function(e){Identifiers.moveDown($(this))});
+					addedToGenerate.find(".removeButton").on("click", function(e){Identifiers.removeIdentifier($(this))});
 
-					GeneralIdentifiers.getIdentifiersContainer(GeneralIdentifiers.getInputContainer(generateButtonJq)).append(addedToGenerate);
+					Identifiers.getIdentifiersContainer(Identifiers.getInputContainer(generateButtonJq)).append(addedToGenerate);
 					break;
 				default:
 					console.warn("Bad generates value");

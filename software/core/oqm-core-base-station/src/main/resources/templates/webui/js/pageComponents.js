@@ -16,16 +16,10 @@ const PageComponents = {
 			storedPricing: '{storedPricingInputPriceLines}\
 '
 		},
-		GeneralIds: {
-			generalIdInput: '{generalIdInputLines}\
+		identifiers: {
+			identifierInput: '{identifierInputLines}\
 ',
-			generalIdAdded: '{generalIdAddedLines}\
-'
-		},
-		UniqueIds: {
-			uniqueIdInput: '{uniqueIdInputLines}\
-',
-			uniqueIdAdded: '{uniqueIdAddedLines}\
+			identifierAdded: '{identifierAddedLines}\
 '
 		},
 		AssociatedLinks: {
