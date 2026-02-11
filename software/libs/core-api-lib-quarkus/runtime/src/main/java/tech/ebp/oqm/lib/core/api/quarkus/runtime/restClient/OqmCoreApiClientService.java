@@ -106,17 +106,17 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/validate/{type}/{identifier}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> generalIdValidateGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type, @PathParam("identifier") String code);
+	Uni<ObjectNode> identifierValidateGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type, @PathParam("identifier") String code);
 	
 	@GET
 	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/getIdObject/{identifier}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> generalIdGetObj(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("identifier") String code);
+	Uni<ObjectNode> identifierGetObj(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("identifier") String code);
 	
 	@GET
 	@Path(ROOT_API_ENDPOINT_V1 + "/media/code/identifier/{type}/{value}/{label}")
 	@Produces("image/svg+xml")
-	Uni<String> generalIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String generalIdType, @PathParam("value") String data, @PathParam("label") String label);
+	Uni<String> identifierGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String generalIdType, @PathParam("value") String data, @PathParam("label") String label);
 	//</editor-fold>
 	
 	//<editor-fold desc="Interacting Entity">
