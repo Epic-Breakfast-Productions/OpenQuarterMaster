@@ -22,18 +22,10 @@ const StoredFormInput = {
 
 	<div class="mb-3">
 		<label class="form-label">
-			` + Icons.generalIds + `
-			General Ids
+			` + Icons.identifiers + `
+			Identifiers
 		</label>
-		` + PageComponents.Inputs.GeneralIds.generalIdInput + `
-	</div>
-	
-	<div class="mb-3">
-		<label class="form-label">
-			` + Icons.uniqueIds + `
-			Unique Ids
-		</label>
-		` + PageComponents.Inputs.UniqueIds.uniqueIdInput + `
+		` + PageComponents.Inputs.Identifiers.identifierInput + `
 	</div>
 	
 	<div class="mb-3">
@@ -50,8 +42,7 @@ const StoredFormInput = {
 	` + PageComponents.Inputs.attribute + `
 </div>`);
 
-		let generalIdInputContainer = output.find(".generalIdInputContainer");
-		let uniqueIdInputContainer = output.find(".uniqueIdInputContainer");
+		let generalIdInputContainer = output.find(".identifierInputContainer");
 
 
 		if (stored != null) {
@@ -72,10 +63,8 @@ const StoredFormInput = {
 			}
 
 			Identifiers.getAssociateButton(generalIdInputContainer).data("forobject", "STORED").attr("id", "generatorSelect-" + window.crypto.getRandomValues(new Uint8Array(5)).join(""));
-			UniqueIdentifiers.getAssociateButton(uniqueIdInputContainer).data("forobject", "STORED").attr("id", "generatorSelect-" + window.crypto.getRandomValues(new Uint8Array(5)).join(""));
 
-			Identifiers.populateEdit(generalIdInputContainer, stored.generalIds, (item == null ? null : item.idGenerators));
-			UniqueIdentifiers.populateEdit(uniqueIdInputContainer, stored.uniqueIds, (item == null ? null : item.idGenerators));
+			Identifiers.populateEdit(generalIdInputContainer, stored.identifiers, (item == null ? null : item.idGenerators));
 			KeywordAttEdit.addKeywordInputs(output.find(".keywordInputDiv"), stored.keywords);
 			KeywordAttEdit.addAttInputs(output.find(".attInputDiv"), stored.attributes);
 			ImageSearchSelect.addSelectedImages(output.find(".imagesSelected"), stored.imageIds);
@@ -84,7 +73,6 @@ const StoredFormInput = {
 
 		if (item !== null) {
 			Identifiers.setupForAssociated(generalIdInputContainer, item.idGenerators);
-			UniqueIdentifiers.setupForAssociated(uniqueIdInputContainer, item.idGenerators);
 
 			let pricingInput = output.find(".pricingInput");
 			Pricing.populateInput(

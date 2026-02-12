@@ -159,7 +159,7 @@ const ItemAddEdit = {
 						}
 					});
 
-				Identifiers.populateEdit(ItemAddEdit.identifierInputContainer, data.generalIds);
+				Identifiers.populateEdit(ItemAddEdit.identifierInputContainer, data.identifiers);
 				IdGeneratorSearchSelect.AssociatedInput.populateAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput, data.idGenerators);
 
 				let durationTimespan = TimeHelpers.durationNumSecsToTimespan(data.expiryWarningThreshold);

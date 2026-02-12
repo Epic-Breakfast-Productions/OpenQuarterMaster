@@ -48,12 +48,7 @@
 					{/if}
 				</td>
 				<td>
-					{#when result.get("generates").asText()}
-						{#is "UNIQUE"}
-							{#icons/uniqueIds /} Unique Ids
-						{#is "GENERAL"}
-							{#icons/generalIds /} General Ids
-					{/when}
+				
 				</td>
 				<td>
 					{#for curType in result.get("forObjectType")}

@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col">
             <button type="button" class="btn btn-primary mb-1" onclick="ExtItemSearch.toggleAddEditProductSearchPane();" title="Search for Products">
-                {#icons/search}{/icons/search} Search for Products
+                {#icons/search /} Search for Products
             </button>
         </div>
     </div>
@@ -168,7 +168,7 @@
                     	Identifiers:
                     </label>
                     <div class="col-sm-10">
-                        {#inputs/identifiers/identifierInput id="addEditItemIdentifiersInput" /}
+                        {#inputs/identifiers/associatedIdentifierInput id="addEditItemIdentifiersInput" name="newIdentifier" /}
                     </div>
                 </div>
                 <div class="mb-3 row">

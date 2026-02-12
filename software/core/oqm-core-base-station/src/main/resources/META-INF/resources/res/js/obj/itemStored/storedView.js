@@ -132,22 +132,11 @@ const StoredView = {
 		return "";
 	},
 
-	getStoredGeneralIds(stored){
-		if(Object.keys(stored.generalIds).length) {
-			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row generalIdContainer"></div></div>');
+	getStoredIdentifiers(stored){
+		if(Object.keys(stored.identifiers).length) {
+			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row identifiersContainer"></div></div>');
 
-			Identifiers.View.showInDiv(output.find(".generalIdContainer"), stored.generalIds);
-
-			return output;
-		}
-		return "";
-	},
-
-	getStoredUniqueIds(stored){
-		if(Object.keys(stored.uniqueIds).length) {
-			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row uniqueIdContainer"></div></div>');
-
-			UniqueIdentifiers.View.showInDiv(output.find(".uniqueIdContainer"), stored.uniqueIds);
+			Identifiers.View.showInDiv(output.find(".identifiersContainer"), stored.identifiers);
 
 			return output;
 		}
@@ -246,8 +235,7 @@ const StoredView = {
 			StoredView.getStorageBlockExpiresView(stored),
 			StoredView.getStoredKeywords(stored),
 			StoredView.getStoredAtts(stored),
-			StoredView.getStoredGeneralIds(stored),
-			StoredView.getStoredUniqueIds(stored),
+			StoredView.getStoredIdentifiers(stored),
 			StoredView.getStoredPricing(stored),
 			StoredView.getStoredAttachedFiles(stored)
 		);

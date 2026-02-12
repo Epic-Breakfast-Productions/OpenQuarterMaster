@@ -18,7 +18,7 @@ const Identifiers = {
 		return Identifiers.getNewIdentifierInput(identifierInputContainerJq).val();
 	},
 	getIdentifierContainer(subElementJq) {
-		return subElementJq.closest('.identifierIdentifierContainer');
+		return subElementJq.closest('.addedIdentifierContainer');
 	},
 	getIdentifierImage(idContainerJq) {
 		return idContainerJq.find(".identifierImage");
@@ -77,6 +77,7 @@ const Identifiers = {
 		let idContainer = Identifiers.getIdentifiersContainer(Identifiers.getInputContainer(generateIdButtonJq));
 	},
 	handleIsBarcodeNeedUpdate(inputJq) {
+		console.debug("Handling barcode checkbox change.");
 		let idContainerJq = Identifiers.getIdentifierContainer(inputJq);
 		let isBarcodeCheckboxJq = Identifiers.getIdentifierIsBarcodeCheckbox(idContainerJq);
 		let identifierValueContainer = Identifiers.getIdentifierValueContainer(idContainerJq);
@@ -113,21 +114,21 @@ const Identifiers = {
 		SelectedObjectDivUtils.moveUp(Identifiers.getIdentifierContainer(upButtonJq));
 	},
 	moveDown(downButtonJq) {
-		SelectedObjectDivUtils.moveDown(downButtonJq.closest('.identifierContainer'));
+		SelectedObjectDivUtils.moveDown(Identifiers.getIdentifierContainer(downButtonJq));
 	},
 	removeIdentifier(removeButtonJq) {
 		if (confirm("Are you sure you want to remove this identifier?") === false) return;
-		SelectedObjectDivUtils.removeSelected(removeButtonJq.closest('.identifierContainer'));
+		SelectedObjectDivUtils.removeSelected(Identifiers.getIdentifierContainer(removeButtonJq));
 	},
 	getIdentifierData(identifierInputContainerJq) {
 		let getIdentifiersContainer = Identifiers.getIdentifiersContainer(identifierInputContainerJq);
 		let output = [];
 
-		getIdentifiersContainer.find(".identifierIdentifierContainer").each(function (i, curIdContainer) {
+		getIdentifiersContainer.find(".addedIdentifierContainer").each(function (i, curIdContainer) {
 			let curIdContainerJq = $(curIdContainer);
 			let curIdObj = {
 				label: Identifiers.getIdentifierLabel(curIdContainerJq)
-			}
+			};
 
 			if (curIdContainerJq.hasClass("toGenerateContainer")) {
 				curIdObj['type'] = "TO_GENERATE";
@@ -145,10 +146,12 @@ const Identifiers = {
 			output.push(curIdObj);
 		});
 
+		console.log("Identifiers gathered: ", output);
+
 		return output;
 	},
 	newAddedIdentifier(identifier) {
-		let idInput = $(PageComponents.Inputs.GeneralIds.generalIdAdded);
+		let idInput = $(PageComponents.Inputs.Identifiers.identifierAdded);
 
 		Identifiers.getIdentifierValueContainer(idInput).text(identifier.value);
 		Identifiers.getIdentifierTypeContainer(idInput).text(identifier.type);
@@ -157,7 +160,7 @@ const Identifiers = {
 		if (identifier.barcode) {
 			let barcodeImage = idInput.find(".identifierImage");
 
-			barcodeImage.attr("src", Rest.passRoot + "/identifier/barcode/" + identifier.type + "/" + identifier.value);
+			barcodeImage.attr("src", Rest.passRoot + "/identifier/barcode/" + encodeURIComponent(identifier.type) + "/" + encodeURIComponent(identifier.value) + "/" + encodeURIComponent(identifier.label));
 			barcodeImage.removeClass("d-none");
 		} else {
 			idInput.find(".identifierValue").removeClass("d-none");

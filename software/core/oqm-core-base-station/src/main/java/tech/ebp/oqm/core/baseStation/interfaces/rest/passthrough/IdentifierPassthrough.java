@@ -47,16 +47,16 @@ public class IdentifierPassthrough extends PassthroughProvider {
 	) {
 		return this.handleCall(
 			this.getOqmCoreApiClient().identifierGetObj(this.getBearerHeaderStr(), code)
-				.map((ObjectNode generalIdentifier)->{
-					log.debug("Got general identifier: {}", generalIdentifier);
+				.map((ObjectNode identifier)->{
+					log.debug("Got general identifier: {}", identifier);
 					//noinspection SwitchStatementWithTooFewBranches
 					return switch (acceptType) {
 						case MediaType.TEXT_HTML -> Response.ok(
 							newIdentifierTemplate
 								.data("rootPrefix", this.getRootPrefix())
-								.data("generalId", generalIdentifier)
+								.data("identifier", identifier)
 						).build();
-						default -> Response.ok(generalIdentifier).build();
+						default -> Response.ok(identifier).build();
 					};
 				})
 		);

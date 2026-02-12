@@ -1,4 +1,4 @@
-<div class="col-xl-3 col-md-4 col-sm-6 col-xs-6 mb-1 identifierContainer">{! {"value":"45664","type":"GENERIC","barcode":false} !}
+<div class="col-xl-3 col-md-4 col-sm-6 col-xs-6 mb-1 addedIdentifierContainer">{! {"value":"45664","type":"GENERIC","barcode":false} !}
 	<div class="card identifierDisplay">
 		<img src="{#if identifier??}{rootPrefix}/api/passthrough/identifier/barcode/{identifier.get("type").asText()}/{identifier.get("value").asText()}/{#if identifier.get("label").isNull()}{identifier.get("type").asText()}{#else}{identifier.get("label").asText()}{/if}{/if}" class="card-img-top identifierImage {#if !identifier??}d-none{#else}{#if !identifier.get("barcode").asBoolean()}d-none{/if}{/if}" alt="Barcode Image">
 		

@@ -95,7 +95,7 @@ public class JsGetters {
 	Template storedPricingInputTemplate;
 	@Location("tags/inputs/pricing/pricingInputPrice.qute.html")
 	Template storedPricingInputPriceTemplate;
-	@Location("tags/inputs/identifiers/identifierInput.qute.html")
+	@Location("tags/inputs/identifiers/associatedIdentifierInput.qute.html")
 	Template identifierInputTemplate;
 	@Location("tags/inputs/identifiers/addedIdentifier.qute.html")
 	Template identifierAddedTemplate;

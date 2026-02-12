@@ -16,7 +16,7 @@ const PageComponents = {
 			storedPricing: '{storedPricingInputPriceLines}\
 '
 		},
-		identifiers: {
+		Identifiers: {
 			identifierInput: '{identifierInputLines}\
 ',
 			identifierAdded: '{identifierAddedLines}\
