@@ -12,7 +12,7 @@
 					class="btn btn-sm btn-outline-success idGeneratorGenerateButton"
 					data-bs-toggle="modal"
 					data-bs-target="#idGeneratorSearchSelectModal"
-					data-forobject="ITEM"
+					data-for-object="{#if forObject??}{forObject}{/if}"
 					onclick="IdGeneratorSearchSelect.GenerateInput.generateButtonClicked(this);"
 				>
 					{#icons/idGenerators /} Generate Id

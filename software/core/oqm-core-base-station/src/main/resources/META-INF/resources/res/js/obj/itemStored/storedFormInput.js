@@ -62,7 +62,7 @@ const StoredFormInput = {
 				);
 			}
 
-			Identifiers.getAssociateButton(generalIdInputContainer).data("forobject", "STORED").attr("id", "generatorSelect-" + window.crypto.getRandomValues(new Uint8Array(5)).join(""));
+			Identifiers.getAssociateButton(generalIdInputContainer).data("for-object", "STORED").attr("id", "generatorSelect-" + window.crypto.getRandomValues(new Uint8Array(5)).join(""));
 
 			Identifiers.populateEdit(generalIdInputContainer, stored.identifiers, (item == null ? null : item.idGenerators));
 			KeywordAttEdit.addKeywordInputs(output.find(".keywordInputDiv"), stored.keywords);

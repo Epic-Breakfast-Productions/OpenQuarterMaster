@@ -7,9 +7,6 @@ const IdGeneratorAddEdit = {
 		id: function(formJq){
 			return formJq.find("input[name='generatorId']");
 		},
-		generates: function(formJq){
-			return formJq.find("select[name='generates']");
-		},
 		generatesFor: function(formJq){
 			return formJq.find("select[name='generatesFor']");
 		},
@@ -36,9 +33,7 @@ const IdGeneratorAddEdit = {
 		IdGeneratorAddEdit.formGetters.messages(formJq).text("");
 		IdGeneratorAddEdit.formGetters.id(formJq).val("");
 		IdGeneratorAddEdit.formGetters.name(formJq).val("");
-		IdGeneratorAddEdit.formGetters.generates(formJq).prop("disabled", false);
 		IdGeneratorAddEdit.formGetters.generatesFor(formJq).prop("disabled", false);
-		IdGeneratorAddEdit.formGetters.generates(formJq).find("option").prop("disabled", false);
 		IdGeneratorAddEdit.formGetters.generatesFor(formJq).find("option").prop("disabled", false).prop("checked", false);
 		Dselect.resetDselect( IdGeneratorAddEdit.formGetters.generatesFor(formJq));
 		IdGeneratorAddEdit.formGetters.barcode(formJq).prop("checked", false);
@@ -78,8 +73,6 @@ const IdGeneratorAddEdit = {
 				IdGeneratorAddEdit.formGetters.id(formJq).val(generator.id);
 				IdGeneratorAddEdit.formGetters.name(formJq).val(generator.name);
 
-				IdGeneratorAddEdit.formGetters.generates(formJq).val(generator.generates);
-				IdGeneratorAddEdit.formGetters.generates(formJq).prop("disabled", true);
 				IdGeneratorAddEdit.formGetters.generatesFor(formJq).prop("disabled", true);//TODO:: not working
 				Dselect.setValues(IdGeneratorAddEdit.formGetters.generatesFor(formJq), generator.forObjectType);
 
@@ -94,7 +87,6 @@ const IdGeneratorAddEdit = {
 	buildGeneratorObject(formJq){
 		let generatorObj = {
 			name: IdGeneratorAddEdit.formGetters.name(formJq).val(),
-			generates: IdGeneratorAddEdit.formGetters.generates(formJq).val(),
 			forObjectType: IdGeneratorAddEdit.formGetters.generatesFor(formJq).val(),
 			encoded: IdGeneratorAddEdit.formGetters.encoded(formJq).prop("checked"),
 			barcode: IdGeneratorAddEdit.formGetters.barcode(formJq).prop("checked"),

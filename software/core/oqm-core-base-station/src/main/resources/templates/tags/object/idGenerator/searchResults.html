@@ -19,7 +19,6 @@
 </tr>
 <tr>
 	<th scope="col" style="">Name</th>
-	<th scope="col" style="">Generates</th>
 	<th scope="col" style="">For</th>
 	<th scope="col">Format</th>
 	<th scope="col" style="width: 75px;">Encoded</th>
@@ -46,9 +45,6 @@
 					{#if !result.get("name").isNull()}
 						{result.get("name").asText()}
 					{/if}
-				</td>
-				<td>
-				
 				</td>
 				<td>
 					{#for curType in result.get("forObjectType")}
