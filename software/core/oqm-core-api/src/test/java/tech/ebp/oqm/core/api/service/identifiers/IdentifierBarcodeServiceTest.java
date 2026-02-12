@@ -45,7 +45,7 @@ class IdentifierBarcodeServiceTest extends CodeUtilTestBase {
 	@MethodSource("getCodes")
 	public void generalIdBarcodeGenTest(String code, Identifier identifier) {
 		StopWatch sw = StopWatch.createStarted();
-		String data = identifierBarcodeService.getGeneralIdData(identifier);
+		String data = identifierBarcodeService.getBarcodeData(identifier);
 		sw.stop();
 		log.info("Generated barcode for {} in {}", identifier, sw);
 		

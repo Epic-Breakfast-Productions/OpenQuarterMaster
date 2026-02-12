@@ -144,7 +144,7 @@ public class IdentifierBarcodeService {
 		return output;
 	}
 	
-	public String getGeneralIdData(IdentifierType type, String data, String label){
+	public String getBarcodeData(IdentifierType type, String data, String label){
 		String dataIn = data;
 		int hQuietZone = 10;
 		
@@ -207,7 +207,7 @@ public class IdentifierBarcodeService {
 		if(type.displayInBarcode){
 			labelStr = type.prettyName();
 			
-			if(haveLabelGiven && !type.name().equals(label)){
+			if(haveLabelGiven && !(type.name().equals(label) || labelStr.equals(label))){
 				labelStr += " / " + label;
 			}
 		} else {
@@ -226,8 +226,8 @@ public class IdentifierBarcodeService {
 		);
 	}
 	
-	public String getGeneralIdData(Identifier identifier){
-		return this.getGeneralIdData(identifier.getType(), identifier.getValue(), identifier.getLabel());
+	public String getBarcodeData(Identifier identifier){
+		return this.getBarcodeData(identifier.getType(), identifier.getValue(), identifier.getLabel());
 	}
 	
 }

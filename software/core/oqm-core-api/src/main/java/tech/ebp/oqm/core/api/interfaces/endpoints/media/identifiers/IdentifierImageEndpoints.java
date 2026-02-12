@@ -53,7 +53,7 @@ public class IdentifierImageEndpoints extends EndpointProvider {
 			return Response.status(Response.Status.BAD_REQUEST).entity("Value not a valid " + type).build();
 		}
 		return Response.status(Response.Status.OK)
-				   .entity(this.identifierBarcodeService.getGeneralIdData(type, data, label))
+				   .entity(this.identifierBarcodeService.getBarcodeData(type, data, label))
 				   .header("Content-Disposition", "attachment;filename="+label+"_"+data+".svg")
 				   .type(IdentifierBarcodeService.DATA_MEDIA_TYPE)
 				   .build();

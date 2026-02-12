@@ -19,10 +19,10 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.Identi
 import tech.ebp.oqm.core.api.service.identifiers.IdentifierUtils;
 
 @Slf4j
-@Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/identifiers/general")
-@Tags({@Tag(name = "General Identifier", description = "Endpoints for getting/dealing with general identifiers.")})
+@Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/identifiers/")
+@Tags({@Tag(name = "Identifiers", description = "Endpoints for getting/dealing with identifiers.")})
 @RequestScoped
-public class GeneralIdentifierEndpoints extends EndpointProvider {
+public class IdentifierEndpoints extends EndpointProvider {
 	
 	@GET
 	@Path("validate/{type}/{identifier}")
