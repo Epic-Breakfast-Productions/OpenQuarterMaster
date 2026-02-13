@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.dev.CoreApiDevDbManagementService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
@@ -27,6 +28,9 @@ public class BasicSetupTest extends RunningServerTest {
 	
 	@Inject
 	KcClientAuthService serviceAccountService;
+ 
+    @Inject
+    CoreApiDevDbManagementService devDbManagementService;
 	
 	@Test
 	public void testBasicSetup() throws IOException, URISyntaxException {

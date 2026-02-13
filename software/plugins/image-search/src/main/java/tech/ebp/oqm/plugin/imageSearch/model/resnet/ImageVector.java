@@ -13,4 +13,12 @@ import org.bson.types.ObjectId;
 public class ImageVector {
 	
 	private ObjectId id;
+	
+	private String oqmDbId;
+	
+	private String imageId;
+	
+	private int imageRevision;
+	
+	private float[] vector;
 }

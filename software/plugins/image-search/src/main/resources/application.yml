@@ -13,7 +13,8 @@ mp:
         topic: "words"
 
 quarkus:
-  
+  mongodb:
+    database: "oqm-image-search"
   keycloak:
     devservices:
       port: 9328
