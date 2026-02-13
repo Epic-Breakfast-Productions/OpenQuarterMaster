@@ -192,14 +192,14 @@ const Identifiers = {
 <div class="col-sm-6 col-md-6 col-lg-4 mb-1 identifierContainer">
 	<div class="card identifierDisplay">
 		<div class="card-header p-1 text-center">
-			<h5 class="card-title mb-0 identifierKey"></h5>
+			<h5 class="card-title mb-0 identifierKey user-select-all"></h5>
 		</div>
 		<a href="" target="_blank" class="identifierImageLink d-none">
 			<img src="" class="card-img identifierImage" alt="Barcode Image">
 		</a>
 		<div class="card-body p-1">
 			<div class="identifierValueContainer text-center">
-				<p class="h4 card-subtitle identifierValue text-nowrap user-select-all mb-0"></p>
+				<p class="h4 card-subtitle identifierValue user-select-all mb-0"></p>
 				<p class="text-secondary mb-1">
 					<small class="identifierType"></small>
 					` + PageComponents.Inputs.copyButton + `

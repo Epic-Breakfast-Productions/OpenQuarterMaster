@@ -5,7 +5,7 @@
 		
 		<div class="card-body p-1">
 			<div class="identifierValueContainer text-center">
-				<p class="h4 card-title identifierValue text-nowrap user-select-all mb-0 {#if !identifier??}d-none{#else}{#if identifier.get("barcode").asBoolean()}d-none{/if}{/if}">{#if identifier??}{identifier.get("value").asText()}{/if}</p>
+				<p class="h4 card-title identifierValue user-select-all mb-0 {#if !identifier??}d-none{#else}{#if identifier.get("barcode").asBoolean()}d-none{/if}{/if}">{#if identifier??}{identifier.get("value").asText()}{/if}</p>
 				<p class=" text-secondary mb-1">
 					<small class="identifierType">{#if identifier??}{identifier.get("type").asText()}{/if}</small>
 					{#copyTextButton copyTextContainerJqSelector='$(this.parentElement.previousElementSibling)' /}
