@@ -44,7 +44,7 @@ import java.util.Set;
 @ValidItemUnit
 public class InventoryItem extends ImagedMainObject implements FileAttachmentContaining {
 	
-	public static final int CUR_SCHEMA_VERSION = 3;
+	public static final int CUR_SCHEMA_VERSION = 4;
 	
 	/**
 	 * The name of this inventory item

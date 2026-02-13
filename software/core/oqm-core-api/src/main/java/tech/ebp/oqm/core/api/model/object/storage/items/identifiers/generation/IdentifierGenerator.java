@@ -27,7 +27,7 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class IdentifierGenerator extends MainObject {
-	public static final int CUR_SCHEMA_VERSION = 1;
+	public static final int CUR_SCHEMA_VERSION = 2;
 	
 	/**
 	 * The name of the generator

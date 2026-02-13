@@ -65,7 +65,7 @@ import java.util.stream.Collectors;
 @BsonDiscriminator
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
 	
-	public static final int CUR_SCHEMA_VERSION = 3;
+	public static final int CUR_SCHEMA_VERSION = 4;
 	
 	private static final Pattern LABEL_PARTS_PATTERN = Pattern.compile("\\{[^}]*}");
 	private static final String LABEL_PLACEHOLDER_PART_DELIM = ";";
@@ -92,7 +92,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 *         exp: {@code {exp;<datetime format>}}- Writes out the expiration for this stored. Format should match standard Java datetime syntax. Default format is {@code MM/dd/yyyy}
 	 *     </li>
 	 *     <li>
-	 *         ident: {@code {ident;<name of general identifier>}}- Use an identifier value.
+	 *         ident: {@code {ident;<name of identifier>}}- Use an identifier value.
 	 *     </li>
 	 *     <li>
 	 *         price: {@code {price;<name of calculated price>}}- Use a price value. Does not include price label.
