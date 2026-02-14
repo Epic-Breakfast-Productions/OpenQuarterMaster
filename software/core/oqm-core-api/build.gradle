@@ -8,7 +8,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '4.3.1'
+version '4.4.0-SNAPSHOT'
 
 repositories {
 	mavenCentral()
@@ -103,6 +103,10 @@ test {
 		destinationFile = layout.buildDirectory.file("jacoco-quarkus.exec").get().asFile
 	}
 	jacocoTestReport.enabled = false
+}
+
+check {
+	finalizedBy quarkusIntTest
 }
 
 // https://github.com/CycloneDX/cyclonedx-gradle-plugin

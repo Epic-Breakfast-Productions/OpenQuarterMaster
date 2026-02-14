@@ -21,9 +21,8 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueIdType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
@@ -129,24 +128,25 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			}
 		}
 		
-		for (UniqueId curUniqueId : newOrChangedObject.getUniqueIds()) {
-			if (curUniqueId.getType() == UniqueIdType.TO_GENERATE) {
-				continue;
-			}
-			
-			List<InventoryItem> uniqueIdresults = this.getItemsWithUniqueId(oqmDbIdOrName, clientSession, curUniqueId);
-			if (!uniqueIdresults.isEmpty()) {
-				if (newObject) {
-					throw new ValidationException("Item with unique id '" + curUniqueId + "' already exists.");
-				} else {
-					for (InventoryItem curMatcingName : uniqueIdresults) {
-						if (!curMatcingName.getId().equals(newOrChangedObject.getId())) {
-							throw new ValidationException("Item with unique id '" + curUniqueId + "' already exists.");
-						}
-					}
-				}
-			}
-		}
+		//TODO:: contemplate uniqueness of id's?
+//		for (Identifier curUniqueId : newOrChangedObject.getIdentifiers()) {
+//			if (curUniqueId.getType() == IdentifierType.TO_GENERATE) {
+//				continue;
+//			}
+//
+//			List<InventoryItem> uniqueIdresults = this.getItemsWithIdentifier(oqmDbIdOrName, clientSession, curUniqueId);
+//			if (!uniqueIdresults.isEmpty()) {
+//				if (newObject) {
+//					throw new ValidationException("Item with unique id '" + curUniqueId + "' already exists.");
+//				} else {
+//					for (InventoryItem curMatcingName : uniqueIdresults) {
+//						if (!curMatcingName.getId().equals(newOrChangedObject.getId())) {
+//							throw new ValidationException("Item with unique id '" + curUniqueId + "' already exists.");
+//						}
+//					}
+//				}
+//			}
+//		}
 		
 		if (!newObject) {
 			//TODO:: in try?
@@ -242,8 +242,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			log.debug("Did not calculate item stats after add/update");
 		}
 		
-		item.setGeneralIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, item.getGeneralIds()));
-		item.setUniqueIds(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, item.getUniqueIds()));
+		item.setIdentifiers(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, item.getIdentifiers()));
 	}
 	
 	@Override
@@ -280,38 +279,37 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		return this.getSumOfIntField(oqmDbIdOrName, "numLowStock");
 	}
 	
-	public List<InventoryItem> getItemsWithUniqueId(String oqmDbIdOrName, ClientSession clientSession, UniqueId id) {
-		
-		Bson filter;
-		
-		switch (id.getType()) {
-			case GENERATED -> {
-				filter = and(
-					eq("uniqueIds.generatedFrom", ((GeneratedUniqueId) id).getGeneratedFrom()),
-					eq("uniqueIds.value", id.getValue())
-				);
-			}
-			case PROVIDED -> {
-				filter = and(
-					eq("uniqueIds.value", id.getValue())
-				);
-			}
-			default -> {
-				return Collections.emptyList();
-			}
-		}
-		
-		List<InventoryItem> list = new ArrayList<>();
-		this.listIterator(
-			oqmDbIdOrName,
-			clientSession,
-			filter,
-			null,
-			null
-		).into(list);
-		
-		return list;
-	}
+//	public List<InventoryItem> getItemsWithIdentifier(String oqmDbIdOrName, ClientSession clientSession, Identifier id) {
+//		Bson filter;
+//
+//		switch (id.getType()) {
+//			case GENERATED -> {
+//				filter = and(
+//					eq("uniqueIds.generatedFrom", ((GeneratedUniqueId) id).getGeneratedFrom()),
+//					eq("uniqueIds.value", id.getValue())
+//				);
+//			}
+//			case PROVIDED -> {
+//				filter = and(
+//					eq("uniqueIds.value", id.getValue())
+//				);
+//			}
+//			default -> {
+//				return Collections.emptyList();
+//			}
+//		}
+//
+//		List<InventoryItem> list = new ArrayList<>();
+//		this.listIterator(
+//			oqmDbIdOrName,
+//			clientSession,
+//			filter,
+//			null,
+//			null
+//		).into(list);
+//
+//		return list;
+//	}
 	
 	public Set<ObjectId> getItemsReferencing(String oqmDbIdOrName, ClientSession clientSession, Image image) {
 		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
