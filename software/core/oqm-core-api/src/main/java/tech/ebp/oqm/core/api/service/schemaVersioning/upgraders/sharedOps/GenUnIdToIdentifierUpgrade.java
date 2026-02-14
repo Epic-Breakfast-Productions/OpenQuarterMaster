@@ -68,8 +68,8 @@ public class GenUnIdToIdentifierUpgrade {
 		
 		String oldLabelFormat = oldObj.get(field).asText();
 		
-		String newLabelFormat = oldLabelFormat.replace("{uid:", "{ident:");
-		newLabelFormat = newLabelFormat.replace("{gid:", "{ident:");
+		String newLabelFormat = oldLabelFormat.replace("{uid;", "{ident;");
+		newLabelFormat = newLabelFormat.replace("{gid;", "{ident;");
 		
 		
 		oldObj.put(field, newLabelFormat);
