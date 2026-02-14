@@ -15,9 +15,6 @@ public class IdGeneratorSearch extends SearchObject {
 	@QueryParam("label")
 	String label;
 	
-	@QueryParam("generates")
-	String generates;
-	
 	@QueryParam("generatorFor")
 	String generatorFor;
 	

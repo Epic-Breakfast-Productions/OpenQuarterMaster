@@ -30,8 +30,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("hasNoExpiryWarn") Boolean hasNoExpiryWarn;
 	@QueryParam("hasLowStock") Boolean hasLowStock;
 	@QueryParam("hasNoLowStock") Boolean hasNoLowStock;
-	@QueryParam("generalId") String generalId;
-	@QueryParam("uniqueId") String uniqueId;
+	@QueryParam("identifier") List<String> identifiers;
 	
 	//TODO:: object specific fields, add to bson filter list
 	
@@ -113,15 +112,14 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 				);
 			}
 		}
-		if(this.hasValue(this.getGeneralId())){
-			filters.add(
-				eq("generalIds.value", this.getGeneralId())
-			);
-		}
-		if(this.hasValue(this.getUniqueId())){
-			filters.add(
-				eq("uniqueIds.value", this.getUniqueId())
-			);
+		if (this.hasValue(this.getIdentifiers())) {
+			List<Bson> typeFilterList = new ArrayList<>(this.getIdentifiers().size());
+			for (String curIdentifier : this.getIdentifiers()) {
+				typeFilterList.add(
+					eq("identifiers.value", curIdentifier)
+				);
+			}
+			filters.add(Filters.or(typeFilterList));
 		}
 		
 		return filters;
