@@ -39,6 +39,7 @@ public class StoredItemBumper4 extends ObjectSchemaVersionBumper<Stored> {
 		UpgradingUtils.stringToConvertedTree(oldObj, "unit", Unit.class);
 		UpgradingUtils.normalizeObjectIdList((ArrayNode) oldObj.get("imageIds"));
 		UpgradingUtils.normalizeObjectIdList((ArrayNode) oldObj.get("attachedFiles"));
+		UpgradingUtils.dequoteString(oldObj, "expires");
 		if(oldObj.has("amount") && !oldObj.get("amount").isNull() && !oldObj.get("amount").isObject()){
 			UpgradingUtils.deserializeJsonField(oldObj, "amount");
 		}

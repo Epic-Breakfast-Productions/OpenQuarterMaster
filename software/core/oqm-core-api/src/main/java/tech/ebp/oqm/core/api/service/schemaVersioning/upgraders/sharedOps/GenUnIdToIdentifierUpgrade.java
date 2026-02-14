@@ -32,34 +32,37 @@ public class GenUnIdToIdentifierUpgrade {
 		}
 		
 		//add unique Ids
-		for(JsonNode unIdNode : unIds){
-			ObjectNode unId = (ObjectNode) unIdNode;
-			normalizeId(unId);
-			
-			//check for label collision
-			TextNode label = (TextNode) unId.get("label");
-			
-			if(hasIdWithLabel(identifiers, label.asText())){
-				//append num to label to make unique
-				String origLabel = unId.get("label").asText();
-				int num = 0;
+		if(unIds != null){
+			for(JsonNode unIdNode : unIds){
+				ObjectNode unId = (ObjectNode) unIdNode;
+				normalizeId(unId);
 				
-				do{
-					label = new TextNode(origLabel + '-' + ++num);
-				}while(hasIdWithLabel(identifiers, label.asText()));
+				//check for label collision
+				TextNode label = (TextNode) unId.get("label");
 				
-				unId.set("label", label);
+				if(hasIdWithLabel(identifiers, label.asText())){
+					//append num to label to make unique
+					String origLabel = unId.get("label").asText();
+					int num = 0;
+					
+					do{
+						label = new TextNode(origLabel + '-' + ++num);
+					}while(hasIdWithLabel(identifiers, label.asText()));
+					
+					unId.set("label", label);
+				}
+				
+				//tweak type
+				switch(unId.get("type").asText()){
+					case "PROVIDED":
+						unId.put("type", "GENERIC");
+						break;
+				}
+				
+				identifiers.add(unId);
 			}
-			
-			//tweak type
-			switch(unId.get("type").asText()){
-				case "PROVIDED":
-					unId.put("type", "GENERIC");
-					break;
-			}
-			
-			identifiers.add(unId);
 		}
+		
 	}
 	public static void upgradeStoredLabelFormat(ObjectNode oldObj, String field){
 		if(oldObj.get(field) == null || !oldObj.get(field).isTextual()){
