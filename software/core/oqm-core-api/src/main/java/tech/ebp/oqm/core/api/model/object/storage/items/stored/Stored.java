@@ -193,15 +193,15 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 							(Collection<Labeled>) switch (placeholderType) {
 								case "ident" -> stored.getIdentifiers();
 								case "price" -> stored.getCalculatedPrices();
-								default -> new ArrayList<GenericIdentifier>(0);
+								default -> new ArrayList<Identifier>(0);
 							}
 						);
 						
 						if (foundLabel.isPresent()) {
 							Labeled cur = foundLabel.get();
 							
-							if (cur instanceof GenericIdentifier) {
-								sb.append(((GenericIdentifier) cur).getValue());
+							if (cur instanceof Identifier) {
+								sb.append(((Identifier) cur).getValue());
 							} else if (cur instanceof CalculatedPricing) {
 								sb.append(((CalculatedPricing) cur).getTotalPriceString());
 							}

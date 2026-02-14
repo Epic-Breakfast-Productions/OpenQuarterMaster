@@ -54,11 +54,9 @@ public class GenUnIdToIdentifierUpgrade {
 			//tweak type
 			switch(unId.get("type").asText()){
 				case "PROVIDED":
-					((ObjectNode) unId).put("type", "GENERIC");
+					unId.put("type", "GENERIC");
 					break;
 			}
-			
-			//TODO:: else?
 			
 			identifiers.add(unId);
 		}
@@ -70,8 +68,8 @@ public class GenUnIdToIdentifierUpgrade {
 		
 		String oldLabelFormat = oldObj.get(field).asText();
 		
-		String newLabelFormat = oldLabelFormat.replace("uid", "ident");
-		newLabelFormat = newLabelFormat.replace("gid", "ident");
+		String newLabelFormat = oldLabelFormat.replace("{uid:", "{ident:");
+		newLabelFormat = newLabelFormat.replace("{gid:", "{ident:");
 		
 		
 		oldObj.put(field, newLabelFormat);
