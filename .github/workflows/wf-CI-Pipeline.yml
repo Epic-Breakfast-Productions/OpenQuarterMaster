@@ -31,16 +31,20 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Runner
+        uses: ./.github/actions/wf-setup
+
       - name: Download the build
         uses: actions/download-artifact@v4
         with:
           name: build-result
           path: ./
 
-      # - name: Setup Runner
-      #   uses: ./.github/actions/wf-setup
-
       - name: Run Unit Tests
+        working-directory: build-result
         run: |
           ./gradlew test
 
@@ -48,7 +52,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Code Coverage Report
-          path: "${{ inputs.path }}/build/jacoco-report"
+          path: "build-result/build/jacoco-report"
 
       - name: Archive Unit Test Report
         env:
@@ -56,7 +60,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: Unit Test Report
-          path: "${{ inputs.path }}/build/reports/tests/test"
+          path: "build-result/build/reports/tests/test"
 
       # https://github.com/marketplace/actions/test-reporter
       - name: Unit Test Report
@@ -66,7 +70,7 @@ jobs:
         if: success() || failure()    # run this step even if previous step failed
         with:
           name: Unit Test Report            # Name of the check run which will be created
-          path: "${{ inputs.path }}/build/test-results/test/*.xml"    # Path to test results
+          path: "build-result/build/test-results/test/*.xml"    # Path to test results
           reporter: java-junit        # Format of test results
 
   sca-scan:
@@ -76,6 +80,12 @@ jobs:
       contents: read          # Required to checkout and read repo files
       security-events: write  # Required to upload SARIF files to Security tab
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Runner
+        uses: ./.github/actions/wf-setup
+        
       - name: Download the build
         uses: actions/download-artifact@v4
         with:
