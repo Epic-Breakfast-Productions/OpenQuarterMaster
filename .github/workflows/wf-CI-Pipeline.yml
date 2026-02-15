@@ -1,0 +1,110 @@
+name: WF - CI Pipeline
+on:
+  workflow_call:
+    inputs:
+      path:
+        required: true
+        type: string
+jobs:
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Runner
+        uses: ./.github/actions/wf-setup
+
+      - name: Build App
+        working-directory: ${{ inputs.path }}
+        run: |
+          ./gradlew build -x test
+
+      - name: Save build output as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: build-result
+          path: ${{ inputs.path }}
+
+  unit-test:
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download the build
+        uses: actions/download-artifact@v4
+        with:
+          name: build-result
+          path: ./
+
+      - name: Setup Runner
+        uses: ./.github/actions/wf-setup
+
+      - name: Run Unit Tests
+        run: |
+          ./gradlew test
+
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v4
+        with:
+          name: Code Coverage Report
+          path: "${{ inputs.path }}/build/jacoco-report"
+
+      - name: Archive Unit Test Report
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+        uses: actions/upload-artifact@v4
+        with:
+          name: Unit Test Report
+          path: "${{ inputs.path }}/build/reports/tests/test"
+
+      # https://github.com/marketplace/actions/test-reporter
+      - name: Unit Test Report
+        uses: dorny/test-reporter@v1
+        env:
+          NODE_OPTIONS: "--max_old_space_size=4096"
+        if: success() || failure()    # run this step even if previous step failed
+        with:
+          name: Unit Test Report            # Name of the check run which will be created
+          path: "${{ inputs.path }}/build/test-results/test/*.xml"    # Path to test results
+          reporter: java-junit        # Format of test results
+
+  sca-scan:
+    runs-on: ubuntu-24.04
+    needs: build
+    permissions:
+      contents: read          # Required to checkout and read repo files
+      security-events: write  # Required to upload SARIF files to Security tab
+    steps:
+      - name: Download the build
+        uses: actions/download-artifact@v4
+        with:
+          name: build-result
+          path: ./
+
+      - name: Setup Runner
+        uses: ./.github/actions/wf-setup
+
+      - name: Generate the lockfile
+        run: |
+          ./gradlew dependencies --write-locks
+      
+      - name: Run Trivy vulnerability scanner in fs mode
+        uses: aquasecurity/trivy-action@0.34.0
+        with:
+          scan-type: 'fs'
+          scan-ref: '.'
+          format: 'sarif'
+          output: 'trivy-results.sarif'
+          scanners: 'vuln,secret,misconfig,license'
+
+      - name: Upload Trivy scan results to GitHub Security tab
+        uses: github/codeql-action/upload-sarif@v4
+        with:
+          sarif_file: 'trivy-results.sarif'
+
+      - name: Save report as an artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: Trivy scan results
+          path: "trivy-results.sarif"
