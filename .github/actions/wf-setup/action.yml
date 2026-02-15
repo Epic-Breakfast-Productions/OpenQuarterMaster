@@ -9,5 +9,4 @@ runs:
         java-version: '21'
         distribution: 'adopt'
 
-    - name: Setup gradle
-      uses: gradle/actions/setup-gradle@v5
+    

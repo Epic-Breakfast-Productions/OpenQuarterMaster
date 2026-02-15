@@ -9,3 +9,9 @@ pluginManagement {
     }
 }
 rootProject.name='oqm-core-api'
+
+buildCache {
+    local {
+        enabled = true
+    }
+}
