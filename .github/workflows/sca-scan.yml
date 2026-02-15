@@ -16,6 +16,11 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v4
 
+    - name: Generate the lockfile
+      working-directory: "software/core/oqm-core-api"
+      run: |
+        ./gradlew dependencies --write-locks
+    
     - name: Run Trivy vulnerability scanner in fs mode
       uses: aquasecurity/trivy-action@0.33.1
       with:
