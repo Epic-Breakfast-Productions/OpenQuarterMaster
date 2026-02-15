@@ -1,10 +1,8 @@
-format: table
-list-all-pkgs: true
+format: sarif
 report: "all"
 severity: 
   - UNKNOWN
+  - LOW
   - MEDIUM
   - HIGH
   - CRITICAL
-table-mode:
-  - detailed
