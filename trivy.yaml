@@ -1,5 +1,5 @@
 format: sarif
-# exit-code: 1
+exit-code: 1
 severity: CRITICAL
 # secret:
 #   config: config/trivy/secret.yaml
