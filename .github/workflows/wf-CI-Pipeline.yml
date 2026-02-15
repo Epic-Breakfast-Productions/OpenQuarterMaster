@@ -16,6 +16,11 @@ jobs:
       - name: Setup Runner
         uses: ./.github/actions/wf-setup
 
+      - name: Setup gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: false
+
       - name: Build App
         working-directory: ${{ inputs.path }}
         run: |
@@ -26,6 +31,7 @@ jobs:
         with:
           name: build-result
           path: ${{ inputs.path }}/build/quarkus-app
+          retention-days: 1
 
   unit-test:
     needs: build
@@ -46,7 +52,7 @@ jobs:
       - name: Run Unit Tests
         working-directory: ${{ inputs.path }}
         run: |
-          ./gradlew test
+          ./gradlew test --build-cache
 
       - name: Archive code coverage results
         uses: actions/upload-artifact@v4
