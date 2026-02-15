@@ -6,3 +6,5 @@ severity:
   - MEDIUM
   - HIGH
   - CRITICAL
+db:
+  skip-update: true
