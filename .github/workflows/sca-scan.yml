@@ -20,7 +20,7 @@ jobs:
       uses: aquasecurity/trivy-action@0.33.1
       with:
         scan-type: 'fs'
-        scan-ref: '.'
+        scan-ref: './software/core/oqm-core-api/'
         trivy-config: trivy.yaml
         output: 'trivy-results.sarif'
 
