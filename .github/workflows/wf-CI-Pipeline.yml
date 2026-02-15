@@ -37,8 +37,8 @@ jobs:
           name: build-result
           path: ./
 
-      - name: Setup Runner
-        uses: ./.github/actions/wf-setup
+      # - name: Setup Runner
+      #   uses: ./.github/actions/wf-setup
 
       - name: Run Unit Tests
         run: |
@@ -82,8 +82,8 @@ jobs:
           name: build-result
           path: ./
 
-      - name: Setup Runner
-        uses: ./.github/actions/wf-setup
+      # - name: Setup Runner
+      #   uses: ./.github/actions/wf-setup
 
       - name: Generate the lockfile
         run: |
