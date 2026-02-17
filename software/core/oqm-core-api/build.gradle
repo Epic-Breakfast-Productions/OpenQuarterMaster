@@ -8,7 +8,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '4.4.0-SNAPSHOT'
+version '4.4.1-SNAPSHOT'
 
 repositories {
 	mavenCentral()

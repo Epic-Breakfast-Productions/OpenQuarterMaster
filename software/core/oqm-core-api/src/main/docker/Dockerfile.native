@@ -27,3 +27,6 @@ EXPOSE 8080
 USER 1001
 
 ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]
+
+HEALTHCHECK --interval=3s --timeout=5s --start-period=5s --retries=10 \
+	CMD curl -sSkL --fail http://localhost:80/q/health
