@@ -86,7 +86,8 @@ ENV LANGUAGE='en_US:en'
 COPY build/lib/* /deployments/lib/
 COPY build/*-runner.jar /deployments/quarkus-run.jar
 
-EXPOSE 8080
+EXPOSE 80/tcp
+EXPOSE 443/tcp
 USER 185
 ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
