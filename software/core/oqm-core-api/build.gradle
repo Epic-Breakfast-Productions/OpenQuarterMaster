@@ -3,7 +3,7 @@ plugins {
 	id 'io.quarkus'
 	id "io.freefair.lombok" version "9.2.0"
 	id 'jacoco'
-	id 'org.cyclonedx.bom' version '2.3.1'
+	id 'org.cyclonedx.bom' version '3.2.0'
 	id("org.spdx.sbom") version "0.9.0"
 }
 
