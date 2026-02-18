@@ -22,8 +22,7 @@ const ItemAddEdit = {
 	addEditItemUnitInput: $('#addEditItemUnitInput'),
 	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
 
-	generalIdInputContainer: GeneralIdentifiers.getInputContainer($("#addEditItemGeneralIdInput")),
-	uniqueIdInputContainer: UniqueIdentifiers.getInputContainer($("#addEditItemUniqueIdInput")),
+	identifierInputContainer: Identifiers.getInputContainer($("#addEditItemIdentifiersInput")),
 	associatedGeneratorInput: $("#addEditItem-item-associatedIdGeneratorInput"),
 
 	// itemNotStoredCheck: $("#addEditItemNotStoredCheck"),
@@ -78,8 +77,7 @@ const ItemAddEdit = {
 		this.addEditItemFormMode.val("");
 		ItemAddEdit.addEditItemNameInput.val("");
 		ItemAddEdit.addEditItemDescriptionInput.setValue("");
-		GeneralIdentifiers.reset(ItemAddEdit.generalIdInputContainer);
-		UniqueIdentifiers.reset(ItemAddEdit.uniqueIdInputContainer);
+		// Identifiers.reset(ItemAddEdit.identifierInputContainer);
 		IdGeneratorSearchSelect.AssociatedInput.resetAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput);
 		ItemAddEdit.addEditItemModalLabel.text("Item");
 		ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(0);
@@ -107,6 +105,7 @@ const ItemAddEdit = {
 		ItemAddEdit.addEditKeywordDiv.text("");
 		ItemAddEdit.addEditAttDiv.text("");
 		Promise.all(promises);
+		console.log("Reset item add/edit form.");
 	},
 	setupAddEditForAdd: async function () {
 		console.log("Setting up add/edit form for add.");
@@ -160,8 +159,7 @@ const ItemAddEdit = {
 						}
 					});
 
-				GeneralIdentifiers.populateEdit(ItemAddEdit.generalIdInputContainer, data.generalIds);
-				UniqueIdentifiers.populateEdit(ItemAddEdit.uniqueIdInputContainer, data.uniqueIds);
+				Identifiers.populateEdit(ItemAddEdit.identifierInputContainer, data.identifiers);
 				IdGeneratorSearchSelect.AssociatedInput.populateAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput, data.idGenerators);
 
 				let durationTimespan = TimeHelpers.durationNumSecsToTimespan(data.expiryWarningThreshold);
@@ -319,8 +317,7 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 	let addEditData = {
 		name: ItemAddEdit.addEditItemNameInput.val(),
 		description: ItemAddEdit.addEditItemDescriptionInput.getValue(),
-		generalIds: GeneralIdentifiers.getGeneralIdData(ItemAddEdit.generalIdInputContainer),
-		uniqueIds: UniqueIdentifiers.getUniqueIdData(ItemAddEdit.uniqueIdInputContainer),
+		identifiers: Identifiers.getIdentifierData(ItemAddEdit.identifierInputContainer),
 		idGenerators: IdGeneratorSearchSelect.AssociatedInput.getAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput),
 		storageType: ItemAddEdit.addEditItemStorageTypeInput.val(),
 		expiryWarningThreshold: ItemAddEdit.addEditItemExpiryWarningThresholdInput.val() * ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.val(),

@@ -13,7 +13,7 @@
     <div class="row">
         <div class="col">
             <button type="button" class="btn btn-primary mb-1" onclick="ExtItemSearch.toggleAddEditProductSearchPane();" title="Search for Products">
-                {#icons/search}{/icons/search} Search for Products
+                {#icons/search /} Search for Products
             </button>
         </div>
     </div>
@@ -163,25 +163,16 @@
                 </div>
                 <hr />
                 <div class="mb-5 row">
-                    <label for="addEditItemGeneralIdInput" class="col-form-label col-sm-2">
-                    	{#icons/generalIds /}
-                    	General Identifiers:
+                    <label for="addEditItemIdentifiersInput" class="col-form-label col-sm-2">
+                    	{#icons/identifiers /}
+                    	Identifiers:
                     </label>
                     <div class="col-sm-10">
-                        {#inputs/identifiers/generalIdInput id="addEditItemGeneralIdInput" /}
-                    </div>
-                </div>
-                <div class="mb-5 row">
-                    <label for="addEditItemUniqueIdInput" class="col-form-label col-sm-2">
-                    	{#icons/uniqueIds /}
-                    	Unique Identifiers:
-                    </label>
-                    <div class="col-sm-10">
-                        {#inputs/identifiers/uniqueIdInput id="addEditItemUniqueIdInput" /}
+                        {#inputs/identifiers/associatedIdentifierInput id="addEditItemIdentifiersInput" name="newIdentifier" forObject='ITEM'/}
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="addEditItemUniqueIdInput" class="col-form-label col-sm-2">
+                    <label for="" class="col-form-label col-sm-2">
                     	{#icons/idGenerators /}
                     	Associated ID Generators:
                     </label>
@@ -296,10 +287,7 @@
 									  Expiration: <code class="user-select-all">\{exp;datetime format}</code> - Writes out the expiration for this stored. Format should match standard <a href="https://www.digitalocean.com/community/tutorials/java-simpledateformat-java-date-format#patterns" target="_blank">Java datetime syntax</a>. Default format is <code>MM/dd/yyyy</code>
 							      </li>
 							      <li>
-							          General Id: <code class="user-select-all">\{gid;name of general identifier}</code> - Use a general identifier value.
-							      </li>
-							      <li>
-							          Unique Id: <code class="user-select-all">\{uid;name of unique identifier}</code> - Use a unique identifier value.
+							          Identifier: <code class="user-select-all">\{ident;name of identifier}</code> - Use an identifier value.
 							      </li>
 							      <li>
 							          Price: <code class="user-select-all">\{price;name of calculated price}</code> - Use a price value. Does not include price label.

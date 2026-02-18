@@ -22,6 +22,7 @@ api:
   insecure: {{ infra.traefik.managementPortEnabled }}
 log:
   level: {{ infra.traefik.logLevel }}
+ping: {}
 {%- if cert.externalDefault == "acme" %}
 certificatesResolvers:
   acmeResolver:

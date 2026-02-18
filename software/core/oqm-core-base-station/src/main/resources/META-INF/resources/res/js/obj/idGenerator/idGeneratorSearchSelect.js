@@ -13,8 +13,7 @@ const IdGeneratorSearchSelect = {
 
 			IdGeneratorSearchSelect.setupSearchSelect(
 				idGenInputContainer,
-				idGenInputContainer.data("generates"),
-				idGenInputContainer.data("forobject")
+				idGenInputContainer.data("for-object")
 			);
 		},
 		associateIdGenerator: function (idGenInputJq, idGenData) {
@@ -70,8 +69,7 @@ const IdGeneratorSearchSelect = {
 
 			IdGeneratorSearchSelect.setupSearchSelect(
 				buttonJq,
-				buttonJq.data("generates"),
-				buttonJq.data("forobject"),
+				buttonJq.data("for-object"),
 				list
 			);
 		},
@@ -113,33 +111,16 @@ const IdGeneratorSearchSelect = {
 				
 			</div>
 			`);
-			//TODO:: adjust added above
+
 			addedToGenerate.find(".fromGenerator").data("generator", idGeneratorData.id).text(idGeneratorData.name);
 			addedToGenerate.find("input[name=label]").val(idGeneratorData.label);
 
+			addedToGenerate.addClass("addedIdentifierContainer");
+			addedToGenerate.find(".moveUpButton").on("click", function(e){Identifiers.moveUp($(this))});
+			addedToGenerate.find(".moveDownButton").on("click", function(e){Identifiers.moveDown($(this))});
+			addedToGenerate.find(".removeButton").on("click", function(e){Identifiers.removeIdentifier($(this))});
 
-
-			switch(generates){
-				case "UNIQUE":
-					addedToGenerate.addClass("uniqueIdentifierContainer");
-
-					addedToGenerate.find(".moveUpButton").on("click", function(e){UniqueIdentifiers.moveUp($(this))});
-					addedToGenerate.find(".moveDownButton").on("click", function(e){UniqueIdentifiers.moveDown($(this))});
-					addedToGenerate.find(".removeButton").on("click", function(e){UniqueIdentifiers.removeIdentifier($(this))});
-
-					UniqueIdentifiers.getIdentifiersContainer(UniqueIdentifiers.getInputContainer(generateButtonJq)).append(addedToGenerate);
-					break;
-				case "GENERAL":
-					addedToGenerate.addClass("generalIdentifierContainer");
-					addedToGenerate.find(".moveUpButton").on("click", function(e){GeneralIdentifiers.moveUp($(this))});
-					addedToGenerate.find(".moveDownButton").on("click", function(e){GeneralIdentifiers.moveDown($(this))});
-					addedToGenerate.find(".removeButton").on("click", function(e){GeneralIdentifiers.removeIdentifier($(this))});
-
-					GeneralIdentifiers.getIdentifiersContainer(GeneralIdentifiers.getInputContainer(generateButtonJq)).append(addedToGenerate);
-					break;
-				default:
-					console.warn("Bad generates value");
-			}
+			Identifiers.getIdentifiersContainer(Identifiers.getInputContainer(generateButtonJq)).append(addedToGenerate);
 		},
 	},
 
@@ -151,8 +132,8 @@ const IdGeneratorSearchSelect = {
 	newGeneratorForm: $("#idGeneratorSearchSelectNewGeneratorForm"),
 	associatedList: $("#idGeneratorSelectSearchFromAssociatedList"),
 
-	setupSearchSelect: function (idGenSelectAddInputJq, generates, forObject, genList = null) {
-		console.log("Setting up id generator search select for: ", generates, forObject);
+	setupSearchSelect: function (idGenSelectAddInputJq, forObject, genList = null) {
+		console.log("Setting up id generator search select for: ", forObject);
 
 		ModalHelpers.setReturnModal(IdGeneratorSearchSelect.searchSelectModal, idGenSelectAddInputJq);
 
@@ -164,18 +145,6 @@ const IdGeneratorSearchSelect = {
 		IdGeneratorAddEdit.setupFormForAdd(IdGeneratorSearchSelect.newGeneratorForm, false, true);
 		IdGeneratorSearchSelect.searchSelectModal.data("destinationId", destinationId);
 
-
-		if (generates) {
-			let generatesInput = IdGeneratorSearchSelect.searchSelectForm.find("select[name='generates']");
-			generatesInput.val(generates);
-			generatesInput.find(':selected').prop('disabled', false);
-			generatesInput.find(':not(:selected)').prop('disabled', true);
-
-			let addGenerates = IdGeneratorAddEdit.formGetters.generates(IdGeneratorSearchSelect.newGeneratorForm);
-			addGenerates.val(generates);
-			addGenerates.find(':selected').prop('disabled', false);
-			addGenerates.find(':not(:selected)').prop('disabled', true);
-		}
 		if (forObject) {
 			let forObjectInput = IdGeneratorSearchSelect.searchSelectForm.find("select[name='generatorFor']");
 			forObjectInput.val(forObject);
@@ -195,9 +164,6 @@ const IdGeneratorSearchSelect = {
 
 			for(let curGenId in genList){
 				Getters.Identifiers.generator(genList[curGenId]).then(function (idGenData){
-					if(generates && idGenData.generates != generates){
-						return;
-					}
 					if(forObject && !idGenData.forObjectType.includes(forObject)){
 						return;
 					}

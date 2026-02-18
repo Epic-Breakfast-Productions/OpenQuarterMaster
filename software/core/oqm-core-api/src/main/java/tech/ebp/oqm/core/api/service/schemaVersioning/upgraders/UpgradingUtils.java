@@ -30,6 +30,9 @@ public class UpgradingUtils {
 	}
 	
 	public static ObjectNode normalizeObject(ObjectNode object, String oldField, String newField, String bsonInnerField) {
+		if(!object.has(oldField)){
+			return object;
+		}
 		if (
 			(!object.has(newField) && object.has(oldField)) ||
 			(
