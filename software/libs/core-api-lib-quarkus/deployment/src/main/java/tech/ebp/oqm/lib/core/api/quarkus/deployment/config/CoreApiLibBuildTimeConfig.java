@@ -73,10 +73,17 @@ public interface CoreApiLibBuildTimeConfig {
 		boolean enable();
 		
 		/**
+		 * The host port to assign to the core api devservice
+		 * @return The host port assigned to the core api devservice
+		 */
+		@WithDefault("8123")
+		Integer port();
+		
+		/**
 		 * The version/ tag of the core api container image
 		 * @return The version/ tag of the core api container image
 		 */
-		@WithDefault("4.3.1")
+		@WithDefault("4.4.1-SNAPSHOT")
 		String coreApiVersion();
 		
 		/**
