@@ -29,12 +29,33 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
                                         --name $CONTAINER_NAME \
                                         --network=oqm-internal \
+                                        --health-cmd=\"rpk cluster health | grep 'Healthy:' | grep 'true'\" \
+                                        --health-interval=10s \
+                                        --health-timeout=10s \
+                                        --health-retries=5 \
+                                        --health-start-period=20s \
                                         $IMAGE_NAME:$IMAGE_VERSION redpanda start \
                                         --kafka-addr internal://0.0.0.0:9092,external://0.0.0.0:19092 \
                                         --advertise-kafka-addr internal://$CONTAINER_NAME:9092,external://localhost:19092 \
                                         --rpc-addr $CONTAINER_NAME:33145 \
                                         --advertise-rpc-addr $CONTAINER_NAME:33145 \
                                         --default-log-level=info"
+# Ensure is up, healthy
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+                                if [ \"$status\" == \"healthy\" ]; then \
+                                    echo \"Container running!\"; \
+                                    running=\"true\"; \
+                                    continue; \
+                                fi; \
+                                sleep 0.05s; \
+                                if [ $SECONDS -gt 30 ]; then \
+                                    echo \"Container not running after 30 seconds!\"; \
+                                    exit 1; \
+                                fi; \
+                            done; \
+                            "
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop kafka container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove kafka container'"
 
