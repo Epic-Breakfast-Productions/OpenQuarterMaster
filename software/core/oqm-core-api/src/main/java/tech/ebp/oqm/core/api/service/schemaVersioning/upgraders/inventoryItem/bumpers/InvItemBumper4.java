@@ -37,11 +37,13 @@ public class InvItemBumper4 extends ObjectSchemaVersionBumper<InventoryItem> {
 		//update existing fields
 		UpgradingUtils.stringToConvertedTree(oldObj, "expiryWarningThreshold", Duration.class);
 		UpgradingUtils.stringToConvertedTree(oldObj, "unit", Unit.class);
+		UpgradingUtils.stringToConvertedTree(oldObj, "lowStockThreshold", Quantity.class);
 		UpgradingUtils.normalizeObjectIdList((ArrayNode) oldObj.get("storageBlocks"));
 		UpgradingUtils.normalizeObjectIdList((ArrayNode) oldObj.get("imageIds"));
 		UpgradingUtils.normalizeObjectIdList((ArrayNode) oldObj.get("attachedFiles"));
 		UpgradingUtils.normalizeObjectIdList((ArrayNode) oldObj.get("categories"));
 		UpgradingUtils.normalizeObjectIdList((ArrayNode) oldObj.get("idGenerators"));
+		
 		
 		if(oldObj.has("stats") && !oldObj.get("stats").isEmpty()){
 			UpgradingUtils.stringToConvertedTree((ObjectNode) oldObj.get("stats"), "total", Quantity.class);

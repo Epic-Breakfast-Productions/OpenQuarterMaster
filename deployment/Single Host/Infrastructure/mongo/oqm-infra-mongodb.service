@@ -51,11 +51,17 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --network=oqm-internal \
                                  -v $(oqm-config g 'system.dataDir')$DATA_DIR/:/data/db  \
                                  --env-file $ENV_CONFIG_FILE \
+                                 --health-cmd=\"mongosh --quiet --eval 'db.runCommand({ping: 1}).ok'\" \
+                                 --health-interval=10s \
+                                 --health-timeout=10s \
+                                 --health-retries=5 \
+                                 --health-start-period=20s \
                                  $IMAGE_NAME:$IMAGE_VERSION mongod --keyFile /data/db/keyfile --replSet rs0"
+# Ensure is up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
-                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME 2> /dev/null)\"; \
-                                if [ \"$status\" == \"true\" ]; then \
+                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+                                if [ \"$status\" == \"healthy\" ]; then \
                                     echo \"Container running!\"; \
                                     running=\"true\"; \
                                     continue; \
@@ -66,22 +72,6 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                     exit 1; \
                                 fi; \
                             done; \
-                            "
-ExecStartPost=/bin/bash -c "running=\"false\"; \
-                            sleep 10s; \
-                            while [ \"$running\" != \"true\" ]; do \
-                                sleep 1s; \
-                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
-                                if [ \"$status\" != \"true\" ]; then \
-                                    echo \"Container was stopped!\"; \
-                                    exit 1; \
-                                fi; \
-                                /usr/bin/docker exec $CONTAINER_NAME mongosh --eval \"\"; \
-                                if [ \"$?\" = \"0\" ]; then \
-                                    echo \"Mongo container running and available!\"; \
-                                    running=\"true\"; \
-                                fi \
-                            done \
                             "
 ExecStartPost=/bin/bash -c "/usr/bin/docker exec $CONTAINER_NAME mongosh -u \"$(oqm-config g 'infra.mongodb.adminUser')\" -p \"$(oqm-config g 'infra.mongodb.adminPass')\" --eval \"rs.initiate({'_id':'rs0', 'members':[{'_id':0,'host':'localhost:27017'}]})\" || echo 'Probably already initialized.'"
 
