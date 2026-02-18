@@ -57,6 +57,11 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  -v /tmp/oqm/serviceConfig/infra/traefik/config.d/dynamicConfig/:/etc/traefik/dynamicConfig:ro \
                                  -v /tmp/oqm/serviceConfig/infra/traefik/certs/:/etc/traefik/certs:ro \
                                  -v $(oqm-config g 'system.dataDir')/traefik/acme:/etc/traefik/acme \
+                                 --health-cmd=\"traefik healthcheck\" \
+                                 --health-interval=10s \
+                                 --health-timeout=10s \
+                                 --health-retries=5 \
+                                 --health-start-period=20s \
                                  $IMAGE_NAME:$IMAGE_VERSION --log.level=DEBUG"
 # TODO:: meaningful healthcheck for startup
 
