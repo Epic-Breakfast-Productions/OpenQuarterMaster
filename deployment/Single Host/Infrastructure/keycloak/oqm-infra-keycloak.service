@@ -100,25 +100,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 fi; \
                             done; \
                             "
-#ExecStartPost=/bin/bash -c "running=\"false\"; \
-#                            sleep 10s; \
-#                            while [ \"$running\" != \"true\" ]; do \
-#                                sleep 1s; \
-#                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
-#                                if [ \"$status\" != \"true\" ]; then \
-#                                    echo \"Container was stopped!\"; \
-#                                    exit 1; \
-#                                fi; \
-#                                hcGet=\"$(docker run --rm --name oqm-infra-keycloak-hc --network=oqm-internal docker.io/curlimages/curl:latest https://$CONTAINER_NAME:9000/infra/keycloak/health -k)\"; \
-#                                echo \"Health check get: $hcGet\"; \
-#                                status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
-#                                echo \"Status: $status\"; \
-#                                if [ \"$status\" = \"UP\" ]; then \
-#                                    echo \"Keycloak running and available!\"; \
-#                                    running=\"true\"; \
-#                                fi; \
-#                            done; \
-#                            "
+
 ExecStop=/bin/bash -c "stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove keycloak container'"
 
