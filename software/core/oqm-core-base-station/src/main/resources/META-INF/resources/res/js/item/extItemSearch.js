@@ -333,8 +333,8 @@ ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
 	event.preventDefault();
 	let barcodeText = ExtItemSearch.prodBarcodeSearchBarcodeInput.val();
 	console.log("Searching for a barcode: ", barcodeText);
-	GeneralIdentifiers.getNewIdentifierInput(ItemAddEdit.generalIdInputContainer).val(barcodeText);
-	GeneralIdentifiers.addIdentifier(ItemAddEdit.generalIdInputContainer);
+	Identifiers.getNewIdentifierInput(ItemAddEdit.identifierInputContainer).val(barcodeText);
+	Identifiers.addIdentifier(ItemAddEdit.identifierInputContainer);
 	ExtItemSearch.extSearchResults.html("");
 
 	Rest.call({

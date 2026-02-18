@@ -41,12 +41,9 @@ const ItemView = {
 	itemViewBarcode: $("#itemViewBarcode"),
 
 	idsAccord: $("#itemViewIdsContainer"),
-	generalIdsAccord: $("#itemViewGeneralIdsAccord"),
-	generalIdNumIds: $("#itemViewGeneralIdsNumIdsLabel"),
-	generalIdContent: $("#itemViewGeneralIdsAccordContent"),
-	uniqueIdsAccord: $("#itemViewUniqueIdsAccord"),
-	uniqueIdNumIds: $("#itemViewUniqueIdsNumIdsLabel"),
-	uniqueIdContent: $("#itemViewUniqueIdsAccordContent"),
+	identifiersAccord: $("#itemViewIdentifiersAccord"),
+	identifierNumIds: $("#itemViewIdentifiersNumIdsLabel"),
+	identifierContent: $("#itemViewGeneralIdentifiersAccordContent"),
 
 	assocIdGensAccord: $("#itemViewIdGeneratorsAccord"),
 	assocIdGensNumIds: $("#itemViewIdGeneratorsNumIdsLabel"),
@@ -117,12 +114,9 @@ const ItemView = {
 		ItemView.itemViewDescription.text("");
 
 		ItemView.idsAccord.hide();
-		ItemView.generalIdsAccord.hide();
-		ItemView.generalIdNumIds.text("");
-		ItemView.generalIdContent.text("");
-		ItemView.uniqueIdsAccord.hide();
-		ItemView.uniqueIdNumIds.text("");
-		ItemView.uniqueIdContent.text("");
+		ItemView.identifiersAccord.hide();
+		ItemView.identifierNumIds.text("");
+		ItemView.identifierContent.text("");
 		ItemView.assocIdGensAccord.hide();
 		ItemView.assocIdGensNumIds.text("");
 		ItemView.assocIdGensContent.text("");
@@ -506,17 +500,12 @@ const ItemView = {
 					ItemView.itemViewDescriptionContainer.show();
 				}
 
-				if(itemData.generalIds.length || itemData.uniqueIds.length || itemData.idGenerators.length) {
+				if(itemData.identifiers.length || itemData.idGenerators.length) {
 					console.debug("Had ids to show");
-					if(itemData.generalIds.length){
-						ItemView.generalIdsAccord.show();
-						ItemView.generalIdNumIds.text(itemData.generalIds.length);
-						GeneralIdentifiers.View.showInDiv(ItemView.generalIdContent, itemData.generalIds);
-					}
-					if(itemData.uniqueIds.length){
-						ItemView.uniqueIdsAccord.show();
-						ItemView.uniqueIdNumIds.text(itemData.uniqueIds.length);
-						UniqueIdentifiers.View.showInDiv(ItemView.uniqueIdContent, itemData.uniqueIds);
+					if(itemData.identifiers.length){
+						ItemView.identifiersAccord.show();
+						ItemView.identifierNumIds.text(itemData.identifiers.length);
+						Identifiers.View.showInDiv(ItemView.identifierContent, itemData.identifiers);
 					}
 					if(itemData.idGenerators.length){
 						ItemView.assocIdGensAccord.show();

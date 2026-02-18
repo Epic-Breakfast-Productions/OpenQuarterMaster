@@ -55,12 +55,11 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/user-config.list \
                                         --add-host $(oqm-config g system.hostname):host-gateway \
                                         $IMAGE_NAME:$IMAGE_VERSION"
-# Ensure is up
-ExecStartPost=/bin/bash -c "echo \"Checking that container started.\"; \
-                            running=\"false\"; \
+# Ensure is up, healthy
+ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
-                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME 2> /dev/null)\"; \
-                                if [ \"$status\" == \"true\" ]; then \
+                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+                                if [ \"$status\" == \"healthy\" ]; then \
                                     echo \"Container running!\"; \
                                     running=\"true\"; \
                                     continue; \
@@ -71,26 +70,6 @@ ExecStartPost=/bin/bash -c "echo \"Checking that container started.\"; \
                                     exit 1; \
                                 fi; \
                             done; \
-                            "
-ExecStartPost=/bin/bash -c "echo \"Checking that health endpoints come up healthy.\"; \
-                            running=\"false\"; \
-                            healthUri=\"$(oqm-config g core.baseStation.internalBaseUri)/q/health\"; \
-                            while [ \"$running\" != \"true\" ]; do \
-                                sleep 1s; \
-                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
-                                if [ \"$status\" != \"true\" ]; then \
-                                    echo \"Container was stopped!\"; \
-                                    exit 1; \
-                                fi; \
-                                hcGet=\"$(docker run --rm --name $CONTAINER_NAME-hc --network=oqm-internal docker.io/curlimages/curl:latest $healthUri -k)\"; \
-                                echo \"Health check get to $healthUri : $hcGet\"; \
-                                status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
-                                echo \"Status: $status\"; \
-                                if [ \"$status\" = \"UP\" ]; then \
-                                    echo \"Base Station running and available!\"; \
-                                    running=\"true\"; \
-                                fi \
-                            done \
                             "
 # Remove from docker
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
