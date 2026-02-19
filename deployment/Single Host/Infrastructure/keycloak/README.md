@@ -1,31 +1,101 @@
 # Keycloak OQM Infra Component
 
-This postgresql instance is currently used by all services that need OIDC and token access. Examples:
+This keycloak instance is currently used by all services that need OIDC and token access. Examples:
 
  - [Base Station](../../open-qm-base-station)
  - [Plugins](../../plugins)
+
+## Outline
+
+## Realm Setup, Structure
+
+For the most part, the OQM realm is pretty straight forward. It is setup to provide the appropriate auth methodology for the system.
+
+
+### Realm Roles
+
+These roles are provided out of the box, applied at the realm level:
+
+ - `user`
+ - `extService`
+ - `inventoryAdmin`
+ - `inventoryView`
+ - `inventoryEdit`
+ - `itemCheckout`
+
+### Groups
+
+\* = default applied to new users
+
+#### User *
+
+This group is intended as a basic user.
+
+##### Roles
+
+ - `user`
+ - `inventoryView`
+ - `inventoryEdit`
+ - `itemCheckout`
+
+#### Inventory Admin
+
+##### Roles
+
+ - `inventoryAdmin`
+
+#### User Admin
+
+
+## Client setup
 
 The flow of this is as follows:
 
  - This infra provides the OQM realm
  - Individual apps provide their clients defined in:
    - `/etc/oqm/kcClient/clientName.json`
-   - Defined by the following schema:
-     ```json
-     {
-        "clientName": "",
-        "displayName": "",
-        "description": "",
-        "roles": {
-            "roleName": {
-                "default": true
-            }
-        }
-     }
-     ```
+   - Defined by the schema in the "Client Definition" section
+     
+     
+### Service Integration Definition
 
+```json
+{
+   "service": "name",
+   "roles": [
+      {
+         "roleName": "",
+         "default": false,
+         "group": "groupName",
+         "realm": false
+      }
+   ],
+   "clients": [
+      {
+         "clientName": "clientName",
+         "displayName": "displayName",
+         "description": "description",
+         "roles": [ ]
+      }
+   ]
+}
+```
 
+Explanation:
 
+ - `service`
+ - `roles` - Roles to be added to the realm
+   - `roleName`
+   - `default` - If this role should be a default role applied to users
+   - `group` - Nullable, the group that this role should be added to
+   - `realm` - Nullable, `true` or `false`. If is a realm-level role or not
+ - `clients` - Clients to be added to the realm
+   - `clientName` - The name of the client
+   - `displayName` - The display name of the client
+   - `description` - The description of the client
+   - `roles` - The roles that the client has. List of strings
+
+## Tips n Tricks
 
 
 In case you get the "HTTPS is required" error: 
