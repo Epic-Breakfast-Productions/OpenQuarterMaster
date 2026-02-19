@@ -1,24 +1,24 @@
-const GeneralIdentifiers = {
+const Identifiers = {
 	getInputContainer(subElementJq) {
-		return subElementJq.closest('.generalIdInputContainer');
+		return subElementJq.closest('.identifierInputContainer');
 	},
-	getIdentifiersContainer(generalInputContainerJq) {
-		return generalInputContainerJq.find(".identifiersContainer");
+	getIdentifiersContainer(identifierInputContainerJq) {
+		return identifierInputContainerJq.find(".identifiersContainer");
 	},
-	getMessagesContainer(generalInputContainerJq) {
-		return generalInputContainerJq.find(".identifierMessagesContainer");
+	getMessagesContainer(identifierInputContainerJq) {
+		return identifierInputContainerJq.find(".identifierMessagesContainer");
 	},
-	getAssociateButton(generalInputContainerJq) {
-		return generalInputContainerJq.find(".idGeneratorGenerateButton");
+	getAssociateButton(identifierInputContainerJq) {
+		return identifierInputContainerJq.find(".idGeneratorGenerateButton");
 	},
-	getNewIdentifierInput(generalInputContainerJq) {
-		return generalInputContainerJq.find("input[name='newIdentifier']");
+	getNewIdentifierInput(identifierInputContainerJq) {
+		return identifierInputContainerJq.find("input[name='newIdentifier']");
 	},
-	getNewIdentifierValue(generalInputContainerJq) {
-		return GeneralIdentifiers.getNewIdentifierInput(generalInputContainerJq).val();
+	getNewIdentifierValue(identifierInputContainerJq) {
+		return Identifiers.getNewIdentifierInput(identifierInputContainerJq).val();
 	},
 	getIdentifierContainer(subElementJq) {
-		return subElementJq.closest('.generalIdentifierContainer');
+		return subElementJq.closest('.addedIdentifierContainer');
 	},
 	getIdentifierImage(idContainerJq) {
 		return idContainerJq.find(".identifierImage");
@@ -27,65 +27,65 @@ const GeneralIdentifiers = {
 		return idContainerJq.find(".identifierValue");
 	},
 	getIdentifierValue(idContainerJq) {
-		return GeneralIdentifiers.getIdentifierValueContainer(idContainerJq).text();
+		return Identifiers.getIdentifierValueContainer(idContainerJq).text();
 	},
 	getIdentifierTypeContainer(idContainerJq) {
 		return idContainerJq.find(".identifierType");
 	},
 	getIdentifierType(idContainerJq) {
-		return GeneralIdentifiers.getIdentifierTypeContainer(idContainerJq).text();
+		return Identifiers.getIdentifierTypeContainer(idContainerJq).text();
 	},
 	getIdentifierLabelInput(idContainerJq) {
 		return idContainerJq.find("input[name='label']");
 	},
 	getIdentifierLabel(idContainerJq) {
-		return GeneralIdentifiers.getIdentifierLabelInput(idContainerJq).val();
+		return Identifiers.getIdentifierLabelInput(idContainerJq).val();
 	},
 	getIdentifierIsBarcodeCheckbox(idContainerJq) {
-		return idContainerJq.find("input[name='generalIdIsBarcode']");
+		return idContainerJq.find("input[name='identifierIsBarcode']");
 	},
-	clearInput(generalInputContainerJq) {
-		GeneralIdentifiers.getNewIdentifierInput(generalInputContainerJq).val("");
+	clearInput(identifierInputContainerJq) {
+		Identifiers.getNewIdentifierInput(identifierInputContainerJq).val("");
 	},
-	reset(generalInputContainerJq) {
-		GeneralIdentifiers.clearInput(generalInputContainerJq);
-		GeneralIdentifiers.getIdentifiersContainer(generalInputContainerJq).html("");
+	reset(identifierInputContainerJq) {
+		Identifiers.clearInput(identifierInputContainerJq);
+		Identifiers.getIdentifiersContainer(identifierInputContainerJq).html("");
 	},
-	addIdentifier(generalInputContainerJq) {
-		let newIdentifier = GeneralIdentifiers.getNewIdentifierValue(generalInputContainerJq);
+	addIdentifier(identifierInputContainerJq) {
+		let newIdentifier = Identifiers.getNewIdentifierValue(identifierInputContainerJq);
 		if(newIdentifier === "") {
 			console.log("Not adding empty identifier.");
 			return;
 		}
 
-		console.log("Adding a new general identifier: ", newIdentifier);
+		console.log("Adding a new identifier: ", newIdentifier);
 
 		return Rest.call({
-			failMessagesDiv: generalInputContainerJq,
-			url: Rest.passRoot + "/identifier/general/getIdObject/" + newIdentifier,
+			failMessagesDiv: identifierInputContainerJq,
+			url: Rest.passRoot + "/identifier/getIdObject/" + newIdentifier,
 			returnType: "html",
 			extraHeaders: {
 				"accept": "text/html",
 			},
 			done: function (data) {
-				GeneralIdentifiers.getIdentifiersContainer(generalInputContainerJq).append(data);
-				GeneralIdentifiers.clearInput(generalInputContainerJq);
+				Identifiers.getIdentifiersContainer(identifierInputContainerJq).append(data);
+				Identifiers.clearInput(identifierInputContainerJq);
 			}
 		});
 	},
 	addToGenerate(generateIdButtonJq, generatorData) {
-		let idContainer = GeneralIdentifiers.getIdentifiersContainer(GeneralIdentifiers.getInputContainer(generateIdButtonJq));
-
+		let idContainer = Identifiers.getIdentifiersContainer(Identifiers.getInputContainer(generateIdButtonJq));
 	},
 	handleIsBarcodeNeedUpdate(inputJq) {
-		let idContainerJq = GeneralIdentifiers.getIdentifierContainer(inputJq);
-		let isBarcodeCheckboxJq = GeneralIdentifiers.getIdentifierIsBarcodeCheckbox(idContainerJq);
-		let identifierValueContainer = GeneralIdentifiers.getIdentifierValueContainer(idContainerJq);
-		let identifierImage = GeneralIdentifiers.getIdentifierImage(idContainerJq);
+		console.debug("Handling barcode checkbox change.");
+		let idContainerJq = Identifiers.getIdentifierContainer(inputJq);
+		let isBarcodeCheckboxJq = Identifiers.getIdentifierIsBarcodeCheckbox(idContainerJq);
+		let identifierValueContainer = Identifiers.getIdentifierValueContainer(idContainerJq);
+		let identifierImage = Identifiers.getIdentifierImage(idContainerJq);
 
-		let type = GeneralIdentifiers.getIdentifierType(idContainerJq);
+		let type = Identifiers.getIdentifierType(idContainerJq);
 		let isChecked = isBarcodeCheckboxJq.prop("checked");
-		let labelVal = GeneralIdentifiers.getIdentifierLabel(idContainerJq);
+		let labelVal = Identifiers.getIdentifierLabel(idContainerJq);
 
 		if(labelVal == ""){
 			labelVal = type;
@@ -96,9 +96,9 @@ const GeneralIdentifiers = {
 			identifierValueContainer.addClass("d-none");
 
 			let imgSrc = Rest.passRoot +
-				"/identifier/general/barcode/" +
+				"/identifier/barcode/" +
 				encodeURIComponent(type) + "/" +
-				encodeURIComponent(GeneralIdentifiers.getIdentifierValue(idContainerJq)) + "/" +
+				encodeURIComponent(Identifiers.getIdentifierValue(idContainerJq)) + "/" +
 				encodeURIComponent(labelVal);
 
 			if (identifierImage.attr("src") !== imgSrc) {
@@ -111,93 +111,95 @@ const GeneralIdentifiers = {
 		}
 	},
 	moveUp(upButtonJq) {
-		SelectedObjectDivUtils.moveUp(GeneralIdentifiers.getIdentifierContainer(upButtonJq));
+		SelectedObjectDivUtils.moveUp(Identifiers.getIdentifierContainer(upButtonJq));
 	},
 	moveDown(downButtonJq) {
-		SelectedObjectDivUtils.moveDown(downButtonJq.closest('.generalIdentifierContainer'));
+		SelectedObjectDivUtils.moveDown(Identifiers.getIdentifierContainer(downButtonJq));
 	},
 	removeIdentifier(removeButtonJq) {
 		if (confirm("Are you sure you want to remove this identifier?") === false) return;
-		SelectedObjectDivUtils.removeSelected(removeButtonJq.closest('.generalIdentifierContainer'));
+		SelectedObjectDivUtils.removeSelected(Identifiers.getIdentifierContainer(removeButtonJq));
 	},
-	getGeneralIdData(generalInputContainerJq) {
-		let getIdentifiersContainer = GeneralIdentifiers.getIdentifiersContainer(generalInputContainerJq);
+	getIdentifierData(identifierInputContainerJq) {
+		let getIdentifiersContainer = Identifiers.getIdentifiersContainer(identifierInputContainerJq);
 		let output = [];
 
-		getIdentifiersContainer.find(".generalIdentifierContainer").each(function (i, curIdContainer) {
+		getIdentifiersContainer.find(".addedIdentifierContainer").each(function (i, curIdContainer) {
 			let curIdContainerJq = $(curIdContainer);
 			let curIdObj = {
-				label: GeneralIdentifiers.getIdentifierLabel(curIdContainerJq)
-			}
+				label: Identifiers.getIdentifierLabel(curIdContainerJq)
+			};
 
 			if (curIdContainerJq.hasClass("toGenerateContainer")) {
 				curIdObj['type'] = "TO_GENERATE";
 				curIdObj['generateFrom'] = curIdContainerJq.find(".fromGenerator").data("generator");
 			} else {
-				curIdObj['value'] = GeneralIdentifiers.getIdentifierValue(curIdContainerJq);
-				curIdObj['type'] = GeneralIdentifiers.getIdentifierType(curIdContainerJq);
-				curIdObj['label'] = GeneralIdentifiers.getIdentifierLabel(curIdContainerJq);
+				curIdObj['value'] = Identifiers.getIdentifierValue(curIdContainerJq);
+				curIdObj['type'] = Identifiers.getIdentifierType(curIdContainerJq);
+				curIdObj['label'] = Identifiers.getIdentifierLabel(curIdContainerJq);
 
 				if (curIdObj.type === "GENERIC") {
-					curIdObj["barcode"] = GeneralIdentifiers.getIdentifierIsBarcodeCheckbox(curIdContainerJq).prop("checked")
+					curIdObj["barcode"] = Identifiers.getIdentifierIsBarcodeCheckbox(curIdContainerJq).prop("checked")
 				}
 			}
 
 			output.push(curIdObj);
 		});
 
+		console.log("Identifiers gathered: ", output);
+
 		return output;
 	},
-	newAddedIdentifier(generalIdentifier) {
-		let idInput = $(PageComponents.Inputs.GeneralIds.generalIdAdded);
+	newAddedIdentifier(identifier) {
+		let idInput = $(PageComponents.Inputs.Identifiers.identifierAdded);
 
-		GeneralIdentifiers.getIdentifierValueContainer(idInput).text(generalIdentifier.value);
-		GeneralIdentifiers.getIdentifierTypeContainer(idInput).text(generalIdentifier.type);
-		GeneralIdentifiers.getIdentifierLabelInput(idInput).val(generalIdentifier.label);
+		Identifiers.getIdentifierValueContainer(idInput).text(identifier.value);
+		Identifiers.getIdentifierTypeContainer(idInput).text(identifier.type);
+		Identifiers.getIdentifierLabelInput(idInput).val(identifier.label);
 
-		if (generalIdentifier.barcode) {
+		if (identifier.barcode) {
 			let barcodeImage = idInput.find(".identifierImage");
 
-			barcodeImage.attr("src", Rest.passRoot + "/identifier/general/barcode/" + generalIdentifier.type + "/" + generalIdentifier.value);
+			barcodeImage.attr("src", Rest.passRoot + "/identifier/barcode/" + encodeURIComponent(identifier.type) + "/" + encodeURIComponent(identifier.value) + "/" + encodeURIComponent(identifier.label));
 			barcodeImage.removeClass("d-none");
 		} else {
 			idInput.find(".identifierValue").removeClass("d-none");
 		}
 
-		GeneralIdentifiers.getIdentifierIsBarcodeCheckbox(idInput).prop("checked", generalIdentifier.barcode);
-		if (generalIdentifier.type !== "GENERIC") {
-			idInput.find(".generalIdIsBarcodeSelectContainer").addClass("d-none");
+		Identifiers.getIdentifierIsBarcodeCheckbox(idInput).prop("checked", identifier.barcode);
+		if (identifier.type !== "GENERIC") {
+			idInput.find(".identifierIsBarcodeSelectContainer").addClass("d-none");
 		}
 
 		return idInput;
 	},
 
-	populateEdit: function (generalInputContainerJq, generalIdentifierList) {
-		let getIdentifiersContainer = GeneralIdentifiers.getIdentifiersContainer(generalInputContainerJq);
-		for (const generalIdentifier of generalIdentifierList) {
-			let idInput = GeneralIdentifiers.newAddedIdentifier(generalIdentifier);
+	populateEdit: function (identifierInputContainerJq, identifierList) {
+		let getIdentifiersContainer = Identifiers.getIdentifiersContainer(identifierInputContainerJq);
+		for (const identifier of identifierList) {
+			let idInput = Identifiers.newAddedIdentifier(identifier);
 
 			getIdentifiersContainer.append(idInput);
 		}
 	},
-	setupForAssociated: function(generalInputContainerJq, identifierList){
-		GeneralIdentifiers.getAssociateButton(generalInputContainerJq).data("idGeneratorList", identifierList);
+	setupForAssociated: function(identifierInputContainerJq, identifierList){
+		Identifiers.getAssociateButton(identifierInputContainerJq).data("idGeneratorList", identifierList);
 	},
 	View: {
-		showInDiv(divJq, generalIdentifierArray) {
-			for (const generalIdentifier of generalIdentifierArray) {
+		showInDiv(divJq, identifierArray) {
+			for (const identifier of identifierArray) {
 				let newIdShow = $(`
-<div class="col-sm-6 col-md-6 col-lg-4 mb-1 generalIdentifierContainer">
+<div class="col-sm-6 col-md-6 col-lg-4 mb-1 identifierContainer">
 	<div class="card identifierDisplay">
 		<div class="card-header p-1 text-center">
-			<h5 class="card-title mb-0 identifierKey"></h5>
+			<h5 class="card-title mb-0 identifierKey user-select-all"></h5>
 		</div>
 		<a href="" target="_blank" class="identifierImageLink d-none">
 			<img src="" class="card-img identifierImage" alt="Barcode Image">
 		</a>
 		<div class="card-body p-1">
 			<div class="identifierValueContainer text-center">
-				<p class="h4 card-subtitle identifierValue text-nowrap user-select-all mb-0"></p>
+				<p class="h4 card-subtitle identifierValue user-select-all mb-0"></p>
 				<p class="text-secondary mb-1">
 					<small class="identifierType"></small>
 					` + PageComponents.Inputs.copyButton + `
@@ -209,225 +211,13 @@ const GeneralIdentifiers = {
 				let valueDiv = newIdShow.find(".identifierValue");
 				let imageLink = newIdShow.find(".identifierImageLink");
 
-				newIdShow.find(".identifierKey").text(generalIdentifier.label);
-				valueDiv.text(generalIdentifier.value);
-				newIdShow.find(".identifierType").text(generalIdentifier.type);
+				newIdShow.find(".identifierKey").text(identifier.label);
+				valueDiv.text(identifier.value);
+				newIdShow.find(".identifierType").text(identifier.type);
 				newIdShow.find(".copyTextButton").attr("onClick", "TextCopyUtils.copyText(this,$(this.parentElement.previousElementSibling));");
 
-				if (generalIdentifier.barcode) {
-					let barcodeUrl = Rest.passRoot + "/identifier/general/barcode/" + encodeURIComponent(generalIdentifier.type) + "/" + encodeURIComponent(generalIdentifier.value) + "/" + encodeURIComponent(generalIdentifier.label);
-					valueDiv.addClass("d-none");
-					imageLink.removeClass("d-none");
-					imageLink.attr("href", barcodeUrl);
-					newIdShow.find(".identifierImage").attr("src", barcodeUrl);
-				}
-
-				divJq.append(newIdShow);
-			}
-		}
-	}
-}
-
-const UniqueIdentifiers = {
-	getInputContainer(subElementJq) {
-		return subElementJq.closest('.uniqueIdInputContainer');
-	},
-	getIdentifiersContainer(generalInputContainerJq) {
-		return generalInputContainerJq.find(".identifiersContainer");
-	},
-	getAddedIdentifiersContainer(generalInputContainerJq) {
-		return generalInputContainerJq.closest(".uniqueIdentifierContainer");
-	},
-	getAssociateButton(generalInputContainerJq) {
-		return generalInputContainerJq.find(".idGeneratorGenerateButton");
-	},
-	getNewIdentifierInput(uniqueInputContainerJq) {
-		return uniqueInputContainerJq.find("input[name='newIdentifier']");
-	},
-	getNewIdentifierValue(uniqueInputContainerJq) {
-		return UniqueIdentifiers.getNewIdentifierInput(uniqueInputContainerJq).val();
-	},
-	getIdentifierImage(idContainerJq) {
-		return idContainerJq.find(".identifierImage");
-	},
-	getIdentifierValueContainer(idContainerJq){
-		return idContainerJq.find(".identifierValue");
-	},
-	getIdentifierValue(idContainerJq){
-		return UniqueIdentifiers.getIdentifierValueContainer(idContainerJq).text();
-	},
-	getIdentifierLabelInput(idContainerJq){
-		return idContainerJq.find("input[name='label']");
-	},
-	getIdentifierLabel(idContainerJq){
-		return UniqueIdentifiers.getIdentifierLabelInput(idContainerJq).val();
-	},
-	getIdentifierIsBarcodeCheckbox(idContainerJq) {
-		return idContainerJq.find("input[name='uniqueIdIsBarcode']");
-	},
-	clearNewInput(generalInputContainerJq) {
-		UniqueIdentifiers.getNewIdentifierInput(generalInputContainerJq).val("");
-	},
-	reset(generalInputContainerJq) {
-		UniqueIdentifiers.clearNewInput(generalInputContainerJq);
-		UniqueIdentifiers.getIdentifiersContainer(generalInputContainerJq).html("");
-	},
-
-	moveUp(upButtonJq) {
-		//TODO:: fix
-		SelectedObjectDivUtils.moveUp(UniqueIdentifiers.getAddedIdentifiersContainer(upButtonJq));
-	},
-	moveDown(downButtonJq) {
-		//TODO:: fix
-		SelectedObjectDivUtils.moveDown(downButtonJq.closest('.uniqueIdentifierContainer'));
-	},
-	removeIdentifier(removeButtonJq) {
-		if (confirm("Are you sure you want to remove this identifier?") === false) return;
-		SelectedObjectDivUtils.removeSelected(removeButtonJq.closest('.uniqueIdentifierContainer'));
-	},
-
-	barcodeCheckChanged(inputJq){
-		let idContainerJq = UniqueIdentifiers.getAddedIdentifiersContainer(inputJq);
-		let isBarcodeCheckboxJq = UniqueIdentifiers.getIdentifierIsBarcodeCheckbox(idContainerJq);
-		let identifierValueContainer = UniqueIdentifiers.getIdentifierValueContainer(idContainerJq);
-		let identifierImage = UniqueIdentifiers.getIdentifierImage(idContainerJq);
-
-		let value = identifierValueContainer.text();
-		let isChecked = isBarcodeCheckboxJq.prop("checked");
-		let labelVal = UniqueIdentifiers.getIdentifierLabel(idContainerJq);
-
-		if(labelVal == ""){
-			labelVal = " ";
-		}
-
-		if (isChecked) {
-			identifierImage.removeClass("d-none");
-			identifierValueContainer.addClass("d-none");
-
-			let imgSrc = Rest.passRoot +
-				"/identifier/unique/barcode/" +
-				encodeURIComponent(value) + "/" +
-				encodeURIComponent(labelVal);
-
-			if (identifierImage.attr("src") !== imgSrc) {
-				console.debug("Updating barcode url: ", imgSrc);
-				identifierImage.attr("src", imgSrc);
-			}
-		} else {
-			identifierValueContainer.removeClass("d-none");
-			identifierImage.addClass("d-none");
-		}
-	},
-
-	newAddedIdentifier(newIdentifier) {
-		console.log("Adding unique identifier: ", newIdentifier);
-		let output = $(PageComponents.Inputs.UniqueIds.uniqueIdAdded);
-
-		output.find("input[name='label']").val(newIdentifier.label);
-
-		let idValue = output.find(".identifierValue");
-		idValue.text(newIdentifier.value);
-
-		let barcodeInput = output.find("input[name='uniqueIdIsBarcode']");
-
-		barcodeInput.prop("checked", newIdentifier.barcode);
-
-		UniqueIdentifiers.barcodeCheckChanged(barcodeInput);
-
-		return output;
-	},
-	populateEdit: function (uniqueInputContainerJq, uniqueIdentifierList) {
-		let getIdentifiersContainer = UniqueIdentifiers.getIdentifiersContainer(uniqueInputContainerJq);
-		for (const generalIdentifier of uniqueIdentifierList) {
-			let idInput = UniqueIdentifiers.newAddedIdentifier(generalIdentifier);
-
-			getIdentifiersContainer.append(idInput);
-		}
-	},
-	setupForAssociated: function(generalInputContainerJq, identifierList){
-		UniqueIdentifiers.getAssociateButton(generalInputContainerJq).data("idGeneratorList", identifierList);
-	},
-
-	addIdentifier(uniqueInputContainerJq, newIdentifier = null) {
-		if (newIdentifier === null) {
-			let newVal = UniqueIdentifiers.getNewIdentifierValue(uniqueInputContainerJq);
-
-			if(newVal === "") {
-				console.log("Not adding empty identifier.");
-				return;
-			}
-
-			newIdentifier = {
-				type: "PROVIDED",
-				value: UniqueIdentifiers.getNewIdentifierValue(uniqueInputContainerJq),
-				barcode: false
-			};
-			UniqueIdentifiers.getNewIdentifierInput(uniqueInputContainerJq).val("");
-		}
-
-		console.log("Adding a new unique identifier: ", newIdentifier);
-
-		UniqueIdentifiers.getIdentifiersContainer(uniqueInputContainerJq).append(UniqueIdentifiers.newAddedIdentifier(newIdentifier));
-	},
-
-	getUniqueIdData(idContainerJq) {
-		let getIdentifiersContainer = UniqueIdentifiers.getIdentifiersContainer(idContainerJq);
-		let output = [];
-
-		getIdentifiersContainer.find(".uniqueIdentifierContainer").each(function (i, curIdContainer) {
-			let curIdContainerJq = $(curIdContainer);
-			let curIdObj = {
-				label: UniqueIdentifiers.getIdentifierLabel(curIdContainerJq)
-			}
-
-			if (curIdContainerJq.hasClass("toGenerateContainer")) {
-				curIdObj['type'] = "TO_GENERATE";
-				// curIdObj['generates'] = "UNIQUE";
-				curIdObj['generateFrom'] = curIdContainerJq.find(".fromGenerator").data("generator");
-			} else {
-				curIdObj['type'] = "PROVIDED";
-				curIdObj['value'] = UniqueIdentifiers.getIdentifierValue(curIdContainerJq);
-				curIdObj["barcode"] = UniqueIdentifiers.getIdentifierIsBarcodeCheckbox(curIdContainerJq).prop("checked");
-			}
-
-			output.push(curIdObj);
-		});
-
-		return output;
-	},
-	View: {
-		showInDiv(divJq, uniqueIdentifierArray) {
-			for (const uniqueIdentifier of uniqueIdentifierArray) {
-				let newIdShow = $(`
-<div class="col-sm-6 col-md-6 col-lg-4 mb-1 uniqueIdentifierContainer">
-	<div class="card identifierDisplay">
-		<div class="card-header p-1 text-center">
-			<h5 class="card-title mb-0 identifierKey"></h5>
-		</div>
-		<a href="" target="_blank" class="identifierImageLink d-none">
-			<img src="" class="card-img identifierImage" alt="Barcode Image">
-		</a>
-		<div class="card-body p-1">
-			<div class="identifierValueContainer text-center">
-				<p class="h4 card-subtitle identifierValue text-nowrap user-select-all mb-0"></p>
-				<p class="text-secondary mb-1">
-					<small class="identifierType"></small>
-					` + PageComponents.Inputs.copyButton + `
-				</p>
-			</div>
-		</div>
-	</div>
-</div>`);
-				let valueDiv = newIdShow.find(".identifierValue");
-				let imageLink = newIdShow.find(".identifierImageLink");
-
-				newIdShow.find(".identifierKey").text(uniqueIdentifier.label);
-				valueDiv.text(uniqueIdentifier.value);
-				newIdShow.find(".identifierType").text(uniqueIdentifier.type);
-				newIdShow.find(".copyTextButton").attr("onClick", "TextCopyUtils.copyText(this,$(this.parentElement.previousElementSibling));");
-
-				if (uniqueIdentifier.barcode) {
-					let barcodeUrl = Rest.passRoot + "/identifier/unique/barcode/" + encodeURIComponent(uniqueIdentifier.value) + "/" + encodeURIComponent(uniqueIdentifier.label);
+				if (identifier.barcode) {
+					let barcodeUrl = Rest.passRoot + "/identifier/barcode/" + encodeURIComponent(identifier.type) + "/" + encodeURIComponent(identifier.value) + "/" + encodeURIComponent(identifier.label);
 					valueDiv.addClass("d-none");
 					imageLink.removeClass("d-none");
 					imageLink.attr("href", barcodeUrl);

@@ -23,14 +23,13 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 	@Override
 	protected void configure() {
 		withNetwork(Network.SHARED);
-		//TODO:: use config to get port
-		withEnv("quarkus.http.port", ""+PORT);
 		
 		Testcontainers.exposeHostPorts(this.devserviceConfig.keycloak().port());
 		
-		addExposedPorts(PORT);
-		addFixedExposedPort(PORT, PORT);
-		// Tell the dev service how to know the container is ready
+		addFixedExposedPort(devserviceConfig.port(), 80);
+		
+		// Tell the dev service how to know the container is ready. All 3 is likely overkill, but eh
+		waitingFor(Wait.forHealthcheck());
 		waitingFor(Wait.forLogMessage(".*Open QuarterMaster Web Server starting.*", 1));
 		waitingFor(Wait.forHttp("/q/health").forResponsePredicate((String response)->{
 			ObjectNode status;
@@ -44,6 +43,6 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 	}
 	
 	public Integer getPort() {
-		return this.getMappedPort(PORT);
+		return this.devserviceConfig.port();
 	}
 }

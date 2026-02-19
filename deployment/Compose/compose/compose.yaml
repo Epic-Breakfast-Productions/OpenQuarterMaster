@@ -99,12 +99,6 @@ services:
       QUARKUS_MONGODB_CONNECTION-STRING: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@oqm-infra-mongo:27017
       QUARKUS_MONGODB_DATABASE: ${MONGO_DATABASE}
       "mp.messaging.outgoing.events-outgoing.enabled": "false"
-    healthcheck:
-      test: [ "CMD-SHELL", "{ printf 'HEAD /q/health HTTP/1.0\r\n\r\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/80" ]
-      start_period: 30s
-      interval: 10s
-      timeout: 10s
-      retries: 5
     
   core-base_station:
     image: docker.io/ebprod/oqm-core-base_station:${CORE_BASE_STATION_IMAGE_TAG}
@@ -122,9 +116,3 @@ services:
       QUARKUS_OIDC_CREDENTIALS_SECRET: ${CORE_BASE_STATION_CLIENT_SECRET}
       QUARKUS_OIDC_AUTH-SERVER-URL: http://localhost:${KEYCLOAK_PORT}/realms/oqm
       OQM_CORE_API_BASEURI: http://localhost:${CORE_API_PORT}
-    healthcheck:
-      test: [ "CMD-SHELL", "{ printf 'HEAD /q/health HTTP/1.0\r\n\r\n' >&0; grep 'HTTP/1.0 200'; } 0<>/dev/tcp/localhost/80" ]
-      start_period: 30s
-      interval: 10s
-      timeout: 10s
-      retries: 5
