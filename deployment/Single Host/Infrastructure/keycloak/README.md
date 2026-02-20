@@ -113,13 +113,19 @@ Run on the container where keycloak is running. This will be obsolete once we ge
 ### Turn on/off public self-serve adding of users
 
 ```bash
-
+/opt/keycloak/bin/kcadm.sh update realms/oqm -s registrationAllowed=false
 ```
 
-### 
+### Get all clients
 
 ```bash
+kcadm.sh get clients -r oqm
+```
 
+### Get all roles
+
+```bash
+kcadm.sh get roles -r oqm
 ```
 
 
