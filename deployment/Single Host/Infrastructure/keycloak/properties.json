@@ -1,12 +1,12 @@
 {
 	"packageName":"oqm-infra-keycloak",
-	"version":"1.2.9",
+	"version":"2.0.0",
 	"description":"Keycloak instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/deployment/Single%20Host/Infrastructure/keycloak",
 	"configs": [
 	],
 	"dependencies": {
-		"deb": ", oqm-manager-station+captain (>= 2.10.0), oqm-infra-traefik (>= 1.0.0), oqm-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-docker, python3-watchdog"
+		"deb": ", oqm-manager-station+captain (>= 2.10.0), oqm-infra-traefik (>= 1.0.0), oqm-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-filelock, python3-docker, python3-watchdog"
 	},
 	"configFiles":{
 	},

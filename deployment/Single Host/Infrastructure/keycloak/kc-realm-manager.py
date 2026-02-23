@@ -1,7 +1,7 @@
 #!/bin/python3
 import argparse
 import os
-
+from filelock import FileLock
 import docker
 from docker.models.containers import Container
 import logging
@@ -20,6 +20,7 @@ LogUtils.setupLogging("kc-realm-manager.log", True)
 from ConfigManager import *
 
 SCRIPT_VERSION = "2.0.0"
+MUTEX_FILE="/tmp/oqm-kc-ream-manager.lock"
 KC_CONTAINER_NAME = "oqm-infra-keycloak"
 KC_ADM_SCRIPT = "/opt/keycloak/bin/kcadm.sh"
 KC_REALM = "oqm"
@@ -40,7 +41,7 @@ KC_SYS_ROLES = [
 log = LogUtils.setupLogger("main")
 
 
-def getClientConfigs() -> list:
+def getServiceConfigs() -> list:
     """
     Gets the list of client configs from the config dir.
     :return:
@@ -56,7 +57,27 @@ def getClientConfigs() -> list:
     configList = [fileToJson(i) for i in configList]
     log.debug("Client configs found: %s", json.dumps(configList))
 
-    #TODO:: validate client configs; no duplicate roles, clients, etc
+    serviceNames = []
+    roleNames = []
+    clientIds = []
+    for curConfig in configList:
+        curName = curConfig['name']
+
+        if curName in serviceNames:
+            raise Exception("Duplicate service name found: " + curName)
+        serviceNames.append(curName)
+
+        for curRole in curConfig['roles']:
+            curRoleName = curRole['name']
+            if curRoleName in roleNames:
+                raise Exception("Duplicate role name found: " + curRoleName)
+            roleNames.append(curRoleName)
+
+        for curClient in curConfig['clients']:
+            curClientId = curClient['clientId']
+            if curClientId in clientIds:
+                raise Exception("Duplicate client name found: " + curClientId)
+            clientIds.append(curClientId)
 
     return configList
 
@@ -123,7 +144,7 @@ def setupAdminConfig(kcContainer: Container | None = None):
     log.debug("Setting up KC creds output: %s", runResult.output)
 
 
-def getAllClientData(kcContainer: Container | None = None):
+def getAllClientData(kcContainer: Container | None = None) -> list[dict]:
     """
     Gets a list of all client data in the realm.
 
@@ -202,29 +223,54 @@ def getAllClientData(kcContainer: Container | None = None):
 
     return output
 
+def getClientData(clientId: str, kcContainer: Container | None = None) -> dict | None:
+    allClients = getAllClientData(kcContainer)
+    for curRole in allClients:
+        if clientId == curRole["clientId"]:
+            return curRole
+    return None
 
-def getClientId(clientName: str, kcContainer: Container | None = None) -> str | None:
+def clientExists(clientId: str, kcContainer: Container | None = None) -> bool:
+    return getClientData(clientId, kcContainer) is not None
+
+def getAllRoleData(kcContainer: Container | None = None) -> list[dict]:
     """
-    Gets the client id for the given client name
-    :param clientName:
+    Example:
+    [
+        {
+            "id": "abc50c50-5c5e-40c4-8a02-36b393e37f34",
+            "name": "uma_authorization",
+            "description": "${role_uma_authorization}",
+            "composite": false,
+            "clientRole": false,
+            "containerId": "72bd1a2f-d711-48ce-b65b-0ad7107e8d56"
+        }
+    ]
+
     :param kcContainer:
     :return:
     """
     if kcContainer is None:
         kcContainer = getKcContainer()
-    runResult = kcContainer.exec_run([
-        KC_ADM_SCRIPT, "get", "clients", "-r", KC_REALM, "--fields", "id,clientId"
-    ])
-    if runResult.exit_code != 0:
-        log.error("Failed to get keycloak clients: %s", runResult.output)
-        raise ChildProcessError("Failed to get keycloak clients")
-    log.debug("Clients list: %s", runResult.output)
-    allClientData = json.loads(runResult.output)
-    for curClient in allClientData:
-        if clientName == curClient["clientId"]:
-            return curClient["id"]
+    runResult = kcContainer.exec_run(
+        [
+            KC_ADM_SCRIPT, "get", "clients", "-r", KC_REALM
+        ])
+
+    output = json.loads(runResult.output)
+    output = [output for output in output if output["clientId"] not in KC_SYS_CLIENTS]
+
+    return output
+
+def getRoleData(roleName: str, kcContainer: Container | None = None) -> dict | None:
+    allRoles = getAllRoleData(kcContainer)
+    for curRole in allRoles:
+        if roleName == curRole["name"]:
+            return curRole
     return None
 
+def roleExists(roleName: str, kcContainer: Container | None = None) -> bool:
+    return getRoleData(roleName, kcContainer) is not None
 
 # def getClientData(clientName:str, kcContainer: Container | None = None) -> str | None:
 #     """
@@ -246,63 +292,94 @@ def processRole(kcContainer: Container, roleDef: dict) -> (bool, str):
     :param roleDef:
     :return:
     """
-    # TODO::
+    kcRoleData = {
+        "name": roleDef['name'],
+        "description": roleDef.get('description', ""),
+    }
+
+    if roleExists(kcRoleData['name'], kcContainer):
+        log.info("Role %s already exists, updating.", kcRoleData['name'])
+
+        runResult = kcContainer.exec_run([
+            KC_ADM_SCRIPT, "update", "roles/"+kcRoleData['name'], "-r", KC_REALM, "-b", json.dumps(kcRoleData)
+        ])
+        if runResult.exit_code != 0:
+            log.error("Failed to create keycloak role: %s", runResult.output)
+            raise ChildProcessError("Failed to create keycloak role: " + kcRoleData['name'])
+    else:
+        log.info("Role %s does not exist, creating.", kcRoleData['name'])
+        runResult = kcContainer.exec_run([
+            KC_ADM_SCRIPT, "create", "roles", "-r", KC_REALM, "-b", json.dumps(kcRoleData)
+        ])
+        if runResult.exit_code != 0:
+            log.error("Failed to create keycloak role: %s", runResult.output)
+            raise ChildProcessError("Failed to create keycloak role: " + kcRoleData['name'])
+
+    # TODO:: group membership
+    # TODO:: respect default; apply to users automatically
+
     return True, ""
 
 def processRoles(kcContainer: Container, roleDef: list[dict]) -> (bool, str):
     log.info("Processing roles")
+
+    customRoles = []
     for role in roleDef:
+        customRoles.append(role['name'])
         success, msg = processRole(kcContainer, role)
     # TODO:: error check
+    #TODO:: remove roles not in config
+
     log.info("Done processing roles")
     return True, ""
 
-def processClient(kcContainer: Container, roleDef: dict) -> (bool, str):
-    # TODO:: rework into parts, update for new schema
-
-    log.info("Adding client %s", roleDef['clientName'])
-    # TODO:: validate object data
-    clientName = roleDef['clientName']
-    mainCM.setConfigValInFile("infra.keycloak.clientSecrets." + clientName, "<secret>", "11-keycloak-clients.json")
+def processClient(kcContainer: Container, clientDef: dict) -> (bool, str):
+    log.info("Adding client %s", clientDef['clientId'])
+    clientId = clientDef['clientId']
+    #ensure secret config exists
+    mainCM.setConfigValInFile("infra.keycloak.clientSecrets." + clientId, "<secret>", "11-keycloak-clients.json")
     mainCM.rereadConfigData()
-    newClientJson = {
-        "clientId": roleDef['clientName'],
-        "name": roleDef['displayName'],
-        "secret": mainCM.getConfigVal("infra.keycloak.clientSecrets." + clientName),
-        "description": roleDef['description'],
+
+    kcClientData = {
+        "clientId": clientId,
+        "name": clientDef['displayName'],
+        "secret": mainCM.getConfigVal("infra.keycloak.clientSecrets." + clientId),
+        "description": clientDef['description'],
         "redirectUris": ["*"],
         "alwaysDisplayInConsole": True,
         "serviceAccountsEnabled": True
     }
-    # TODO:: if exists, update instead of create
-    runResult = kcContainer.exec_run([
-        KC_ADM_SCRIPT,
-        "create",
-        "clients",
-        "-r", KC_REALM,
-        "-b", json.dumps(newClientJson)
-    ])
-    if runResult.exit_code != 0:
-        log.error("Failed to add new client: %s", runResult.output)
-        raise ChildProcessError("Failed to add new client")
-    clientId = getClientId(roleDef['clientName'])
 
-    log.debug("Client id: %s", clientId)
-    # TODO:: add roles
+    if clientExists(kcClientData['clientId'], kcContainer):
+        log.info("Client %s already exists, updating.", kcClientData['clientId'])
 
-    # if "serviceAccount" in curClient and curClient['serviceAccount']['enabled']:
-    #     runResult = kcContainer.exec_run([
-    #         KC_ADM_SCRIPT,
-    #
-    #         "-r", KC_REALM,
-    #     ])
+        runResult = kcContainer.exec_run([
+            KC_ADM_SCRIPT, "update", "clients/"+kcClientData['clientId'], "-r", KC_REALM, "-b", json.dumps(kcClientData)
+        ])
+        if runResult.exit_code != 0:
+            log.error("Failed to create keycloak client: %s", runResult.output)
+            raise ChildProcessError("Failed to update keycloak client: " + kcClientData['clientId'])
+    else:
+        log.info("Client %s does not exist, creating.", kcClientData['clientId'])
+        runResult = kcContainer.exec_run([
+            KC_ADM_SCRIPT, "create", "clients", "-r", KC_REALM, "-b", json.dumps(kcClientData)
+        ])
+        if runResult.exit_code != 0:
+            log.error("Failed to create keycloak client: %s", runResult.output)
+            raise ChildProcessError("Failed to create keycloak client: " + kcClientData['clientId'])
+
+    # TODO:: validate object data
+    # TODO:: add roles?
     return True, ""
 
 def processClients(kcContainer: Container, clientsDefs: list[dict]) -> (bool, str):
     log.info("Processing clients")
+    customClients = []
     for clientDef in clientsDefs:
+        customClients.append(clientDef['clientId'])
         success, msg = processClient(kcContainer, clientDef)
     # TODO:: error check
+    # TODO:: remove clients not in config
     log.info("Done processing clients")
     return True, ""
 
@@ -318,9 +395,8 @@ def processServiceIntegration(kcContainer: Container, integrationDef: dict) -> (
     success, msg = processRoles(kcContainer, integrationDef['roles'])
     # TODO:: error check
 
-    success, msg = (kcContainer, integrationDef['clients'])
+    success, msg = processClients(kcContainer, integrationDef['clients'])
     # TODO:: error check
-
 
     return True, ""
 
@@ -343,39 +419,25 @@ def updateKc():
     "Main" method for reloading and applying keycloak settings
     :return:
     """
-    log.info("Updating Keycloak Realm")
-    kcContainer = getKcContainer()
-    setupAdminConfig(kcContainer)
+    log.info("Acquiring lock for Keycloak Realm update.")
+    with FileLock(MUTEX_FILE):
+        log.info("Updating Keycloak Realm")
+        try:
+            # Init
+            kcContainer = getKcContainer()
+            setupAdminConfig(kcContainer)
 
-    updateRealmSettings(kcContainer)
+            # Update general settings from config
+            updateRealmSettings(kcContainer)
 
-    # Remove all clients not in the set brought in by keycloak
-    # log.info("Removing all clients before re-creation")
-    # allClientData = getAllClientData(kcContainer)
-    # for curClient in allClientData:
-    #     if curClient["clientId"] in KC_SYS_CLIENTS:
-    #         continue
-    #     log.info("Removing client to re-create: %s", curClient["clientId"])
-    #     clientId = getClientId(curClient["clientId"])
-    #     log.debug("Client id: %s", clientId)
-    #     runResult = kcContainer.exec_run([
-    #         KC_ADM_SCRIPT,
-    #         "delete",
-    #         "clients/" + clientId,
-    #         "-r", KC_REALM
-    #     ])
-    #     if runResult.exit_code != 0:
-    #         log.error("Failed to remove client: %s", runResult.output)
-    #         raise ChildProcessError("Failed to remove client")
-
-    clientConfigs = getClientConfigs()
-
-    log.info("Creating clients from config.")
-    for curClient in clientConfigs:
-        result, msg = processServiceIntegration(kcContainer, curClient)
-
-    log.info("Done updating realm.")
-
+            # Process service integrations
+            serviceConfigs = getServiceConfigs()
+            for curService in serviceConfigs:
+                result, msg = processServiceIntegration(kcContainer, curService)
+            log.info("Done updating realm.")
+        except Exception as e:
+            log.error("Exception thrown during update: {e}", exc_info=True)
+    log.info("Released lock for Keycloak Realm update.")
 
 class Handler(FileSystemEventHandler):
     def on_modified(self, event):

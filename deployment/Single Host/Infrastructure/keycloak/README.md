@@ -64,15 +64,18 @@ The flow of this is as follows:
    "service": "name",
    "roles": [
       {
-         "roleName": "",
+         "name": "",
+         "description": "",
          "default": false,
-         "group": "groupName",
+         "groups": [
+            "groupName"
+         ],
          "realm": false
       }
    ],
    "clients": [
       {
-         "clientName": "clientName",
+         "clientId": "clientName",
          "displayName": "displayName",
          "description": "description",
          "roles": [ ]
@@ -129,7 +132,10 @@ kcadm.sh get roles -r oqm
 ```
 
 
+## TODOs
 
+ - [ ] Remove roles not defined in client defs
+ - [ ] Remove roles from groups if not in def to be in group
 
 ## Resources
 
