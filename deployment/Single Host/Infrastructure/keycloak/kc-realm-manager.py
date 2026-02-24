@@ -1,7 +1,9 @@
 #!/bin/python3
 import argparse
 import os
+from os import wait
 
+from filelock import FileLock
 import docker
 from docker.models.containers import Container
 import logging
@@ -12,17 +14,20 @@ from time import sleep
 from requests.exceptions import HTTPError
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
+
 sys.path.append("/usr/lib/oqm/station-captain/")
 from LogUtils import *
+
 LogUtils.setupLogging("kc-realm-manager.log", True)
 from ConfigManager import *
 
-SCRIPT_VERSION = "1.0.0"
+SCRIPT_VERSION = "2.0.0"
+MUTEX_FILE="/tmp/oqm-kc-ream-manager.lock"
 KC_CONTAINER_NAME = "oqm-infra-keycloak"
 KC_ADM_SCRIPT = "/opt/keycloak/bin/kcadm.sh"
 KC_REALM = "oqm"
 KC_CLIENT_CONFIGS_DIR = "/etc/oqm/kcClients/"
-KC_DEFAULT_CLIENTS = [
+KC_SYS_CLIENTS = [
     "account",
     "account-console",
     "admin-cli",
@@ -30,22 +35,60 @@ KC_DEFAULT_CLIENTS = [
     "realm-management",
     "security-admin-console"
 ]
+KC_SYS_ROLES = [
+    "uma_authorization",
+    "offline_access",
+    "default-roles-oqm"
+]
 log = LogUtils.setupLogger("main")
 
-def getClientConfigs() -> list:
+
+def getServiceConfigs() -> list:
+    """
+    Gets the list of client configs from the config dir.
+    :return:
+    """
     configList = os.listdir(KC_CLIENT_CONFIGS_DIR)
     configList = [KC_CLIENT_CONFIGS_DIR + i for i in configList]
     configList = [i for i in configList if os.path.isfile(i) and i.endswith(".json")]
 
-    def fileToJson(jsonFile : str) -> object:
+    def fileToJson(jsonFile: str) -> object:
         with open(jsonFile) as file:
             return json.load(file)
 
     configList = [fileToJson(i) for i in configList]
     log.debug("Client configs found: %s", json.dumps(configList))
+
+    serviceNames = []
+    roleNames = []
+    clientIds = []
+    for curConfig in configList:
+        curName = curConfig['service']
+
+        if curName in serviceNames:
+            raise Exception("Duplicate service name found: " + curName)
+        serviceNames.append(curName)
+
+        for curRole in curConfig['roles']:
+            curRoleName = curRole['name']
+            if curRoleName in roleNames:
+                raise Exception("Duplicate role name found: " + curRoleName)
+            roleNames.append(curRoleName)
+
+        for curClient in curConfig['clients']:
+            curClientId = curClient['clientId']
+            if curClientId in clientIds:
+                raise Exception("Duplicate client name found: " + curClientId)
+            clientIds.append(curClientId)
+
     return configList
 
+
 def getKcContainer() -> Container:
+    """
+    Gets the keycloak container to run things in.
+    :return:
+    """
     log.debug("Getting keycloak container.")
     client = docker.from_env()
     log.debug("Running containers: %s", client.containers.list())
@@ -62,6 +105,11 @@ def getKcContainer() -> Container:
 
 
 def setupAdminConfig(kcContainer: Container | None = None):
+    """
+    Sets up the admin client within the keycloak container.
+    :param kcContainer:
+    :return:
+    """
     log.info("Setting up keycloak admin config for future calls.")
     if kcContainer is None:
         kcContainer = getKcContainer()
@@ -98,8 +146,70 @@ def setupAdminConfig(kcContainer: Container | None = None):
     log.debug("Setting up KC creds output: %s", runResult.output)
 
 
+def getAllClientData(kcContainer: Container | None = None) -> list[dict]:
+    """
+    Gets a list of all client data in the realm.
 
-def getAllClientData(kcContainer: Container | None = None):
+    Example:
+
+    [
+        {
+            "id": "931b5ce4-c880-4669-909b-816620e6c03b",
+            "clientId": "oqm-base-station",
+            "name": "OQM Base Station",
+            "description": "The client for OQM's Base Station main component.",
+            "surrogateAuthRequired": false,
+            "enabled": true,
+            "alwaysDisplayInConsole": true,
+            "clientAuthenticatorType": "client-secret",
+            "secret": "qM_mXmlPZGHUmx1pGaEDRhiy2wLXQpbB",
+            "redirectUris": [
+              "*"
+            ],
+            "webOrigins": [],
+            "notBefore": 0,
+            "bearerOnly": false,
+            "consentRequired": false,
+            "standardFlowEnabled": true,
+            "implicitFlowEnabled": false,
+            "directAccessGrantsEnabled": false,
+            "serviceAccountsEnabled": true,
+            "publicClient": false,
+            "frontchannelLogout": false,
+            "protocol": "openid-connect",
+            "attributes": {
+              "realm_client": "false"
+            },
+            "authenticationFlowBindingOverrides": {},
+            "fullScopeAllowed": true,
+            "nodeReRegistrationTimeout": -1,
+            "defaultClientScopes": [
+              "web-origins",
+              "service_account",
+              "acr",
+              "roles",
+              "profile",
+              "microprofile-jwt",
+              "basic",
+              "email"
+            ],
+            "optionalClientScopes": [
+              "address",
+              "phone",
+              "offline_access"
+            ],
+            "access": {
+              "view": true,
+              "configure": true,
+              "manage": true
+            }
+          },
+          ...
+    ]
+
+    :param kcContainer:
+    :return:
+    """
     if kcContainer is None:
         kcContainer = getKcContainer()
     runResult = kcContainer.exec_run(
@@ -109,156 +219,315 @@ def getAllClientData(kcContainer: Container | None = None):
     if runResult.exit_code != 0:
         log.error("Failed to get keycloak clients: %s", runResult.output)
         raise ChildProcessError("Failed to get keycloak clients")
-    return json.loads(runResult.output)
 
+    output = json.loads(runResult.output)
+    output = [output for output in output if output["clientId"] not in KC_SYS_CLIENTS]
 
-def getClientId(clientName: str, kcContainer: Container | None = None) -> str | None:
+    return output
+
+def getClientData(clientId: str, kcContainer: Container | None = None) -> dict | None:
+    allClients = getAllClientData(kcContainer)
+    for curRole in allClients:
+        if clientId == curRole["clientId"]:
+            return curRole
+    return None
+
+def clientExists(clientId: str, kcContainer: Container | None = None) -> bool:
+    return getClientData(clientId, kcContainer) is not None
+
+def getIdOfClient(clientId: str, kcContainer: Container | None = None) -> str | None:
+    """
+    Gets the ID of a specific client. Which is distinct from the "clientId".
+    :param clientId:
+    :param kcContainer:
+    :return:
+    """
+    clientData = getClientData(clientId, kcContainer)
+    if clientData is not None:
+        return clientData["id"]
+
+def getAllRoleData(kcContainer: Container | None = None) -> list[dict]:
+    """
+    Example:
+    [
+        {
+            "id": "abc50c50-5c5e-40c4-8a02-36b393e37f34",
+            "name": "uma_authorization",
+            "description": "${role_uma_authorization}",
+            "composite": false,
+            "clientRole": false,
+            "containerId": "72bd1a2f-d711-48ce-b65b-0ad7107e8d56"
+        }
+    ]
+
+    :param kcContainer:
+    :return:
+    """
     if kcContainer is None:
         kcContainer = getKcContainer()
-    runResult = kcContainer.exec_run([
-            KC_ADM_SCRIPT, "get", "clients", "-r", KC_REALM, "--fields", "id,clientId"
+    runResult = kcContainer.exec_run(
+        [
+            KC_ADM_SCRIPT, "get", "clients", "-r", KC_REALM
         ])
-    if runResult.exit_code != 0:
-        log.error("Failed to get keycloak clients: %s", runResult.output)
-        raise ChildProcessError("Failed to get keycloak clients")
-    log.debug("Clients list: %s", runResult.output)
-    allClientData = json.loads(runResult.output)
-    for curClient in allClientData:
-        if clientName == curClient["clientId"]:
-            return curClient["id"]
+
+    output = json.loads(runResult.output)
+    output = [output for output in output if output["clientId"] not in KC_SYS_CLIENTS]
+
+    return output
+
+def getRoleData(roleName: str, kcContainer: Container | None = None) -> dict | None:
+    allRoles = getAllRoleData(kcContainer)
+    for curRole in allRoles:
+        if roleName == curRole["name"]:
+            return curRole
     return None
 
+def roleExists(roleName: str, kcContainer: Container | None = None) -> bool:
+    return getRoleData(roleName, kcContainer) is not None
 
-def getClientData(clientName:str, kcContainer: Container | None = None) -> str | None:
-    allClientData = getAllClientData(kcContainer)
-    for curClient in allClientData:
-        if clientName == curClient["clientId"]:
-            return curClient["id"]
-    return None
+# def getClientData(clientName:str, kcContainer: Container | None = None) -> str | None:
+#     """
+#     Gets the client data of a specific client
+#     :param clientName:
+#     :param kcContainer:
+#     :return:
+#     """
+#     allClientData = getAllClientData(kcContainer)
+#     for curClient in allClientData:
+#         if clientName == curClient["clientId"]:
+#             return curClient["id"]
+#     return None
 
+def processRole(kcContainer: Container, roleDef: dict) -> (bool, str):
+    """
+    Processes a role definition, integrating it into Keycloak.
+    :param kcContainer:
+    :param roleDef:
+    :return:
+    """
+    log.info("Processing role %s", roleDef['name'])
+    kcRoleData = {
+        "name": roleDef['name'],
+        "description": roleDef.get('description', ""),
+    }
 
-def updateKc():
-    log.info("Updating Keycloak Realm")
-    kcContainer = getKcContainer()
-    setupAdminConfig(kcContainer)
+    if roleExists(kcRoleData['name'], kcContainer):
+        log.info("Role %s already exists, updating.", kcRoleData['name'])
 
+        runResult = kcContainer.exec_run([
+            KC_ADM_SCRIPT, "update", "roles/"+kcRoleData['name'], "-r", KC_REALM, "-b", json.dumps(kcRoleData)
+        ])
+        if runResult.exit_code != 0:
+            log.error("Failed to create keycloak role: %s", runResult.output)
+            raise ChildProcessError("Failed to create keycloak role: " + kcRoleData['name'])
+    else:
+        log.info("Role %s does not exist, creating.", kcRoleData['name'])
+        runResult = kcContainer.exec_run([
+            KC_ADM_SCRIPT, "create", "roles", "-r", KC_REALM, "-b", json.dumps(kcRoleData)
+        ])
+        if runResult.exit_code != 0:
+            log.error("Failed to create keycloak role: %s", runResult.output)
+            raise ChildProcessError("Failed to create keycloak role: " + kcRoleData['name'])
+
+    # TODO:: group membership
+    # TODO:: respect default; apply to users automatically
+
+    return True, ""
+
+def processRoles(kcContainer: Container, roleDefs: list[dict]) -> (bool, str):
+    log.info("Processing roles")
+
+    customRoles = []
+    for roleDef in roleDefs:
+        customRoles.append(roleDef['name'])
+        success, msg = processRole(kcContainer, roleDef)
+    # TODO:: error check
+    #TODO:: remove roles not in config
+
+    log.info("Done processing roles")
+    return True, ""
+
+def processClient(kcContainer: Container, clientDef: dict) -> (bool, str):
+    log.info("Processing client %s", clientDef['clientId'])
+    clientId = clientDef['clientId']
+    #ensure secret config exists
+    mainCM.setConfigValInFile("infra.keycloak.clientSecrets." + clientId, "<secret>", "11-keycloak-clients.json")
+    mainCM.rereadConfigData()
+
+    kcClientData = {
+        "clientId": clientId,
+        "name": clientDef['displayName'],
+        "secret": mainCM.getConfigVal("infra.keycloak.clientSecrets." + clientId),
+        "description": clientDef['description'],
+        "redirectUris": ["*"],
+        "alwaysDisplayInConsole": True,
+        "serviceAccountsEnabled": True
+    }
+
+    if clientExists(kcClientData['clientId'], kcContainer):
+        log.info("Client %s already exists, updating.", kcClientData['clientId'])
+
+        runResult = kcContainer.exec_run([
+            KC_ADM_SCRIPT, "update", "clients/"+getIdOfClient(kcClientData['clientId'], kcContainer), "-r", KC_REALM, "-b", json.dumps(kcClientData)
+        ])
+        if runResult.exit_code != 0:
+            log.error("Failed to create keycloak client: %s", runResult.output)
+            raise ChildProcessError("Failed to update keycloak client: " + kcClientData['clientId'])
+    else:
+        log.info("Client %s does not exist, creating.", kcClientData['clientId'])
+        runResult = kcContainer.exec_run([
+            KC_ADM_SCRIPT, "create", "clients", "-r", KC_REALM, "-b", json.dumps(kcClientData)
+        ])
+        if runResult.exit_code != 0:
+            log.error("Failed to create keycloak client: %s", runResult.output)
+            raise ChildProcessError("Failed to create keycloak client: " + kcClientData['clientId'])
+
+    # TODO:: add roles?
+    return True, ""
+
+def processClients(kcContainer: Container, clientsDefs: list[dict]) -> (bool, str):
+    log.info("Processing clients")
+    customClients = []
+    for clientDef in clientsDefs:
+        customClients.append(clientDef['clientId'])
+        success, msg = processClient(kcContainer, clientDef)
+    # TODO:: error check
+    # TODO:: remove clients not in config
+    log.info("Done processing clients")
+    return True, ""
+
+def processServiceIntegration(kcContainer: Container, integrationDef: dict) -> (bool, str):
+    """
+    Processes a service integration definition by adding a new client to Keycloak.
+    :param kcContainer: The Keycloak container instance.
+    :param integrationDef: The integration definition dictionary.
+    :return: A tuple containing a boolean indicating success and a message.
+    """
+    log.info("Processing integration: %s", integrationDef['service'])
+
+    success, msg = processRoles(kcContainer, integrationDef['roles'])
+    # TODO:: error check
+
+    success, msg = processClients(kcContainer, integrationDef['clients'])
+    # TODO:: error check
+
+    return True, ""
+
+def updateRealmSettings(kcContainer: Container):
     log.info("Updating realm settings.")
+
+    # registrationAllowed
+    allowed=str(mainCM.getConfigVal("infra.keycloak.options.userSelfRegistration"))
     runResult = kcContainer.exec_run([
-            KC_ADM_SCRIPT,
-            "update",
-            "realms/"+KC_REALM,
-            "-s", "registrationAllowed=" + str(mainCM.getConfigVal("infra.keycloak.options.userSelfRegistration"))
-        ])
+        KC_ADM_SCRIPT,
+        "update",
+        "realms/" + KC_REALM,
+        "-s", "registrationAllowed=" + allowed
+    ])
     if runResult.exit_code != 0:
         log.error("Failed to set registration allowed: %s", runResult.output)
         raise ChildProcessError("Failed to set registration allowed")
-    log.debug("Setting up KC registration allowed: %s", runResult.output)
+    log.debug("Set KC registration allowed: %s/%s", allowed, runResult.output)
 
-    # Remove all clients not in the set brought in by keycloak
-    log.info("Removing all clients before re-creation")
-    allClientData = getAllClientData(kcContainer)
-    for curClient in allClientData:
-        if curClient["clientId"] in KC_DEFAULT_CLIENTS:
-            continue
-        log.info("Removing client to re-create: %s", curClient["clientId"])
-        clientId = getClientId(curClient["clientId"])
-        log.debug("Client id: %s", clientId)
-        runResult = kcContainer.exec_run([
-            KC_ADM_SCRIPT,
-            "delete",
-            "clients/"+clientId,
-            "-r", KC_REALM
-        ])
-        if runResult.exit_code != 0:
-            log.error("Failed to remove client: %s", runResult.output)
-            raise ChildProcessError("Failed to remove client")
+    log.info("Done updating realm settings.")
 
-    log.info("Creating clients from config.")
-    for curClient in getClientConfigs():
-        log.info("Adding client %s", curClient['clientName'])
-        # TODO:: validate object data
-        clientName = curClient['clientName']
-        mainCM.setConfigValInFile("infra.keycloak.clientSecrets."+clientName, "<secret>", "11-keycloak-clients.json")
-        mainCM.rereadConfigData()
-        newClientJson = {
-            "clientId": curClient['clientName'],
-            "name": curClient['displayName'],
-            "secret": mainCM.getConfigVal("infra.keycloak.clientSecrets."+clientName),
-            "description": curClient['description'],
-            "redirectUris": ["*"],
-            "alwaysDisplayInConsole": True,
-            "serviceAccountsEnabled": True
-        }
-        runResult = kcContainer.exec_run([
-            KC_ADM_SCRIPT,
-            "create",
-            "clients",
-            "-r", KC_REALM,
-            "-b", json.dumps(newClientJson)
-        ])
-        if runResult.exit_code != 0:
-            log.error("Failed to add new client: %s", runResult.output)
-            raise ChildProcessError("Failed to add new client")
-        clientId = getClientId(curClient['clientName'])
+def updateKc():
+    """
+    "Main" method for reloading and applying keycloak settings
+    :return:
+    """
+    log.info("Acquiring lock for Keycloak Realm update.")
+    with FileLock(MUTEX_FILE):
+        log.info("Updating Keycloak Realm")
+        try:
+            # Init
+            kcContainer = getKcContainer()
+            setupAdminConfig(kcContainer)
 
-        log.debug("Client id: %s", clientId)
-        # TODO:: add roles
+            # Update general settings from config
+            updateRealmSettings(kcContainer)
 
-        # if "serviceAccount" in curClient and curClient['serviceAccount']['enabled']:
-        #     runResult = kcContainer.exec_run([
-        #         KC_ADM_SCRIPT,
-        #
-        #         "-r", KC_REALM,
-        #     ])
-
-    log.info("Done updating realm.")
-
+            # Process service integrations
+            serviceConfigs = getServiceConfigs()
+            for curService in serviceConfigs:
+                result, msg = processServiceIntegration(kcContainer, curService)
+            log.info("Done updating realm.")
+        except Exception as e:
+            log.error("Exception thrown during update:", exc_info=True)
+    log.info("Released lock for Keycloak Realm update.")
 
 class Handler(FileSystemEventHandler):
     def on_modified(self, event):
         log.info("Noted change in kc client configs. Updating realms. File changed: %s", event.src_path)
         updateKc()
 
+def updateFromArgs(args):
+    updateKc()
+
+def monitorChanges(args):
+    log.info("Monitoring changes to keycloak clients in %s", KC_CLIENT_CONFIGS_DIR)
+    observer = Observer()
+    observer.schedule(Handler(), KC_CLIENT_CONFIGS_DIR)
+
+    log.info("Running initial update of keycloak clients.")
+    updateKc()
+    log.info("Done running initial update.")
+    log.info("Starting client change observer.")
+
+    observer.start()
+
+    log.info("Started observer.")
+
+    try:
+        while True:
+            sleep(5)
+    except KeyboardInterrupt:
+        observer.stop()
+    log.info("STOPPING monitoring directory for changes.")
+    observer.join()
+
+def wait(args):
+    result = mainCM.waitForConfig(
+        "infra.keycloak.clientSecrets." + args.clientId,
+        args.timeout
+    )
+    if not result:
+        print("ERROR: Timeout waiting for client '"+args.clientId+"' to be setup after "+str(args.timeout)+"s.", file=sys.stderr)
+        exit(1)
 
 argParser = argparse.ArgumentParser(
     prog="kc-realm-manager",
     description="This script is a utility to help manage OQM's Keycloak installation.",
-    epilog="Script version "+SCRIPT_VERSION+". With <3, EBP"
+    epilog="Script version " + SCRIPT_VERSION + ". With <3, EBP"
 )
-argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
-argParser.add_argument('--update-realm', dest="updateRealm", action="store_true", help="Updates the OQM realm with the latest configuration.")
-argParser.add_argument('--monitor-client-changes', dest="monitorChanges", action="store_true", help="Monitors the clients config dir for changes, updates as needed.")
+g = argParser.add_mutually_exclusive_group()
+
+g.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
+
+subparsers = argParser.add_subparsers(dest="command", help="Subcommands")
+
+update_parser = subparsers.add_parser("update", aliases=['u'], help="Updates the OQM realm with the latest configuration.")
+update_parser.set_defaults(func=updateFromArgs)
+
+update_parser = subparsers.add_parser("monitor", aliases=['m'], help="Monitors the clients config dir for changes, updates as needed.")
+update_parser.set_defaults(func=monitorChanges)
+
+wait_parser = subparsers.add_parser("waitForClient", aliases=['w'], help="Waits for a client with given clientId to be setup.")
+wait_parser.add_argument("clientId", help="The client id to check.")
+wait_parser.add_argument("timeout", help="How long to wait before timing out, in seconds (optional).", type=int, nargs="?", default=30)
+wait_parser.set_defaults(func=wait)
+
 args = argParser.parse_args()
 
 try:
     if args.v:
         print(SCRIPT_VERSION)
         exit()
-    elif args.updateRealm:
-        updateKc()
-    elif args.monitorChanges:
-        log.info("Monitoring changes to keycloak clients in %s", KC_CLIENT_CONFIGS_DIR)
-        observer = Observer()
-        observer.schedule(Handler(), KC_CLIENT_CONFIGS_DIR)
-
-        log.info("Running initial update of keycloak clients.")
-        updateKc()
-        log.info("Done running initial update.")
-        log.info("Starting client change observer.")
-
-        observer.start()
-
-        log.info("Started observer.")
-
-        try:
-            while True:
-                sleep(5)
-        except KeyboardInterrupt:
-            observer.stop()
-        log.info("STOPPING monitoring directory for changes.")
-        observer.join()
+    if hasattr(args, 'func'):
+        args.func(args)
     else:
-        argParser.print_usage()
+        print("No input given.")
+        argParser.print_help()
 except Exception as e:
     log.error("Exception thrown: {e}", exc_info=True)
     exit(1)
