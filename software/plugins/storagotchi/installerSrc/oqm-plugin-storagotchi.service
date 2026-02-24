@@ -32,6 +32,7 @@ Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/plugin/storagotchi/user-con
 
 ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
 ExecStartPre=/bin/bash -c "oqm-captain certs ensure-system-present"
+ExecStartPre=/bin/bash -c "/etc/oqm/static/keycloak/kc-realm-manager waitForClient oqm-plugin-storagotchi"
 # Ensure previous runs gone
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
