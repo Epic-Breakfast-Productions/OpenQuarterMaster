@@ -1,6 +1,8 @@
 #!/bin/python3
 import argparse
 import os
+from os import wait
+
 from filelock import FileLock
 import docker
 from docker.models.containers import Container
@@ -459,46 +461,73 @@ class Handler(FileSystemEventHandler):
         log.info("Noted change in kc client configs. Updating realms. File changed: %s", event.src_path)
         updateKc()
 
+def updateFromArgs(args):
+    updateKc()
+
+def monitorChanges(args):
+    log.info("Monitoring changes to keycloak clients in %s", KC_CLIENT_CONFIGS_DIR)
+    observer = Observer()
+    observer.schedule(Handler(), KC_CLIENT_CONFIGS_DIR)
+
+    log.info("Running initial update of keycloak clients.")
+    updateKc()
+    log.info("Done running initial update.")
+    log.info("Starting client change observer.")
+
+    observer.start()
+
+    log.info("Started observer.")
+
+    try:
+        while True:
+            sleep(5)
+    except KeyboardInterrupt:
+        observer.stop()
+    log.info("STOPPING monitoring directory for changes.")
+    observer.join()
+
+def wait(args):
+    result = mainCM.waitForConfig(
+        "infra.keycloak.clientSecrets." + args.clientId,
+        args.timeout
+    )
+    if not result:
+        print("ERROR: Timeout waiting for client '"+args.clientId+"' to be setup after "+str(args.timeout)+"s.", file=sys.stderr)
+        exit(1)
 
 argParser = argparse.ArgumentParser(
     prog="kc-realm-manager",
     description="This script is a utility to help manage OQM's Keycloak installation.",
     epilog="Script version " + SCRIPT_VERSION + ". With <3, EBP"
 )
-argParser.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
-argParser.add_argument('--update-realm', dest="updateRealm", action="store_true", help="Updates the OQM realm with the latest configuration.")
-argParser.add_argument('--monitor-client-changes', dest="monitorChanges", action="store_true", help="Monitors the clients config dir for changes, updates as needed.")
+g = argParser.add_mutually_exclusive_group()
+
+g.add_argument('-v', '--version', dest="v", action="store_true", help="Get this script's version")
+
+subparsers = argParser.add_subparsers(dest="command", help="Subcommands")
+
+update_parser = subparsers.add_parser("update", aliases=['u'], help="Updates the OQM realm with the latest configuration.")
+update_parser.set_defaults(func=updateFromArgs)
+
+update_parser = subparsers.add_parser("monitor", aliases=['m'], help="Monitors the clients config dir for changes, updates as needed.")
+update_parser.set_defaults(func=monitorChanges)
+
+wait_parser = subparsers.add_parser("waitForClient", aliases=['w'], help="Waits for a client with given clientId to be setup.")
+wait_parser.add_argument("clientId", help="The client id to check.")
+wait_parser.add_argument("timeout", help="How long to wait before timing out, in seconds (optional).", type=int, nargs="?", default=30)
+wait_parser.set_defaults(func=wait)
+
 args = argParser.parse_args()
 
 try:
     if args.v:
         print(SCRIPT_VERSION)
         exit()
-    elif args.updateRealm:
-        updateKc()
-    elif args.monitorChanges:
-        log.info("Monitoring changes to keycloak clients in %s", KC_CLIENT_CONFIGS_DIR)
-        observer = Observer()
-        observer.schedule(Handler(), KC_CLIENT_CONFIGS_DIR)
-
-        log.info("Running initial update of keycloak clients.")
-        updateKc()
-        log.info("Done running initial update.")
-        log.info("Starting client change observer.")
-
-        observer.start()
-
-        log.info("Started observer.")
-
-        try:
-            while True:
-                sleep(5)
-        except KeyboardInterrupt:
-            observer.stop()
-        log.info("STOPPING monitoring directory for changes.")
-        observer.join()
+    if hasattr(args, 'func'):
+        args.func(args)
     else:
-        argParser.print_usage()
+        print("No input given.")
+        argParser.print_help()
 except Exception as e:
     log.error("Exception thrown: {e}", exc_info=True)
     exit(1)
