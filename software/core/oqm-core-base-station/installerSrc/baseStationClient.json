@@ -3,9 +3,9 @@
 	"roles": [],
 	"clients": [
 		{
-			"clientName": "oqm-base-station",
+			"clientId": "oqm-base-station",
 			"displayName": "OQM Base Station",
-			"description": "The client for OQM's Base Station main component.",
+			"description": "The client for OQM's Base Station core component.",
 			"roles": []
 		}
 	]
