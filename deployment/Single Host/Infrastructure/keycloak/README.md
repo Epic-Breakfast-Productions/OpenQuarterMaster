@@ -132,11 +132,6 @@ kcadm.sh get roles -r oqm
 ```
 
 
-## TODOs
-
- - [ ] Remove roles not defined in client defs
- - [ ] Remove roles from groups if not in def to be in group
-
 ## Resources
 
  - https://www.keycloak.org/server/db

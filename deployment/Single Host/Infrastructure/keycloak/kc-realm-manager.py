@@ -61,7 +61,7 @@ def getServiceConfigs() -> list:
     roleNames = []
     clientIds = []
     for curConfig in configList:
-        curName = curConfig['name']
+        curName = curConfig['service']
 
         if curName in serviceNames:
             raise Exception("Duplicate service name found: " + curName)
@@ -233,6 +233,17 @@ def getClientData(clientId: str, kcContainer: Container | None = None) -> dict |
 def clientExists(clientId: str, kcContainer: Container | None = None) -> bool:
     return getClientData(clientId, kcContainer) is not None
 
+def getIdOfClient(clientId: str, kcContainer: Container | None = None) -> str | None:
+    """
+    Gets the ID of a specific client. Which is distinct from the "clientId".
+    :param clientId:
+    :param kcContainer:
+    :return:
+    """
+    clientData = getClientData(clientId, kcContainer)
+    if clientData is not None:
+        return clientData["id"]
+
 def getAllRoleData(kcContainer: Container | None = None) -> list[dict]:
     """
     Example:
@@ -292,6 +303,7 @@ def processRole(kcContainer: Container, roleDef: dict) -> (bool, str):
     :param roleDef:
     :return:
     """
+    log.info("Processing role %s", roleDef['name'])
     kcRoleData = {
         "name": roleDef['name'],
         "description": roleDef.get('description', ""),
@@ -320,13 +332,13 @@ def processRole(kcContainer: Container, roleDef: dict) -> (bool, str):
 
     return True, ""
 
-def processRoles(kcContainer: Container, roleDef: list[dict]) -> (bool, str):
+def processRoles(kcContainer: Container, roleDefs: list[dict]) -> (bool, str):
     log.info("Processing roles")
 
     customRoles = []
-    for role in roleDef:
-        customRoles.append(role['name'])
-        success, msg = processRole(kcContainer, role)
+    for roleDef in roleDefs:
+        customRoles.append(roleDef['name'])
+        success, msg = processRole(kcContainer, roleDef)
     # TODO:: error check
     #TODO:: remove roles not in config
 
@@ -334,7 +346,7 @@ def processRoles(kcContainer: Container, roleDef: list[dict]) -> (bool, str):
     return True, ""
 
 def processClient(kcContainer: Container, clientDef: dict) -> (bool, str):
-    log.info("Adding client %s", clientDef['clientId'])
+    log.info("Processing client %s", clientDef['clientId'])
     clientId = clientDef['clientId']
     #ensure secret config exists
     mainCM.setConfigValInFile("infra.keycloak.clientSecrets." + clientId, "<secret>", "11-keycloak-clients.json")
@@ -354,7 +366,7 @@ def processClient(kcContainer: Container, clientDef: dict) -> (bool, str):
         log.info("Client %s already exists, updating.", kcClientData['clientId'])
 
         runResult = kcContainer.exec_run([
-            KC_ADM_SCRIPT, "update", "clients/"+kcClientData['clientId'], "-r", KC_REALM, "-b", json.dumps(kcClientData)
+            KC_ADM_SCRIPT, "update", "clients/"+getIdOfClient(kcClientData['clientId'], kcContainer), "-r", KC_REALM, "-b", json.dumps(kcClientData)
         ])
         if runResult.exit_code != 0:
             log.error("Failed to create keycloak client: %s", runResult.output)
@@ -368,7 +380,6 @@ def processClient(kcContainer: Container, clientDef: dict) -> (bool, str):
             log.error("Failed to create keycloak client: %s", runResult.output)
             raise ChildProcessError("Failed to create keycloak client: " + kcClientData['clientId'])
 
-    # TODO:: validate object data
     # TODO:: add roles?
     return True, ""
 
@@ -402,16 +413,20 @@ def processServiceIntegration(kcContainer: Container, integrationDef: dict) -> (
 
 def updateRealmSettings(kcContainer: Container):
     log.info("Updating realm settings.")
+
+    # registrationAllowed
+    allowed=str(mainCM.getConfigVal("infra.keycloak.options.userSelfRegistration"))
     runResult = kcContainer.exec_run([
         KC_ADM_SCRIPT,
         "update",
         "realms/" + KC_REALM,
-        "-s", "registrationAllowed=" + str(mainCM.getConfigVal("infra.keycloak.options.userSelfRegistration"))
+        "-s", "registrationAllowed=" + allowed
     ])
     if runResult.exit_code != 0:
         log.error("Failed to set registration allowed: %s", runResult.output)
         raise ChildProcessError("Failed to set registration allowed")
-    log.debug("Setting up KC registration allowed: %s", runResult.output)
+    log.debug("Set KC registration allowed: %s/%s", allowed, runResult.output)
+
     log.info("Done updating realm settings.")
 
 def updateKc():
@@ -436,7 +451,7 @@ def updateKc():
                 result, msg = processServiceIntegration(kcContainer, curService)
             log.info("Done updating realm.")
         except Exception as e:
-            log.error("Exception thrown during update: {e}", exc_info=True)
+            log.error("Exception thrown during update:", exc_info=True)
     log.info("Released lock for Keycloak Realm update.")
 
 class Handler(FileSystemEventHandler):
