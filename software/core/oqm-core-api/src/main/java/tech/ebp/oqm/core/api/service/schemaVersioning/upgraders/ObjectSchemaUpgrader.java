@@ -2,6 +2,8 @@ package tech.ebp.oqm.core.api.service.schemaVersioning.upgraders;
 
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,6 +29,16 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public abstract class ObjectSchemaUpgrader<T extends Versionable> {
+	
+	/**
+	 * Have our own here to be more lenient on unknown properties
+	 */
+	private static final ObjectMapper MAPPER = new ObjectMapper();
+	
+	static {
+		ObjectUtils.setupObjectMapper(MAPPER);
+		MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
+	}
 
 	@Getter
 	private final SortedSet<ObjectSchemaVersionBumper<T>> versionBumpers;
@@ -152,7 +164,7 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 			// Get end result object from resulting bumped json
 			T upgradedObj = null;
 			try {
-				upgradedObj = ObjectUtils.OBJECT_MAPPER.treeToValue(upgradedJson, this.objClass);
+				upgradedObj = MAPPER.treeToValue(upgradedJson, this.objClass);
 			} catch(JsonProcessingException e) {
 				log.error("Failed to deserialize upgraded object of class {}: {}", this.objClass, upgradedJson.toPrettyString(), e);
 				throw new UpgradeFailedException(e, this.getObjClass());
