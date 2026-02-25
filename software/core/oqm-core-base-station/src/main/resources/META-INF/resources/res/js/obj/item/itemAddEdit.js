@@ -10,7 +10,7 @@ const ItemAddEdit = {
 
 	addEditItemIdInput: $("#addEditItemIdInput"),
 	addEditItemNameInput: $('#addEditItemNameInput'),
-	addEditItemDescriptionInput: Markdown.Editor.initInput("#addEditItemDescriptionInput")[0][0],
+	addEditItemDescriptionInput: Markdown.Editor.initInput("#addEditItemDescriptionInput")[0],
 	addEditItemExpiryWarningThresholdInput: $('#addEditItemExpiryWarningThresholdInput'),
 	addEditItemExpiryWarningThresholdUnitInput: $('#addEditItemExpiryWarningThresholdUnitInput'),
 	addEditItemCategoriesInput: $("#addEditItemCategoriesInput"),

@@ -57,8 +57,27 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  -v /tmp/oqm/serviceConfig/infra/traefik/config.d/dynamicConfig/:/etc/traefik/dynamicConfig:ro \
                                  -v /tmp/oqm/serviceConfig/infra/traefik/certs/:/etc/traefik/certs:ro \
                                  -v $(oqm-config g 'system.dataDir')/traefik/acme:/etc/traefik/acme \
+                                 --health-cmd=\"traefik healthcheck\" \
+                                 --health-interval=10s \
+                                 --health-timeout=10s \
+                                 --health-retries=5 \
+                                 --health-start-period=20s \
                                  $IMAGE_NAME:$IMAGE_VERSION --log.level=DEBUG"
-# TODO:: meaningful healthcheck for startup
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+                                if [ \"$status\" == \"healthy\" ]; then \
+                                    echo \"Container running!\"; \
+                                    running=\"true\"; \
+                                    continue; \
+                                fi; \
+                                sleep 0.05s; \
+                                if [ $SECONDS -gt 30 ]; then \
+                                    echo \"Container not running after 30 seconds!\"; \
+                                    exit 1; \
+                                fi; \
+                            done; \
+                            "
 
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop traefik container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove traefik container'"

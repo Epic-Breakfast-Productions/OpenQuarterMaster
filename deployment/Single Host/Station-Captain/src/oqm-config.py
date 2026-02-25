@@ -5,6 +5,7 @@
 #
 import os
 import sys
+import time
 
 from jinja2 import FileSystemLoader
 
@@ -77,6 +78,14 @@ def get(args):
         print("ERROR: Config key not found: " + configToGet, file=sys.stderr)
         exit(1)
     print(configValue)
+
+
+def wait(args):
+    result = mainCM.waitForConfig(args.key, args.timeout)
+    if not result:
+        print("ERROR: Timeout waiting for config value after "+str(args.timeout)+"s.", file=sys.stderr)
+        exit(1)
+
 
 def template(args):
     configFileToGet = args.templateFile
@@ -171,9 +180,14 @@ get_parser = subparsers.add_parser("get", aliases=['g'], help="Gets a config's v
 get_parser.add_argument("key", help="The config key to get.").completer=ConfigKeyCompleter()
 get_parser.set_defaults(func=get)
 
-get_parser = subparsers.add_parser("template", aliases=['t'], help="Fills out a template file with config values. Outputs the result.")
-get_parser.add_argument("templateFile", help="The template file to fill out.", type=pathlib.Path)
-get_parser.set_defaults(func=template)
+wait_parser = subparsers.add_parser("wait", aliases=['w'], help="Waits for a config value to be populated before returning.")
+wait_parser.add_argument("key", help="The config key to check.").completer=ConfigKeyCompleter()
+wait_parser.add_argument("timeout", help="How long to wait before timing out, in seconds (optional).", type=int, nargs="?", default=30)
+wait_parser.set_defaults(func=wait)
+
+temp_parser = subparsers.add_parser("template", aliases=['t'], help="Fills out a template file with config values. Outputs the result.")
+temp_parser.add_argument("templateFile", help="The template file to fill out.", type=pathlib.Path)
+temp_parser.set_defaults(func=template)
 
 set_parser = subparsers.add_parser("set", aliases=['s'], help="Sets a configuration value.")
 set_parser.add_argument("key", help="The config key to set.").completer=ConfigKeyCompleter()
