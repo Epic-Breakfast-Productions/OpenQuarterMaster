@@ -1154,6 +1154,21 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Homepage instance for Open QuarterMaster.
 Developer: EBP
 
+Package: oqm-infra-homepage
+Version: 1.0.4
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0), oqm-manager-station+captain (>= 2.9.0), oqm-infra-traefik (>= 1.0.3), python3-docker, python3-watchdog
+Filename: ./oqm-infra-homepage_1.0.4_all.deb
+Size: 5884
+MD5sum: 6aad13a752b5cdaa99c7bd907959587f
+SHA1: 090bf3b71d337f8d90ffd4e7ac2a1e8b64e470d4
+SHA256: cae04dca1d5427668a8ec52af11231e033ac08679cba0e4a97e18e9aeebe2493
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/homepage
+Description: Homepage instance for Open QuarterMaster.
+Developer: EBP
+
 Package: oqm-infra-jaeger
 Version: 1.1.1
 Architecture: all
