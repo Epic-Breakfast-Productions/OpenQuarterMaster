@@ -1,23 +1,18 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.stored;
 
-import io.smallrye.mutiny.Uni;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.Generic;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ProvidedUniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricing;
 import tech.ebp.oqm.core.api.model.testUtils.BasicTest;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 
 import javax.money.Monetary;
-import javax.money.MonetaryAmount;
 import java.time.ZonedDateTime;
-import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -28,19 +23,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class StoredTest extends BasicTest {
 
 	public static Stream<Arguments> getParseLabelTests(){
-		GeneralId gid = Generic.builder()
+		Identifier gid = GenericIdentifier.builder()
 							.label(FAKER.name().name())
 							.value(FAKER.idNumber().valid())
 							.build();
-		LinkedHashSet<GeneralId> generalIds = new LinkedHashSet<>(){{
+		LinkedHashSet<Identifier> identifiers = new LinkedHashSet<>(){{
 			add(gid);
-		}};
-		UniqueId uid = ProvidedUniqueId.builder()
-							.label(FAKER.name().name())
-							.value(FAKER.idNumber().valid())
-							.build();
-		LinkedHashSet<UniqueId> uniqueIds = new LinkedHashSet<>(){{
-			add(uid);
 		}};
 		CalculatedPricing pricing = CalculatedPricing.builder()
 										.label(FAKER.name().name())
@@ -63,8 +51,7 @@ public class StoredTest extends BasicTest {
 											.item(ObjectId.get())
 											.storageBlock(ObjectId.get())
 											.amount(UnitUtils.Quantities.UNIT_ONE)
-											.generalIds(generalIds)
-											.uniqueIds(uniqueIds)
+											.identifiers(identifiers)
 											.calculatedPrices(pricingSet)
 											.attributes(atts)
 											.condition(condition)
@@ -74,7 +61,7 @@ public class StoredTest extends BasicTest {
 											.id(ObjectId.get())
 											.item(ObjectId.get())
 											.storageBlock(ObjectId.get())
-											.generalIds(generalIds)
+											.identifiers(identifiers)
 											.build();
 		
 		return Stream.of(
@@ -91,11 +78,8 @@ public class StoredTest extends BasicTest {
 			Arguments.of(fullAmountStored, "{exp;LLL/yyyy}", "Dec/2007"),
 			Arguments.of(fullUniqueStored, "{exp}", "-"),
 			//general Ids
-			Arguments.of(fullAmountStored, "{gid;"+gid.getLabel()+"}", gid.getValue()),
-			Arguments.of(fullAmountStored, "{gid;foo}", "#E#"),
-			//unique Ids
-			Arguments.of(fullAmountStored, "{uid;"+uid.getLabel()+"}", uid.getValue()),
-			Arguments.of(fullAmountStored, "{uid;foo}", "#E#"),
+			Arguments.of(fullAmountStored, "{ident;"+gid.getLabel()+"}", gid.getValue()),
+			Arguments.of(fullAmountStored, "{ident;foo}", "#E#"),
 			//Pricing
 			Arguments.of(fullAmountStored, "{price;"+pricing.getLabel()+"}", "$1.00"),
 			Arguments.of(fullAmountStored, "{price;foo}", "#E#"),
@@ -105,12 +89,11 @@ public class StoredTest extends BasicTest {
 			//combined
 			Arguments.of(
 				fullAmountStored,
-				"-{id} - {amt} - {cnd} - {gid;"+gid.getLabel()+"} - {uid;"+uid.getLabel()+"} - {price;"+pricing.getLabel()+"} - {att;"+att+"}",
+				"-{id} - {amt} - {cnd} - {ident;"+gid.getLabel()+"} - {price;"+pricing.getLabel()+"} - {att;"+att+"}",
 				"-" + fullAmountStored.getId().toHexString() +
 				" - 1 units" +
 				" - 20%" +
 				" - " + gid.getValue() +
-				" - " + uid.getValue() +
 				" - $1.00" +
 				" - " + atts.get(att)
 			)

@@ -4,7 +4,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.result.InsertOneResult;
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.ValidationException;
@@ -14,10 +13,6 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.Generates;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.ToGenerateUniqueId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdentifierGenerator;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.TotalPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
@@ -217,79 +212,6 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		log.info("Exception: {}", exception.getMessage());
 	}
 	
-	@Test
-	public void testGeneratedUniqueIdInAdd() {
-		User user = this.getTestUserService().getTestUser();
-		InventoryItem item = this.getTestObject();
-		
-		ObjectId uig = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), user).getId();
-		
-		item.getUniqueIds().add(
-			ToGenerateUniqueId.builder().generateFrom(uig)
-				.label("SKU").build()
-		);
-		
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, user).getId();
-		
-		item = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newId);
-		
-		assertEquals(1, item.getUniqueIds().size());
-		
-		UniqueId id = item.getUniqueIds().getFirst();
-		log.info("generated id: {}", id);
-		assertInstanceOf(GeneratedUniqueId.class, id);
-	}
-	
-	@Test
-	public void testOtherSameIdDiffGeneratorUniqueIdInAdd() {
-		User user = this.getTestUserService().getTestUser();
-		InventoryItem item1 = this.getTestObject();
-		InventoryItem item2 = this.getTestObject();
-		
-		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), user).getId();
-		ObjectId uig2 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test2").generates(Generates.UNIQUE).idFormat("{inc}").build(), user).getId();
-		
-		item1.getUniqueIds().add(
-			ToGenerateUniqueId.builder().generateFrom(uig1)
-				.label("SKU").build()
-		);
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item1, user).getId();
-		
-		item2.getUniqueIds().add(
-			ToGenerateUniqueId.builder().generateFrom(uig2)
-				.label("SKU").build()
-		);
-		newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item2, user).getId();
-		
-		//		item1 = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newId);
-		//
-		//		assertEquals(1, item.getUniqueIds().size());
-		//
-		//		UniqueId id = item.getUniqueIds().getFirst();
-		//		log.info("generated id: {}", id);
-		//		assertInstanceOf(GeneratedUniqueId.class, id);
-	}
-	
-	@Test
-	public void testOtherSameIdSameGeneratorUniqueIdInAdd() {
-		User user = this.getTestUserService().getTestUser();
-		InventoryItem item1 = this.getTestObject();
-		InventoryItem item2 = this.getTestObject();
-		
-		ObjectId uig1 = this.uigs.add(DEFAULT_TEST_DB_NAME, IdentifierGenerator.builder().name("test").generates(Generates.UNIQUE).idFormat("{inc}").build(), user).getId();
-		
-		item1.getUniqueIds().add(
-			ToGenerateUniqueId.builder().generateFrom(uig1)
-				.label("SKU").build()
-		);
-		ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item1, user).getId();
-		item1 = this.inventoryItemService.get(DEFAULT_TEST_DB_NAME, newId);
-		
-		item2.getUniqueIds().add(
-			item1.getUniqueIds().getFirst()
-		);
-		assertThrows(ValidationException.class, ()->this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item2, user));
-	}
 	
 	@Test
 	public void testPricesInStats() {

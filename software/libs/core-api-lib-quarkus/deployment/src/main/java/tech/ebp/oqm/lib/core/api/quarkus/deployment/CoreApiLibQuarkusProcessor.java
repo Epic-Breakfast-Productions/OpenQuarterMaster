@@ -198,7 +198,7 @@ class CoreApiLibQuarkusProcessor {
 	}
 	
 	@BuildStep(onlyIf = IsLocalDevelopment.class)
-	void setupDevUiCard(BuildProducer<CardPageBuildItem> cardsProducer) {
+	void setupDevUiCard(BuildProducer<CardPageBuildItem> cardsProducer, CoreApiLibBuildTimeConfig config) {
 		
 		CardPageBuildItem cardPageBuildItem = new CardPageBuildItem();
 		cardPageBuildItem.setLogo("oqm-icon.svg", "oqm-icon.svg");
@@ -206,7 +206,7 @@ class CoreApiLibQuarkusProcessor {
 		//show oqm core api ui
 		cardPageBuildItem.addPage(
 			Page.externalPageBuilder("OQM Core API UI")
-				.url("http://localhost:" + OqmCoreApiWebServiceContainer.PORT)
+				.url("http://localhost:" + config.devservice().port())
 				.doNotEmbed()//needed as embedded fails due to CORS
 		);
 		

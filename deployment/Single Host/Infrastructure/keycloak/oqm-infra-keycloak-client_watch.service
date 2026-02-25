@@ -22,7 +22,7 @@ After=oqm-infra-keycloak.service
 Type=simple
 Restart=always
 TimeoutSec=5m
-ExecStart=/bin/bash -c "/etc/oqm/static/keycloak/kc-realm-manager --monitor-client-changes"
+ExecStart=/bin/bash -c "/etc/oqm/static/keycloak/kc-realm-manager monitor"
 
 [Install]
 WantedBy=multi-user.target

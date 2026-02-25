@@ -3,7 +3,7 @@ package tech.ebp.oqm.core.api.model.validation.validators.identifiers;
 import jakarta.validation.ConstraintValidatorContext;
 import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidGTIN14;
 import tech.ebp.oqm.core.api.model.validation.validators.Validator;
-import tech.ebp.oqm.core.api.service.identifiers.general.upc.GTINCodeUtilities;
+import tech.ebp.oqm.core.api.service.identifiers.upc.GTINCodeUtilities;
 
 import java.util.ArrayList;
 import java.util.List;

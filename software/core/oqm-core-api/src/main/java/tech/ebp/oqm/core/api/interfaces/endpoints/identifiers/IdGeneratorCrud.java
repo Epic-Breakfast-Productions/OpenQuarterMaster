@@ -258,15 +258,14 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public IdGenResult<?> generateNewId(
+	public IdGenResult generateNewId(
 		@PathParam("id") String id,
 		@QueryParam("num") Optional<Integer> numToGenerate
 	) {
 		return this.getObjectService().getNextNIds(
 			this.getOqmDbIdOrName(),
 			new ObjectId(id),
-			numToGenerate.orElse(1),
-			null
+			numToGenerate.orElse(1)
 		);
 	}
 	
