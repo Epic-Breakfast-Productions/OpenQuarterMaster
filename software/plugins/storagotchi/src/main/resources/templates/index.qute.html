@@ -72,9 +72,7 @@
 			<button id="testModalOpenButton" aria-label="Help"></button>
 			{!<button aria-label="Minimize" disabled></button>!}
 			{!<button aria-label="Restore" disabled></button>!}
-			<a href="{config:['runningInfo.homeUrl']}">
-				<button aria-label="Close" disabled></button>
-			</a>
+			<button aria-label="Close" onclick="window.location.href='{config:['runningInfo.homeUrl']}'"></button>
 		</div>
 	</div>
 	<div class="window-body" id="mainWindowBody">
@@ -167,7 +165,7 @@
 			Version {config:['quarkus.application.version']}
 		</p>
 		<p>
-			&copy; 2025 <a href="https://epic-breakfast-productions.tech">Epic Breakfast Productions</a>
+			&copy; 2026 <a href="https://epic-breakfast-productions.tech">Epic Breakfast Productions</a>
 		</p>
 		<p>
 			Source on <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/storagotchi/">Open QuarterMaster Github</a>

@@ -1,8 +1,10 @@
-
 runningInfo:
   homeUrl: "#"
 
 quarkus:
+  http:
+    port: 80
+    ssl-port: 443
   container-image:
     name: oqm-plugin-storagotchi
     group: ebprod
@@ -21,9 +23,12 @@ quarkus:
       port: 9328
       realm-path: "dev/oqm-realm.json"
       realm-name: oqm
-      
+
 "%dev":
   quarkus:
+    http:
+      port: 8080
+      ssl-port: 8443
     log:
       level: DEBUG
     oidc:
