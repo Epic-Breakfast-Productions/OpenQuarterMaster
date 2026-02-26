@@ -487,7 +487,7 @@ def monitorChanges(args):
     observer.join()
 
 def wait(args):
-    result = mainCM.waitForConfig(
+    result, val = mainCM.waitForConfig(
         "infra.keycloak.clientSecrets." + args.clientId,
         args.timeout
     )

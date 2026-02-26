@@ -1,0 +1,1102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<link rel="shortcut icon" href="{rootPrefix}/media/plugin-storagotchi.svg"/>
+	<title>Storagotchi - Open QuarterMaster</title>
+	<meta charset="UTF-8"/>
+	
+	<link rel="stylesheet" href="{rootPrefix}/lib/xp.css/0.2.6/XP.css"/>
+	<style>
+		html {
+			height: 100%;
+		}
+		
+		body {
+			min-height: 100vh;
+			background-image: url({rootPrefix}/media/background/windows_xp_original-wallpaper.jpg);
+			background-size: cover;
+			background-repeat: no-repeat;
+		}
+		
+		#mainWindow {
+			width: 95vw; /* 100% of the viewport width */
+			height: 95vh;
+			display: flex;
+			flex-direction: column;
+		}
+		
+		#mainWindowBody {
+			flex: 1;
+		}
+		
+		.mainTabBody {
+			flex: 1;
+			margin-bottom: 0px;
+			overflow: scroll;
+		}
+		
+		#mainTabs {
+			/*border: 1px solid black;*/
+			max-width: 100%;
+			height: 100%;
+			display: flex;
+			flex-direction: column;
+		}
+		
+		dialog.window {
+			border-width: 0;
+		}
+		
+		#gameCanvas {
+			width: 100%;
+			min-height: 100%;
+			/*border: 1px solid black;*/
+		}
+		.initContent {
+			position: absolute;
+			/*display: inline;*/
+		}
+		.initLoadingDoneHidden {
+			display: none;
+		}
+	</style>
+</head>
+
+<body class="">
+<div class="window" id="mainWindow">
+	<div class="title-bar">
+		<div class="title-bar-text">
+			Storagotchi
+		</div>
+		<div class="title-bar-controls">
+			<button id="testModalOpenButton" aria-label="Help"></button>
+			{!<button aria-label="Minimize" disabled></button>!}
+			{!<button aria-label="Restore" disabled></button>!}
+			<button aria-label="Close" onclick="window.location.href='{config:['runningInfo.homeUrl']}'"></button>
+		</div>
+	</div>
+	<div class="window-body" id="mainWindowBody">
+		<section class="tabs" id="mainTabs">
+			<menu role="tablist" aria-label="Navigation">
+				<button role="tab" aria-selected="true" aria-controls="tab-game" id="storagotchiTabButton">{settings.getStoragotchiName()}</button>
+				{!TODO:: these!}
+				{!<button role="tab" aria-controls="tab-achievements">Achievements</button>!}
+				{!<button role="tab" aria-controls="tab-guide">Guide</button>!}
+				<button role="tab" aria-controls="tab-options">Options <span id="optionsChangedIndicator"></span></button>
+			</menu>
+			<!-- the tab content -->
+			<article role="tabpanel" id="tab-game" class="mainTabBody">
+				<div id="gameCanvas">
+					<div class="initContent">
+						<h3>Loading... <span class="initLoadingDone initLoadingDoneHidden">Done.</span></h3>
+						<progress id="initProgressBar"></progress>
+						<p class="initLoadingDone initLoadingDoneHidden">
+							Click on {settings.getStoragotchiName()} to start...
+						</p>
+					</div>
+				</div>
+			</article>
+			<article role="tabpanel" id="tab-achievements" class="mainTabBody" hidden>
+				<h3>Achievements</h3>
+				<p>Achievements for doing cool things with your inventory</p>
+			</article>
+			<article role="tabpanel" id="tab-guide" class="mainTabBody" hidden>
+				<h3>Guide</h3>
+				<p>Content</p>
+			</article>
+			<article role="tabpanel" id="tab-options" class="mainTabBody" hidden>
+				<h3>Options</h3>
+				<form id="optionsForm">
+					<button type="submit" id="optionsFormSubmitButton" disabled>Save</button>
+					<fieldset>
+						<legend>Audio</legend>
+						<div class="field-row" style="width: 300px">
+							<label for="volumeInput">Volume:</label>
+							<label for="volumeInput">Low</label>
+							<input id="volumeInput" type="range" min="0" max="1" step="0.05" name="volume" value="{settings.getVolume()}"/>
+							<label for="volumeInput">High</label>
+						</div>
+						<div class="field-row">
+							<input type="checkbox" id="musicInput" name="music" value="true" {#if settings.isMusic()}checked{/if}>
+							<label for="musicInput">Music</label>
+						</div>
+						<div class="field-row">
+							<input type="checkbox" id="soundfxInput" name="soundfx" value="true" {#if settings.isSoundfx()}checked{/if}>
+							<label for="soundfxInput">Sfx</label>
+						</div>
+					</fieldset>
+					<fieldset>
+						<legend>Customization</legend>
+						<div class="field-row">
+							<label for="storagotchiNameInput">Storagotchi Name:</label>
+							<input id="storagotchiNameInput" name="storagotchiName" type="text" value="{settings.getStoragotchiName()}" required/>
+						</div>
+					</fieldset>
+				</form>
+			</article>
+		</section>
+	</div>
+	{!<div style="height: 100%;"></div>!}
+	<div class="status-bar" style="margin-bottom: 3px;">
+		<p class="status-bar-field" style="max-width: 100px;">Status: <span id="statusDisplay">?</span></p>
+		<p class="status-bar-field"></p><!-- spacer -->
+		<p class="status-bar-field" style="max-width: 85px;">CPU Usage: <span id="cpuDisplay"></span>%</p>
+		<p class="status-bar-field" style="max-width: 125px;">State: <span id="stateDisplay"></span></p>
+		<p class="status-bar-field" style="max-width: 115px;" id="stateLoadBar">
+			<progress></progress>
+		</p>
+	</div>
+</div>
+
+
+<dialog class="window" style="width: 250px" id="testDialog">
+	<div class="title-bar">
+		<div class="title-bar-text">Info</div>
+		<div class="title-bar-controls">
+			<button type="button" aria-label="Close" class="modalClose"></button>
+		</div>
+	</div>
+	<div class="window-body">
+		<h3>Storagotchi</h3>
+		<p>
+			A fun digital dude to help you stay motivated with your inventory management.
+		</p>
+		<p>
+			Version {config:['quarkus.application.version']}
+		</p>
+		<p>
+			&copy; 2026 <a href="https://epic-breakfast-productions.tech">Epic Breakfast Productions</a>
+		</p>
+		<p>
+			Source on <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/storagotchi/">Open QuarterMaster Github</a>
+		</p>
+	</div>
+</dialog>
+
+<script src="{rootPrefix}/webjars/jquery/3.7.1/jquery.min.js"></script>
+
+<script>
+	
+	function newUpdatesWebSocket() {
+		let wsProtocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+		//TODO:: doublecheck this (root path needed?)
+		let wsUrl = `${ wsProtocol}//${ window.location.host}${ window.location.pathname.substring(0, window.location.pathname.lastIndexOf('/'))}/ws/updates`;
+		
+		let socket = new WebSocket(wsUrl)
+		socket.onopen = (event) => {
+			console.log('WebSocket connection opened:', event);
+			updateStatusDisplay("Connected");
+		}
+		socket.onclose = (event) => {
+			console.warn("Websocket closed connection.");
+			updateStatusDisplay("Disconnected");
+		}
+		socket.onmessage = (event) => {
+			console.info("Received a message from websocket: ", event);
+		}
+		return socket;
+	}
+	
+	const updatesSocket = newUpdatesWebSocket();
+</script>
+<script>
+	const testDialog = $("#testDialog");
+	
+	const showButton = $("#testModalOpenButton");
+	const closeButton = testDialog.find(".modalClose");
+	
+	// "Show the dialog" button opens the dialog modally
+	showButton.on("click", () => {
+		console.log("Opening test modal");
+		testDialog[0].showModal();
+	});
+	
+	// "Close" button closes the dialog
+	closeButton.on("click", () => {
+		console.log("Closing test modal");
+		testDialog[0].close();
+	});
+	
+	
+	const tabs = document.querySelectorAll("menu[role=tablist]");
+	
+	for (let i = 0; i < tabs.length; i++) {
+		const tab = tabs[i];
+		
+		const tabButtons = tab.querySelectorAll("menu[role=tablist] > button");
+		
+		tabButtons.forEach((btn) =>
+			btn.addEventListener("click", (e) => {
+				e.preventDefault();
+				
+				tabButtons.forEach((button) => {
+					if (
+						button.getAttribute("aria-controls") ===
+						e.target.getAttribute("aria-controls")
+					) {
+						button.setAttribute("aria-selected", true);
+						openTab(e, tab);
+					} else {
+						button.setAttribute("aria-selected", false);
+					}
+				});
+			})
+		);
+	}
+	
+	function openTab(event, tab) {
+		const articles = tab.parentNode.querySelectorAll('[role="tabpanel"]');
+		articles.forEach((p) => {
+			p.setAttribute("hidden", true);
+		});
+		const article = tab.parentNode.querySelector(
+			`[role="tabpanel"]#` + event.target.getAttribute("aria-controls")
+		);
+		article.removeAttribute("hidden");
+	}
+	
+	let storagotchiTabButton = $("#storagotchiTabButton");
+	
+	let opsForm = $("#optionsForm");
+	let opsFormSubButton = $("#optionsFormSubmitButton");
+	let optionsChangedIndicator = $("#optionsChangedIndicator");
+	let storagotchiOpsNameInput = opsForm.find("input[name='storagotchiName']");
+	
+	opsForm.find("input,select").on("input", function () {
+		optionsChangedIndicator.text("*");
+		opsFormSubButton.prop("disabled", false);
+	});
+	
+	opsForm.on("submit", function (e) {
+		e.preventDefault();
+		console.log("Submitting options change form");
+		
+		let data = {
+			"type": "updateSettings",
+			"data": {}
+		};
+		
+		opsForm.find("input,select").each(function (i, inputJs) {
+			let inputJq = $(inputJs);
+			
+			if (inputJq.attr("type") === "checkbox") {
+				data.data[inputJq.prop("name")] = inputJq.is(":checked");
+			} else {
+				data.data[inputJq.prop("name")] = inputJq.val();
+			}
+		});
+		
+		console.log("Sending update message: ", data)
+		
+		updatesSocket.send(JSON.stringify(data));
+		
+		storagotchiTabButton.text(storagotchiOpsNameInput.val());
+		optionsChangedIndicator.text("");
+		opsFormSubButton.prop("disabled", true);
+	});
+	
+	
+	let stateDisplay = $("#stateDisplay");
+	let stateLoadBar = $("#stateLoadBar");
+	
+	function updateLoadBar(loadBarPerc = null) {
+		if (loadBarPerc === null) {
+			stateLoadBar.html("<progress></progress>");
+		} else {
+			stateLoadBar.html(`<progress value="` + loadBarPerc + `"></progress>`);
+		}
+	}
+	
+	function updateStateDisplay(state, loadBarPerc = 0) {
+		stateDisplay.text(state);
+		updateLoadBar(loadBarPerc);
+	}
+	
+	let cpuDisplay = $("#cpuDisplay");
+	
+	function updateCpuDisplay(state) {
+		let perc = 0;
+		switch (state) {
+			case "pinned": // 100%
+				perc = 100;
+				break;
+			case "high": // 75 - 100 %
+				perc = Math.floor(Math.random() * (100 - 75 + 1)) + 75;
+				break;
+			case "med": // 50 - 75 %
+				perc = Math.floor(Math.random() * (75 - 50 + 1)) + 50;
+				break;
+			case "medLow": // 25 - 50%
+				perc = Math.floor(Math.random() * (50 - 25 + 1)) + 25;
+				break;
+			case "low": // 0 - 50%
+				perc = Math.floor(Math.random() * (25 + 1));
+				break;
+			case "none": // 0 - 50%
+				perc = 0;
+				break;
+			default:
+				perc = "?";
+		}
+		
+		cpuDisplay.text(perc);
+	}
+	
+	updateCpuDisplay("");
+	
+	let statusDisplay = $("#statusDisplay");
+	
+	function updateStatusDisplay(status) {
+		statusDisplay.text(status);
+	}
+</script>
+
+<script src="{rootPrefix}/lib/pixi/8.14.0/pixi.min.js"></script>
+<script src="{rootPrefix}/lib/pixi/8.14.0/pixi-filters.js"></script>
+<script src="{rootPrefix}/lib/pixi/8.14.0/pixi-sound.js"></script>
+<script type="module">
+	// import * as PIXI from '/lib/pixi/8.14.0/pixi.min.mjs';
+	// import * as PIXIS from '/lib/pixi/8.14.0/pixi-sound.js';
+	
+	const DESIGN_WIDTH = 500;
+	const SCREEN_BORDER = 30;
+	
+	//boxes
+	const NUM_BOXES = 10;
+	const BOX_DISTANCE_THRESHOLD = 30;
+	const BOX_WIDTH_MOD = 0.04;
+	
+	//stuff
+	const STUFF_WIDTH_MOD = 0.015;
+	
+	//storagotchi
+	const SG_WIDTH_MOD = 0.08;
+	const SG_CPU_UPDATE_TIME = 750;
+	const SG_WAKEUP_TIME = 23_500;
+	
+	const gameState = {
+		oqmActionCount: 0
+	};
+	
+	const stuff = {
+	{#for entry in stuffMap}
+	{#let rarity = entry.getKey() stuffList = entry.getValue()}
+	// {rarity}
+	{rarity}:
+	[
+		{#for curStuff in stuffList}
+		"stuff-{rarity}-{curStuff}"{#if curStuff_hasNext},{/if}
+		{/for}
+	]{#if entry_hasNext},{/if}
+	{/for}
+	}
+	;
+	
+	// Create a new application
+	const app = new PIXI.Application();
+	const scalingContainer = new PIXI.Container();
+	const sounds = {
+		"sfx": { },
+		"music": { }
+	};
+	const boxes = [];
+	const stuffOnGround = [];
+	let storagotchi = null;
+	
+	
+	(async () => {
+		await preload();
+		await initApp();
+		
+		setupBackdrop();
+		setupBoxes();
+		setupStoragotchi();
+		
+		$(".initLoadingDone").removeClass("initLoadingDoneHidden");
+		$("#initProgressBar").attr("value", "100");
+		
+		// Listen for animate update
+		app.ticker.add((time) => {
+			animateStoragotchi(app, time, time.deltaTime);
+		});
+	})();
+	
+	async function preload() {
+		// Create an array of asset data to load.
+		const assets = [
+			{ alias: 'storagotchi-drop', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_DROP-Sheet.json'},
+			{ alias: 'storagotchi-idle', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_IDLE-Sheet.json'},
+			{ alias: 'storagotchi-lift-idle', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_LIFT-IDLE-Sheet.json'},
+			{ alias: 'storagotchi-lift', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_LIFT-Sheet.json'},
+			{ alias: 'storagotchi-lift-walk', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_LIFT-WALK-Sheet.json'},
+			{ alias: 'storagotchi-loading', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_LOADING-Sheet.json'},
+			{ alias: 'storagotchi-put-to-box', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_PUT-TO-BOX-Sheet.json'},
+			{ alias: 'storagotchi-rummage', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_RUMMAGE-Sheet.json'},
+			{ alias: 'storagotchi-salute', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_SALUTE-Sheet.json'},
+			{ alias: 'storagotchi-sleeping', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_SLEEPING-Sheet.json'},
+			{ alias: 'storagotchi-sleeping-to-idle', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_SLEEPING-TO-IDLE-Sheet.json'},
+			{ alias: 'storagotchi-walk', src: '{rootPrefix}/media/sprites/storagotchi/Spritesheets/Storagotchi_WALK-Sheet.json'},
+			{ alias: 'box-1-closed', src: '{rootPrefix}/media/sprites/box/box-1-closed.png'},
+			{ alias: 'box-1-open', src: '{rootPrefix}/media/sprites/box/box-1-open.png'},
+			{ alias: 'box-2-closed', src: '{rootPrefix}/media/sprites/box/box-2-closed.png'},
+			{ alias: 'box-2-open', src: '{rootPrefix}/media/sprites/box/box-2-open.png'},
+			{ alias: 'box-3-closed', src: '{rootPrefix}/media/sprites/box/box-3-closed.png'},
+			{ alias: 'box-3-open', src: '{rootPrefix}/media/sprites/box/box-3-open.png'},
+			//stuff
+			{#for entry in stuffMap}
+			{#let rarity = entry.getKey() stuffList = entry.getValue()}
+			// {rarity}
+			{#for curStuff in stuffList}
+			{ alias: "stuff-{rarity}-{curStuff}", src: '{rootPrefix}/media/sprites/stuff/{rarity}/{curStuff}'},
+			{/for}
+			{/for}
+		];
+		
+		// Load the assets defined above.
+		console.log("Loading assets");
+		await PIXI.Assets.load(assets);
+		console.log("Finished loading assets.");
+		
+		//sounds
+		sounds["sfx"]['dial-up'] = PIXI.sound.Sound.from({
+			alias: 'dial-up',
+			url: '{rootPrefix}/media/audio/sfx/dial-up.mp3',
+			preload: true
+		});
+		
+	}
+	
+	async function initApp() {
+		let gameCanvas = document.getElementById("gameCanvas");
+		
+		// Initialize the application
+		await app.init({
+			backgroundAlpha: 0,
+			// background: '#ece9d8', //beige
+			resizeTo: gameCanvas
+		});
+		
+		// Append the application canvas to the document body
+		gameCanvas.appendChild(app.canvas);
+		
+		let aspectRatio = app.renderer.width / app.renderer.height;
+		let { width, height } = app.renderer;
+		
+		app.stage.addChild(scalingContainer);
+		scalingContainer.scale.set(app.renderer.width / DESIGN_WIDTH);
+		
+		let ratioHeight = DESIGN_WIDTH / aspectRatio;
+		
+		scalingContainer['design'] = {
+			"width": DESIGN_WIDTH,
+			"height": ratioHeight,
+			"aspectRatio": aspectRatio,
+			"center": {
+				"x": DESIGN_WIDTH / 2,
+				"y": ratioHeight / 2,
+			}
+		};
+		
+		let containerHeight = scalingContainer.height;
+		
+		console.log("height from renderer: ", height);
+		console.log("height from ratio: ", ratioHeight);
+		console.log("height from container: ", containerHeight);
+		
+		
+	}
+	
+	function setupBackdrop() {
+		let graphics = new PIXI.Graphics();
+		
+		graphics.circle(
+			scalingContainer['design']['center']['x'],
+			scalingContainer['design']['center']['y'],
+			(scalingContainer['design']['width'] / 4) / 2
+		)
+			.fill({
+				color: '#bed5ff'
+			});
+		
+		scalingContainer.addChild(graphics);
+		
+		//debugging center dot
+		// graphics = new PIXI.Graphics();
+		// graphics.circle(app.screen.width / 2, app.screen.height / 2, 1)
+		// 	.fill({
+		// 		color: '#000000'
+		// 	})
+		// app.stage.addChild(graphics);
+	}
+	
+	function randomFloatFromInterval(min, max) { // min and max included
+		return Math.random() * (max - min) + min;
+	}
+	
+	function randomIntFromInterval(min, max) { // min and max included
+		return Math.floor(Math.random() * (max - min + 1) + min);
+	}
+	
+	function distanceBetween(x1, y1, x2, y2) {
+		const dx = x1 - x2;
+		const dy = y1 - y2;
+		return Math.sqrt((dx * dx) + (dy * dy));
+	}
+	
+	function distanceBetweenSprites(sprite1, sprite2) {
+		return distanceBetween(
+			sprite1.x, sprite1.y,
+			sprite2.x, sprite2.y
+		);
+	}
+	
+	function spriteNear(sprite, x, y, radius) {
+		const distance = distanceBetween(sprite.x, sprite.y, x, y);
+		return distance <= radius;
+	}
+	
+	function spritesNear(sprite1, sprite2, radius) {
+		return spriteNear(sprite1, sprite2.x, sprite2.y, radius);
+	}
+	
+	function spriteNearThings(sprite, radius = 20) {
+		//not near center
+		if (spriteNear(sprite, scalingContainer['design']['width'] / 2, scalingContainer['design']['height'] / 2, radius)) {
+			console.debug("Sprite near center.");
+			return true;
+		}
+		for (let box in boxes) {
+			if (spritesNear(sprite, boxes[box], radius)) {
+				console.debug("Sprite near box.");
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	function setupBoxes() {
+		for (let i = 0; i < NUM_BOXES; i++) {
+			let boxNo = (Math.floor(Math.random() * 3) + 1);
+			let closed = 'box-' + boxNo + "-closed";
+			let open = 'box-' + boxNo + "-open";
+			let box = PIXI.Sprite.from(closed);
+			box['frames'] = {
+				'open': PIXI.Assets.get(open),
+				'closed': PIXI.Assets.get(closed)
+			}
+			box.anchor.set(0.5, 0.5);
+			box.width = scalingContainer['design']['width'] * BOX_WIDTH_MOD;
+			box.scale.y = box.scale.x;
+			box.zIndex = 4;
+			
+			let itCount = 0;
+			do {
+				let x = randomIntFromInterval(SCREEN_BORDER, scalingContainer['design']['width'] - SCREEN_BORDER);
+				let y = randomIntFromInterval(SCREEN_BORDER, scalingContainer['design']['height'] - SCREEN_BORDER);
+				
+				box.x = x;
+				box.y = y;
+				itCount++;
+			} while (spriteNearThings(box, BOX_DISTANCE_THRESHOLD) && itCount <= 20);
+			
+			if(itCount > 20){
+				console.warn("Could not place box");
+				break;
+			}
+			
+			boxes.push(box);
+			
+			scalingContainer.addChild(box);
+		}
+	}
+	
+	function setupStoragotchi() {
+		
+		let storagotchiSheets = {
+			"drop": PIXI.Assets.cache.get('storagotchi-drop'),
+			"idle": PIXI.Assets.cache.get('storagotchi-idle'),
+			"lift-idle": PIXI.Assets.cache.get('storagotchi-lift-idle'),
+			"lift": PIXI.Assets.cache.get('storagotchi-lift'),
+			"lift-walk": PIXI.Assets.cache.get('storagotchi-lift-walk'),
+			"loading": PIXI.Assets.cache.get('storagotchi-loading'),
+			"put-to-box": PIXI.Assets.cache.get('storagotchi-put-to-box'),
+			"rummage": PIXI.Assets.cache.get('storagotchi-rummage'),
+			"salute": PIXI.Assets.cache.get('storagotchi-salute'),
+			"sleeping": PIXI.Assets.cache.get('storagotchi-sleeping'),
+			"sleeping-to-idle": PIXI.Assets.cache.get('storagotchi-sleeping-to-idle'),
+			"walk": PIXI.Assets.cache.get('storagotchi-walk')
+		}
+		// let tstoragotchi = PIXI.AnimatedSprite.from('storagotchi-sleeping');
+		
+		
+		// storagotchi = PIXI.Sprite.from('storagotchi-1');
+		storagotchi = new PIXI.AnimatedSprite(storagotchiSheets["sleeping"].animations['sleeping']);
+		storagotchi["animSheets"] = storagotchiSheets;
+		storagotchi.anchor.set(0.5, 0.75);//bottom center of sprite
+		
+		console.log("Initial storagotchi height/width: ", storagotchi.height, storagotchi.width);
+		
+		storagotchi.width = scalingContainer['design']['width'] * SG_WIDTH_MOD;
+		storagotchi.scale.y = storagotchi.scale.x;
+		
+		storagotchi.x = scalingContainer['design']['center']['x'];
+		storagotchi.y = scalingContainer['design']['center']['y'];
+		storagotchi.zIndex = 5;
+		
+		console.log("Storagotchi height/width after scaling: ", storagotchi.height, storagotchi.width);
+		
+		storagotchi.eventMode = 'static';
+		storagotchi.on('click', (event) => {
+			console.log('Storagotchi clicked!', event);
+			
+			switch (storagotchi["state"]["state"]) {
+				case "asleep":
+					storagotchiSetupWakeup();
+					break;
+				case "wakeup":
+					storagotchi["state"]["start"] = storagotchi["state"]["start"] - SG_WAKEUP_TIME;
+					break;
+				default:
+					console.log("Noting to do in this state");
+			}
+		});
+		
+		storagotchi["state"] = {
+			"state": "asleep",
+			"cpu": "none",
+			"cpuTimer": performance.now(),
+			'heldItem': null
+		};
+		updateStateDisplay("Asleep", 0);
+		storagotchi.animationSpeed = storagotchi["animSheets"]['sleeping']['data']['meta']['animationSpeed'];
+		storagotchi.play();
+		
+		scalingContainer.addChild(storagotchi);
+		console.log("Storagotchi after setup: ", storagotchi);
+	}
+	
+	function setStoragotchiAnimation(animName, nonLoopCallback = null, resetInCallback = false) {
+		console.debug("Setting up new animation: ", animName);
+		storagotchi.stop();
+		// Assign the new set of textures (the new animation sequence)
+		let oldAnimName = storagotchi["state"]["animationName"];
+		storagotchi["state"]["animationName"] = animName;
+		storagotchi.textures = storagotchi["animSheets"][animName].animations[animName];
+		storagotchi.animationSpeed = storagotchi["animSheets"][animName]['data']['meta']['animationSpeed'];
+		
+		if (nonLoopCallback == null) {
+			storagotchi.loop = true;
+		} else {
+			console.debug("Setting up nonlooping animation.");
+			storagotchi.loop = false;
+			storagotchi.onComplete = ()=>{
+				if(resetInCallback) {
+					setStoragotchiAnimation(oldAnimName);
+				}
+				nonLoopCallback();
+			};
+		}
+		
+		// Start playing the new animation
+		storagotchi.play();
+		
+		console.debug("Done Setting up nonlooping animation.");
+	}
+	
+	function storagotchiFaceRight() {
+		if (storagotchi.scale.x < 0) {
+			console.log("Setting to face Right.");
+			storagotchi.scale.x *= -1;
+		}
+	}
+	
+	function storagotchiFaceLeft() {
+		if (storagotchi.scale.x > 0) {
+			console.log("Setting to face Left.");
+			storagotchi.scale.x *= -1;
+		}
+	}
+	
+	function storagotchiFaceXDirection(xDirection) {
+		if (xDirection < 0) {
+			storagotchiFaceRight();
+		} else {
+			storagotchiFaceLeft();
+		}
+	}
+	
+	function storagotchiSetupWakeup(app, time, delta) {
+		$(".initContent").each(function (i, content) {
+			$(content).remove();
+		});
+		
+		setStoragotchiAnimation("loading");
+		
+		storagotchi["state"]["state"] = "wakeup";
+		storagotchi["state"]["cpu"] = "pinned";
+		storagotchi["state"]["start"] = performance.now();
+		
+		updateStateDisplay("Waking Up", 0);
+		sounds["sfx"]['dial-up'].play();
+	}
+	
+	function storagotchiWakeup(app, time, delta) {
+		let curTime = performance.now();
+		let curDiff = curTime - storagotchi["state"]["start"];
+		
+		if (curDiff < SG_WAKEUP_TIME) {
+			updateLoadBar(curDiff / SG_WAKEUP_TIME);
+			// storagotchi.rotation += ((Math.random() < 0.5) ? -1 : 1) * 0.1 * delta;
+		} else {
+			storagotchi["state"]["state"] = "waitingForAnimation";
+			setStoragotchiAnimation(
+				"sleeping-to-idle",
+				()=>{
+					setStoragotchiAnimation("salute", storagotchiWakeupDone)
+				}
+			)
+		}
+	}
+	
+	function storagotchiWakeupDone() {
+		console.log("Storagotchi woken up - now meandering");
+		sounds["sfx"]["dial-up"].stop();
+		storagotchi.rotation = 0;
+		storagotchiSetupForMeander();
+	}
+	
+	function storagotchiSetupForMeander() {
+		if (storagotchi['state']['heldItem']) {
+			setStoragotchiAnimation("lift-walk");
+		} else {
+			setStoragotchiAnimation("walk");
+		}
+		
+		storagotchi["state"]["state"] = "meander";
+		storagotchi["state"]["cpu"] = "low";
+		storagotchi["state"]["start"] = performance.now();
+		storagotchi["state"]["destination"] = null;
+		updateStateDisplay("Meandering", null);
+		console.log("Setup for meandering");
+	}
+	
+	function storagotchiMeander(app, time, delta) {
+		if (storagotchi["state"]["destination"] == null) {
+			let x = randomIntFromInterval(SCREEN_BORDER, scalingContainer['design']['width'] - SCREEN_BORDER);
+			let y = randomIntFromInterval(SCREEN_BORDER, scalingContainer['design']['height'] - SCREEN_BORDER);
+			storagotchi["state"]["destination"] = {
+				x: x,
+				y: y
+			}
+			storagotchi["state"]["speed"] = randomFloatFromInterval(0.5, 1);
+			console.log("Got new meander destination, moving at: ", storagotchi["state"]["speed"]);
+		}
+		
+		if (storagotchi["state"]["destination"] === "wait") { // waiting
+			let curTime = performance.now();
+			
+			if ((curTime - storagotchi["state"]["start"]) > storagotchi["state"]["duration"]) {
+				console.log("Done with meandering wait.");
+				storagotchi["state"]["destination"] = null;
+			}
+		} else if ( // got to destination
+			storagotchi.x === storagotchi["state"]["destination"]["x"] &&
+			storagotchi.y === storagotchi["state"]["destination"]["y"]
+		) {
+			storagotchi["state"]["destination"] = "wait";
+			storagotchi["state"]["duration"] = randomIntFromInterval(1_000, 3_000);
+			storagotchi["state"]["start"] = performance.now();
+			console.log("Meandering wait for ms: ", storagotchi["state"]["duration"]);
+		} else { //move to destination
+			let directionX = storagotchi["state"]["destination"]["x"] - storagotchi.x;
+			let directionY = storagotchi["state"]["destination"]["y"] - storagotchi.y;
+			
+			storagotchiFaceXDirection(directionX);
+			
+			let distance = Math.sqrt(directionX * directionX + directionY * directionY);
+			
+			if (distance > storagotchi["state"]["speed"]) { // Move if distance is greater than speed
+				directionX /= distance;
+				directionY /= distance;
+				
+				storagotchi.x += directionX * storagotchi["state"]["speed"] * delta;
+				storagotchi.y += directionY * storagotchi["state"]["speed"] * delta;
+			} else { // Stop when close enough
+				console.log("Storagotchi got to meander destination");
+				storagotchi.x = storagotchi["state"]["destination"]["x"];
+				storagotchi.y = storagotchi["state"]["destination"]["y"];
+				
+				let val = randomIntFromInterval(0, 100);
+				if (val > 25) {
+					storagotchiSetDecidingState();
+				}
+			}
+		}
+		
+	}
+	
+	function storagotchiSetDecidingState() {
+		if (storagotchi['state']['heldItem']) {
+			setStoragotchiAnimation("lift-idle");
+		} else {
+			setStoragotchiAnimation("idle");
+		}
+		
+		storagotchi["state"]["state"] = "deciding";
+		storagotchi["state"]["cpu"] = "high";
+		storagotchi["state"]["start"] = performance.now();
+		storagotchi["state"]["duration"] = randomIntFromInterval(2_000, 10_000);
+		updateStateDisplay("Deciding", null);
+		console.log("Deciding what to do...");
+	}
+	
+	function storagotchiDropItem(app, time, delta) {
+		let item = storagotchi['state']['heldItem'];
+		storagotchi['state']['heldItem'] = null;
+		item.removeFromParent();
+		
+		item.x = storagotchi.x;
+		item.y = storagotchi.y;
+		item.zIndex = 8;
+		item.width = scalingContainer['design']['width'] * STUFF_WIDTH_MOD;
+		item.scale.y = item.scale.x;
+		
+		let oldState = storagotchi["state"]["state"];
+		
+		storagotchi["state"]["state"] = "waitingForDropAnimation";
+		setStoragotchiAnimation(
+			"drop",
+			() => {
+				stuffOnGround.push(item);
+				scalingContainer.addChild(item);
+				storagotchi["state"]["state"] = oldState;
+			},
+			true
+		);
+		
+		console.log("Set to drop held item.");
+	}
+	
+	function storagotchiDecide(app, time, delta) {
+		let now = performance.now();
+		let diff = now - storagotchi["state"]["start"];
+		
+		updateLoadBar(diff / storagotchi["state"]["duration"]);
+		
+		if (diff > storagotchi["state"]["duration"]) {
+			//decide what to do next
+			let val = randomIntFromInterval(0, 100);
+			
+			if (val > 33) {
+				if (storagotchi['state']['heldItem']) {
+					storagotchiDropItem(app, time, delta);
+				} else {
+					console.log("Decided to get an item.");
+					storagotchiSetupForGetThing();
+				}
+			} else {
+				console.log("Decided to meander.");
+				storagotchiSetupForMeander();
+			}
+			
+			
+			if (Math.random() < 0.5) { //TODO:: more actions
+			
+			} else {
+			}
+		}
+	}
+	
+	
+	function storagotchiSetupForGetThing() {
+		setStoragotchiAnimation("rummage");//TODO:: not this?
+		storagotchi["state"]["state"] = "getItem";
+		storagotchi["state"]["cpu"] = "medLow";
+		storagotchi["state"]["start"] = performance.now();
+		storagotchi["state"]["destination"] = null;
+		updateStateDisplay("Getting Item", null);
+		
+		console.log("Setup to get an item.");
+	}
+	
+	function storagotchiGetThing(app, time, delta) {
+		if (storagotchi["state"]["destination"] == null) {
+			let randomIndex = Math.floor(Math.random() * boxes.length);
+			let randBox =  boxes[randomIndex];
+			
+			storagotchi["state"]["destination"] = {
+				"box": randBox,
+				"x": randBox.x + (randBox.width/2) - 2,
+				"y": randBox.y + 5
+			};
+			storagotchi["state"]["originalDistance"] = distanceBetweenSprites(storagotchi, storagotchi["state"]["destination"]);
+			storagotchi["state"]["speed"] = randomFloatFromInterval(1, 2);
+			console.log("Selected a box");
+			
+			setStoragotchiAnimation("walk");
+		}
+		
+		if ( // got to destination
+			storagotchi.x === storagotchi["state"]["destination"]["x"] &&
+			storagotchi.y === storagotchi["state"]["destination"]["y"]
+		) {
+			storagotchiSetupForRummaging();
+		} else { //move to destination
+			let directionX = storagotchi["state"]["destination"]["x"] - storagotchi.x;
+			let directionY = storagotchi["state"]["destination"]["y"] - storagotchi.y;
+			
+			storagotchiFaceXDirection(directionX);
+			
+			let distance = distanceBetweenSprites(storagotchi["state"]["destination"], storagotchi);
+			
+			// console.debug("distance: ", distance, storagotchi["state"]["originalDistance"]);
+			
+			updateLoadBar((storagotchi["state"]["originalDistance"] - distance) / storagotchi["state"]["originalDistance"]);
+			
+			if (distance > storagotchi["state"]["speed"]) { // Move if distance is greater than speed
+				directionX /= distance;
+				directionY /= distance;
+				
+				storagotchi.x += directionX * storagotchi["state"]["speed"] * delta;
+				storagotchi.y += directionY * storagotchi["state"]["speed"] * delta;
+			} else { // Stop when close enough
+				console.log("Storagotchi got to destination box.");
+				storagotchi.x = storagotchi["state"]["destination"]["x"];
+				storagotchi.y = storagotchi["state"]["destination"]["y"];
+			}
+		}
+		
+	}
+	
+	function getRandomItem() {
+		let val = randomIntFromInterval(1, 100);
+		let rarity = "common";
+		
+		if (val > 95) {
+			rarity = "epic";
+		} else if (val > 75) {
+			rarity = "rare";
+		} else if (val > 50) {
+			rarity = "uncommon";
+		}
+		
+		console.log("Picking item of rarity: ", rarity);
+		
+		let thingToPick = stuff[rarity][randomIntFromInterval(0, stuff[rarity].length - 1)];
+		console.log("Got random item: ", thingToPick);
+		
+		let thingSprite = PIXI.Sprite.from(thingToPick);
+		thingSprite.anchor.set(0.5, 0.5);
+		
+		let outlineColor = "#000000";
+		let alpha = 0.5;
+		
+		switch (rarity) {
+			case "common":
+				outlineColor = "#D2B48C"
+				break;
+			case "uncommon":
+				outlineColor = "#00FF00"
+				break;
+			case "rare":
+				outlineColor = "#800080"
+				alpha = 0.35
+				break;
+			case "epic":
+				outlineColor = "#FFA500"
+				break;
+		}
+		
+		let outlineFilter = new PIXI.filters.OutlineFilter({
+			"thickness": 4,
+			"alpha": alpha,
+			"color": outlineColor
+		});
+		thingSprite.filters = [outlineFilter];
+		
+		return thingSprite;
+	}
+	
+	function storagotchiSetupForRummaging() {
+		setStoragotchiAnimation("rummage");
+		storagotchiFaceRight();
+		storagotchi["state"]["state"] = "rummaging";
+		storagotchi["state"]["cpu"] = "pinned";
+		storagotchi["state"]["start"] = performance.now();
+		storagotchi["state"]["box"] = storagotchi["state"]["destination"]["box"];
+		storagotchi["state"]["destination"] = null;
+		storagotchi["state"]["duration"] = randomIntFromInterval(5_000, 10_000);
+		updateStateDisplay("Rummaging", 0);
+		console.debug("box: ", storagotchi["state"]["box"]);
+		
+		storagotchi["state"]["box"].texture = storagotchi["state"]["box"]['frames']['open'];
+		storagotchi["state"]["box"].zIndex = 6;
+		
+		console.log("Setup to rummage an item from box for: ", storagotchi["state"]["duration"]);
+	}
+	
+	function storagotchiRummage(app, time, delta) {
+		let now = performance.now();
+		let diff = now - storagotchi["state"]["start"];
+		
+		updateLoadBar(diff / storagotchi["state"]["duration"]);
+		
+		if (diff > storagotchi["state"]["duration"]) {
+			//select an item, give to storagotchi
+			storagotchi["state"]["box"].texture = storagotchi["state"]["box"]['frames']['closed'];
+			storagotchi["state"]["box"].zIndex = 4;
+			
+			let thing = getRandomItem();
+			
+			// thing.width = storagotchi.width * STUFF_WIDTH_MOD;
+			// thing.scale.y = thing.scale.x;
+			thing.zIndex = storagotchi.zIndex + 1;
+			
+			thing.x = 0;
+			thing.y = -(storagotchi.height + 4);
+			
+			setStoragotchiAnimation("lift", ()=>{
+				storagotchi.addChild(thing);
+				storagotchi['state']['heldItem'] = thing;
+				
+				storagotchiSetupForMeander();
+			});
+			storagotchi["state"]["state"] = "waitingOnLiftAnimation";
+		}
+	}
+	
+	
+	function animateStoragotchi(app, time, delta) {
+		let curTime = performance.now();
+		let curDiff = curTime - storagotchi["state"]["cpuTimer"];
+		
+		if (curDiff > SG_CPU_UPDATE_TIME) {
+			storagotchi["state"]["cpuTimer"] = performance.now();
+			updateCpuDisplay(storagotchi["state"]["cpu"]);
+		}
+		
+		
+		switch (storagotchi["state"]["state"]) {
+			case "wakeup":
+				storagotchiWakeup(app, time, delta);
+				break;
+			case "meander":
+				storagotchiMeander(app, time, delta);
+				break;
+			case "deciding":
+				storagotchiDecide(app, time, delta);
+				break;
+			case "getItem":
+				storagotchiGetThing(app, time, delta);
+				break;
+			case "rummaging":
+				storagotchiRummage(app, time, delta);
+				break;
+		}
+	}
+
+</script>
+
+</body>
+</html>

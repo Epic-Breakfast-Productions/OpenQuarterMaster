@@ -1,0 +1,12 @@
+{
+	"service": "oqm-plugin-storagotchi",
+	"roles": [],
+	"clients": [
+		{
+			"clientId": "oqm-plugin-storagotchi",
+			"displayName": "OQM Storagotchi Plugin",
+			"description": "The Storagotchi Plugin.",
+			"roles": []
+		}
+	]
+}

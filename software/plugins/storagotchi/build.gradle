@@ -1,0 +1,67 @@
+plugins {
+	id 'java'
+	id 'io.quarkus'
+	id "io.freefair.lombok" version "9.0.0"
+}
+
+group = 'tech.ebp.oqm.plugin'
+version = '1.0.0-SNAPSHOT'
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+dependencies {
+	implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+	implementation 'io.quarkus:quarkus-rest'
+	implementation 'io.quarkus:quarkus-hibernate-validator'
+	implementation 'io.quarkus:quarkus-qute'
+	implementation 'io.quarkus:quarkus-rest-qute'
+	implementation 'io.quarkus:quarkus-hibernate-orm-panache'
+	implementation 'io.quarkus:quarkus-jdbc-postgresql'
+	implementation 'io.quarkus:quarkus-arc'
+	implementation 'io.quarkus:quarkus-hibernate-orm'
+	implementation 'io.quarkus:quarkus-oidc'
+	implementation 'io.quarkus:quarkus-config-yaml'
+	implementation 'io.quarkus:quarkus-smallrye-health'
+	implementation 'io.quarkus:quarkus-websockets-next'
+	implementation 'io.quarkus:quarkus-container-image-docker'
+
+	implementation 'org.webjars:jquery:3.7.1'
+
+	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.1.1'
+
+	testImplementation 'io.quarkus:quarkus-junit5'
+	testImplementation 'io.rest-assured:rest-assured'
+}
+
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_21
+	targetCompatibility = JavaVersion.VERSION_21
+}
+
+test {
+	systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+	jvmArgs "--add-opens", "java.base/java.lang=ALL-UNNAMED"
+}
+compileJava {
+	options.encoding = 'UTF-8'
+	options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+	options.encoding = 'UTF-8'
+}
+
+/**
+ * Used to print the current version of this project.
+ *
+ * Used by the `makeInstallers.sh` script to get the version.
+ */
+tasks.register('printVersion') {
+	doLast {
+		println project.version
+	}
+}

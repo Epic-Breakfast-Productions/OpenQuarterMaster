@@ -1,11 +1,11 @@
 {
 	"packageName":"oqm-infra-homepage",
-	"version":"1.0.4",
+	"version":"1.0.5",
 	"description":"Homepage instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/homepage",
 	"configs": [],
 	"dependencies": {
-		"deb": ", oqm-manager-station+captain (>= 2.9.0), oqm-infra-traefik (>= 1.0.3), python3-docker, python3-watchdog"
+		"deb": ", oqm-manager-station+captain (>= 2.11.1), oqm-infra-traefik (>= 1.0.3), python3-docker, python3-watchdog"
 	},
 	"configFiles":{
 	},
