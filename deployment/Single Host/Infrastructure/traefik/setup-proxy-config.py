@@ -96,7 +96,10 @@ def updateTraefikConfig():
                 curProxyConfig["proxyPath"] = "/" + curProxyConfig["type"] + "/" + curProxyConfig["name"]
 
                 if "internalBaseUri" not in curProxyConfig:
-                    curProxyConfig["internalBaseUri"] = mainCM.getConfigVal(curProxyConfig["internalBaseUriConfig"])
+                    result, curProxyConfig["internalBaseUri"] = mainCM.waitForConfig(curProxyConfig["internalBaseUriConfig"])
+                    if not result:
+                        raise Exception("Could not find url for entry: " + curUiConfig["urlConfigKey"])
+
                 if "preservePath" not in curProxyConfig:
                     curProxyConfig["preservePath"] = False
                 if "stripPrefixes" not in curProxyConfig:
