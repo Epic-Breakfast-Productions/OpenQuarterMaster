@@ -5,6 +5,12 @@ quarkus:
   http:
     port: 80
     ssl-port: 443
+    auth:
+      proactive: false
+      permission:
+        logout:
+          paths: ${quarkus.oidc.logout.path}
+          policy: authenticated
   container-image:
     name: oqm-plugin-storagotchi
     group: ebprod
@@ -23,6 +29,10 @@ quarkus:
       port: 9328
       realm-path: "dev/oqm-realm.json"
       realm-name: oqm
+
+smallrye:
+  jwt:
+    always-check-authorization: true
 
 "%dev":
   quarkus:

@@ -28,17 +28,17 @@ public class RedirectCheckPrefixFilter {
 //		);
 		if (
 			!Response.Status.FOUND.equals(responseContext.getStatusInfo().toEnum())
-				|| !requestContext.getHeaders().containsKey("x-forwarded-prefix")
+			|| !requestContext.getHeaders().containsKey("x-forwarded-prefix")
 		) {
 			log.trace("Response not needing prefix checking.");
 			return;
 		}
-
+		
 		String prefix = requestContext.getHeaderString("x-forwarded-prefix");
 		URI redirectingToUri = URI.create(responseContext.getHeaderString("Location"));
-
+		
 		log.debug("Checking redirect response for doubled-up prefix: {} / {}", prefix, redirectingToUri);
-
+		
 		if (redirectingToUri.getPath().startsWith(prefix + prefix)) {
 			log.debug("Detected doubled-up prefix.");
 			URI newUri;
