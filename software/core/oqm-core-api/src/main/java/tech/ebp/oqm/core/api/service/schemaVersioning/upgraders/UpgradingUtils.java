@@ -8,6 +8,8 @@ import jakarta.json.Json;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 
+import javax.measure.Unit;
+
 import static tech.ebp.oqm.core.api.model.object.ObjectUtils.OBJECT_MAPPER;
 
 public class UpgradingUtils {
@@ -141,12 +143,15 @@ public class UpgradingUtils {
 		monetaryAmount.remove("valueDouble");
 		
 		monetaryAmount.set("amount", valueStr);
-		monetaryAmount.set("currency", valueStr);
+		monetaryAmount.set("currency", currency);
 		
 		monetaryAmount.remove("valueDouble");
 	}
 	
 	public static void monetaryAmountMongoToJackson(ArrayNode priceArray){
+		if(priceArray == null || priceArray.isNull()){
+			return;
+		}
 		for(JsonNode priceNode : priceArray){
 			if(priceNode.has("totalPrice")) {
 				monetaryAmountMongoToJackson((ObjectNode) priceNode.get("totalPrice"));
@@ -158,6 +163,7 @@ public class UpgradingUtils {
 				monetaryAmountMongoToJackson(
 					(ObjectNode) priceNode.get("pricePerUnit").get("price")
 				);
+				UpgradingUtils.stringToConvertedTree((ObjectNode) priceNode.get("pricePerUnit"), "unit", Unit.class);
 			}
 			
 		}
