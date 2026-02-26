@@ -6,8 +6,9 @@ This postgresql instance is currently used by:
 
 ## Helpful commands
 
- - Check if pg reports itself ready: `pg_isready`
- - 
+ - Check if pg reports itself ready: `pg_isready`: 
+ - List databases: `psql postgres -U oqm_admin -tXAc "SELECT datname FROM pg_database;"`
+ - Fix collation issues: `psql postgres -U oqm_admin -tXAc "ALTER DATABASE <database> REFRESH COLLATION VERSION;"`
 
 
 ## Resources
