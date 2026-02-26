@@ -351,20 +351,19 @@ class ConfigManager:
         self.updateReplacements("", output)
         return output
 
-    def waitForConfig(self, configKey: str, timeout: int = 10) -> bool:
+    def waitForConfig(self, configKey: str, timeout: int = 10) -> (bool, any):
         startTime = time.time()
 
         while True:
             try:
-                self.getConfigVal(configKey)
-                return True
+                val = self.getConfigVal(configKey)
+                return True, val
             except ConfigKeyNotFoundException:
                 time.sleep(0.25)
                 self.rereadConfigData()
                 pass
             if time.time() - startTime > timeout:
-                return False
-
+                return False, None
 
     @staticmethod
     def getArrRef(configKey: str):
