@@ -69,8 +69,12 @@ Game Mechanics
 
 Resources from:
 
- - https://last-tick.itch.io/16x16-icons-tools-electronic-gadgets
- - https://apokalips123.itch.io/pixel-warehouse-stuff
+ - Storagotchi Pixel art: https://www.fiverr.com/metalzebra
+ - XP Theme: https://botoxparty.github.io/XP.css/
+ - Engine: https://pixijs.com/
+ - Stuff:
+   - https://last-tick.itch.io/16x16-icons-tools-electronic-gadgets
+   - https://apokalips123.itch.io/pixel-warehouse-stuff
 
 
 ## Running the application in dev mode
