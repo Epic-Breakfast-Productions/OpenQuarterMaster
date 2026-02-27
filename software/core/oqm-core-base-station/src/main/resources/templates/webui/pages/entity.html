@@ -64,13 +64,23 @@
 {/modal}
 {/modals}
 {#scripts}
-<script src="{rootPrefix}/META-INF/resources/res/js/searchUtils.js"></script>
-<script src="{rootPrefix}/res/js/entityRef.js"></script>
-<script src="{rootPrefix}/META-INF/resources/res/js/HistorySearchUtils.js"></script>
 {/scripts}
 {#pageScript}
-    <script>
-        //$("#userHistoryForm").submit();
+    <script type="module">
+    	import { Rest } from '{rootPrefix}/res/js/Rest.js';
+    	import { EntityRef } from '{rootPrefix}/res/js/EntityRef.js';
+		import { UriUtils } from '{rootPrefix}/res/js/UriUtils.js';
+		import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
+		
+		SearchUtils.initPage();
+		
+		window.Rest = Rest;
+		window.EntityRef = EntityRef;
+		window.UriUtils = UriUtils;
+		
+		console.log("Page modules loaded.");
+    </script>
+    <script defer>
 
         let viewModal = $("#interactingEntityViewModal");
         let viewModalMessages = $("#interactingEntityViewMessages");
@@ -78,7 +88,7 @@
         let viewType = $("#viewType");
         let viewEmailLink = $("#viewEmailLink");
         let viewRoles = $("#viewRoles");
-
+    	
         function resetView(){
             viewName.text("");
             viewType.text("");
@@ -99,6 +109,9 @@
                 failMessagesDiv: viewModalMessages,
                 done: async function(data){
                     viewName.text(data.name);
+					
+					viewType.append(EntityRef.getEntityRefIcon(data));
+					viewType.append(data.type);
 
                     viewEmailLink.text(data.email);
                     viewEmailLink.prop("href", "mailto:" + data.email);
@@ -111,10 +124,6 @@
                     });
                 }
             });
-
-            EntityRef.getEntityRef(id, function(data){
-                viewType.html(data);
-            });
         }
 
         let viewModalBs = new bootstrap.Modal(viewModal, { });
@@ -122,11 +131,14 @@
         viewModal[0].addEventListener("hidden.bs.modal", function (){
             UriUtils.removeParam("view");
         });
-
-        if(UriUtils.getParams.has("view")){
-            setupView(UriUtils.getParams.get("view"));
-            viewModalBs.show();
-        }
-    </script>
+		
+		$(document).ready(function(){
+			if(UriUtils.getParams.has("view")){
+				setupView(UriUtils.getParams.get("view"));
+				viewModalBs.show();
+			}
+		});
+		
+	</script>
 {/pageScript}
 {/include}

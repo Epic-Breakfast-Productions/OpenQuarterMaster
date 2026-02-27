@@ -33,6 +33,10 @@ export const Icons = {
 	setTransaction: '{#icons/transactionSet /}',
 	identifiers: '{#icons/identifiers /}',
 	idGenerators: '{#icons/idGenerators /}',
+	//interacting entities
+	user: '{#icons/user /}',
+	extService: '{#icons/extService /}',
+	coreApi: '{#icons/coreApi /}',
 
 	iconWithSub(icon, subIcon){
 		return icon + '<sup>' + subIcon + '</sup>';
