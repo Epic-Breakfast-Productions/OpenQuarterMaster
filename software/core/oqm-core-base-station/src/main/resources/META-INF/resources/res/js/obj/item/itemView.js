@@ -167,7 +167,7 @@ const ItemView = {
 
 		let newAccordItem = $('<div class="accordion-item" data-block-id="">' +
 			'  <h2 class="accordion-header">' +
-			'    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">' +
+			'    <button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">' +
 			'    </button>' +
 			'  </h2>' +
 			'  <div id="" class="accordion-collapse collapse" aria-labelledby="" data-bs-parent="">' +
@@ -190,10 +190,15 @@ const ItemView = {
 
 		collapseButton.text(blockId);
 		getStorageBlockLabel(blockId, function (blockLabel) {
-			let labelText = blockLabel;
-			//TODO:: image
+			let labelText = $('<span></span>');
+			labelText.text(blockLabel);
 
-			collapseButton.text(labelText);
+			//TODO:: image
+			//TODO:: stats
+
+			collapseButton.empty();
+			collapseButton.append($(Icons.storageBlock).addClass("me-2"));
+			collapseButton.append(labelText);
 		});
 
 		return newAccordItem;
