@@ -41,12 +41,9 @@ const ItemView = {
 	itemViewBarcode: $("#itemViewBarcode"),
 
 	idsAccord: $("#itemViewIdsContainer"),
-	generalIdsAccord: $("#itemViewGeneralIdsAccord"),
-	generalIdNumIds: $("#itemViewGeneralIdsNumIdsLabel"),
-	generalIdContent: $("#itemViewGeneralIdsAccordContent"),
-	uniqueIdsAccord: $("#itemViewUniqueIdsAccord"),
-	uniqueIdNumIds: $("#itemViewUniqueIdsNumIdsLabel"),
-	uniqueIdContent: $("#itemViewUniqueIdsAccordContent"),
+	identifiersAccord: $("#itemViewIdentifiersAccord"),
+	identifierNumIds: $("#itemViewIdentifiersNumIdsLabel"),
+	identifierContent: $("#itemViewGeneralIdentifiersAccordContent"),
 
 	assocIdGensAccord: $("#itemViewIdGeneratorsAccord"),
 	assocIdGensNumIds: $("#itemViewIdGeneratorsNumIdsLabel"),
@@ -117,12 +114,9 @@ const ItemView = {
 		ItemView.itemViewDescription.text("");
 
 		ItemView.idsAccord.hide();
-		ItemView.generalIdsAccord.hide();
-		ItemView.generalIdNumIds.text("");
-		ItemView.generalIdContent.text("");
-		ItemView.uniqueIdsAccord.hide();
-		ItemView.uniqueIdNumIds.text("");
-		ItemView.uniqueIdContent.text("");
+		ItemView.identifiersAccord.hide();
+		ItemView.identifierNumIds.text("");
+		ItemView.identifierContent.text("");
 		ItemView.assocIdGensAccord.hide();
 		ItemView.assocIdGensNumIds.text("");
 		ItemView.assocIdGensContent.text("");
@@ -173,7 +167,7 @@ const ItemView = {
 
 		let newAccordItem = $('<div class="accordion-item" data-block-id="">' +
 			'  <h2 class="accordion-header">' +
-			'    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">' +
+			'    <button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse" data-bs-target="" aria-expanded="false" aria-controls="">' +
 			'    </button>' +
 			'  </h2>' +
 			'  <div id="" class="accordion-collapse collapse" aria-labelledby="" data-bs-parent="">' +
@@ -196,10 +190,15 @@ const ItemView = {
 
 		collapseButton.text(blockId);
 		getStorageBlockLabel(blockId, function (blockLabel) {
-			let labelText = blockLabel;
-			//TODO:: image
+			let labelText = $('<span></span>');
+			labelText.text(blockLabel);
 
-			collapseButton.text(labelText);
+			//TODO:: image
+			//TODO:: stats
+
+			collapseButton.empty();
+			collapseButton.append($(Icons.storageBlock).addClass("me-2"));
+			collapseButton.append(labelText);
 		});
 
 		return newAccordItem;
@@ -506,17 +505,12 @@ const ItemView = {
 					ItemView.itemViewDescriptionContainer.show();
 				}
 
-				if(itemData.generalIds.length || itemData.uniqueIds.length || itemData.idGenerators.length) {
+				if(itemData.identifiers.length || itemData.idGenerators.length) {
 					console.debug("Had ids to show");
-					if(itemData.generalIds.length){
-						ItemView.generalIdsAccord.show();
-						ItemView.generalIdNumIds.text(itemData.generalIds.length);
-						GeneralIdentifiers.View.showInDiv(ItemView.generalIdContent, itemData.generalIds);
-					}
-					if(itemData.uniqueIds.length){
-						ItemView.uniqueIdsAccord.show();
-						ItemView.uniqueIdNumIds.text(itemData.uniqueIds.length);
-						UniqueIdentifiers.View.showInDiv(ItemView.uniqueIdContent, itemData.uniqueIds);
+					if(itemData.identifiers.length){
+						ItemView.identifiersAccord.show();
+						ItemView.identifierNumIds.text(itemData.identifiers.length);
+						Identifiers.View.showInDiv(ItemView.identifierContent, itemData.identifiers);
 					}
 					if(itemData.idGenerators.length){
 						ItemView.assocIdGensAccord.show();

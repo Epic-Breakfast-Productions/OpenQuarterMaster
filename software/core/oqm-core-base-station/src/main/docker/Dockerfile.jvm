@@ -89,10 +89,13 @@ COPY --chown=185 build/quarkus-app/*.jar /deployments/
 COPY --chown=185 build/quarkus-app/app/ /deployments/app/
 COPY --chown=185 build/quarkus-app/quarkus/ /deployments/quarkus/
 
-EXPOSE 8080
+EXPOSE 80/tcp
+EXPOSE 443/tcp
 USER 185
 ENV JAVA_OPTS_APPEND="-Dquarkus.http.host=0.0.0.0 -Djava.util.logging.manager=org.jboss.logmanager.LogManager"
 ENV JAVA_APP_JAR="/deployments/quarkus-run.jar"
 
 ENTRYPOINT [ "/opt/jboss/container/java/run/run-java.sh" ]
 
+HEALTHCHECK --interval=3s --timeout=5s --start-period=5s --retries=10 \
+	CMD curl -sSkL --fail http://localhost:${QUARKUS_HTTP_PORT:-80}/q/health

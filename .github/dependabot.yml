@@ -85,6 +85,25 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
+  # Storagotchi
+  - package-ecosystem: "gradle"
+    directory: "/software/plugins/storagotchi"
+    target-branch: "development"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    labels:
+      - "area-dependencies"
+      - "project-plugin-storagotchi"
+  - package-ecosystem: "docker"
+    directory: "/software/plugins/storagotchi/src/main/docker"
+    target-branch: "development"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    labels:
+      - "area-dependencies"
+      - "project-core-api"
 
   # Demo
 #  - package-ecosystem: "gradle"

@@ -32,7 +32,7 @@ class LogManagement:
     @staticmethod
     def packageServiceLogs(service: str, compilingDir: str):
         outFileName = compilingDir + "/10-" + service + ".log"
-        LogManagement.log.info("log events for %s to file %s", service, outFileName)
+        LogManagement.log.info("logging events for %s to file %s", service, outFileName)
         start = time.time()
         with open(outFileName, "w") as outfile:
             result = subprocess.run(["journalctl", "-r", "-u", service], shell=False, text=True, check=False, stdout=outfile)
@@ -88,6 +88,7 @@ class LogManagement:
         logCaptureName = "OQM-log-capture-{}".format(datetime.datetime.now().strftime("%Y.%m.%d-%H.%M.%S"))
 
         LogManagement.log.debug("Log capture name: %s", logCaptureName)
+
         compilingDir = ScriptInfo.TMP_DIR + "/logCaptures/" + logCaptureName
         logCaptureLocation = mainCM.getConfigVal("snapshots.location") + "/logCaptures"
         logArchiveName = "{}/{}.tar.{}".format(logCaptureLocation, logCaptureName, compressionAlg)
@@ -126,7 +127,7 @@ class LogManagement:
             LogManagement.log.info("Done writing Service log messages.")
 
             try:
-                shutil.copy(LogUtils.logDir, otherLogsDir)
+                shutil.copytree(LogUtils.logDir, otherLogsDir, dirs_exist_ok=True)
             except Exception as e:
                 LogManagement.log.error("FAILED to copy in other logs: %s", e)
                 return False, str(e)
@@ -141,10 +142,10 @@ class LogManagement:
                 return False, str(e)
             LogManagement.log.info("Completed archiving log bundle. Took %s seconds. Bundle: %s", time.time() - start, logArchiveName)
             success = True
-            LogManagement.log.info("Done Performing snapshot.")
+            LogManagement.log.info("Done generating log bundle.")
             return True, logArchiveName
         finally:
-            LogManagement.log.info("Cleaning up after snapshot operations")
+            LogManagement.log.info("Cleaning up after log bundling operations")
 
             try:
                 if not success:

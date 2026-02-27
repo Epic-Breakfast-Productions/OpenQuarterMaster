@@ -651,7 +651,7 @@ const ItemStoredTransaction = {
 					case "originalBy":
 						transactionData.details.checkedInBy = {
 							type: "OQM_USER",
-							entity: itemCheckoutData.checkedOutByEntity
+							entity: checkoutData.checkedOutByEntity
 						}
 						break;
 					case "self":

@@ -7,11 +7,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -19,36 +17,28 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.Labeled;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.UniqueId;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.StoredNotificationStatus;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricing;
-import tech.ebp.oqm.core.api.model.object.storage.items.pricing.Pricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
-import tech.ebp.oqm.core.api.model.object.storage.items.pricing.TotalPricing;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.model.validation.annotations.UniqueLabeledCollection;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidStoredLabelFormat;
 
 import javax.measure.Quantity;
-import java.awt.*;
-import java.math.BigInteger;
-import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import java.util.List;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
@@ -75,7 +65,7 @@ import java.util.stream.Collectors;
 @BsonDiscriminator
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
 	
-	public static final int CUR_SCHEMA_VERSION = 3;
+	public static final int CUR_SCHEMA_VERSION = 4;
 	
 	private static final Pattern LABEL_PARTS_PATTERN = Pattern.compile("\\{[^}]*}");
 	private static final String LABEL_PLACEHOLDER_PART_DELIM = ";";
@@ -102,10 +92,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 *         exp: {@code {exp;<datetime format>}}- Writes out the expiration for this stored. Format should match standard Java datetime syntax. Default format is {@code MM/dd/yyyy}
 	 *     </li>
 	 *     <li>
-	 *         gid: {@code {gid;<name of general identifier>}}- Use a general identifier value.
-	 *     </li>
-	 *     <li>
-	 *         uid: {@code {uid;<name of unique identifier>}}- Use a unique identifier value.
+	 *         ident: {@code {ident;<name of identifier>}}- Use an identifier value.
 	 *     </li>
 	 *     <li>
 	 *         price: {@code {price;<name of calculated price>}}- Use a price value. Does not include price label.
@@ -194,19 +181,17 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 							stored.getExpires().format(formatter)
 						);
 						break;
-					case "gid":
-					case "uid":
+					case "ident":
 					case "price":
 						if (args.length != 1) {
-							throw new IllegalArgumentException("Must specify exactly one argument for 'gid' and 'uid'.");
+							throw new IllegalArgumentException("Must specify exactly one argument for 'ident', and 'price'.");
 						}
 						
 						String label = args[0];
 						Optional<Labeled> foundLabel = Labeled.findLabeledInSet(
 							label,
 							(Collection<Labeled>) switch (placeholderType) {
-								case "gid" -> stored.getGeneralIds();
-								case "uid" -> stored.getUniqueIds();
+								case "ident" -> stored.getIdentifiers();
 								case "price" -> stored.getCalculatedPrices();
 								default -> new ArrayList<Identifier>(0);
 							}
@@ -270,16 +255,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	@UniqueLabeledCollection
-	private LinkedHashSet<@NotNull GeneralId> generalIds = new LinkedHashSet<>();
-	
-	/**
-	 * Unique ID's for this particular item.
-	 */
-	@NonNull
-	@NotNull
-	@lombok.Builder.Default
-	@UniqueLabeledCollection
-	private LinkedHashSet<@NotNull UniqueId> uniqueIds = new LinkedHashSet<>();
+	private LinkedHashSet<@NotNull Identifier> identifiers = new LinkedHashSet<>();
 	
 	/**
 	 * When the item(s) held expire. Null if it does not expire.
