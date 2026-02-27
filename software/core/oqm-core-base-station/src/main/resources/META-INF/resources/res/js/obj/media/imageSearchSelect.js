@@ -5,7 +5,7 @@ const ImageSearchSelect = {
 	curImagesSelectedDiv: null,
 
 	setupImageSearchModal(selectedImagesDiv) {
-		ModalHelpers.setReturnModal(ImageSearchSelect.imageSearchSelectModal, selectedImagesDiv);
+		ModalUtils.setReturnModal(ImageSearchSelect.imageSearchSelectModal, selectedImagesDiv);
 		ImageSearchSelect.curImagesSelectedDiv = selectedImagesDiv;
 	},
 	selectImage(imageName, imageId) {

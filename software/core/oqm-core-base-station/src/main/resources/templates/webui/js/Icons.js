@@ -1,5 +1,5 @@
 
-const Icons = {
+export const Icons = {
 	add: '{#icons/add /}',
 	copy: '{#icons/copy /}',
 	copyChecked: '{#icons/copyChecked /}',

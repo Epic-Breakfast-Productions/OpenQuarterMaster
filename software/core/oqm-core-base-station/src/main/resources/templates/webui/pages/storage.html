@@ -404,11 +404,11 @@ function removeStorageBlock(blockId) {
         method: "DELETE",
         async: false,
         done: function (data) {
-            PageMessages.reloadPageWithMessage("Removed storage block successfully!", "success", "Success!");
+            PageMessageUtils.reloadPageWithMessage("Removed storage block successfully!", "success", "Success!");
         },
         fail: function (data) {
             console.warn("Bad response from storage block removal request: " + JSON.stringify(data));
-            PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to remove storage block.", "Failed", null);
+            PageMessageUtils.addMessageToDiv(addEditFormMessages, "danger", "Failed to remove storage block.", "Failed", null);
         }
     });
 }
@@ -450,7 +450,7 @@ function resetAddEdit(){
     keywordInputDiv.text("");
     attInputDiv.text("");
     capacityInputDiv.text("");
-    Dselect.resetDselect(addEditCategoriesInput);
+    DselectUtils.resetDselect(addEditCategoriesInput);
     
     addBulkEnabledInput.prop("checked", false);
     addBulkNumberInput.val(1);
@@ -490,7 +490,7 @@ function setupAddEditForEdit(blockId){
             addEditNicknameInput.val(data.nickname);
             addEditDescriptionInput.text(data.description);
             addEditLocationInput.val(data.location);
-            Dselect.setValues(addEditCategoriesInput, data.storedCategories);
+            DselectUtils.setValues(addEditCategoriesInput, data.storedCategories);
             if(data.parent){
                 addEditParentInputId.val(data.parent);
                 getStorageBlockLabel(data.parent, function(parentLabel){
@@ -594,9 +594,9 @@ addEditStorageForm.submit(async function (event) {
     }
     
     if (!result) {
-        PageMessages.addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
+        PageMessageUtils.addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
     } else {
-        PageMessages.reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
+        PageMessageUtils.reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
     }
 });
 

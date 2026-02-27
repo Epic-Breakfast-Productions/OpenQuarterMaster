@@ -326,7 +326,7 @@
 					failMessagesDiv: $("#dataImportMessages"),
 					done: function (data){
 						console.log("Successfully imported the data.");
-						PageMessages.reloadPageWithMessage("Imported data successfully!", "success", "Success!");
+						PageMessageUtils.reloadPageWithMessage("Imported data successfully!", "success", "Success!");
 					}
 					//TODO:: fail message
 				});
@@ -391,7 +391,7 @@
 					method: 'POST',
 					data: newUnitRequest,
 					done: function (data){
-						PageMessages.reloadPageWithMessage("Added custom unit successfully!", "success", "Success!");
+						PageMessageUtils.reloadPageWithMessage("Added custom unit successfully!", "success", "Success!");
 					},
 					fail: function (data){
 					}
@@ -422,7 +422,7 @@
                     data: addDbData,
                     failMessagesDiv: addDatabaseFormMessages,
                     done: function (data){
-                        PageMessages.reloadPageWithMessage("Added Database successfully!", "success", "Success!");
+                        PageMessageUtils.reloadPageWithMessage("Added Database successfully!", "success", "Success!");
                     },
                     fail: function (data){
                     }

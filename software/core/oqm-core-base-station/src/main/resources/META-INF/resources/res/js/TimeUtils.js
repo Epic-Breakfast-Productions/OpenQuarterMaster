@@ -5,7 +5,7 @@
  * https://moment.github.io/luxon/demo/global.html
  * @type {{getNowTs(): *, setupDateTimeInputs(): void, getTsForServer(*): (null|*)}}
  */
-const TimeHelpers = {
+export const TimeUtils = {
 
 	tsToLocal(ts){
 		return ts.slice(0, 16);
@@ -14,7 +14,7 @@ const TimeHelpers = {
 	 * Get the current timestamp used for `datetime-local` inputs.
 	 */
 	getNowTs(){
-		return TimeHelpers.tsToLocal(luxon.DateTime.now().toISO());
+		return TimeUtils.tsToLocal(luxon.DateTime.now().toISO());
 	},
 	getTsFromInput(dtInputJq){
 		let value = dtInputJq.val();
@@ -31,7 +31,7 @@ const TimeHelpers = {
 		return value;
 	},
 	setDatetimelocalInput(dtInputJq, dt){
-		dtInputJq.val(TimeHelpers.tsToLocal(dt));
+		dtInputJq.val(TimeUtils.tsToLocal(dt));
 	},
 	setupDateTimeInputs(){
 		let nowDateTimeStamp = this.getNowTs();
@@ -64,7 +64,7 @@ const TimeHelpers = {
 	},
 	durationNumSecsTo(duration, timespanTo = null){
 		if(timespanTo == null){
-			timespanTo = TimeHelpers.durationNumSecsToTimespan(duration);
+			timespanTo = TimeUtils.durationNumSecsToTimespan(duration);
 		}
 		console.debug("Turning duration " + duration + " to " + timespanTo)
 		let output = null;
@@ -89,13 +89,14 @@ const TimeHelpers = {
 		return output;
 	},
 	durationNumSecsToHuman(duration){
-		let timespan = TimeHelpers.durationNumSecsToTimespan(duration);
-		let num = TimeHelpers.durationNumSecsTo(duration, timespan);
+		let timespan = TimeUtils.durationNumSecsToTimespan(duration);
+		let num = TimeUtils.durationNumSecsTo(duration, timespan);
 		return num + " " + timespan;
+	},
+	initPage(){
+		console.log("Initting dateTime inputs.");
+		TimeUtils.setupDateTimeInputs();
+		Main.processStop();
+		console.log("Done processing page message.");
 	}
 };
-
-
-TimeHelpers.setupDateTimeInputs();
-Main.processStop();
-

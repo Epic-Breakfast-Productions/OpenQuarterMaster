@@ -1,5 +1,5 @@
 
-const ModalHelpers = {
+export const ModalUtils = {
 
 	getModalCloseButton: function (modalJq){
 		return modalJq.find("#" + modalJq.prop("id") + "LabelCloseButton")
@@ -31,7 +31,7 @@ const ModalHelpers = {
 			returnModal = $(returnModal.target);
 		}
 		//get modal parent, if applicable
-		returnModal = ModalHelpers.getModalOfElement(returnModal);
+		returnModal = ModalUtils.getModalOfElement(returnModal);
 
 		if(returnModal === undefined || returnModal == null || returnModal.length === 0){
 			this.clearModalReturn(destModalJq);

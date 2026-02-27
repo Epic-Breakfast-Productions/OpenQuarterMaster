@@ -293,7 +293,7 @@ const ExtItemSearch = {
 		);
 
 		for (const [service, error] of Object.entries(results.serviceErrs)) {
-			PageMessages.addMessageToDiv(ExtItemSearch.extItemSearchSearchFormMessages, "danger", error, "Failed calling " + service);
+			PageMessageUtils.addMessageToDiv(ExtItemSearch.extItemSearchSearchFormMessages, "danger", error, "Failed calling " + service);
 		}
 		await Promise.all(resultPromises);
 		console.log("Finished processing ext item search results.");

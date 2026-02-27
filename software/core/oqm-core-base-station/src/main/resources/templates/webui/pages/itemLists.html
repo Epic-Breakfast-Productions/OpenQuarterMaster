@@ -124,7 +124,7 @@
 					done: function (data) {
 						console.log("Response from create request: " + data);
 						
-						PageMessages.gotoPageWithMessage("/itemList/"+data,
+						PageMessageUtils.gotoPageWithMessage("/itemList/"+data,
 							"List created successfully!",
 							"success",
 							"Success!"
@@ -145,11 +145,11 @@
 					method: "DELETE",
 					done: function(data) {
 						console.log("Response from remove request: " + JSON.stringify(data));
-						PageMessages.reloadPageWithMessage("Removed item list successfully!", "success", "Success!");
+						PageMessageUtils.reloadPageWithMessage("Removed item list successfully!", "success", "Success!");
 					},
 					fail: function(data) {
 						console.warn("Bad response from remove attempt: " + JSON.stringify(data));
-						PageMessages.addMessage("danger", "Failed to remove item.", "Failed", null);
+						PageMessageUtils.addMessage("danger", "Failed to remove item.", "Failed", null);
 					}
 				});
 			}

@@ -28,7 +28,7 @@ const ItemStoredEdit = {
 			});
 		}
 		console.log("Setting up stored edit form for stored item: ", stored);
-		ModalHelpers.setReturnModal(ItemStoredEdit.modal, buttonPressed);
+		ModalUtils.setReturnModal(ItemStoredEdit.modal, buttonPressed);
 		ItemStoredEdit.resetForm();
 
 		let promises = [];
@@ -68,7 +68,7 @@ ItemStoredEdit.form.on("submit", async function (e) {
 		failMessagesDiv: ItemStoredEdit.formMessages,
 		done: async function(){
 			console.log("Successfully updated stored item.");
-			PageMessages.reloadPageWithMessage("Updated stored item successfully!", "success", "Success!");
+			PageMessageUtils.reloadPageWithMessage("Updated stored item successfully!", "success", "Success!");
 		}
 	});
 });

@@ -534,7 +534,7 @@ const ItemView = {
 				}
 
 				if(itemData.expiryWarningThreshold){
-					ItemView.itemViewExpiryWarnThreshold.text(TimeHelpers.durationNumSecsToHuman(itemData.expiryWarningThreshold));
+					ItemView.itemViewExpiryWarnThreshold.text(TimeUtils.durationNumSecsToHuman(itemData.expiryWarningThreshold));
 					ItemView.itemViewExpiryWarnThresholdContainer.show();
 				}
 

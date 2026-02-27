@@ -1,6 +1,7 @@
+import { Icons } from "./Icons.js";
 
 //TODO:: determine if necessary
-const Links = {
+export const Links = {
 	storage: '<a href="{rootPrefix}/storage">'+Icons.storageBlock+' Storage</a>',
 
 	getStorageViewLink: function (id, text=""){

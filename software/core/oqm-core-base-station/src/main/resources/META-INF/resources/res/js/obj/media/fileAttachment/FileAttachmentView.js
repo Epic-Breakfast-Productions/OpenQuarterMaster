@@ -146,7 +146,7 @@ const FileAttachmentView = {
 	setupView(fileId, oldModal = null) {
 		console.log("Setting up view for file ", fileId);
 		if(oldModal !== null){
-			ModalHelpers.setReturnModal(FileAttachmentView.viewModal, oldModal);
+			ModalUtils.setReturnModal(FileAttachmentView.viewModal, oldModal);
 		}
 
 		this.resetView();

@@ -55,7 +55,7 @@ ItemCheckoutSearchSelect = {
 
 	setupItemCheckoutSearchModal(buttonPressed) {
 		console.log("setting up itemStoredSearchModal");
-		ModalHelpers.setReturnModal(ItemStoredSearchSelect.modal, buttonPressed);
+		ModalUtils.setReturnModal(ItemStoredSearchSelect.modal, buttonPressed);
 		let inputGroup = $(buttonPressed).parent();
 		let inputGroupId = inputGroup.attr("id");
 		let itemId = ItemStoredSearchSelect.getItemIdInput(inputGroup).val();

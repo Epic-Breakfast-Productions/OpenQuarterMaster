@@ -8,7 +8,7 @@ const FileAttachmentSearchSelect = {
 
 	setup(resultContainerJq){
 		console.log("Setting up for file attachment search select.");
-		ModalHelpers.setReturnModal(FileAttachmentSearchSelect.modal, resultContainerJq);
+		ModalUtils.setReturnModal(FileAttachmentSearchSelect.modal, resultContainerJq);
 		FileAttachmentAddEdit.setupForAdd();
 		this.curResultContainer = resultContainerJq;
 		this.selectSearch.submit();

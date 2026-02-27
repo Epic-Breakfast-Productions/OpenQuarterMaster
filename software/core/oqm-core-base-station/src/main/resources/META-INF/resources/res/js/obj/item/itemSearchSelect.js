@@ -14,7 +14,7 @@ const ItemSearchSelect = {
 	},
 	setupItemSearchModal(inputIdPrepend, buttonPressed) {
 		console.log("setting up itemSearchModal:", inputIdPrepend);
-		ModalHelpers.setReturnModal(ItemSearchSelect.itemSearchSelectModal, buttonPressed);
+		ModalUtils.setReturnModal(ItemSearchSelect.itemSearchSelectModal, buttonPressed);
 		ItemSearchSelect.itemSearchSelectModal.attr("data-bs-inputIdPrepend", inputIdPrepend);
 		ItemSearchSelect.itemSearchSelectForm.submit();
 	},

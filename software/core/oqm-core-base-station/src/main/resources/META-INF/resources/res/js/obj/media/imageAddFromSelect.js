@@ -49,7 +49,7 @@ ImageAddFromSelect.imageAddImageForm.submit(function (ev) {
 			},
 			fail: function(data) {
 				console.warn("Bad response from image add attempt: ", data);
-				PageMessages.addMessageToDiv(ImageAddFromSelect.formMessages, "danger", "Failed to add image: " + data.responseText, "Failed", null);
+				PageMessageUtils.addMessageToDiv(ImageAddFromSelect.formMessages, "danger", "Failed to add image: " + data.responseText, "Failed", null);
 			}
 		});
 	});

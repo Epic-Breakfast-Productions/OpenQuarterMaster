@@ -35,7 +35,7 @@ const IdGeneratorAddEdit = {
 		IdGeneratorAddEdit.formGetters.name(formJq).val("");
 		IdGeneratorAddEdit.formGetters.generatesFor(formJq).prop("disabled", false);
 		IdGeneratorAddEdit.formGetters.generatesFor(formJq).find("option").prop("disabled", false).prop("checked", false);
-		Dselect.resetDselect( IdGeneratorAddEdit.formGetters.generatesFor(formJq));
+		DselectUtils.resetDselect( IdGeneratorAddEdit.formGetters.generatesFor(formJq));
 		IdGeneratorAddEdit.formGetters.barcode(formJq).prop("checked", false);
 		IdGeneratorAddEdit.formGetters.encoded(formJq)
 			.prop("checked", false)
@@ -74,7 +74,7 @@ const IdGeneratorAddEdit = {
 				IdGeneratorAddEdit.formGetters.name(formJq).val(generator.name);
 
 				IdGeneratorAddEdit.formGetters.generatesFor(formJq).prop("disabled", true);//TODO:: not working
-				Dselect.setValues(IdGeneratorAddEdit.formGetters.generatesFor(formJq), generator.forObjectType);
+				DselectUtils.setValues(IdGeneratorAddEdit.formGetters.generatesFor(formJq), generator.forObjectType);
 
 				//TODO:: generates
 				//TODO:: for
@@ -121,9 +121,9 @@ const IdGeneratorAddEdit = {
 						IdGeneratorSearchSelect.closeModal();
 					} else {
 						if(refreshOnSuccess){
-							PageMessages.reloadPageWithMessage("Successfully added new id generator.", "success");
+							PageMessageUtils.reloadPageWithMessage("Successfully added new id generator.", "success");
 						} else {
-							PageMessages.addMessageToDiv(IdGeneratorAddEdit.formGetters.messages(formJq), "success", "Successfully added new id generator.")
+							PageMessageUtils.addMessageToDiv(IdGeneratorAddEdit.formGetters.messages(formJq), "success", "Successfully added new id generator.")
 						}
 					}
 				}
@@ -137,9 +137,9 @@ const IdGeneratorAddEdit = {
 				failMessagesDiv: IdGeneratorAddEdit.formGetters.messages(formJq),
 				done: function (data) {
 					if(refreshOnSuccess){
-						PageMessages.reloadPageWithMessage("Successfully edited id generator.", "success");
+						PageMessageUtils.reloadPageWithMessage("Successfully edited id generator.", "success");
 					} else {
-						PageMessages.addMessageToDiv(IdGeneratorAddEdit.formGetters.messages(formJq), "success", "Successfully edited id generator.")
+						PageMessageUtils.addMessageToDiv(IdGeneratorAddEdit.formGetters.messages(formJq), "success", "Successfully edited id generator.")
 					}
 				}
 			});

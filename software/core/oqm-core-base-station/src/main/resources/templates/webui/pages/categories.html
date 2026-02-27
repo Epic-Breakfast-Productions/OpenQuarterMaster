@@ -206,7 +206,7 @@
                     Category.colorCheckInput.prop('checked', false);
                     Category.colorInput.val("#FFFFFF");
                     Category.colorCheckboxChanged();
-                    Dselect.resetDselect(Category.parentInput);
+                    DselectUtils.resetDselect(Category.parentInput);
                     Category.imagesInputDiv.html("");
                     Category.keywordInputs.text("");
                     Category.attInputs.text("");
@@ -232,7 +232,7 @@
                             Category.nameInput.val(data.name);
                             Category.descInput.val(data.description);
                             if(data.parent) {
-                                Dselect.setValues(Category.parentInput, data.parent);
+                                DselectUtils.setValues(Category.parentInput, data.parent);
                             }
                             if(data.color){
                                 Category.colorCheckInput.prop('checked', true);
@@ -302,7 +302,7 @@
                 }
     
                 if (result) {
-                    PageMessages.reloadPageWithMessage(verb + " item category successfully!", "success", "Success!");
+                    PageMessageUtils.reloadPageWithMessage(verb + " item category successfully!", "success", "Success!");
                 }
             });
             
@@ -317,9 +317,9 @@
                     method: "DELETE",
                     async: false,
                     done: function (data) {
-                        PageMessages.reloadPageWithMessage("Deleted item category successfully!", "success", "Success!");
+                        PageMessageUtils.reloadPageWithMessage("Deleted item category successfully!", "success", "Success!");
                     },
-                    failMessagesDiv: PageMessages.mainMessageDiv
+                    failMessagesDiv: PageMessageUtils.mainMessageDiv
                 });
             }
 

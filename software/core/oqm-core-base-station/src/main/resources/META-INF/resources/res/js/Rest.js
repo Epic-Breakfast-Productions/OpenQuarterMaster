@@ -1,5 +1,7 @@
+import {SpinnerUtils} from "./SpinnerUtils";
+import {PageMessageUtils} from "./PageMessageUtils";
 
-const Rest = {
+export const Rest = {
 	wholeBody: $('body'),
 	webroot: Constants.rootPrefix,
 	apiRoot: Constants.rootPrefix + "/api",
@@ -94,7 +96,7 @@ const Rest = {
 		} = {}
 	) {
 		console.log("Making "+ method +" rest call to " + url);
-		let spinner = (spinnerContainer === null ? null : new Spin.Spinner(spinnerOpts).spin(spinnerContainer));
+		let spinner = (spinnerContainer === null ? null : SpinnerUtils.newSpinner(spinnerContainer));
 
 		let ajaxOps = {
 			url: url,
@@ -169,7 +171,7 @@ const Rest = {
 					if(String(failMessagesDiv) === failMessagesDiv){
 						failMessagesDiv = $(failMessagesDiv);
 					}
-					PageMessages.addMessageToDiv(
+					PageMessageUtils.addMessageToDiv(
 						failMessagesDiv,
 						"danger",
 						Rest.buildErrorMessageFromResponse(data, statusStr),
@@ -188,7 +190,7 @@ const Rest = {
 					if (failNoResponse != null) {
 						failNoResponse(data);
 					} else {
-						PageMessages.addMessage(
+						PageMessageUtils.addMessage(
 							"danger",
 							"Try refreshing the page, or wait until later. Contact the server operators for help and details.",
 							"Failed to connect to server."

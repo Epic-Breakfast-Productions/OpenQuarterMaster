@@ -43,7 +43,7 @@ const ItemAddEdit = {
 	numTrackedStoredClicked: 0,
 
 	itemAdded(newItemName, newItemId) {
-		PageMessages.reloadPageWithMessage("Added \"" + newItemName + "\" item successfully!", "success", "Success!");
+		PageMessageUtils.reloadPageWithMessage("Added \"" + newItemName + "\" item successfully!", "success", "Success!");
 	},
 
 	async foreachStorageTypeFromInput(
@@ -86,9 +86,9 @@ const ItemAddEdit = {
 		ItemAddEdit.addEditItemIdentifyingAttInput.val("");
 		ItemAddEdit.addEditItemStorageTypeInput.prop("disabled", false);
 		ItemAddEdit.addEditItemStorageTypeInput.val($("#addEditItemStorageTypeInput option:first").val());
-		Dselect.resetDselect(ItemAddEdit.addEditItemUnitInput);
+		DselectUtils.resetDselect(ItemAddEdit.addEditItemUnitInput);
 		ItemAddEdit.addEditItemUnitInput.data("previous", ItemAddEdit.addEditItemUnitInput.val());
-		Dselect.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
+		DselectUtils.resetDselect(ItemAddEdit.addEditItemCategoriesInput);
 		FileAttachmentSearchSelect.resetInput(this.fileInput);
 		Pricing.resetInput(ItemAddEdit.addEditItemPricingInput);
 		ItemAddEdit.defaultStoredLabelInput.val("");
@@ -120,7 +120,7 @@ const ItemAddEdit = {
 
 	setupAddEditForEdit: async function (itemId, otherModal = null) {
 		console.log("Setting up add/edit form for editing item " + itemId);
-		ModalHelpers.setReturnModal(ItemAddEdit.addEditItemModal, otherModal);
+		ModalUtils.setReturnModal(ItemAddEdit.addEditItemModal, otherModal);
 		await ItemAddEdit.resetAddEditForm();
 		ItemAddEdit.addEditItemModalLabel.text("Item Edit");
 		ItemAddEdit.addEditItemFormMode.val("edit");
@@ -148,8 +148,8 @@ const ItemAddEdit = {
 				ItemAddEdit.addEditItemNameInput.val(data.name);
 				ItemAddEdit.addEditItemDescriptionInput.setValue(data.description);
 				ItemAddEdit.addEditItemStorageTypeInput.val(data.storageType);
-				Dselect.setValues(ItemAddEdit.addEditItemUnitInput, data.unit.string);
-				Dselect.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
+				DselectUtils.setValues(ItemAddEdit.addEditItemUnitInput, data.unit.string);
+				DselectUtils.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
 				ItemAddEdit.addEditStoredTypeInputChanged(true)
 					.then(function () {
 						if (data.lowStockThreshold) {
@@ -162,9 +162,9 @@ const ItemAddEdit = {
 				Identifiers.populateEdit(ItemAddEdit.identifierInputContainer, data.identifiers);
 				IdGeneratorSearchSelect.AssociatedInput.populateAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput, data.idGenerators);
 
-				let durationTimespan = TimeHelpers.durationNumSecsToTimespan(data.expiryWarningThreshold);
+				let durationTimespan = TimeUtils.durationNumSecsToTimespan(data.expiryWarningThreshold);
 
-				ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(TimeHelpers.durationNumSecsTo(data.expiryWarningThreshold, durationTimespan));
+				ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(TimeUtils.durationNumSecsTo(data.expiryWarningThreshold, durationTimespan));
 				switch (durationTimespan) {
 					case "weeks":
 						ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 4);
@@ -384,8 +384,8 @@ ItemAddEdit.addEditItemForm.submit(async function (event) {
 	}
 
 	if (!result) {
-		PageMessages.addMessageToDiv(ItemAddEdit.addEditItemFormMessages, "danger", "Failed to do " + verb + " item.", "Failed", null);
+		PageMessageUtils.addMessageToDiv(ItemAddEdit.addEditItemFormMessages, "danger", "Failed to do " + verb + " item.", "Failed", null);
 	} else {
-		PageMessages.reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
+		PageMessageUtils.reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
 	}
 });

@@ -1,12 +1,12 @@
-const Dselect = {
+export const DselectUtils = {
 	standardOps: {search: true, clearable: true},
 	setupDselect(selectJs) {
-		dselect(selectJs, Dselect.standardOps);
+		dselect(selectJs, DselectUtils.standardOps);
 	},
 	setupPageDselects() {
 		document.querySelectorAll(".dselect-select").forEach(function (cur) {
 			try {
-				Dselect.setupDselect(cur);
+				DselectUtils.setupDselect(cur);
 			} catch (error) {
 				console.error(error);
 			}
@@ -14,7 +14,7 @@ const Dselect = {
 	},
 	setValues(selectJq, value){
 		selectJq.val(value);
-		Dselect.setupDselect(selectJq[0]);
+		DselectUtils.setupDselect(selectJq[0]);
 	},
 	resetDselect(selectJq) {
 		if (selectJq.prop("multiple")) {
@@ -23,8 +23,12 @@ const Dselect = {
 			selectJq.val(selectJq.find("option:first").val());
 		}
 
-		Dselect.setupDselect(selectJq[0]);
+		DselectUtils.setupDselect(selectJq[0]);
+	},
+	initPage(){
+		console.log("Setting up dselects");
+		DselectUtils.setupPageDselects();
+		Main.processStop();
+		console.log("Finished setting up dselects");
 	}
 };
-Dselect.setupPageDselects();
-Main.processStop();

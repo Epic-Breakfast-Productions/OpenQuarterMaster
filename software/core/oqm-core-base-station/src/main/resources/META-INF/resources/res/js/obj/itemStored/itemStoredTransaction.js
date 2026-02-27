@@ -12,7 +12,7 @@ const ItemStoredTransaction = {
 			data: transaction,
 			done: function (appliedTransaction) {
 				console.log("Successfully applied transaction: ", appliedTransaction);
-				PageMessages.reloadPageWithMessage("Transaction Successful!", "success", "Success!");
+				PageMessageUtils.reloadPageWithMessage("Transaction Successful!", "success", "Success!");
 			}
 		});
 	},
@@ -281,7 +281,7 @@ const ItemStoredTransaction = {
 		setupForm: async function (itemId = null, preselectedStoredId = null, buttonElement = null) {
 			//TODO:: do something wiht preselected stored
 			console.log("Setting up item stored add transaction form for item", itemId);
-			ModalHelpers.setReturnModal(this.modal, buttonElement);
+			ModalUtils.setReturnModal(this.modal, buttonElement);
 			this.resetForm();
 			if (itemId != null) {
 				console.log("Given an item, keeping inputs disabled.");
@@ -429,7 +429,7 @@ const ItemStoredTransaction = {
 		},
 		setupForm: async function (checkout, buttonElement) {
 			console.log("Setting up item stored checkin transaction form for checkin ", checkout);
-			ModalHelpers.setReturnModal(this.modal, buttonElement);
+			ModalUtils.setReturnModal(this.modal, buttonElement);
 			this.resetForm();
 
 			if (checkout == null) {
@@ -443,7 +443,7 @@ const ItemStoredTransaction = {
 			}
 
 			if (!checkout.stillCheckedOut) {
-				PageMessages.addMessageToDiv(ItemStoredTransaction.Checkin.messages, "danger", "This has already been checked in.");
+				PageMessageUtils.addMessageToDiv(ItemStoredTransaction.Checkin.messages, "danger", "This has already been checked in.");
 			}
 
 			let item = null;
@@ -790,7 +790,7 @@ const ItemStoredTransaction = {
 			Main.processStart();
 			ItemStoredTransaction.Checkout.resetForm();
 			if (buttonElement != null) {
-				ModalHelpers.setReturnModal(ItemStoredTransaction.Checkout.modal, buttonElement);
+				ModalUtils.setReturnModal(ItemStoredTransaction.Checkout.modal, buttonElement);
 			}
 			if (item == null && stored == null) {
 				console.log("No item given.")
@@ -1105,7 +1105,7 @@ const ItemStoredTransaction = {
 		amountInputs: $("#itemStoredTransactionSetFormAmountContainer"),
 
 		failNotAmountType() {
-			PageMessages.addMessageToDiv(
+			PageMessageUtils.addMessageToDiv(
 				ItemStoredTransaction.Set.messages,
 				"danger",
 				"Cannot set the amount of an item with no amount.",
@@ -1132,7 +1132,7 @@ const ItemStoredTransaction = {
 		setupForm: async function (item, stored, buttonElement) {
 			Main.processStart();
 			if (buttonElement != null) {
-				ModalHelpers.setReturnModal(this.modal, buttonElement);
+				ModalUtils.setReturnModal(this.modal, buttonElement);
 			}
 			this.resetForm();
 
@@ -1349,7 +1349,7 @@ const ItemStoredTransaction = {
 		setupForm: async function (item, stored, buttonElement) {
 			Main.processStart();
 			if (buttonElement != null) {
-				ModalHelpers.setReturnModal(this.modal, buttonElement);
+				ModalUtils.setReturnModal(this.modal, buttonElement);
 			}
 			ItemStoredTransaction.Subtract.resetForm();
 			if (item == null && stored == null) {
@@ -1654,7 +1654,7 @@ const ItemStoredTransaction = {
 		setupForm: async function (item, stored, buttonElement = null) {
 			Main.processStart();
 			if (buttonElement != null) {
-				ModalHelpers.setReturnModal(this.modal, buttonElement);
+				ModalUtils.setReturnModal(this.modal, buttonElement);
 			}
 			ItemStoredTransaction.Transfer.resetForm(false);
 			if (item == null && stored == null) {

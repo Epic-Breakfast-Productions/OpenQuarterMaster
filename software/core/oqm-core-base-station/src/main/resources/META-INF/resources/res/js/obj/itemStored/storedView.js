@@ -268,7 +268,7 @@ const StoredView = {
 	setupViewModal: async function (itemId, blockId, storedId, previousModal) {
 		Main.processStart();
 		console.log("Setting up stored view for ", storedId);
-		ModalHelpers.setReturnModal(StoredView.viewModal, previousModal);
+		ModalUtils.setReturnModal(StoredView.viewModal, previousModal);
 		StoredView.resetViewModal();
 
 		let promises = [];

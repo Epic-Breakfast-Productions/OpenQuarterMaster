@@ -135,7 +135,7 @@ const IdGeneratorSearchSelect = {
 	setupSearchSelect: function (idGenSelectAddInputJq, forObject, genList = null) {
 		console.log("Setting up id generator search select for: ", forObject);
 
-		ModalHelpers.setReturnModal(IdGeneratorSearchSelect.searchSelectModal, idGenSelectAddInputJq);
+		ModalUtils.setReturnModal(IdGeneratorSearchSelect.searchSelectModal, idGenSelectAddInputJq);
 
 		IdGeneratorSearchSelect.searchSelectContainer.show();
 		IdGeneratorSearchSelect.associatedContainer.hide();
@@ -155,7 +155,7 @@ const IdGeneratorSearchSelect = {
 			addForObj.val(forObject);
 			addForObj.find(':selected').prop('disabled', false);
 			addForObj.find(':not(:selected)').prop('disabled', true);
-			Dselect.setupDselect(addForObj[0]);
+			DselectUtils.setupDselect(addForObj[0]);
 		}
 
 		if(genList !== null){

@@ -39,7 +39,7 @@ let Search = {
 
 				if (getParams.has(formSelect.name)) {
 					if (formSelect.classList.contains("dselect-select")) {
-						Dselect.setValues($(formSelect), value);
+						DselectUtils.setValues($(formSelect), value);
 					} else {
 						$(formSelect).val(value);
 					}

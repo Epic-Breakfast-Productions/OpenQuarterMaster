@@ -57,7 +57,7 @@ public class JsGetters {
 	}
 	
 	@Inject
-	@Location("webui/js/icons.js")
+	@Location("webui/js/Icons.js")
 	Template icons;
 	
 	@Inject
@@ -212,7 +212,7 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("icons.js")
+	@Path("Icons.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> icons() {

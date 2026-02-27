@@ -1,5 +1,5 @@
 
-const UriUtils = {
+export const UriUtils = {
 	getParams: new URLSearchParams(window.location.search),
 	updateParams(){
 		let newQuery = UriUtils.getParams.toString();

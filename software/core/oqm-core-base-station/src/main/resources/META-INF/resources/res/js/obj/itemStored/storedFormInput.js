@@ -56,7 +56,7 @@ const StoredFormInput = {
 				output.find(".storedConditionNotesInput").val(stored.conditionNotes);
 			}
 			if (stored.expires) {
-				TimeHelpers.setDatetimelocalInput(
+				TimeUtils.setDatetimelocalInput(
 					output.find(".storedExpiredInput"),
 					stored.expires
 				);
@@ -168,7 +168,7 @@ const StoredFormInput = {
 			dataToAddTo["identifiers"] = Identifiers.getIdentifierData(commonInputsContainer.find('.identifierInputContainer'));
 			dataToAddTo["condition"] = commonInputsContainer.find('input[name="condition"]').val();
 			dataToAddTo["conditionNotes"] = commonInputsContainer.find('textarea[name="conditionNotes"]').val();
-			dataToAddTo["expires"] = TimeHelpers.getTsFromInput(commonInputsContainer.find('input[name="expires"]'));
+			dataToAddTo["expires"] = TimeUtils.getTsFromInput(commonInputsContainer.find('input[name="expires"]'));
 			KeywordAttEdit.addKeywordAttData(dataToAddTo, commonInputsContainer.find(".keywordInputDiv"), commonInputsContainer.find(".attInputDiv"));
 			ImageSearchSelect.addImagesToData(dataToAddTo, commonInputsContainer.find(".imagesSelected"));
 			dataToAddTo["attachedFiles"] = FileAttachmentSearchSelect.getFileListFromInput(commonInputsContainer.find(".fileAttachmentSelectInputTableContent"));

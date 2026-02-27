@@ -38,7 +38,7 @@ const FileAttachmentAddEdit = {
 		});
 	},
 	fileAttachmentAdded(data) {
-		PageMessages.reloadPageWithMessage("Added file successfully!", "success", "Success!");
+		PageMessageUtils.reloadPageWithMessage("Added file successfully!", "success", "Success!");
 	},
 	removeFile(fileId){
 		console.log("Attempting to remove file: ", fileId);
@@ -51,9 +51,9 @@ const FileAttachmentAddEdit = {
 			method: "delete",
 			done: function (data){
 				console.log("Successfully removed file attachment.");
-				PageMessages.reloadPageWithMessage("Removed file successfully!", "success", "Success!");
+				PageMessageUtils.reloadPageWithMessage("Removed file successfully!", "success", "Success!");
 			},
-			failMessagesDiv: PageMessages.mainMessageDiv
+			failMessagesDiv: PageMessageUtils.mainMessageDiv
 		});
 	}
 };

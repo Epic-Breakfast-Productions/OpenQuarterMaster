@@ -130,10 +130,8 @@
 		</div>
 	{/pageContent}
 	{#modals}
-		{#search/storage/searchSelectModal otherModalId="" rootPrefix=rootPrefix}
-		{/search/storage/searchSelectModal}
-		{#search/item/itemSearchSelectModal otherModalId="" rootPrefix=rootPrefix}
-		{/search/item/itemSearchSelectModal}
+		{#search/storage/searchSelectModal otherModalId="" rootPrefix=rootPrefix /}
+		{#search/item/itemSearchSelectModal otherModalId="" rootPrefix=rootPrefix allCategorySearchResults=allCategorySearchResults /}
 	{/modals}
 	{#scripts}
 		<script src="{rootPrefix}/res/js/search.js"></script>

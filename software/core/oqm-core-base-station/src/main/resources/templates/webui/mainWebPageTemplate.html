@@ -387,12 +387,11 @@ Ingests:
 
 <!-- scripts -->
 
-<!-- Libraries -->
+<!-- Libraries TODO:: wrap these up in imports as relevant-->
 <script src="{rootPrefix}/webjars/jquery/4.0.0/jquery.min.js"></script>
 <script src="{rootPrefix}/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
 <script src="{rootPrefix}/lib/luxon/3.3.0/luxon.min.js"></script>
 <script src="{rootPrefix}/lib/js-cookie/3.0.5/js.cookie.min.js"></script>
-<script src="{rootPrefix}/lib/spin.js/spin.umd.js"></script>
 <script src="{rootPrefix}/lib/dselect/1.0.4/dist/js/dselect.js"></script>
 <script src="{rootPrefix}/lib/DOMPurify/3.3.1/DOMPurify.min.js"></script>
 <script src="{rootPrefix}/lib/Marked/17.0.1/marked.min.js"></script>
@@ -402,27 +401,24 @@ Ingests:
 <script src="{rootPrefix}/res/js/main.js"></script>
 <!-- Bring in libs that are needed by the plain js / need activated -->
 <script type="module">
-	import { MarkdownUtils } from '{rootPrefix}/res/js/MarkdownUtils.js';//this exact one doesn't need to be here, but was a test
+	import { PageMessageUtils } from '{rootPrefix}/res/js/PageMessageUtils.js';
+	import { OqmDbUtils } from '{rootPrefix}/res/js/OqmDbUtils.js';
+	import { Icons } from '{rootPrefix}/res/js/Icons.js';
+	import { DselectUtils } from '{rootPrefix}/res/js/DselectUtils.js';
+	import { TimeUtils } from '{rootPrefix}/res/js/TimeUtils.js';
+	
+	// init necessary modules
+	PageMessageUtils.initPage();
+	DselectUtils.initPage();
+	TimeUtils.initPage();
 	
 	//allow direct usage of imported utilities in html
-	window.MarkdownUtils = MarkdownUtils;
+	window.OqmDbUtils = OqmDbUtils;
+	window.Icons = Icons;
+	window.DselectUtils = DselectUtils;
 	
 	console.log("Main modules loaded.");
 </script>
-
-<!-- TODO things to turn into modules and include above -->
-<script src="{rootPrefix}/res/js/pageMessages.js"></script>
-<script src="{rootPrefix}/res/js/OqmDb.js"></script>
-<script src="{rootPrefix}/res/js/dselectHelpers.js"></script>
-
-<!-- TODO things to turn into modules -->
-<script src="{rootPrefix}/res/js/spinnerHelpers.js"></script>
-<script src="{rootPrefix}/res/js/getParamUtils.js"></script>
-<script src="{rootPrefix}/res/js/rest.js"></script>
-<script src="{rootPrefix}/res/js/timeHelpers.js"></script>
-<script src="{rootPrefix}/res/js/icons.js"></script>
-<script src="{rootPrefix}/res/js/links.js"></script>
-<script src="{rootPrefix}/res/js/modalHelpers.js"></script>
 
 {#insert scripts}{/}
 
