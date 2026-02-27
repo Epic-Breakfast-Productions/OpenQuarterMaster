@@ -1,4 +1,4 @@
-const ItemCategoryInput = {
+export const ItemCategoryInput = {
 	getValueFromInput(itemCatInputJq){
 		let inputIsMultiple = itemCatInputJq.prop("multiple");
 		let val = itemCatInputJq.val();

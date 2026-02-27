@@ -360,464 +360,492 @@ Accepts:
 {/modals}
 
 {#scripts}
-<script src="{rootPrefix}/META-INF/resources/res/js/searchUtils.js"></script>
-<script src="{rootPrefix}/res/js/historySearch.js"></script>
-<script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
-<script src="{rootPrefix}/res/js/obj/objView.js"></script>
-<script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-<script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
-<script src="{rootPrefix}/res/js/obj/units.js"></script>
-<script src="{rootPrefix}/res/js/obj/getters.js"></script>
-<script src="{rootPrefix}/res/js/obj/itemCategoryView.js"></script>
-<script src="{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
-<script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
-<script src="{rootPrefix}/res/js/carousel.js"></script>
-<script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
-<script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
-<script src="{rootPrefix}/res/js/obj/media/imageAddFromSelect.js"></script>
-<script src="{rootPrefix}/res/js/textCopy.js"></script>
+	<script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
+	<script src="{rootPrefix}/lib/treant-js/vendor/raphael.js"></script>
+	<script src="{rootPrefix}/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+	<script src="{rootPrefix}/lib/treant-js/vendor/jquery.easing.js"></script>
+	<script src="{rootPrefix}/lib/treant-js/Treant.js"></script>
 
-<script src="{rootPrefix}/lib/treant-js/vendor/raphael.js"></script>
-<script src="{rootPrefix}/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
-<script src="{rootPrefix}/lib/treant-js/vendor/jquery.easing.js"></script>
-<script src="{rootPrefix}/lib/treant-js/Treant.js"></script>
-<script src="{rootPrefix}/res/js/obj/storageBlock/storageBlockTree.js"></script>
 {/scripts}
 {#pageScript}
-<script>
-// Search.fillInQueryForm($("#mainStorageSearch"));
-
-function clearParentInput(caller){
-    caller.siblings("input[name=parentName]").val("");
-    caller.siblings("input[name=parentId]").val("");
-}
-
-function removeStorageBlock(blockId) {
-    if (!confirm("Are you sure you want to delete this storage block? This cannot be undone.")) {
-        return;
-    }
-    
-    console.log("Removing storage block " + blockId);
-    
-    Rest.call({
-        url: Rest.passRoot +"/inventory/storage-block/" + blockId,
-        method: "DELETE",
-        async: false,
-        done: function (data) {
-            PageMessageUtils.reloadPageWithMessage("Removed storage block successfully!", "success", "Success!");
-        },
-        fail: function (data) {
-            console.warn("Bad response from storage block removal request: " + JSON.stringify(data));
-            PageMessageUtils.addMessageToDiv(addEditFormMessages, "danger", "Failed to remove storage block.", "Failed", null);
-        }
-    });
-}
-
-
-var addEditStorageForm = $("#addEditStorageForm");
-var addEditModalTitleText = $("#addEditModalLabel");
-var addEditModalTitleIcon = $("#addEditModalLabelIcon");
-var addEditFormSubmitButton = $("#addEditFormSubmitButton");
-var addEditFormMessages = $("#addEditFormMessages");
-//inputs
-var addEditFormMode = $("#addEditFormMode");
-var addEditFormId = $("#addEditFormId");
-var addEditLabelInput = $("#addEditLabelInput");
-var addEditNicknameInput = $("#addEditNicknameInput");
-var addEditDescriptionInput = $("#addEditDescriptionInput");
-var addEditLocationInput = $("#addEditLocationInput");
-var addEditParentInputId = $("#addEditParentInputId");
-var addEditParentInputName = $("#addEditParentInputName");
-var addEditCategoriesInput = $("#addEditCategoriesInput");
-var imagesSelected = $(".imagesSelected");
-var capacityInputDiv = addEditStorageForm.find(".capacityInputDiv");
-
-var keywordInputDiv = addEditStorageForm.find(".keywordInputDiv");
-var attInputDiv = addEditStorageForm.find(".attInputDiv");
-
-var addBulkAccord = $("#addBulkAccord");
-var addBulkEnabledInput = $("#addBulkEnabledInput");
-var bulkInputControls = $("#bulkInputControls");
-var addBulkNumberInput = $("#addBulkNumberInput");
-var addBulkLeadingZeroesInput = $("#addBulkLeadingZeroesInput");
-var addBulkExample = $("#addBulkExample");
-
-
-function resetAddEdit(){
-    addEditStorageForm.trigger("reset");
-    addEditFormId.val("");
-    imagesSelected.html("");
-    keywordInputDiv.text("");
-    attInputDiv.text("");
-    capacityInputDiv.text("");
-    DselectUtils.resetDselect(addEditCategoriesInput);
-    
-    addBulkEnabledInput.prop("checked", false);
-    addBulkNumberInput.val(1);
-    setBulkInsertInputState();
-}
-
-
-function setupAddEditForAdd(){
-    Main.processStart();
-    console.log("Setting up add/edit form for add.");
-    resetAddEdit();
-    addBulkAccord.show();
-    addEditFormMode.val("add");
-    addEditModalTitleText.text("Add Storage Block");
-    addEditModalTitleIcon.html(Icons.iconWithSub(Icons.storageBlock, Icons.add));
-    addEditFormSubmitButton.html(Icons.add + ' Add Storage Block');
-    Main.processStop();
-}
-
-function setupAddEditForEdit(blockId){
-    Main.processStart()
-    console.log("Setting up add/edit form for editing storage block " + blockId);
-    resetAddEdit();
-    addBulkAccord.hide();
-    addEditModalTitleIcon.html(Icons.iconWithSub(Icons.storageBlock, Icons.edit));
-    addEditFormMode.val("edit");
-    addEditModalTitleText.text("Edit Storage Block");
-    addEditFormSubmitButton.html(Icons.edit + ' Edit Storage Block');
-
-    Rest.call({
-    	spinnerContainer: addEditModal,
-    	url: Rest.passRoot +"/inventory/storage-block/" + blockId,
-    	done: function(data){
-			ImageSearchSelect.addSelectedImages(imagesSelected, data.imageIds);
-    	    addEditFormId.val(blockId);
-            addEditLabelInput.val(data.label);
-            addEditNicknameInput.val(data.nickname);
-            addEditDescriptionInput.text(data.description);
-            addEditLocationInput.val(data.location);
-            DselectUtils.setValues(addEditCategoriesInput, data.storedCategories);
-            if(data.parent){
-                addEditParentInputId.val(data.parent);
-                getStorageBlockLabel(data.parent, function(parentLabel){
-                    addEditParentInputName.val(parentLabel);
-                });
-            }
-            KeywordAttEdit.addKeywordInputs(keywordInputDiv, data.keywords);
-            KeywordAttEdit.addAttInputs(attInputDiv, data.attributes);
-            // addCapacityInputs(capacityInputDiv, data.capacityMeasures);
-            Main.processStop();
-    	}
-    });
-
-}
-
-addEditStorageForm.submit(async function (event) {
-    event.preventDefault();
-    console.log("Submitting add/edit form.");
-    
-    var addEditData = {
-        label: addEditLabelInput.val(),
-        nickname: addEditNicknameInput.val(),
-        description: addEditDescriptionInput.val(),
-        location: addEditLocationInput.val(),
-        storedCategories: ItemCategoryInput.getValueFromInput(addEditCategoriesInput),
-        capacityMeasures: []
-    };
-    
-    KeywordAttEdit.addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
-	ImageSearchSelect.addImagesToData(addEditData, imagesSelected);
-    
-    capacityInputDiv.children().each(function (i, curCapDiv) {
-        var cur = $(curCapDiv);
-        addEditData.capacityMeasures.push({
-            value: cur.find(".capacityInput")[0].value,
-            unit: cur.find(".unitSelect").find(":selected")[0].value,
-            scale: "ABSOLUTE"
-        });
-    });
-    
-    
-    if (addEditParentInputId.val()) {
-        addEditData.parent = addEditParentInputId.val();
-    } else {
-        addEditData.parent = null;
-    }
-    
-    var result = false;
-    var verb = "";
-    if (addEditFormMode.val() === "add") {
-        verb = "Created";
-        
-        if (addBulkEnabledInput.is(":checked")) {
-            addEditData = getBulkInsertData(addEditData);
-            console.log("Adding new storage blocks in bulk.");
-            await Rest.call({
-                url: Rest.passRoot +"/inventory/storage-block/bulk",
-                method: "POST",
-                data: addEditData,
-				failMessagesDiv: addEditFormMessages,
-                done: function (data) {
-                    console.log("Response from create request: " + JSON.stringify(data));
-                    result = true;
-                },
-                fail: function (data) {
-                    console.warn("Bad response from bulk block add attempt: " + JSON.stringify(data));
-                }
-            });
-        } else {
-            console.log("Adding new storage block.");
-            await Rest.call({
-                url: Rest.passRoot +"/inventory/storage-block",
-                method: "POST",
-                data: addEditData,
-				failMessagesDiv: addEditFormMessages,
-                done: function (data) {
-                    console.log("Response from create request: " + JSON.stringify(data));
-                    result = true;
-                },
-                fail: function (data) {
-                    console.warn("Bad response from block add attempt: " + JSON.stringify(data));
-                }
-            });
-        }
-    } else if (addEditFormMode.val() === "edit") {
-        verb = "Edited";
-        let id = addEditFormId.val();
-        console.log("Editing storage block " + id);
-        
-        await Rest.call({
-            url: Rest.passRoot +"/inventory/storage-block/" + id,
-            method: "PUT",
-            data: addEditData,
-            async: false,
-            done: function (data) {
-                console.log("Response from edit request: " + JSON.stringify(data));
-                result = true;
-            },
-            failMessagesDiv: addEditFormMessages
-        });
-    }
-    
-    if (!result) {
-        PageMessageUtils.addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
-    } else {
-        PageMessageUtils.reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
-    }
-});
-
-let storageBlockViewModal = $('#storageBlockViewModal');
-let storageBlockViewMessages = $("#storageBlockViewMessages");
-let storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
-let storageBlockViewCarousel = $('#storageBlockViewCarousel');
-
-let storageBlockHistoryAccordionCollapse = $("#storageBlockHistoryAccordionCollapse");
-let storageBlockHistoryForm = $('#storageBlockHistoryForm');
-let storageBlockHistory = $('#storageBlockHistory');
-
-let storageBlockViewId = $('#storageBlockViewId');
-let storageBlockViewLocationContainer = $('#storageBlockViewLocationContainer');
-let storageBlockViewDescriptionContainer = $('#storageBlockViewDescriptionContainer');
-let storageBlockViewCapacityContainer = $('#storageBlockViewCapacityContainer');
-let storageBlockViewLocation = $('#storageBlockViewLocation');
-let storageBlockViewDescription = $('#storageBlockViewDescription');
-let storageBlockViewCapacity = $('#storageBlockViewCapacity');
-let viewKeywordsSection = $('#viewKeywordsSection');
-let viewAttsSection = $('#viewAttsSection');
-let storageBlockViewBreadcrumbContainer = $('#storageBlockViewBreadcrumbContainer');
-let storageBlockViewChildrenContainer = $('#storageBlockViewChildrenContainer');
-let storageBlockViewChildrenContainerTitle = $('#storageBlockViewChildrenContainerTitle');
-let storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
-let storageBlockViewStoredItemCategories = $("#storageBlockViewStoredItemCategories");
-
-function resetView(){
-    storageBlockViewMessages.text("");
-    storageBlockViewId.text('');
-    storageBlockViewLocationContainer.hide();
-    storageBlockViewLocation.text('');
-    storageBlockViewBreadcrumbContainer.text('');
-    storageBlockViewChildrenContainer.text('');
-    storageBlockViewChildrenContainerTitle.text("Children:");
-    
-    storageBlockViewDescriptionContainer.hide();
-    storageBlockViewDescription.text("");
-    
-    storageBlockViewCapacity.text('');
-    storageBlockViewCapacityContainer.hide();
-    storageBlockViewStoredItemCategories.text('');
-    
-    resetHistorySearch(storageBlockHistoryAccordionCollapse);
-
-    storageBlockViewModalLabel.text("");
-    storageBlockViewItemsStoredContent.text("");
-    Carousel.clearCarousel(storageBlockViewCarousel);
-    KeywordAttUtils.clearHideKeywordDisplay(viewKeywordsSection);
-    KeywordAttUtils.clearHideAttDisplay(viewAttsSection);
-    
-}
-
-function setupView(blockId){
-    Main.processStart();
-    console.log("Setting up view for storage block " + blockId);
-    resetView();
-    storageBlockViewId.text(blockId);
-    UriUtils.addOrReplaceParams("view", blockId);
-    storageBlockViewModalLabel.text(blockId);
-    StorageBlockTree.getBlockBreadcrumbs(storageBlockViewBreadcrumbContainer, blockId);
-
-    //TODO:: do this in await getter
-    Rest.call({
-    	spinnerContainer: storageBlockViewModal,
-    	url: Rest.passRoot +"/inventory/storage-block/" + blockId,
-    	failMessagesDiv: storageBlockViewMessages,
-    	done: async function(data){
-            let promises = [];
-            let children = getStorageBlockChildrenData(blockId);
-            let storageBlockItems = getStorageBlockItemData(blockId);
-            KeywordAttUtils.processKeywordDisplay(viewKeywordsSection, data.keywords);
-            KeywordAttUtils.processAttDisplay(viewAttsSection, data.attributes);
-            promises.push(ItemCategoryView.setupItemCategoryView(storageBlockViewStoredItemCategories, data.storedCategories))
-            
-            if(data.nickname){
-                storageBlockViewModalLabel.text(data.label + " / " + data.nickname);
-            } else {
-                storageBlockViewModalLabel.text(data.label);
-            }
-            
-            if(data.location){
-                storageBlockViewLocation.text(data.location);
-                storageBlockViewLocationContainer.show();
-            }
-            if(data.description){
-                storageBlockViewDescription.text(data.description);
-                storageBlockViewDescriptionContainer.show();
-            }
-            if(data.capacityMeasures.length){
-                data.capacityMeasures.forEach(function(curCapacity){
-                    let curCapacitySpan = $('<span class="badge bg-secondary m-2 user-select-all"></span>');
-                    curCapacitySpan.text(curCapacity.value+curCapacity.unit)
-                    storageBlockViewCapacity.append(curCapacitySpan);
-                });
-                storageBlockViewCapacityContainer.show();
-            }
-
-            if(data.imageIds.length){
-                console.log("Storage block had images to show.");
-                storageBlockViewCarousel.show();
-                
-                promises.push(Carousel.setCarouselImagesFromIds(data.imageIds, storageBlockViewCarousel));
-            } else {
-                console.log("Storage block had no images to show.");
-                storageBlockViewCarousel.hide();
-            }
+	<script type="module">
+		import { StorageSearchSelect } from '{rootPrefix}/res/js/obj/storageBlock/StorageSearchSelect.js';
+		import { StorageBlockTree } from '{rootPrefix}/res/js/obj/storageBlock/StorageBlockTree.js';
+		import { HistorySearchUtils } from '{rootPrefix}/res/js/HistorySearchUtils.js';
+		import { KeywordAttEdit } from '{rootPrefix}/res/js/obj/ObjEditUtils.js';
+		import { Rest } from '{rootPrefix}/res/js/Rest.js';
+		import { KeywordAttUtils } from '{rootPrefix}/res/js/obj/ObjViewUtils.js';
+		import { ImageSearchSelect } from '{rootPrefix}/res/js/obj/media/ImageSearchSelect.js';
+		import { ImageAddFromSelect } from '{rootPrefix}/res/js/obj/media/ImageAddFromSelect.js';
+		import { ImageAdd } from '{rootPrefix}/res/js/obj/media/ImageAdd.js';
+		import { Getters } from '{rootPrefix}/res/js/obj/Getters.js';
+		import { ItemCategoryView } from '{rootPrefix}/res/js/obj/itemCategory/itemCategoryView.js';
+		import { UriUtils } from '{rootPrefix}/res/js/UriUtils.js';
+		import { ItemCategoryInput } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js';
+		import { Carousel } from '{rootPrefix}/res/js/carousel.js';
+		import { TextCopyUtils } from '{rootPrefix}/res/js/TextCopyUtils.js';
+		import { PageMessageUtils } from '{rootPrefix}/res/js/PageMessageUtils.js';
+		
+		// init necessary modules
+		StorageSearchSelect.initPage();
+		ImageAdd.initPage();
+		ImageAddFromSelect.initPage();
+		
+		window.StorageSearchSelect = StorageSearchSelect;
+		window.StorageBlockTree = StorageBlockTree;
+		window.HistorySearchUtils = HistorySearchUtils;
+		window.KeywordAttEdit = KeywordAttEdit;
+		window.Rest = Rest;
+		window.KeywordAttUtils = KeywordAttUtils;
+		window.ImageSearchSelect = ImageSearchSelect;
+		window.Getters = Getters;
+		window.ItemCategoryView = ItemCategoryView;
+		window.UriUtils = UriUtils;
+		window.ItemCategoryInput = ItemCategoryInput;
+		window.Carousel = Carousel;
+		window.ImageAddFromSelect = ImageAddFromSelect;
+		window.TextCopyUtils = TextCopyUtils;
+		window.PageMessageUtils = PageMessageUtils;
+		
+		console.log("Page modules loaded.");
+	</script>
+	<script defer>
+		
+		// Search.fillInQueryForm($("#mainStorageSearch"));
+		
+		function clearParentInput(caller){
+			caller.siblings("input[name=parentName]").val("");
+			caller.siblings("input[name=parentId]").val("");
+		}
+		
+		function removeStorageBlock(blockId) {
+			if (!confirm("Are you sure you want to delete this storage block? This cannot be undone.")) {
+				return;
+			}
 			
-            storageBlockItems = await storageBlockItems;
-            if(storageBlockItems.empty){
-				storageBlockViewItemsStoredContent.html("<tr><td colspan='5'><h4>No Items</h4></td></tr>");
-            } else {
-                console.log(storageBlockItems.numResults + " items stored.")
-                storageBlockItems.results.forEach(function (item){
-                    let row = $('<tr>' +
-                            '<td class="blockViewItemInImage"></td>' +//image
-                            '<td class="blockViewItemName"></td>' +//name
-                            '<td class="blockViewItemAmountIn"></td>' +//amount in
-                            '<td class="blockViewItemTotal"></td>' +//total
-                            '<td class="blockViewItemActions"><a href="{rootPrefix}/items?view='+item.id+'" class="btn btn-info btn-sm">{#icons/view}{/icons/view}</a> </td>' +//actions
-                            '</tr>');
-                    row.find(".blockViewItemName").text(item.name);
-                    row.find(".blockViewItemAmountIn").text(item.stats.storageBlockStats[blockId].total.value + item.stats.storageBlockStats[blockId].total.unit.symbol);
-                    row.find(".blockViewItemTotal").text(item.stats.total.value + item.stats.total.unit.symbol);
-                    storageBlockViewItemsStoredContent.append(row);
-                });
-            }
-            
-            children = await children;
-            if(children['empty']){
-                storageBlockViewChildrenContainerTitle.text("No children!")
-            } else {
-                children.results.forEach(function (child) {
-                    let newGetParams = new URLSearchParams(window.location.search);
-                    newGetParams.set("view", child.id)
-                    
-                    let newChildLink = $('<li class="list-inline-item"><a href="{rootPrefix}/storage?'+newGetParams.toString()+'"></li></a>');
-                    newChildLink.find("a").text(child.labelText);
-                    storageBlockViewChildrenContainer.append(newChildLink);
-                });
-            }
-            await Promise.all(promises);
-            Main.processStop();
-    	}
-    });
-    
-    setupHistorySearch(storageBlockHistoryAccordionCollapse, blockId);
-}
-
-var viewModal = new bootstrap.Modal(storageBlockViewModal, { });
-
-storageBlockViewModal[0].addEventListener("hidden.bs.modal", function (){
-    UriUtils.removeParam("view");
-});
-
-if(UriUtils.getParams.has("view")){
-    setupView(UriUtils.getParams.get("view"));
-    viewModal.show();
-}
-
-function setBulkInsertInputState(){
-    if(addBulkEnabledInput.is(":checked")){
-        console.log("Disabling bulk insert options");
-        bulkInputControls.show();
-        bulkInputControls.find(":input").attr("disabled", false);
-    } else {
-        console.log("Enabling bulk insert options");
-        bulkInputControls.hide();
-        bulkInputControls.find(":input").attr("disabled", true);
-    }
-}
-
-function padWithZero(num, targetLength) {
-    return String(num).padStart(targetLength, '0');
-}
-
-function getBulkLabel(i, leadingZeroes, numDigits){
-    return addEditLabelInput.val() + " " + padWithZero(i, (leadingZeroes? numDigits:0))
-}
-
-function updateBulkLabelExample(){
-    let num = addBulkNumberInput.val();
-    let numDigits = num.toString().length;
-    let addBulkLeadingZeroes = addBulkLeadingZeroesInput.is(":checked");
-    
-    addBulkExample.text(
-            getBulkLabel(1, addBulkLeadingZeroes, numDigits) +
-            " → " +
-            getBulkLabel(num, addBulkLeadingZeroes, numDigits)
-    );
-}
-
-function getBulkInsertData(origStorageBlockData){
-    let origDataString = JSON.stringify(origStorageBlockData);
-    let output = [ ];
-    
-    let num = addBulkNumberInput.val();
-    let numDigits = num.toString().length;
-    let addBulkLeadingZeroes = addBulkLeadingZeroesInput.is(":checked");
-    
-    for(let i = 1; i <= num; i++){
-        let newData = JSON.parse(origDataString);
-        newData.label = getBulkLabel(i, addBulkLeadingZeroes, numDigits);
-        output.push(newData);
-    }
-    
-    return output;
-}
-
-var storageBlockInventorySheetPrintoutForm = $("#storageBlockInventorySheetPrintoutForm");
-var storageBlockInventorySheetPrintoutFormBlockNameInput = $("#storageBlockInventorySheetPrintoutFormBlockNameInput");
-
-function setupStorageBlockInvSheetPrintoutForm(){
-    storageBlockInventorySheetPrintoutForm[0].reset();
-    
-    storageBlockInventorySheetPrintoutForm.attr("action", Rest.apiRoot + "/media/printouts/storage-block/"+storageBlockViewId.text()+"/storageSheet");
-    storageBlockInventorySheetPrintoutFormBlockNameInput.val(storageBlockViewModalLabel.text());
-}
-
-// showTree("#mainTreeChart");
-</script>
+			console.log("Removing storage block " + blockId);
+			
+			Rest.call({
+				url: Rest.passRoot +"/inventory/storage-block/" + blockId,
+				method: "DELETE",
+				async: false,
+				done: function (data) {
+					PageMessageUtils.reloadPageWithMessage("Removed storage block successfully!", "success", "Success!");
+				},
+				fail: function (data) {
+					console.warn("Bad response from storage block removal request: " + JSON.stringify(data));
+					PageMessageUtils.addMessageToDiv(addEditFormMessages, "danger", "Failed to remove storage block.", "Failed", null);
+				}
+			});
+		}
+		
+		
+		let addEditStorageForm = $("#addEditStorageForm");
+		let addEditModalTitleText = $("#addEditModalLabel");
+		let addEditModalTitleIcon = $("#addEditModalLabelIcon");
+		let addEditFormSubmitButton = $("#addEditFormSubmitButton");
+		let addEditFormMessages = $("#addEditFormMessages");
+		//inputs
+		let addEditFormMode = $("#addEditFormMode");
+		let addEditFormId = $("#addEditFormId");
+		let addEditLabelInput = $("#addEditLabelInput");
+		let addEditNicknameInput = $("#addEditNicknameInput");
+		let addEditDescriptionInput = $("#addEditDescriptionInput");
+		let addEditLocationInput = $("#addEditLocationInput");
+		let addEditParentInputId = $("#addEditParentInputId");
+		let addEditParentInputName = $("#addEditParentInputName");
+		let addEditCategoriesInput = $("#addEditCategoriesInput");
+		let imagesSelected = $(".imagesSelected");
+		let capacityInputDiv = addEditStorageForm.find(".capacityInputDiv");
+		
+		let keywordInputDiv = addEditStorageForm.find(".keywordInputDiv");
+		let attInputDiv = addEditStorageForm.find(".attInputDiv");
+		
+		let addBulkAccord = $("#addBulkAccord");
+		let addBulkEnabledInput = $("#addBulkEnabledInput");
+		let bulkInputControls = $("#bulkInputControls");
+		let addBulkNumberInput = $("#addBulkNumberInput");
+		let addBulkLeadingZeroesInput = $("#addBulkLeadingZeroesInput");
+		let addBulkExample = $("#addBulkExample");
+		
+		
+		function resetAddEdit(){
+			addEditStorageForm.trigger("reset");
+			addEditFormId.val("");
+			imagesSelected.html("");
+			keywordInputDiv.text("");
+			attInputDiv.text("");
+			capacityInputDiv.text("");
+			DselectUtils.resetDselect(addEditCategoriesInput);
+			
+			addBulkEnabledInput.prop("checked", false);
+			addBulkNumberInput.val(1);
+			setBulkInsertInputState();
+		}
+		
+		
+		function setupAddEditForAdd(){
+			Main.processStart();
+			console.log("Setting up add/edit form for add.");
+			resetAddEdit();
+			addBulkAccord.show();
+			addEditFormMode.val("add");
+			addEditModalTitleText.text("Add Storage Block");
+			addEditModalTitleIcon.html(Icons.iconWithSub(Icons.storageBlock, Icons.add));
+			addEditFormSubmitButton.html(Icons.add + ' Add Storage Block');
+			Main.processStop();
+		}
+		
+		function setupAddEditForEdit(blockId){
+			Main.processStart()
+			console.log("Setting up add/edit form for editing storage block " + blockId);
+			resetAddEdit();
+			addBulkAccord.hide();
+			addEditModalTitleIcon.html(Icons.iconWithSub(Icons.storageBlock, Icons.edit));
+			addEditFormMode.val("edit");
+			addEditModalTitleText.text("Edit Storage Block");
+			addEditFormSubmitButton.html(Icons.edit + ' Edit Storage Block');
+			
+			Rest.call({
+				spinnerContainer: addEditModal,
+				url: Rest.passRoot +"/inventory/storage-block/" + blockId,
+				done: function(data){
+					ImageSearchSelect.addSelectedImages(imagesSelected, data.imageIds);
+					addEditFormId.val(blockId);
+					addEditLabelInput.val(data.label);
+					addEditNicknameInput.val(data.nickname);
+					addEditDescriptionInput.text(data.description);
+					addEditLocationInput.val(data.location);
+					DselectUtils.setValues(addEditCategoriesInput, data.storedCategories);
+					if(data.parent){
+						addEditParentInputId.val(data.parent);
+						Getters.StorageBlock.getStorageBlockLabel(data.parent, function(parentLabel){
+							addEditParentInputName.val(parentLabel);
+						});
+					}
+					KeywordAttEdit.addKeywordInputs(keywordInputDiv, data.keywords);
+					KeywordAttEdit.addAttInputs(attInputDiv, data.attributes);
+					// addCapacityInputs(capacityInputDiv, data.capacityMeasures);
+					Main.processStop();
+				}
+			});
+			
+		}
+		
+		addEditStorageForm.submit(async function (event) {
+			event.preventDefault();
+			console.log("Submitting add/edit form.");
+			
+			let addEditData = {
+				label: addEditLabelInput.val(),
+				nickname: addEditNicknameInput.val(),
+				description: addEditDescriptionInput.val(),
+				location: addEditLocationInput.val(),
+				storedCategories: ItemCategoryInput.getValueFromInput(addEditCategoriesInput),
+				capacityMeasures: []
+			};
+			
+			KeywordAttEdit.addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
+			ImageSearchSelect.addImagesToData(addEditData, imagesSelected);
+			
+			capacityInputDiv.children().each(function (i, curCapDiv) {
+				let cur = $(curCapDiv);
+				addEditData.capacityMeasures.push({
+					value: cur.find(".capacityInput")[0].value,
+					unit: cur.find(".unitSelect").find(":selected")[0].value,
+					scale: "ABSOLUTE"
+				});
+			});
+			
+			
+			if (addEditParentInputId.val()) {
+				addEditData.parent = addEditParentInputId.val();
+			} else {
+				addEditData.parent = null;
+			}
+			
+			let result = false;
+			let verb = "";
+			if (addEditFormMode.val() === "add") {
+				verb = "Created";
+				
+				if (addBulkEnabledInput.is(":checked")) {
+					addEditData = getBulkInsertData(addEditData);
+					console.log("Adding new storage blocks in bulk.");
+					await Rest.call({
+						url: Rest.passRoot +"/inventory/storage-block/bulk",
+						method: "POST",
+						data: addEditData,
+						failMessagesDiv: addEditFormMessages,
+						done: function (data) {
+							console.log("Response from create request: " + JSON.stringify(data));
+							result = true;
+						},
+						fail: function (data) {
+							console.warn("Bad response from bulk block add attempt: " + JSON.stringify(data));
+						}
+					});
+				} else {
+					console.log("Adding new storage block.");
+					await Rest.call({
+						url: Rest.passRoot +"/inventory/storage-block",
+						method: "POST",
+						data: addEditData,
+						failMessagesDiv: addEditFormMessages,
+						done: function (data) {
+							console.log("Response from create request: " + JSON.stringify(data));
+							result = true;
+						},
+						fail: function (data) {
+							console.warn("Bad response from block add attempt: " + JSON.stringify(data));
+						}
+					});
+				}
+			} else if (addEditFormMode.val() === "edit") {
+				verb = "Edited";
+				let id = addEditFormId.val();
+				console.log("Editing storage block " + id);
+				
+				await Rest.call({
+					url: Rest.passRoot +"/inventory/storage-block/" + id,
+					method: "PUT",
+					data: addEditData,
+					async: false,
+					done: function (data) {
+						console.log("Response from edit request: " + JSON.stringify(data));
+						result = true;
+					},
+					failMessagesDiv: addEditFormMessages
+				});
+			}
+			
+			if (!result) {
+				PageMessageUtils.addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
+			} else {
+				PageMessageUtils.reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
+			}
+		});
+		
+		let storageBlockViewModal = $('#storageBlockViewModal');
+		let storageBlockViewMessages = $("#storageBlockViewMessages");
+		let storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
+		let storageBlockViewCarousel = $('#storageBlockViewCarousel');
+		
+		let storageBlockHistoryAccordionCollapse = $("#storageBlockHistoryAccordionCollapse");
+		let storageBlockHistoryForm = $('#storageBlockHistoryForm');
+		let storageBlockHistory = $('#storageBlockHistory');
+		
+		let storageBlockViewId = $('#storageBlockViewId');
+		let storageBlockViewLocationContainer = $('#storageBlockViewLocationContainer');
+		let storageBlockViewDescriptionContainer = $('#storageBlockViewDescriptionContainer');
+		let storageBlockViewCapacityContainer = $('#storageBlockViewCapacityContainer');
+		let storageBlockViewLocation = $('#storageBlockViewLocation');
+		let storageBlockViewDescription = $('#storageBlockViewDescription');
+		let storageBlockViewCapacity = $('#storageBlockViewCapacity');
+		let viewKeywordsSection = $('#viewKeywordsSection');
+		let viewAttsSection = $('#viewAttsSection');
+		let storageBlockViewBreadcrumbContainer = $('#storageBlockViewBreadcrumbContainer');
+		let storageBlockViewChildrenContainer = $('#storageBlockViewChildrenContainer');
+		let storageBlockViewChildrenContainerTitle = $('#storageBlockViewChildrenContainerTitle');
+		let storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
+		let storageBlockViewStoredItemCategories = $("#storageBlockViewStoredItemCategories");
+		
+		function resetView(){
+			storageBlockViewMessages.text("");
+			storageBlockViewId.text('');
+			storageBlockViewLocationContainer.hide();
+			storageBlockViewLocation.text('');
+			storageBlockViewBreadcrumbContainer.text('');
+			storageBlockViewChildrenContainer.text('');
+			storageBlockViewChildrenContainerTitle.text("Children:");
+			
+			storageBlockViewDescriptionContainer.hide();
+			storageBlockViewDescription.text("");
+			
+			storageBlockViewCapacity.text('');
+			storageBlockViewCapacityContainer.hide();
+			storageBlockViewStoredItemCategories.text('');
+			
+			HistorySearchUtils.resetHistorySearch(storageBlockHistoryAccordionCollapse);
+			
+			storageBlockViewModalLabel.text("");
+			storageBlockViewItemsStoredContent.text("");
+			Carousel.clearCarousel(storageBlockViewCarousel);
+			KeywordAttUtils.clearHideKeywordDisplay(viewKeywordsSection);
+			KeywordAttUtils.clearHideAttDisplay(viewAttsSection);
+			
+		}
+		
+		function setupView(blockId){
+			Main.processStart();
+			console.log("Setting up view for storage block " + blockId);
+			resetView();
+			storageBlockViewId.text(blockId);
+			UriUtils.addOrReplaceParams("view", blockId);
+			storageBlockViewModalLabel.text(blockId);
+			StorageBlockTree.getBlockBreadcrumbs(storageBlockViewBreadcrumbContainer, blockId);
+			
+			//TODO:: do this in await getter
+			Rest.call({
+				spinnerContainer: storageBlockViewModal,
+				url: Rest.passRoot +"/inventory/storage-block/" + blockId,
+				failMessagesDiv: storageBlockViewMessages,
+				done: async function(data){
+					let promises = [];
+					let children = Getters.StorageBlock.getStorageBlockChildrenData(blockId);
+					let storageBlockItems = Getters.StorageBlock.getStorageBlockItemData(blockId);
+					KeywordAttUtils.processKeywordDisplay(viewKeywordsSection, data.keywords);
+					KeywordAttUtils.processAttDisplay(viewAttsSection, data.attributes);
+					promises.push(ItemCategoryView.setupItemCategoryView(storageBlockViewStoredItemCategories, data.storedCategories))
+					
+					if(data.nickname){
+						storageBlockViewModalLabel.text(data.label + " / " + data.nickname);
+					} else {
+						storageBlockViewModalLabel.text(data.label);
+					}
+					
+					if(data.location){
+						storageBlockViewLocation.text(data.location);
+						storageBlockViewLocationContainer.show();
+					}
+					if(data.description){
+						storageBlockViewDescription.text(data.description);
+						storageBlockViewDescriptionContainer.show();
+					}
+					if(data.capacityMeasures.length){
+						data.capacityMeasures.forEach(function(curCapacity){
+							let curCapacitySpan = $('<span class="badge bg-secondary m-2 user-select-all"></span>');
+							curCapacitySpan.text(curCapacity.value+curCapacity.unit)
+							storageBlockViewCapacity.append(curCapacitySpan);
+						});
+						storageBlockViewCapacityContainer.show();
+					}
+					
+					if(data.imageIds.length){
+						console.log("Storage block had images to show.");
+						storageBlockViewCarousel.show();
+						
+						promises.push(Carousel.setCarouselImagesFromIds(data.imageIds, storageBlockViewCarousel));
+					} else {
+						console.log("Storage block had no images to show.");
+						storageBlockViewCarousel.hide();
+					}
+					
+					storageBlockItems = await storageBlockItems;
+					if(storageBlockItems.empty){
+						storageBlockViewItemsStoredContent.html("<tr><td colspan='5'><h4>No Items</h4></td></tr>");
+					} else {
+						console.log(storageBlockItems.numResults + " items stored.")
+						storageBlockItems.results.forEach(function (item){
+							let row = $('<tr>' +
+								'<td class="blockViewItemInImage"></td>' +//image
+								'<td class="blockViewItemName"></td>' +//name
+								'<td class="blockViewItemAmountIn"></td>' +//amount in
+								'<td class="blockViewItemTotal"></td>' +//total
+								'<td class="blockViewItemActions"><a href="{rootPrefix}/items?view='+item.id+'" class="btn btn-info btn-sm">{#icons/view}{/icons/view}</a> </td>' +//actions
+								'</tr>');
+							row.find(".blockViewItemName").text(item.name);
+							row.find(".blockViewItemAmountIn").text(item.stats.storageBlockStats[blockId].total.value + item.stats.storageBlockStats[blockId].total.unit.symbol);
+							row.find(".blockViewItemTotal").text(item.stats.total.value + item.stats.total.unit.symbol);
+							storageBlockViewItemsStoredContent.append(row);
+						});
+					}
+					
+					children = await children;
+					if(children['empty']){
+						storageBlockViewChildrenContainerTitle.text("No children!")
+					} else {
+						children.results.forEach(function (child) {
+							let newGetParams = new URLSearchParams(window.location.search);
+							newGetParams.set("view", child.id)
+							
+							let newChildLink = $('<li class="list-inline-item"><a href="{rootPrefix}/storage?'+newGetParams.toString()+'"></li></a>');
+							newChildLink.find("a").text(child.labelText);
+							storageBlockViewChildrenContainer.append(newChildLink);
+						});
+					}
+					await Promise.all(promises);
+					Main.processStop();
+				}
+			});
+			
+			HistorySearchUtils.setupHistorySearch(storageBlockHistoryAccordionCollapse, blockId);
+		}
+		
+		let viewModal = new bootstrap.Modal(storageBlockViewModal, { });
+		
+		storageBlockViewModal[0].addEventListener("hidden.bs.modal", function (){
+			UriUtils.removeParam("view");
+		});
+		
+		$(document).ready(function() {
+			if (UriUtils.getParams.has("view")) {
+				setupView(UriUtils.getParams.get("view"));
+				viewModal.show();
+			}
+		});
+		
+		function setBulkInsertInputState(){
+			if(addBulkEnabledInput.is(":checked")){
+				console.log("Disabling bulk insert options");
+				bulkInputControls.show();
+				bulkInputControls.find(":input").attr("disabled", false);
+			} else {
+				console.log("Enabling bulk insert options");
+				bulkInputControls.hide();
+				bulkInputControls.find(":input").attr("disabled", true);
+			}
+		}
+		
+		function padWithZero(num, targetLength) {
+			return String(num).padStart(targetLength, '0');
+		}
+		
+		function getBulkLabel(i, leadingZeroes, numDigits){
+			return addEditLabelInput.val() + " " + padWithZero(i, (leadingZeroes? numDigits:0))
+		}
+		
+		function updateBulkLabelExample(){
+			let num = addBulkNumberInput.val();
+			let numDigits = num.toString().length;
+			let addBulkLeadingZeroes = addBulkLeadingZeroesInput.is(":checked");
+			
+			addBulkExample.text(
+				getBulkLabel(1, addBulkLeadingZeroes, numDigits) +
+				" → " +
+				getBulkLabel(num, addBulkLeadingZeroes, numDigits)
+			);
+		}
+		
+		function getBulkInsertData(origStorageBlockData){
+			let origDataString = JSON.stringify(origStorageBlockData);
+			let output = [ ];
+			
+			let num = addBulkNumberInput.val();
+			let numDigits = num.toString().length;
+			let addBulkLeadingZeroes = addBulkLeadingZeroesInput.is(":checked");
+			
+			for(let i = 1; i <= num; i++){
+				let newData = JSON.parse(origDataString);
+				newData.label = getBulkLabel(i, addBulkLeadingZeroes, numDigits);
+				output.push(newData);
+			}
+			
+			return output;
+		}
+		
+		let storageBlockInventorySheetPrintoutForm = $("#storageBlockInventorySheetPrintoutForm");
+		let storageBlockInventorySheetPrintoutFormBlockNameInput = $("#storageBlockInventorySheetPrintoutFormBlockNameInput");
+		
+		function setupStorageBlockInvSheetPrintoutForm(){
+			storageBlockInventorySheetPrintoutForm[0].reset();
+			
+			storageBlockInventorySheetPrintoutForm.attr("action", Rest.apiRoot + "/media/printouts/storage-block/"+storageBlockViewId.text()+"/storageSheet");
+			storageBlockInventorySheetPrintoutFormBlockNameInput.val(storageBlockViewModalLabel.text());
+		}
+		
+		// showTree("#mainTreeChart");
+	</script>
 {/pageScript}
 
     {/include}

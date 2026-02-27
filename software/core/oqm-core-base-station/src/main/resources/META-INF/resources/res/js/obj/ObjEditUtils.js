@@ -1,4 +1,5 @@
-const KeywordAttEdit = {
+
+export const KeywordAttEdit = {
 	addKeywordInput(container, keyword) {
 		console.log("Adding keyword input.");
 		let newInputDiv = $('<div class="input-group mb-1"> \

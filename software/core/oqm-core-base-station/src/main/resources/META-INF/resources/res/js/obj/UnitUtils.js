@@ -1,4 +1,6 @@
-const UnitUtils = {
+import {Rest} from "../Rest.js";
+
+export const UnitUtils = {
 	compatibleUnitMap: null,
 	allUnitOptionsCache: null,
 	compatibleUnitOptionsCache: {},

@@ -1,5 +1,6 @@
+import {Rest} from "../../Rest.js";
 
-const ItemCategoryView = {
+export const ItemCategoryView = {
 	async setupItemCategoryView(container, categoryIdList){
 		let promises = [];
 		for (const categoryId of categoryIdList) {

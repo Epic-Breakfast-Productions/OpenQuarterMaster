@@ -1,4 +1,4 @@
-const KeywordAttUtils = {
+export const KeywordAttUtils = {
 
 	displayKeywordsIn(container, keywords) {
 		keywords.forEach(function (keyword) {

@@ -1,5 +1,6 @@
+import {Icons} from "./Icons.js";
 
-const TextCopyUtils = {
+export const TextCopyUtils = {
 	copyText(buttonClicked, textContainerJq, fromTitle= false) {
 		let copyText = fromTitle ?
 			textContainerJq.prop("title") :

@@ -1,6 +1,7 @@
-// https://fperucic.github.io/treant-js/
+import {Rest} from "../../Rest.js";
 
-const StorageBlockTree = {
+// https://fperucic.github.io/treant-js/
+export const StorageBlockTree = {
 	MAIN_CONFIG: {
 		chart: {
 			container: "",

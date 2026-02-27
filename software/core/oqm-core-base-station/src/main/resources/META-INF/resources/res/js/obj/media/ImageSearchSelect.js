@@ -1,4 +1,7 @@
-const ImageSearchSelect = {
+import {ModalUtils} from "../../ModalUtils.js";
+import {Rest} from "../../Rest.js";
+
+export const ImageSearchSelect = {
 	imageSearchSelectModal: $("#imageSearchSelectModal"),
 	searchForm: $("#imageSearchSelectForm"),
 	searchResults: $("#imageSearchSelectResults"),
@@ -21,7 +24,7 @@ const ImageSearchSelect = {
 	},
 	addSelectedImages(selectedImagesDiv, imageList) {
 		ImageSearchSelect.setupImageSearchModal(selectedImagesDiv);
-		var titleArr = [];
+		let titleArr = [];
 		imageList.forEach(async function (imageId, i) {
 			await Rest.call({
 				async: false,
@@ -68,7 +71,7 @@ ImageSearchSelect.searchForm.on("submit", function (event) {
 	event.preventDefault();
 	console.log("Submitting search form.");
 
-	var searchParams = new URLSearchParams(new FormData(event.target));
+	let searchParams = new URLSearchParams(new FormData(event.target));
 	console.log("URL search params: " + searchParams);
 
 	Rest.call({
