@@ -28,7 +28,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-websockets-next'
 	implementation 'io.quarkus:quarkus-container-image-docker'
 
-	implementation 'org.webjars:jquery:3.7.1'
+	implementation 'org.webjars:jquery:4.0.0'
 
 	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.4.1'
 
