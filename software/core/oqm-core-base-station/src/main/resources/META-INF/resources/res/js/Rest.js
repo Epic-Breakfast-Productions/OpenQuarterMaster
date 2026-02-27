@@ -1,5 +1,5 @@
-import {SpinnerUtils} from "./SpinnerUtils";
-import {PageMessageUtils} from "./PageMessageUtils";
+import {SpinnerUtils} from "./SpinnerUtils.js";
+import {PageMessageUtils} from "./PageMessageUtils.js";
 
 export const Rest = {
 	wholeBody: $('body'),

@@ -1,7 +1,9 @@
-let Search = {
+import {DselectUtils} from "./DselectUtils.js";
+
+export const SearchUtils = {
 	mainPageSearch: $('#mainPageSearch'),
 	hasMainPageSearch: function (){
-		return Search.mainPageSearch.length === 1;
+		return SearchUtils.mainPageSearch.length === 1;
 	},
 	paginationClick: function (formId, page) {
 		console.log("Paginating. Form Id: \"" + formId, "\", page: " + page);
@@ -96,32 +98,35 @@ let Search = {
 	resetPageToOne: function (pageNumInputId) {
 		console.log("page num input reset to 1");
 		$("#" + pageNumInputId).val(1);
+	},
+
+	initPage: function(){
+		console.log("Initting search utils.");
+		// TODO:: attach handlers to all search forms
+		$(document).ready(function(){
+			Main.processStart();
+			if (SearchUtils.hasMainPageSearch()) {
+				console.log("Filling in main search form from GET params")
+				SearchUtils.fillInQueryForm(SearchUtils.mainPageSearch);
+				// Search.mainPageSearch.submit();
+			} else {
+				console.log("Page has no main search to fill in.")
+			}
+			Main.processStop();
+		});
+
+		$(".pagingSearchForm").each(function (i, form) {
+			let pageNumInputId = $(form).find('input[name="pageNum"]').get(0).id;
+			$(form).find(":input").each(function (i2, input) {
+				if (input.name != "pageNum") {
+					input.addEventListener('change', function () {
+						SearchUtils.resetPageToOne(pageNumInputId);
+					});
+				}
+			});
+		});
+
+		console.log("Done initting search utils.");
 	}
 }
-
-// TODO:: attach handlers to all search forms
-
-
-$(document).ready(function(){
-	Main.processStart();
-	if (Search.hasMainPageSearch()) {
-		console.log("Filling in main search form from GET params")
-		Search.fillInQueryForm(Search.mainPageSearch);
-		// Search.mainPageSearch.submit();
-	} else {
-		console.log("Page has no main search to fill in.")
-	}
-	Main.processStop();
-});
-
-$(".pagingSearchForm").each(function (i, form) {
-	let pageNumInputId = $(form).find('input[name="pageNum"]').get(0).id;
-	$(form).find(":input").each(function (i2, input) {
-		if (input.name != "pageNum") {
-			input.addEventListener('change', function () {
-				Search.resetPageToOne(pageNumInputId);
-			});
-		}
-	});
-});
 

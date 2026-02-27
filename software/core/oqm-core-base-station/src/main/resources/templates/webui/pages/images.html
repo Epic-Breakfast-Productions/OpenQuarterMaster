@@ -126,7 +126,7 @@
 {/modals}
 {#scripts}
     <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
-    <script src="{rootPrefix}/res/js/search.js"></script>
+    <script src="{rootPrefix}/META-INF/resources/res/js/searchUtils.js"></script>
     <script src="{rootPrefix}/res/js/historySearch.js"></script>
     <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
     <script src="{rootPrefix}/res/js/obj/objView.js"></script>
@@ -134,7 +134,7 @@
 {/scripts}
 {#pageScript}
 <script>
-Search.fillInQueryForm($("#mainImageSearch"));
+SearchUtils.fillInQueryForm($("#mainImageSearch"));
 
 var addEditImageForm = $("#addEditImageForm");
 var addEditModalLabel = $("#addEditModalLabel");
