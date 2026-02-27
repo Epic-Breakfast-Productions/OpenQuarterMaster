@@ -4,7 +4,7 @@
  *
  * @type {{Parsing: {parseMarkdown: function(*): *}}}
  */
-const Markdown = {
+export let MarkdownUtils = {
 	Parsing: {
 		/**
 		 * Parses the given markdown string and returns the sanitized html.
@@ -44,11 +44,8 @@ const Markdown = {
 
 			return OverType.initFromData(
 				editorSelector,
-				Markdown.Editor.inputDefaults
+				MarkdownUtils.Editor.inputDefaults
 			);
 		},
-
 	}
 }
-
-document.getElementById()

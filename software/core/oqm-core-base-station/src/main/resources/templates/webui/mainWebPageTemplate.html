@@ -49,10 +49,10 @@ Ingests:
 	{#if navbar == "full"}
 	<div class="container-fluid">
 		<a class="navbar-brand p-0" href="{rootPrefix}/overview">
-			<img src="{rootPrefix}/media/logo.svg" alt=""  id="topOqmLogo">
+			<img src="{rootPrefix}/media/logo.svg" alt="" id="topOqmLogo">
 		</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavBar"
-				aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
+			aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
 			<span class="navbar-toggler-icon"></span>
 		</button>
 		<div class="collapse navbar-collapse navbar-expand-md" id="mainNavBar">
@@ -64,7 +64,7 @@ Ingests:
 							<!-- Selected db: {selectedOqmDb} -->
 							<select class="form-select" id="navDatabaseSelector" aria-label="Database Selection" style="max-width: 140px;" onchange="OqmDbUtils.newDbSelected();">
 								{#for curOqmDb in oqmDbs}
-									{#let curId=curOqmDb.get("id").asText()}
+									{#let curId = curOqmDb.get("id").asText()}
 										<option value="{curId}" {#if curId.equals(selectedOqmDb)}selected{/if}>{curOqmDb.get("displayName").asText()}</option>
 									{/let}
 								{/for}
@@ -74,7 +74,7 @@ Ingests:
 				</li>
 				<li class="nav-item">
 					<a class="nav-link {#if page is 'overview'}active{/if}" href="{rootPrefix}/overview">
-						{#icons/pageIcon page='overview'}{/icons/pageIcon} Overview
+						{#icons/pageIcon page = 'overview'}{/icons/pageIcon} Overview
 						{#if page is 'overview'}
 						<span class="visually-hidden">(current)</span>
 						{/if}
@@ -82,7 +82,7 @@ Ingests:
 				</li>
 				<li class="nav-item">
 					<a class="nav-link {#if page is 'storage'}active{/if}" href="{rootPrefix}/storage">
-						{#icons/pageIcon page='storage'}{/icons/pageIcon} Storage
+						{#icons/pageIcon page = 'storage'}{/icons/pageIcon} Storage
 						{#if page is 'storage'}
 						<span class="visually-hidden">(current)</span>
 						{/if}
@@ -90,7 +90,7 @@ Ingests:
 				</li>
 				<li class="nav-item">
 					<a class="nav-link pe-0 {#if page is 'items'}active{/if}" href="{rootPrefix}/items">
-						{#icons/pageIcon page='items'}{/icons/pageIcon} Items
+						{#icons/pageIcon page = 'items'}{/icons/pageIcon} Items
 						{#if page is 'items'}
 						<span class="visually-hidden">(current)</span>
 						{/if}
@@ -99,7 +99,7 @@ Ingests:
 				
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle ps-0 {#if page is 'itemLists' || page is 'categories' || page is 'itemCheckout' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
-							aria-haspopup="true" aria-expanded="false">&nbsp;</a>
+						aria-haspopup="true" aria-expanded="false">&nbsp;</a>
 					<div class="dropdown-menu">
 						<!-- Not ready yet
 						<a class="dropdown-item {#if page is 'itemLists'}active{/if}" href="/itemLists">
@@ -136,7 +136,7 @@ Ingests:
 				</li>
 				<li class="nav-item dropdown">
 					<a class="nav-link dropdown-toggle {#if page is 'images' || page is 'codes' || page is 'files' || page is 'help' }active{/if}" data-bs-toggle="dropdown" href="#" role="button"
-							aria-haspopup="true" aria-expanded="false">
+						aria-haspopup="true" aria-expanded="false">
 						{#icons/icon icon='infinity'}{/icons/icon} Other</a>
 					<div class="dropdown-menu">
 						<a class="dropdown-item {#if page is 'images'}active{/if}" href="{rootPrefix}/images">
@@ -166,7 +166,7 @@ Ingests:
 					</div>
 				</li>
 			</ul>
-		
+			
 			<form class="d-flex me-auto" method="get" action="{rootPrefix}/items" id="navSearchForm">
 				<div class="input-group">
 					<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name" style="max-width:150px;">
@@ -197,23 +197,23 @@ Ingests:
 						<a class="dropdown-item" href="{config:['service.auth.userSettingsUrl']}" id="youEditLink" target="_blank">
 							{#icons/edit}{/icons/edit} Account Settings
 						</a>
-					{#if userInfo.getRoles().contains('userAdmin') || userInfo.getRoles().contains('inventoryAdmin')}
-					<div class="dropdown-divider"></div>
-					{/if}
-					{#if userInfo.getRoles().contains('userAdmin')}
-					<a class="dropdown-item" href="{rootPrefix}/userAdmin" id="userAdminLink">
-						{#icons/userAdmin}{/icons/userAdmin} User Administration
-					</a>
-					{/if}
-					{#if userInfo.getRoles().contains('inventoryAdmin')}
-					<a class="dropdown-item" href="{rootPrefix}/inventoryAdmin" id="inventoryAdminLink">
-						{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Admin
-					</a>
-					{/if}
-					<button class="btn-link dropdown-item" id="copyJwtButton" data-token="{userToken}" onclick="navigator.clipboard.writeText(this.dataset.token);">
-						{#icons/copy}{/icons/copy} Copy Token
-					</button>
-					<div class="dropdown-divider"></div>
+						{#if userInfo.getRoles().contains('userAdmin') || userInfo.getRoles().contains('inventoryAdmin')}
+						<div class="dropdown-divider"></div>
+						{/if}
+						{#if userInfo.getRoles().contains('userAdmin')}
+						<a class="dropdown-item" href="{rootPrefix}/userAdmin" id="userAdminLink">
+							{#icons/userAdmin}{/icons/userAdmin} User Administration
+						</a>
+						{/if}
+						{#if userInfo.getRoles().contains('inventoryAdmin')}
+						<a class="dropdown-item" href="{rootPrefix}/inventoryAdmin" id="inventoryAdminLink">
+							{#icons/inventoryAdmin}{/icons/inventoryAdmin} Inventory Admin
+						</a>
+						{/if}
+						<button class="btn-link dropdown-item" id="copyJwtButton" data-token="{userToken}" onclick="navigator.clipboard.writeText(this.dataset.token);">
+							{#icons/copy}{/icons/copy} Copy Token
+						</button>
+						<div class="dropdown-divider"></div>
 						<a class="dropdown-item" href="{rootPrefix}{config:['quarkus.oidc.logout.path']}" id="logoutButton">
 							{#icons/icon icon='door-closed'}{/icons/icon} Logout
 						</a>
@@ -256,15 +256,15 @@ Ingests:
 
 <div id="mainContainer" class="container flex-grow-1">
 	{#if showTitle}
-		<h1>{#icons/pageIcon page=page addSpace=true}{/icons/pageIcon} {title}</h1>
-		{#insert additionalTitleContent}{/}
-		
-		<div id="messageDiv">
-		</div>
-		<hr/>
+	<h1>{#icons/pageIcon page=page addSpace=true}{/icons/pageIcon} {title}</h1>
+	{#insert additionalTitleContent}{/}
+	
+	<div id="messageDiv">
+	</div>
+	<hr/>
 	{#else}
-		<div id="messageDiv">
-		</div>
+	<div id="messageDiv">
+	</div>
 	{/if}
 	
 	<main class="" role="main">
@@ -289,15 +289,15 @@ Ingests:
 			
 			<div class="dropup color-modes" id="theme-picker">
 				<button class="btn btn-link p-0 text-decoration-none dropdown-toggle"
-						id="bd-theme"
-						type="button"
-						aria-expanded="false"
-						data-bs-toggle="dropdown"
-						data-bs-display="static">
+					id="bd-theme"
+					type="button"
+					aria-expanded="false"
+					data-bs-toggle="dropdown"
+					data-bs-display="static">
 					<span class="theme-icon-active">
 						{#icons/themeAuto addSpace=true}{/icons/themeAuto}
 					</span>
-							<span id="bd-theme-text">
+					<span id="bd-theme-text">
 					Toggle theme
 					</span>
 				</button>
@@ -336,12 +336,12 @@ Ingests:
 					</li>
 				</ul>
 			</div>
-			<a href="{rootPrefix}/help">{#icons/help /} Help & User Guide</a><br />
+			<a href="{rootPrefix}/help">{#icons/help /} Help & User Guide</a><br/>
 			<small class="fw-lighter fst-italic text-muted">
 				<div class="d-grid gap-2">
 					<button class="btn btn-outline-success btn-sm" type="button" data-bs-toggle="collapse"
-							data-bs-target="#pageLoadInfoCollapse" aria-expanded="false"
-							aria-controls="pageLoadInfoCollapse">
+						data-bs-target="#pageLoadInfoCollapse" aria-expanded="false"
+						aria-controls="pageLoadInfoCollapse">
 						Page Loaded: <span id="pageLoadTimestamp">{cdi:DateTimeService.formatForUi()}</span>
 						(Server time)
 					</button>
@@ -349,7 +349,7 @@ Ingests:
 				<div class="collapse" id="pageLoadInfoCollapse">
 					<div class="card card-body">
 						Service id: <code class="user-select-all"
-								id="traceServiceName">{config:['quarkus.application.name']}</code><br/>
+							id="traceServiceName">{config:['quarkus.application.name']}</code><br/>
 						Trace id: <code class="user-select-all" id="traceId">{traceId}</code>
 						<!-- TODO:: link to Jaeger? -->
 					</div>
@@ -358,21 +358,21 @@ Ingests:
 		</div>
 		<div id="serverInfo" class="col-sm-4">
 			{#if config:['service.runBy.logo'] != " "}
-				<img src="/media/runBy/logo" style="float:right; max-width: 30%;">
+			<img src="/media/runBy/logo" style="float:right; max-width: 30%;">
 			{/if}
 			{#if config:['service.runBy.name'] != " "}
-				<span class="h5">Run by:</span><br/>
-				{config:['service.runBy.name']}
+			<span class="h5">Run by:</span><br/>
+			{config:['service.runBy.name']}
 			{/if}
 			<br/>
 			{#if config:['service.runBy.email'] != " " || config:['service.runBy.phone'] != " " || config:['service.runBy.website'] != " "}
-				<span class="h6">Contact Info:</span><br/>
-				{#if config:['service.runBy.email'] != " "}<a href="mailto:{config:['service.runBy.email']}">{config:['service.runBy.email']}</a>
-					<br/>{/if}
-				{#if config:['service.runBy.phone'] != " "}<a href="tel:{config:['service.runBy.phone']}">{config:['service.runBy.phone']}</a>
-					<br/>{/if}
-				{#if config:['service.runBy.website'] != " "}<a href="{config:['service.runBy.website']}">{config:['service.runBy.website']}</a>
-					<br/>{/if}
+			<span class="h6">Contact Info:</span><br/>
+			{#if config:['service.runBy.email'] != " "}<a href="mailto:{config:['service.runBy.email']}">{config:['service.runBy.email']}</a>
+			<br/>{/if}
+			{#if config:['service.runBy.phone'] != " "}<a href="tel:{config:['service.runBy.phone']}">{config:['service.runBy.phone']}</a>
+			<br/>{/if}
+			{#if config:['service.runBy.website'] != " "}<a href="{config:['service.runBy.website']}">{config:['service.runBy.website']}</a>
+			<br/>{/if}
 			{/if}
 		</div>
 		<div class="col-sm-4">
@@ -386,6 +386,8 @@ Ingests:
 {#insert modals}{/}
 
 <!-- scripts -->
+
+<!-- Libraries -->
 <script src="{rootPrefix}/webjars/jquery/4.0.0/jquery.min.js"></script>
 <script src="{rootPrefix}/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
 <script src="{rootPrefix}/lib/luxon/3.3.0/luxon.min.js"></script>
@@ -395,30 +397,34 @@ Ingests:
 <script src="{rootPrefix}/lib/DOMPurify/3.3.1/DOMPurify.min.js"></script>
 <script src="{rootPrefix}/lib/Marked/17.0.1/marked.min.js"></script>
 <script src="{rootPrefix}/lib/overtype/2.2.0/overtype.min.js"></script>
-<script src="{rootPrefix}/res/js/Markdown.js"></script>
+<!-- needed globally and assured loaded synchronously as non-modules -->
 <script src="{rootPrefix}/res/js/constants.js"></script>
 <script src="{rootPrefix}/res/js/main.js"></script>
+<!-- Bring in libs that are needed by the plain js / need activated -->
+<script type="module">
+	import { MarkdownUtils } from '{rootPrefix}/res/js/MarkdownUtils.js';//this exact one doesn't need to be here, but was a test
+	
+	//allow direct usage of imported utilities in html
+	window.MarkdownUtils = MarkdownUtils;
+	
+	console.log("Main modules loaded.");
+</script>
+
+<!-- TODO things to turn into modules and include above -->
+<script src="{rootPrefix}/res/js/pageMessages.js"></script>
+<script src="{rootPrefix}/res/js/OqmDb.js"></script>
+<script src="{rootPrefix}/res/js/dselectHelpers.js"></script>
+
+<!-- TODO things to turn into modules -->
 <script src="{rootPrefix}/res/js/spinnerHelpers.js"></script>
 <script src="{rootPrefix}/res/js/getParamUtils.js"></script>
-<script src="{rootPrefix}/res/js/pageMessages.js"></script>
-<script src="{rootPrefix}/res/js/dselectHelpers.js"></script>
 <script src="{rootPrefix}/res/js/rest.js"></script>
 <script src="{rootPrefix}/res/js/timeHelpers.js"></script>
-<script src="{rootPrefix}/res/js/OqmDb.js"></script>
 <script src="{rootPrefix}/res/js/icons.js"></script>
 <script src="{rootPrefix}/res/js/links.js"></script>
 <script src="{rootPrefix}/res/js/modalHelpers.js"></script>
-<script>
 
-</script>
 {#insert scripts}{/}
-{!
-{#if styleSheets??}
-{#for script in scripts}
-<script src="{script}"></script>
-{/for}
-{/if}
-!}
 
 {#insert pageScript}{/}
 

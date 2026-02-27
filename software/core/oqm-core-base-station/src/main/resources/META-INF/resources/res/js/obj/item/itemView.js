@@ -498,7 +498,7 @@ const ItemView = {
 				FileAttachmentView.setupObjectView(ItemView.itemViewFiles, itemData.attachedFiles, ItemView.itemViewMessages);
 
 				if (itemData.description) {
-					Markdown.Parsing.displayInDiv(
+					MarkdownUtils.Parsing.displayInDiv(
 						itemData.description,
 						ItemView.itemViewDescription
 					);
