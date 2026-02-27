@@ -21,11 +21,11 @@
 </tr>
 <tr>
 	{#if showItem}
-	<th scope="col">{#icons/item}{/icons/item} Item</th>{/if}
+	<th scope="col">{#icons/item /} Item</th>{/if}
 	<th scope="col" style="width: 75px;">Status</th>
 	<th scope="col">Amount</th>
 	<th scope="col">
-		{#icons/storageBlock}{/icons/storageBlock} From
+		{#icons/storageBlock /} From
 	</th>
 	<th scope="col">For</th>
 	<th scope="col">By</th>
@@ -41,7 +41,7 @@
 			No Checkouts Found
 		</h2>
 		<p>
-			Checkout an item on the {#links/inventoryItems}{/links/inventoryItems} page!
+			Checkout an item on the {#links/inventoryItems /} page!
 		</p>
 	</td>
 </tr>
@@ -56,9 +56,9 @@
 	{/if}
 	<td class="table-{#if result.get("stillCheckedOut").asBoolean()}active{#else}success{/if}">
 		{#if result.get("stillCheckedOut").asBoolean()}
-		{#icons/transactionCheckout}{/icons/transactionCheckout} Out
+		{#icons/transactionCheckout /} Out
 		{#else}
-		{#icons/transactionCheckin}{/icons/transactionCheckin} In
+		{#icons/transactionCheckin /} In
 		{/if}
 	</td>
 	<td>
@@ -76,7 +76,7 @@
 		{#let checkedOutFor=result.get("checkoutDetails").get("checkedOutFor") }
 		{#when checkedOutFor.get("type").asText()}
 		{#is "OQM_ENTITY"}
-		{#interactingEntityRef entityRef = checkedOutFor.get("entityRef")}{/interactingEntityRef}
+		{#interactingEntityRef entityRef=checkedOutFor.get("entityRef") rootPrefix=rootPrefix /}
 		{#is "EXT_SYS_USER"}
 		{checkedOutFor.get("name")} /
 		{checkedOutFor.get("externalId")}
@@ -84,7 +84,7 @@
 		{/let}
 	</td>
 	<td>
-		{#interactingEntityRef entityRef = result.get("creatorRef")}{/interactingEntityRef}
+		{#interactingEntityRef entityRef = result.get("creatorRef") rootPrefix=rootPrefix /}
 	</td>
 	<td>
 		{#let dueBack = result.get("checkoutDetails").get("dueBack")}
@@ -106,7 +106,7 @@
 		</button>
 		{/if}
 		<button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeItemCheckout('{id}');">
-			{#icons/remove}{/icons/remove}
+			{#icons/remove /}
 		</button>
 	</td>
 	{#else if actionType == 'select'}
@@ -114,15 +114,15 @@
 		<button type="button" class="btn btn-sm btn-success" title="Select"
 			data-bs-toggle="modal" data-bs-target="#{otherModalId}"
 			onclick="">
-			{#icons/select}{/icons/select} Select
+			{#icons/select /} Select
 		</button>
 	</td>
 	{#else if actionType == 'viewCheckin'}
 	<td>
-		{#links/itemCheckoutButton id = result.get("id").asText()}{/links/itemCheckoutButton}
+		{#links/itemCheckoutButton id = result.get("id").asText() /}
 		{#if result.get("stillCheckedOut").asBoolean()}
 		<button type="button" class="btn btn-sm btn-warning" title="Checkin" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionCheckinModal" onclick="ItemStoredTransaction.Checkin.setupForm('{id}', this);">
-			{#icons/transactionCheckin}{/icons/transactionCheckin}
+			{#icons/transactionCheckin /}
 		</button>
 		{/if}
 	</td>

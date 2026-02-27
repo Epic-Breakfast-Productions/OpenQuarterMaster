@@ -58,7 +58,9 @@ def updateHomepageConfig():
                     curUiConfig = json.load(stream)
 
                 if "url" not in curUiConfig or curUiConfig["url"] is None or mainCM.getConfigVal(curUiConfig["urlConfigKey"]) != curUiConfig["url"] :
-                    curUiConfig["url"] = mainCM.getConfigVal(curUiConfig["urlConfigKey"])
+                    result, curUiConfig["url"] = mainCM.waitForConfig(curUiConfig["urlConfigKey"])
+                    if not result:
+                        raise Exception("Could not find url for ui entry: " + curUiConfig["urlConfigKey"])
                     writeBack = True
                 if "order" not in curUiConfig or curUiConfig["order"] is None:
                     curUiConfig["order"] = 999

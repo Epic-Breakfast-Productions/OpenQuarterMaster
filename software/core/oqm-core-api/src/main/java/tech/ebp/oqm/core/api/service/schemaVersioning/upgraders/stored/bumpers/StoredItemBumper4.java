@@ -43,6 +43,8 @@ public class StoredItemBumper4 extends ObjectSchemaVersionBumper<Stored> {
 		if(oldObj.has("amount") && !oldObj.get("amount").isNull() && !oldObj.get("amount").isObject()){
 			UpgradingUtils.deserializeJsonField(oldObj, "amount");
 		}
+		UpgradingUtils.monetaryAmountMongoToJackson((ArrayNode) oldObj.get("prices"));
+		
 		
 		return resultBuilder.build();
 	}
