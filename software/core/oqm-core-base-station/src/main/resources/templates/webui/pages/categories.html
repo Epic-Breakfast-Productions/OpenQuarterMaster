@@ -151,30 +151,55 @@
         {#search/image/imageSearchSelectModal otherModalId="addEditItemCategoryModal" rootPrefix=rootPrefix /}
     {/modals}
     {#scripts}
-        <script src="{rootPrefix}/META-INF/resources/res/js/searchUtils.js"></script>
-        <script src="{rootPrefix}/META-INF/resources/res/js/HistorySearchUtils.js"></script>
-        <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
-        <script src="{rootPrefix}/res/js/obj/objView.js"></script>
-        <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-        <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
-        <script src="{rootPrefix}/res/js/obj/units.js"></script>
-        <script src="{rootPrefix}/res/js/obj/getters.js"></script>
-        <script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
-		<script src="{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
-        <script src="{rootPrefix}/res/js/carousel.js"></script>
-        <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
-        <script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
-        <script src="{rootPrefix}/res/js/obj/media/imageAddFromSelect.js"></script>
-        <script src="{rootPrefix}/res/js/textCopy.js"></script>
-        <script src="{rootPrefix}/lib/treant-js/vendor/raphael.js"></script>
-        <script src="{rootPrefix}/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
-        <script src="{rootPrefix}/lib/treant-js/vendor/jquery.easing.js"></script>
-        <script src="{rootPrefix}/lib/treant-js/Treant.js"></script>
-        <script src="{rootPrefix}/res/js/obj/itemCategory/itemCategoryTree.js"></script>
+		<script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
+		<script src="{rootPrefix}/lib/treant-js/vendor/raphael.js"></script>
+		<script src="{rootPrefix}/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+		<script src="{rootPrefix}/lib/treant-js/vendor/jquery.easing.js"></script>
+		<script src="{rootPrefix}/lib/treant-js/Treant.js"></script>
     {/scripts}
     
     {#pageScript}
-        <script>
+		<script type="module">
+			import { Rest } from '{rootPrefix}/res/js/Rest.js';
+			import { HistorySearchUtils } from '{rootPrefix}/res/js/HistorySearchUtils.js';
+			import { KeywordAttEdit } from '{rootPrefix}/res/js/obj/ObjEditUtils.js';
+			import { KeywordAttUtils } from '{rootPrefix}/res/js/obj/ObjViewUtils.js';
+			import { TextCopyUtils } from '{rootPrefix}/res/js/TextCopyUtils.js';
+			import { ImageAdd } from '{rootPrefix}/res/js/obj/media/ImageAdd.js';
+			import { ImageAddFromSelect } from '{rootPrefix}/res/js/obj/media/ImageAddFromSelect.js';
+			import { ImageSearchSelect } from '{rootPrefix}/res/js/obj/media/ImageSearchSelect.js';
+			import { Carousel } from '{rootPrefix}/res/js/carousel.js';
+			import { Getters } from '{rootPrefix}/res/js/obj/Getters.js'
+			import { StorageSearchSelect } from '{rootPrefix}/res/js/obj/storageBlock/StorageSearchSelect.js';
+			import { UnitUtils } from '{rootPrefix}/res/js/obj/UnitUtils.js';
+			import { ItemCategoryView } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryView.js';
+			import { ItemCategoryTree } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryTree.js';
+			import { ItemCategoryInput } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js';
+			import { UriUtils } from '{rootPrefix}/res/js/UriUtils.js';
+
+			StorageSearchSelect.initPage();
+			ImageAdd.initPage();
+			ImageAddFromSelect.initPage();
+			
+			window.Rest = Rest;
+			window.StorageSearchSelect = StorageSearchSelect;
+			window.HistorySearchUtils = HistorySearchUtils;
+			window.KeywordAttEdit = KeywordAttEdit;
+			window.KeywordAttUtils = KeywordAttUtils;
+			window.TextCopyUtils = TextCopyUtils;
+			window.ImageAddFromSelect = ImageAddFromSelect;
+			window.ImageSearchSelect = ImageSearchSelect;
+			window.Carousel = Carousel;
+			window.Getters = Getters;
+			window.UnitUtils = UnitUtils;
+			window.UriUtils = UriUtils;
+			window.ItemCategoryView = ItemCategoryView;
+			window.ItemCategoryTree = ItemCategoryTree;
+			window.ItemCategoryInput = ItemCategoryInput;
+			
+			console.log("Page modules loaded.");
+		</script>
+        <script defer>
             const Category = {
                 addEditForm: $("#addEditItemCategoryForm"),
                 addEditModalLabel: $("#addEditItemCategoryModalLabel"),
@@ -352,7 +377,7 @@
                     Carousel.clearCarousel(ItemCategoryView.carousel);
 					KeywordAttUtils.clearHideKeywordDisplay(ItemCategoryView.keywordView);
 					KeywordAttUtils.clearHideAttDisplay(ItemCategoryView.attsView);
-                    resetHistorySearch(ItemCategoryView.historyView);
+                    HistorySearchUtils.resetHistorySearch(ItemCategoryView.historyView);
                 },
                 async setupItemCategoryView(categoryId){
                     console.log("Setting up view for item category " + categoryId);
@@ -366,7 +391,7 @@
                         async: false,
                         done: async function (data) {
                             let promises = [];
-                            let children = getItemCategoryChildrenData(categoryId);
+                            let children = Getters.ItemCategories.getItemCategoryChildrenData(categoryId);
                             promises.push(ItemCategoryTree.getBreadcrumbs(ItemCategoryView.breadcrumbContainer, categoryId));
                             ItemCategoryView.modalLabel.text(data.name);
                             promises.push(Carousel.processImagedObjectImages(data, ItemCategoryView.carousel));
@@ -411,7 +436,7 @@
                         },
                         failMessagesDiv: Category.addEditFormMessages
                     });
-                    setupHistorySearch(ItemCategoryView.historyView, categoryId);
+                    HistorySearchUtils.setupHistorySearch(ItemCategoryView.historyView, categoryId);
                 }
             }
 
@@ -421,10 +446,12 @@
                 UriUtils.removeParam("view");
             });
 
-            if(UriUtils.getParams.has("view")){
-                ItemCategoryView.setupItemCategoryView(UriUtils.getParams.get("view"));
-                viewModal.show();
-            }
+			$(document).ready(function() {
+				if(UriUtils.getParams.has("view")){
+					ItemCategoryView.setupItemCategoryView(UriUtils.getParams.get("view"));
+					viewModal.show();
+				}
+			});
         </script>
     {/pageScript}
 {/include}

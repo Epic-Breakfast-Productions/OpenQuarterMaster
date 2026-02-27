@@ -1,6 +1,8 @@
 // https://fperucic.github.io/treant-js/
 
-const ItemCategoryTree = {
+import {Rest} from "../../Rest.js";
+
+export const ItemCategoryTree = {
 	MAIN_CONFIG: {
 		chart: {
 			container: "",
@@ -23,7 +25,7 @@ const ItemCategoryTree = {
 	},
 
 	addChildrenToList(childrenList, curBlock) {
-		var curNode = {
+		let curNode = {
 			text: {
 				name: curBlock.catName,
 				title: curBlock.catName
@@ -52,7 +54,7 @@ const ItemCategoryTree = {
 			url: Rest.passRoot + "/inventory/item-category/tree",
 			done: function (data) {
 				console.log("Successfully got tree data.");
-				var rootChildrenList = chartConfig.nodeStructure.children;
+				let rootChildrenList = chartConfig.nodeStructure.children;
 				data.rootNodes.forEach(function (curRootNode, i) {
 					ItemCategoryTree.addChildrenToList(rootChildrenList, curRootNode);
 				});
@@ -86,11 +88,11 @@ const ItemCategoryTree = {
 			done: function (data) {
 				console.log("Successfully got tree data.");
 
-				var crumbList = $('<ol class="breadcrumb"></ol>');
+				let crumbList = $('<ol class="breadcrumb"></ol>');
 
 				ItemCategoryTree.addCrumbs(data.rootNodes[0], crumbList, toKeepId);
 
-				var nav = $('<nav aria-label="Storage Block Breadcrumb"></nav>');
+				let nav = $('<nav aria-label="Storage Block Breadcrumb"></nav>');
 				nav.append(crumbList);
 				crumbContainer.append(nav);
 			},
