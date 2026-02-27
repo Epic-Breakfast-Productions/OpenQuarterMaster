@@ -1004,7 +1004,7 @@ class UserInteraction:
             toShow += "\tVersion: " + curPackage['version'] + "\n"
             toShow += "\tInstalled?: " + str(curPackage['installed']) + "\n"
             toShow += "\tDescription: " + curPackage['description'] + "\n"
-            toShow += "\n\n\n"
+            toShow += "\n"
         self.dialog.scrollbox(toShow, title="Available Plugins",
                               #    height=UserInteraction.TALL_HEIGHT,
                               # width=UserInteraction.WIDE_WIDTH,

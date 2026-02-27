@@ -366,7 +366,7 @@ const ItemCheckoutView = {
 					break;
 			}
 
-			//checked in by
+			//TODO:: checked in by
 
 		}
 
