@@ -387,19 +387,17 @@ Ingests:
 
 <!-- scripts -->
 
-<!-- Libraries TODO:: wrap these up in imports as relevant-->
+<!-- Libraries, needed globally as this -->
 <script src="{rootPrefix}/webjars/jquery/4.0.0/jquery.min.js"></script>
 <script src="{rootPrefix}/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
 <script src="{rootPrefix}/lib/luxon/3.3.0/luxon.min.js"></script>
-<script src="{rootPrefix}/lib/js-cookie/3.0.5/js.cookie.min.js"></script>
-<script src="{rootPrefix}/lib/dselect/1.0.4/dist/js/dselect.js"></script>
-<script src="{rootPrefix}/lib/DOMPurify/3.3.1/DOMPurify.min.js"></script>
-<script src="{rootPrefix}/lib/Marked/17.0.1/marked.min.js"></script>
-<script src="{rootPrefix}/lib/overtype/2.2.0/overtype.min.js"></script>
+<script src="{rootPrefix}/lib/dselect/1.0.4/dist/js/dselect.js"></script><!-- Not usable as a module -->
+
 <!-- needed globally and assured loaded synchronously as non-modules -->
 <script src="{rootPrefix}/res/js/constants.js"></script>
 <script src="{rootPrefix}/res/js/main.js"></script>
-<!-- Bring in libs that are needed by the plain js / need activated -->
+
+<!-- Bring in libs that are needed everywhere by the plain js / need activated -->
 <script type="module">
 	import { PageMessageUtils } from '{rootPrefix}/res/js/PageMessageUtils.js';
 	import { OqmDbUtils } from '{rootPrefix}/res/js/OqmDbUtils.js';
