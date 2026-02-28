@@ -1,4 +1,4 @@
-import * as Cookies from "../../lib/js-cookie/3.0.5/js.cookie.esm.min.js";
+import Cookies from "../../lib/js-cookie/3.0.5/js.cookie.esm.min.js";
 import {PageMessageUtils} from "./PageMessageUtils.js";
 
 export const OqmDbUtils = {
