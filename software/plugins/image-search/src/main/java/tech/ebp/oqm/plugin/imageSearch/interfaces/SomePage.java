@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.imageSearch;
+package tech.ebp.oqm.plugin.imageSearch.interfaces;
 
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;

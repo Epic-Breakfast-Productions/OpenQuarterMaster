@@ -1,5 +1,31 @@
 # Image Search Plugin
 
+
+ - store image vectors in mongodb
+ - pull image data from OQM
+ - present an endopoint to upload an image, search for matches
+
+
+
+
+
+## TODOS
+
+ - [ ] Replace `imageData.json` with mongodb 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 This plugin is intended to provide image-based searches of items.
 
 Use case is to take a picure of something, and then identify which items in the database it could be based on that image.

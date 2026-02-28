@@ -3,6 +3,7 @@ import java.nio.file.Files
 plugins {
 	id 'java'
 	id 'io.quarkus'
+	id "io.freefair.lombok" version "8.14"
 }
 
 repositories {
@@ -21,8 +22,17 @@ dependencies {
 	implementation 'io.quarkus:quarkus-messaging-kafka'
 	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-arc'
+	implementation 'io.quarkus:quarkus-oidc'
+
+	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.3.0'
+
+	implementation group: 'org.tensorflow', name: 'tensorflow-core-platform', version: '1.1.0'
+	implementation group: 'org.openpnp', name: 'opencv', version: '4.9.0-0'
+
+
 	testImplementation 'io.quarkus:quarkus-junit5'
 	testImplementation 'io.rest-assured:rest-assured'
+	testImplementation 'net.datafaker:datafaker:2.4.4'
 }
 
 group 'tech.ebp.oqm.plugin'
@@ -108,11 +118,11 @@ tasks.register("downloadModels", DownloadModelsTask) {
 	group = "build"
 	description = "Downloads models before build to ensure presence."
 }
-build {
+processResources {
 	mustRunAfter("downloadModels")
 }
 
-tasks.build.configure { dependsOn(tasks.downloadModels) }
+tasks.processResources.configure { dependsOn(tasks.downloadModels) }
 
 /**
  * Used to print the current version of this project.
