@@ -42,20 +42,19 @@
     	{#object/idGenerator/GenerateResultModal /}
     {/modals}
     {#scripts}
-        <script src="{rootPrefix}/META-INF/resources/res/js/searchUtils.js"></script>
-        <script src="{rootPrefix}/META-INF/resources/res/js/HistorySearchUtils.js"></script>
-        <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
-        <script src="{rootPrefix}/res/js/obj/objView.js"></script>
-        <script src="{rootPrefix}/res/js/obj/getters.js"></script>
-        <script src="{rootPrefix}/res/js/textCopy.js"></script>
-        <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorUtils.js"></script>
-        <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorAddEdit.js"></script>
-        
+    
     {/scripts}
     
     {#pageScript}
-        <script>
-        
+        <script type="module">
+		import { IdGeneratorUtils } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorUtils.js';
+		import { IdGeneratorAddEdit } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorAddEdit.js';
+			
+		IdGeneratorAddEdit.initPage();
+		
+		window.IdGeneratorUtils = IdGeneratorUtils;
+		window.IdGeneratorAddEdit = IdGeneratorAddEdit;
+		
         </script>
     {/pageScript}
 {/include}

@@ -1,5 +1,9 @@
+import {DselectUtils} from "../../DselectUtils.js";
+import {Rest} from "../../Rest.js";
+import {PageMessageUtils} from "../../PageMessageUtils.js";
+import {Getters} from "../Getters.js";
 
-const IdGeneratorAddEdit = {
+export const IdGeneratorAddEdit = {
 	formGetters: {
 		messages: function(formJq){
 			return formJq.find("div.formMessages");
@@ -68,7 +72,7 @@ const IdGeneratorAddEdit = {
 		}
 		//TODO:: change label to edit if modal
 
-		Getters.UniqueId.generator(uniqueIdGeneratorId)
+		Getters.Identifiers.generator(uniqueIdGeneratorId)
 			.then(function(generator){
 				IdGeneratorAddEdit.formGetters.id(formJq).val(generator.id);
 				IdGeneratorAddEdit.formGetters.name(formJq).val(generator.name);
@@ -150,9 +154,10 @@ const IdGeneratorAddEdit = {
 		formJq.on("submit", function(event){
 			IdGeneratorAddEdit.submitAddEditForm(event, formJq);
 		});
+	},
+	initPage: function(){
+		$(".idGeneratorAddEditForm").each(function(i, formJs){
+			IdGeneratorAddEdit.setupFormSubmit($(formJs));
+		});
 	}
 }
-
-$(".idGeneratorAddEditForm").each(function(i, formJs){
-	IdGeneratorAddEdit.setupFormSubmit($(formJs));
-});

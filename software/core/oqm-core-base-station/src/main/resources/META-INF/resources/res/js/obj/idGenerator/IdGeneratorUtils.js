@@ -1,5 +1,6 @@
+import {Rest} from "../../Rest.js";
 
-const IdGeneratorUtils = {
+export const IdGeneratorUtils = {
 	modalResultContainer: $("#idGeneratorGenerateResultModalContainer"),
 
 	generate: async function(generatorId, n = 1, resultContainerJq = null, doneFunc = function(){}) {
