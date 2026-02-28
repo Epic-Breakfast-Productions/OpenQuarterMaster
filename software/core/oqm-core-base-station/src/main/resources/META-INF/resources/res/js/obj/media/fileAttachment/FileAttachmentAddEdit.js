@@ -1,5 +1,8 @@
-//TODO:: handle edit
-const FileAttachmentAddEdit = {
+import {Rest} from "../../../Rest.js";
+import {PageMessageUtils} from "../../../PageMessageUtils.js";
+
+// TODO:: #1149 editing
+export const FileAttachmentAddEdit = {
 	formMessages: $("#fileAttachmentAddEditFormMessages"),
 	form: $("#fileAttachmentAddEditForm"),
 	fileInput: $("#fileAttachmentAddEditFormFileInput"),
@@ -55,7 +58,8 @@ const FileAttachmentAddEdit = {
 			},
 			failMessagesDiv: PageMessageUtils.mainMessageDiv
 		});
+	},
+	initPage: function () {
+		FileAttachmentAddEdit.form.on("submit", function(e){FileAttachmentAddEdit.submitForm(e)});
 	}
 };
-
-FileAttachmentAddEdit.form.on("submit", function(e){FileAttachmentAddEdit.submitForm(e)});

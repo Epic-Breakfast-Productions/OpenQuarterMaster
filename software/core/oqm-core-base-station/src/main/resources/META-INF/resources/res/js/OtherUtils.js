@@ -1,4 +1,4 @@
-const OtherUtils = {
+export const OtherUtils = {
 	numBytesToHuman(size) {
 		let sizes = [' Bytes', ' KB', ' MB', ' GB',
 			' TB', ' PB', ' EB', ' ZB', ' YB'];

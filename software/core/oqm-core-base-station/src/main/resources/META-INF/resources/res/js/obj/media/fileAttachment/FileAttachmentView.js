@@ -1,4 +1,9 @@
-const FileAttachmentView = {
+import {Rest} from "../../../Rest.js";
+import {KeywordAttUtils} from "../../ObjViewUtils.js";
+import {OtherUtils} from "../../../OtherUtils.js";
+import {ModalUtils} from "../../../ModalUtils.js";
+
+export const FileAttachmentView = {
 	viewModal: $("#fileAttachmentViewModal"),
 	viewModalMessages: $("#fileAttachmentViewMessages"),
 	previewContainer: $("#fileAttachmentViewPreviewContainer"),
