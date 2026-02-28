@@ -87,7 +87,11 @@ public class CheckoutAmountTransactionApplier extends CheckinOutTransactionAppli
 		if (transaction.isAll()) {
 			amount = stored.getAmount();
 		}
-		
+
+		if (amount.getValue().equals(0)) {
+			throw new IllegalArgumentException("Amount to checkout must be greater than zero.");
+		}
+
 		ItemCheckout.ItemCheckoutBuilder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
 															.checkedOutByEntity(interactingEntity.getId())
 															.item(inventoryItem.getId())
