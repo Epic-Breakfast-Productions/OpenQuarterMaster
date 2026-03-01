@@ -1,4 +1,14 @@
-const ItemStoredTransaction = {
+import {Rest} from "../../Rest.js";
+import {PageMessageUtils} from "../../PageMessageUtils.js";
+import {Getters} from "../Getters.js";
+import {ModalUtils} from "../../ModalUtils.js";
+import {UnitUtils} from "../UnitUtils.js";
+import {Links} from "../../links.js";
+import {KeywordAttEdit} from "../ObjEditUtils.js";
+import {ImageSearchSelect} from "../media/ImageSearchSelect.js";
+import {ItemSearchSelect} from "../item/ItemSearchSelect.js";
+
+export const ItemStoredTransaction = {
 
 	// http://localhost:8080/api/passthrough/inventory/item/673c68565986ac44629caf6c/stored/transact
 	//                      /api/passthrough/inventory/item/{itemId}                /stored/transact
@@ -477,7 +487,7 @@ const ItemStoredTransaction = {
 			item.storageBlocks.forEach(function (blockId) {
 				let newBlockOption = $('<option></option>');
 				newBlockOption.val(blockId);
-				getStorageBlockLabel(blockId, function (blockLabel) {
+				Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
 					newBlockOption.text(blockLabel);
 				});
 				ItemStoredTransaction.Checkin.toBlockInput.append(newBlockOption);
@@ -513,7 +523,7 @@ const ItemStoredTransaction = {
 			let blockOriginal = function () {
 				if (item.storageBlocks.includes(checkout.fromBlock)) {
 					originalOption.prop("disabled", false);
-					getStorageBlockLabel(checkout.fromBlock, function (blockLabel) {
+					Getters.StorageBlock.getStorageBlockLabel(checkout.fromBlock, function (blockLabel) {
 						ItemStoredTransaction.Checkin.toOrigDesc.html(
 							Links.getStorageViewLink(checkout.fromBlock, blockLabel)
 						);
@@ -874,7 +884,7 @@ const ItemStoredTransaction = {
 				item.storageBlocks.forEach(function (blockId) {
 					let newBlockOption = $('<option></option>');
 					newBlockOption.val(blockId);
-					promises.push(getStorageBlockLabel(blockId, function (blockLabel) {
+					promises.push(Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
 						newBlockOption.text(blockLabel);
 					}));
 					ItemStoredTransaction.Checkout.fromBlockSelect.append(newBlockOption);
@@ -1176,7 +1186,7 @@ const ItemStoredTransaction = {
 						if (stored && stored.storageBlock === blockId) {
 							newBlockOption.attr("selected", true);
 						}
-						promises.push(getStorageBlockLabel(blockId, function (blockLabel) {
+						promises.push(Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
 							newBlockOption.text(blockLabel);
 						}));
 						ItemStoredTransaction.Set.blockSelect.append(newBlockOption);
@@ -1418,7 +1428,7 @@ const ItemStoredTransaction = {
 				item.storageBlocks.forEach(function (blockId) {
 					let newBlockOption = $('<option></option>');
 					newBlockOption.val(blockId);
-					promises.push(getStorageBlockLabel(blockId, function (blockLabel) {
+					promises.push(Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
 						newBlockOption.text(blockLabel);
 					}));
 					ItemStoredTransaction.Subtract.fromBlockSelect.append(newBlockOption);
@@ -1730,7 +1740,7 @@ const ItemStoredTransaction = {
 				item.storageBlocks.forEach(function (blockId) {
 					let newBlockOption = $('<option></option>');
 					newBlockOption.val(blockId);
-					promises.push(getStorageBlockLabel(blockId, function (blockLabel) {
+					promises.push(Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
 						newBlockOption.text(blockLabel);
 					}));
 					ItemStoredTransaction.Transfer.fromBlockSelect.append(newBlockOption);
@@ -1756,7 +1766,7 @@ const ItemStoredTransaction = {
 				item.storageBlocks.forEach(function (blockId) {
 					let newBlockOption = $('<option></option>');
 					newBlockOption.val(blockId);
-					promises.push(getStorageBlockLabel(blockId, function (blockLabel) {
+					promises.push(Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
 						newBlockOption.text(blockLabel);
 					}));
 					ItemStoredTransaction.Transfer.toBlockSelect.append(newBlockOption);
@@ -1981,57 +1991,58 @@ const ItemStoredTransaction = {
 				ItemStoredTransaction.Transfer.modal
 			);
 		}
+	},
+	initPage: function () {
+		if (ItemStoredTransaction.Add.form) {
+			ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitFormHandler);
+			ItemStoredTransaction.Add.itemIdInput.on("change", function () {
+				let itemId = ItemStoredTransaction.Add.itemIdInput.val();
+				console.log("Got item for add transaction form. Setting up: ", itemId);
+				ItemStoredTransaction.Add.setupForm(itemId);
+			});
+		}
+
+		if (ItemStoredTransaction.Checkout.form) {
+			ItemStoredTransaction.Checkout.form.on("submit", ItemStoredTransaction.Checkout.submitFormHandler);
+			ItemStoredTransaction.Checkout.itemSearchIdInput.on("change", function () {
+				console.log("Selected new item.");
+				let item = ItemStoredTransaction.Checkout.itemSearchIdInput.val();
+				if (item != null) {
+					ItemStoredTransaction.Checkout.setupForm(item);
+				}
+			});
+		}
+
+		if (ItemStoredTransaction.Set.form) {
+			ItemStoredTransaction.Set.form.on("submit", ItemStoredTransaction.Set.submitFormHandler);
+		}
+
+		if (ItemStoredTransaction.Subtract.form) {
+			ItemStoredTransaction.Subtract.form.on("submit", ItemStoredTransaction.Subtract.submitFormHandler);
+			ItemStoredTransaction.Subtract.itemSearchIdInput.on("change", function () {
+				console.log("Selected new item.");
+				let item = ItemStoredTransaction.Subtract.itemSearchIdInput.val();
+
+				if (item != null) {
+					ItemStoredTransaction.Subtract.setupForm(item);
+				}
+			});
+		}
+
+		if (ItemStoredTransaction.Transfer.form) {
+			ItemStoredTransaction.Transfer.form.on("submit", ItemStoredTransaction.Transfer.submitFormHandler);
+			ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function () {
+				console.log("Selected new item.");
+				let item = ItemStoredTransaction.Transfer.itemSearchIdInput.val();
+
+				if (item != null) {
+					ItemStoredTransaction.Transfer.setupForm(item);
+				}
+			});
+		}
+
+		if (ItemStoredTransaction.Checkin.form) {
+			ItemStoredTransaction.Checkin.form.on("submit", ItemStoredTransaction.Checkin.submitFormHandler);
+		}
 	}
 };
-
-if (ItemStoredTransaction.Add.form) {
-	ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitFormHandler);
-	ItemStoredTransaction.Add.itemIdInput.on("change", function () {
-		let itemId = ItemStoredTransaction.Add.itemIdInput.val();
-		console.log("Got item for add transaction form. Setting up: ", itemId);
-		ItemStoredTransaction.Add.setupForm(itemId);
-	});
-}
-
-if (ItemStoredTransaction.Checkout.form) {
-	ItemStoredTransaction.Checkout.form.on("submit", ItemStoredTransaction.Checkout.submitFormHandler);
-	ItemStoredTransaction.Checkout.itemSearchIdInput.on("change", function () {
-		console.log("Selected new item.");
-		let item = ItemStoredTransaction.Checkout.itemSearchIdInput.val();
-		if (item != null) {
-			ItemStoredTransaction.Checkout.setupForm(item);
-		}
-	});
-}
-
-if (ItemStoredTransaction.Set.form) {
-	ItemStoredTransaction.Set.form.on("submit", ItemStoredTransaction.Set.submitFormHandler);
-}
-
-if (ItemStoredTransaction.Subtract.form) {
-	ItemStoredTransaction.Subtract.form.on("submit", ItemStoredTransaction.Subtract.submitFormHandler);
-	ItemStoredTransaction.Subtract.itemSearchIdInput.on("change", function () {
-		console.log("Selected new item.");
-		let item = ItemStoredTransaction.Subtract.itemSearchIdInput.val();
-
-		if (item != null) {
-			ItemStoredTransaction.Subtract.setupForm(item);
-		}
-	});
-}
-
-if (ItemStoredTransaction.Transfer.form) {
-	ItemStoredTransaction.Transfer.form.on("submit", ItemStoredTransaction.Transfer.submitFormHandler);
-	ItemStoredTransaction.Transfer.itemSearchIdInput.on("change", function () {
-		console.log("Selected new item.");
-		let item = ItemStoredTransaction.Transfer.itemSearchIdInput.val();
-
-		if (item != null) {
-			ItemStoredTransaction.Transfer.setupForm(item);
-		}
-	});
-}
-
-if (ItemStoredTransaction.Checkin.form) {
-	ItemStoredTransaction.Checkin.form.on("submit", ItemStoredTransaction.Checkin.submitFormHandler);
-}

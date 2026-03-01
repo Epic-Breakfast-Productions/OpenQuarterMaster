@@ -1,4 +1,5 @@
 import {Rest} from "../../Rest.js";
+import {ModalUtils} from "../../ModalUtils.js";
 
 export const ItemSearchSelect = {
 	itemSearchSelectModal: $("#itemSearchSelectModal"),
