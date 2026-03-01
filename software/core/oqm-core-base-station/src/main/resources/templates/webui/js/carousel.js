@@ -1,5 +1,5 @@
 //TODO:: determine if necessary
-const Carousel = {
+export const Carousel = {
 	carouselTemplate: '{carouselLines}\
 	',
 	newCarousel(id, objectData=null, toAppendTo=null){
@@ -102,7 +102,3 @@ const Carousel = {
 		return [];
 	}
 }
-
-
-
-

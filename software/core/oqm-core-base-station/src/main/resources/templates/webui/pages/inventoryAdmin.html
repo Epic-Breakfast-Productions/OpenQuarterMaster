@@ -74,7 +74,7 @@
 													<label for="unitAddBaseDimensionInput" class="form-label">Unit Dimension</label>
 													<select class="form-select" id="unitAddBaseDimensionInput" required>
 														{#for curDimension in unitDimensions}
-															<option value="{curDimension}">{curDimension}</option>
+															<option value="{curDimension.asText()}">{curDimension.asText()}</option>
 														{/for}
 													</select>
 												</div>
@@ -302,12 +302,19 @@
 		</div>
 	{/pageContent}
 	{#scripts}
-		<script src="{rootPrefix}/res/js/obj/units.js"></script>
+	<script type="module">
+		import { Rest } from '{rootPrefix}/res/js/Rest.js';
+		import { UnitUtils } from '{rootPrefix}/res/js/obj/UnitUtils.js';
+		
+		window.Rest = Rest;
+		window.UnitUtils = UnitUtils;
+		
+		console.log("Page modules loaded.");
+	</script>
 	{/scripts}
 	{#pageScript}
-		<script>
-
-			var importBulkFileInput = $("#importBulkFileInput")[0];
+		<script defer>
+			let importBulkFileInput = $("#importBulkFileInput")[0];
 
 			$("#bulkImportForm").submit(function (e){
 				e.preventDefault();
@@ -326,25 +333,25 @@
 					failMessagesDiv: $("#dataImportMessages"),
 					done: function (data){
 						console.log("Successfully imported the data.");
-						PageMessages.reloadPageWithMessage("Imported data successfully!", "success", "Success!");
+						PageMessageUtils.reloadPageWithMessage("Imported data successfully!", "success", "Success!");
 					}
 					//TODO:: fail message
 				});
 			});
 
-			var unitAddForm = $("#unitAddForm");
-			var unitAddCategoryInput = $("#unitAddCategoryInput");
-			var unitAddNameInput = $("#unitAddNameInput");
-			var unitAddSymbolInput = $("#unitAddSymbolInput");
-			var unitAddTypeInput = $("#unitAddTypeInput");
+			let unitAddForm = $("#unitAddForm");
+			let unitAddCategoryInput = $("#unitAddCategoryInput");
+			let unitAddNameInput = $("#unitAddNameInput");
+			let unitAddSymbolInput = $("#unitAddSymbolInput");
+			let unitAddTypeInput = $("#unitAddTypeInput");
 
-			var baseFormInputRow = $("#baseFormInputRow");
-			var unitAddBaseDimensionInput = $("#unitAddBaseDimensionInput");
+			let baseFormInputRow = $("#baseFormInputRow");
+			let unitAddBaseDimensionInput = $("#unitAddBaseDimensionInput");
 
-			var derivedFormInputRow = $("#derivedFormInputRow");
-			var unitAddDerivedFromInput = $("#unitAddDerivedFromInput");
-			var unitAddDerivedTypeInput = $("#unitAddDerivedTypeInput");
-			var unitAddDerivedValueInput = $("#unitAddDerivedValueInput");
+			let derivedFormInputRow = $("#derivedFormInputRow");
+			let unitAddDerivedFromInput = $("#unitAddDerivedFromInput");
+			let unitAddDerivedTypeInput = $("#unitAddDerivedTypeInput");
+			let unitAddDerivedValueInput = $("#unitAddDerivedValueInput");
 
 			function newUnitTypeChanged(){
 				switch (unitAddTypeInput.val()){
@@ -391,7 +398,7 @@
 					method: 'POST',
 					data: newUnitRequest,
 					done: function (data){
-						PageMessages.reloadPageWithMessage("Added custom unit successfully!", "success", "Success!");
+						PageMessageUtils.reloadPageWithMessage("Added custom unit successfully!", "success", "Success!");
 					},
 					fail: function (data){
 					}
@@ -422,7 +429,7 @@
                     data: addDbData,
                     failMessagesDiv: addDatabaseFormMessages,
                     done: function (data){
-                        PageMessages.reloadPageWithMessage("Added Database successfully!", "success", "Success!");
+                        PageMessageUtils.reloadPageWithMessage("Added Database successfully!", "success", "Success!");
                     },
                     fail: function (data){
                     }

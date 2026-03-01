@@ -1,7 +1,7 @@
 {#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Items' page='items'}
 {!{@java.util.Map allowedUnitsMap}!}
 {#styleSheets}
-    <link rel="stylesheet" href="{rootPrefix}/lib/Croppie-2.6.4/croppie.css"/>
+    <link rel="stylesheet" href="{rootPrefix}/lib/Croppie/2.6.4/croppie.css"/>
 {/styleSheets}
 {#pageContent}
 <div class="row">
@@ -93,64 +93,33 @@
 
 {#scripts}
     <script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-    <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
-    <script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
-    <script src="{rootPrefix}/res/js/obj/media/imageAddFromSelect.js"></script>
-    <script src="{rootPrefix}/res/js/selectedObjectDivUtils.js"></script>
-    <script src="{rootPrefix}/res/js/search.js"></script>
-    <script src="{rootPrefix}/res/js/identifiers.js"></script>
-    <script src="{rootPrefix}/res/js/other.js"></script>
-    <script src="{rootPrefix}/res/js/historySearch.js"></script>
-    <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
-    <script src="{rootPrefix}/res/js/obj/objView.js"></script>
-    <script src="{rootPrefix}/res/js/storedTypeUtils.js"></script>
-    <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/item/itemSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/units.js"></script>
-    <script src="{rootPrefix}/res/js/obj/getters.js"></script>
-    <script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
-    <script src="{rootPrefix}/res/js/carousel.js"></script>
-    <script src="{rootPrefix}/res/js/pricing.js"></script>
-    <script src="{rootPrefix}/res/js/obj/storageBlock/storageBlockTree.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemCategoryView.js"></script>
-    <script src="{rootPrefix}/res/js/textCopy.js"></script>
-    <script src="{rootPrefix}/res/js/item/extItemSearch.js"></script>
-	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
-	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
-	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/item/itemAddEdit.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemStored/storedView.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemStored/storedFormInput.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemStored/itemStoredEdit.js"></script>
-    <script src="{rootPrefix}/res/js/obj/item/itemView.js"></script>
-    <script src="{rootPrefix}/res/js/CodeScanning.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
-    <script src="{rootPrefix}/res/js/pageComponents.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearch.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredTransaction.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
-	<script src="{rootPrefix}/res/js/entityRef.js"></script>
-	<script src="{rootPrefix}/res/js/associatedLinks.js"></script>
-	<script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorAddEdit.js"></script>
-	<script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorSearchSelect.js"></script>
 {/scripts}
-
-
-
 {#pageScript}
-<script>
-const STORAGE_CLASS = "storageBlock";
+<script type="module">
+	import { Rest } from '{rootPrefix}/res/js/Rest.js';
+	import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
+	import { ItemAddEdit } from '{rootPrefix}/res/js/obj/item/ItemAddEdit.js';
+	import { ItemView } from '{rootPrefix}/res/js/obj/item/ItemView.js';
+	import { ItemStoredEdit } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredEdit.js';
+	import { FileAttachmentSearchSelect } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js';
+	import { HistorySearchUtils } from '{rootPrefix}/res/js/HistorySearchUtils.js';
+	
+	SearchUtils.initPage();
+	ItemAddEdit.initPage();
+	ItemView.initPage();
+	FileAttachmentSearchSelect.initPage();
+	ItemStoredEdit.initPage();
+	
+	window.Rest = Rest;
+	window.ItemAddEdit = ItemAddEdit;
+	window.ItemView = ItemView;
+	window.ItemStoredEdit = ItemStoredEdit;
+	window.HistorySearchUtils = HistorySearchUtils;
+</script>
+<script defer>
 
-var keywordInputTemplate = $('#keywordInputTemplate');
-var attInputTemplate = $('#attInputTemplate');
-var imageInputTemplate = $('#imageInputTemplate');
-
-
-var addFromFileInput = $("#addFromFileInput")[0];
-var addItemFromFileFormMessages = $("#addItemFromFileFormMessages");
+let addFromFileInput = $("#addFromFileInput")[0];
+let addItemFromFileFormMessages = $("#addItemFromFileFormMessages");
 
 $("#addItemFromFileForm").submit(function (e){
     e.preventDefault();
@@ -167,7 +136,7 @@ $("#addItemFromFileForm").submit(function (e){
         data: formData,
         done: function (data){
             console.log("Successfully added items.");
-            PageMessages.reloadPageWithMessage("Added item(s) successfully!", "success", "Success!");
+            PageMessageUtils.reloadPageWithMessage("Added item(s) successfully!", "success", "Success!");
         },
         failMessagesDiv: addItemFromFileFormMessages
     });
@@ -184,11 +153,11 @@ function removeItem(itemId){
         method: "DELETE",
         done: function(data) {
             console.log("Response from remove request: " + JSON.stringify(data));
-            PageMessages.reloadPageWithMessage("Removed item successfully!", "success", "Success!");
+            PageMessageUtils.reloadPageWithMessage("Removed item successfully!", "success", "Success!");
         },
         fail: function(data) {
             console.warn("Bad response from remove attempt: " + JSON.stringify(data));
-            PageMessages.addMessageToDiv(PageMessages.mainMessageDiv, "danger", "Failed to remove item.", "Failed", null);
+            PageMessageUtils.addMessageToDiv(PageMessageUtils.mainMessageDiv, "danger", "Failed to remove item.", "Failed", null);
         }
     });
 }

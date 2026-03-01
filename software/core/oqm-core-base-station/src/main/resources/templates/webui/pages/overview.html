@@ -156,86 +156,29 @@
 	{/modals}
 	{#scripts}
 	<script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-    <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
-    <script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
-    <script src="{rootPrefix}/res/js/obj/media/imageAddFromSelect.js"></script>
-    <script src="{rootPrefix}/res/js/search.js"></script>
-    <script src="{rootPrefix}/res/js/other.js"></script>
-    <script src="{rootPrefix}/res/js/historySearch.js"></script>
-    <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
-    <script src="{rootPrefix}/res/js/obj/objView.js"></script>
-    <script src="{rootPrefix}/res/js/storedTypeUtils.js"></script>
-    <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/item/itemSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/units.js"></script>
-    <script src="{rootPrefix}/res/js/obj/getters.js"></script>
-    <script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
-    <script src="{rootPrefix}/res/js/carousel.js"></script>
-    <script src="{rootPrefix}/res/js/obj/storageBlock/storageBlockTree.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemCategoryView.js"></script>
-    <script src="{rootPrefix}/res/js/textCopy.js"></script>
-    <script src="{rootPrefix}/res/js/item/extItemSearch.js"></script>
-	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
-	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
-	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/identifiers.js"></script>
-    <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorAddEdit.js"></script>
-    <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/idGenerator/idGeneratorUtils.js"></script>
-    <script src="{rootPrefix}/res/js/obj/item/itemAddEdit.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemStored/storedView.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemStored/storedFormInput.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemStored/itemStoredEdit.js"></script>
-    <script src="{rootPrefix}/res/js/obj/item/itemView.js"></script>
-    <script src="{rootPrefix}/res/js/CodeScanning.js"></script>
-    <script src="{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
-    <script src="{rootPrefix}/res/js/pageComponents.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearch.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredTransaction.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
-	<script src="{rootPrefix}/res/js/entityRef.js"></script>
 	
 	{/scripts}
 	{#pageScript}
-		<script>
+		<script type="module">
+			import { Rest } from '{rootPrefix}/res/js/Rest.js';
+			import { Getters } from '{rootPrefix}/res/js/obj/Getters.js';
+			import { Links } from '{rootPrefix}/res/js/links.js';
+			import { UnitUtils } from '{rootPrefix}/res/js/obj/UnitUtils.js';
+			
+			window.Rest = Rest;
+			window.Getters = Getters;
+			window.Links = Links;
+			window.UnitUtils = UnitUtils;
+		</script>
+		<script defer>
 			let overviewParentBlocksTreeForm = $("#overviewParentBlocksTreeForm");
-			if(overviewParentBlocksTreeForm.length !== 0){
-				overviewParentBlocksTreeForm.on("submit", function(e){
-					// e.preventDefault();
-					overviewParentBlocksTreeForm.find("input[name='pageNum']").attr("name", "storageBlockTreePage");
-				});
-			}
-			
 			let overviewLowStockSearchForm = $("#overviewLowStockSearchForm");
-			if(overviewLowStockSearchForm.length !== 0){
-				overviewLowStockSearchForm.on("submit", function(e){
-					// e.preventDefault();
-					overviewLowStockSearchForm.find("input[name='pageNum']").attr("name", "lowStockPage");
-				});
-			}
-			
 			let overviewExpiringSearchForm = $("#overviewExpiringSearchForm");
-			if(overviewExpiringSearchForm.length !== 0){
-				overviewExpiringSearchForm.on("submit", function(e){
-					// e.preventDefault();
-					overviewExpiringSearchForm.find("input[name='pageNum']").attr("name", "expiringPage");
-				});
-			}
-			
 			let overviewExpiredSearchForm = $("#overviewExpiredSearchForm");
-			if(overviewExpiredSearchForm.length !== 0){
-				overviewExpiredSearchForm.on("submit", function(e){
-					// e.preventDefault();
-					overviewExpiredSearchForm.find("input[name='pageNum']").attr("name", "expiredPage");
-				});
-			}
 			
+			let created = { };
+			let anchor = $(location).attr('hash');
 			
-			var created = { };
-
 			function getInvItemSection(invItemSearchResult, parentId){
 				if(invItemSearchResult.empty){
 					return $('<p>{#icons/items /} No inventory items held.</p>');
@@ -366,8 +309,8 @@
 			}
 			
 			async function createNewStorageBlockContent(storageBlockData){
-				let storageBlockItems = getStorageBlockItemData(storageBlockData.id);
-				let storageBlockChildren = getStorageBlockChildrenData(storageBlockData.id);
+				let storageBlockItems = Getters.StorageBlock.getStorageBlockItemData(storageBlockData.id);
+				let storageBlockChildren = Getters.StorageBlock.getStorageBlockChildrenData(storageBlockData.id);
 				storageBlockItems = await storageBlockItems;
 				storageBlockChildren = await storageBlockChildren;
 				
@@ -430,11 +373,39 @@
 				});
 			}
 			
-			let anchor = $(location).attr('hash');
-			if(anchor){
-				$(anchor).click();
-			}
-			
+			$(document).ready(function(){
+				if(overviewParentBlocksTreeForm.length !== 0){
+					overviewParentBlocksTreeForm.on("submit", function(e){
+						// e.preventDefault();
+						overviewParentBlocksTreeForm.find("input[name='pageNum']").attr("name", "storageBlockTreePage");
+					});
+				}
+				
+				if(overviewLowStockSearchForm.length !== 0){
+					overviewLowStockSearchForm.on("submit", function(e){
+						// e.preventDefault();
+						overviewLowStockSearchForm.find("input[name='pageNum']").attr("name", "lowStockPage");
+					});
+				}
+				
+				if(overviewExpiringSearchForm.length !== 0){
+					overviewExpiringSearchForm.on("submit", function(e){
+						// e.preventDefault();
+						overviewExpiringSearchForm.find("input[name='pageNum']").attr("name", "expiringPage");
+					});
+				}
+				
+				if(overviewExpiredSearchForm.length !== 0){
+					overviewExpiredSearchForm.on("submit", function(e){
+						// e.preventDefault();
+						overviewExpiredSearchForm.find("input[name='pageNum']").attr("name", "expiredPage");
+					});
+				}
+				
+				if(anchor){
+					$(anchor).click();
+				}
+			});
 		</script>
 	{/pageScript}
 {/include}

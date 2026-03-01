@@ -46,30 +46,24 @@
 	
 {/modals}
 {#scripts}
-	<script src="{rootPrefix}/res/js/entityRef.js"></script>
-	<script src="{rootPrefix}/res/js/carousel.js"></script>
-	<script src="{rootPrefix}/res/js/search.js"></script>
-	<script src="{rootPrefix}/res/js/textCopy.js"></script>
-	<script src="{rootPrefix}/res/js/obj/getters.js"></script>
-	<script src="{rootPrefix}/res/js/historySearch.js"></script>
-	<script src="{rootPrefix}/res/js/obj/objView.js"></script>
-	<script src="{rootPrefix}/res/js/obj/units.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearchSelect.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutSearchSelect.js"></script>
-	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
-	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
-	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
-	<script src="{rootPrefix}/res/js/storedTypeUtils.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemStored/storedView.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
-	<script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
-	<script src="{rootPrefix}/res/js/obj/item/itemSearchSelect.js"></script>
-	<script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredTransaction.js"></script>
+
 {/scripts}
 {#pageScript}
-    <script>
+    <script type="module">
+		import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
+		import { ItemSearchSelect } from '{rootPrefix}/res/js/obj/item/ItemSearchSelect.js';
+		import { StorageSearchSelect } from '{rootPrefix}/res/js/obj/storageBlock/StorageSearchSelect.js';
+		import { ItemStoredTransaction } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredTransaction.js';
+		
+		ItemSearchSelect.initPage();
+		SearchUtils.initPage();
+		ItemStoredTransaction.initPage();
+		StorageSearchSelect.initPage();
+		
+		window.ItemSearchSelect = ItemSearchSelect;
+		window.StorageSearchSelect = StorageSearchSelect;
+		
+		console.log("Page modules loaded.");
     </script>
 {/pageScript}
 {/include}

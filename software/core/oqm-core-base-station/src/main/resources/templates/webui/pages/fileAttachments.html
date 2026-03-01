@@ -10,7 +10,7 @@
     <div class="col-6 d-grid gap-2 text-center">
         <button type="button" class="btn btn-success" data-bs-toggle="modal"
                 data-bs-target="#fileAttachmentAddEditModal" onclick="FileAttachmentAddEdit.setupForAdd();">
-            {#icons/add}{/icons/add} Add File
+            {#icons/add /} Add File
         </button>
     </div>
 </div>
@@ -21,15 +21,14 @@
                 <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
                         data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
                         aria-controls="searchCollapse">
-                    {#icons/search}{/icons/search}
+                    {#icons/search /}
                     Search Fields
                 </button>
             </h2>
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#fileAttachment/fileAttachmentSearchForm id='fileAttachmentSearchForm'}
-                    {/fileAttachment/fileAttachmentSearchForm}
+                    {#fileAttachment/fileAttachmentSearchForm id='fileAttachmentSearchForm' /}
                 </div>
             </div>
         </div>
@@ -38,14 +37,12 @@
 <div class="row">
     <div class="col table-responsive">
         <table class=" table table-bordered table-striped table-hover table-sm">
-			{#fileAttachment/fileAttachmentSearchResults searchResults=searchResults actionType='full' searchFormId='fileAttachmentSearchForm'}
-			{/fileAttachment/fileAttachmentSearchResults}
+			{#fileAttachment/fileAttachmentSearchResults searchResults=searchResults actionType='full' searchFormId='fileAttachmentSearchForm' /}
         </table>
     </div>
 </div>
 {/pageContent}
 {#modals}
-	
 	{#fileAttachment/FileAttachmentAddEditModal}
 	{/fileAttachment/FileAttachmentAddEditModal}
 	{#fileAttachment/FileAttachmentViewModal}
@@ -54,17 +51,20 @@
 {/modals}
 {#scripts}
     <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
-    <script src="{rootPrefix}/res/js/other.js"></script>
-    <script src="{rootPrefix}/res/js/search.js"></script>
-    <script src="{rootPrefix}/res/js/historySearch.js"></script>
-    <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
-    <script src="{rootPrefix}/res/js/obj/objView.js"></script>
-    <script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
-    <script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
 {/scripts}
 {#pageScript}
-<script>
+<script type="module">
+	import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
+	import { FileAttachmentAddEdit } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js';
+	import { FileAttachmentView } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js';
+	
+	SearchUtils.initPage();
+	FileAttachmentAddEdit.initPage();
+	
+	window.FileAttachmentAddEdit = FileAttachmentAddEdit;
+	window.FileAttachmentView = FileAttachmentView;
 
+	console.log("Page modules loaded.");
 </script>
 {/pageScript}
 

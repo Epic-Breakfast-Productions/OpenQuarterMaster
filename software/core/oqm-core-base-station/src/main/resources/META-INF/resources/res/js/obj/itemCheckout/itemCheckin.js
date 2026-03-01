@@ -37,7 +37,7 @@ const ItemCheckin = {
 		ItemCheckin.itemNameLabel.text("");
 		ItemCheckin.originalStorageLabelLabel.text("");
 		ItemCheckin.storedDetails.text("");
-		ItemCheckin.returnedDtInput.val(TimeHelpers.getNowTs());
+		ItemCheckin.returnedDtInput.val(TimeUtils.getNowTs());
 		ItemCheckin.notesInput.val("");
 		ItemCheckin.checkinTypeInput.val("RETURN");
 		ItemCheckin.setCheckinTypeView();
@@ -62,7 +62,7 @@ const ItemCheckin = {
 					ItemCheckoutView.viewBsModal.show();
 					await ItemCheckoutView.setupView(checkoutId);
 					//TODO:: close checkin view
-					PageMessages.addMessageToDiv(
+					PageMessageUtils.addMessageToDiv(
 						ItemCheckoutView.messages,
 						"danger",
 						"This has already been checked in. Details below.",
@@ -121,7 +121,7 @@ ItemCheckin.itemCheckinForm.on("submit", function(e){
 	console.log("Submitting item checkin form.");
 
 	let checkinDetailsData = {
-		"checkinDateTime": TimeHelpers.getTsFromInput(ItemCheckin.returnedDtInput),
+		"checkinDateTime": TimeUtils.getTsFromInput(ItemCheckin.returnedDtInput),
 		"notes": ItemCheckin.notesInput.val(),
 		"checkinType": ItemCheckin.checkinTypeInput.val()
 	};
@@ -135,7 +135,7 @@ ItemCheckin.itemCheckinForm.on("submit", function(e){
 			checkinDetailsData["reason"]=ItemCheckin.lossReasonInput.val();
 			break;
 		default:
-			PageMessages.addMessageToDiv(
+			PageMessageUtils.addMessageToDiv(
 				ItemCheckin.messages,
 				"danger",
 				"Invalid checkin type"
@@ -153,7 +153,7 @@ ItemCheckin.itemCheckinForm.on("submit", function(e){
 			if (UriUtils.getParams.has("checkin")) {
 				UriUtils.removeParam("checkin");
 			}
-			PageMessages.reloadPageWithMessage("Checked in item successfully!", "success", "Success!");
+			PageMessageUtils.reloadPageWithMessage("Checked in item successfully!", "success", "Success!");
 		}
 	})
 });

@@ -1,4 +1,9 @@
-const FileAttachmentView = {
+import {Rest} from "../../../Rest.js";
+import {KeywordAttUtils} from "../../ObjViewUtils.js";
+import {OtherUtils} from "../../../OtherUtils.js";
+import {ModalUtils} from "../../../ModalUtils.js";
+
+export const FileAttachmentView = {
 	viewModal: $("#fileAttachmentViewModal"),
 	viewModalMessages: $("#fileAttachmentViewMessages"),
 	previewContainer: $("#fileAttachmentViewPreviewContainer"),
@@ -146,7 +151,7 @@ const FileAttachmentView = {
 	setupView(fileId, oldModal = null) {
 		console.log("Setting up view for file ", fileId);
 		if(oldModal !== null){
-			ModalHelpers.setReturnModal(FileAttachmentView.viewModal, oldModal);
+			ModalUtils.setReturnModal(FileAttachmentView.viewModal, oldModal);
 		}
 
 		this.resetView();
