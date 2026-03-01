@@ -1,26 +1,13 @@
-//TODO:: move to class
-function toDataURL(src, callback, outputFormat) {
-	let image = new Image();
-	image.crossOrigin = 'Anonymous';
-	image.onload = function () {
-		let canvas = document.createElement('canvas');
-		let ctx = canvas.getContext('2d');
-		let dataURL;
-		canvas.height = this.naturalHeight;
-		canvas.width = this.naturalWidth;
-		ctx.drawImage(this, 0, 0);
-		dataURL = canvas.toDataURL(outputFormat);
-		callback(dataURL);
-	};
-	image.src = src;
-	if (image.complete || image.complete === undefined) {
-		image.src = "data:image/gif;base64, R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==";
-		image.src = src;
-	}
-}
+import {Icons} from "../Icons.js";
+import {Rest} from "../Rest.js";
+import {ImageSearchSelect} from "../obj/media/ImageSearchSelect.js";
+import {ItemAddEdit} from "../obj/item/ItemAddEdit.js";
+import {KeywordAttUtils} from "../obj/ObjViewUtils.js";
+import {KeywordAttEdit} from "../obj/ObjEditUtils.js";
+import {PageMessageUtils} from "../PageMessageUtils.js";
+import {Identifiers} from "../Identifiers.js";
 
-
-const ExtItemSearch = {
+export const ExtItemSearch = {
 	extSearchResults: $("#extSearchResults"),
 
 	prodBarcodeSearchForm: $("#prodBarcodeSearchForm"),

@@ -1,5 +1,10 @@
+import {Getters} from "../Getters.js";
+import {ModalUtils} from "../../ModalUtils.js";
+import {Rest} from "../../Rest.js";
+import {PageMessageUtils} from "../../PageMessageUtils.js";
+import {StoredFormInput} from "./StoredFormInput.js";
 
-const ItemStoredEdit = {
+export const ItemStoredEdit = {
 	modal: $("#itemStoredEditModal"),
 	form: $("#itemStoredEditForm"),
 	formMessages: $("#itemStoredEditMessages"),
@@ -36,7 +41,7 @@ const ItemStoredEdit = {
 		ItemStoredEdit.infoStoredLabel.text(stored.labelText);
 		ItemStoredEdit.infoItemName.text(item.name);
 
-		promises.push(getStorageBlockLabel(stored.storageBlock, function (blockLabel){
+		promises.push(Getters.StorageBlock.getStorageBlockLabel(stored.storageBlock, function (blockLabel){
 			ItemStoredEdit.infoBlockLabel.text(blockLabel);
 		}));
 
@@ -45,30 +50,31 @@ const ItemStoredEdit = {
 		let inputs = await StoredFormInput.getStoredInputs(stored.type, stored, item, true);
 		ItemStoredEdit.form.append(inputs);
 
-		Promise.all(promises);
+		await Promise.all(promises);
 
 		Main.processStop();
+	},
+	initPage: function () {
+		ItemStoredEdit.form.on("submit", async function (e) {
+			e.preventDefault();
+			console.log("Stored item edit form submitted.");
+
+			let updateData = {};
+			StoredFormInput.dataFromInputs(updateData, ItemStoredEdit.form);
+			delete updateData["type"];
+
+			console.debug("Stored item update data: ", updateData);
+
+			Rest.call({
+				method: "PUT",
+				url: ItemStoredEdit.form.attr("action"),
+				data: updateData,
+				failMessagesDiv: ItemStoredEdit.formMessages,
+				done: async function(){
+					console.log("Successfully updated stored item.");
+					PageMessageUtils.reloadPageWithMessage("Updated stored item successfully!", "success", "Success!");
+				}
+			});
+		});
 	}
 }
-
-ItemStoredEdit.form.on("submit", async function (e) {
-	e.preventDefault();
-	console.log("Stored item edit form submitted.");
-
-	let updateData = {};
-	StoredFormInput.dataFromInputs(updateData, ItemStoredEdit.form);
-	delete updateData["type"];
-
-	console.debug("Stored item update data: ", updateData);
-
-	Rest.call({
-		method: "PUT",
-		url: ItemStoredEdit.form.attr("action"),
-		data: updateData,
-		failMessagesDiv: ItemStoredEdit.formMessages,
-		done: async function(){
-			console.log("Successfully updated stored item.");
-			PageMessageUtils.reloadPageWithMessage("Updated stored item successfully!", "success", "Success!");
-		}
-	});
-});

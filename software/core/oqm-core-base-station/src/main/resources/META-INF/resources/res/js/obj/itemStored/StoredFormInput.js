@@ -1,4 +1,15 @@
-const StoredFormInput = {
+import {Icons} from "../../Icons.js";
+import {Identifiers} from "../../Identifiers.js";
+import {KeywordAttEdit} from "../ObjEditUtils.js";
+import {ImageSearchSelect} from "../media/ImageSearchSelect.js";
+import {FileAttachmentSearchSelect} from "../media/fileAttachment/FileAttachmentSearchSelect.js";
+import {TimeUtils} from "../../TimeUtils.js";
+import {Pricing} from "../../Pricing.js";
+import {UnitUtils} from "../UnitUtils.js";
+import {StoredTypeUtils} from "../../StoredTypeUtils.js";
+import {PageComponents} from "../../PageComponents.js";
+
+export const StoredFormInput = {
 	getBasicInputs(stored, item) {
 		let output = $(`
 <div class="commonStoredFormElements">

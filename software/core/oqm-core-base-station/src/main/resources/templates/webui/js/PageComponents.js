@@ -1,4 +1,4 @@
-const PageComponents = {
+export const PageComponents = {
 	Inputs: {
 		attribute: '{attInputLines}\
 ',

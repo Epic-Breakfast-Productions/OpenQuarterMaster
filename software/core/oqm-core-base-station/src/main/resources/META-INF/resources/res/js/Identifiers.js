@@ -1,4 +1,7 @@
-const Identifiers = {
+import {Rest} from "./Rest.js";
+import {SelectedObjectDivUtils} from "./SelectedObjectDivUtils.js";
+
+export const Identifiers = {
 	getInputContainer(subElementJq) {
 		return subElementJq.closest('.identifierInputContainer');
 	},

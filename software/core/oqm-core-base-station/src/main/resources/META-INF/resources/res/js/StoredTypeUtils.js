@@ -1,4 +1,4 @@
-const StoredTypeUtils = {
+export const StoredTypeUtils = {
 	types: ["AMOUNT", "UNIQUE"],
 	typeFromStored(stored) {
 		return stored.type;
@@ -32,7 +32,7 @@ const StoredTypeUtils = {
 	}
 };
 
-const StorageTypeUtils = {
+export const StorageTypeUtils = {
 	types: ["BULK", "AMOUNT_LIST", "UNIQUE_MULTI", "UNIQUE_SINGLE"],
 	runForType(
 		storedType,
@@ -108,7 +108,7 @@ const StorageTypeUtils = {
 	}
 };
 
-const CheckoutTypeUtils = {
+export const CheckoutTypeUtils = {
 	types: ["AMOUNT", "WHOLE"],
 	typeFromCheckout(checkout) {
 		return checkout.type;

@@ -1,6 +1,6 @@
-import {DOMPurify} from "../../lib/DOMPurify/3.3.1/DOMPurify.min.js";
-import {marked} from "../../lib/Marked/17.0.1/marked.min.js";
-import {OverType} from "../../lib/overtype/2.2.0/overtype.min.js";
+import "../../lib/DOMPurify/3.3.1/DOMPurify.min.js";
+import "../../lib/Marked/17.0.1/marked.min.js";
+import "../../lib/overtype/2.3.4/overtype.min.js";
 
 /**
  * https://marked.js.org/

@@ -1,4 +1,6 @@
-Pricing = {
+import {UnitUtils} from "./obj/UnitUtils.js";
+
+export const Pricing = {
 	PriceInput: {
 		getInput: function (innerElem) {
 			let output = innerElem;

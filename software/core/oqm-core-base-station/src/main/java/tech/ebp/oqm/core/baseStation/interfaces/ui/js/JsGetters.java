@@ -72,9 +72,8 @@ public class JsGetters {
 	@Location("webui/js/carousel.js")
 	Template carouselJs;
 	
-	
 	@Inject
-	@Location("webui/js/pageComponents.js")
+	@Location("webui/js/PageComponents.js")
 	Template componentsJs;
 	
 	@Location("tags/carousel.html")
@@ -238,7 +237,7 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("pageComponents.js")
+	@Path("PageComponents.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> components() {

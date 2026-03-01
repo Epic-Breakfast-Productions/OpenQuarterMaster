@@ -1,4 +1,8 @@
-AssociatedLinks = {
+import {SelectedObjectDivUtils} from "./SelectedObjectDivUtils.js";
+import {Links} from "./links.js";
+import {Icons} from "./Icons.js";
+
+export const AssociatedLinks = {
 	Form: {
 		Input: {
 			getInput(innerElem){

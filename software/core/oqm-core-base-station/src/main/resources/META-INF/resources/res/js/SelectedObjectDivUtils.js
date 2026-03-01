@@ -1,4 +1,4 @@
-const SelectedObjectDivUtils = {
+export const SelectedObjectDivUtils = {
 	moveUp(objectDivJq) {
 		let objectDiv = objectDivJq[0];
 		if (objectDiv.previousSibling) {

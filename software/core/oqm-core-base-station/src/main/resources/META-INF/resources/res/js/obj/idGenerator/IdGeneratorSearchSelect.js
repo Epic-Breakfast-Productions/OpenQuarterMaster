@@ -1,4 +1,12 @@
-const IdGeneratorSearchSelect = {
+import {Icons} from "../../Icons.js";
+import {Getters} from "../Getters.js";
+import {Identifiers} from "../../Identifiers.js";
+import {ModalUtils} from "../../ModalUtils.js";
+import {IdGeneratorAddEdit} from "./IdGeneratorAddEdit.js";
+import {DselectUtils} from "../../DselectUtils.js";
+import {Rest} from "../../Rest.js";
+
+export const IdGeneratorSearchSelect = {
 	AssociatedInput: {
 		getInputContainer(innerElementJq) {
 			return innerElementJq.closest(".idGeneratorAssociatedInput");

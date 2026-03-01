@@ -1,4 +1,14 @@
-const StoredView = {
+import {KeywordAttUtils} from "../ObjViewUtils.js";
+import {FileAttachmentView} from "../media/fileAttachment/FileAttachmentView.js";
+import {Identifiers} from "../../Identifiers.js";
+import {Pricing} from "../../Pricing.js";
+import {ItemStoredTransaction} from "./ItemStoredTransaction.js";
+import {ModalUtils} from "../../ModalUtils.js";
+import {Getters} from "../Getters.js";
+import {Icons} from "../../Icons.js";
+import {Links} from "../../links.js";
+
+export const StoredView = {
 	viewModal: $("#itemStoredViewModal"),
 	viewModalLabel: $("#itemStoredViewModalLabel"),
 	viewModalMessages: $("#itemStoredViewMessages"),

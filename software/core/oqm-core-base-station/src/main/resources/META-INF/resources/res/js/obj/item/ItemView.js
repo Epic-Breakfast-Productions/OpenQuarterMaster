@@ -1,4 +1,25 @@
-const ItemView = {
+import {HistorySearchUtils} from "../../HistorySearchUtils.js";
+import {KeywordAttUtils} from "../ObjViewUtils.js";
+import {FileAttachmentView} from "../media/fileAttachment/FileAttachmentView.js";
+import {Carousel} from "../../carousel.js";
+import {Icons} from "../../Icons.js";
+import {Links} from "../../links.js";
+import {Getters} from "../Getters.js";
+import {UnitUtils} from "../UnitUtils.js";
+import {Pricing} from "../../Pricing.js";
+import {ItemAddEdit} from "./ItemAddEdit.js";
+import {UriUtils} from "../../UriUtils.js";
+import {Rest} from "../../Rest.js";
+import {ItemStoredTransaction} from "../itemStored/ItemStoredTransaction.js";
+import {MarkdownUtils} from "../../MarkdownUtils.js";
+import {Identifiers} from "../../Identifiers.js";
+import {CheckoutTypeUtils, StorageTypeUtils, StoredTypeUtils} from "../../StoredTypeUtils.js";
+import {AssociatedLinks} from "../../AssociatedLinks.js";
+import {ItemCategoryView} from "../itemCategory/ItemCategoryView.js";
+import {StoredView} from "../itemStored/StoredView.js";
+import {TimeUtils} from "../../TimeUtils.js";
+
+export const ItemView = {
 	itemViewModal: $("#itemViewModal"),
 	viewBsModal: new bootstrap.Modal($("#itemViewModal"), {}),
 	itemViewMessages: $("#itemViewMessages"),
@@ -144,7 +165,7 @@ const ItemView = {
 
 		ItemView.allStoredSearchForm.trigger("reset");
 
-		resetHistorySearch(ItemView.itemHistoryAccordionCollapse);
+		HistorySearchUtils.resetHistorySearch(ItemView.itemHistoryAccordionCollapse);
 
 		Carousel.clearCarousel(ItemView.itemViewCarousel);
 		KeywordAttUtils.clearHideKeywordDisplay(ItemView.viewKeywordsSection);
@@ -189,7 +210,7 @@ const ItemView = {
 		newAccordItem.find(".accordion-body").append(body);
 
 		collapseButton.text(blockId);
-		getStorageBlockLabel(blockId, function (blockLabel) {
+		Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
 			let labelText = $('<span></span>');
 			labelText.text(blockLabel);
 
@@ -231,7 +252,7 @@ const ItemView = {
 		output.find("#" + searchFormId + "-storageBlockInputClearButton").prop("disabled", true);
 		output.find("#" + searchFormId + "-storageBlockInputClearButton").prop("readonly", true);
 
-		getStorageBlockLabel(blockId, function (blockLabel) {
+		Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
 			output.find("#" + searchFormId + "-storageBlockInputName").val(blockLabel);
 		});
 
@@ -360,7 +381,7 @@ const ItemView = {
 								if (ItemView.storedMultiNoneStoredInBlock.empty()) {
 									ItemView.storedMultiNoneStoredInBlock.append("Blocks with nothing stored:");
 								}
-								getStorageBlockLabel(blockId, function (labelText) {
+								Getters.StorageBlock.getStorageBlockLabel(blockId, function (labelText) {
 									let newLink = Links.getStorageViewLink(blockId, labelText);
 									ItemView.storedMultiNoneStoredInBlock.append(newLink);
 									ItemView.storedMultiNoneStoredInBlock.append(" ");
@@ -395,7 +416,7 @@ const ItemView = {
 									if (ItemView.storedBulkNonePresentBlocksList.empty()) {
 										ItemView.storedBulkNonePresentBlocksList.append("Blocks with no stored items: ");
 									}
-									getStorageBlockLabel(blockId, function (labelText) {
+									Getters.StorageBlock.getStorageBlockLabel(blockId, function (labelText) {
 										let newLink = Links.getStorageViewLink(blockId, labelText);
 										ItemView.storedBulkNonePresentBlocksList.append(newLink);
 										ItemView.storedBulkNonePresentBlocksList.append(" ");
@@ -419,7 +440,7 @@ const ItemView = {
 									</p>`);
 
 								itemData.storageBlocks.forEach(function (curBlock) {
-									promises.push(getStorageBlockLabel(curBlock, function (labelText) {
+									promises.push(Getters.StorageBlock.getStorageBlockLabel(curBlock, function (labelText) {
 										let newLink = Links.getStorageViewLink(curBlock, labelText);
 
 										if (curBlock === stored.storageBlock) {
@@ -454,7 +475,7 @@ const ItemView = {
 
 					if (itemData.storageBlocks.length) {
 						itemData.storageBlocks.forEach(function (curBlock) {
-							getStorageBlockLabel(curBlock, function (labelText) {
+							Getters.StorageBlock.getStorageBlockLabel(curBlock, function (labelText) {
 								let newLink = Links.getStorageViewLink(curBlock, labelText);
 								ItemView.storedNonePresentBlocksList.append(newLink);
 								ItemView.storedNonePresentBlocksList.append(" ");
@@ -570,50 +591,54 @@ const ItemView = {
 
 		//TODO:: adjust html to match history
 		//ItemCheckoutSearch.setupSearchForItem(ItemView.itemViewCheckedOutResultsContainer, itemId);
-		setupHistorySearch(ItemView.itemHistoryAccordionCollapse, itemId);
+		HistorySearchUtils.setupHistorySearch(ItemView.itemHistoryAccordionCollapse, itemId);
+	},
+	initPage: function () {
+
+		ItemView.itemViewModal[0].addEventListener("hidden.bs.modal", function () {
+			UriUtils.removeParam("view");
+		});
+
+		ItemView.allStoredSearchFormItemInputDeleteButton.prop("disabled", true);
+		ItemView.allStoredSearchFormItemInputSearchButton.prop("disabled", true);
+		ItemView.allStoredSearchFormItemInputName.prop("disabled", true);
+
+		ItemView.checkoutSearchFormItemSearchButt.prop("disabled", true);
+		ItemView.checkoutSearchFormItemClearButt.prop("disabled", true);
+		ItemView.checkoutSearchFormItemNameInput.prop("disabled", true);
+
+		ItemView.checkoutSearchForm.on("submit", function (e) {
+			e.preventDefault();
+			let searchParams = new URLSearchParams(new FormData(e.target));
+			console.log("URL search params: " + searchParams);
+
+			Rest.call({
+				spinnerContainer: ItemView.itemViewModal.get(0),
+				url: Rest.passRoot + "/inventory/item-checkout?" + searchParams,
+				method: 'GET',
+				returnType: false,
+				failNoResponse: null,
+				failNoResponseCheckStatus: true,
+				extraHeaders: {
+					"accept": "text/html",
+					"actionType": "viewCheckin",
+					"searchFormId": "itemViewCheckoutSearchForm",
+					"showItemCol": false
+				},
+				async: false,
+				done: function (data) {
+					console.log("Got data!");
+					ItemView.checkoutSearchResults.html(data);
+				}
+			});
+		});
+
+		$(document).ready(function () {
+			if (UriUtils.getParams.has("view")
+			) {
+				ItemView.setupView(UriUtils.getParams.get("view"));
+				ItemView.viewBsModal.show();
+			}
+		});
 	}
 };
-
-ItemView.itemViewModal[0].addEventListener("hidden.bs.modal", function () {
-	UriUtils.removeParam("view");
-});
-
-if (UriUtils.getParams.has("view")
-) {
-	ItemView.setupView(UriUtils.getParams.get("view"));
-	ItemView.viewBsModal.show();
-}
-
-ItemView.allStoredSearchFormItemInputDeleteButton.prop("disabled", true);
-ItemView.allStoredSearchFormItemInputSearchButton.prop("disabled", true);
-ItemView.allStoredSearchFormItemInputName.prop("disabled", true);
-
-ItemView.checkoutSearchFormItemSearchButt.prop("disabled", true);
-ItemView.checkoutSearchFormItemClearButt.prop("disabled", true);
-ItemView.checkoutSearchFormItemNameInput.prop("disabled", true);
-
-ItemView.checkoutSearchForm.on("submit", function (e) {
-	e.preventDefault();
-	let searchParams = new URLSearchParams(new FormData(e.target));
-	console.log("URL search params: " + searchParams);
-
-	Rest.call({
-		spinnerContainer: ItemView.itemViewModal.get(0),
-		url: Rest.passRoot + "/inventory/item-checkout?" + searchParams,
-		method: 'GET',
-		returnType: false,
-		failNoResponse: null,
-		failNoResponseCheckStatus: true,
-		extraHeaders: {
-			"accept": "text/html",
-			"actionType": "viewCheckin",
-			"searchFormId": "itemViewCheckoutSearchForm",
-			"showItemCol": false
-		},
-		async: false,
-		done: function (data) {
-			console.log("Got data!");
-			ItemView.checkoutSearchResults.html(data);
-		}
-	});
-});

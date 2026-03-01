@@ -1,5 +1,5 @@
 import {Rest} from "../../Rest.js";
-
+import "../../../../lib/Croppie/2.6.4/croppie.min.js";
 
 export const ImageAdd = {
 	defaultCroppieImage: Rest.webroot + "/media/logoSymbolSquare.svg",

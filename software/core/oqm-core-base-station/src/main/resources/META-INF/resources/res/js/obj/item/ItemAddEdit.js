@@ -1,4 +1,25 @@
-const ItemAddEdit = {
+import {StorageSearchSelect} from "../storageBlock/StorageSearchSelect.js";
+import {UnitUtils} from "../UnitUtils.js";
+import {ItemCategoryInput} from "../itemCategory/ItemCategoryInput.js";
+import {KeywordAttEdit} from "../ObjEditUtils.js";
+import {ImageSearchSelect} from "../media/ImageSearchSelect.js";
+import {Rest} from "../../Rest.js";
+import {PageMessageUtils} from "../../PageMessageUtils.js";
+import {Pricing} from "../../Pricing.js";
+import {MarkdownUtils} from "../../MarkdownUtils.js";
+import {Identifiers} from "../../Identifiers.js";
+import {ExtItemSearch} from "../../item/ExtItemSearch.js";
+import {IdGeneratorSearchSelect} from "../idGenerator/IdGeneratorSearchSelect.js";
+import {DselectUtils} from "../../DselectUtils.js";
+import {ModalUtils} from "../../ModalUtils.js";
+import {Icons} from "../../Icons.js";
+import {Getters} from "../Getters.js";
+import {FileAttachmentSearchSelect} from "../media/fileAttachment/FileAttachmentSearchSelect.js";
+import {AssociatedLinks} from "../../AssociatedLinks.js";
+import {TimeUtils} from "../../TimeUtils.js";
+import {StorageTypeUtils} from "../../StoredTypeUtils.js";
+
+export const ItemAddEdit = {
 	addEditItemForm: $('#addEditItemForm'),
 	addEditItemFormSubmitButton: $('#addEditItemFormSubmitButton'),
 	addEditItemModal: $("#addEditItemModal"),
@@ -104,7 +125,7 @@ const ItemAddEdit = {
 		ItemAddEdit.addEditItemImagesSelected.text("");
 		ItemAddEdit.addEditKeywordDiv.text("");
 		ItemAddEdit.addEditAttDiv.text("");
-		Promise.all(promises);
+		await Promise.all(promises);
 		console.log("Reset item add/edit form.");
 	},
 	setupAddEditForAdd: async function () {
@@ -184,7 +205,7 @@ const ItemAddEdit = {
 				}
 
 				data.storageBlocks.forEach(curStorageBlockId => {
-					getStorageBlockLabel(curStorageBlockId, function (label) {
+					Getters.StorageBlock.getStorageBlockLabel(curStorageBlockId, function (label) {
 						//TODO:: determine if we are allowed to remove (if has stored items in it or not)
 						ItemAddEdit.storageInput.addStorage(label, curStorageBlockId);
 					});
@@ -287,13 +308,12 @@ const ItemAddEdit = {
 			.then(function (options) {
 				ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.html(options);
 			});
-	}
-};
-
-ItemAddEdit.addEditItemUnitInput.on("change", function () {
-	console.log("Changed unit!");
-	ItemAddEdit.unitChanged();
-});
+	},
+	initPage: function () {
+		ItemAddEdit.addEditItemUnitInput.on("change", function () {
+			console.log("Changed unit!");
+			ItemAddEdit.unitChanged();
+		});
 
 // //prevent enter from submitting form on barcode; barcode scanners can add enter key automatically
 // ItemAddEdit.addEditItemBarcodeInput.on('keypress', function (e) {
@@ -303,89 +323,91 @@ ItemAddEdit.addEditItemUnitInput.on("change", function () {
 // 	}
 // });
 
-StorageSearchSelect.selectStorageBlock = function (blockName, blockId, inputIdPrepend, otherModalId) {
-	Main.processStart();
-	console.log("Selected " + blockId + " - " + blockName);
-	ItemAddEdit.storageInput.addStorage(blockName, blockId);
-	Main.processStop();
-}
-
-ItemAddEdit.addEditItemForm.submit(async function (event) {
-	event.preventDefault();
-	console.log("Submitting add/edit form.");
-
-	let addEditData = {
-		name: ItemAddEdit.addEditItemNameInput.val(),
-		description: ItemAddEdit.addEditItemDescriptionInput.getValue(),
-		identifiers: Identifiers.getIdentifierData(ItemAddEdit.identifierInputContainer),
-		idGenerators: IdGeneratorSearchSelect.AssociatedInput.getAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput),
-		storageType: ItemAddEdit.addEditItemStorageTypeInput.val(),
-		expiryWarningThreshold: ItemAddEdit.addEditItemExpiryWarningThresholdInput.val() * ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.val(),
-		lowStockThreshold: (ItemAddEdit.addEditItemTotalLowStockThresholdInput.val() ? UnitUtils.getQuantityObj(
-			ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(),
-			ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val()
-		) : null),
-		associatedLinks: AssociatedLinks.Form.getLinkData(ItemAddEdit.linkInput),
-		categories: ItemCategoryInput.getValueFromInput(ItemAddEdit.addEditItemCategoriesInput),
-		storageBlocks: ItemAddEdit.storageInput.selectedStorageList(),
-		attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(ItemAddEdit.fileInput),
-		defaultPrices: Pricing.getPricingData(ItemAddEdit.addEditItemPricingInput),
-		defaultLabelFormat: ItemAddEdit.defaultStoredLabelInput.val() ? ItemAddEdit.defaultStoredLabelInput.val() : null
-	};
-
-	let setAmountStoredVars = function () {
-		addEditData["unit"] = UnitUtils.getUnitObj(ItemAddEdit.addEditItemUnitInput.val());
-	};
-
-	ItemAddEdit.foreachStorageTypeFromInput(
-		setAmountStoredVars,
-		setAmountStoredVars,
-		function () {
-
+		StorageSearchSelect.selectStorageBlock = function (blockName, blockId, inputIdPrepend, otherModalId) {
+			Main.processStart();
+			console.log("Selected " + blockId + " - " + blockName);
+			ItemAddEdit.storageInput.addStorage(blockName, blockId);
+			Main.processStop();
 		}
-	);
 
-	KeywordAttEdit.addKeywordAttData(addEditData, ItemAddEdit.addEditKeywordDiv, ItemAddEdit.addEditAttDiv);
-	ImageSearchSelect.addImagesToData(addEditData, ItemAddEdit.addEditItemImagesSelected);
+		ItemAddEdit.addEditItemForm.submit(async function (event) {
+			event.preventDefault();
+			console.log("Submitting add/edit form.");
 
-	console.log("Data being submitted: " + JSON.stringify(addEditData));
-	let verb = "";
-	let result = false;
-	if (ItemAddEdit.addEditItemFormMode.val() === "add") {
-		verb = "Created";
-		console.log("Adding new item.");
-		await Rest.call({
-			url: Rest.passRoot + "/inventory/item",
-			method: "POST",
-			data: addEditData,
-			async: false,
-			done: function (data) {
-				console.log("Response from create request: " + JSON.stringify(data));
-				result = true;
-			},
-			failMessagesDiv: ItemAddEdit.addEditItemFormMessages
-		});
-	} else if (ItemAddEdit.addEditItemFormMode.val() === "edit") {
-		verb = "Edited";
-		let id = ItemAddEdit.addEditItemIdInput.val();
-		console.log("Editing storage block " + id);
+			let addEditData = {
+				name: ItemAddEdit.addEditItemNameInput.val(),
+				description: ItemAddEdit.addEditItemDescriptionInput.getValue(),
+				identifiers: Identifiers.getIdentifierData(ItemAddEdit.identifierInputContainer),
+				idGenerators: IdGeneratorSearchSelect.AssociatedInput.getAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput),
+				storageType: ItemAddEdit.addEditItemStorageTypeInput.val(),
+				expiryWarningThreshold: ItemAddEdit.addEditItemExpiryWarningThresholdInput.val() * ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.val(),
+				lowStockThreshold: (ItemAddEdit.addEditItemTotalLowStockThresholdInput.val() ? UnitUtils.getQuantityObj(
+					ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(),
+					ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val()
+				) : null),
+				associatedLinks: AssociatedLinks.Form.getLinkData(ItemAddEdit.linkInput),
+				categories: ItemCategoryInput.getValueFromInput(ItemAddEdit.addEditItemCategoriesInput),
+				storageBlocks: ItemAddEdit.storageInput.selectedStorageList(),
+				attachedFiles: FileAttachmentSearchSelect.getFileListFromInput(ItemAddEdit.fileInput),
+				defaultPrices: Pricing.getPricingData(ItemAddEdit.addEditItemPricingInput),
+				defaultLabelFormat: ItemAddEdit.defaultStoredLabelInput.val() ? ItemAddEdit.defaultStoredLabelInput.val() : null
+			};
 
-		await Rest.call({
-			url: Rest.passRoot + "/inventory/item/" + id,
-			method: "PUT",
-			data: addEditData,
-			async: false,
-			done: function (data) {
-				console.log("Response from create request: " + JSON.stringify(data));
-				result = true;
-			},
-			failMessagesDiv: ItemAddEdit.addEditItemFormMessages
+			let setAmountStoredVars = function () {
+				addEditData["unit"] = UnitUtils.getUnitObj(ItemAddEdit.addEditItemUnitInput.val());
+			};
+
+			ItemAddEdit.foreachStorageTypeFromInput(
+				setAmountStoredVars,
+				setAmountStoredVars,
+				function () {
+
+				}
+			);
+
+			KeywordAttEdit.addKeywordAttData(addEditData, ItemAddEdit.addEditKeywordDiv, ItemAddEdit.addEditAttDiv);
+			ImageSearchSelect.addImagesToData(addEditData, ItemAddEdit.addEditItemImagesSelected);
+
+			console.log("Data being submitted: " + JSON.stringify(addEditData));
+			let verb = "";
+			let result = false;
+			if (ItemAddEdit.addEditItemFormMode.val() === "add") {
+				verb = "Created";
+				console.log("Adding new item.");
+				await Rest.call({
+					url: Rest.passRoot + "/inventory/item",
+					method: "POST",
+					data: addEditData,
+					async: false,
+					done: function (data) {
+						console.log("Response from create request: " + JSON.stringify(data));
+						result = true;
+					},
+					failMessagesDiv: ItemAddEdit.addEditItemFormMessages
+				});
+			} else if (ItemAddEdit.addEditItemFormMode.val() === "edit") {
+				verb = "Edited";
+				let id = ItemAddEdit.addEditItemIdInput.val();
+				console.log("Editing storage block " + id);
+
+				await Rest.call({
+					url: Rest.passRoot + "/inventory/item/" + id,
+					method: "PUT",
+					data: addEditData,
+					async: false,
+					done: function (data) {
+						console.log("Response from create request: " + JSON.stringify(data));
+						result = true;
+					},
+					failMessagesDiv: ItemAddEdit.addEditItemFormMessages
+				});
+			}
+
+			if (!result) {
+				PageMessageUtils.addMessageToDiv(ItemAddEdit.addEditItemFormMessages, "danger", "Failed to do " + verb + " item.", "Failed", null);
+			} else {
+				PageMessageUtils.reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
+			}
 		});
 	}
-
-	if (!result) {
-		PageMessageUtils.addMessageToDiv(ItemAddEdit.addEditItemFormMessages, "danger", "Failed to do " + verb + " item.", "Failed", null);
-	} else {
-		PageMessageUtils.reloadPageWithMessage(verb + " item successfully!", "success", "Success!");
-	}
-});
+};
