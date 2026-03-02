@@ -108,7 +108,7 @@ jobs:
         with:
           name: "Integration Test Report (Container ${{ inputs.containerBased }})"
           path: "${{ inputs.path }}/build/reports/tests/quarkusIntTest"
-          
+
       # https://github.com/marketplace/actions/test-reporter
       - name: "Integration Test Report (Container: ${{ inputs.containerBased }})"
         uses: dorny/test-reporter@v1
@@ -145,7 +145,7 @@ jobs:
           ./gradlew dependencies --write-locks
       
       - name: Run Trivy vulnerability scanner in fs mode
-        uses: aquasecurity/trivy-action@0.34.0
+        uses: aquasecurity/trivy-action@0.34.1
         with:
           scan-type: 'fs'
           scan-ref: '${{ inputs.path }}'
