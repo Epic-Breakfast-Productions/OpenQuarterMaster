@@ -130,14 +130,14 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Runner
-        uses: ./.github/actions/wf-setup
+      # - name: Setup Runner
+      #   uses: ./.github/actions/wf-setup
 
-      - name: Download the build
-        uses: actions/download-artifact@v4
-        with:
-          name: build-result
-          path: ${{ inputs.path }}/build/quarkus-app
+      # - name: Download the build
+      #   uses: actions/download-artifact@v4
+      #   with:
+      #     name: build-result
+      #     path: ${{ inputs.path }}/build/quarkus-app
 
       - name: Generate the lockfile
         working-directory: ${{ inputs.path }}
@@ -148,10 +148,12 @@ jobs:
         uses: aquasecurity/trivy-action@0.33.1
         with:
           scan-type: 'fs'
-          scan-ref: '${{ inputs.path }}'
-          format: 'table'
+          # scan-ref: '${{ inputs.path }}'
+          scan-ref: '.'
+          trivy-config: trivy.yaml
+          # format: 'table'
           # output: 'trivy-results.sarif'
-          scanners: 'vuln'
+          # scanners: 'vuln'
           # scanners: 'vuln,secret,misconfig,license'
 
       - name: Upload Trivy scan results to GitHub Security tab
