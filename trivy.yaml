@@ -1,10 +1,11 @@
-# format: sarif
-# report: "all"
-# severity: 
-#   - UNKNOWN
-#   - LOW
-#   - MEDIUM
-#   - HIGH
-#   - CRITICAL
-# db:
-#   skip-update: true
+format: sarif
+report: "all"
+version: 
+severity: 
+  - UNKNOWN
+  - LOW
+  - MEDIUM
+  - HIGH
+  - CRITICAL
+db:
+  skip-update: true

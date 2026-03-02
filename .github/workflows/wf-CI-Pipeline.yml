@@ -143,14 +143,20 @@ jobs:
         working-directory: ${{ inputs.path }}
         run: |
           ./gradlew dependencies --write-locks
+
+      - name: Install Trivy
+        run: |
+          wget -qO- https://github.com/aquasecurity/trivy/releases/download/v0.58.1/trivy_0.58.1_Linux-64bit.tar.gz \
+            | tar -xzf - -C /usr/local/bin/ trivy
       
       - name: Run Trivy vulnerability scanner in fs mode
-        uses: aquasecurity/trivy-action@0.33.1
+        uses: aquasecurity/trivy-action@0.34.1
         with:
           scan-type: 'fs'
           # scan-ref: '${{ inputs.path }}'
           scan-ref: '.'
           trivy-config: trivy.yaml
+          trivy-command: trivy
           # format: 'table'
           # output: 'trivy-results.sarif'
           # scanners: 'vuln'
