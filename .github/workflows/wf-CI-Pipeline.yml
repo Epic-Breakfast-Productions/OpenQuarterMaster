@@ -158,7 +158,7 @@ jobs:
         with:
           scan-type: 'fs'
           scan-ref: '${{ inputs.path }}'
-          scan-ref: '.'
+          # scan-ref: '.'
           trivy-config: trivy.yaml
           skip-setup-trivy: true
           # trivy-command: trivy
