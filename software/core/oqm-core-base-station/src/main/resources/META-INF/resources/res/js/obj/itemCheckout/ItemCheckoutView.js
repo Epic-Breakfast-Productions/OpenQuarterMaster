@@ -417,16 +417,18 @@ export const ItemCheckoutView = {
 		});
 
 		HistorySearchUtils.setupHistorySearch(ItemCheckoutView.history, itemCheckoutId);
+	},
+	initPage: function () {
+		//TODO:: bring back for item checkout view page, breaks when on other pages
+		// if (ItemCheckoutView.itemCheckoutViewModal.length) {
+		// 	ItemCheckoutView.itemCheckoutViewModal[0].addEventListener("hidden.bs.modal", function () {
+		// 		UriUtils.removeParam("view");
+		// 	});
+		// }
+		//
+		// if (UriUtils.getParams.has("view")) {
+		// 	ItemCheckoutView.setupView(UriUtils.getParams.get("view"));
+		// 	ItemCheckoutView.viewBsModal.show();
+		// }
 	}
 };
-
-if (ItemCheckoutView.itemCheckoutViewModal.length) {
-	ItemCheckoutView.itemCheckoutViewModal[0].addEventListener("hidden.bs.modal", function () {
-		UriUtils.removeParam("view");
-	});
-}
-
-if (UriUtils.getParams.has("view")) {
-	ItemCheckoutView.setupView(UriUtils.getParams.get("view"));
-	ItemCheckoutView.viewBsModal.show();
-}
