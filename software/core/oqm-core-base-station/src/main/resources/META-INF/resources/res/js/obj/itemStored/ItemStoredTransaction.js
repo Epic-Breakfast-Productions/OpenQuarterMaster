@@ -7,6 +7,12 @@ import {Links} from "../../links.js";
 import {KeywordAttEdit} from "../ObjEditUtils.js";
 import {ImageSearchSelect} from "../media/ImageSearchSelect.js";
 import {ItemSearchSelect} from "../item/ItemSearchSelect.js";
+import {StoredFormInput} from "./StoredFormInput.js";
+import {CheckoutTypeUtils, StorageTypeUtils} from "../../StoredTypeUtils.js";
+import {ItemCheckoutSearchSelect} from "../itemCheckout/ItemCheckoutSearchSelect.js";
+import {ItemStoredSearchSelect} from "./ItemStoredSearchSelect.js";
+import {FileAttachmentSearchSelect} from "../media/fileAttachment/FileAttachmentSearchSelect.js";
+import {ItemCheckoutView} from "../itemCheckout/ItemCheckoutView.js";
 
 export const ItemStoredTransaction = {
 
@@ -231,7 +237,7 @@ export const ItemStoredTransaction = {
 					let blockOp = $("<option></option>");
 					blockOp.val(blockId);
 					blockOp.text(blockId);
-					itemPromises.push(getStorageBlockLabel(blockId, function (blockLabel) {
+					itemPromises.push(Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
 						blockOp.text(blockLabel);
 					}));
 					ItemStoredTransaction.Add.toBlockInput.append(blockOp);

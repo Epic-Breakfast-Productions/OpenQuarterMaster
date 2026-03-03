@@ -1,4 +1,10 @@
-const ItemCheckin = {
+import {TimeUtils} from "../../TimeUtils.js";
+import {PageMessageUtils} from "../../PageMessageUtils.js";
+import {Rest} from "../../Rest.js";
+import {Getters} from "../Getters.js";
+import {StoredView} from "../itemStored/StoredView.js";
+
+export const ItemCheckin = {
 	modal: $("#itemCheckinModal"),
 	modalBs: new bootstrap.Modal($("#itemCheckinModal"), {}),
 	messages: $("#itemCheckinMessages"),
@@ -96,7 +102,7 @@ const ItemCheckin = {
 					}
 				}));
 
-				getStorageBlockLabel(data.checkedOutFrom, function (label) {
+				Getters.StorageBlock.getStorageBlockLabel(data.checkedOutFrom, function (label) {
 					ItemCheckin.originalStorageLabelLabel.text(label);
 				});
 				ItemCheckin.storedDetails.append(
@@ -113,56 +119,58 @@ const ItemCheckin = {
 			},
 			failMessagesDiv: ItemCheckin.messages
 		});
+	},
+	initPage: function () {
+
+		ItemCheckin.itemCheckinForm.on("submit", function(e){
+			e.preventDefault();
+			console.log("Submitting item checkin form.");
+
+			let checkinDetailsData = {
+				"checkinDateTime": TimeUtils.getTsFromInput(ItemCheckin.returnedDtInput),
+				"notes": ItemCheckin.notesInput.val(),
+				"checkinType": ItemCheckin.checkinTypeInput.val()
+			};
+			KeywordAttEdit.addKeywordAttData(checkinDetailsData, ItemCheckin.keywords, ItemCheckin.atts);
+
+			switch (checkinDetailsData.checkinType){
+				case "RETURN":
+					checkinDetailsData["storageBlockCheckedInto"]=ItemCheckin.intoInput.val();
+					break;
+				case "LOSS":
+					checkinDetailsData["reason"]=ItemCheckin.lossReasonInput.val();
+					break;
+				default:
+					PageMessageUtils.addMessageToDiv(
+						ItemCheckin.messages,
+						"danger",
+						"Invalid checkin type"
+					);
+					return;
+			}
+
+			Rest.call({
+				spinnerContainer: ItemCheckin.modal.get(0),
+				failMessagesDiv: ItemCheckin.messages,
+				url: Rest.passRoot + "/inventory/item-checkout/" + ItemCheckin.checkinIdInput.val() + "/checkin",
+				method: "PUT",
+				data: checkinDetailsData,
+				done: function (data) {
+					if (UriUtils.getParams.has("checkin")) {
+						UriUtils.removeParam("checkin");
+					}
+					PageMessageUtils.reloadPageWithMessage("Checked in item successfully!", "success", "Success!");
+				}
+			})
+		});
+
+		ItemCheckin.modal[0].addEventListener("hidden.bs.modal", function () {
+			UriUtils.removeParam("checkin");
+		});
+
+		if (UriUtils.getParams.has("checkin")) {
+			ItemCheckin.setupCheckinForm(UriUtils.getParams.get("checkin"));
+			ItemCheckin.modalBs.show();
+		}
 	}
 };
-
-ItemCheckin.itemCheckinForm.on("submit", function(e){
-	e.preventDefault();
-	console.log("Submitting item checkin form.");
-
-	let checkinDetailsData = {
-		"checkinDateTime": TimeUtils.getTsFromInput(ItemCheckin.returnedDtInput),
-		"notes": ItemCheckin.notesInput.val(),
-		"checkinType": ItemCheckin.checkinTypeInput.val()
-	};
-	KeywordAttEdit.addKeywordAttData(checkinDetailsData, ItemCheckin.keywords, ItemCheckin.atts);
-
-	switch (checkinDetailsData.checkinType){
-		case "RETURN":
-			checkinDetailsData["storageBlockCheckedInto"]=ItemCheckin.intoInput.val();
-			break;
-		case "LOSS":
-			checkinDetailsData["reason"]=ItemCheckin.lossReasonInput.val();
-			break;
-		default:
-			PageMessageUtils.addMessageToDiv(
-				ItemCheckin.messages,
-				"danger",
-				"Invalid checkin type"
-			);
-			return;
-	}
-
-	Rest.call({
-		spinnerContainer: ItemCheckin.modal.get(0),
-		failMessagesDiv: ItemCheckin.messages,
-		url: Rest.passRoot + "/inventory/item-checkout/" + ItemCheckin.checkinIdInput.val() + "/checkin",
-		method: "PUT",
-		data: checkinDetailsData,
-		done: function (data) {
-			if (UriUtils.getParams.has("checkin")) {
-				UriUtils.removeParam("checkin");
-			}
-			PageMessageUtils.reloadPageWithMessage("Checked in item successfully!", "success", "Success!");
-		}
-	})
-});
-
-ItemCheckin.modal[0].addEventListener("hidden.bs.modal", function () {
-	UriUtils.removeParam("checkin");
-});
-
-if (UriUtils.getParams.has("checkin")) {
-	ItemCheckin.setupCheckinForm(UriUtils.getParams.get("checkin"));
-	ItemCheckin.modalBs.show();
-}

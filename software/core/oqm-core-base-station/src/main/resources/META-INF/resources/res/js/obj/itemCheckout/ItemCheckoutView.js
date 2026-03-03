@@ -1,4 +1,15 @@
-const ItemCheckoutView = {
+import {EntityRef} from "../../EntityRef.js";
+import {Icons} from "../../Icons.js";
+import {KeywordAttUtils} from "../ObjViewUtils.js";
+import {Rest} from "../../Rest.js";
+import {StoredView} from "../itemStored/StoredView.js";
+import {UnitUtils} from "../UnitUtils.js";
+import {Links} from "../../links.js";
+import {HistorySearchUtils} from "../../HistorySearchUtils.js";
+import {UriUtils} from "../../UriUtils.js";
+import {Getters} from "../Getters.js";
+
+export const ItemCheckoutView = {
 	itemCheckoutViewModal: $("#itemCheckoutViewModal"),
 	viewBsModal: $("#itemCheckoutViewModal").length ? new bootstrap.Modal($("#itemCheckoutViewModal"), {}) : null,
 	messages: $("#itemCheckoutViewMessages"),
@@ -284,7 +295,7 @@ const ItemCheckoutView = {
 			}
 		}));
 
-		getStorageBlockLabel(itemCheckoutData.fromBlock, function (label) {
+		Getters.StorageBlock.getStorageBlockLabel(itemCheckoutData.fromBlock, function (label) {
 			output.find(".itemCheckoutViewCheckedOutFromLabel").append(
 				Links.getStorageViewLink(itemCheckoutData.fromBlock, label)
 			);
@@ -379,7 +390,7 @@ const ItemCheckoutView = {
 		ItemCheckoutView.content.text("");
 		ItemCheckoutView.checkinButton.hide();
 
-		resetHistorySearch(ItemCheckoutView.history);
+		HistorySearchUtils.resetHistorySearch(ItemCheckoutView.history);
 	},
 	async setupView(itemCheckoutId) {
 		console.log("Setting up view for item checkout " + itemCheckoutId);
@@ -405,7 +416,7 @@ const ItemCheckoutView = {
 			}
 		});
 
-		setupHistorySearch(ItemCheckoutView.history, itemCheckoutId);
+		HistorySearchUtils.setupHistorySearch(ItemCheckoutView.history, itemCheckoutId);
 	}
 };
 

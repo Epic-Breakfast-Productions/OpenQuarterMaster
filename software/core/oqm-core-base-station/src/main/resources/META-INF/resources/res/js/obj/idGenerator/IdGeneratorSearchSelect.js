@@ -224,36 +224,38 @@ export const IdGeneratorSearchSelect = {
 		} else {
 			console.warn("Destination of selected generator could not be determined.");
 		}
+	},
+	initPage: function () {
+		console.log("Initializing id generator search select.");
+		IdGeneratorSearchSelect.searchSelectForm.on("submit", function (event) {
+			event.preventDefault();
+			console.log("Submitting search form.");
+
+			let searchParams = new URLSearchParams(new FormData(event.target));
+			console.log("URL search params: " + searchParams);
+
+			Rest.call({
+				spinnerContainer: IdGeneratorSearchSelect.searchSelectModal.get(0),
+				url: Rest.passRoot + "/identifier/generator?" + searchParams,
+				returnType: "html",
+				method: 'GET',
+				failNoResponse: null,
+				failNoResponseCheckStatus: true,
+				extraHeaders: {
+					"accept": "text/html",
+					"actionType": "select",
+					"searchFormId": "storageSearchSelectForm",
+					"inputIdPrepend": IdGeneratorSearchSelect.searchSelectModal.attr("data-bs-inputIdPrepend"),
+					"destinationId": IdGeneratorSearchSelect.searchSelectModal.data("destinationId"),
+					"otherModalId": IdGeneratorSearchSelect.searchSelectModal.data("bs-othermodalid")
+				},
+				async: false,
+				done: function (data) {
+					console.log("Got data!");
+					IdGeneratorSearchSelect.searchSelectSearchResults.html(data);
+				}
+			});
+		});
 	}
 }
 
-
-IdGeneratorSearchSelect.searchSelectForm.on("submit", function (event) {
-	event.preventDefault();
-	console.log("Submitting search form.");
-
-	let searchParams = new URLSearchParams(new FormData(event.target));
-	console.log("URL search params: " + searchParams);
-
-	Rest.call({
-		spinnerContainer: IdGeneratorSearchSelect.searchSelectModal.get(0),
-		url: Rest.passRoot + "/identifier/generator?" + searchParams,
-		returnType: "html",
-		method: 'GET',
-		failNoResponse: null,
-		failNoResponseCheckStatus: true,
-		extraHeaders: {
-			"accept": "text/html",
-			"actionType": "select",
-			"searchFormId": "storageSearchSelectForm",
-			"inputIdPrepend": IdGeneratorSearchSelect.searchSelectModal.attr("data-bs-inputIdPrepend"),
-			"destinationId": IdGeneratorSearchSelect.searchSelectModal.data("destinationId"),
-			"otherModalId": IdGeneratorSearchSelect.searchSelectModal.data("bs-othermodalid")
-		},
-		async: false,
-		done: function (data) {
-			console.log("Got data!");
-			IdGeneratorSearchSelect.searchSelectSearchResults.html(data);
-		}
-	});
-});

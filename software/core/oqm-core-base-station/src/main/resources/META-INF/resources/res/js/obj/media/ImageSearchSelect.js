@@ -29,7 +29,7 @@ export const ImageSearchSelect = {
 			await Rest.call({
 				async: false,
 				spinnerContainer: null,
-				url: Rest.passRoot+"/media/image/" + imageId + "/revision/latest/data",
+				url: Rest.passRoot+"/media/image/" + imageId + "/revision/latest",
 				done: function (data) {
 					titleArr[i] = data.title
 				}
@@ -64,35 +64,35 @@ export const ImageSearchSelect = {
 		selectedImageDiv.find("img").each(function(i, curImg){
 			data.imageIds.push($(curImg).attr('data-bs-imageId'));
 		});
+	},
+	initPage: function () {
+		ImageSearchSelect.searchForm.on("submit", function (event) {
+			event.preventDefault();
+			console.log("Submitting search form.");
+
+			let searchParams = new URLSearchParams(new FormData(event.target));
+			console.log("URL search params: " + searchParams);
+
+			Rest.call({
+				spinnerContainer: ImageSearchSelect.imageSearchSelectModal.get(0),
+				url: Rest.passRoot + "/media/image?" + searchParams,
+				method: 'GET',
+				failNoResponse: null,
+				failNoResponseCheckStatus: true,
+				returnType: "html",
+				extraHeaders: {
+					"accept": "text/html",
+					"actionType": "select",
+					"searchFormId": "imageSearchSelectForm",
+					"inputIdPrepend": ImageSearchSelect.imageSearchSelectModal.attr("data-bs-inputIdPrepend"),
+					"otherModalId": ImageSearchSelect.imageSearchSelectModal.attr("data-bs-otherModalId")
+				},
+				async: false,
+				done: function (data) {
+					console.log("Got data!");
+					ImageSearchSelect.searchResults.html(data);
+				}
+			});
+		});
 	}
 };
-
-ImageSearchSelect.searchForm.on("submit", function (event) {
-	event.preventDefault();
-	console.log("Submitting search form.");
-
-	let searchParams = new URLSearchParams(new FormData(event.target));
-	console.log("URL search params: " + searchParams);
-
-	Rest.call({
-		spinnerContainer: ImageSearchSelect.imageSearchSelectModal.get(0),
-		url: Rest.passRoot + "/media/image?" + searchParams,
-		method: 'GET',
-		failNoResponse: null,
-		failNoResponseCheckStatus: true,
-		returnType: "html",
-		extraHeaders: {
-			"accept": "text/html",
-			"actionType": "select",
-			"searchFormId": "imageSearchSelectForm",
-			"inputIdPrepend": ImageSearchSelect.imageSearchSelectModal.attr("data-bs-inputIdPrepend"),
-			"otherModalId": ImageSearchSelect.imageSearchSelectModal.attr("data-bs-otherModalId")
-		},
-		async: false,
-		done: function (data) {
-			console.log("Got data!");
-			ImageSearchSelect.searchResults.html(data);
-		}
-	});
-
-});

@@ -103,18 +103,62 @@
 	import { ItemStoredEdit } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredEdit.js';
 	import { FileAttachmentSearchSelect } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js';
 	import { HistorySearchUtils } from '{rootPrefix}/res/js/HistorySearchUtils.js';
+	import { Identifiers } from '{rootPrefix}/res/js/Identifiers.js';
+	import { Pricing } from '{rootPrefix}/res/js/Pricing.js';
+	import { AssociatedLinks } from '{rootPrefix}/res/js/AssociatedLinks.js';
+	import { StorageSearchSelect } from '{rootPrefix}/res/js/obj/storageBlock/StorageSearchSelect.js';
+	import { IdGeneratorAddEdit } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorAddEdit.js';
+	import { IdGeneratorSearchSelect } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorSearchSelect.js';
+	import { FileAttachmentAddEdit } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js';
+	import { FileAttachmentView } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js';
+	import { ImageSearchSelect } from '{rootPrefix}/res/js/obj/media/ImageSearchSelect.js';
+	import { ImageAdd } from '{rootPrefix}/res/js/obj/media/ImageAdd.js';
+	import { ImageAddFromSelect } from '{rootPrefix}/res/js/obj/media/ImageAddFromSelect.js';
+	import { KeywordAttEdit } from '{rootPrefix}/res/js/obj/ObjEditUtils.js';
+	import { ItemStoredTransaction } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredTransaction.js';
+	import { ItemStoredSearch } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredSearch.js';
+	import { ItemStoredSearchSelect } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredSearchSelect.js';
+	import { ItemCheckoutSearchSelect } from '{rootPrefix}/res/js/obj/itemCheckout/ItemCheckoutSearchSelect.js';
 	
 	SearchUtils.initPage();
 	ItemAddEdit.initPage();
 	ItemView.initPage();
 	FileAttachmentSearchSelect.initPage();
 	ItemStoredEdit.initPage();
+	StorageSearchSelect.initPage();
+	IdGeneratorAddEdit.initPage();
+	IdGeneratorSearchSelect.initPage();
+	FileAttachmentAddEdit.initPage();
+	ImageSearchSelect.initPage();
+	ImageAdd.initPage();
+	ImageAddFromSelect.initPage();
+	ItemStoredTransaction.initPage();
+	ItemStoredSearchSelect.initPage();
 	
 	window.Rest = Rest;
 	window.ItemAddEdit = ItemAddEdit;
 	window.ItemView = ItemView;
 	window.ItemStoredEdit = ItemStoredEdit;
 	window.HistorySearchUtils = HistorySearchUtils;
+	window.StorageSearchSelect = StorageSearchSelect;
+	window.Identifiers = Identifiers;
+	window.IdGeneratorAddEdit = IdGeneratorAddEdit;
+	window.IdGeneratorSearchSelect = IdGeneratorSearchSelect;
+	window.Pricing = Pricing;
+	window.AssociatedLinks = AssociatedLinks;
+	window.FileAttachmentSearchSelect = FileAttachmentSearchSelect;
+	window.FileAttachmentAddEdit = FileAttachmentAddEdit;
+	window.FileAttachmentView = FileAttachmentView;
+	window.ImageSearchSelect = ImageSearchSelect;
+	window.ImageAdd = ImageAdd;
+	window.ImageAddFromSelect = ImageAddFromSelect;
+	window.KeywordAttEdit = KeywordAttEdit;
+	window.ItemStoredTransaction = ItemStoredTransaction;
+	window.ItemStoredSearch = ItemStoredSearch;
+	window.ItemStoredSearchSelect = ItemStoredSearchSelect;
+	window.ItemCheckoutSearchSelect = ItemCheckoutSearchSelect;
+	
+	console.log("Page modules loaded.");
 </script>
 <script defer>
 

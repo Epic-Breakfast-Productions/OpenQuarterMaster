@@ -1,4 +1,9 @@
-ItemCheckoutSearchSelect = {
+import {ItemStoredSearchSelect} from "../itemStored/ItemStoredSearchSelect.js";
+import {Getters} from "../Getters.js";
+import {ModalUtils} from "../../ModalUtils.js";
+import {ItemStoredSearch} from "../itemStored/ItemStoredSearch.js";
+
+export const ItemCheckoutSearchSelect = {
 	//TODO:: finish reworking
 	modal: $("#itemCheckoutSearchSelectModal"),
 	form: $("#itemCheckoutSearchSelectForm"),
@@ -113,24 +118,25 @@ ItemCheckoutSearchSelect = {
 			ItemStoredSearchSelect.getIdInput(storedItemInputGroupJq).val(id);
 			ItemStoredSearchSelect.disableInputs(storedItemInputGroupJq);
 		}
+	},
+	initPage: function() {
+		// ItemStoredSearchSelect.form.on(
+		// 	"submit",
+		// 	function (event) {
+		// 		ItemStoredSearch.search(
+		// 			ItemStoredSearchSelect.form[0],
+		// 			event,
+		// 			ItemStoredSearchSelect.results,
+		// 			false,
+		// 			true,
+		// 			true,
+		// 			ItemStoredSearchSelect.modal.attr("data-bs-destination")
+		// 		);
+		// 	}
+		// );
+		//
+		// ItemStoredSearchSelect.itemNameInput.prop("readOnly", true);
+		// ItemStoredSearchSelect.itemClearButton.prop("disabled", true);
+		// ItemStoredSearchSelect.itemSearchButton.prop("disabled", true);
 	}
 }
-
-ItemStoredSearchSelect.form.on(
-	"submit",
-	function (event) {
-		ItemStoredSearch.search(
-			ItemStoredSearchSelect.form[0],
-			event,
-			ItemStoredSearchSelect.results,
-			false,
-			true,
-			true,
-			ItemStoredSearchSelect.modal.attr("data-bs-destination")
-		);
-	}
-);
-
-ItemStoredSearchSelect.itemNameInput.prop("readOnly", true);
-ItemStoredSearchSelect.itemClearButton.prop("disabled", true);
-ItemStoredSearchSelect.itemSearchButton.prop("disabled", true);
