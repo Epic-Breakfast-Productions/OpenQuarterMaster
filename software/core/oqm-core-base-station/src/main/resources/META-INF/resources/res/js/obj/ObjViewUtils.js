@@ -1,3 +1,5 @@
+import {Rest} from "../Rest.js";
+
 export const KeywordAttUtils = {
 
 	displayKeywordsIn(container, keywords) {
