@@ -4,7 +4,7 @@ import {KeywordAttUtils} from "../ObjViewUtils.js";
 import {Rest} from "../../Rest.js";
 import {StoredView} from "../itemStored/StoredView.js";
 import {UnitUtils} from "../UnitUtils.js";
-import {Links} from "../../links.js";
+import {Links} from "../../Links.js";
 import {HistorySearchUtils} from "../../HistorySearchUtils.js";
 import {UriUtils} from "../../UriUtils.js";
 import {Getters} from "../Getters.js";

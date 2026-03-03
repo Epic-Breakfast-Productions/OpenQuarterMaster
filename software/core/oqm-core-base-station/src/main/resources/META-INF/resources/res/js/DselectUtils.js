@@ -1,3 +1,4 @@
+//import "../../lib/dselect/1.0.4/dist/js/dselect.min.js";//doesn't work. Unsure why
 
 export const DselectUtils = {
 	standardOps: {search: true, clearable: true},

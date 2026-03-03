@@ -6,7 +6,7 @@ import {ItemStoredTransaction} from "./ItemStoredTransaction.js";
 import {ModalUtils} from "../../ModalUtils.js";
 import {Getters} from "../Getters.js";
 import {Icons} from "../../Icons.js";
-import {Links} from "../../links.js";
+import {Links} from "../../Links.js";
 
 export const StoredView = {
 	viewModal: $("#itemStoredViewModal"),

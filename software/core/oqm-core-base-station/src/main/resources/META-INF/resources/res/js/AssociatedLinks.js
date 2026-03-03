@@ -1,5 +1,5 @@
 import {SelectedObjectDivUtils} from "./SelectedObjectDivUtils.js";
-import {Links} from "./links.js";
+import {Links} from "./Links.js";
 import {Icons} from "./Icons.js";
 import {PageComponents} from "./PageComponents.js";
 

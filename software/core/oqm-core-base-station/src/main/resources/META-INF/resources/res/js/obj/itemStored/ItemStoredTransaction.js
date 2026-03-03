@@ -3,7 +3,7 @@ import {PageMessageUtils} from "../../PageMessageUtils.js";
 import {Getters} from "../Getters.js";
 import {ModalUtils} from "../../ModalUtils.js";
 import {UnitUtils} from "../UnitUtils.js";
-import {Links} from "../../links.js";
+import {Links} from "../../Links.js";
 import {KeywordAttEdit} from "../ObjEditUtils.js";
 import {ImageSearchSelect} from "../media/ImageSearchSelect.js";
 import {ItemSearchSelect} from "../item/ItemSearchSelect.js";
