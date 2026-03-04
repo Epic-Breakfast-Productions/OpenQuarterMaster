@@ -1,0 +1,65 @@
+# Service file for running an instance of Apache Kafka.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  Kafka tags: https://hub.docker.com/r/apache/kafka/tags
+#
+# TODO:: figure out better username/password situation
+
+[Unit]
+Description=Otel-LGTM server for Open Quartermaster. Version ${version}.
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/metrics
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=simple
+Restart=always
+TimeoutStartSec=600
+Environment="CONTAINER_NAME=oqm-metrics-otel_lgtm"
+Environment="IMAGE_NAME=docker.io/grafana/otel-lgtm"
+Environment="IMAGE_VERSION=0.19.1"
+Environment="DATA_DIR=/metrics/lgtm"
+
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop kafka container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove kafka container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
+ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR/grafana"
+ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR/prometheus"
+ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR/loki"
+
+#
+#                                        -p 3000:3000 \ # Grafana web port
+#                                        -p 4040:4040 \ # Pyroscope web port
+#                                        -p 4317:4317 \
+#                                        -p 4318:4318 \
+#                                        -p 9090:9090 \ # Prometheus Endpoint
+ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
+                                        -v "${LOCAL_VOLUME}"/grafana:/data/grafana\
+                                        -v "${LOCAL_VOLUME}"/prometheus:/data/prometheus \
+                                        -v "${LOCAL_VOLUME}"/loki:/data/loki \
+                                        -e GF_PATHS_DATA=/data/grafana \
+                                        $IMAGE_NAME:$IMAGE_VERSION
+# Ensure is up, healthy
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+                                if [ \"$status\" == \"healthy\" ]; then \
+                                    echo \"Container running!\"; \
+                                    running=\"true\"; \
+                                    continue; \
+                                fi; \
+                                sleep 0.05s; \
+                                if [ $SECONDS -gt 30 ]; then \
+                                    echo \"Container not running after 30 seconds!\"; \
+                                    exit 1; \
+                                fi; \
+                            done; \
+                            "
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop kafka container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove kafka container'"
+
+[Install]
+WantedBy=multi-user.target

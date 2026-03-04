@@ -1,0 +1,10 @@
+{
+	"metrics": {
+		"otel-lgtm": {
+			"internalHost": "oqm-metrics-otel_lgtm",
+			"internalHttpPort": 3000,
+			"externalBaseUri": "#{infra.traefik.externalRootUri}/infra/keycloak",
+			"internalBaseUri": "https://#{infra.keycloak.internalHost}:#{infra.keycloak.internalHttpsPort}"
+		}
+	}
+}

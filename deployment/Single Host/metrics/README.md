@@ -1,5 +1,13 @@
 # Metrics components for Single Host OQM Deployment
 
-These are packaged FOSS products used to provide metrics and insight into the running system.
 
-These are currently under development and not yet available.
+## TOODs
+
+ - [ ] make installer
+ - [ ] selectively include exposed metrics ui's, from config
+ - [ ] make sure can run behind proxy
+ - [ ] add oidc to grafana, only see when logged in?
+ - [ ] add metrics back to core api, base station. Verify connection
+ - [ ] Load dashboards.. create dashboards?
+   - [ ] System resource metrics
+   - [ ] OQM inventory metrics

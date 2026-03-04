@@ -1,0 +1,8 @@
+{
+	"type": "metrics",
+	"name": "otel-lgtm",
+	"title": "Otel LGTM",
+	"internalBaseUriConfig": "metrics.otel-lgtm.internalBaseUri",
+	"preservePath": false,
+	"stripPrefixes": false
+}
