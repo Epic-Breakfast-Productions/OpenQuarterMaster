@@ -1,3 +1,5 @@
+// import "../../lib/html5-qrcode/2.3.8/html5-qrcode.min.js";
+
 /**
  *
  * Requires:
@@ -6,7 +8,7 @@
  *
  * @type {{scanningModal: (*|jQuery|HTMLElement), codeScanner}}
  */
-const CodeScanner = {
+export const CodeScanner = {
 	scanningModal: $("#codeScannerModal"),
 	scanningModalObj: new bootstrap.Modal($("#codeScannerModal")),
 	codeScanner: new Html5QrcodeScanner(
@@ -38,18 +40,18 @@ const CodeScanner = {
 	},
 	onScanFailure(error) {
 		console.warn(`Code scan error = ${error}`);
+	},
+	initPage: function(){
+		CodeScanner.scanningModal.on('hidden.bs.modal', CodeScanner.cleanupScanner);
+		CodeScanner.scanningModal.on('show.bs.modal', event => {
+			console.log("Opening Barcode Scanning Modal");
+			CodeScanner.codeScanner.render(CodeScanner.onScanSuccess, CodeScanner.onScanFailure);
+			CodeScanner.codeDestInput = $(event.relatedTarget.nextElementSibling);
+
+			let inputModal = CodeScanner.codeDestInput.closest(".modal");
+			if(inputModal.length){
+				CodeScanner.otherModal = inputModal[0].id;
+			}
+		});
 	}
 };
-
-CodeScanner.scanningModal.on('hidden.bs.modal', CodeScanner.cleanupScanner);
-CodeScanner.scanningModal.on('show.bs.modal', event => {
-	console.log("Opening Barcode Scanning Modal");
-	CodeScanner.codeScanner.render(CodeScanner.onScanSuccess, CodeScanner.onScanFailure);
-	CodeScanner.codeDestInput = $(event.relatedTarget.nextElementSibling);
-
-	let inputModal = CodeScanner.codeDestInput.closest(".modal");
-	if(inputModal.length){
-		CodeScanner.otherModal = inputModal[0].id;
-	}
-
-});

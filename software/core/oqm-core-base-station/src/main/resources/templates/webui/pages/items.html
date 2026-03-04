@@ -92,7 +92,7 @@
 {/modals}
 
 {#scripts}
-    <script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script><!-- doesn't play nice with import -->
 {/scripts}
 {#pageScript}
 <script type="module">
@@ -119,6 +119,8 @@
 	import { ItemStoredSearch } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredSearch.js';
 	import { ItemStoredSearchSelect } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredSearchSelect.js';
 	import { ItemCheckoutSearchSelect } from '{rootPrefix}/res/js/obj/itemCheckout/ItemCheckoutSearchSelect.js';
+	import { ExtItemSearch } from '{rootPrefix}/res/js/item/ExtItemSearch.js';
+	import { CodeScanner } from '{rootPrefix}/res/js/CodeScanner.js';
 	
 	SearchUtils.initPage();
 	ItemAddEdit.initPage();
@@ -134,6 +136,8 @@
 	ImageAddFromSelect.initPage();
 	ItemStoredTransaction.initPage();
 	ItemStoredSearchSelect.initPage();
+	ExtItemSearch.initPage();
+	CodeScanner.initPage();
 	
 	window.Rest = Rest;
 	window.ItemAddEdit = ItemAddEdit;
@@ -157,6 +161,7 @@
 	window.ItemStoredSearch = ItemStoredSearch;
 	window.ItemStoredSearchSelect = ItemStoredSearchSelect;
 	window.ItemCheckoutSearchSelect = ItemCheckoutSearchSelect;
+	window.ExtItemSearch = ExtItemSearch;
 	
 	console.log("Page modules loaded.");
 </script>

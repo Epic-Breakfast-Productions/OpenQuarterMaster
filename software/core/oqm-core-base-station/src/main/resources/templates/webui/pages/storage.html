@@ -131,8 +131,7 @@ Accepts:
                 </div>
             </div>
             
-            {#search/image/imageSelectFormInput}
-            {/search/image/imageSelectFormInput}
+            {#search/image/imageSelectFormInput /}
             
             {! TODO:: do capacities: [FR]: Enable managing storage block capacities in UI #230 !}
             {!{#inputs/capacityInput}!}
@@ -387,6 +386,7 @@ Accepts:
 		
 		// init necessary modules
 		StorageSearchSelect.initPage();
+		ImageSearchSelect.initPage();
 		ImageAdd.initPage();
 		ImageAddFromSelect.initPage();
 		SearchUtils.initPage();
@@ -531,99 +531,7 @@ Accepts:
 			
 		}
 		
-		addEditStorageForm.submit(async function (event) {
-			event.preventDefault();
-			console.log("Submitting add/edit form.");
-			
-			let addEditData = {
-				label: addEditLabelInput.val(),
-				nickname: addEditNicknameInput.val(),
-				description: addEditDescriptionInput.val(),
-				location: addEditLocationInput.val(),
-				storedCategories: ItemCategoryInput.getValueFromInput(addEditCategoriesInput),
-				capacityMeasures: []
-			};
-			
-			KeywordAttEdit.addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
-			ImageSearchSelect.addImagesToData(addEditData, imagesSelected);
-			
-			capacityInputDiv.children().each(function (i, curCapDiv) {
-				let cur = $(curCapDiv);
-				addEditData.capacityMeasures.push({
-					value: cur.find(".capacityInput")[0].value,
-					unit: cur.find(".unitSelect").find(":selected")[0].value,
-					scale: "ABSOLUTE"
-				});
-			});
-			
-			
-			if (addEditParentInputId.val()) {
-				addEditData.parent = addEditParentInputId.val();
-			} else {
-				addEditData.parent = null;
-			}
-			
-			let result = false;
-			let verb = "";
-			if (addEditFormMode.val() === "add") {
-				verb = "Created";
-				
-				if (addBulkEnabledInput.is(":checked")) {
-					addEditData = getBulkInsertData(addEditData);
-					console.log("Adding new storage blocks in bulk.");
-					await Rest.call({
-						url: Rest.passRoot +"/inventory/storage-block/bulk",
-						method: "POST",
-						data: addEditData,
-						failMessagesDiv: addEditFormMessages,
-						done: function (data) {
-							console.log("Response from create request: " + JSON.stringify(data));
-							result = true;
-						},
-						fail: function (data) {
-							console.warn("Bad response from bulk block add attempt: " + JSON.stringify(data));
-						}
-					});
-				} else {
-					console.log("Adding new storage block.");
-					await Rest.call({
-						url: Rest.passRoot +"/inventory/storage-block",
-						method: "POST",
-						data: addEditData,
-						failMessagesDiv: addEditFormMessages,
-						done: function (data) {
-							console.log("Response from create request: " + JSON.stringify(data));
-							result = true;
-						},
-						fail: function (data) {
-							console.warn("Bad response from block add attempt: " + JSON.stringify(data));
-						}
-					});
-				}
-			} else if (addEditFormMode.val() === "edit") {
-				verb = "Edited";
-				let id = addEditFormId.val();
-				console.log("Editing storage block " + id);
-				
-				await Rest.call({
-					url: Rest.passRoot +"/inventory/storage-block/" + id,
-					method: "PUT",
-					data: addEditData,
-					async: false,
-					done: function (data) {
-						console.log("Response from edit request: " + JSON.stringify(data));
-						result = true;
-					},
-					failMessagesDiv: addEditFormMessages
-				});
-			}
-			
-			if (!result) {
-				PageMessageUtils.addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
-			} else {
-				PageMessageUtils.reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
-			}
-		});
+		
 		
 		let storageBlockViewModal = $('#storageBlockViewModal');
 		let storageBlockViewMessages = $("#storageBlockViewMessages");
@@ -773,15 +681,108 @@ Accepts:
 		
 		let viewModal = new bootstrap.Modal(storageBlockViewModal, { });
 		
-		storageBlockViewModal[0].addEventListener("hidden.bs.modal", function (){
-			UriUtils.removeParam("view");
-		});
 		
 		$(document).ready(function() {
 			if (UriUtils.getParams.has("view")) {
 				setupView(UriUtils.getParams.get("view"));
 				viewModal.show();
 			}
+			storageBlockViewModal[0].addEventListener("hidden.bs.modal", function (){
+				UriUtils.removeParam("view");
+			});
+			addEditStorageForm.submit(async function (event) {
+				event.preventDefault();
+				console.log("Submitting add/edit form.");
+				
+				let addEditData = {
+					label: addEditLabelInput.val(),
+					nickname: addEditNicknameInput.val(),
+					description: addEditDescriptionInput.val(),
+					location: addEditLocationInput.val(),
+					storedCategories: ItemCategoryInput.getValueFromInput(addEditCategoriesInput),
+					capacityMeasures: []
+				};
+				
+				KeywordAttEdit.addKeywordAttData(addEditData, keywordInputDiv, attInputDiv);
+				ImageSearchSelect.addImagesToData(addEditData, imagesSelected);
+				
+				capacityInputDiv.children().each(function (i, curCapDiv) {
+					let cur = $(curCapDiv);
+					addEditData.capacityMeasures.push({
+						value: cur.find(".capacityInput")[0].value,
+						unit: cur.find(".unitSelect").find(":selected")[0].value,
+						scale: "ABSOLUTE"
+					});
+				});
+				
+				
+				if (addEditParentInputId.val()) {
+					addEditData.parent = addEditParentInputId.val();
+				} else {
+					addEditData.parent = null;
+				}
+				
+				let result = false;
+				let verb = "";
+				if (addEditFormMode.val() === "add") {
+					verb = "Created";
+					
+					if (addBulkEnabledInput.is(":checked")) {
+						addEditData = getBulkInsertData(addEditData);
+						console.log("Adding new storage blocks in bulk.");
+						await Rest.call({
+							url: Rest.passRoot +"/inventory/storage-block/bulk",
+							method: "POST",
+							data: addEditData,
+							failMessagesDiv: addEditFormMessages,
+							done: function (data) {
+								console.log("Response from create request: " + JSON.stringify(data));
+								result = true;
+							},
+							fail: function (data) {
+								console.warn("Bad response from bulk block add attempt: " + JSON.stringify(data));
+							}
+						});
+					} else {
+						console.log("Adding new storage block.");
+						await Rest.call({
+							url: Rest.passRoot +"/inventory/storage-block",
+							method: "POST",
+							data: addEditData,
+							failMessagesDiv: addEditFormMessages,
+							done: function (data) {
+								console.log("Response from create request: " + JSON.stringify(data));
+								result = true;
+							},
+							fail: function (data) {
+								console.warn("Bad response from block add attempt: " + JSON.stringify(data));
+							}
+						});
+					}
+				} else if (addEditFormMode.val() === "edit") {
+					verb = "Edited";
+					let id = addEditFormId.val();
+					console.log("Editing storage block " + id);
+					
+					await Rest.call({
+						url: Rest.passRoot +"/inventory/storage-block/" + id,
+						method: "PUT",
+						data: addEditData,
+						async: false,
+						done: function (data) {
+							console.log("Response from edit request: " + JSON.stringify(data));
+							result = true;
+						},
+						failMessagesDiv: addEditFormMessages
+					});
+				}
+				
+				if (!result) {
+					PageMessageUtils.addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
+				} else {
+					PageMessageUtils.reloadPageWithMessage(verb + " storage block successfully!", "success", "Success!");
+				}
+			});
 		});
 		
 		function setBulkInsertInputState(){

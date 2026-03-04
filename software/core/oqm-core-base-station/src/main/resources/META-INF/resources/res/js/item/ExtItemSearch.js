@@ -298,52 +298,54 @@ export const ExtItemSearch = {
 
 	showAddEditProductSearchPane() {
 		ExtItemSearch.addEditProductSearchPane.show();
+	},
+	initPage: function () {
+
+		ExtItemSearch.websiteScanSearchForm.submit(function (event) {
+			event.preventDefault();
+			let webpage = ExtItemSearch.websiteScanSearchInput.val();
+			console.log("Scanning a web page: " + webpage);
+			ExtItemSearch.extSearchResults.html("");
+
+			Rest.call({
+				url: Rest.passRoot + "/plugin/itemLookup/webpage/scrape/" + encodeURIComponent(webpage),
+				done: async function (data) {
+					await ExtItemSearch.handleExtItemSearchResults(data);
+				},
+				failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
+			});
+		});
+
+		ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
+			event.preventDefault();
+			let barcodeText = ExtItemSearch.prodBarcodeSearchBarcodeInput.val();
+			console.log("Searching for a barcode: ", barcodeText);
+			Identifiers.getNewIdentifierInput(ItemAddEdit.identifierInputContainer).val(barcodeText);
+			Identifiers.addIdentifier(ItemAddEdit.identifierInputContainer);
+			ExtItemSearch.extSearchResults.html("");
+
+			Rest.call({
+				url: Rest.passRoot + "/plugin/itemLookup/barcode/" + barcodeText,
+				done: async function (data) {
+					await ExtItemSearch.handleExtItemSearchResults(data);
+				},
+				failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
+			});
+		});
+
+		ExtItemSearch.legoPartNumSearchForm.submit(function (event) {
+			event.preventDefault();
+			let partNumber = ExtItemSearch.legoPartNumSearchInput.val();
+			console.log("Searching for a lego part: " + partNumber);
+			ExtItemSearch.extSearchResults.html("");
+
+			Rest.call({
+				url: Rest.passRoot + "/plugin/itemLookup/lego/part/" + partNumber,
+				done: async function (data) {
+					await ExtItemSearch.handleExtItemSearchResults(data)
+				},
+				failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
+			});
+		});
 	}
 }
-
-ExtItemSearch.websiteScanSearchForm.submit(function (event) {
-	event.preventDefault();
-	let webpage = ExtItemSearch.websiteScanSearchInput.val();
-	console.log("Scanning a web page: " + webpage);
-	ExtItemSearch.extSearchResults.html("");
-
-	Rest.call({
-		url: Rest.passRoot + "/plugin/itemLookup/webpage/scrape/" + encodeURIComponent(webpage),
-		done: async function (data) {
-			await ExtItemSearch.handleExtItemSearchResults(data);
-		},
-		failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
-	});
-});
-
-ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
-	event.preventDefault();
-	let barcodeText = ExtItemSearch.prodBarcodeSearchBarcodeInput.val();
-	console.log("Searching for a barcode: ", barcodeText);
-	Identifiers.getNewIdentifierInput(ItemAddEdit.identifierInputContainer).val(barcodeText);
-	Identifiers.addIdentifier(ItemAddEdit.identifierInputContainer);
-	ExtItemSearch.extSearchResults.html("");
-
-	Rest.call({
-		url: Rest.passRoot + "/plugin/itemLookup/barcode/" + barcodeText,
-		done: async function (data) {
-			await ExtItemSearch.handleExtItemSearchResults(data);
-		},
-		failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
-	});
-});
-
-ExtItemSearch.legoPartNumSearchForm.submit(function (event) {
-	event.preventDefault();
-	let partNumber = ExtItemSearch.legoPartNumSearchInput.val();
-	console.log("Searching for a lego part: " + partNumber);
-	ExtItemSearch.extSearchResults.html("");
-
-	Rest.call({
-		url: Rest.passRoot + "/plugin/itemLookup/lego/part/" + partNumber,
-		done: async function (data) {
-			await ExtItemSearch.handleExtItemSearchResults(data)
-		},
-		failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
-	});
-});
