@@ -36,28 +36,33 @@ ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR/lo
 #                                        -p 4317:4317 \
 #                                        -p 4318:4318 \
 #                                        -p 9090:9090 \ # Prometheus Endpoint
-ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
-                                        -v "${LOCAL_VOLUME}"/grafana:/data/grafana\
-                                        -v "${LOCAL_VOLUME}"/prometheus:/data/prometheus \
-                                        -v "${LOCAL_VOLUME}"/loki:/data/loki \
+
+#  -e GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/home.json
+#  -v ./my-custom-dashboards:/var/lib/grafana/dashboards:ro
+# -e GF_AUTH_ANONYMOUS_ENABLED=false
+ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
+                                        --network=oqm-internal \
+                                        -v $(oqm-config g system.dataDir)${DATA_DIR}/grafana:/data/grafana \
+                                        -v $(oqm-config g system.dataDir)${DATA_DIR}/prometheus:/data/prometheus \
+                                        -v $(oqm-config g system.dataDir)${DATA_DIR}/loki:/data/loki \
                                         -e GF_PATHS_DATA=/data/grafana \
-                                        $IMAGE_NAME:$IMAGE_VERSION
-# Ensure is up, healthy
-ExecStartPost=/bin/bash -c "running=\"false\"; \
-                            while [ \"$running\" != \"true\" ]; do \
-                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
-                                if [ \"$status\" == \"healthy\" ]; then \
-                                    echo \"Container running!\"; \
-                                    running=\"true\"; \
-                                    continue; \
-                                fi; \
-                                sleep 0.05s; \
-                                if [ $SECONDS -gt 30 ]; then \
-                                    echo \"Container not running after 30 seconds!\"; \
-                                    exit 1; \
-                                fi; \
-                            done; \
-                            "
+                                        $IMAGE_NAME:$IMAGE_VERSION"
+# Ensure is up, healthy TODO:: https://github.com/grafana/docker-otel-lgtm/issues/1104
+#ExecStartPost=/bin/bash -c "running=\"false\"; \
+#                            while [ \"$running\" != \"true\" ]; do \
+#                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+#                                if [ \"$status\" == \"healthy\" ]; then \
+#                                    echo \"Container running!\"; \
+#                                    running=\"true\"; \
+#                                    continue; \
+#                                fi; \
+#                                sleep 0.05s; \
+#                                if [ $SECONDS -gt 30 ]; then \
+#                                    echo \"Container not running after 30 seconds!\"; \
+#                                    exit 1; \
+#                                fi; \
+#                            done; \
+#                            "
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop kafka container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove kafka container'"
 
