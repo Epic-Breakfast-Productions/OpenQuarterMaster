@@ -159,7 +159,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			//if new item, and stats are null, set new stats. No stored should exist so this should be representative enough to start. Maybe generate stats?
 			if (newOrChangedObject.getStats() == null) {
 				newOrChangedObject.setStats(
-					new ItemStoredStats(newOrChangedObject.getUnit())
+					new ItemStoredStats(newOrChangedObject.getUnit(), newOrChangedObject.getDefaultPrices())
 				);
 			}
 		}

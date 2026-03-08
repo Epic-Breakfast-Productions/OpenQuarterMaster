@@ -218,7 +218,7 @@ class InventoryItemServiceTest extends MongoHistoriedServiceTest<InventoryItem, 
 		User user = this.getTestUserService().getTestUser();
 		InventoryItem item = this.getTestObject();
 		
-		item.setStats((ItemStoredStats) new ItemStoredStats(item.getUnit())
+		item.setStats((ItemStoredStats) new ItemStoredStats(item.getUnit(), item.getDefaultPrices())
 											.setPrices(new LinkedHashSet<>() {{
 												add(
 													TotalPricing.builder()

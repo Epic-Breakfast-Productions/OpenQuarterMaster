@@ -185,7 +185,7 @@ public class ItemStatsService {
 	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, InventoryItem item) {
 		log.info("Getting stats for item: {}", item.getId());
 		
-		ItemStoredStats output = new ItemStoredStats(item.getUnit());
+		ItemStoredStats output = new ItemStoredStats(item.getUnit(), item.getDefaultPrices());
 		
 		for (ObjectId storageBlock : item.getStorageBlocks()) {
 			output.getStorageBlockStats().put(storageBlock, new StoredInBlockStats(output.getTotal().getUnit()));
