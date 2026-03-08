@@ -59,12 +59,8 @@ class InventoryItemsStatsTest extends RunningServerTest {
 	@Inject
 	InventoryItemService inventoryItemService;
 	
-	
-	@Test
-	public void testItemStatsNoStored() throws JsonProcessingException {
-		User testUser = this.getTestUserService().getTestUser();
-		
-		StorageBlock block = OBJECT_MAPPER.readValue(
+	private StorageBlock newBlock(User testUser) throws JsonProcessingException {
+		return OBJECT_MAPPER.readValue(
 			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 				.body(OBJECT_MAPPER.writeValueAsString(testBlockCreator.getTestObject()))
 				.contentType(ContentType.JSON)
@@ -73,14 +69,20 @@ class InventoryItemsStatsTest extends RunningServerTest {
 				.extract().body().asString(),
 			StorageBlock.class
 		);
-		
-		InventoryItem item = OBJECT_MAPPER.readValue(
+	}
+	
+	private InventoryItem newItem(User testUser, StorageBlock... blocks) throws JsonProcessingException {
+		return OBJECT_MAPPER.readValue(
 			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 				.body(
 					OBJECT_MAPPER.writeValueAsString(
 						testObjectCreator.getTestObject()
 							.setStorageType(StorageType.AMOUNT_LIST)
-							.setStorageBlocks(new LinkedHashSet<>() {{add(block.getId());}})
+							.setStorageBlocks(new LinkedHashSet<>() {{
+								for (StorageBlock block : blocks) {
+									add(block.getId());
+								}
+							}})
 					)
 				)
 				.contentType(ContentType.JSON)
@@ -89,7 +91,15 @@ class InventoryItemsStatsTest extends RunningServerTest {
 				.extract().body().asString(),
 			InventoryItem.class
 		);
+	}
+	
+	
+	@Test
+	public void testItemStatsNoStored() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser();
 		
+		StorageBlock block = this.newBlock(testUser);
+		InventoryItem item = this.newItem(testUser, block);
 		
 		ItemStoredStats itemStats = item.getStats();
 		
@@ -107,31 +117,8 @@ class InventoryItemsStatsTest extends RunningServerTest {
 	public void testItemStatsWithStored() throws JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
 		
-		StorageBlock block = OBJECT_MAPPER.readValue(
-			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-				.body(OBJECT_MAPPER.writeValueAsString(testBlockCreator.getTestObject()))
-				.contentType(ContentType.JSON)
-				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/storage-block")
-				.then().statusCode(200)
-				.extract().body().asString(),
-			StorageBlock.class
-		);
-		
-		InventoryItem item = OBJECT_MAPPER.readValue(
-			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-				.body(
-					OBJECT_MAPPER.writeValueAsString(
-						testObjectCreator.getTestObject()
-							.setStorageType(StorageType.AMOUNT_LIST)
-							.setStorageBlocks(new LinkedHashSet<>() {{add(block.getId());}})
-					)
-				)
-				.contentType(ContentType.JSON)
-				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item")
-				.then().statusCode(200)
-				.extract().body().asString(),
-			InventoryItem.class
-		);
+		StorageBlock block = this.newBlock(testUser);
+		InventoryItem item = this.newItem(testUser, block);
 		
 		//add stored
 		
@@ -188,16 +175,7 @@ class InventoryItemsStatsTest extends RunningServerTest {
 	public void testPricingTotals() throws JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
 		
-		StorageBlock block =
-			OBJECT_MAPPER.readValue(
-				setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-					.body(OBJECT_MAPPER.writeValueAsString(testBlockCreator.getTestObject()))
-					.contentType(ContentType.JSON)
-					.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/storage-block")
-					.then().statusCode(200)
-					.extract().body().asString(),
-				StorageBlock.class
-			);
+		StorageBlock block = this.newBlock(testUser);
 		
 		InventoryItem item =
 			OBJECT_MAPPER.readValue(
@@ -366,31 +344,8 @@ class InventoryItemsStatsTest extends RunningServerTest {
 	public void testItemStatsItemUpdateUnitNoStored() throws JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
 		
-		StorageBlock block = OBJECT_MAPPER.readValue(
-			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-				.body(OBJECT_MAPPER.writeValueAsString(testBlockCreator.getTestObject()))
-				.contentType(ContentType.JSON)
-				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/storage-block")
-				.then().statusCode(200)
-				.extract().body().asString(),
-			StorageBlock.class
-		);
-		
-		InventoryItem item = OBJECT_MAPPER.readValue(
-			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-				.body(
-					OBJECT_MAPPER.writeValueAsString(
-						testObjectCreator.getTestObject()
-							.setStorageType(StorageType.AMOUNT_LIST)
-							.setStorageBlocks(new LinkedHashSet<>() {{add(block.getId());}})
-					)
-				)
-				.contentType(ContentType.JSON)
-				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item")
-				.then().statusCode(200)
-				.extract().body().asString(),
-			InventoryItem.class
-		);
+		StorageBlock block = this.newBlock(testUser);
+		InventoryItem item = this.newItem(testUser, block);
 		
 		item = OBJECT_MAPPER.readValue(
 			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
@@ -416,7 +371,41 @@ class InventoryItemsStatsTest extends RunningServerTest {
 		assertFalse(blockStats.isHasStored());
 	}
 	
-	//TODO:: test no stored, update storage blocks
+	
+	@Test
+	public void testItemStatsItemUpdateBlocksNoStored() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser();
+		
+		StorageBlock block = this.newBlock(testUser);
+		StorageBlock block2 = this.newBlock(testUser);
+		InventoryItem item = this.newItem(testUser, block);
+		
+		item = OBJECT_MAPPER.readValue(
+			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+				.contentType(ContentType.JSON)
+				.body("{\"storageBlocks\": [\"" + block2.getId() + "\", \"" + block.getId() + "\"]}")
+				.put(
+					"/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item/" + item.getId()
+				)
+				.then().statusCode(200)
+				.extract().body().asString(),
+			InventoryItem.class
+		);
+		
+		ItemStoredStats itemStats = item.getStats();
+		
+		assertEquals(0, itemStats.getNumStored());
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), itemStats.getTotal());
+		assertTrue(itemStats.getStorageBlockStats().containsKey(block.getId()));
+		assertTrue(itemStats.getStorageBlockStats().containsKey(block2.getId()));
+		
+		StoredInBlockStats blockStats = itemStats.getStorageBlockStats().get(block.getId());
+		assertFalse(blockStats.isHasStored());
+		
+		blockStats = itemStats.getStorageBlockStats().get(block2.getId());
+		assertFalse(blockStats.isHasStored());
+	}
+	
 	//TODO:: test no stored, update expiry threshold, set
 	//TODO:: test no stored, update expiry threshold, unset
 	//TODO:: test no stored, update low stock threshold, set
