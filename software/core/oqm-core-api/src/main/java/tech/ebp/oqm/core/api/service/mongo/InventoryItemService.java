@@ -22,6 +22,7 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
@@ -234,8 +235,14 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				}
 			}
 			
-			if(updates.has("defaultPrices")){
-				//TODO:: this #929
+			if(
+				updates.has("defaultPrices") &&
+				!item.getDefaultPrices().equals(
+					this.getObjectMapper().treeToValue(updates.get("defaultPrices"), new TypeReference<List<StoredPricing>>(){})
+				)
+			){
+				log.debug("Default pricing changed for item {}. Recalculating stats.", item.getId());
+				return true;
 			}
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException("Failed to process update node. This likely shouldn't happen here.", e);
