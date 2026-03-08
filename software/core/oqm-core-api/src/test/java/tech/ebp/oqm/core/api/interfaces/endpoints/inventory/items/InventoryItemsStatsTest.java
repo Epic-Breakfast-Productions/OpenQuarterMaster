@@ -31,6 +31,7 @@ import tech.ebp.oqm.core.api.testResources.data.StorageBlockTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.units.indriya.quantity.Quantities;
+import tech.units.indriya.unit.Units;
 
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
@@ -182,66 +183,6 @@ class InventoryItemsStatsTest extends RunningServerTest {
 		assertTrue(blockStats.isHasStored());
 		assertEquals(Quantities.getQuantity(1, OqmProvidedUnits.UNIT), blockStats.getTotal());
 	}
-	
-	
-	@Test
-	public void testItemStatsItemUpdateNoStored() throws JsonProcessingException {
-		User testUser = this.getTestUserService().getTestUser();
-		
-		StorageBlock block = OBJECT_MAPPER.readValue(
-			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-				.body(OBJECT_MAPPER.writeValueAsString(testBlockCreator.getTestObject()))
-				.contentType(ContentType.JSON)
-				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/storage-block")
-				.then().statusCode(200)
-				.extract().body().asString(),
-			StorageBlock.class
-		);
-		
-		InventoryItem item = OBJECT_MAPPER.readValue(
-			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-				.body(
-					OBJECT_MAPPER.writeValueAsString(
-						testObjectCreator.getTestObject()
-							.setStorageType(StorageType.AMOUNT_LIST)
-							.setStorageBlocks(new LinkedHashSet<>() {{add(block.getId());}})
-					)
-				)
-				.contentType(ContentType.JSON)
-				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item")
-				.then().statusCode(200)
-				.extract().body().asString(),
-			InventoryItem.class
-		);
-		
-		//TODO:: send update to unit
-		
-		item = OBJECT_MAPPER.readValue(
-			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-				.contentType(ContentType.JSON)
-				.get("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item/" + item.getId())
-				.then().statusCode(200)
-				.extract().body().asString(),
-			InventoryItem.class
-		);
-		
-		ItemStoredStats itemStats = item.getStats();
-		
-		assertEquals(0, itemStats.getNumStored());
-		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), itemStats.getTotal());
-		assertTrue(itemStats.getStorageBlockStats().containsKey(block.getId()));
-		
-		
-		StoredInBlockStats blockStats = itemStats.getStorageBlockStats().get(block.getId());
-		
-		assertFalse(blockStats.isHasStored());
-	}
-	
-	
-	//TODO:: test stats, update item, stored
-	//TODO:: test stats, update stored; non-triggering
-	//TODO:: test stats, update stored; unit
-	
 	
 	@Test
 	public void testPricingTotals() throws JsonProcessingException {
@@ -419,4 +360,77 @@ class InventoryItemsStatsTest extends RunningServerTest {
 		
 		//TODO:: verify pricing in item stats
 	}
+	
+	
+	@Test
+	public void testItemStatsItemUpdateUnitNoStored() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser();
+		
+		StorageBlock block = OBJECT_MAPPER.readValue(
+			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+				.body(OBJECT_MAPPER.writeValueAsString(testBlockCreator.getTestObject()))
+				.contentType(ContentType.JSON)
+				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/storage-block")
+				.then().statusCode(200)
+				.extract().body().asString(),
+			StorageBlock.class
+		);
+		
+		InventoryItem item = OBJECT_MAPPER.readValue(
+			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+				.body(
+					OBJECT_MAPPER.writeValueAsString(
+						testObjectCreator.getTestObject()
+							.setStorageType(StorageType.AMOUNT_LIST)
+							.setStorageBlocks(new LinkedHashSet<>() {{add(block.getId());}})
+					)
+				)
+				.contentType(ContentType.JSON)
+				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item")
+				.then().statusCode(200)
+				.extract().body().asString(),
+			InventoryItem.class
+		);
+		
+		item = OBJECT_MAPPER.readValue(
+			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+				.contentType(ContentType.JSON)
+				.body("{\"unit\": {\"string\": \"mol\"}}")
+				.put(
+					"/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item/" + item.getId()
+				)
+				.then().statusCode(200)
+				.extract().body().asString(),
+			InventoryItem.class
+		);
+		
+		ItemStoredStats itemStats = item.getStats();
+		
+		assertEquals(0, itemStats.getNumStored());
+		assertEquals(Quantities.getQuantity(0, Units.MOLE), itemStats.getTotal());
+		assertTrue(itemStats.getStorageBlockStats().containsKey(block.getId()));
+		
+		
+		StoredInBlockStats blockStats = itemStats.getStorageBlockStats().get(block.getId());
+		
+		assertFalse(blockStats.isHasStored());
+	}
+	
+	//TODO:: test no stored, update storage blocks
+	//TODO:: test no stored, update expiry threshold, set
+	//TODO:: test no stored, update expiry threshold, unset
+	//TODO:: test no stored, update low stock threshold, set
+	//TODO:: test no stored, update low stock threshold, unset
+	//TODO:: test no stored, update low stock threshold, default pricing
+	
+	//TODO:: test stored, update storage unit
+	//TODO:: test stored, update storage blocks
+	//TODO:: test stored, update expiry threshold, set
+	//TODO:: test stored, update expiry threshold, unset
+	//TODO:: test stored, update low stock threshold, set
+	//TODO:: test stored, update low stock threshold, unset
+	//TODO:: test stored, update low stock threshold, default pricing
+	
+	//TODO:: test stats, update stored; non-triggering
+	//TODO:: test stats, update stored; pricing
 }
