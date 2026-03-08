@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
 	id 'io.quarkus'
-	id "io.freefair.lombok" version "9.0.0"
+	id "io.freefair.lombok" version "9.2.0"
 }
 
 group = 'tech.ebp.oqm.plugin'
@@ -28,9 +28,9 @@ dependencies {
 	implementation 'io.quarkus:quarkus-websockets-next'
 	implementation 'io.quarkus:quarkus-container-image-docker'
 
-	implementation 'org.webjars:jquery:3.7.1'
+	implementation 'org.webjars:jquery:4.0.0'
 
-	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.1.1'
+	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.4.1'
 
 	testImplementation 'io.quarkus:quarkus-junit5'
 	testImplementation 'io.rest-assured:rest-assured'
