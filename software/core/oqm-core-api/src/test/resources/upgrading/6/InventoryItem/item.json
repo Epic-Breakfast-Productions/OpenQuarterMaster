@@ -1,0 +1,54 @@
+{
+	"_id": {
+		"$oid": "68b8f55a6cbfdc68d2d35d32"
+	},
+	"attachedFiles": [
+		{
+			"$oid": "68b8f5216cbfdc68d2d35d30"
+		}],
+	"attributes": {},
+	"barcode": "032429253842",
+	"categories": [
+		{
+			"$oid": "68b8f5216cbfdc68d2d35d30"
+		}],
+	"description": "",
+	"expiryWarningThreshold": "0.0",
+	"imageIds": [
+		{
+			"$oid": "68b8f5216cbfdc68d2d35d30"
+		}
+	],
+	"keywords": [],
+	"name": "Test",
+	"notificationStatus": {
+		"lowStock": false
+	},
+	"schemaVersion": 2,
+	"stats": {
+		"anyLowStock": false,
+		"lowStock": false,
+		"numExpired": 0,
+		"numExpiryWarn": 0,
+		"numLowStock": 0,
+		"numStored": 1,
+		"storageBlockStats": {
+			"68b8f5216cbfdc68d2d35d30": {
+				"hasStored": true,
+				"numExpired": 0,
+				"numExpiryWarn": 0,
+				"numLowStock": 0,
+				"numStored": 1,
+				"total": "{\"unit\":{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"},\"scale\":\"ABSOLUTE\",\"value\":10}"
+			}
+		},
+		"total": "{\"unit\":{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"},\"scale\":\"ABSOLUTE\",\"value\":10}"
+	},
+	"storageBlocks": [
+		{
+			"$oid": "68b8f5216cbfdc68d2d35d30"
+		}
+	],
+	"storageType": "BULK",
+	"unit": "{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"}"
+}

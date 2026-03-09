@@ -7,13 +7,11 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.utils.FileContentsGet;
 import tech.ebp.oqm.core.api.testResources.data.TestMainFileObject;
 import tech.ebp.oqm.core.api.testResources.data.TestMainFileObjectGet;
 import tech.ebp.oqm.core.api.testResources.data.TestMongoHistoriedFileService;
-import tech.ebp.oqm.core.api.testResources.data.TestUserService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
@@ -29,10 +27,8 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
-//@Disabled("Waiting on file transaction support")//TODO::  #51
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class MongoHistoriedFileServiceTest extends RunningServerTest {
 	
 	@Inject
@@ -56,7 +52,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 			testMainObject,
 			testFileOne,
 			testUser
-		);
+		).getId();
 		
 		assertEquals(1, this.testMongoFileService.count(DEFAULT_TEST_DB_NAME));
 		assertNotNull(testMainObject.getId());
@@ -230,11 +226,7 @@ class MongoHistoriedFileServiceTest extends RunningServerTest {
 		
 		FileMetadata gotten = this.testMongoFileService.getFileMetadata(DEFAULT_TEST_DB_NAME, null, mainFileObject.getId(), 2);
 		
-		//TODO:: compare duration between, not stamps?
-		Comparator<ZonedDateTime> comparator = Comparator.comparing(
-			zdt -> zdt.truncatedTo(ChronoUnit.MINUTES)
-		);
-		assertEquals(0, comparator.compare(expected.getUploadDateTime(), gotten.getUploadDateTime()), "Unexpected upload datetime");
+		assertEquals(0, ChronoUnit.MINUTES.between(expected.getUploadDateTime(), gotten.getUploadDateTime()), "Unexpected upload datetime");
 		
 		gotten.setUploadDateTime(expected.getUploadDateTime());
 		

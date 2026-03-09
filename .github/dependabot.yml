@@ -18,7 +18,7 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
-      - "project-baseStation"
+      - "project-core-api"
   - package-ecosystem: "docker"
     directory: "/software/core/oqm-core-api/src/main/docker"
     target-branch: "development"
@@ -27,7 +27,7 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
-      - "project-baseStation"
+      - "project-core-api"
 
   # Base Station
   - package-ecosystem: "gradle"
@@ -38,7 +38,7 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
-      - "project-baseStation"
+      - "project-core-baseStation"
   - package-ecosystem: "docker"
     directory: "/software/core/oqm-core-base-station"
     target-branch: "development"
@@ -47,18 +47,8 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
-      - "project-baseStation"
+      - "project-core-baseStation"
 
-  # Station Captain
-  - package-ecosystem: "maven"
-    directory: "/software/Station Captain/stationCaptainTest"
-    target-branch: "development"
-    schedule:
-      interval: "weekly"
-      day: "tuesday"
-    labels:
-      - "area-dependencies"
-      - "project-stationCaptain"
 #
 # Libraries
 #
@@ -95,6 +85,25 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
+  # Storagotchi
+  - package-ecosystem: "gradle"
+    directory: "/software/plugins/storagotchi"
+    target-branch: "development"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    labels:
+      - "area-dependencies"
+      - "project-plugin-storagotchi"
+  - package-ecosystem: "docker"
+    directory: "/software/plugins/storagotchi/src/main/docker"
+    target-branch: "development"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    labels:
+      - "area-dependencies"
+      - "project-core-api"
 
   # Demo
 #  - package-ecosystem: "gradle"

@@ -1,4 +1,9 @@
-const FileAttachmentView = {
+import {Rest} from "../../../Rest.js";
+import {KeywordAttUtils} from "../../ObjViewUtils.js";
+import {OtherUtils} from "../../../OtherUtils.js";
+import {ModalUtils} from "../../../ModalUtils.js";
+
+export const FileAttachmentView = {
 	viewModal: $("#fileAttachmentViewModal"),
 	viewModalMessages: $("#fileAttachmentViewMessages"),
 	previewContainer: $("#fileAttachmentViewPreviewContainer"),
@@ -143,8 +148,12 @@ const FileAttachmentView = {
 		return output;
 	},
 
-	setupView(fileId) {
+	setupView(fileId, oldModal = null) {
 		console.log("Setting up view for file ", fileId);
+		if(oldModal !== null){
+			ModalUtils.setReturnModal(FileAttachmentView.viewModal, oldModal);
+		}
+
 		this.resetView();
 		let dataUrl = Rest.passRoot + '/media/fileAttachment/' + fileId + '/revision/latest/data';
 		this.fileViewDownloadButton.prop("href", dataUrl);
@@ -204,7 +213,7 @@ const FileAttachmentView = {
 				done: async function (data) {
 					let nextRow = $('<tr></tr>');
 					nextRow.append($('<td></td>').text(data.fileName));
-					nextRow.append($('<td><button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewModal" onclick="FileAttachmentView.setupView(\''+curFileId+'\');">'+Icons.view+'</button></td>'));
+					nextRow.append($('<td><button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewModal" onclick="FileAttachmentView.setupView(\''+curFileId+'\', this);">'+Icons.view+'</button></td>'));
 					fileShowContent.append(nextRow);
 				}
 			});

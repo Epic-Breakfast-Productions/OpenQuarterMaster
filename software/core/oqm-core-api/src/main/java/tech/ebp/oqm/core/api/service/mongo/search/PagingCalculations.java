@@ -1,5 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo.search;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,26 +17,38 @@ import java.util.Iterator;
 public class PagingCalculations {
 	private boolean onFirstPage;
 	private boolean onLastPage;
-	private long numPages;
-	private long lastPage;
-	private long curPage;
-	private long nextPage;
-	private long previousPage;
+	private int numPages;
+	private int pageSize;
+	private int lastPage;
+	private int curPage;
+	private int nextPage;
+	private int previousPage;
+	private int pageResultIndexStart;
+	private int pageResultIndexEnd;
 	
-	protected PagingCalculations(long curPageNum, long numPages) {
+	protected PagingCalculations(int curPageNum, int numPages, int pageSize, int startIndex, int endIndex) {
 		this(
 			curPageNum <= 1,
 			curPageNum == numPages,
 			numPages,
+			pageSize,
 			numPages,
 			curPageNum,
 			(Math.min(curPageNum + 1, numPages)),
-			(Math.max(curPageNum - 1, 1))
+			(Math.max(curPageNum - 1, 1)),
+			startIndex,
+			endIndex
 		);
 	}
 	
-	public PagingCalculations(PagingOptions options, long numResults) {
-		this(options.getPageNum(), (long) Math.ceil((double) numResults / (double) options.getPageSize()));
+	public PagingCalculations(PagingOptions options, int numResults) {
+		this(
+			options.getPageNum(),
+			(int) Math.ceil((double) numResults / (double) options.getPageSize()),
+			options.getPageSize(),
+			options.getSkipVal(),
+			options.getSkipVal() + options.getPageSize() - 1
+		);
 	}
 	
 	public PagingCalculations(SearchResult<?> searchResult) {
@@ -49,6 +63,12 @@ public class PagingCalculations {
 		return this.onPage((long) curPage);
 	}
 	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	public boolean isHasPages() {
+		return getNumPages() > 1;
+	}
+	
+	@JsonIgnore
 	public Iterator<Long> getPageIterator() {
 		return new Iterator<>() {
 			private final long end = getNumPages();
@@ -65,5 +85,4 @@ public class PagingCalculations {
 			}
 		};
 	}
-	
 }

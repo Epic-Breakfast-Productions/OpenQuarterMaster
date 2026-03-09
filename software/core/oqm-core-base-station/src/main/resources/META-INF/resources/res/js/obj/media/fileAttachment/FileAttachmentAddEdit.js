@@ -1,5 +1,8 @@
-//TODO:: handle edit
-const FileAttachmentAddEdit = {
+import {Rest} from "../../../Rest.js";
+import {PageMessageUtils} from "../../../PageMessageUtils.js";
+
+// TODO:: #1149 editing
+export const FileAttachmentAddEdit = {
 	formMessages: $("#fileAttachmentAddEditFormMessages"),
 	form: $("#fileAttachmentAddEditForm"),
 	fileInput: $("#fileAttachmentAddEditFormFileInput"),
@@ -38,7 +41,7 @@ const FileAttachmentAddEdit = {
 		});
 	},
 	fileAttachmentAdded(data) {
-		PageMessages.reloadPageWithMessage("Added file successfully!", "success", "Success!");
+		PageMessageUtils.reloadPageWithMessage("Added file successfully!", "success", "Success!");
 	},
 	removeFile(fileId){
 		console.log("Attempting to remove file: ", fileId);
@@ -51,11 +54,12 @@ const FileAttachmentAddEdit = {
 			method: "delete",
 			done: function (data){
 				console.log("Successfully removed file attachment.");
-				PageMessages.reloadPageWithMessage("Removed file successfully!", "success", "Success!");
+				PageMessageUtils.reloadPageWithMessage("Removed file successfully!", "success", "Success!");
 			},
-			failMessagesDiv: PageMessages.mainMessageDiv
+			failMessagesDiv: PageMessageUtils.mainMessageDiv
 		});
+	},
+	initPage: function () {
+		FileAttachmentAddEdit.form.on("submit", function(e){FileAttachmentAddEdit.submitForm(e)});
 	}
 };
-
-FileAttachmentAddEdit.form.on("submit", function(e){FileAttachmentAddEdit.submitForm(e)});

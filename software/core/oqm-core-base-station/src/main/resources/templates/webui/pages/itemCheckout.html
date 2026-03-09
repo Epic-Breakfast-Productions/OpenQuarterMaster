@@ -1,7 +1,7 @@
 {#include webui/mainWebPageTemplate navbar="full" showTitle=true title="Item Checkout" page='itemCheckout'}
-{#pageStyle}
-
-{/pageStyle}
+{#styleSheets}
+    <link rel="stylesheet" href="{rootPrefix}/lib/Croppie/2.6.4/croppie.css"/>
+{/styleSheets}
 {#pageContent}
 <div class="row">
 	<div class="col accordion" id="searchAccordion">
@@ -37,7 +37,7 @@
 {#modals}
 	{#search/storage/searchSelectModal otherModalId="" rootPrefix=rootPrefix /}
 	{#itemCheckout/viewModal /}
-	{#search/item/itemSearchSelectModal otherModalId="" rootPrefix=rootPrefix /}
+	{#search/item/itemSearchSelectModal otherModalId="" rootPrefix=rootPrefix allCategorySearchResults=allCategorySearchResults /}
 	{#itemStored/transaction/checkinTransactionModal /}
 	{#search/itemStored/itemStoredSearchSelectModal rootPrefix=rootPrefix /}
 	{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
@@ -46,31 +46,43 @@
 	
 {/modals}
 {#scripts}
-	<script src="{rootPrefix}/res/js/entityRef.js"></script>
-	<script src="{rootPrefix}/res/js/carousel.js"></script>
-	<script src="{rootPrefix}/res/js/search.js"></script>
-	<script src="{rootPrefix}/res/js/textCopy.js"></script>
-	<script src="{rootPrefix}/res/js/obj/getters.js"></script>
-	<script src="{rootPrefix}/res/js/historySearch.js"></script>
-	<script src="{rootPrefix}/res/js/obj/objView.js"></script>
-	<script src="{rootPrefix}/res/js/obj/units.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredSearchSelect.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutSearchSelect.js"></script>
-	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js"></script>
-	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js"></script>
-	<script src="{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js"></script>
-    <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
-	<script src="{rootPrefix}/res/js/storedTypeUtils.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemStored/storedView.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemCheckout/itemCheckoutView.js"></script>
-	<script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
-	<script src="{rootPrefix}/res/js/obj/item/itemSearchSelect.js"></script>
-	<script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-	<script src="{rootPrefix}/res/js/obj/itemStored/itemStoredTransaction.js"></script>
-	<script src="{rootPrefix}/res/js/modalHelpers.js"></script>
+
 {/scripts}
 {#pageScript}
-    <script>
+    <script type="module">
+		import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
+		import { HistorySearchUtils } from '{rootPrefix}/res/js/HistorySearchUtils.js';
+		import { ItemSearchSelect } from '{rootPrefix}/res/js/obj/item/ItemSearchSelect.js';
+		import { StorageSearchSelect } from '{rootPrefix}/res/js/obj/storageBlock/StorageSearchSelect.js';
+		import { ItemStoredTransaction } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredTransaction.js';
+		import { ItemCheckoutView } from '{rootPrefix}/res/js/obj/itemCheckout/ItemCheckoutView.js';
+		import { ImageSearchSelect } from '{rootPrefix}/res/js/obj/media/ImageSearchSelect.js';
+		import { ImageAdd } from '{rootPrefix}/res/js/obj/media/ImageAdd.js';
+		import { ImageAddFromSelect } from '{rootPrefix}/res/js/obj/media/ImageAddFromSelect.js';
+		import { FileAttachmentSearchSelect } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js';
+		import { FileAttachmentAddEdit } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js';
+		
+		ItemSearchSelect.initPage();
+		SearchUtils.initPage();
+		ItemStoredTransaction.initPage();
+		StorageSearchSelect.initPage();
+		ImageSearchSelect.initPage();
+		FileAttachmentSearchSelect.initPage();
+		ImageAdd.initPage();
+		ImageAddFromSelect.initPage();
+		FileAttachmentAddEdit.initPage();
+		
+		window.HistorySearchUtils = HistorySearchUtils;
+		window.ItemSearchSelect = ItemSearchSelect;
+		window.StorageSearchSelect = StorageSearchSelect;
+		window.ItemCheckoutView = ItemCheckoutView;
+		window.ItemStoredTransaction = ItemStoredTransaction;
+		window.ImageSearchSelect = ImageSearchSelect;
+		window.FileAttachmentSearchSelect = FileAttachmentSearchSelect;
+		window.ImageAdd = ImageAdd;
+		window.ImageAddFromSelect = ImageAddFromSelect;
+		
+		console.log("Page modules loaded.");
     </script>
 {/pageScript}
 {/include}

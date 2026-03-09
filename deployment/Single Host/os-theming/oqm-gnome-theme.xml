@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE wallpapers SYSTEM "gnome-wp-list.dtd">
+<wallpapers>
+	<wallpaper>
+		<name>Open QuarterMaster - Logo</name>
+		<filename>/usr/share/backgrounds/oqm-bg-light-logo-big.png</filename>
+		<filename-dark>/usr/share/backgrounds/oqm-bg-dark-logo-big.png</filename-dark>
+		<options>centered</options>
+		<pcolor>#2c001e</pcolor>
+		<scolor>#2c001e</scolor>
+		<shade_type>solid</shade_type>
+	</wallpaper>
+	<wallpaper>
+		<name>Open QuarterMaster - Pattern</name>
+		<filename>/usr/share/backgrounds/oqm-bg-light.png</filename>
+		<filename-dark>/usr/share/backgrounds/oqm-bg-dark.png</filename-dark>
+		<options>centered</options>
+		<pcolor>#2c001e</pcolor>
+		<scolor>#2c001e</scolor>
+		<shade_type>solid</shade_type>
+	</wallpaper>
+</wallpapers>

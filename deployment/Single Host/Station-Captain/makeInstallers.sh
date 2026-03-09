@@ -121,7 +121,7 @@ EOT
 chmod +x "$buildDir/$debDir/DEBIAN/preinst"
 
 cat <<'EOT' > "$buildDir/$debDir/DEBIAN/postinst"
-oqm-captain --ensure-certs-present
+oqm-captain certs ensure-system-present
 
 if [ ! -z "$(grep "oqm:" /etc/group)" ] ; then
 	echo 'OQM group already existent'

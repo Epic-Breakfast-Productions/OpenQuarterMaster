@@ -73,3 +73,21 @@ class InputValidators:
         if not os.path.isdir(val):
             return "Path given is not a directory"
         return None
+
+    @classmethod
+    def isValidHostname(cls, val: str) -> Optional[str]:
+        cls.log.info("Validating hostname: '" + val + "'")
+        if val is "#{#mdnsHost}":
+            cls.log.info("Valid - default value")
+            return None
+        if cls.isNotEmpty(val) is not None:
+            cls.log.info("Invalid - blank")
+            return "Hostname cannot be blank"
+        if any(c.isupper() for c in val):
+            cls.log.info("Invalid - contained uppercase characters")
+            return "Hostname cannot contain uppercase characters"
+        if re.search(r'\s', val) is not None:
+            cls.log.info("Invalid - contained whitespace")
+            return "Hostname cannot contain whitespace"
+        cls.log.info("Valid")
+        return None

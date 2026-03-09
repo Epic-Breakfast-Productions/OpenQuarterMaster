@@ -7,7 +7,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmDatabaseService;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -17,9 +16,6 @@ import java.util.TreeMap;
 @Singleton
 @Slf4j
 public class LifecycleBean {
-
-	@Inject
-	OqmDatabaseService oqmDatabaseService;
 
 	private ZonedDateTime startDateTime;
 	
@@ -51,7 +47,6 @@ public class LifecycleBean {
 	}
 	
 	private void startLogAnnounce(){
-		this.startDateTime = ZonedDateTime.now();
 		log.info("Open QuarterMaster Web Server starting.");
 		//		log.info("Base URL: {}", this.serverUrlService.getBaseServerUrl());
 		//		log.debug("Version: {}", this.serverVersion);
@@ -67,8 +62,8 @@ public class LifecycleBean {
 		@Observes
 		StartupEvent ev
 	) {
+		this.startDateTime = ZonedDateTime.now();
 		this.startLogAnnounce();
-		this.oqmDatabaseService.getDatabases();
 	}
 	
 	void onStop(

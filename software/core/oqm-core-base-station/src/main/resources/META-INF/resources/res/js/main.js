@@ -25,16 +25,20 @@ const Main = {
 		}
 	},
 	processStop(process = null) {
-		this.processCount--;
+		if(Main.processCount <= 0){
+			log.error("Tried to stop a process that was never started! (Process count before stop: " + Main.processCount +")");
+		}
+
+		Main.processCount--;
 		if (process) {
 			console.log("Finished process " + process);
 		}
 	},
 	processesRunning() {
-		return this.processCount !== 0;
+		return Main.processCount !== 0;
 	},
 	noProcessesRunning() {
-		return !this.processesRunning();
+		return !Main.processesRunning();
 	},
 	/**
 	 * @async

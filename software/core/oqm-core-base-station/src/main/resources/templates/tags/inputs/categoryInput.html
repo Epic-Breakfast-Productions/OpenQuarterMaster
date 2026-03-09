@@ -1,5 +1,5 @@
-<select class="form-select dselect-select" id="{id}" name="{#if name??}{name}{#else}itemCategoryParent{/if}" aria-describedby="{id}-help" {#if multi??}multiple{/if}>
-	<option value="" selected>No Parent</option>
+<select class="form-select dselect-select" id="{id}" name="{#if name??}{name}{#else}categories{/if}" aria-describedby="{id}-help" {#if multi??}multiple{/if}>
+	<option value="" selected>No {#if placeholder??}{placeholder}{#else}Categories{/if}</option>
 	{#for curItemCat in allCategorySearchResults.get("results")}
 		<option value="{curItemCat.get("id").asText()}">{curItemCat.get("name").asText()}</option>
 	{/for}

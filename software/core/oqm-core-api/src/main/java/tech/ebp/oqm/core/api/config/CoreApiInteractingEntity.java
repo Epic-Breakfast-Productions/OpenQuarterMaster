@@ -24,17 +24,9 @@ public class CoreApiInteractingEntity extends InteractingEntity {
 	 * Don't change this. We ue this very specific ObjectId to identify the Base Station's specific entry in the db.
 	 */
 	public static final ObjectId BS_ID = new ObjectId("00000000AAAAAAAAAAFFFFFF");
-	
-	@Inject
-	public CoreApiInteractingEntity(
-		@ConfigProperty(name = "service.runBy.email", defaultValue = "")
-		String email
-	){
-		this.email = email;
-	}
 
 	@Getter
-	private String email;
+	private String email = "";
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Override

@@ -29,12 +29,12 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.Invent
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class InvItemPassthrough extends PassthroughProvider {
-
+	
 	@Getter
 	@Inject
 	@Location("tags/search/item/itemSearchResults")
 	Template searchResultTemplate;
-
+	
 	@POST
 	@Operation(
 		summary = "Adds a new inventory item."
@@ -53,38 +53,40 @@ public class InvItemPassthrough extends PassthroughProvider {
 	)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<String> create(
+	public Uni<Response> create(
 		ObjectNode item
 	) {
-		return this.getOqmCoreApiClient().invItemCreate(this.getBearerHeaderStr(), this.getSelectedDb(), item);
+		return this.handleCall(
+			this.getOqmCoreApiClient().invItemCreate(this.getBearerHeaderStr(), this.getSelectedDb(), item)
+		);
 	}
 	
-//	@POST
-//	@Operation(
-//		summary = "Imports items from a file uploaded by a user."
-//	)
-//	@APIResponse(
-//		responseCode = "200",
-//		description = "Object added.",
-//		content = @Content(
-//			mediaType = MediaType.APPLICATION_JSON,
-//			schema = @Schema(
-//				type = SchemaType.ARRAY
-//			)
-//		)
-//	)
-//	@APIResponse(
-//		responseCode = "400",
-//		description = "Bad request given. Data given could not pass validation.",
-//		content = @Content(mediaType = "text/plain")
-//	)
-//	@Consumes(MediaType.MULTIPART_FORM_DATA)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Uni<ArrayNode> importData(
-//		@BeanParam ImportBundleFileBody body
-//	) throws IOException {
-//		return this.getOqmCoreApiClient().invItemImportData(this.getBearerHeaderStr(), this.getSelectedDb(), body);
-//	}
+	//	@POST
+	//	@Operation(
+	//		summary = "Imports items from a file uploaded by a user."
+	//	)
+	//	@APIResponse(
+	//		responseCode = "200",
+	//		description = "Object added.",
+	//		content = @Content(
+	//			mediaType = MediaType.APPLICATION_JSON,
+	//			schema = @Schema(
+	//				type = SchemaType.ARRAY
+	//			)
+	//		)
+	//	)
+	//	@APIResponse(
+	//		responseCode = "400",
+	//		description = "Bad request given. Data given could not pass validation.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@Consumes(MediaType.MULTIPART_FORM_DATA)
+	//	@Produces(MediaType.APPLICATION_JSON)
+	//	public Uni<ArrayNode> importData(
+	//		@BeanParam ImportBundleFileBody body
+	//	) throws IOException {
+	//		return this.getOqmCoreApiClient().invItemImportData(this.getBearerHeaderStr(), this.getSelectedDb(), body);
+	//	}
 	
 	@Path("stats")
 	@GET
@@ -100,9 +102,11 @@ public class InvItemPassthrough extends PassthroughProvider {
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@WithSpan
-	public Uni<ObjectNode> getCollectionStats(
+	public Uni<Response> getCollectionStats(
 	) {
-		return this.getOqmCoreApiClient().invItemCollectionStats(this.getBearerHeaderStr(), this.getSelectedDb());
+		return this.handleCall(
+			this.getOqmCoreApiClient().invItemCollectionStats(this.getBearerHeaderStr(), this.getSelectedDb())
+		);
 	}
 	
 	@GET
@@ -131,14 +135,16 @@ public class InvItemPassthrough extends PassthroughProvider {
 		@HeaderParam("otherModalId") String otherModalId,
 		@HeaderParam("inputIdPrepend") String inputIdPrepend
 	) {
-		return this.processSearchResults(
-			this.getOqmCoreApiClient().invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemSearch),
-			this.searchResultTemplate,
-			acceptType,
-			searchFormId,
-			otherModalId,
-			inputIdPrepend,
-			"select"
+		return this.handleCall(
+			this.processSearchResults(
+				this.getOqmCoreApiClient().invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemSearch),
+				this.searchResultTemplate,
+				acceptType,
+				searchFormId,
+				otherModalId,
+				inputIdPrepend,
+				"select"
+			)
 		);
 	}
 	
@@ -170,10 +176,12 @@ public class InvItemPassthrough extends PassthroughProvider {
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> get(
+	public Uni<Response> get(
 		@PathParam("id") String id
 	) {
-		return this.getOqmCoreApiClient().invItemGet(this.getBearerHeaderStr(), this.getSelectedDb(), id);
+		return this.handleCall(
+			this.getOqmCoreApiClient().invItemGet(this.getBearerHeaderStr(), this.getSelectedDb(), id)
+		);
 	}
 	
 	@PUT
@@ -205,11 +213,13 @@ public class InvItemPassthrough extends PassthroughProvider {
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> update(
+	public Uni<Response> update(
 		@PathParam("id") String id,
 		ObjectNode updates
 	) {
-		return this.getOqmCoreApiClient().invItemUpdate(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates);
+		return this.handleCall(
+			this.getOqmCoreApiClient().invItemUpdate(this.getBearerHeaderStr(), this.getSelectedDb(), id, updates)
+		);
 	}
 	
 	@DELETE
@@ -240,10 +250,12 @@ public class InvItemPassthrough extends PassthroughProvider {
 		content = @Content(mediaType = "text/plain")
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> delete(
+	public Uni<Response> delete(
 		@PathParam("id") String id
 	) {
-		return this.getOqmCoreApiClient().invItemDelete(this.getBearerHeaderStr(), this.getSelectedDb(), id);
+		return this.handleCall(
+			this.getOqmCoreApiClient().invItemDelete(this.getBearerHeaderStr(), this.getSelectedDb(), id)
+		);
 	}
 	
 	@GET
@@ -278,7 +290,9 @@ public class InvItemPassthrough extends PassthroughProvider {
 		@HeaderParam("searchFormId") String searchFormId
 	) {
 		Uni<ObjectNode> searchUni = this.getOqmCoreApiClient().invItemGetHistoryForObject(this.getBearerHeaderStr(), this.getSelectedDb(), id, searchObject);
-		return this.processHistoryResults(searchUni, acceptType, searchFormId);
+		return this.handleCall(
+			this.processHistoryResults(searchUni, acceptType, searchFormId)
+		);
 	}
 	
 	@GET
@@ -300,36 +314,38 @@ public class InvItemPassthrough extends PassthroughProvider {
 		}
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> searchHistory(
+	public Uni<Response> searchHistory(
 		@BeanParam HistorySearch searchObject
 	) {
-		return this.getOqmCoreApiClient().invItemSearchHistory(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject);
+		return this.handleCall(
+			this.getOqmCoreApiClient().invItemSearchHistory(this.getBearerHeaderStr(), this.getSelectedDb(), searchObject)
+		);
 	}
 	
-//	@GET
-//	@Path("{itemId}/stored/{storageBlockId}")
-//	@Operation(
-//		summary = "Gets the stored amount or tracked item to the storage block specified."
-//	)
-//	@APIResponse(
-//		responseCode = "200",
-//		description = "Item added.",
-//		content = @Content(
-//			mediaType = "application/json"
-//		)
-//	)
-//	@APIResponse(
-//		responseCode = "404",
-//		description = "No item found to get.",
-//		content = @Content(mediaType = "text/plain")
-//	)
-//	@Produces(MediaType.APPLICATION_JSON)
-//	public Uni<ObjectNode> getStoredInventoryItem(
-//		@PathParam("itemId") String itemId,
-//		@PathParam("storageBlockId") String storageBlockId
-//	) {
-//		//TODO
-//		return Response.serverError().entity("Not implemented yet.").build();
-//	}
-
+	//	@GET
+	//	@Path("{itemId}/stored/{storageBlockId}")
+	//	@Operation(
+	//		summary = "Gets the stored amount or tracked item to the storage block specified."
+	//	)
+	//	@APIResponse(
+	//		responseCode = "200",
+	//		description = "Item added.",
+	//		content = @Content(
+	//			mediaType = "application/json"
+	//		)
+	//	)
+	//	@APIResponse(
+	//		responseCode = "404",
+	//		description = "No item found to get.",
+	//		content = @Content(mediaType = "text/plain")
+	//	)
+	//	@Produces(MediaType.APPLICATION_JSON)
+	//	public Uni<ObjectNode> getStoredInventoryItem(
+	//		@PathParam("itemId") String itemId,
+	//		@PathParam("storageBlockId") String storageBlockId
+	//	) {
+	//		//TODO
+	//		return Response.serverError().entity("Not implemented yet.").build();
+	//	}
+	
 }

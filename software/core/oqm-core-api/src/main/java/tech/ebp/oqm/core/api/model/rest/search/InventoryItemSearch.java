@@ -8,6 +8,7 @@ import lombok.ToString;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchUtils;
 
 import java.util.ArrayList;
@@ -20,7 +21,7 @@ import static com.mongodb.client.model.Filters.*;
 @Setter
 public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("name") String name;
-	@QueryParam("itemBarcode") String itemBarcode;
+	@QueryParam("storageTypes") List<StorageType> storageTypes;
 	@QueryParam("itemCategories") List<ObjectId> categories;
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
 	@QueryParam("hasExpired") Boolean hasExpired;
@@ -29,6 +30,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("hasNoExpiryWarn") Boolean hasNoExpiryWarn;
 	@QueryParam("hasLowStock") Boolean hasLowStock;
 	@QueryParam("hasNoLowStock") Boolean hasNoLowStock;
+	@QueryParam("identifier") List<String> identifiers;
 	
 	//TODO:: object specific fields, add to bson filter list
 	
@@ -41,12 +43,17 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 				SearchUtils.getBasicSearchFilter("name", this.getName())
 			);
 		}
-		if (this.hasValue(this.getItemBarcode())) {
-			filters.add(
-				eq("barcode", this.getItemBarcode())
-			);
+		if (this.getStorageTypes() != null && !this.getStorageTypes().isEmpty()) {
+			List<Bson> typeFilterList = new ArrayList<>(this.getStorageTypes().size());
+			for (StorageType curType : this.getStorageTypes()) {
+				typeFilterList.add(eq(
+					"storageType",
+					curType
+				));
+			}
+			filters.add(Filters.or(typeFilterList));
 		}
-		if (this.getCategories() != null && !this.categories.isEmpty()) {
+		if (this.getCategories() != null && !this.getCategories().isEmpty()) {
 			List<Bson> catsFilterList = new ArrayList<>(this.getCategories().size());
 			for (ObjectId curCategoryId : this.getCategories()) {
 				catsFilterList.add(in(
@@ -94,16 +101,25 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 		if(this.hasValue(this.getHasLowStock())){
 			if(this.getHasLowStock()){
 				filters.add(
-					gt("stats.numLowStock", 0)
+					eq("stats.anyLowStock", true)
 				);
 			}
 		}
 		if(this.hasValue(this.getHasNoLowStock())){
 			if(this.getHasNoLowStock()){
 				filters.add(
-					eq("stats.numLowStock", 0)
+					eq("stats.anyLowStock", true)
 				);
 			}
+		}
+		if (this.hasValue(this.getIdentifiers())) {
+			List<Bson> typeFilterList = new ArrayList<>(this.getIdentifiers().size());
+			for (String curIdentifier : this.getIdentifiers()) {
+				typeFilterList.add(
+					eq("identifiers.value", curIdentifier)
+				);
+			}
+			filters.add(Filters.or(typeFilterList));
 		}
 		
 		return filters;
