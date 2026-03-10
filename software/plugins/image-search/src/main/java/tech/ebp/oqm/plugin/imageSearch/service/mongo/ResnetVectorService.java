@@ -14,8 +14,13 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ImageS
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 import tech.ebp.oqm.plugin.imageSearch.model.resnet.ImageVector;
 
+import tech.ebp.oqm.plugin.imageSearch.service.ImageSearchService;
+
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 
 @ApplicationScoped
 public class ResnetVectorService {
@@ -29,8 +34,14 @@ public class ResnetVectorService {
 	
 	@Inject
 	KcClientAuthService serviceAccountService;
-	
-	
+
+	@Inject
+	ImageSearchService imageSearchService;
+
+    @Inject
+    tech.ebp.oqm.plugin.imageSearch.interfaces.ImageSearch imageSearch;
+
+
 	protected MongoDatabase getMongoDatabase() {
 		return this.getMongoClient().getDatabase("oqm-image-search");
 	}
@@ -51,15 +62,23 @@ public class ResnetVectorService {
 		) {
 			
 			//TODO:: process image data (get vector), add/ update mongodb entry for that vector
-			
-			this.getTypedCollection();
+			File tmpFile = new File("tmp");
+			Files.copy(is, tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
+			float[] vector = ImageSearchService.extractDeepFeatures(tmpFile);
+			//HOW TO GET INT OF imageRevision
+			ImageVector curObj = new ImageVector(null, "oqm-image-search",
+					imageMetadata.get("id").asText(), "latest", vector);
+
+			this.getTypedCollection().insertOne(curObj);
 			
 			
 		} catch(IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
+
+	//Iterates db, operate on each image in turn
 	public void processImages() {
 		
 		ImageSearch imageSearch = new ImageSearch();
@@ -74,8 +93,8 @@ public class ResnetVectorService {
 				"default",
 				imageSearch
 			).await().indefinitely();
-			
 			//TODO process each image in result
+			processImage("oqm-image-search", results);
 			
 			imageSearch.setPageNum(imageSearch.getPageNum() + 1);
 		} while (!results.get("paginationCalculations").get("onLastPage").asBoolean());

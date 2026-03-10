@@ -1,5 +1,4 @@
 package tech.ebp.oqm.plugin.imageSearch;
-//TEST NEW FUNCTION
 import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.test.junit.QuarkusTest;
@@ -14,6 +13,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientServ
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 import tech.ebp.oqm.plugin.imageSearch.testResources.testClasses.RunningServerTest;
+//import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
 
 import java.io.*;
 import java.net.URISyntaxException;
@@ -36,7 +36,9 @@ public class BasicSetupTest extends RunningServerTest {
 	public void testBasicSetup() throws IOException, URISyntaxException {
 
         //Parses testImages folder and gets a list of filenames
-        File directory = new File((Objects.requireNonNull(BasicSetupTest.class.getClassLoader().getResource("testImages/"))).toURI());
+        //File directory = new File((Objects.requireNonNull(BasicSetupTest.class.getClassLoader().getResource("dev/testImages"))).toURI());
+        File directory = new File("dev/testImages");
+
         File[] fileList = directory.listFiles();
         Assertions.assertNotNull(fileList);
         String[] imageList = new String[fileList.length];
@@ -49,62 +51,6 @@ public class BasicSetupTest extends RunningServerTest {
             uploadSingleImage(imageList[i], "test" + (i + 1) + ".jpg");
         }
 
-        //uploadSingleImage("bin.jpg", "test1.jpg");
-		/*
-		//create image
-		String imageId;
-		try(
-			InputStream is = BasicSetupTest.class.getClassLoader().getResourceAsStream("testImages/bin.jpg");
-			){
-			FileUploadBody testImageUpload = new FileUploadBody();
-			testImageUpload.file = is;
-			testImageUpload.fileName = "bin.jpg";
-			testImageUpload.description = FAKER.lorem().sentence();
-			testImageUpload.source = "bin.jpg";
-			
-			imageId = this.oqmCoreApiClientService.imageAdd(
-				this.serviceAccountService.getAuthString(),
-				"default",
-				testImageUpload
-			).subscribeAsCompletionStage().join();
-		}
-		imageId = imageId.replace("\"", "");
-		log.info("imageId: {}", imageId);
-		
-		//create item with image
-		ObjectNode item = JsonNodeFactory.instance.objectNode();
-		item.put("name", FAKER.appliance().equipment());
-		item.put("storageType", "BULK");
-		item.putObject("unit").put("string", "units");
-		
-		item.putArray("imageIds").add(imageId);
-		
-		
-		String result = this.oqmCoreApiClientService.invItemCreate(serviceAccountService.getAuthString(), "default", item).subscribeAsCompletionStage().join();
-		log.info("Item id: {}", result);
-		
-		ObjectNode newItem = this.oqmCoreApiClientService.invItemGet(serviceAccountService.getAuthString(), "default", result.replace("\"", "")).subscribeAsCompletionStage().join();
-		log.info("Item: {}", newItem);
-		
-		
-		ObjectNode imageObj = this.oqmCoreApiClientService.imageGet(serviceAccountService.getAuthString(), "default", imageId).subscribeAsCompletionStage().join();
-		log.info("imageObj: {}", imageObj);
-
-		//get image object, data
-		Response response = this.oqmCoreApiClientService.imageGetRevisionData(
-			this.serviceAccountService.getAuthString(), "default",
-			imageId,
-			"latest"
-		).subscribeAsCompletionStage().join();
-		
-		log.info("response: {}", response);
-		try(
-			OutputStream is = new FileOutputStream("build/test-results/test.png");
-		){
-			((InputStream)response.getEntity()).transferTo(is);
-		}
-		*/
-
 	}
 
     //takes in the name of an image in the temporary testImages folder
@@ -113,7 +59,8 @@ public class BasicSetupTest extends RunningServerTest {
         //uploads image object and generates image id
         String imageId;
         try(
-           InputStream inputStream = BasicSetupTest.class.getClassLoader().getResourceAsStream("testImages/" + resourceLocation);
+           //InputStream inputStream = BasicSetupTest.class.getClassLoader().getResourceAsStream("dev/testImages/" + resourceLocation);
+           InputStream inputStream = new FileInputStream("dev/testImages/" + resourceLocation);
            ){
            FileUploadBody testImageUploadObj = FileUploadBody.builder()
                                                    .file(inputStream)

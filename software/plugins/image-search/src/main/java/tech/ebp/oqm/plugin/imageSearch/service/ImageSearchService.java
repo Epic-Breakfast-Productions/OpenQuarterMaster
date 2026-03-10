@@ -38,6 +38,7 @@ public class ImageSearchService {
 	public static final Size modelImageSize = new Size(500, 500);
 	
 	//stuff to cleanup
+	//no more json, upload to mongo when finding new image
 	public static final String jsonPath = "./build/imageData.json";
 	public static String imageFolderPath = "./dev/testImages";
 	public static File imageFolder = new File(imageFolderPath);
@@ -106,6 +107,8 @@ public class ImageSearchService {
 	//Checks if there is a pre-existing json file
 	//if so, ensure it perfectly matches the contents of the images folder
 	//if not, creates one with image data from all images in folder
+
+	//wont need any of these functions, mongo will keep add/delete image data as it goes
 	private static File generateJson() throws IOException {
 		File jsonF = new File(jsonPath);
 		log.info("Generating JSON file: {}", jsonF.getAbsolutePath());
@@ -199,6 +202,8 @@ public class ImageSearchService {
 	
 	//Creates an ImageData object for provided image file
 	//including the image path, filename, and the image features obtained from tensorflow
+
+	//get rid of ImageData class, just push float[] to mongo
 	private static ImageData getImageData(File imageFile) {
 		try {
 			if (imageFile.exists() && imageFile.isFile()) {
@@ -215,7 +220,9 @@ public class ImageSearchService {
 	
 	//Runs input image through TensorFlow model
 	//Returns float array of image feature data
-	private static float[] extractDeepFeatures(File imageFile) {
+
+
+	public static float[] extractDeepFeatures(File imageFile) {
 		try (Tensor inputTensor = preprocessImage(imageFile)) {
 			try (
 				Result outputTensor = model.session().runner()
@@ -236,7 +243,7 @@ public class ImageSearchService {
 	
 	//Converts image file to matrix, resize, normalize values,
 	//convert to tensor type to prepare image for tensorflow model
-	private static Tensor preprocessImage(File imageFile) {
+	public static Tensor preprocessImage(File imageFile) {
 		log.info("Preprocessing image: {}", imageFile);
 		
 		Mat tmp = Imgcodecs.imread(imageFile.getAbsolutePath());
@@ -266,6 +273,8 @@ public class ImageSearchService {
 	//Runs the cosineSimilarity function on the query feature vector against
 	//every image present in the previously generated jsonData
 	//Returns a reverse sorted TreeMap containing the similarity score and image filename
+
+	//traverse mongo DB instead of json file
 	private static TreeMap<Double, String> getSimilarities(ImageData queryObject) {
 		log.info("Getting similarities for query.");
 		float[] queryFeatures = queryData.getImageFeatureVector();
