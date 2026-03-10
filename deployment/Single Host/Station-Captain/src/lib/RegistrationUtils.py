@@ -24,7 +24,7 @@ class RegistrationUtils:
     log = LogUtils.setupLogger("RegistrationUtils")
     CRON_NAME = "ping-registration"
     REG_CONFIG_FILE = "70-registration.json"
-    REG_BASE_URL = "https://openquartermaster.com/instance-registration"
+    REG_BASE_URL = "https://openquartermaster.com/public/instance-registration"
     SNAPSHOT_FILE_TEMPLATE = SnapshotSharedUtils.SNAPSHOT_FILE_PREFIX + "{}-{}"
 
     @classmethod
@@ -189,7 +189,7 @@ class RegistrationUtils:
 
         data = {
             "deploymentType": "Single Node Host",
-            "oem-id": SystemInfoUtils.getOemId(),
+            "oemId": SystemInfoUtils.getOemId(),
             "systemDetails": {
                 "memory": SystemInfoUtils.getMemSizeGB(),
                 "cpuModel": SystemInfoUtils.getCpuModel(),
@@ -200,6 +200,8 @@ class RegistrationUtils:
             },
             "oqmSoftwareVersions": packagesTree
         }
+
+        cls.log.info("Sending registration ping data: %s", data)
 
         result = requests.put(
             cls.REG_BASE_URL + "/instance/" + mainCM.getConfigVal("registration.registrationId") + "/ping",
