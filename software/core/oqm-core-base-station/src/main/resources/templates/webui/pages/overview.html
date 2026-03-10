@@ -2,6 +2,9 @@
 {!{@java.util.List<tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem> expiredList}!}
 {!{@java.util.List<tech.ebp.oqm.baseStation.model.object.storage.items.InventoryItem> expiredWarnList}!}
 {#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Overview' page='overview'}
+	{#styleSheets}
+		<link rel="stylesheet" href="{rootPrefix}/lib/Croppie/2.6.4/croppie.css"/>
+	{/styleSheets}
 	{#pageStyle}
 		.buttonCell{
 		border: 1px solid black;
@@ -153,6 +156,7 @@
 		{#CodeScannerModal /}
 		{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal" /}
 		{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal' /}
+		{#object/idGenerator/searchSelectModal rootPrefix=rootPrefix /}
 	{/modals}
 	{#scripts}
 	<script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
@@ -164,11 +168,51 @@
 			import { Getters } from '{rootPrefix}/res/js/obj/Getters.js';
 			import { Links } from '{rootPrefix}/res/js/Links.js';
 			import { UnitUtils } from '{rootPrefix}/res/js/obj/UnitUtils.js';
+			import { StoredView } from '{rootPrefix}/res/js/obj/itemStored/StoredView.js';
+			import { ItemStoredEdit } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredEdit.js';
+			import { ItemStoredTransaction } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredTransaction.js';
+			import { CodeScanner } from '{rootPrefix}/res/js/CodeScanner.js';
+			import { Identifiers } from '{rootPrefix}/res/js/Identifiers.js';
+			import { Pricing } from '{rootPrefix}/res/js/Pricing.js';
+			import { IdGeneratorAddEdit } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorAddEdit.js';
+			import { IdGeneratorSearchSelect } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorSearchSelect.js';
+			import { ImageSearchSelect } from '{rootPrefix}/res/js/obj/media/ImageSearchSelect.js';
+			import { ImageAdd } from '{rootPrefix}/res/js/obj/media/ImageAdd.js';
+			import { ImageAddFromSelect } from '{rootPrefix}/res/js/obj/media/ImageAddFromSelect.js';
+			import { FileAttachmentSearchSelect } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js';
+			import { FileAttachmentAddEdit } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js';
+			import { FileAttachmentView } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js';
+			import { KeywordAttEdit } from '{rootPrefix}/res/js/obj/ObjEditUtils.js';
+			
+			ItemStoredEdit.initPage();
+			ItemStoredTransaction.initPage();
+			CodeScanner.initPage();
+			IdGeneratorAddEdit.initPage();
+			IdGeneratorSearchSelect.initPage();
+			ImageSearchSelect.initPage();
+			ImageAdd.initPage();
+			ImageAddFromSelect.initPage();
+			FileAttachmentSearchSelect.initPage();
+			FileAttachmentAddEdit.initPage();
 			
 			window.Rest = Rest;
 			window.Getters = Getters;
 			window.Links = Links;
 			window.UnitUtils = UnitUtils;
+			window.StoredView = StoredView;
+			window.ItemStoredEdit = ItemStoredEdit;
+			window.ItemStoredTransaction = ItemStoredTransaction;
+			window.Identifiers = Identifiers;
+			window.IdGeneratorAddEdit = IdGeneratorAddEdit;
+			window.IdGeneratorSearchSelect = IdGeneratorSearchSelect;
+			window.Pricing = Pricing;
+			window.ImageSearchSelect = ImageSearchSelect;
+			window.ImageAdd = ImageAdd;
+			window.ImageAddFromSelect = ImageAddFromSelect;
+			window.FileAttachmentSearchSelect = FileAttachmentSearchSelect;
+			window.FileAttachmentAddEdit = FileAttachmentAddEdit;
+			window.FileAttachmentView = FileAttachmentView;
+			window.KeywordAttEdit = KeywordAttEdit;
 		</script>
 		<script defer>
 			let overviewParentBlocksTreeForm = $("#overviewParentBlocksTreeForm");
