@@ -2,11 +2,11 @@ package tech.ebp.oqm.core.api.interfaces.endpoints.media;
 
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public interface FileGet {
 	
-	public ArrayList<FileMetadata> getRevisions();
+	List<FileMetadata> getRevisions();
 	
 	default int getNumRevisions(){
 		return this.getRevisions().size();
