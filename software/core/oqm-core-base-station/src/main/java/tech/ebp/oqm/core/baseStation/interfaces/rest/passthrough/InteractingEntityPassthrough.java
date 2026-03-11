@@ -65,6 +65,7 @@ public class InteractingEntityPassthrough extends PassthroughProvider {
 					if (MediaType.TEXT_HTML.equalsIgnoreCase(acceptType)) {
 						return Response.ok(
 							historyTemplate.data("entityRef", reference)
+								.data("rootPrefix", this.getRootPrefix())
 						).build();
 					}
 					return Response.ok(reference).build();

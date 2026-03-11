@@ -268,12 +268,12 @@ class StoredServiceTest extends MongoHistoriedServiceTest<Stored, StoredService>
 		User user = this.getTestUserService().getTestUser();
 		ObjectId blockIdOne = this.storageBlockService.add(
 			DEFAULT_TEST_DB_NAME,
-			new StorageBlock().setLabel(FAKER.location().building()),
+			new StorageBlock().setLabel(FAKER.location().building() + Math.random()),
 			user
 		).getId();
 		ObjectId blockIdTwo = this.storageBlockService.add(
 			DEFAULT_TEST_DB_NAME,
-			new StorageBlock().setLabel(FAKER.location().building()),
+			new StorageBlock().setLabel(FAKER.location().building() + Math.random()),
 			user
 		).getId();
 		InventoryItem item = this.itemTestObjectCreator.getTestObject();

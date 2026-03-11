@@ -9,14 +9,13 @@ import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Generated;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.general.GeneralGeneratedId;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.Generates;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.ToGenerate;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.unique.GeneratedUniqueId;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated.Generated;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated.GeneratedIdentifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdGenResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdentifierGenerator;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated.ToGenerateIdentifier;
 import tech.ebp.oqm.core.api.model.rest.search.IdGeneratorSearch;
 import tech.ebp.oqm.core.api.exception.db.DbModValidationException;
 
@@ -261,41 +260,23 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 		return IdentifierGenerator.CUR_SCHEMA_VERSION;
 	}
 	
-	private <T extends Identifier & Generated> T getIdObjectFromNewValue(IdentifierGenerator generator, String newVal) {
-		//noinspection unchecked
-		return (T) switch (generator.getGenerates()) {
-			case UNIQUE -> GeneratedUniqueId.builder()
-							   .label(generator.getLabel())
-							   .generatedFrom(generator.getId())
-							   .value(newVal)
-							   .barcode(generator.isBarcode())
-							   .build();
-			case GENERAL -> GeneralGeneratedId.builder()
-								.label(generator.getLabel())
-								.generatedFrom(generator.getId())
-								.value(newVal)
-								.barcode(generator.isBarcode())
-								.build();
-		};
+	private GeneratedIdentifier getIdObjectFromNewValue(IdentifierGenerator generator, String newVal) {
+		return GeneratedIdentifier.builder()
+				   .label(generator.getLabel())
+				   .generatedFrom(generator.getId())
+				   .value(newVal)
+				   .barcode(generator.isBarcode())
+				   .build();
 	}
 	
-	public IdGenResult<?> getNextNIds(String oqmDbNameOrId, ObjectId generatorId, int numIds, Generates generates) {
+	public IdGenResult getNextNIds(String oqmDbNameOrId, ObjectId generatorId, int numIds) {
 		if (numIds < 1) {
 			throw new IllegalArgumentException("Number of ids to generate must be greater than 0.");
 		}
 		
 		IdentifierGenerator gen = this.get(oqmDbNameOrId, generatorId);
 		
-		if(generates != null) {
-			if(gen.getGenerates() != generates) {
-				throw new IllegalArgumentException("Cannot generate " + generates + " ids from a " + gen.getGenerates() + " generator.");
-			}
-		}
-		
-		IdGenResult<?> output = switch (gen.getGenerates()){
-			case UNIQUE -> new IdGenResult<GeneratedUniqueId>();
-			case GENERAL -> new IdGenResult<GeneralGeneratedId>();
-		};
+		IdGenResult output = new IdGenResult();
 		
 		log.debug("Getting next id from generator: {}", gen.getId());
 		
@@ -347,33 +328,29 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 		return output;
 	}
 	
-	public IdGenResult<?> getNextId(String oqmDbNameOrId, ObjectId generatorId, Generates generates) {
-		return this.getNextNIds(oqmDbNameOrId, generatorId, 1, generates);
+	public IdGenResult getNextId(String oqmDbNameOrId, ObjectId generatorId) {
+		return this.getNextNIds(oqmDbNameOrId, generatorId, 1);
 	}
 	
-	public IdGenResult<?> getNextId(String oqmDbNameOrId, ObjectId generatorId) {
-		return this.getNextNIds(oqmDbNameOrId, generatorId, 1, null);
-	}
-	
-	
-	public <I extends Identifier> LinkedHashSet<I> replaceIdPlaceholders(String oqmDbIdOrName, Set<I> identifiers){
+	public LinkedHashSet<Identifier> replaceIdPlaceholders(String oqmDbIdOrName, Set<Identifier> identifiers){
 		log.debug("Generating placeholders for identifiers: {}.", identifiers);
-		LinkedHashSet<I> output = new LinkedHashSet<>(identifiers.size());
+		LinkedHashSet<Identifier> output = new LinkedHashSet<>(identifiers.size());
 		
-		for (I curId : identifiers) {
-			if (! (curId instanceof ToGenerate)) {
+		for (Identifier curId : identifiers) {
+			if (! (curId instanceof ToGenerateIdentifier)) {
 				output.add(curId);
 			} else {
-				ObjectId generateFrom = ((ToGenerate) curId).getGenerateFrom();
-				I generatedId = null;
+				ObjectId generateFrom = ((ToGenerateIdentifier)curId).getGenerateFrom();
+				GeneratedIdentifier generatedId = null;
 				
-				generatedId = (I) this.getNextId(
+				generatedId = this.getNextId(
 					oqmDbIdOrName,
-					generateFrom,
-					((ToGenerate) curId).generates()
+					generateFrom
 				).getGeneratedIds().getFirst();
 				
-				if(curId.getLabel() != null ){
+//				generatedId.setUnique(curId.isUnique());
+				
+				if(curId.hasLabel()){
 					generatedId.setLabel(curId.getLabel());
 				}
 				

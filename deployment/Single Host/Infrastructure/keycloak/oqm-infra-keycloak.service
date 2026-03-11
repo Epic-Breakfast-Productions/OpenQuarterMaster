@@ -25,7 +25,7 @@ TimeoutSec=10m
 # setup operating variables
 Environment="CONTAINER_NAME=oqm-infra-keycloak"
 Environment="IMAGE_NAME=quay.io/keycloak/keycloak"
-Environment="IMAGE_VERSION=26.1"
+Environment="IMAGE_VERSION=26.5"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/infra/keycloak/env.list"
 
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
@@ -50,6 +50,8 @@ ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_HOST=$(oqm-config g 'infra.postgre
 ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_PORT=$(oqm-config g 'infra.postgres.port')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_DB_URL_DATABASE=$(oqm-config g 'infra.keycloak.postgresDb')\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HEALTH_ENABLED=true\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_HTTP_MANAGEMENT_HEALTH_ENABLED=true\n\" >> $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "printf \"KC_HTTP_MANAGEMENT_SCHEME=http\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_CERTIFICATE_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/serviceCert.crt\n\" >> $ENV_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "printf \"KC_HTTPS_CERTIFICATE_KEY_FILE=/etc/oqm/serviceConfig/infra/keycloak/files/serviceCertKey.pem\n\" >> $ENV_CONFIG_FILE"
 
@@ -75,43 +77,30 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
                                  -v /etc/oqm/certs/trustStores:/etc/oqm/certs/trustStores:ro \
                                  -v /etc/oqm/serviceConfig/infra/keycloak/files:/etc/oqm/serviceConfig/infra/keycloak/files:ro \
                                  -v /etc/oqm/static/keycloak/import:/opt/keycloak/data/import:ro \
+                                 --health-cmd=\"{ printf 'HEAD /health HTTP/1.0\r\n\r\n' >&0; } 0<>/dev/tcp/localhost/9000\" \
+                                 --health-interval=15s \
+                                 --health-timeout=10s \
+                                 --health-retries=10 \
+                                 --health-start-period=1m \
                                  $IMAGE_NAME:$IMAGE_VERSION start --import-realm"
 
-# Ensure is up
+# Ensure is up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
-                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME 2> /dev/null)\"; \
-                                if [ \"$status\" == \"true\" ]; then \
+                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+                                if [ \"$status\" == \"healthy\" ]; then \
                                     echo \"Container running!\"; \
                                     running=\"true\"; \
                                     continue; \
                                 fi; \
                                 sleep 0.05s; \
-                                if [ $SECONDS -gt 30 ]; then \
+                                if [ $SECONDS -gt 600 ]; then \
                                     echo \"Container not running after 30 seconds!\"; \
                                     exit 1; \
                                 fi; \
                             done; \
                             "
-ExecStartPost=/bin/bash -c "running=\"false\"; \
-                            sleep 10s; \
-                            while [ \"$running\" != \"true\" ]; do \
-                                sleep 1s; \
-                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
-                                if [ \"$status\" != \"true\" ]; then \
-                                    echo \"Container was stopped!\"; \
-                                    exit 1; \
-                                fi; \
-                                hcGet=\"$(docker run --rm --name oqm-infra-keycloak-hc --network=oqm-internal docker.io/curlimages/curl:latest https://$CONTAINER_NAME:9000/infra/keycloak/health -k)\"; \
-                                echo \"Health check get: $hcGet\"; \
-                                status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
-                                echo \"Status: $status\"; \
-                                if [ \"$status\" = \"UP\" ]; then \
-                                    echo \"Keycloak running and available!\"; \
-                                    running=\"true\"; \
-                                fi; \
-                            done; \
-                            "
+
 ExecStop=/bin/bash -c "stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove keycloak container'"
 
