@@ -101,7 +101,6 @@
 	import { ItemAddEdit } from '{rootPrefix}/res/js/obj/item/ItemAddEdit.js';
 	import { ItemView } from '{rootPrefix}/res/js/obj/item/ItemView.js';
 	import { ItemStoredEdit } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredEdit.js';
-	import { FileAttachmentSearchSelect } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js';
 	import { HistorySearchUtils } from '{rootPrefix}/res/js/HistorySearchUtils.js';
 	import { Identifiers } from '{rootPrefix}/res/js/Identifiers.js';
 	import { Pricing } from '{rootPrefix}/res/js/Pricing.js';
@@ -109,6 +108,7 @@
 	import { StorageSearchSelect } from '{rootPrefix}/res/js/obj/storageBlock/StorageSearchSelect.js';
 	import { IdGeneratorAddEdit } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorAddEdit.js';
 	import { IdGeneratorSearchSelect } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorSearchSelect.js';
+	import { FileAttachmentSearchSelect } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js';
 	import { FileAttachmentAddEdit } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js';
 	import { FileAttachmentView } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js';
 	import { ImageSearchSelect } from '{rootPrefix}/res/js/obj/media/ImageSearchSelect.js';
@@ -118,6 +118,7 @@
 	import { ItemStoredTransaction } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredTransaction.js';
 	import { ItemStoredSearch } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredSearch.js';
 	import { ItemStoredSearchSelect } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredSearchSelect.js';
+	import { StoredView } from '{rootPrefix}/res/js/obj/itemStored/StoredView.js';
 	import { ItemCheckoutSearchSelect } from '{rootPrefix}/res/js/obj/itemCheckout/ItemCheckoutSearchSelect.js';
 	import { ExtItemSearch } from '{rootPrefix}/res/js/item/ExtItemSearch.js';
 	import { CodeScanner } from '{rootPrefix}/res/js/CodeScanner.js';
@@ -125,11 +126,11 @@
 	SearchUtils.initPage();
 	ItemAddEdit.initPage();
 	ItemView.initPage();
-	FileAttachmentSearchSelect.initPage();
 	ItemStoredEdit.initPage();
 	StorageSearchSelect.initPage();
 	IdGeneratorAddEdit.initPage();
 	IdGeneratorSearchSelect.initPage();
+	FileAttachmentSearchSelect.initPage();
 	FileAttachmentAddEdit.initPage();
 	ImageSearchSelect.initPage();
 	ImageAdd.initPage();
@@ -162,6 +163,7 @@
 	window.ItemStoredSearchSelect = ItemStoredSearchSelect;
 	window.ItemCheckoutSearchSelect = ItemCheckoutSearchSelect;
 	window.ExtItemSearch = ExtItemSearch;
+	window.StoredView = StoredView;
 	
 	console.log("Page modules loaded.");
 </script>
