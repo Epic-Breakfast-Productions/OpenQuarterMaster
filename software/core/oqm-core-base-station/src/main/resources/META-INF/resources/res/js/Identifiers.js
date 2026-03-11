@@ -1,5 +1,6 @@
 import {Rest} from "./Rest.js";
 import {SelectedObjectDivUtils} from "./SelectedObjectDivUtils.js";
+import {PageComponents} from "./PageComponents.js";
 
 export const Identifiers = {
 	getInputContainer(subElementJq) {
