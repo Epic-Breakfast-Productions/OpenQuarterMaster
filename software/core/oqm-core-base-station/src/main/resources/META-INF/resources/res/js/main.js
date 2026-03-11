@@ -26,7 +26,8 @@ const Main = {
 	},
 	processStop(process = null) {
 		if(Main.processCount <= 0){
-			log.error("Tried to stop a process that was never started! (Process count before stop: " + Main.processCount +")");
+			console.error("Tried to stop a process that was never started! (Process count before stop: " + Main.processCount +")");
+			return;
 		}
 
 		Main.processCount--;
