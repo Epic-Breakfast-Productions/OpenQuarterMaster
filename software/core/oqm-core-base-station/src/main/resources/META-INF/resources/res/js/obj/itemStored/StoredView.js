@@ -7,6 +7,8 @@ import {ModalUtils} from "../../ModalUtils.js";
 import {Getters} from "../Getters.js";
 import {Icons} from "../../Icons.js";
 import {Links} from "../../Links.js";
+import {Carousel} from "../../Carousel.js";
+import {PageComponents} from "../../PageComponents.js";
 
 export const StoredView = {
 	viewModal: $("#itemStoredViewModal"),
