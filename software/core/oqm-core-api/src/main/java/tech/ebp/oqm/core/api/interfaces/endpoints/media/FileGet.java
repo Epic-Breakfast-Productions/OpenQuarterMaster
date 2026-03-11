@@ -1,17 +1,19 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints.media;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public interface FileGet {
 	
-	public List<FileMetadata> getRevisions();
+	public ArrayList<FileMetadata> getRevisions();
 	
-	@JsonIgnore
-	public default FileMetadata getLatestRevision(){
-		return this.getRevisions().get(0);
+	default int getNumRevisions(){
+		return this.getRevisions().size();
 	}
-
+	
+	default int getLatestRevision(){
+		return this.getNumRevisions();
+	}
+	
 }
