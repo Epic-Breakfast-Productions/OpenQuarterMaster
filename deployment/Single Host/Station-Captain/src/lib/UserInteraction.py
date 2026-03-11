@@ -876,8 +876,11 @@ class UserInteraction:
             else:
                 UserInteraction.log.info("User chose to install core components.")
                 self.dialog.infobox("Installing core components. Please wait.")
-                PackageManagement.installCore()
-                self.dialog.msgbox("Core components installed!", title="Setup Wizard")
+                success, error = PackageManagement.installCore()
+                if success:
+                    self.dialog.msgbox("Core components installed!", title="Setup Wizard")
+                else:
+                    self.dialog.msgbox("Failed to install core components:\n\n" + str(error), title="Setup Wizard - Error")
 
         # TODO: set simple settings; domain name, run by details, email settings
 
