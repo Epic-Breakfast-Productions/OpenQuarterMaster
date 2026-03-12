@@ -1,0 +1,84 @@
+# Service file for running an instance of the Open QuarterMaster Base Station.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  OQM Base Station tags: https://hub.docker.com/repository/docker/ebprod/open-qm-storagotchi/tags
+#
+[Unit]
+Description=Open QuarterMaster Storagotchi. Version ${version}.
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/
+Wants=network-online.target
+After=docker.service
+Requires=docker.socket
+Requires=oqm-core-api.service
+After=oqm-core-api.service
+Requires=oqm-infra-keycloak.service
+After=oqm-infra-keycloak.service
+Requires=oqm-infra-keycloak-client_watch.service
+After=oqm-infra-keycloak-client_watch.service
+
+[Service]
+Type=simple
+Restart=always
+TimeoutSec=10m
+# Setup operating variables
+Environment="CONTAINER_NAME=oqm-plugin-storagotchi"
+Environment="IMAGE_NAME=ebprod/oqm-plugin-storagotchi"
+Environment="IMAGE_VERSION=${version}"
+Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/plugin/storagotchi/storagotchi-config.list"
+Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/plugin/storagotchi/storagotchi-config.list"
+Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/plugin/storagotchi/user-config.list"
+Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/plugin/storagotchi/user-config.list"
+
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
+ExecStartPre=/bin/bash -c "oqm-captain certs ensure-system-present"
+ExecStartPre=/bin/bash -c "/etc/oqm/static/keycloak/kc-realm-manager waitForClient oqm-plugin-storagotchi"
+# Ensure previous runs gone
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
+ExecStartPre=/bin/bash -c "oqm-captain certs write-internal $CONTAINER_NAME /etc/oqm/serviceConfig/plugin/storagotchi/files/"
+
+# Create filled out configuration
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/plugin/storagotchi/"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config t $USER_CONFIG_FILE_TEMPLATE > $USER_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
+
+# Pull image as separate task
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
+# Postgres setup
+ExecStartPre=/bin/bash -c "/etc/oqm/accountScripts/postgres-assert-account.sh -u \"$(oqm-config g 'plugin.storagotchi.postgresUser')\" -p \"$(oqm-config g 'plugin.storagotchi.postgresPass')\""
+ExecStartPre=/bin/bash -c "/usr/bin/docker exec oqm-infra-postgres psql postgres -U \"$(oqm-config g 'plugin.storagotchi.postgresUser')\" -tXAc \"SELECT 1 FROM pg_database WHERE datname = '$(oqm-config g 'plugin.storagotchi.postgresDb')'\" | grep -q \"^1$\" || /usr/bin/docker exec oqm-infra-postgres psql postgres -U \"$(oqm-config g 'plugin.storagotchi.postgresUser')\" -tXAc \"create database $(oqm-config g 'plugin.storagotchi.postgresDb') with encoding 'UTF8';\""
+
+# Run
+ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
+                                        --network=oqm-internal \
+                                        -v /etc/oqm/certs/trustStores:/etc/oqm/certs/trustStores:ro \
+                                        -v /etc/oqm/serviceConfig/plugin/storagotchi/files:/etc/oqm/serviceConfig/plugin/storagotchi/files:ro \
+                                        --env-file /tmp/oqm/serviceConfig/plugin/storagotchi/storagotchi-config.list \
+                                        --env-file /tmp/oqm/serviceConfig/plugin/storagotchi/user-config.list \
+                                        --add-host $(oqm-config g system.hostname):host-gateway \
+                                        $IMAGE_NAME:$IMAGE_VERSION"
+# Ensure is up, healthy
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+                                if [ \"$status\" == \"healthy\" ]; then \
+                                    echo \"Container running!\"; \
+                                    running=\"true\"; \
+                                    continue; \
+                                fi; \
+                                sleep 0.05s; \
+                                if [ $SECONDS -gt 30 ]; then \
+                                    echo \"Container not running after 30 seconds!\"; \
+                                    exit 1; \
+                                fi; \
+                            done; \
+                            "
+# Remove from docker
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
+
+[Install]
+WantedBy=multi-user.target
