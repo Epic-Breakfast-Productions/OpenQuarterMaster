@@ -158,21 +158,15 @@ jobs:
         with:
           scan-ref: '${{ inputs.path }}'
           scan-type: 'fs'
-          format: sarif
-          report: "all"
-          version: 
-          severity: 
-            - UNKNOWN
-            - LOW
-            - MEDIUM
-            - HIGH
-            - CRITICAL
-          db:
-            skip-update: true
+          format: 'sarif'
+          # 'report' isn't a standard input for this action; 
+          # usually, 'exit-code' or 'ignore-unfixed' is used here.
+          severity: 'UNKNOWN,LOW,MEDIUM,HIGH,CRITICAL'
+          skip-db-update: true
           scanners: 'vuln,secret,misconfig,license'
           output: 'trivy-results.sarif'
-          skip-setup-trivy: true
-          
+          # Only use skip-setup-trivy if you've manually installed the binary in a previous step
+          skip-setup-trivy: true          
 
       - name: Upload Trivy scan results to GitHub Security tab
         uses: github/codeql-action/upload-sarif@v4
