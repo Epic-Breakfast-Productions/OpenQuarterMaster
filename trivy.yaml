@@ -9,3 +9,7 @@ severity:
   - CRITICAL
 db:
   skip-update: true
+scanners: 'vuln,secret,misconfig,license'
+output: 'trivy-results.sarif'
+skip-setup-trivy: true
+scan-type: 'fs'
