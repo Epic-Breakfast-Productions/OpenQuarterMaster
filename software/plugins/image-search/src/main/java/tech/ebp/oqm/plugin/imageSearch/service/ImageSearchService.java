@@ -2,6 +2,8 @@ package tech.ebp.oqm.plugin.imageSearch.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.net.URL;
 
 import com.fasterxml.jackson.core.type.TypeReference;
@@ -30,6 +32,7 @@ import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
 @Slf4j
 @ApplicationScoped
 public class ImageSearchService {
+	
 	private static final String RESNET_V2_MODEL_PATH = "models/resnetV2";
 	public static final String inputTensorName = "serving_default_inputs";
 	public static final String outputTensorName = "StatefulPartitionedCall";
@@ -43,7 +46,6 @@ public class ImageSearchService {
 	public static String imageFolderPath = "./dev/testImages";
 	public static File imageFolder = new File(imageFolderPath);
 	public static File jsonFile;
-	
 	
 	
 	static {
@@ -76,7 +78,7 @@ public class ImageSearchService {
 		jsonFile = generateJson();
 		File queryImage = new File("./dev/testImages/" + query);
 		
-		if(!queryImage.exists() || !queryImage.isFile()){
+		if (!queryImage.exists() || !queryImage.isFile()) {
 			log.warn("Query Image does not exist: {}", queryImage.getAbsolutePath());
 			return null;
 		}
@@ -107,7 +109,7 @@ public class ImageSearchService {
 	//Checks if there is a pre-existing json file
 	//if so, ensure it perfectly matches the contents of the images folder
 	//if not, creates one with image data from all images in folder
-
+	
 	//wont need any of these functions, mongo will keep add/delete image data as it goes
 	private static File generateJson() throws IOException {
 		File jsonF = new File(jsonPath);
@@ -202,7 +204,7 @@ public class ImageSearchService {
 	
 	//Creates an ImageData object for provided image file
 	//including the image path, filename, and the image features obtained from tensorflow
-
+	
 	//get rid of ImageData class, just push float[] to mongo
 	private static ImageData getImageData(File imageFile) {
 		try {
@@ -220,8 +222,38 @@ public class ImageSearchService {
 	
 	//Runs input image through TensorFlow model
 	//Returns float array of image feature data
-
-
+	
+	
+	/**
+	 * Method for generating a feature vector from image data.
+	 * <p>
+	 * TODO:: validate/ integrate with rest
+	 *
+	 * @param imageBytes The bytes of image data
+	 *
+	 * @return The processes image feature vector
+	 */
+	public static float[] generateImageFeatureVector(byte[] imageBytes) {
+		MatOfByte matOfByte = new MatOfByte(imageBytes);
+		
+		// Decode the image (like cv::imdecode in C++)
+		Mat mat = Imgcodecs.imdecode(matOfByte, Imgcodecs.IMREAD_UNCHANGED);
+		
+		//TODO:: not this exactly, but need to handle this case
+		if (mat.empty()) {//invalid image / unable to process image
+			throw new RuntimeException("Failed to decode image!");
+		}
+		
+		//TODO:: need to release all `Mat` objects
+		matOfByte.release(); // Release temporary buffer.
+		return new float[0];
+	}
+	
+	public static float[] generateImageFeatureVector(InputStream imageStream) throws IOException {
+		return generateImageFeatureVector(imageStream.readAllBytes());
+	}
+	
+	
 	public static float[] extractDeepFeatures(File imageFile) {
 		try (Tensor inputTensor = preprocessImage(imageFile)) {
 			try (
@@ -273,7 +305,7 @@ public class ImageSearchService {
 	//Runs the cosineSimilarity function on the query feature vector against
 	//every image present in the previously generated jsonData
 	//Returns a reverse sorted TreeMap containing the similarity score and image filename
-
+	
 	//traverse mongo DB instead of json file
 	private static TreeMap<Double, String> getSimilarities(ImageData queryObject) {
 		log.info("Getting similarities for query.");

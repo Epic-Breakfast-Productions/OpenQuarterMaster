@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.Filters;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
@@ -22,6 +23,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.Iterator;
 
 @ApplicationScoped
 public class ResnetVectorService {
@@ -55,6 +57,16 @@ public class ResnetVectorService {
 		return this.getMongoDatabase().getCollection("resnet-image-vectors", ImageVector.class);
 	}
 	
+	public Iterator<ImageVector> getAllVectors(String database) {
+		return this.getTypedCollection().find(
+			Filters.eq("database", database)
+		).iterator();
+	}
+	
+	private void processImage(String database, String imageId, int imageRevision){
+		//TODO:: refactor into this
+	}
+	
 	private void processImage(String database, ObjectNode imageMetadata) {
 		try (
 			InputStream is = this.oqmCoreApiClientService.imageGetRevisionData(
@@ -64,23 +76,17 @@ public class ResnetVectorService {
 				"latest"
 			).await().indefinitely()
 		) {
+			ImageVector.ImageVectorBuilder builder = ImageVector.builder();
 			
-			//TODO:: process image data (get vector), add/ update mongodb entry for that vector
-			File tmpFile = new File("tmp");
-			Files.copy(is, tmpFile.toPath(), StandardCopyOption.REPLACE_EXISTING);
-			float[] vector = ImageSearchService.extractDeepFeatures(tmpFile);
-			//HOW TO GET INT OF imageRevision
-			ImageVector curObj = new ImageVector(null, "oqm-image-search",
-					imageMetadata.get("id").asText(), "latest", vector);
+			builder.imageId(imageMetadata.get("id").asText());
+			builder.imageRevision(1);//TODO:: update with refactor
+			builder.vector(ImageSearchService.generateImageFeatureVector(is));
 
-			this.getTypedCollection().insertOne(curObj);
-			
-			
+			this.getTypedCollection().insertOne(builder.build());
 		} catch(IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
-
 
 	//Iterates db, operate on each image in turn
 	public void processImages() {
