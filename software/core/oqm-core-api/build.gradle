@@ -3,7 +3,7 @@ plugins {
 	id 'io.quarkus'
 	id "io.freefair.lombok" version "9.2.0"
 	id 'jacoco'
-	id 'org.cyclonedx.bom' version '2.3.1'
+	id 'org.cyclonedx.bom' version '3.2.1'
 	id("org.spdx.sbom") version "0.10.0"
 }
 
@@ -110,7 +110,7 @@ check {
 }
 
 // https://github.com/CycloneDX/cyclonedx-gradle-plugin
-cyclonedxBom {
+tasks.cyclonedxDirectBom {
 	// includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration), regex is supported
 	includeConfigs = ["runtimeClasspath"]
 
@@ -122,20 +122,16 @@ cyclonedxBom {
 
 	// Specified the type of project being built. Defaults to 'library'
 	projectType = "application"
+	// Include resolution of full metadata for components including licenses. Defaults to 'true'
+	includeMetadataResolution = true
+}
+tasks.cyclonedxBom {
 	// Specified the version of the CycloneDX specification to use. Defaults to '1.6'
-	schemaVersion = "1.6"
-	// Boms destination directory. Defaults to 'build/reports'
-	destination = file("build/reports")
-	// The file name for the generated BOMs (before the file format suffix). Defaults to 'bom'
-	outputName = "${project.name}-sbom-cyclonedx"
-	// The file format generated, can be xml, json or all for generating both. Defaults to 'all'
-	outputFormat = "all"
+	schemaVersion = "VERSION_16"
 	// Include BOM Serial Number. Defaults to 'true'
 	includeBomSerialNumber = true
 	// Include License Text. Defaults to 'true'
 	includeLicenseText = false
-	// Include resolution of full metadata for components including licenses. Defaults to 'true'
-	includeMetadataResolution = true
 	// Attempt to include the build-system URL by reading environment variables from common CI system such as GitHub Actions, GitLab CI, Drone, Jenkins, Travis CI, and Circle CI. Defaults to 'false'
 	includeBuildSystem = true
 	// if includeBuildSystem is true, the given environment variables will be used to construct the build-system URL that will be included in the BOM. The dollar sign and curly braces (e.g. `${NAME}`) are required to specify an environment variable. Optional, defaults to `null`.
@@ -146,6 +142,19 @@ cyclonedxBom {
 //	componentName = "my-component"
 }
 
+tasks.cyclonedxDirectBom {
+	// Configure JSON output (default: build/reports/cyclonedx/bom.json)
+	jsonOutput.set(layout.buildDirectory.file("reports/sbom/cyclonedx/${project.name}-cyclonedx-bom.json"))
+	// Configure XML output (default: build/reports/cyclonedx/bom.xml)
+	xmlOutput.set(layout.buildDirectory.file("reports/sbom/cyclonedx/${project.name}-cyclonedx-bom.xml"))
+}
+tasks.cyclonedxBom {
+	// Configure JSON output (default: build/reports/cyclonedx-aggregate/bom.json)
+	jsonOutput.set(layout.buildDirectory.file("reports/sbom/cyclonedx/aggregate/${project.name}-cyclonedx-aggregate-bom.json"))
+	// Configure XML output (default: build/reports/cyclonedx-aggregate/bom.xml)
+	xmlOutput.set(layout.buildDirectory.file("reports/sbom/cyclonedx/aggregate/${project.name}-cyclonedx-aggregate-bom.xml"))
+}
+
 // https://github.com/spdx/spdx-gradle-plugin
 spdxSbom {
 	targets {
@@ -154,7 +163,7 @@ spdxSbom {
 		// and output file (release.spdx.json)
 
 		create("release") {
-			outputFile.set(layout.buildDirectory.file("reports/${project.name}-sbom-spdx.json"))
+			outputFile.set(layout.buildDirectory.file("reports/sbom/spdx/${project.name}-sbom-spdx.json"))
 			document {
 //				name.set("my spdx document")
 			}
