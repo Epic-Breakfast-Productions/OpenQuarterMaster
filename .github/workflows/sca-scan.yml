@@ -1,0 +1,41 @@
+name: SCA Scan
+on:
+  # push:
+  #   branches:
+  #   - main
+  # pull_request:
+  workflow_dispatch:
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: read          # Required to checkout and read repo files
+      security-events: write  # Required to upload SARIF files to Security tab
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Generate the lockfile
+      working-directory: "software/core/oqm-core-api"
+      run: |
+        ./gradlew dependencies --write-locks
+    
+    - name: Run Trivy vulnerability scanner in fs mode
+      uses: aquasecurity/trivy-action@0.34.1
+      with:
+        scan-type: 'fs'
+        scan-ref: './software/core/oqm-core-api/'
+        trivy-config: trivy.yaml
+        output: 'trivy-results.sarif'
+
+    - name: Upload Trivy scan results to GitHub Security tab
+      uses: github/codeql-action/upload-sarif@v4
+      with:
+        sarif_file: 'trivy-results.sarif'
+
+    - name: Save report as an artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: Trivy scan results
+        path: "trivy-results.sarif"

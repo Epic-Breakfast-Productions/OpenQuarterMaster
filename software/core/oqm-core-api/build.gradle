@@ -181,3 +181,6 @@ tasks.register('printVersion') {
 	}
 }
 
+dependencyLocking {
+    lockAllConfigurations()
+}
