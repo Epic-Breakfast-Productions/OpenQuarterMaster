@@ -8,6 +8,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ImageSearch;
@@ -29,6 +30,10 @@ public class ResnetVectorService {
 	@Getter(AccessLevel.PROTECTED)
 	MongoClient mongoClient;
 	
+	@Getter
+	@ConfigProperty(name = "quarkus.mongodb.database")
+	String database;
+	
 	@RestClient
 	OqmCoreApiClientService oqmCoreApiClientService;
 	
@@ -40,16 +45,15 @@ public class ResnetVectorService {
 
     @Inject
     tech.ebp.oqm.plugin.imageSearch.interfaces.ImageSearch imageSearch;
-
-
+	
+	
 	protected MongoDatabase getMongoDatabase() {
-		return this.getMongoClient().getDatabase("oqm-image-search");
+		return this.getMongoClient().getDatabase(this.getDatabase());
 	}
 	
 	public MongoCollection<ImageVector> getTypedCollection() {
 		return this.getMongoDatabase().getCollection("resnet-image-vectors", ImageVector.class);
 	}
-	
 	
 	private void processImage(String database, ObjectNode imageMetadata) {
 		try (
