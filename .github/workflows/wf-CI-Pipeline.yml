@@ -152,9 +152,19 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y trivy
           trivy --version
+
+      # 1. This step restores the database if it exists
+      - name: Cache Trivy vulnerability database
+        uses: actions/cache@v4
+        with:
+          path: .trivycache
+          # The key includes the date so it refreshes daily
+          key: trivy-db-${{ runner.os }}-${{ github.run_id }}
+          restore-keys: |
+            trivy-db-${{ runner.os }}-
       
       - name: Run Trivy vulnerability scanner in fs mode
-        uses: aquasecurity/trivy-action@0.34.1
+        uses: aquasecurity/trivy-action@0.35.0
         with:
           scan-ref: '${{ inputs.path }}'
           scan-type: 'fs'
