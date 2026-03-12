@@ -8,6 +8,8 @@ import jakarta.json.Json;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 
+import javax.measure.Unit;
+
 import static tech.ebp.oqm.core.api.model.object.ObjectUtils.OBJECT_MAPPER;
 
 public class UpgradingUtils {
@@ -116,5 +118,54 @@ public class UpgradingUtils {
 			}
 		}
 		return json;
+	}
+	
+	
+	/**
+	 * {
+	 *     "valueStr": "75.00",
+	 *     "currency": "USD",
+	 *     "valueDouble": 75.0
+	 * }
+	 * to
+	 * {
+	 *     "amount": "75.00",
+	 *     "currency": "USD"
+	 * }
+	 *
+	 * @param monetaryAmount
+	 */
+	public static void monetaryAmountMongoToJackson(ObjectNode monetaryAmount){
+		JsonNode valueStr = monetaryAmount.remove("valueStr");
+		JsonNode currency = monetaryAmount.remove("currency");
+		
+		monetaryAmount.remove("valueStr");
+		monetaryAmount.remove("valueDouble");
+		
+		monetaryAmount.set("amount", valueStr);
+		monetaryAmount.set("currency", currency);
+		
+		monetaryAmount.remove("valueDouble");
+	}
+	
+	public static void monetaryAmountMongoToJackson(ArrayNode priceArray){
+		if(priceArray == null || priceArray.isNull()){
+			return;
+		}
+		for(JsonNode priceNode : priceArray){
+			if(priceNode.has("totalPrice")) {
+				monetaryAmountMongoToJackson((ObjectNode) priceNode.get("totalPrice"));
+			}
+			if(priceNode.has("flatPrice")) {
+				monetaryAmountMongoToJackson((ObjectNode) priceNode.get("flatPrice"));
+			}
+			if(priceNode.has("pricePerUnit")) {
+				monetaryAmountMongoToJackson(
+					(ObjectNode) priceNode.get("pricePerUnit").get("price")
+				);
+				UpgradingUtils.stringToConvertedTree((ObjectNode) priceNode.get("pricePerUnit"), "unit", Unit.class);
+			}
+			
+		}
 	}
 }

@@ -6,6 +6,7 @@
 import os
 import sys
 import time
+from encodings.aliases import aliases
 
 from jinja2 import FileSystemLoader
 
@@ -81,10 +82,18 @@ def get(args):
 
 
 def wait(args):
-    result = mainCM.waitForConfig(args.key, args.timeout)
+    returnVal = args.returnVal
+    result, configValue = mainCM.waitForConfig(args.key, args.timeout)
     if not result:
         print("ERROR: Timeout waiting for config value after "+str(args.timeout)+"s.", file=sys.stderr)
         exit(1)
+    if returnVal:
+        if isinstance(configValue, (dict, list)):
+            configValue = json.dumps(
+                configValue,
+                indent=4
+            )
+        print(configValue)
 
 
 def template(args):
@@ -183,6 +192,7 @@ get_parser.set_defaults(func=get)
 wait_parser = subparsers.add_parser("wait", aliases=['w'], help="Waits for a config value to be populated before returning.")
 wait_parser.add_argument("key", help="The config key to check.").completer=ConfigKeyCompleter()
 wait_parser.add_argument("timeout", help="How long to wait before timing out, in seconds (optional).", type=int, nargs="?", default=30)
+wait_parser.add_argument("returnVal", help="If to return (print) the value after waiting (optional).", type=bool, nargs="?", default=False)
 wait_parser.set_defaults(func=wait)
 
 temp_parser = subparsers.add_parser("template", aliases=['t'], help="Fills out a template file with config values. Outputs the result.")

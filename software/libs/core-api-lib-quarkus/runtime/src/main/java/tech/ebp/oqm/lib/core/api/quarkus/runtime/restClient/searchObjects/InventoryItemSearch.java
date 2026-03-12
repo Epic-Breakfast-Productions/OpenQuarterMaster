@@ -19,6 +19,7 @@ public class InventoryItemSearch extends SearchKeyAttObject {
 	@QueryParam("storageTypes") List<String> storageTypes;
 	@QueryParam("itemCategories") List<String> categories;
 	@QueryParam("inStorageBlock") List<String> inStorageBlocks;
+	@QueryParam("hasImage") List<String> hasImages;
 	@QueryParam("hasExpired") Boolean hasExpired;
 	@QueryParam("hasNoExpired") Boolean hasNoExpired;
 	@QueryParam("hasExpiryWarn") Boolean hasExpiryWarn;

@@ -53,6 +53,12 @@ public class InvItemBumper4 extends ObjectSchemaVersionBumper<InventoryItem> {
 			}
 		}
 		
+		UpgradingUtils.monetaryAmountMongoToJackson((ArrayNode) oldObj.get("defaultPrices"));
+		UpgradingUtils.monetaryAmountMongoToJackson((ArrayNode) oldObj.get("stats").get("prices"));
+		
+		for(JsonNode curBlockStat : oldObj.get("stats").get("storageBlockStats")){
+			UpgradingUtils.monetaryAmountMongoToJackson((ArrayNode) curBlockStat.get("prices"));
+		}
 		
 		return resultBuilder.build();
 	}

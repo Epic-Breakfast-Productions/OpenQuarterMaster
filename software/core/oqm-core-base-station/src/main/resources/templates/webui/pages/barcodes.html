@@ -130,36 +130,44 @@
 		</div>
 	{/pageContent}
 	{#modals}
-		{#search/storage/searchSelectModal otherModalId="" rootPrefix=rootPrefix}
-		{/search/storage/searchSelectModal}
-		{#search/item/itemSearchSelectModal otherModalId="" rootPrefix=rootPrefix}
-		{/search/item/itemSearchSelectModal}
+		{#search/storage/searchSelectModal otherModalId="" rootPrefix=rootPrefix /}
+		{#search/item/itemSearchSelectModal otherModalId="" rootPrefix=rootPrefix allCategorySearchResults=allCategorySearchResults /}
 	{/modals}
-	{#scripts}
-		<script src="{rootPrefix}/res/js/search.js"></script>
-		<script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-		<script src="{rootPrefix}/res/js/obj/item/itemSearchSelect.js"></script>
-		
-	{/scripts}
 	{#pageScript}
-		<script>
-			var outputImageDisplay = $("#outputImageDisplay");
-			var noImageText = $("#noImageText");
-			var outputImage = $("#outputImage");
-			var codeTypeInput = $("#codeTypeInput");
-			var codeContentInput = $("#codeContentInput");
-			
-			function showGenerated(){
-				noImageText.hide();
-				outputImageDisplay.show();
-			}
-			
-			function generateQrFromData(data){
-				outputImage.attr("src", "{rootPrefix}/api/media/code/"+codeTypeInput.val()+"/" + encodeURIComponent(data));
-				showGenerated();
-			}
-			
-			var objectContentTypeInput = $("#objectContentTypeInput");
+	<script type="module">
+		import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
+		import { StorageSearchSelect } from '{rootPrefix}/res/js/obj/storageBlock/StorageSearchSelect.js';
+		import { ItemSearchSelect } from '{rootPrefix}/res/js/obj/item/ItemSearchSelect.js';
+		
+		// init necessary modules
+		SearchUtils.initPage();
+		StorageSearchSelect.initPage();
+		ItemSearchSelect.initPage();
+		
+		window.StorageSearchSelect = StorageSearchSelect;
+		window.ItemSearchSelect = ItemSearchSelect;
+		
+		console.log("Page modules loaded.");
+		
+		const outputImageDisplay = $("#outputImageDisplay");
+		const noImageText = $("#noImageText");
+		const outputImage = $("#outputImage");
+		const codeTypeInput = $("#codeTypeInput");
+		const codeContentInput = $("#codeContentInput");
+		
+		function showGenerated(){
+			noImageText.hide();
+			outputImageDisplay.show();
+		}
+		
+		function generateQrFromData(data){
+			outputImage.attr("src", "{rootPrefix}/api/media/code/"+codeTypeInput.val()+"/" + encodeURIComponent(data));
+			showGenerated();
+		}
+		
+		$(document).ready(function(){
+			console.log("Setting up search select functions.");
+			let objectContentTypeInput = $("#objectContentTypeInput");
 			StorageSearchSelect.selectStorageBlock = function (label, id, thing){
 				outputImage.attr("src", "{rootPrefix}/api/media/code/object/storageBlock/" + id + "/" + codeTypeInput.val() + "/" + objectContentTypeInput.val());
 				showGenerated();
@@ -168,6 +176,7 @@
 				outputImage.attr("src", "{rootPrefix}/api/media/code/object/item/" + id + "/" + codeTypeInput.val() + "/" + objectContentTypeInput.val());
 				showGenerated();
 			}
-		</script>
+		});
+	</script>
 	{/pageScript}
 {/include}

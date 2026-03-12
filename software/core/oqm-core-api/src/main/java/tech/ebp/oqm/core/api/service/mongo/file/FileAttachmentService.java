@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.service.mongo.file;
 
 import com.mongodb.client.ClientSession;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
@@ -18,7 +19,9 @@ import java.util.Set;
 @ApplicationScoped
 public class FileAttachmentService extends MongoHistoriedFileService<FileAttachment, FileUploadBody, FileAttachmentSearch, FileAttachmentGet> {
 	
+	@Inject
 	StorageBlockService storageBlockService;
+	@Inject
 	InventoryItemService inventoryItemService;
 	
 	public FileAttachmentService() {

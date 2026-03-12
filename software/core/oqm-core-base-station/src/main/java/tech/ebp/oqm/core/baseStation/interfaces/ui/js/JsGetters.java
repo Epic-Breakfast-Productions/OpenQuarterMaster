@@ -57,7 +57,7 @@ public class JsGetters {
 	}
 	
 	@Inject
-	@Location("webui/js/icons.js")
+	@Location("webui/js/Icons.js")
 	Template icons;
 	
 	@Inject
@@ -65,16 +65,15 @@ public class JsGetters {
 	Template constants;
 	
 	@Inject
-	@Location("webui/js/links.js")
+	@Location("webui/js/Links.js")
 	Template links;
 	
 	@Inject
-	@Location("webui/js/carousel.js")
+	@Location("webui/js/Carousel.js")
 	Template carouselJs;
 	
-	
 	@Inject
-	@Location("webui/js/pageComponents.js")
+	@Location("webui/js/PageComponents.js")
 	Template componentsJs;
 	
 	@Location("tags/carousel.html")
@@ -212,7 +211,7 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("icons.js")
+	@Path("Icons.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> icons() {
@@ -220,7 +219,7 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("links.js")
+	@Path("Links.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> links() {
@@ -228,7 +227,7 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("carousel.js")
+	@Path("Carousel.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> carousel() {
@@ -238,7 +237,7 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("pageComponents.js")
+	@Path("PageComponents.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> components() {

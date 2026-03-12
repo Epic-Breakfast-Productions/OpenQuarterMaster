@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -9,8 +10,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.jetbrains.annotations.NotNull;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
@@ -153,11 +154,20 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 //		}
 	}
 	
+	
+	@Override
+	public boolean needsDerivedUpdatesAfterUpdate(@NotNull Stored stored, ObjectNode updates) {
+		
+		return false;
+	}
+	
 	@Override
 	public void massageIncomingData(String oqmDbIdOrName, ClientSession session, @NonNull Stored stored, boolean recalculateDerived) {
 		super.massageIncomingData(oqmDbIdOrName, session, stored, recalculateDerived);
 		
-		//TODO:: potentially trigger refresh of item stats #929
+		if(recalculateDerived) {
+			//TODO:: potentially trigger refresh of item stats #929. Doublecheck to make sure not doubling up stats calculation on transaction
+		}
 		
 		stored.setIdentifiers(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, stored.getIdentifiers()));
 	}
