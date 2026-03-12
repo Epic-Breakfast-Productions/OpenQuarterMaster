@@ -157,7 +157,21 @@ jobs:
         uses: aquasecurity/trivy-action@0.34.1
         with:
           scan-ref: '${{ inputs.path }}'
-          trivy-config: trivy.yaml
+          scan-type: 'fs'
+          format: sarif
+          report: "all"
+          version: 
+          severity: 
+            - UNKNOWN
+            - LOW
+            - MEDIUM
+            - HIGH
+            - CRITICAL
+          db:
+            skip-update: true
+          scanners: 'vuln,secret,misconfig,license'
+          output: 'trivy-results.sarif'
+          skip-setup-trivy: true
           
 
       - name: Upload Trivy scan results to GitHub Security tab
