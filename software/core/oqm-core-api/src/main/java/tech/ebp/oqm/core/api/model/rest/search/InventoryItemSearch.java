@@ -24,6 +24,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("storageTypes") List<StorageType> storageTypes;
 	@QueryParam("itemCategories") List<ObjectId> categories;
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
+	@QueryParam("hasImage") List<ObjectId> hasImages;
 	@QueryParam("hasExpired") Boolean hasExpired;
 	@QueryParam("hasNoExpired") Boolean hasNoExpired;
 	@QueryParam("hasExpiryWarn") Boolean hasExpiryWarn;
@@ -67,6 +68,13 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 			filters.add(or(
 				this.getInStorageBlocks().stream().map((ObjectId storageBlockId) -> {
 					return in("storageBlocks", storageBlockId);
+				}).toList()
+			));
+		}
+		if(this.hasValue(this.getHasImages())){
+			filters.add(or(
+				this.getHasImages().stream().map((ObjectId imageId) -> {
+					return in("imageIds", imageId);
 				}).toList()
 			));
 		}
