@@ -180,7 +180,10 @@ class RegistrationUtils:
 
     @classmethod
     def pingFromArgs(cls, args)->(bool, str):
-        return cls.pingRegStatus()
+        status, message = cls.pingRegStatus()
+        if not status:
+            print("FAILED to ping registration: " + message, file=sys.stderr)
+            exit(2)
 
     @classmethod
     def pingRegStatus(cls)->(bool, str):
