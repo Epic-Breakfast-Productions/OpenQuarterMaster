@@ -6,6 +6,8 @@ import re
 from ServiceUtils import *
 from LogUtils import *
 
+PACKMAN_FILTER_ALL_OQM = "oqm-*"
+PACKMAN_FILTER_PLUGINS = "oqm-plugin-*"
 
 class PackageManagement:
     """
@@ -196,27 +198,32 @@ class PackageManagement:
         return output
 
     @staticmethod
-    def getOqmPackagesList(filter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True):
+    def getOqmPackagesList(packageFilter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True)->map:
         PackageManagement.log.debug("Getting OQM packages.")
-        result = PackageManagement.getOqmPackagesStr(filter, installed, notInstalled)
+        result = PackageManagement.getOqmPackagesStr(packageFilter, installed, notInstalled)
         # print("Package list str: " + result)
         result = result.splitlines()
         result = map(PackageManagement.packageLineToArray,result)
-        # TODO:: debug
-        PackageManagement.log.debug("Package list: {0}", list(result))
+
+        # PackageManagement.log.debug("Package list: %s", list(result))
+        # PackageManagement.log.debug("Package list: %s", result)
         return result
 
     @classmethod
-    def getOqmPackagesTree(cls, filter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True):
-        packageList = cls.getOqmPackagesList(filter, installed, notInstalled)
+    def getOqmPackagesTree(cls, packageFilter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True):
+        packageList = list(cls.getOqmPackagesList(packageFilter, installed, notInstalled))
+        cls.log.debug("Package list gotten: %s", packageList)
         output = {
+            "manager": {},
             "core": {},
-            "plugins": {},
+            "plugin": {},
             "infra": {}
         }
         for curPackage in packageList:
+            # cls.log.debug("Package: %s", curPackage)
             curGroup = curPackage['group']
             output[curGroup][curPackage['package']] = curPackage
+        cls.log.debug("Package tree: %s", output)
         return output
 
     @staticmethod

@@ -39,11 +39,8 @@ class RegistrationUtils:
         snapshot_parser = snapshotSubparsers.add_parser("ensureInstanceId", aliases=["eid", "instanceId"], help="Ensures that an instance ID is set for this system. If not, it will generate one and save it to the config file.")
         snapshot_parser.set_defaults(func=cls.ensureInstanceId)
 
-        snapshot_parser = snapshotSubparsers.add_parser("removeRegistration", help="Clears the registration state for the system. This will clear the registration data, generating a new instance ID. It will also call the OQM site to remove the registration.")
-        snapshot_parser.set_defaults(func=cls.ensureInstanceId)
-
         snapshot_parser = snapshotSubparsers.add_parser("ping", help="Sends a ping to to the OQM site to push registration data. This is called periodically by the system when registered. It is not necessary to call this manually.")
-        snapshot_parser.set_defaults(func=cls.ensureInstanceId)
+        snapshot_parser.set_defaults(func=cls.pingFromArgs)
 
         snapshot_parser = snapshotSubparsers.add_parser("status", aliases=["stat", "s"], help="Checks the registration status of this system.")
         snapshot_parser.set_defaults(func=cls.statusFromArgs)
@@ -51,6 +48,10 @@ class RegistrationUtils:
     @classmethod
     def registerFromArgs(cls, args):
         regId = args.registrationId
+
+        if cls.isRegistered():
+            print("System is already registered. Exiting.")
+            exit(2)
 
         if not regId:
             print("Registration id not specified. Please visit the following link to get one: ")
@@ -85,6 +86,7 @@ class RegistrationUtils:
 
     @classmethod
     def removeRegFromArgs(cls, args):
+        # TODO:: determine how relevant, deletion of reg no longer doable from api
         cls.log.info("Removing registration.")
         if not cls.isRegistered():
             cls.log.info("Not registered. Exiting.")
@@ -137,8 +139,6 @@ class RegistrationUtils:
         mainCM.setConfigValInFile("registration.instanceId", str(uuid.uuid4()), cls.REG_CONFIG_FILE)
         mainCM.rereadConfigData()
 
-        # TODO:: call to OQM site
-
         cls.disableAutomaticPing()
         cls.log.info("Cleared registration.")
 
@@ -164,8 +164,8 @@ class RegistrationUtils:
     @classmethod
     def isRegistered(cls) -> bool:
         cls.log.info("Checking registration status.")
-        return mainCM.getConfigVal("registration.registrationSecret") == True
-    #     TODO:: Call OQM site?
+        #     TODO:: Any smarter? Check actually pinged?
+        return mainCM.getConfigVal("registration.registrationSecret") is not None
 
     @classmethod
     def getRegistrationLink(cls)->str:
@@ -179,12 +179,17 @@ class RegistrationUtils:
         return cls.REG_BASE_URL + "/instance/" + mainCM.getConfigVal("registration.registrationId") + "/enter"
 
     @classmethod
+    def pingFromArgs(cls, args)->(bool, str):
+        return cls.pingRegStatus()
+
+    @classmethod
     def pingRegStatus(cls)->(bool, str):
         cls.log.info("Pinging registration details.")
 
         packagesTree = PackageManagement.getOqmPackagesTree(notInstalled=False)
-        for groupName, packages  in packagesTree.values():
-            for packageName, package in packages.values():
+
+        for groupName, packages  in packagesTree.items():
+            for packageName, package in packages.items():
                 packagesTree[groupName][packageName] = {"version": package['version']}
 
         data = {
@@ -209,7 +214,8 @@ class RegistrationUtils:
             headers={
                 "Content-Type": "application/json"
             },
-            auth=(mainCM.getConfigVal("registration.instanceId"), mainCM.getConfigVal("registration.registrationSecret"))
+            auth=(mainCM.getConfigVal("registration.instanceId"), mainCM.getConfigVal("registration.registrationSecret")),
+            timeout=10
         )
         if result.status_code != 200:
             cls.log.error("Ping failed with status code %s", result.status_code)
