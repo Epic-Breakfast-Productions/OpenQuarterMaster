@@ -931,8 +931,7 @@ class UserInteraction:
         #
         # Registration
         #
-        if RegistrationUtils.isRegistered():
-            self.registrationWizard()
+        self.registrationWizard()
 
         self.dialog.msgbox(
             "Setup Wizard complete!",
@@ -1044,8 +1043,8 @@ class UserInteraction:
                 "Please choose an option:",
                 title="Registration",
                 choices=[
-                    ("(1)", "Installation status"),
-                    ("(2)", "Host information"),
+                    ("(1)", "Registration Wizard"),
+                    # ("(2)", "Host information"),
                 ]
             )
             self.clearScreen()
@@ -1053,9 +1052,8 @@ class UserInteraction:
             if code != self.dialog.OK:
                 break
             if choice == "(1)":
-                self.showSystemStatus()
-            if choice == "(2)":
-                self.showHostInfo()
+                self.registrationWizard()
+            # TODO:: more; show status, info
 
         UserInteraction.log.debug("Done running registration wizard.")
 
@@ -1092,12 +1090,16 @@ class UserInteraction:
             if returnCode != self.dialog.OK:
                 break
 
-            returnCode, registrationSecret = self.dialog.passwordbox(
+            returnCode, registrationSecret = self.dialog.inputbox(
                 text="Enter your Registration Secret:",
                 title="Registration",
             )
             if returnCode != self.dialog.OK:
                 break
+
+            self.dialog.infobox(
+                "Setting up registration...!\n\nPlease wait",
+            )
 
             success, message = RegistrationUtils.registerSys(registrationId, registrationSecret)
             if success:

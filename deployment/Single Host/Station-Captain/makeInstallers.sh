@@ -113,14 +113,12 @@ Copyright: $(cat "$configFile" | jq -r '.copyright.copyright')
 License: $(cat "$configFile" | jq -r '.copyright.licence')
 EOT
 
-cat <<'EOT' > "$buildDir/$debDir/DEBIAN/preinst"
+
+cat <<'EOT' > "$buildDir/$debDir/DEBIAN/postinst"
 
 # Activate argcomplete
 activate-global-python-argcomplete
-EOT
-chmod +x "$buildDir/$debDir/DEBIAN/preinst"
 
-cat <<'EOT' > "$buildDir/$debDir/DEBIAN/postinst"
 oqm-captain certs ensure-system-present
 
 if [ ! -z "$(grep "oqm:" /etc/group)" ] ; then
