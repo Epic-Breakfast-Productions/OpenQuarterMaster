@@ -214,7 +214,10 @@ class RegistrationUtils:
             headers={
                 "Content-Type": "application/json"
             },
-            auth=(mainCM.getConfigVal("registration.instanceId"), mainCM.getConfigVal("registration.registrationSecret")),
+            auth=(
+                mainCM.getConfigVal("registration.instanceId") + "/" + mainCM.getConfigVal("registration.registrationId"),
+                mainCM.getConfigVal("registration.registrationSecret")
+            ),
             timeout=10
         )
         if result.status_code != 200:
