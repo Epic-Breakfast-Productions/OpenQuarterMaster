@@ -6,8 +6,6 @@ import re
 from ServiceUtils import *
 from LogUtils import *
 
-PACKMAN_FILTER_ALL_OQM = "oqm-*"
-PACKMAN_FILTER_PLUGINS = "oqm-plugin-*"
 
 class PackageManagement:
     """

@@ -44,18 +44,24 @@ class SystemInfoUtils:
     def getOemId(cls) -> str | None:
         if os.path.isfile("/var/log/installer/oem-id"):
             with open("/var/log/installer/oem-id", 'r') as f:
-                return f.read()
+                return f.read().strip()
         return None
 
     @classmethod
     def getOsType(cls):
-        systemReleaseInfo = platform.freedesktop_os_release()
-        return systemReleaseInfo['ID_LIKE']
+        try:
+            systemReleaseInfo = platform.freedesktop_os_release()
+            return systemReleaseInfo.get('ID_LIKE', systemReleaseInfo.get('ID', 'unknown'))
+        except OSError:
+            return 'unknown'
 
     @classmethod
     def getOsFullName(cls):
-        systemReleaseInfo = platform.freedesktop_os_release()
-        return systemReleaseInfo['PRETTY_NAME']
+        try:
+            systemReleaseInfo = platform.freedesktop_os_release()
+            return systemReleaseInfo.get('PRETTY_NAME', 'Unknown OS')
+        except OSError:
+            return 'Unknown OS'
 
     @classmethod
     def getSystemInfo(cls):
@@ -78,7 +84,8 @@ class SystemInfoUtils:
         osInfo += subprocess.run(["uname", "-a"], shell=False, capture_output=True, text=True, check=True).stdout
         output += "OS Info:\n" + osInfo + "\n\n\n"
 
-        output += "OQM OEM Id:\n" + cls.getOemId() + "\n\n\n"
+        oemId = cls.getOemId()
+        output += "OQM OEM Id:\n" + (oemId if oemId else "N/A") + "\n\n\n"
 
         hwinfo = subprocess.run(["hwinfo", "--short"], shell=False, capture_output=True, text=True,
                                 check=True).stdout
