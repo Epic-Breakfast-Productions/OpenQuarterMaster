@@ -141,7 +141,9 @@
         "mentoring",
         "tool",
         "userTesting",
-        "maintenance"
+        "maintenance",
+        "review",
+        "test"
       ]
     },
     {

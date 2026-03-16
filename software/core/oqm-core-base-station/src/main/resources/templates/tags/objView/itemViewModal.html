@@ -74,30 +74,16 @@
             <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewIdsContainer">
                 <div class="card-body">
 					<div class="accordion" id="itemViewIdsAccord">
-					  <div class="accordion-item" id="itemViewGeneralIdsAccord">
+					  <div class="accordion-item" id="itemViewIdentifiersAccord">
 						<h2 class="accordion-header">
-						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewGeneralIdsAccordCollapse" aria-expanded="false" aria-controls="itemViewGeneralIdsAccordCollapse">
-							{#icons/generalIds /}
-							General Ids (<span id="itemViewGeneralIdsNumIdsLabel"></span>)
+						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewGeneralIdentifiersAccordCollapse" aria-expanded="false" aria-controls="itemViewGeneralIdentifiersAccordCollapse">
+							{#icons/identifiers /}
+							Identifiers (<span id="itemViewIdentifiersNumIdsLabel"></span>)
 						  </button>
 						</h2>
-						<div id="itemViewGeneralIdsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
+						<div id="itemViewGeneralIdentifiersAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
 						  <div class="accordion-body">
-						  	<div class="row" id="itemViewGeneralIdsAccordContent">
-						  	</div>
-						  </div>
-						</div>
-					  </div>
-					  <div class="accordion-item" id="itemViewUniqueIdsAccord">
-						<h2 class="accordion-header">
-						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewUniqueIdsAccordCollapse" aria-expanded="false" aria-controls="itemViewUniqueIdsAccordCollapse">
-							{#icons/uniqueIds /}
-							Unique Ids (<span id="itemViewUniqueIdsNumIdsLabel"></span>)
-						  </button>
-						</h2>
-						<div id="itemViewUniqueIdsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
-						  <div class="accordion-body">
-						  	<div class="row" id="itemViewUniqueIdsAccordContent">
+						  	<div class="row" id="itemViewGeneralIdentifiersAccordContent">
 						  	</div>
 						  </div>
 						</div>
@@ -134,6 +120,26 @@
 							<div id="itemViewPriceTotalsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewPriceTotalsAccord">
 								<div class="accordion-body">
 									<div class="row" id="itemViewPriceTotalsContent">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewLinksContainer">
+                <div class="card-body" id="">
+					<div class="accordion" id="itemViewLinksAccord">
+						<div class="accordion-item" id="itemViewLinksAccordItem">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewLinkAccordCollapse" aria-expanded="false" aria-controls="itemViewLinksAccordCollapse">
+									{#icons/link /}
+									Links (<span id="itemViewLinksNumLabel"></span>)
+								</button>
+							</h2>
+							<div id="itemViewLinkAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewLinkAccord">
+								<div class="accordion-body">
+									<div class="row" id="itemViewLinkContent">
 									</div>
 								</div>
 							</div>
@@ -179,11 +185,13 @@
             <ul class="nav nav-tabs" id="itemViewStoredViewTab" role="tablist">
               <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="itemViewStoredViewTabByBlock" data-bs-toggle="tab" data-bs-target="#itemViewStoredViewTabByBlockPane" type="button" role="tab" aria-controls="itemViewStoredViewTabByBlockPane" aria-selected="true">
-                    By Block
+                    {#icons/storageBlock /}
+					By Block
                 </button>
               </li>
               <li class="nav-item" role="presentation">
                 <button class="nav-link" id="itemViewStoredViewTabAllStored" data-bs-toggle="tab" data-bs-target="#itemViewStoredViewTabAllStoredPane" type="button" role="tab" aria-controls="itemViewStoredViewTabAllStoredPane" aria-selected="false">
+                    {#icons/storageBlocks /}
                     All Stored
                 </button>
               </li>

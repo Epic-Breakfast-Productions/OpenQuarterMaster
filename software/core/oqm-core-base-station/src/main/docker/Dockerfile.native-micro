@@ -26,7 +26,11 @@ RUN chown 1001 /work \
     && chown 1001:root /work
 COPY --chown=1001:root --chmod=0755 build/*-runner /work/application
 
-EXPOSE 8080
+EXPOSE 80/tcp
+EXPOSE 443/tcp
 USER 1001
 
 ENTRYPOINT ["./application", "-Dquarkus.http.host=0.0.0.0"]
+
+HEALTHCHECK --interval=3s --timeout=5s --start-period=5s --retries=10 \
+	CMD curl -sSkL --fail http://localhost:${QUARKUS_HTTP_PORT:-80}/q/health

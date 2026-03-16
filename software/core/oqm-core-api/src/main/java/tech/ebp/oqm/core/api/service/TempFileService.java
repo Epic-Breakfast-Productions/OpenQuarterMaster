@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.service;
 
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.exception.InvalidConfigException;
@@ -25,7 +26,7 @@ public class TempFileService {
 	private static final DateTimeFormatter FILENAME_TIMESTAMP_FORMAT = DateTimeFormatter.ofPattern("MM-dd-yyyy_kk-mm");
 	private static final Random RANDOM = new SecureRandom();
 	
-	private static void checkDir(Path dir){
+	public static void checkDir(Path dir){
 		if (!Files.exists(dir)) {
 			try{
 				dir = Files.createDirectories(dir);
@@ -35,7 +36,7 @@ public class TempFileService {
 		}
 		
 		if(!Files.isDirectory(dir)){
-			throw new InvalidConfigException("Temp directory must be directory. \"Dir\": " + dir);
+			throw new InvalidConfigException("Temp directory must be directory. Dir: " + dir);
 		}
 		
 		if(!Files.isWritable(dir)){
@@ -49,6 +50,7 @@ public class TempFileService {
 			.collect(Collectors.joining());
 	}
 	
+	@Getter
 	@ConfigProperty(name = "service.tempDir")
 	Path tempDir;
 	

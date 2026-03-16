@@ -1,5 +1,5 @@
 {!{@tech.ebp.oqm.baseStation.rest.search.HistorySearch historySearchObject}!}
-{#include tags/search/searchForm id=id action=objectUrl showKeywords=true showAttributes=true searchFormClasses="historySearchForm" onSubmit="runHistorySearch(this, event);"  defaultPageSize=config:['ui.history.search.defaultPageSize']}
+{#include tags/search/searchForm id=id action=objectUrl showKeywords=true showAttributes=true searchFormClasses="historySearchForm" onSubmit="HistorySearchUtils.runHistorySearch(this, event);"  defaultPageSize=config:['ui.history.search.defaultPageSize']}
 	{#inputs}
 		<input type="hidden" name="objectId" id="{id}ObjectId" value="{#if objectId??}{objectId}{/if}">
 		{! TODO:: this

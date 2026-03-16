@@ -1,26 +1,26 @@
 package tech.ebp.oqm.core.api.service;
 
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.io.FilenameUtils;
 import org.bson.assertions.Assertions;
 import org.junit.jupiter.api.Test;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
+import tech.ebp.oqm.core.api.exception.InvalidConfigException;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import jakarta.inject.Inject;
-import tech.ebp.oqm.core.api.service.TempFileService;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Paths;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class TempFileServiceTest extends RunningServerTest {
 	
 	@Inject
@@ -38,7 +38,59 @@ class TempFileServiceTest extends RunningServerTest {
 		assertTrue(tempFile.getName().startsWith(prefix));
 		assertTrue(FilenameUtils.isExtension(tempFile.getName(), ext));
 		
-		if(!tempFile.createNewFile()){
+		assertTrue(
+			tempFile.toString().startsWith(
+				this.tempFileService.getTempDir().toString() + File.separator
+			)
+		);
+		
+		if (!tempFile.createNewFile()) {
+			Assertions.fail("Failed to create new file.");
+		}
+	}
+	
+	@Test
+	public void testGetTempFileBlankDir() throws IOException {
+		String ext = "txt";
+		String prefix = "testFile";
+		
+		File tempFile = this.tempFileService.getTempFile(prefix, ext, "");
+		
+		log.info("Temp file gotten: {}", tempFile);
+		
+		assertTrue(tempFile.getName().startsWith(prefix));
+		assertTrue(FilenameUtils.isExtension(tempFile.getName(), ext));
+		
+		assertTrue(
+			tempFile.toString().startsWith(
+				this.tempFileService.getTempDir().toString() + File.separator
+			)
+		);
+		
+		if (!tempFile.createNewFile()) {
+			Assertions.fail("Failed to create new file.");
+		}
+	}
+	
+	@Test
+	public void testGetTempFileInDir() throws IOException {
+		String ext = "txt";
+		String prefix = "testFile";
+		String dir = "testDir";
+		
+		File tempFile = this.tempFileService.getTempFile(prefix, ext, dir);
+		
+		log.info("Temp file gotten: {}", tempFile);
+		
+		assertTrue(tempFile.getName().startsWith(prefix));
+		assertTrue(FilenameUtils.isExtension(tempFile.getName(), ext));
+		
+		assertTrue(
+			tempFile.toString().startsWith(
+				this.tempFileService.getTempDir().toString() + File.separator + dir + File.separator
+			)
+		);
+		if (!tempFile.createNewFile()) {
 			Assertions.fail("Failed to create new file.");
 		}
 	}
@@ -54,4 +106,21 @@ class TempFileServiceTest extends RunningServerTest {
 		assertNotEquals(tempFileOne, tempFileTwo);
 	}
 	
+	@Test
+	public void testCheckDirNotDirectory() {
+		InvalidConfigException e = assertThrows(InvalidConfigException.class, ()->TempFileService.checkDir(Paths.get("/bin/sh")));
+		assertTrue(e.getMessage().contains("Temp directory must be directory."));
+	}
+	
+	@Test
+	public void testCheckDirCantMakeDir() {
+		InvalidConfigException e = assertThrows(InvalidConfigException.class, ()->TempFileService.checkDir(Paths.get("/bin/someDir/")));
+		assertTrue(e.getMessage().contains("Temp directory could not be created."));
+	}
+	
+	@Test
+	public void testCheckDirNotWritable() {
+		InvalidConfigException e = assertThrows(InvalidConfigException.class, ()->TempFileService.checkDir(Paths.get("/bin/")));
+		assertTrue(e.getMessage().contains("Temp directory cannot be written to."));
+	}
 }

@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.core.Response;
@@ -11,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.core.api.model.object.FileMainObject;
+import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
 import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
@@ -32,7 +32,7 @@ import java.io.IOException;
  */
 @Slf4j
 @NoArgsConstructor
-public abstract class MainFileObjectProvider<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends FileGet> extends ObjectProvider {
+public abstract class MainFileObjectProvider<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends MainObject & FileGet> extends ObjectProvider {
 	
 	
 	@Getter
@@ -41,7 +41,6 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	
 	public abstract MongoHistoriedFileService<T, U, S, G> getFileService();
 	
-	@WithSpan
 	protected Response.ResponseBuilder getSearchResponseBuilder(
 		String oqmDbIdOrName,
 		S searchObject
@@ -83,7 +82,6 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	@WithSpan
 	public Response search(
 		//		@BeanParam
 		S searchObject
@@ -160,7 +158,6 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	@WithSpan
 	public G get(
 		//		@PathParam("id")
 		String id
@@ -202,7 +199,6 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	)
 	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Produces(MediaType.APPLICATION_JSON)
-	@WithSpan
 	public Integer updateFile(
 		//		@PathParam("id")
 		String id,
@@ -212,7 +208,6 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 		return this.getFileService().updateFile(this.getOqmDbIdOrName(), null, id, body, this.getInteractingEntity());
 	}
 	
-	@WithSpan
 	public G updateObj(
 		//		@PathParam("id")
 		String id,
@@ -281,7 +276,6 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	)
 	//		@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	@WithSpan
 	public FileMetadata getRevision(
 		//		@PathParam("id")
 		String id,
@@ -325,7 +319,6 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	@WithSpan
 	public Response getRevisionData(
 		//		@PathParam("id")
 		String id,
@@ -379,7 +372,6 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(Roles.INVENTORY_EDIT)
-	@WithSpan
 	public G remove(
 		//		@PathParam("id")
 		String id
@@ -419,7 +411,6 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	public Response getHistoryForObject(
 //		@PathParam("id")
 		String id,
@@ -458,7 +449,6 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(
 //		@BeanParam
 		HistorySearch searchObject

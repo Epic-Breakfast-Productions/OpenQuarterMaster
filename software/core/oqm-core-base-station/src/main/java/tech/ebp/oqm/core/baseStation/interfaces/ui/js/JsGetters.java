@@ -40,10 +40,9 @@ public class JsGetters {
 	private static String fileInputLines;
 	private static String storedPricingInputLines;
 	private static String storedPricingInputPriceLines;
-	private static String generalIdInputLines;
-	private static String generalIdAddedLines;
-	private static String uniqueIdInputLines;
-	private static String uniqueIdAddedLines;
+	private static String assocLinkLinkInputLines;
+	private static String identifierInputLines;
+	private static String identifierAddedLines;
 	private static String copyTextButtonLines;
 	
 	private static String itemCatBadgeLines;
@@ -58,7 +57,7 @@ public class JsGetters {
 	}
 	
 	@Inject
-	@Location("webui/js/icons.js")
+	@Location("webui/js/Icons.js")
 	Template icons;
 	
 	@Inject
@@ -66,16 +65,15 @@ public class JsGetters {
 	Template constants;
 	
 	@Inject
-	@Location("webui/js/links.js")
+	@Location("webui/js/Links.js")
 	Template links;
 	
 	@Inject
-	@Location("webui/js/carousel.js")
+	@Location("webui/js/Carousel.js")
 	Template carouselJs;
 	
-	
 	@Inject
-	@Location("webui/js/pageComponents.js")
+	@Location("webui/js/PageComponents.js")
 	Template componentsJs;
 	
 	@Location("tags/carousel.html")
@@ -90,18 +88,16 @@ public class JsGetters {
 	Template fileInputTemplate;
 	@Location("tags/copyTextButton.html")
 	Template copyButtonTemplate;
+	@Location("tags/inputs/assocLink/assocLinkInputLink.qute.html")
+	Template assocLinkInputLinkTemplate;
 	@Location("tags/inputs/pricing/pricingInput.qute.html")
 	Template storedPricingInputTemplate;
 	@Location("tags/inputs/pricing/pricingInputPrice.qute.html")
 	Template storedPricingInputPriceTemplate;
-	@Location("tags/inputs/identifiers/generalIdInput.qute.html")
-	Template generalIdInputTemplate;
-	@Location("tags/inputs/identifiers/addedGeneralIdentifier.qute.html")
-	Template generalIdAddedTemplate;
-	@Location("tags/inputs/identifiers/addedUniqueIdentifier.qute.html")
-	Template uniqueIdAddedTemplate;
-	@Location("tags/inputs/identifiers/uniqueIdInput.qute.html")
-	Template uniqueIdInputTemplate;
+	@Location("tags/inputs/identifiers/associatedIdentifierInput.qute.html")
+	Template identifierInputTemplate;
+	@Location("tags/inputs/identifiers/addedIdentifier.qute.html")
+	Template identifierAddedTemplate;
 	@Location("tags/fileAttachment/FileAttachmentObjectView.html")
 	Template fileAttachmentObjectViewTemplate;
 	@Location("tags/objView/itemCatBadge.qute.html")
@@ -171,32 +167,18 @@ public class JsGetters {
 		return storedPricingInputPriceLines;
 	}
 	
-	private String getGeneralIdInputLines() {
-		if (generalIdInputLines == null) {
-			generalIdInputLines = this.templateToEscapedJs(generalIdInputTemplate.data("id", ""));
+	private String getIdentifierInputLines() {
+		if (identifierInputLines == null) {
+			identifierInputLines = this.templateToEscapedJs(identifierInputTemplate.data("id", ""));
 		}
-		return generalIdInputLines;
+		return identifierInputLines;
 	}
 	
-	private String getGeneralIdAddedLines() {
-		if (generalIdAddedLines == null) {
-			generalIdAddedLines = this.templateToEscapedJs(generalIdAddedTemplate.data("rootPrefix", this.forwardedPrefix.orElse("")));
+	private String getIdentifierAddedLines() {
+		if (identifierAddedLines == null) {
+			identifierAddedLines = this.templateToEscapedJs(identifierAddedTemplate.data("rootPrefix", this.forwardedPrefix.orElse("")));
 		}
-		return generalIdAddedLines;
-	}
-	
-	private String getUniqueIdInputLines() {
-		if (uniqueIdInputLines == null) {
-			uniqueIdInputLines = this.templateToEscapedJs(uniqueIdInputTemplate.data("id", ""));
-		}
-		return uniqueIdInputLines;
-	}
-	
-	private String getUniqueIdAddedLines() {
-		if (uniqueIdAddedLines == null) {
-			uniqueIdAddedLines = this.templateToEscapedJs(uniqueIdAddedTemplate.data("rootPrefix", this.forwardedPrefix.orElse("")));
-		}
-		return uniqueIdAddedLines;
+		return identifierAddedLines;
 	}
 	
 	private String getAttachedFileListLines() {
@@ -213,6 +195,13 @@ public class JsGetters {
 		return itemCatBadgeLines;
 	}
 	
+	private String getAssocLinkLinkInputLines() {
+		if (assocLinkLinkInputLines == null) {
+			assocLinkLinkInputLines = this.templateToEscapedJs(assocLinkInputLinkTemplate.instance());
+		}
+		return assocLinkLinkInputLines;
+	}
+	
 	@GET
 	@Path("constants.js")
 	@PermitAll
@@ -222,7 +211,7 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("icons.js")
+	@Path("Icons.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> icons() {
@@ -230,7 +219,7 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("links.js")
+	@Path("Links.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> links() {
@@ -238,7 +227,7 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("carousel.js")
+	@Path("Carousel.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> carousel() {
@@ -248,7 +237,7 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("pageComponents.js")
+	@Path("PageComponents.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> components() {
@@ -258,12 +247,11 @@ public class JsGetters {
 				   .data("imageInputLines", this.getImageInputLines())
 				   .data("fileInputLines", this.getFileInputLines())
 				   .data("copyButtonLines", this.getCopyTextButtonLines())
+				   .data("assocLinkLinkInputLines", this.getAssocLinkLinkInputLines())
 				   .data("storedPricingInputLines", this.getStoredPricingInputLines())
 				   .data("storedPricingInputPriceLines", this.getStoredPricingInputPriceLines())
-				   .data("generalIdInputLines", this.getGeneralIdInputLines())
-				   .data("generalIdAddedLines", this.getGeneralIdAddedLines())
-				   .data("uniqueIdInputLines", this.getUniqueIdInputLines())
-				   .data("uniqueIdAddedLines", this.getUniqueIdAddedLines())
+				   .data("identifierInputLines", this.getIdentifierInputLines())
+				   .data("identifierAddedLines", this.getIdentifierAddedLines())
 				   .data("itemCatBadgeLines", this.getItemCatBadgeLines())
 				   .data("attachedFileListLines", this.getAttachedFileListLines())
 				   .createUni();

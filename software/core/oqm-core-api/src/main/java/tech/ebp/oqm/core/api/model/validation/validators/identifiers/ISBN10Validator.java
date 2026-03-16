@@ -3,7 +3,7 @@ package tech.ebp.oqm.core.api.model.validation.validators.identifiers;
 import jakarta.validation.ConstraintValidatorContext;
 import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidISBN10;
 import tech.ebp.oqm.core.api.model.validation.validators.Validator;
-import tech.ebp.oqm.core.api.service.identifiers.general.upc.ISBNCodeUtilities;
+import tech.ebp.oqm.core.api.service.identifiers.upc.ISBNCodeUtilities;
 
 import java.util.ArrayList;
 import java.util.List;

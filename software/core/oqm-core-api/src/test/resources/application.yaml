@@ -1,24 +1,11 @@
 service:
-  runBy:
-    name: The Testing Org
-    email: test@test.org
-    phone: 999-888-7777
-    website: https://test.org
   tempDir: "/tmp/oqmTest/core/api"
 
-externalService:
-  extServices:
-    testService:
-      secret: dadasdadadasdadasdasdasdsa
-#    "test Service Two":
-#      secret: 234dfs 234f 32fwervdfdgw54y5wb
-
-#messaging:
-#  connector: smallrye-amqp
-  
 quarkus:
   test:
     integration-test-profile: intTest
+  jacoco:
+  
   http:
     port: 8081
   log:
