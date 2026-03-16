@@ -1,4 +1,5 @@
 import {Rest} from "../../Rest.js";
+import {PageComponents} from "../../PageComponents.js";
 
 export const ItemCategoryView = {
 	async setupItemCategoryView(container, categoryIdList){
