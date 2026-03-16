@@ -1,3 +1,6 @@
+import {Rest} from "../../Rest.js";
+import {DselectUtils} from "../../DselectUtils.js";
+
 export const ItemCategoryInput = {
 	getValueFromInput(itemCatInputJq){
 		let inputIsMultiple = itemCatInputJq.prop("multiple");
@@ -22,7 +25,7 @@ export const ItemCategoryInput = {
 
 	// Handle newly created categories from dselect creatable mode
 	handleNewCategory(selectElement, newCategoryName) {
-		console.log("Creating new category: " + newCategoryName);
+		console.log("Creating new category: ", newCategoryName);
 
 		Rest.call({
 			url: Rest.passRoot + "/inventory/item-category",
@@ -45,31 +48,32 @@ export const ItemCategoryInput = {
 				$(selectElement).find('option').filter(function() {
 					return $(this).val() === newCategoryName;
 				}).remove();
-				Dselect.setupDselect(selectElement);
+				DselectUtils.setupDselect(selectElement);
 			}
+		});
+	},
+
+	initPage: function () {
+		$(".category-input").on("change", function(e) {
+			let selectElement = this;
+			let values = $(selectElement).val();
+
+			// Handle both single and multi-select
+			if (!Array.isArray(values)) {
+				values = values ? [values] : [];
+			}
+
+			// Check each selected value to see if it's a newly created category
+			// (dselect creates options with value === text for new items)
+			values.forEach(function(val) {
+				if (val && val !== "") {
+					let option = $(selectElement).find('option[value="' + val + '"]');
+					// If value equals text and doesn't look like a MongoDB ObjectId, it's new
+					if (option.length && option.text() === val && !val.match(/^[0-9a-fA-F]{24}$/)) {
+						ItemCategoryInput.handleNewCategory(selectElement, val);
+					}
+				}
+			});
 		});
 	}
 };
-
-// Listen for changes on category inputs to detect new creations
-$(document).on('change', 'select.category-input', function(e) {
-	let selectElement = this;
-	let values = $(selectElement).val();
-
-	// Handle both single and multi-select
-	if (!Array.isArray(values)) {
-		values = values ? [values] : [];
-	}
-
-	// Check each selected value to see if it's a newly created category
-	// (dselect creates options with value === text for new items)
-	values.forEach(function(val) {
-		if (val && val !== "") {
-			let option = $(selectElement).find('option[value="' + val + '"]');
-			// If value equals text and doesn't look like a MongoDB ObjectId, it's new
-			if (option.length && option.text() === val && !val.match(/^[0-9a-fA-F]{24}$/)) {
-				ItemCategoryInput.handleNewCategory(selectElement, val);
-			}
-		}
-	});
-});
