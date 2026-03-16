@@ -20,13 +20,15 @@ Ingests:
             <div class="modal-body">
                 {nested-content}
             </div>
-            <div class="modal-footer">
-                {#if submitForm??}
-                    <button class="btn btn-success" type="submit" form="{submitForm}" {#if submitDismiss}{#if otherModalId??}data-bs-target="#{otherModalId}" data-bs-toggle="modal"{#else} data-bs-dismiss="modal"{/if}{/if}>Submit</button>
-                {/if}
-                {#insert footerButtons}{/}
-                {!<button class="btn btn-warning" {#if otherModalId??}data-bs-target="#{otherModalId}" data-bs-toggle="modal"{#else} data-bs-dismiss="modal"{/if}>Back</button>!}
-            </div>
+			{!{#if submitForm?? or footerButtons??}!}
+				<div class="modal-footer">
+					{#if submitForm??}
+						<button class="btn btn-success" type="submit" form="{submitForm}" {#if submitDismiss}{#if otherModalId??}data-bs-target="#{otherModalId}" data-bs-toggle="modal"{#else} data-bs-dismiss="modal"{/if}{/if}>Submit</button>
+					{/if}
+					{#insert footerButtons}{/}
+					{!<button class="btn btn-warning" {#if otherModalId??}data-bs-target="#{otherModalId}" data-bs-toggle="modal"{#else} data-bs-dismiss="modal"{/if}>Back</button>!}
+				</div>
+			{!{/if}!}
         </div>
     </div>
 </div>

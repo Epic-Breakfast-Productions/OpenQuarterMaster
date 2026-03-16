@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints.inventory.storage;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -84,7 +83,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 			mediaType = "application/json",
 			schema = @Schema(
 				type = SchemaType.ARRAY,
-				implementation = ObjectId.class
+				implementation = StorageBlock.class
 			)
 		)
 	)
@@ -97,7 +96,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public List<ObjectId> createBulk(
+	public List<StorageBlock> createBulk(
 		@Valid List<StorageBlock> storageBlocks
 	) {
 		return super.createBulk(storageBlocks);
@@ -138,7 +137,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	public CollectionStats getCollectionStats(
 	) {
 		return super.getCollectionStats();
@@ -247,11 +245,6 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@APIResponse(
 		responseCode = "410",
 		description = "Object requested has already been deleted.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No object found to delete.",
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)

@@ -41,7 +41,7 @@
   <tr class="itemStoredResultRow align-middle">
     <td>
       {#if !result.get("imageIds").isEmpty()}
-      <img src="/api/passthrough/media/image/for/item_stored/{id}" class="searchResultImage">{! TODO:: fix this url !}
+      <img src="{rootPrefix}/api/passthrough/media/image/for/item_stored/{id}" class="searchResultImage">
       {/if}
     </td>
     <td class="">{labelText}</td>
@@ -91,11 +91,7 @@
         {#icons/edit}{/icons/edit}
       </button>
       {#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false storedId=id itemId=itemId checkinButton=false /}
-      {!<button type="button" class="btn btn-sm btn-primary" title="Add/Subtract/Transfer" data-bs-toggle="modal" data-bs-target="#itemStoredAddSubTransModal" onclick="ItemStoredAddSubTransfer.setupForItem('{id}');">!}
-        {!{#icons/addSubTrans}{/icons/addSubTrans}!}
-      {!</button>!}
-
-      {!<button type="button" class="btn btn-sm btn-danger" title="Remove" onclick="removeItem('{result.id}');">{#icons/remove}{/icons/remove}</button>!}
+      
     {#else if actionType == 'select'}
     <td class="d-grid gap-2">
       <button type="button" class="btn btn-sm btn-success" title="Select {labelText}"

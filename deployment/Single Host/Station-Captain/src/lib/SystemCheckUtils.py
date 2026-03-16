@@ -1,8 +1,5 @@
-import ipaddress
-import shutil
 import platform
 
-from ServiceUtils import *
 from LogUtils import *
 
 
@@ -37,9 +34,26 @@ class SystemCheckUtils:
     def checkSystem(cls):
         output = []
 
+        cls.checkSysHostnameValid(output)
         cls.checkSysIsSupportedArch(output)
         cls.checkSysHasAvx(output)
 
+        return output
+
+
+    @classmethod
+    def checkSysHostnameValid(cls, errArray = [])-> dict[str, str] | None:
+        hostname = platform.node()
+
+        if not any(c.isupper() for c in hostname):
+            return None
+
+        output = {
+            "title": "System hostname contains upper case characters.",
+            "level": "WARN",
+            "description": "The system's hostname contains upper case characters. If using mdns for hostname and/or self-signed cert mode, this is known to cause issues."
+        }
+        errArray.append(output)
         return output
 
 

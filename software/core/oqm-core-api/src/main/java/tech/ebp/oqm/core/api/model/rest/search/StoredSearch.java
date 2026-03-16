@@ -33,7 +33,7 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 	@QueryParam("hasExpiryDate") Boolean hasExpiryDate;
 	@QueryParam("hasLowStockThreshold") Boolean hasLowStockThreshold;
 	
-	@QueryParam("generalId") String generalId;
+	@QueryParam("identifier") List<String> identifiers;
 
 	//TODO:: are these outdated?
 	@QueryParam("expired") Boolean hasExpired;
@@ -114,10 +114,14 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 			filters.add(eq("notificationStatus.lowStock", this.getHasExpired()));
 		}
 		
-		if(this.hasValue(this.getGeneralId())){
-			filters.add(
-				eq("generalIds.value", this.getGeneralId())
-			);
+		if (this.hasValue(this.getIdentifiers())) {
+			List<Bson> typeFilterList = new ArrayList<>(this.getIdentifiers().size());
+			for (String curIdentifier : this.getIdentifiers()) {
+				typeFilterList.add(
+					eq("identifiers.value", curIdentifier)
+				);
+			}
+			filters.add(Filters.or(typeFilterList));
 		}
 		
 		return filters;

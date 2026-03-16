@@ -340,11 +340,25 @@
 	{/pageContent}
 	{#pageScript}
 		<script>
-			const itemsTab = document.getElementById("itemsTab");
+			const tabList = $("#mainTab button.nav-link");
+		
+			const pageHash = $(location).attr('hash').replace("#", "");
 			
-			if ($(location).attr('hash') === "#items") {
-				itemsTab.click();
-			}
+			console.log("Had hash: ");
+			tabList.each(function(index, element) {
+				let hashCheckVal = element.id;
+				hashCheckVal = hashCheckVal.replace("Tab", "");
+				
+				if(pageHash !== ""){
+					if(hashCheckVal === pageHash) {
+						element.click();
+					}
+				}
+				
+				$(element).on("click", function() {
+					window.location.hash = hashCheckVal;
+				});
+			});
 		</script>
 	{/pageScript}
 {/include}

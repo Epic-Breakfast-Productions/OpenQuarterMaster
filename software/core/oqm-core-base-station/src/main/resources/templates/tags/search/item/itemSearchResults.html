@@ -15,7 +15,7 @@
 !}
 <thead>
 <tr>
-	<td colspan="7" class="text-center searchResultsContainer">
+	<td colspan="9" class="text-center searchResultsContainer">
 		{#paginationButtons searchFormId = searchFormId searchResults = searchResults /}
 	</td>
 </tr>
@@ -24,15 +24,17 @@
 	<th scope="col">Name</th>
 	<th scope="col">Storage Type</th>
 	<th scope="col">Total</th>
-	<th scope="col" style="width: 50px;"># {#icons/storageBlocks /}</th>
-	<th scope="col" style="width: 114px;">{#icons/flags /} Flags</th>
+	<th scope="col">{#icons/categories /} Categories</th>
+	<th scope="col" class="text-center" style="width: 50px;"># {#icons/storageBlocks /}</th>
+	<th scope="col" class="text-center" style="width: 50px;"># {#icons/stored /}</th>
+	<th scope="col" class="text-center" style="width: 114px;">{#icons/flags /} Flags</th>
 	<th scope="col" style="width: 175px;">Actions</th>
 </tr>
 </thead>
 <tbody>
 {#if searchResults.get("empty").asBoolean()}
 <tr>
-	<td colspan="7" class="text-center">
+	<td colspan="9" class="text-center">
 		<h2>
 			No Items
 		</h2>
@@ -60,8 +62,16 @@
 	<td>
 		{#amountDisplay amount = result.get("stats").get("total")}{/amountDisplay}
 	</td>
-	<td>
+	<td class="">
+		{#for curCat in result.get("categories-objs")}
+			{#objView/itemCatBadge rootPrefix=rootPrefix category=curCat /}
+		{/for}
+	</td>
+	<td class="text-center">
 		{result.get("storageBlocks").size()}
+	</td>
+	<td class="text-center">
+		{result.get("stats").get("numStored").asInt()}
 	</td>
 	<td>
 		{#if result.get("stats").get("anyLowStock").asBoolean()}
@@ -112,7 +122,7 @@
 </tbody>
 <tfoot>
 <tr>
-	<td colspan="7" class="text-center searchResultsContainer">
+	<td colspan="9" class="text-center searchResultsContainer">
 		{#paginationButtons searchFormId = searchFormId searchResults = searchResults}{/paginationButtons}
 	</td>
 </tr>

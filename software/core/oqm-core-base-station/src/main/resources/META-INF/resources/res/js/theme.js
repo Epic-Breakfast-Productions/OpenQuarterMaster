@@ -1,6 +1,27 @@
 /**
  * Script to handle theme changing.
  */
+const PageTheme = {
+	mode: "auto",
+	lightness: "",
+
+	setMode: function(mode){
+		this.mode = mode;
+
+		switch (PageTheme.mode) {
+			case "light":
+				PageTheme.lightness = "light";
+				break;
+			case "dark":
+				PageTheme.lightness = "dark";
+				break;
+		}
+	},
+	isDarkMode: function(){
+		return PageTheme.lightness === "dark";
+	}
+};
+
 (() => {
 	'use strict'
 
@@ -18,8 +39,10 @@
 
 	const setTheme = theme => {
 		if (theme === 'auto' && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+			PageTheme.setMode("dark");
 			document.documentElement.setAttribute('data-bs-theme', 'dark');
 		} else {
+			PageTheme.setMode(theme);
 			document.documentElement.setAttribute('data-bs-theme', theme);
 		}
 	}

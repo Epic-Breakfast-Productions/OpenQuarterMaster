@@ -6,7 +6,6 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.PostConstruct;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -124,7 +123,6 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	 * @return The object found. Null if not found.
 	 */
 	@Override
-	@WithSpan
 	public T get(String oqmDbIdOrName, ObjectId objectId) {
 		try {
 			return super.get(oqmDbIdOrName, objectId);
@@ -140,9 +138,8 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		}
 	}
 
-	@WithSpan
-	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
-		object = this.update(oqmDbIdOrName, cs, object);
+	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, boolean deriveApplied, HistoryDetail ... details) throws DbNotFoundException {
+		object = this.update(oqmDbIdOrName, cs, object, deriveApplied);
 		this.addHistoryFor(oqmDbIdOrName, cs, object, entity,
 			UpdateEvent.builder()
 				.objectId(object.getId())
@@ -153,9 +150,12 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		return object;
 	}
 	
-	@WithSpan
+	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
+		return this.update(oqmDbIdOrName, cs, object, entity, false, details);
+	}
+	
 	public T update(String oqmDbIdOrName, T object, InteractingEntity entity, HistoryDetail ... details) throws DbNotFoundException {
-		return this.update(oqmDbIdOrName, null, object, entity, details);
+		return this.update(oqmDbIdOrName, null, object, entity, false, details);
 	}
 	
 	/**
@@ -167,7 +167,6 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	 *
 	 * @return
 	 */
-	@WithSpan
 	public T update(String oqmDbIdOrName, ClientSession cs, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity, HistoryDetail ... details) {
 		assertNotNullEntity(interactingEntity);
 		T updated = this.update(oqmDbIdOrName, cs, id, updateJson);
@@ -197,8 +196,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		 *
 		 * @return The id of the newly added object.
 		 */
-	@WithSpan
-	public ObjectId add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid T object, InteractingEntity entity, HistoryDetail ... details) {
+	public T add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid T object, InteractingEntity entity, HistoryDetail ... details) {
 		if (!this.allowNullEntityForCreate) {
 			assertNotNullEntity(entity);
 		}
@@ -212,18 +210,18 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 			details
 		);
 		
-		return object.getId();
+		return object;
 	}
 
-	public ObjectId add(ObjectId oqmDbIdOrName, ClientSession session, @NonNull @Valid T object, InteractingEntity entity) {
+	public T add(ObjectId oqmDbIdOrName, ClientSession session, @NonNull @Valid T object, InteractingEntity entity) {
 		return this.add(oqmDbIdOrName.toHexString(), session, object, entity);
 	}
 	
-	public ObjectId add(String oqmDbIdOrName, T object, InteractingEntity interactingEntity) {
+	public T add(String oqmDbIdOrName, T object, InteractingEntity interactingEntity) {
 		return this.add(oqmDbIdOrName, null, object, interactingEntity);
 	}
 	
-	public ObjectId add(String oqmDbIdOrName, @NonNull T object) {
+	public T add(String oqmDbIdOrName, @NonNull T object) {
 		//TODO:: tweak see if this works/ passes tests/ test manually
 		//		if (!this.allowNullEntityForCreate) {
 		//			assertNotNullEntity(entity);
@@ -232,18 +230,17 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	}
 	
 	
-	@WithSpan
-	public List<ObjectId> addBulk(String oqmDbIdOrName, ClientSession session, @NonNull @Valid List<T> objects, InteractingEntity entity, HistoryDetail ... details) {
+	public List<T> addBulk(String oqmDbIdOrName, ClientSession session, @NonNull @Valid List<T> objects, InteractingEntity entity, HistoryDetail ... details) {
 		if (!this.allowNullEntityForCreate) {
 			assertNotNullEntity(entity);
 		}
 		
-		List<ObjectId> output;
+		List<T> output;
 		try(
 			MongoSessionWrapper sessionWrapper = new MongoSessionWrapper(session, this)
 			){
 			output = sessionWrapper.runTransaction(()->{
-				List<ObjectId> ids = super.addBulk(oqmDbIdOrName, sessionWrapper.getClientSession(), objects);
+				List<T> ids = super.addBulk(oqmDbIdOrName, sessionWrapper.getClientSession(), objects);
 				
 				for(T object : objects) {
 					this.getHistoryService().objectCreated(
@@ -263,8 +260,7 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		return output;
 	}
 	
-	@WithSpan
-	public List<ObjectId> addBulk(String oqmDbIdOrName, List<T> objects, InteractingEntity entity) {
+	public List<T> addBulk(String oqmDbIdOrName, List<T> objects, InteractingEntity entity) {
 		return this.addBulk(oqmDbIdOrName, null, objects, entity);
 	}
 	
@@ -275,7 +271,6 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	 *
 	 * @return The object that was removed
 	 */
-	@WithSpan
 	public T remove(String oqmDbIdOrName, ClientSession session, ObjectId objectId, InteractingEntity entity, HistoryDetail ... details) {
 		assertNotNullEntity(entity);
 		T removed = super.remove(oqmDbIdOrName, session, objectId);
@@ -305,7 +300,6 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
 	}
 	
-	@WithSpan
 	public long removeAll(String oqmDbIdOrName, ClientSession session, InteractingEntity entity) {
 		//TODO:: add history event to each
 		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
@@ -316,7 +310,6 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		}
 	}
 	
-	@WithSpan
 	public long removeAll(String oqmDbIdOrName, InteractingEntity entity) {
 		return this.removeAll(oqmDbIdOrName, null, entity);
 	}
@@ -343,52 +336,42 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		throw new IllegalArgumentException(NULL_USER_EXCEPT_MESSAGE);
 	}
 	
-	@WithSpan
 	public List<ObjectHistoryEvent> listHistory(String oqmDbIdOrName, Bson filter, Bson sort, PagingOptions pageOptions) {
 		return this.getHistoryService().list(oqmDbIdOrName, filter, sort, pageOptions);
 	}
 	
-	@WithSpan
 	public Iterator<ObjectHistoryEvent> historyIterator(String oqmDbIdOrName) {
 		return this.getHistoryService().iterator(oqmDbIdOrName);
 	}
 	
-	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(String oqmDbIdOrName, HistorySearch search, boolean defaultPageSizeIfNotSet) {
 		return this.getHistoryService().search(oqmDbIdOrName, search, defaultPageSizeIfNotSet);
 	}
 	
-	@WithSpan
 	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, ObjectId objectId) {
 		return this.getHistoryService().getHistoryFor(oqmDbIdOrName, objectId);
 	}
 	
-	@WithSpan
 	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, String objectId) {
 		return this.getHistoryFor(oqmDbIdOrName, new ObjectId(objectId));
 	}
 	
-	@WithSpan
 	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, T object) {
 		return this.getHistoryFor(oqmDbIdOrName, object.getId());
 	}
 
-	@WithSpan
-	public ObjectId addHistoryFor(String oqmDbIdOrName, ClientSession clientSession, ObjectId object, InteractingEntity entity, ObjectHistoryEvent event) {
+	public ObjectHistoryEvent addHistoryFor(String oqmDbIdOrName, ClientSession clientSession, ObjectId object, InteractingEntity entity, ObjectHistoryEvent event) {
 		return this.getHistoryService().addHistoryFor(oqmDbIdOrName, clientSession, object, entity, event);
 	}
 
-	@WithSpan
-	public ObjectId addHistoryFor(String oqmDbIdOrName, ClientSession clientSession, T object, InteractingEntity entity, ObjectHistoryEvent event) {
+	public ObjectHistoryEvent addHistoryFor(String oqmDbIdOrName, ClientSession clientSession, T object, InteractingEntity entity, ObjectHistoryEvent event) {
 		return this.getHistoryService().addHistoryFor(oqmDbIdOrName, clientSession, object, entity, event);
 	}
 	
-	@WithSpan
-	public ObjectId addHistoryFor(String oqmDbIdOrName, T object, InteractingEntity entity, ObjectHistoryEvent event) {
+	public ObjectHistoryEvent addHistoryFor(String oqmDbIdOrName, T object, InteractingEntity entity, ObjectHistoryEvent event) {
 		return this.addHistoryFor(oqmDbIdOrName, null, object, entity, event);
 	}
 	
-	@WithSpan
 	public CreateEvent getCreateEvent(String oqmDbIdOrName, ObjectId objectId) {
 		CreateEvent output = (CreateEvent) this.getHistoryService().listIterator(
 				oqmDbIdOrName,

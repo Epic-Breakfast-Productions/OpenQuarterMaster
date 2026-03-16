@@ -1,9 +1,10 @@
-name: Core Api Lib Quarkus
-#description: Do something useful.
+name: "OQM Core Api Lib"
+description: Brings in tooling to interact with the OQM core api.
+guide: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/libs/core-api-lib-quarkus
 metadata:
-#  keywords:
-#    - core-api-lib-quarkus
-#  guide: ... # To create and publish this guide, see https://github.com/quarkiverse/quarkiverse/wiki#documenting-your-extension
+  short-name: "oqm-core-api-lib-quarkus"
+  categories:
+    - data
 #  categories:
 #    - "miscellaneous"
 #  status: "preview"

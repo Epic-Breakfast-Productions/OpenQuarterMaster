@@ -2,7 +2,6 @@ package tech.ebp.oqm.core.api.interfaces.endpoints;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +10,6 @@ import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
@@ -71,25 +69,23 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Consumes(MediaType.APPLICATION_JSON)
 	//	@Produces(MediaType.APPLICATION_JSON)
-	@WithSpan
 	public T create(
 		@NotNull @Valid T object
 	) {
 		log.info("Creating new {} ({}) from REST interface.", this.getObjectClass().getSimpleName(), object.getClass());
 		
-		ObjectId newId = this.getObjectService().add(this.getOqmDbIdOrName(), object, this.getInteractingEntity());
+		T newObj = this.getObjectService().add(this.getOqmDbIdOrName(), object, this.getInteractingEntity());
 		
-		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), newId);
+		log.info("{} created with id: {}", this.getObjectClass().getSimpleName(), newObj.getId());
 		return object;
 	}
 	
-	@WithSpan
-	public List<ObjectId> createBulk(
+	public List<T> createBulk(
 		@Valid List<T> objects
 	) {
 		log.info("Creating new {} (bulk) from REST interface.", this.getObjectClass().getSimpleName());
 		
-		List<ObjectId> output = this.getObjectService().addBulk(this.getOqmDbIdOrName(), objects, this.getInteractingEntity());
+		List<T> output = this.getObjectService().addBulk(this.getOqmDbIdOrName(), objects, this.getInteractingEntity());
 		log.info("{} {} created with ids: {}", output.size(), this.getObjectClass().getSimpleName(), output);
 		return output;
 	}
@@ -122,7 +118,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	@WithSpan
 	public SearchResult<T> search(
 		//		@BeanParam
 		S searchObject
@@ -162,7 +157,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	@WithSpan
 	public T get(
 		//		@PathParam("id")
 		String id
@@ -232,7 +226,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Produces(MediaType.APPLICATION_JSON)
-	@WithSpan
 	public T update(
 		//		@PathParam("id")
 		String id,
@@ -271,14 +264,8 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//		description = "Object requested has already been deleted.",
 	//		content = @Content(mediaType = "text/plain")
 	//	)
-	//	@APIResponse(
-	//		responseCode = "404",
-	//		description = "No object found to delete.",
-	//		content = @Content(mediaType = "text/plain")
-	//	)
 	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Produces(MediaType.APPLICATION_JSON)
-	@WithSpan
 	public T delete(
 		//		@PathParam("id")
 		String id
@@ -320,7 +307,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	public Response getHistoryForObject(
 		@PathParam("id") String id,
 		//@BeanParam
@@ -361,7 +347,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(
 		//@BeanParam
 		HistorySearch searchObject

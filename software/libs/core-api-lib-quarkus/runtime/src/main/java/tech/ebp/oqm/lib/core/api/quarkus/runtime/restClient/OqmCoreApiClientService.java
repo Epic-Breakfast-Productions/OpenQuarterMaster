@@ -102,30 +102,21 @@ public interface OqmCoreApiClientService {
 	
 	//</editor-fold>
 	
-	//<editor-fold desc="General Identifiers">
+	//<editor-fold desc="Identifiers">
 	@GET
-	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/general/validate/{type}/{identifier}")
+	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/validate/{type}/{identifier}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> generalIdValidateGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type, @PathParam("identifier") String code);
+	Uni<ObjectNode> identifierValidateGet(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String type, @PathParam("identifier") String code);
 	
 	@GET
-	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/general/getIdObject/{identifier}")
+	@Path(ROOT_API_ENDPOINT_V1 + "/identifiers/getIdObject/{identifier}")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> generalIdGetObj(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("identifier") String code);
+	Uni<ObjectNode> identifierGetObj(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("identifier") String code);
 	
 	@GET
-	@Path(ROOT_API_ENDPOINT_V1 + "/media/code/identifier/general/{type}/{value}/{label}")
+	@Path(ROOT_API_ENDPOINT_V1 + "/media/code/identifier/{type}/{value}/{label}")
 	@Produces("image/svg+xml")
-	Uni<String> generalIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String generalIdType, @PathParam("value") String data, @PathParam("label") String label);
-	//</editor-fold>
-	
-	//<editor-fold desc="Unique IDs">
-	
-	@GET
-	@Path(ROOT_API_ENDPOINT_V1 + "/media/code/identifier/unique/{value}/{label}")
-	@Produces("image/svg+xml")
-	Uni<String> uniqueIdGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("value") String data, @PathParam("label") String label);
-	
+	Uni<String> identifierGetBarcodeImage(@HeaderParam(Constants.AUTH_HEADER_NAME) String token, @PathParam("type") String generalIdType, @PathParam("value") String data, @PathParam("label") String label);
 	//</editor-fold>
 	
 	//<editor-fold desc="Interacting Entity">
@@ -470,7 +461,7 @@ public interface OqmCoreApiClientService {
 	@POST
 	@Path(INV_ITEM_ROOT_ENDPOINT + "/{itemId}/stored/transaction")
 	@Produces(MediaType.APPLICATION_JSON)
-	Uni<String> invItemStoredTransact(
+	Uni<ObjectNode> invItemStoredTransact(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("itemId") String itemId,
@@ -496,7 +487,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("itemId") String itemId,
 		@PathParam("transactionId") String transactionId
 	);
-	
+
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT)
 	@Produces(MediaType.APPLICATION_JSON)
@@ -505,7 +496,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@BeanParam StoredSearch storedSearch
 	);
-	
+
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}/history")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -515,7 +506,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("storedId") String storedId,
 		HistorySearch search
 	);
-	
+
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -524,7 +515,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("storedId") String storedId
 	);
-	
+
 	@PUT
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}")
 	@Produces(MediaType.APPLICATION_JSON)
@@ -534,7 +525,7 @@ public interface OqmCoreApiClientService {
 		@PathParam("storedId") String storedId,
 		ObjectNode updateObject
 	);
-	
+
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/history")
 	@Produces(MediaType.APPLICATION_JSON)

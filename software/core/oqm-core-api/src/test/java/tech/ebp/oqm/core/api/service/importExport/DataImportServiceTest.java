@@ -4,9 +4,9 @@ import com.mongodb.client.model.Sorts;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.org.apache.commons.io.FileUtils;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.rest.media.ImageGet;
@@ -21,7 +21,6 @@ import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
 import tech.ebp.oqm.core.api.service.mongo.file.FileAttachmentService;
 import tech.ebp.oqm.core.api.service.mongo.transactions.AppliedTransactionService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.object.media.Image;
@@ -55,7 +54,6 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class DataImportServiceTest extends RunningServerTest {
 
 	@Inject
@@ -176,7 +174,7 @@ class DataImportServiceTest extends RunningServerTest {
 				curCategory.setParent(itemCategoryIds.get(rand.nextInt(itemCategoryIds.size())));
 			}
 
-			itemCategoryIds.add(this.itemCategoryService.add(DEFAULT_TEST_DB_NAME, curCategory, testUser));
+			itemCategoryIds.add(this.itemCategoryService.add(DEFAULT_TEST_DB_NAME, curCategory, testUser).getId());
 		}
 		//add storage blocks
 		List<ObjectId> storageIds = new ArrayList<>();
@@ -193,7 +191,7 @@ class DataImportServiceTest extends RunningServerTest {
 
 			storageBlock.getAttributes().put("key", "val");
 			storageBlock.getKeywords().add("hello world");
-			storageIds.add(this.storageBlockService.add(DEFAULT_TEST_DB_NAME, storageBlock, testUser));
+			storageIds.add(this.storageBlockService.add(DEFAULT_TEST_DB_NAME, storageBlock, testUser).getId());
 		}
 
 		for (int i = 0; i < StorageType.values().length*2; i++) {
@@ -216,7 +214,7 @@ class DataImportServiceTest extends RunningServerTest {
 
 			item.getAttributes().put("key", "val");
 			item.getKeywords().add("hello world");
-			ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, testUser);
+			ObjectId newId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, testUser).getId();
 			itemIds.add(newId);
 			items.add(item);
 		}

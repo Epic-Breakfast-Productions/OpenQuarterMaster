@@ -68,7 +68,7 @@ public class IndexUi {
 		Version {1}
 	</p>
 	<p>
-		&copy; 2024 <a href="https://epic-breakfast-productions.tech">EBP</a>
+		&copy; 2026 <a href="https://epic-breakfast-productions.tech">EBP</a>
 	</p>
 </footer>
 </body>

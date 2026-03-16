@@ -1,6 +1,6 @@
 plugins {
 	id 'java-library'
-	id "io.freefair.lombok" version "8.1.0"
+	id "io.freefair.lombok" version "9.1.0"
 	id "jacoco"
 	// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
 	id 'maven-publish'

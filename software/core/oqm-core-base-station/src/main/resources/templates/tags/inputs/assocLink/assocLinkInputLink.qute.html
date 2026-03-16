@@ -1,0 +1,15 @@
+<div class="assocLinkInputLink">
+	<div class="input-group">
+		<input type="text" class="form-control assocLinkInputLinkLabel" placeholder="Label" aria-label="Label" required>
+		<span class="input-group-text">{#icons/link /}</span>
+		<input type="url" class="form-control assocLinkInputLinkLink" placeholder="Link" aria-label="Link" required>
+		<div class="input-group-text">
+			<label class="form-check-label form-switch">
+				<input class="form-check-input mt-0 me-1 assocLinkInputLinkDescToggle" type="checkbox" value="" aria-label="Input Link Description" onclick="AssociatedLinks.Form.Input.updateDescDisplay($(this));">
+				{#icons/description /}
+			</label>
+		</div>
+		<button class="btn btn-outline-danger" type="button" onclick="AssociatedLinks.Form.Input.remove($(this))">{#icons/remove /}</button>
+	</div>
+	<textarea class="assocLinkInputLinkDesc w-100" placeholder="Description..." aria-label="Description"></textarea>
+</div>

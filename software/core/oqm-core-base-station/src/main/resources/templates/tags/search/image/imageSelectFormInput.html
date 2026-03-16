@@ -1,8 +1,9 @@
-
 <div class="mb-3 row">
-    <label class="col-sm-2 col-form-label">Images</label>
+    <label class="col-sm-2 col-form-label">Images:</label>
     <div class="col-sm-10">
         <div class="imagesSelected"></div>
-        <button type="button" class="btn btn-outline-success m-1" data-bs-toggle="modal" data-bs-target="#imageSearchSelectModal" title="Add Image" onclick="ImageSearchSelect.setupImageSearchModal($(this).parent().find('.imagesSelected'));ImageSearchSelect.searchForm.submit();">{#icons/add}{/icons/add}</button>
+        <button type="button" class="btn btn-outline-success m-1" data-bs-toggle="modal" data-bs-target="#imageSearchSelectModal" title="Add Image" onclick="ImageSearchSelect.setupImageSearchModal($(this).parent().find('.imagesSelected'));ImageSearchSelect.searchForm.submit();">
+			{#icons/add /} Add Image
+		</button>
     </div>
 </div>

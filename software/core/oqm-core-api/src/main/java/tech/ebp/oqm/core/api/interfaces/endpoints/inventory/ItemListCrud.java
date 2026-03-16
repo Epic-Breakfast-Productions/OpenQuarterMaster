@@ -82,7 +82,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 			mediaType = "application/json",
 			schema = @Schema(
 				type = SchemaType.ARRAY,
-				implementation = ObjectId.class
+				implementation = ItemList.class
 			)
 		)
 	)
@@ -95,7 +95,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public List<ObjectId> createBulk(
+	public List<ItemList> createBulk(
 		@Valid List<ItemList> itemLists
 	) {
 		return super.createBulk(itemLists);
@@ -221,11 +221,6 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@APIResponse(
 		responseCode = "410",
 		description = "Object requested has already been deleted.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No object found to delete.",
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
