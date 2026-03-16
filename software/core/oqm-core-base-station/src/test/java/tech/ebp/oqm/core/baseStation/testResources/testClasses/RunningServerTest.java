@@ -6,6 +6,7 @@ import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
@@ -27,6 +28,10 @@ public abstract class RunningServerTest extends WebServerTest {
 	@Getter
 	@TestHTTPResource("/")
 	URL index;
+	
+	@Getter
+	@ConfigProperty(name = "oqm.core.api.baseUri")
+	String coreApiBaseUri;
 
 	@Getter
 	private final TestUserService testUserService = TestUserService.getInstance();
@@ -63,14 +68,15 @@ public abstract class RunningServerTest extends WebServerTest {
 		TestUser user = this.getTestUserService().getTestUser();
 
 		if(user.getJwt() != null){
-			log.info("JWT found, clearing database: {}", this.index.toString() + "api/passthrough/manage/db/clearAllDbs");
+			String url = this.getCoreApiBaseUri() + "/api/v1/inventory/manage/db/clearAllDbs";
+			log.info("JWT found, clearing database: {}", url);
 			log.info("JWT: {}", user.getJwt());
 			// this.index.toString() + PassthroughProvider.PASSTHROUGH_API_ROOT + "/manage/db/clearAllDbs
 			given()
 				.when()
 				.header(new Header("Authorization", "Bearer " + user.getJwt()))
 				.accept(ContentType.JSON)
-				.delete(this.index.toString() + "api/passthrough/manage/db/clearAllDbs")
+				.delete(url)
 				.then()
 				.statusCode(200)
 			;

@@ -19,8 +19,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Optional;
 
+/**
+ * TODO:: rework these to standard page component calls?
+ */
 @Slf4j
 @Path("/res/js/")
 @Tags({@Tag(name = "JS Utilities")})
@@ -28,40 +33,77 @@ import java.util.Optional;
 @Produces(MediaType.TEXT_HTML)
 public class JsGetters {
 	
-	private static String carouselLines = "";
+	private static String carouselLines;
 	private static String attInputLines;
 	private static String keywordInputLines;
-
+	private static String imageInputLines;
+	private static String fileInputLines;
+	private static String storedPricingInputLines;
+	private static String storedPricingInputPriceLines;
+	private static String assocLinkLinkInputLines;
+	private static String identifierInputLines;
+	private static String identifierAddedLines;
+	private static String copyTextButtonLines;
+	
+	private static String itemCatBadgeLines;
+	private static String attachedFileListLines;
+	
 	@Getter
 	@HeaderParam("x-forwarded-prefix")
 	Optional<String> forwardedPrefix;
-
-	protected String getRootPrefix(){
+	
+	protected String getRootPrefix() {
 		return this.forwardedPrefix.orElse("");
 	}
-
+	
 	@Inject
-	@Location("webui/js/icons.js")
+	@Location("webui/js/Icons.js")
 	Template icons;
-
+	
 	@Inject
 	@Location("webui/js/constants.js")
 	Template constants;
 	
 	@Inject
-	@Location("webui/js/links.js")
+	@Location("webui/js/Links.js")
 	Template links;
 	
 	@Inject
-	@Location("webui/js/carousel.js")
+	@Location("webui/js/Carousel.js")
 	Template carouselJs;
 	
-	
 	@Inject
-	@Location("webui/js/pageComponents.js")
+	@Location("webui/js/PageComponents.js")
 	Template componentsJs;
 	
-	private String templateToEscapedJs(TemplateInstance templateInstance){
+	@Location("tags/carousel.html")
+	Template carouselTemplate;
+	@Location("tags/inputs/attInput.html")
+	Template attInputTemplate;
+	@Location("tags/inputs/keywordInput.html")
+	Template keywordInputTemplate;
+	@Location("tags/search/image/imageSelectFormInput.html")
+	Template imageInputTemplate;
+	@Location("tags/fileAttachment/fileAttachmentSelectFormInput.html")
+	Template fileInputTemplate;
+	@Location("tags/copyTextButton.html")
+	Template copyButtonTemplate;
+	@Location("tags/inputs/assocLink/assocLinkInputLink.qute.html")
+	Template assocLinkInputLinkTemplate;
+	@Location("tags/inputs/pricing/pricingInput.qute.html")
+	Template storedPricingInputTemplate;
+	@Location("tags/inputs/pricing/pricingInputPrice.qute.html")
+	Template storedPricingInputPriceTemplate;
+	@Location("tags/inputs/identifiers/associatedIdentifierInput.qute.html")
+	Template identifierInputTemplate;
+	@Location("tags/inputs/identifiers/addedIdentifier.qute.html")
+	Template identifierAddedTemplate;
+	@Location("tags/fileAttachment/FileAttachmentObjectView.html")
+	Template fileAttachmentObjectViewTemplate;
+	@Location("tags/objView/itemCatBadge.qute.html")
+	Template itemCatBadgeTemplate;
+	
+	private String templateToEscapedJs(TemplateInstance templateInstance) {
 		return templateInstance
 				   .render()
 				   .replaceAll("'", "\\\\'")
@@ -69,23 +111,97 @@ public class JsGetters {
 			;
 	}
 	
-	@Inject
-	public JsGetters(
-		@Location("tags/carousel.html") Template carouselTemplate,
-		@Location("tags/inputs/attInput.html") Template attInputTemplate,
-		@Location("tags/inputs/keywordInput.html") Template keywordInputTemplate
-	){
-		if(carouselLines == null){
+	private String getCarouselLines() {
+		if (carouselLines == null) {
 			carouselLines = this.templateToEscapedJs(carouselTemplate.data("id", ""));
 		}
-		if(attInputLines == null){
+		return carouselLines;
+	}
+	
+	private String getAttInputLines() {
+		if (attInputLines == null) {
 			attInputLines = this.templateToEscapedJs(attInputTemplate.instance());
 		}
-		if(keywordInputLines == null){
+		return attInputLines;
+	}
+	
+	private String getKeywordInputLines() {
+		if (keywordInputLines == null) {
 			keywordInputLines = this.templateToEscapedJs(keywordInputTemplate.instance());
 		}
+		return keywordInputLines;
 	}
-
+	
+	private String getImageInputLines() {
+		if (imageInputLines == null) {
+			imageInputLines = this.templateToEscapedJs(imageInputTemplate.instance());
+		}
+		return imageInputLines;
+	}
+	
+	private String getFileInputLines() {
+		if (fileInputLines == null) {
+			fileInputLines = this.templateToEscapedJs(fileInputTemplate.instance());
+		}
+		return fileInputLines;
+	}
+	
+	private String getCopyTextButtonLines() {
+		if (copyTextButtonLines == null) {
+			copyTextButtonLines = this.templateToEscapedJs(copyButtonTemplate.instance());
+		}
+		return copyTextButtonLines;
+	}
+	
+	private String getStoredPricingInputLines() {
+		if (storedPricingInputLines == null) {
+			storedPricingInputLines = this.templateToEscapedJs(storedPricingInputTemplate.instance());
+		}
+		return storedPricingInputLines;
+	}
+	
+	private String getStoredPricingInputPriceLines() {
+		if (storedPricingInputPriceLines == null) {
+			storedPricingInputPriceLines = this.templateToEscapedJs(storedPricingInputPriceTemplate.instance());
+		}
+		return storedPricingInputPriceLines;
+	}
+	
+	private String getIdentifierInputLines() {
+		if (identifierInputLines == null) {
+			identifierInputLines = this.templateToEscapedJs(identifierInputTemplate.data("id", ""));
+		}
+		return identifierInputLines;
+	}
+	
+	private String getIdentifierAddedLines() {
+		if (identifierAddedLines == null) {
+			identifierAddedLines = this.templateToEscapedJs(identifierAddedTemplate.data("rootPrefix", this.forwardedPrefix.orElse("")));
+		}
+		return identifierAddedLines;
+	}
+	
+	private String getAttachedFileListLines() {
+		if (attachedFileListLines == null) {
+			attachedFileListLines = this.templateToEscapedJs(fileAttachmentObjectViewTemplate.instance());
+		}
+		return attachedFileListLines;
+	}
+	
+	private String getItemCatBadgeLines() {
+		if (itemCatBadgeLines == null) {
+			itemCatBadgeLines = this.templateToEscapedJs(itemCatBadgeTemplate.instance());
+		}
+		return itemCatBadgeLines;
+	}
+	
+	private String getAssocLinkLinkInputLines() {
+		if (assocLinkLinkInputLines == null) {
+			assocLinkLinkInputLines = this.templateToEscapedJs(assocLinkInputLinkTemplate.instance());
+		}
+		return assocLinkLinkInputLines;
+	}
+	
 	@GET
 	@Path("constants.js")
 	@PermitAll
@@ -93,9 +209,9 @@ public class JsGetters {
 	public Uni<String> constants() {
 		return constants.data("rootPrefix", this.getRootPrefix()).createUni();
 	}
-
+	
 	@GET
-	@Path("icons.js")
+	@Path("Icons.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> icons() {
@@ -103,7 +219,7 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("links.js")
+	@Path("Links.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> links() {
@@ -111,23 +227,33 @@ public class JsGetters {
 	}
 	
 	@GET
-	@Path("carousel.js")
+	@Path("Carousel.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> carousel() {
 		return this.carouselJs
-				   .data("carouselLines", carouselLines)
+				   .data("carouselLines", this.getCarouselLines())
 				   .createUni();
 	}
 	
 	@GET
-	@Path("pageComponents.js")
+	@Path("PageComponents.js")
 	@PermitAll
 	@Produces("text/javascript")
 	public Uni<String> components() {
 		return this.componentsJs
-				   .data("attInputLines", attInputLines)
-				   .data("keywordInputLines", keywordInputLines)
+				   .data("attInputLines", this.getAttInputLines())
+				   .data("keywordInputLines", this.getKeywordInputLines())
+				   .data("imageInputLines", this.getImageInputLines())
+				   .data("fileInputLines", this.getFileInputLines())
+				   .data("copyButtonLines", this.getCopyTextButtonLines())
+				   .data("assocLinkLinkInputLines", this.getAssocLinkLinkInputLines())
+				   .data("storedPricingInputLines", this.getStoredPricingInputLines())
+				   .data("storedPricingInputPriceLines", this.getStoredPricingInputPriceLines())
+				   .data("identifierInputLines", this.getIdentifierInputLines())
+				   .data("identifierAddedLines", this.getIdentifierAddedLines())
+				   .data("itemCatBadgeLines", this.getItemCatBadgeLines())
+				   .data("attachedFileListLines", this.getAttachedFileListLines())
 				   .createUni();
 	}
 }

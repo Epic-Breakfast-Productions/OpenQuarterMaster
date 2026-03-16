@@ -1,6 +1,7 @@
 import base64
 import datetime
 import socket
+import time
 import uuid
 from pathlib import Path
 from cryptography.fernet import Fernet
@@ -17,9 +18,9 @@ import collections.abc
 from ScriptInfos import *
 from LogUtils import *
 
-
+CONFIG_MNGR_DEFAULT_ADDENDUM_FILENAME = "99-custom.json"
 CONFIG_MNGR_MAIN_CONFIG_FILE = ScriptInfo.CONFIG_DIR + "/mainConfig.json"
-CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = ScriptInfo.CONFIG_VALUES_DIR + "/99-custom.json"
+CONFIG_MNGR_DEFAULT_ADDENDUM_FILE = ScriptInfo.CONFIG_VALUES_DIR + "/" + CONFIG_MNGR_DEFAULT_ADDENDUM_FILENAME
 
 SECRET_MNGR_SECRET_PW_HASH_SALT = b'saltySpittoonHowToughAreYa'
 SECRET_MNGR_SECRET_PW_HASH_ITERATIONS = int(480_000 * 2.5)
@@ -196,7 +197,7 @@ class SecretManager:
 # Exception to throw when config errors occur
 class ConfigKeyNotFoundException(Exception):
     def __init__(self, message):
-        super().__init__("Config key error. " + message)
+        super().__init__("Config key error. \"" + message + "\"")
     pass
 
 
@@ -350,6 +351,20 @@ class ConfigManager:
         self.updateReplacements("", output)
         return output
 
+    def waitForConfig(self, configKey: str, timeout: int = 10) -> (bool, any):
+        startTime = time.time()
+
+        while True:
+            try:
+                val = self.getConfigVal(configKey)
+                return True, val
+            except ConfigKeyNotFoundException:
+                time.sleep(0.25)
+                self.rereadConfigData()
+                pass
+            if time.time() - startTime > timeout:
+                return False, None
+
     @staticmethod
     def getArrRef(configKey: str):
         ConfigManager.log.debug('todo')
@@ -400,6 +415,8 @@ class ConfigManager:
             configFile = defaultAddendumFile
         else:
             configFile = additionalConfigDir + "/" + configFile
+
+        # TODO:: check to ensure in appropriate directory (additionalConfigDir) #414
 
         try:
             if not os.path.isfile(configFile):

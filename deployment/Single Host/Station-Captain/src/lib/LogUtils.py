@@ -64,7 +64,7 @@ class LogUtils:
                 fh.setLevel(LogUtils.fileLogLevel)
                 LogUtils.fileHandler = fh
             except Exception as e:
-                fh = None
+                LogUtils.fileHandler = None
 
     @staticmethod
     def setupLogger(name: str) -> logging.Logger:

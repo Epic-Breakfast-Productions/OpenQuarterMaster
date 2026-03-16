@@ -6,14 +6,14 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.testResources.testClasses.WebServerTest;
 import tech.ebp.oqm.core.api.model.object.MainObject;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
+import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
 
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @QuarkusTest

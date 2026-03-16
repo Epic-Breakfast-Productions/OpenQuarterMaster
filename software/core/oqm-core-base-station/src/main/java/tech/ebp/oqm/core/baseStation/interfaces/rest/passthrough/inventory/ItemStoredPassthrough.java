@@ -62,29 +62,32 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 		@HeaderParam("showStorage") boolean showStorage,
 		@HeaderParam("actionType") Optional<String> actionType
 	) {
-		return this.getOqmCoreApiClient()
-				   .invItemGet(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId())
-				   .chain((item)->{
-						   return this.processSearchResults(
-							   this.getOqmCoreApiClient()
-								   .invItemStoredSearch(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), storedSearch)
-								   .call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "storageBlock", this.getBearerHeaderStr()))
-								   .call(results->searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
-							   ,
-							   this.searchResultTemplate
-								   .data("showItem", showItem)
-								   .data("showStorage", showStorage)
-								   .data("showType", false)
-								   .data("inventoryItem", item)
-							   ,
-							   acceptType,
-							   searchFormId,
-							   otherModalId,
-							   inputIdPrepend,
-							   actionType.orElse("select")
-						   );
-					   }
-				   );
+		return this.handleCall(
+			this.getOqmCoreApiClient()
+				.invItemGet(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId())
+				.chain(
+					(item)->{
+						return this.processSearchResults(
+							this.getOqmCoreApiClient()
+								.invItemStoredSearch(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), storedSearch)
+								.call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "storageBlock", this.getBearerHeaderStr()))
+								.call(results->searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
+							,
+							this.searchResultTemplate
+								.data("showItem", showItem)
+								.data("showStorage", showStorage)
+								.data("showType", false)
+								.data("inventoryItem", item)
+							,
+							acceptType,
+							searchFormId,
+							otherModalId,
+							inputIdPrepend,
+							actionType.orElse("select")
+						);
+					}
+				)
+		);
 	}
 	
 	//	@GET //TODO if necessary
@@ -137,14 +140,16 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 		description = "Stored entries retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> getStored(
+	public Uni<Response> getStored(
 		@PathParam("storedId") String storedId
 	) {
-		return this.getOqmCoreApiClient().invItemStoredGet(
-			this.getBearerHeaderStr(),
-			this.getSelectedDb(),
-			this.getItemId(),
-			storedId
+		return this.handleCall(
+			this.getOqmCoreApiClient().invItemStoredGet(
+				this.getBearerHeaderStr(),
+				this.getSelectedDb(),
+				this.getItemId(),
+				storedId
+			)
 		);
 	}
 	
@@ -158,16 +163,18 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 		description = "Stored entries retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> updateStored(
+	public Uni<Response> updateStored(
 		@PathParam("storedId") String storedId,
 		ObjectNode updates
 	) {
-		return this.getOqmCoreApiClient().invItemStoredUpdate(
-			this.getBearerHeaderStr(),
-			this.getSelectedDb(),
-			this.getItemId(),
-			storedId,
-			updates
+		return this.handleCall(
+			this.getOqmCoreApiClient().invItemStoredUpdate(
+				this.getBearerHeaderStr(),
+				this.getSelectedDb(),
+				this.getItemId(),
+				storedId,
+				updates
+			)
 		);
 	}
 	
@@ -202,9 +209,10 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 		@HeaderParam("Accept") String acceptType,
 		@HeaderParam("searchFormId") String searchFormId
 	) {
-		Uni<ObjectNode>
-			searchUni =
+		Uni<ObjectNode> searchUni =
 			this.getOqmCoreApiClient().invItemStoredSearchHistory(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), storedId, searchObject);
-		return this.processHistoryResults(searchUni, acceptType, searchFormId);
+		return this.handleCall(
+			this.processHistoryResults(searchUni, acceptType, searchFormId)
+		);
 	}
 }

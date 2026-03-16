@@ -13,10 +13,11 @@ tls:
         domain:
           main: {{ system.hostname }}
           sans:
-            {%- for san in system.alternateSans %}
+            {%- for san in system.altHostnameIps %}
             - {{ san }}
             {%- endfor  %}
       {%- endif  %}
+  {%- if certs.method != "acme" %}
   certificates:
     {%- for cert in certs.certList %}
     - certFile: {{ cert.cert }}
@@ -24,6 +25,7 @@ tls:
       stores:
         - default
     {%- endfor %}
+  {%- endif  %}
 http:
   # https://doc.traefik.io/traefik/routing/services/
   services:

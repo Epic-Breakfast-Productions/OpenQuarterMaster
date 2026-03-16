@@ -34,7 +34,7 @@
   {#else}
   {#for result in searchResults.get("results")}
 	  {#let id=result.get("id").asText() title=result.get("fileName").asText()}
-    <div class="col-md-3 card mb-1 imageSearchResult" data-bs-toggle="modal" {#if actionType == 'select'} data-bs-target="#{otherModalId}" onclick="selectImage('{title}', '{id}');"{#else} data-bs-target="#viewModal" onclick="setupViewForImage('{id}')"{/if}>
+    <div class="col-md-3 card mb-1 imageSearchResult" data-bs-toggle="modal" {#if actionType == 'select'} data-bs-target="#{otherModalId}" onclick="ImageSearchSelect.selectImage('{title}', '{id}');"{#else} data-bs-target="#viewModal" onclick="setupViewForImage('{id}')"{/if}>
       <img src="{rootPrefix}/api/passthrough/media/image/{id}/revision/latest/data" class="card-img-top img-thumbnail" alt="{title}">
       <div class="card-body">
         <h5 class="card-title">{title}</h5>

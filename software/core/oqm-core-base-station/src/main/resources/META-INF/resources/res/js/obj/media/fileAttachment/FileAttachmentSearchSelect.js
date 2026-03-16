@@ -1,4 +1,8 @@
-const FileAttachmentSearchSelect = {
+import {ModalUtils} from "../../../ModalUtils.js";
+import {FileAttachmentAddEdit} from "./FileAttachmentAddEdit.js";
+import {Rest} from "../../../Rest.js";
+
+export const FileAttachmentSearchSelect = {
 	curResultContainer: null,
 	selectSearch: $("#fileAttachmentSearchSelectForm"),
 	modal: $("#fileAttachmentSearchSelectModal"),
@@ -8,6 +12,7 @@ const FileAttachmentSearchSelect = {
 
 	setup(resultContainerJq){
 		console.log("Setting up for file attachment search select.");
+		ModalUtils.setReturnModal(FileAttachmentSearchSelect.modal, resultContainerJq);
 		FileAttachmentAddEdit.setupForAdd();
 		this.curResultContainer = resultContainerJq;
 		this.selectSearch.submit();
@@ -51,40 +56,41 @@ const FileAttachmentSearchSelect = {
 				}
 			});
 		});
+	},
+	initPage: function () {
+		FileAttachmentSearchSelect.selectSearch.on("submit", function (e){
+			e.preventDefault();
+			console.log("Submitting File Attachment Select Search");
+
+			let searchParams = new URLSearchParams(new FormData(e.target));
+			console.log("URL search params: " + searchParams);
+
+			Rest.call({
+				spinnerContainer: FileAttachmentSearchSelect.modal.get(0),
+				url: Rest.passRoot + "/media/fileAttachment?" + searchParams,
+				method: 'GET',
+				failNoResponse: null,
+				failNoResponseCheckStatus: true,
+				returnType: "html",
+				extraHeaders: {
+					"accept": "text/html",
+					"actionType": "select",
+					"searchFormId": "fileAttachmentSearchSelectForm",
+					"inputIdPrepend": FileAttachmentSearchSelect.modal.attr("data-bs-inputIdPrepend"),
+					"otherModalId": FileAttachmentSearchSelect.modal.attr("data-bs-otherModalId")
+				},
+				async: false,
+				done: function (data) {
+					console.log("Got data!");
+					FileAttachmentSearchSelect.fileSearchResults.html(data);
+				}
+			});
+		});
+
+		FileAttachmentAddEdit.fileAttachmentAdded = function (newFile, name){
+			console.log("Selecting newly addd file attachment: ", newFile);
+			FileAttachmentSearchSelect.selectFile(newFile.id, name);
+			FileAttachmentSearchSelect.modalCloseButton.click();
+		}
 	}
 };
-
-FileAttachmentSearchSelect.selectSearch.on("submit", function (e){
-	e.preventDefault();
-	console.log("Submitting File Attachment Select Search");
-
-	let searchParams = new URLSearchParams(new FormData(e.target));
-	console.log("URL search params: " + searchParams);
-
-	Rest.call({
-		spinnerContainer: imageSearchSelectModal.get(0),
-		url: Rest.passRoot + "/media/fileAttachment?" + searchParams,
-		method: 'GET',
-		failNoResponse: null,
-		failNoResponseCheckStatus: true,
-		returnType: "html",
-		extraHeaders: {
-			"accept": "text/html",
-			"actionType": "select",
-			"searchFormId": "imageSearchSelectForm",
-			"inputIdPrepend": FileAttachmentSearchSelect.modal.attr("data-bs-inputIdPrepend"),
-			"otherModalId": FileAttachmentSearchSelect.modal.attr("data-bs-otherModalId")
-		},
-		async: false,
-		done: function (data) {
-			console.log("Got data!");
-			FileAttachmentSearchSelect.fileSearchResults.html(data);
-		}
-	});
-});
-
-FileAttachmentAddEdit.fileAttachmentAdded = function (newFileId, name){
-	console.log("Selecting newly addd file attachment: ", newFileId);
-	FileAttachmentSearchSelect.selectFile(newFileId, name);
-	FileAttachmentSearchSelect.modalCloseButton.click();
-}

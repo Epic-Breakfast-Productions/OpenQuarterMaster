@@ -1,0 +1,11 @@
+{#modal id='idGeneratorAddEdit' size='xl' title='ID Generator add/edit' submitDismiss=false}
+	{#titleIcon}{#icons/idGenerators /}{/titleIcon}
+    {#footerButtons}
+    <button class="btn btn-success" id="addEditIdGeneratorFormSubmitButton" type="submit" form="idGeneratorAddEditForm">
+        Submit
+    </button>
+    {/footerButtons}
+	
+	{#object/idGenerator/addEditForm /}
+	
+{/modal}

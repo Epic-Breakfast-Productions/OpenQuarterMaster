@@ -4,7 +4,6 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.validation.Valid;
@@ -16,7 +15,7 @@ import tech.ebp.oqm.core.api.model.rest.unit.custom.NewCustomUnitRequest;
 import tech.ebp.oqm.core.api.model.units.CustomUnitEntry;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.model.rest.search.CustomUnitSearch;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 
 import javax.measure.Unit;
 import java.util.ArrayList;
@@ -51,7 +50,6 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 		log.info("Done reading in custom units.");
 	}
 	
-	@WithSpan
 	public long getNextOrderValue() {
 		CustomUnitEntry entry = this.listIterator(null, Sorts.descending("order"), null).first();
 		
@@ -61,7 +59,6 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 		return entry.getOrder() + 1L;
 	}
 	
-	@WithSpan
 	public CustomUnitEntry getFromUnit(ClientSession clientSession, Unit unit) {
 		List<CustomUnitEntry> matchList = this.listIterator(
 			clientSession,

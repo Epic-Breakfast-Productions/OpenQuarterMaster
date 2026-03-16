@@ -15,4 +15,8 @@ public class ImportBundleFileBody {
 	@FormParam("fileName")
 	@PartType(MediaType.TEXT_PLAIN)
 	public String fileName;
+	
+	@FormParam("options")
+	@PartType(MediaType.APPLICATION_JSON)
+	public String options;
 }

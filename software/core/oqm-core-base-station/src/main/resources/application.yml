@@ -38,8 +38,20 @@ runningInfo:
   
 ui:
   defaults:
+    indexRedirect: /overview
     search:
       defaultPageSize: 25
+  pagination:
+    breakToInput: 20
+  overview:
+    storageTree:
+      defaultPageSize: 500
+    lowStockItems:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+    expiringItems:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
+    expiredItems:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
   storage:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
@@ -67,6 +79,9 @@ ui:
   itemsStored:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  idGenerator:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
 
 quarkus:
   application:
@@ -81,7 +96,6 @@ quarkus:
       url: " "
       scope: jakarta.inject.Singleton
   log:
-    level: DEBUG
     console:
       format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t]():: %s%e%n"
   smallrye-health:
@@ -127,11 +141,12 @@ quarkus:
     logout:
       path: /logout
       post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
-      
+  rest-csrf:
+    
   keycloak:
     devservices:
       port: 9328
-      realm-path: "../../../../dev/oqm-realm.json"
+      realm-path: "dev/oqm-realm.json"
       realm-name: oqm
 #      users:
 #        alice: alice
@@ -161,13 +176,16 @@ smallrye:
     application:
       name: ${service.nameShort} - V${service.apiVersion} - DEV
     log:
-      level: DEBUG
-    opentelemetry:
-      enabled: true
-      tracer:
-        exporter:
-          otlp:
-            endpoint: http://localhost:8096
+      level: INFO
+      category:
+        "tech.ebp.oqm.core.baseStation":
+          level: DEBUG
+    #    opentelemetry:
+#      enabled: true
+#      tracer:
+#        exporter:
+#          otlp:
+#            endpoint: http://localhost:8096
     smallrye-openapi:
       info-title: Open QuarterMaster Base Station API (DEV)
     http:
@@ -179,9 +197,18 @@ smallrye:
       credentials:
         secret: "**********"
     #      auth-server-url: http://localhost:8115/realms/oqm
-    oqmCoreApi:
-      refreshDbCacheFrequency: "30m"
-
+#    oqm:
+#      core:
+#        api:
+#          devservice:
+#            coreApiVersion: 3.0.3-DEV
+#          caching:
+#            oqmDatabase:
+#              refreshFrequencyEvery: "5m"
+#            unit:
+#              refreshFrequencyEvery: "5m"
+    rest-csrf:
+#      token-signature-key: AyM1SysPpbyDfgZld3umj1qzKObwVMkoqQ-EstJQLr_T-1qS0gZH75aKtMN3Yj0iPS4hcgUuTwjAzZr1Z9CAow
   runningInfo:
     depotUri: "Hello World"
   service:
@@ -191,4 +218,11 @@ smallrye:
       phone: 111-222-3333
       website: http://devlopment.dev
       logo: ../../../../dev/developers.jpeg
-
+#  ui:
+#    overview:
+#      lowStockItems:
+#        defaultPageSize: 2
+#      expiringItems:
+#        defaultPageSize: 2
+#      expiredItems:
+#        defaultPageSize: 2

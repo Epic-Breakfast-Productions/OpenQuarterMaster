@@ -31,7 +31,9 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
             - inventoryView
             - inventoryEdit
             - itemCheckout
-   oqm.core.api:
+   oqm:
+     core:
+       api:
          baseUri:
    ```
 
@@ -45,5 +47,9 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
 https://central.sonatype.org/publish/publish-portal-maven/
 
 `./mvnw deploy`
+
+then:
+
+https://central.sonatype.com/publishing/deployments
 
 

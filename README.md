@@ -10,8 +10,9 @@
 [//]: # (![Station Captain]&#40;https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/stationCaptain.yml/badge.svg&#41;)
 <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/releases.atom">![Rss](https://img.shields.io/badge/rss-F88900?style=for-the-badge&logo=rss&logoColor=white)</a>
 ![GitHub](https://img.shields.io/github/license/Epic-Breakfast-Productions/OpenQuarterMaster)
-[![](https://dcbadge.limes.pink/api/server/cpcVh6SyNn?style=flat)](https://discord.gg/cpcVh6SyNn)<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-12-orange.svg?style=flat-square)](#contributors-)
+[![](https://dcbadge.limes.pink/api/server/cpcVh6SyNn?style=flat)](https://discord.gg/cpcVh6SyNn)
+<a href="https://openquartermaster.com/public/demo" target="_blank">![Demo Badge](https://img.shields.io/badge/demo-instance?style=flat&link=https%3A%2F%2Fopenquartermaster.com%2Fpublic%2Fdemo)</a><!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-19-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 **Inventory without a catch, and all the hooks**
@@ -24,34 +25,9 @@ We are very much in development still, so check back often! We are also acceptin
 
  - For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single%20Host)
  - To see all the ways you can deploy OQM for yourself, see [Deployment](deployment/)
+ - For information on the overall system, see the [software](software/) directory.
 
 ## How it works
-
-```mermaid
-C4Context
-title System Context diagram for Open QuarterMaster
-
-Person(user, "User", "You (Hopefully)!")
-
-System_Boundary(b1, "Deployment Environment- Local computer/server, Kubernetes") {
-
-  SystemDb_Ext(baseStation, "OQM Base Station", "Handles all Inventory Management core functionality")
-  System(stationCaptain, "Station Captain", "Manages your installation (On single server only)")
-
-  Boundary(boundaryInfra, "Infrastructure Components") {
-    SystemDb(mongo, "MongoDB")
-    SystemDb(amq, "AMQ")
-    System(jaeger, "Jaeger")
-  }
-  
-  Boundary(boundaryPlugins, "Plugins") {
-    System(pluginPoc, "Point of Sale (Planned)", "Standard POS functions")
-    System(pluginStorage, "Interactive and Modular Storage (Planned)", "A system that intractis with physical storage medims to help convey placement of items.")
-  }
-}
-
-```
-Please use the diagram above for reference.
 
 How we accomplish the goal of being the only inventory management system you could ever need is through our modular design. The main component of Open QuarterMaster is the [Core API](software/core/oqm-core-api). Think of this as the central hub and core functionality of the system. It handles all the generic inventory management tasks; what is stored where, and facts about what is stored. This central component is designed to be, on the whole, generic and accessible. We also have a frontend for the core API called the [Base Station](software/core/oqm-core-base-station), which lets you have direct and easy to navigate access to your inventory.
 
@@ -60,6 +36,8 @@ To cover specific use-cases, we have what we call [Plugins](software/plugins). T
 In the theme of flexibility, the system is designed to be run in many different environments. It is just as home on the cloud as well as something as small as a [Raspberry Pi](https://www.raspberrypi.com/). This is accomplished using containers, segmenting each software component, ensuring flexibility and ease of management.
 
 To get started on your own hardware, please see [Single Host Deployment](deployment/Single%20Host)
+
+For more information on the overall system, see the [software](software/) directory. 
 
 ## On Privacy
 
@@ -87,10 +65,17 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/LouisBarbier"><img src="https://avatars.githubusercontent.com/u/116147989?v=4?s=100" width="100px;" alt="LouisBarbier"/><br /><sub><b>LouisBarbier</b></sub></a><br /><a href="#content-LouisBarbier" title="Content">🖋</a> <a href="#projectManagement-LouisBarbier" title="Project Management">📆</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/BrendanAndrews"><img src="https://avatars.githubusercontent.com/u/113378507?v=4?s=100" width="100px;" alt="Brendan Andrews"/><br /><sub><b>Brendan Andrews</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=BrendanAndrews" title="Code">💻</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Spitzer-Tech"><img src="https://avatars.githubusercontent.com/u/37207444?v=4?s=100" width="100px;" alt="Spitzer-Tech"/><br /><sub><b>Spitzer-Tech</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/issues?q=author%3ASpitzer-Tech" title="Bug reports">🐛</a> <a href="#design-Spitzer-Tech" title="Design">🎨</a> <a href="#example-Spitzer-Tech" title="Examples">💡</a> <a href="#financial-Spitzer-Tech" title="Financial">💵</a> <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=Spitzer-Tech" title="Tests">⚠️</a> <a href="#userTesting-Spitzer-Tech" title="User Testing">📓</a> <a href="#ideas-Spitzer-Tech" title="Ideas, Planning, & Feedback">🤔</a></td>
-      <td align="center" valign="top" width="14.28%"><a href="https://github.com/steve-dill"><img src="https://avatars.githubusercontent.com/u/175041555?v=4?s=100" width="100px;" alt="steve-dill"/><br /><sub><b>steve-dill</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/issues?q=author%3Asteve-dill" title="Bug reports">🐛</a> <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=steve-dill" title="Code">💻</a> <a href="#ideas-steve-dill" title="Ideas, Planning, & Feedback">🤔</a> <a href="#infra-steve-dill" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#mentoring-steve-dill" title="Mentoring">🧑‍🏫</a> <a href="#tool-steve-dill" title="Tools">🔧</a> <a href="#userTesting-steve-dill" title="User Testing">📓</a> <a href="#maintenance-steve-dill" title="Maintenance">🚧</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/steve-dill"><img src="https://avatars.githubusercontent.com/u/175041555?v=4?s=100" width="100px;" alt="steve-dill"/><br /><sub><b>steve-dill</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/issues?q=author%3Asteve-dill" title="Bug reports">🐛</a> <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=steve-dill" title="Code">💻</a> <a href="#ideas-steve-dill" title="Ideas, Planning, & Feedback">🤔</a> <a href="#infra-steve-dill" title="Infrastructure (Hosting, Build-Tools, etc)">🚇</a> <a href="#mentoring-steve-dill" title="Mentoring">🧑‍🏫</a> <a href="#tool-steve-dill" title="Tools">🔧</a> <a href="#userTesting-steve-dill" title="User Testing">📓</a> <a href="#maintenance-steve-dill" title="Maintenance">🚧</a> <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/pulls?q=is%3Apr+reviewed-by%3Asteve-dill" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=steve-dill" title="Tests">⚠️</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mulliar22"><img src="https://avatars.githubusercontent.com/u/168582625?v=4?s=100" width="100px;" alt="mulliar22"/><br /><sub><b>mulliar22</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=mulliar22" title="Code">💻</a> <a href="#data-mulliar22" title="Data">🔣</a> <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=mulliar22" title="Documentation">📖</a> <a href="#example-mulliar22" title="Examples">💡</a> <a href="#plugin-mulliar22" title="Plugin/utility libraries">🔌</a> <a href="#research-mulliar22" title="Research">🔬</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/mallom21"><img src="https://avatars.githubusercontent.com/u/113387289?v=4?s=100" width="100px;" alt="mallom21"/><br /><sub><b>mallom21</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=mallom21" title="Code">💻</a> <a href="#data-mallom21" title="Data">🔣</a> <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=mallom21" title="Documentation">📖</a> <a href="#example-mallom21" title="Examples">💡</a> <a href="#plugin-mallom21" title="Plugin/utility libraries">🔌</a> <a href="#research-mallom21" title="Research">🔬</a> <a href="#projectManagement-mallom21" title="Project Management">📆</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/Coletrane315"><img src="https://avatars.githubusercontent.com/u/52933325?v=4?s=100" width="100px;" alt="Coletrane315"/><br /><sub><b>Coletrane315</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=Coletrane315" title="Code">💻</a> <a href="#data-Coletrane315" title="Data">🔣</a> <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=Coletrane315" title="Documentation">📖</a> <a href="#example-Coletrane315" title="Examples">💡</a> <a href="#plugin-Coletrane315" title="Plugin/utility libraries">🔌</a> <a href="#research-Coletrane315" title="Research">🔬</a></td>
+    </tr>
+    <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/simonramsey0"><img src="https://avatars.githubusercontent.com/u/149826099?v=4?s=100" width="100px;" alt="Simon Ramsey"/><br /><sub><b>Simon Ramsey</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=simonramsey0" title="Code">💻</a> <a href="#content-simonramsey0" title="Content">🖋</a> <a href="#plugin-simonramsey0" title="Plugin/utility libraries">🔌</a> <a href="#research-simonramsey0" title="Research">🔬</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/RaimonAbreu007"><img src="https://avatars.githubusercontent.com/u/199864098?v=4?s=100" width="100px;" alt="RaimonAbreu007"/><br /><sub><b>RaimonAbreu007</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=RaimonAbreu007" title="Code">💻</a> <a href="#content-RaimonAbreu007" title="Content">🖋</a> <a href="#plugin-RaimonAbreu007" title="Plugin/utility libraries">🔌</a> <a href="#research-RaimonAbreu007" title="Research">🔬</a> <a href="#projectManagement-RaimonAbreu007" title="Project Management">📆</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/Maxf653"><img src="https://avatars.githubusercontent.com/u/189031501?v=4?s=100" width="100px;" alt="Max"/><br /><sub><b>Max</b></sub></a><br /><a href="#content-Maxf653" title="Content">🖋</a> <a href="#plugin-Maxf653" title="Plugin/utility libraries">🔌</a> <a href="#research-Maxf653" title="Research">🔬</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/thederpylama"><img src="https://avatars.githubusercontent.com/u/35352055?v=4?s=100" width="100px;" alt="Ian Lauver"/><br /><sub><b>Ian Lauver</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=thederpylama" title="Code">💻</a> <a href="#content-thederpylama" title="Content">🖋</a> <a href="#plugin-thederpylama" title="Plugin/utility libraries">🔌</a> <a href="#research-thederpylama" title="Research">🔬</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/CircuitSide"><img src="https://avatars.githubusercontent.com/u/114544677?v=4?s=100" width="100px;" alt="CircuitSide"/><br /><sub><b>CircuitSide</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/issues?q=author%3ACircuitSide" title="Bug reports">🐛</a> <a href="#business-CircuitSide" title="Business development">💼</a> <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=CircuitSide" title="Code">💻</a> <a href="#content-CircuitSide" title="Content">🖋</a> <a href="#data-CircuitSide" title="Data">🔣</a> <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=CircuitSide" title="Documentation">📖</a> <a href="#design-CircuitSide" title="Design">🎨</a> <a href="#ideas-CircuitSide" title="Ideas, Planning, & Feedback">🤔</a> <a href="#promotion-CircuitSide" title="Promotion">📣</a> <a href="#research-CircuitSide" title="Research">🔬</a> <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/pulls?q=is%3Apr+reviewed-by%3ACircuitSide" title="Reviewed Pull Requests">👀</a> <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=CircuitSide" title="Tests">⚠️</a> <a href="#userTesting-CircuitSide" title="User Testing">📓</a></td>
     </tr>
   </tbody>
 </table>

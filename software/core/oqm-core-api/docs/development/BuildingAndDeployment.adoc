@@ -293,21 +293,6 @@ https://www.freeformatter.com/cron-expression-generator-quartz.html[Cron Referen
 
 |===
 
-==== Emails
-
-For information on setting up your specific email settings, see https://quarkus.io/guides/mailer-reference#configuring-the-smtp-credentials
-
-Note: As a service admin, goto the "Service Admin" page to send a test email to ensure the settings you set are correct.
-
-|===
-| Config | Default | Examples | Explain
-
-| runningInfo.fromEmail
-| no-reply@${runningInfo.baseUrl}
-| your-email@gmail.com
-| The email to use as the sender for emails. `quarkus.mailer.from` is set to this value.
-|===
-
 ==== Messaging
 
 For information on setting up your specific messaging settings, see https://quarkus.io/guides/amqp-reference#configuring-the-amqp-broker-access

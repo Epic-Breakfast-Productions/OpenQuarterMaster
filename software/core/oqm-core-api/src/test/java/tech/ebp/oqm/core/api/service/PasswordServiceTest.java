@@ -9,7 +9,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.api.testResources.testClasses.WebServerTest;
 
 import jakarta.inject.Inject;
-import tech.ebp.oqm.core.api.service.PasswordService;
+import tech.ebp.oqm.core.api.testResources.PasswordService;
 
 import java.util.Arrays;
 import java.util.stream.IntStream;

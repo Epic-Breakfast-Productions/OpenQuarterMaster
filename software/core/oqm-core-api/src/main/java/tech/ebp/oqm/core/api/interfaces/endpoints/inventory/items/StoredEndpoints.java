@@ -14,6 +14,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -35,6 +36,9 @@ import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.transactions.AppliedTransactionService;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Slf4j
 @Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/inventory/item/stored")
 @Tags({@Tag(name = "Inventory Items", description = "Endpoints for inventory item CRUD, and managing stored items.")})
@@ -55,6 +59,29 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 
 	@Getter
 	Class<Stored> objectClass = Stored.class;
+	
+	Map<ObjectId, InventoryItem> itemCache = new HashMap<>();
+	
+	private InventoryItem getItem(ObjectId itemId) {
+		if(!this.itemCache.containsKey(itemId)) {
+			this.itemCache.put(
+				itemId,
+				this.inventoryItemService.get(this.getOqmDbIdOrName(), itemId.toString())
+			);
+		}
+		return this.itemCache.get(itemId);
+	}
+	
+	private Stored applyDefaults(Stored stored){
+		stored.applyDefaultsFromItem(this.getItem(stored.getItem()));
+		
+		return stored;
+	}
+	
+	private SearchResult<Stored> applyDefaults(SearchResult<Stored> searchResult){
+		searchResult.getResults().forEach(this::applyDefaults);
+		return searchResult;
+	}
 
 	@GET
 	@Operation(
@@ -69,7 +96,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	public SearchResult<Stored> search(
 		@BeanParam StoredSearch storedSearch
 	) {
-		return super.search(storedSearch);
+		return this.applyDefaults(super.search(storedSearch));
 	}
 	
 	@Path("{storedItemId}")
@@ -105,7 +132,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Stored get(@PathParam("storedItemId") String id) {
-		return super.get(id);
+		return this.applyDefaults(super.get(id));
 	}
 	
 	@PUT
@@ -120,7 +147,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				implementation = InventoryItem.class
+				implementation = Stored.class
 			)
 		)
 	)
@@ -145,7 +172,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 		@PathParam("storedItemId") String id,
 		ObjectNode updates
 	) {
-		return super.update(id, updates);
+		return this.applyDefaults(super.update(id, updates));
 	}
 	
 	@GET

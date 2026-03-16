@@ -6,5 +6,6 @@ package tech.ebp.oqm.core.api.model.rest.storage;
 public enum IMAGED_OBJ_TYPE_NAME {
 	storageBlock,
 	item,
-	item_category
+	item_category,
+	item_stored
 }

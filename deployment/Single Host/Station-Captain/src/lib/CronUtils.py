@@ -2,6 +2,8 @@ import os
 from enum import Enum
 from ConfigManager import *
 from LogUtils import *
+import os
+import stat
 
 
 
@@ -44,23 +46,49 @@ class CronUtils:
             except OSError:
                 pass
 
-    @staticmethod
+    @classmethod
+    def getScriptContent(cls, name: str, script: str, scriptType:str) -> str:
+        output = ""
+
+        if scriptType == "bash":
+            output += """#!/bin/bash
+            # OQM Cron """ + name + """
+            # This script placed here by oqm-captain.
+            logfile=/var/log/oqm/cron-"""+name+""".log
+            
+            echo "$(date) - """ + name + """ starting." >> $logfile
+            
+            ((
+                """ + script + """
+            ) 2>&1) | tee -a "$logfile"
+            
+            echo "$(date) - """ + name + """ Finished." >> $logfile
+            """
+        else:
+            raise ValueError("Script type not supported: " + scriptType)
+
+        return output
+
+    @classmethod
     def enableCron(
+            cls,
             name: str,
             script: str,
-            frequency: CronFrequency
+            frequency: CronFrequency,
+            scriptType: str = "bash",
     ):
         CronUtils.disableCron(name)
         CronUtils.log.info("Enabling cron %s", name)
         fileName = CronUtils.getFileName(name)
         filePath = CronUtils.getFileDir(frequency, fileName)
-        fileContent = """
-#!/bin/bash
-# Cron """ + name + """
-# This script placed here by oqm-captain.
-""" + script
+        fileContent = cls.getScriptContent(name, script, scriptType)
         with open(filePath, "w") as cronFile:
             cronFile.write(fileContent)
+
+        current_permissions = os.stat(filePath).st_mode
+        new_permissions = current_permissions | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH
+        os.chmod(filePath, new_permissions)
+
         CronUtils.log.info("Enabled cron %s at file %s", name, filePath)
 
     @staticmethod

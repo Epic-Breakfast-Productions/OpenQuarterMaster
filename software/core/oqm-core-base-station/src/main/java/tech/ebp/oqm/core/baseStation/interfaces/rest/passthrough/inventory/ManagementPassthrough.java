@@ -22,6 +22,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import tech.ebp.oqm.core.baseStation.interfaces.rest.passthrough.PassthroughProvider;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.ImportBundleFileBody;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.otherQueries.DbExportQuery;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.HistorySearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
 
@@ -54,9 +55,11 @@ public class ManagementPassthrough extends PassthroughProvider {
 	)
 	@Produces("application/tar+gzip")
 	public Uni<Response> export(
-		@QueryParam("excludeHistory") boolean excludeHistory
+		@BeanParam DbExportQuery exportQuery
 	) {
-		return this.getOqmCoreApiClient().manageExportData(this.getBearerHeaderStr(), excludeHistory);
+		return this.handleCall(
+			this.getOqmCoreApiClient().manageExportData(this.getBearerHeaderStr(), exportQuery)
+		);
 	}
 	
 	@POST
@@ -78,9 +81,11 @@ public class ManagementPassthrough extends PassthroughProvider {
 	)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> importData(
+	public Uni<Response> importData(
 		@BeanParam ImportBundleFileBody body
 	) {
-		return this.getOqmCoreApiClient().manageImportData(this.getBearerHeaderStr(), body);
+		return this.handleCall(
+			this.getOqmCoreApiClient().manageImportData(this.getBearerHeaderStr(), body)
+		);
 	}
 }

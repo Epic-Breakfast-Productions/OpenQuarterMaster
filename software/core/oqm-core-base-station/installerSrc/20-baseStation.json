@@ -5,7 +5,8 @@
 			"internalHttpPort": 80,
 			"internalHttpsPort": 443,
 			"internalBaseUri": "http://#{core.baseStation.internalHost}:#{core.baseStation.internalHttpPort}",
-			"externalBaseUri": "#{infra.traefik.externalRootUri}/core/base-station"
+			"externalBaseUri": "#{infra.traefik.externalRootUri}/core/base-station",
+			"csrfSigKey": "<secret>"
 		}
 	}
 }
