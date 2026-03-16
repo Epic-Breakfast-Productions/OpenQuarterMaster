@@ -49,6 +49,15 @@ export const ItemCategoryInput = {
 					return $(this).val() === newCategoryName;
 				}).remove();
 				DselectUtils.setupDselect(selectElement);
+				// Consider adding user notification here
+				if (typeof PageMessageUtils !== 'undefined') {
+					PageMessageUtils.addMessageToDiv(
+						$(".messages-container:first"),
+						"warning",
+						"Failed to create category: " + newCategoryName,
+						"Category Creation Failed"
+					);
+				}
 			}
 		});
 	},
