@@ -5,15 +5,19 @@ This is a Minecraft mod to provide integration with the Open QuarterMaster syste
 ## Features
 
 ### Stage 1 (Current)
+
 - Log items in chests to OQM server
   - Uses custom OQM chest logging item `Chest PDA`
 
 
-### Future
+### Future / TODOs
 
+ - Database selector in mod settings
  - Mod configuration screen
  - OQM specific chest
  - Chest naming / simple storage block management
+ - Align package naming to OQM standard
+   - `tech.ebp.oqm.plugin.minecraft`
 
 #### Stage 2 (Issue #1017 on github)
 
@@ -42,6 +46,8 @@ For Multiplayer, use this guide from NeoForge: [Setting up a NeoForge Server](ht
 4. Enter your OQM server client secret
 5. Click Done
 
+
+
 Your OQM server can now be accessed from within Minecraft!
 
 ### Mod Use in Game
@@ -61,11 +67,16 @@ Steps to get the OQM instance ready: (assuming Single Node Host deployment)
     - Content:
       ```json
       {
-        "clientName": "minecraft-mod",
-        "displayName": "Minecraft Mod",
-        "description": "",
-        "roles": {
-        }
+        "service": "minecraft-mod",
+        "roles": [],
+        "clients": [
+          {
+            "clientId": "oqm-plugin-minecraft-mod",
+            "displayName": "OQM Minecraft Mod",
+            "description": "The Minecraft Mod.",
+            "roles": []
+          }
+        ]
       }
       ```
  3. Get client secret: `oqm-config g infra.keycloak.clientSecrets.minecraft-mod`
