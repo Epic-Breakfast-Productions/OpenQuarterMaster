@@ -117,15 +117,17 @@ class RegistrationUtils:
     @classmethod
     def registerSys(cls, regId, newSecret)->(bool, str):
         cls.log.info("Registering system.")
-        mainCM.setConfigValInFile("registration.registrationId", regId, cls.REG_CONFIG_FILE)
-        mainCM.setSecretValInFile("registration.registrationSecret", newSecret, cls.REG_CONFIG_FILE)
-        mainCM.rereadConfigData()
 
-        success, message = cls.pingRegStatus()
+        success, message = cls.pingRegStatus(regId, newSecret)
 
         if success:
             cls.log.info("Registered system.")
             cls.enableAutomaticPing()
+
+            mainCM.setConfigValInFile("registration.registrationId", regId, cls.REG_CONFIG_FILE)
+            mainCM.setSecretValInFile("registration.registrationSecret", newSecret, cls.REG_CONFIG_FILE)
+            mainCM.rereadConfigData()
+
             return True, "Registered"
         else:
             cls.log.info("Failed to register system.")
@@ -186,8 +188,14 @@ class RegistrationUtils:
             exit(2)
 
     @classmethod
-    def pingRegStatus(cls)->(bool, str):
+    def pingRegStatus(cls, regId = None, newSecret = None)->(bool, str):
         cls.log.info("Pinging registration details.")
+
+        if regId is None:
+            regId = mainCM.getConfigVal("registration.registrationId")
+        if newSecret is None:
+            newSecret = mainCM.getConfigVal("registration.registrationSecret")
+
 
         packagesTree = PackageManagement.getOqmPackagesTree(notInstalled=False)
 
@@ -212,14 +220,14 @@ class RegistrationUtils:
         cls.log.info("Sending registration ping data: %s", data)
 
         result = requests.put(
-            cls.REG_BASE_URL + "/instance/" + mainCM.getConfigVal("registration.registrationId") + "/ping",
+            cls.REG_BASE_URL + "/instance/" + regId + "/ping",
             json=data,
             headers={
                 "Content-Type": "application/json"
             },
             auth=(
-                mainCM.getConfigVal("registration.instanceId") + "/" + mainCM.getConfigVal("registration.registrationId"),
-                mainCM.getConfigVal("registration.registrationSecret")
+                mainCM.getConfigVal("registration.instanceId") + "/" + regId,
+                newSecret
             ),
             timeout=10
         )
