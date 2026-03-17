@@ -931,7 +931,15 @@ class UserInteraction:
         #
         # Registration
         #
-        self.registrationWizard()
+        code = self.dialog.yesno(
+            "Would you like to register this instance?",
+            title="Register? - Setup Wizard"
+        )
+        if code != self.dialog.OK:
+            UserInteraction.log.info("User chose not to register.")
+        else:
+            UserInteraction.log.info("User chose to register.")
+            self.registrationWizard()
 
         self.dialog.msgbox(
             "Setup Wizard complete!",
@@ -987,7 +995,7 @@ class UserInteraction:
     def mapPluginSelection(pluginFromPm):
         return (
             pluginFromPm['package'],
-            PackageManagement.getPluginDisplayName(pluginFromPm['package']),
+            PackageManagement.getPackageDisplayName(pluginFromPm['package']),
             pluginFromPm['installed']
         )
 

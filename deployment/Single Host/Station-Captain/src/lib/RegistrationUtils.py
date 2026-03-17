@@ -45,6 +45,10 @@ class RegistrationUtils:
         snapshot_parser = snapshotSubparsers.add_parser("status", aliases=["stat", "s"], help="Checks the registration status of this system.")
         snapshot_parser.set_defaults(func=cls.statusFromArgs)
 
+        snapshot_parser = snapshotSubparsers.add_parser("clear", help="Clears the registration information from the system.")
+        snapshot_parser.add_argument("--clearInstanceId", dest="clearInstanceId", action="store_true", help="The registration id given from the OQM website. Will display a registration link if not specified. Go to this link, register the instance, and come back here.")
+        snapshot_parser.set_defaults(func=cls.clearRegFromArgs)
+
     @classmethod
     def registerFromArgs(cls, args):
         regId = args.registrationId
@@ -85,58 +89,38 @@ class RegistrationUtils:
             print("System is not registered.")
 
     @classmethod
-    def removeRegFromArgs(cls, args):
-        # TODO:: determine how relevant, deletion of reg no longer doable from api
-        cls.log.info("Removing registration.")
-        if not cls.isRegistered():
-            cls.log.info("Not registered. Exiting.")
-            print("System not registered. Exiting.", file=sys.stderr)
-            exit(2)
-
-        print("This will REMOVE the registration config, and remove the registration entry from the OQM database. This will also clear the instance ID. This action cannot be undone.")
-        confirm = input("Are you sure you want to continue? (y/n)")
-        if confirm.lower() != "y":
-            cls.log.info("User did not confirm. Aborting.")
-            print("Aborting.", file=sys.stderr)
-            exit(2)
-
-        instanceId = mainCM.getConfigVal("registration.instanceId")
-        print("Instance Id: " + mainCM.getConfigVal("registration.instanceId"))
-        instanceIdIn = input("Enter the instance ID to confirm: ")
-        if instanceIdIn != instanceId:
-            cls.log.info("Instance ID did not match. Aborting.")
-            print("Instance ID did not match. Aborting.", file=sys.stderr)
-            exit(2)
-
-        cls.log.info("User checks cleared. Removing registration.")
-        print("Removing registration...")
-
-        cls.clearRegistration()
-        print("Registration removed.")
+    def clearRegFromArgs(cls, args):
+        cls.clearRegistration(resetInstanceId=args.clearInstanceId)
+        print("Registration cleared.")
 
     @classmethod
     def registerSys(cls, regId, newSecret)->(bool, str):
         cls.log.info("Registering system.")
-        mainCM.setConfigValInFile("registration.registrationId", regId, cls.REG_CONFIG_FILE)
-        mainCM.setSecretValInFile("registration.registrationSecret", newSecret, cls.REG_CONFIG_FILE)
-        mainCM.rereadConfigData()
 
-        success, message = cls.pingRegStatus()
+        success, message = cls.pingRegStatus(regId, newSecret)
 
         if success:
             cls.log.info("Registered system.")
             cls.enableAutomaticPing()
+
+            mainCM.setConfigValInFile("registration.registrationId", regId, cls.REG_CONFIG_FILE)
+            mainCM.setSecretValInFile("registration.registrationSecret", newSecret, cls.REG_CONFIG_FILE)
+            mainCM.rereadConfigData()
+
             return True, "Registered"
         else:
             cls.log.info("Failed to register system.")
             return False, "Failed to register: " + message
 
     @classmethod
-    def clearRegistration(cls):
+    def clearRegistration(cls, resetInstanceId:bool=True):
         cls.log.info("Clearing registration.")
         mainCM.setConfigValInFile("registration.registrationId", None, cls.REG_CONFIG_FILE)
         mainCM.setConfigValInFile("registration.registrationSecret", None, cls.REG_CONFIG_FILE)
-        mainCM.setConfigValInFile("registration.instanceId", str(uuid.uuid4()), cls.REG_CONFIG_FILE)
+
+        if resetInstanceId:
+            mainCM.setConfigValInFile("registration.instanceId", None, cls.REG_CONFIG_FILE)
+
         mainCM.rereadConfigData()
 
         cls.disableAutomaticPing()
@@ -186,8 +170,14 @@ class RegistrationUtils:
             exit(2)
 
     @classmethod
-    def pingRegStatus(cls)->(bool, str):
+    def pingRegStatus(cls, regId = None, newSecret = None)->(bool, str):
         cls.log.info("Pinging registration details.")
+
+        if regId is None:
+            regId = mainCM.getConfigVal("registration.registrationId")
+        if newSecret is None:
+            newSecret = mainCM.getConfigVal("registration.registrationSecret")
+
 
         packagesTree = PackageManagement.getOqmPackagesTree(notInstalled=False)
 
@@ -212,14 +202,14 @@ class RegistrationUtils:
         cls.log.info("Sending registration ping data: %s", data)
 
         result = requests.put(
-            cls.REG_BASE_URL + "/instance/" + mainCM.getConfigVal("registration.registrationId") + "/ping",
+            cls.REG_BASE_URL + "/instance/" + regId + "/ping",
             json=data,
             headers={
                 "Content-Type": "application/json"
             },
             auth=(
-                mainCM.getConfigVal("registration.instanceId") + "/" + mainCM.getConfigVal("registration.registrationId"),
-                mainCM.getConfigVal("registration.registrationSecret")
+                mainCM.getConfigVal("registration.instanceId") + "/" + regId,
+                newSecret
             ),
             timeout=10
         )
