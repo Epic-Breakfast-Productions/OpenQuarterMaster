@@ -27,7 +27,6 @@ import static io.restassured.RestAssured.given;
 @Execution(ExecutionMode.SAME_THREAD)
 public abstract class RunningServerTest extends WebServerTest {
 	
-	
 	@RestClient
 	OqmCoreApiClientService oqmCoreApiClientService;
 	
@@ -78,4 +77,13 @@ public abstract class RunningServerTest extends WebServerTest {
 		
 		log.info("Completed after step.");
 	}
+	
+	
+	protected void setupDb() {
+		//TODO:: setup core api database with images, items, etc
+	
+	}
+	
+	
+	
 }
