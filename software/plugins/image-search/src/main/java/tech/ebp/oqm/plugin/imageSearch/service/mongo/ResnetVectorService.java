@@ -1,5 +1,6 @@
 package tech.ebp.oqm.plugin.imageSearch.service.mongo;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
@@ -9,6 +10,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
@@ -18,13 +20,14 @@ import tech.ebp.oqm.plugin.imageSearch.model.resnet.ImageVector;
 
 import tech.ebp.oqm.plugin.imageSearch.service.ImageSearchService;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
+import java.net.URI;
 import java.util.Iterator;
 
+import static com.mongodb.client.model.Filters.and;
+
+@Slf4j
 @ApplicationScoped
 public class ResnetVectorService {
 	
@@ -41,12 +44,12 @@ public class ResnetVectorService {
 	
 	@Inject
 	KcClientAuthService serviceAccountService;
-
+	
 	@Inject
 	ImageSearchService imageSearchService;
-
-    @Inject
-    tech.ebp.oqm.plugin.imageSearch.interfaces.ImageSearch imageSearch;
+	
+	@Inject
+	tech.ebp.oqm.plugin.imageSearch.interfaces.ImageSearch imageSearch;
 	
 	
 	protected MongoDatabase getMongoDatabase() {
@@ -61,55 +64,80 @@ public class ResnetVectorService {
 		return this.getTypedCollection().find(
 			Filters.eq("database", database)
 		).iterator();
+		
+		//example
+//		and(
+//			Filters.eq("imageId", id),
+//			Filters.eq("database", database)
+//		)
 	}
 	
-	private void processImage(String database, String imageId, int imageRevision){
-		//TODO:: refactor into this
-	}
-	
-	private void processImage(String database, ObjectNode imageMetadata) {
+	private void processImage(String database, String imageId, int imageRevision) {
+		log.info("Processing image revision: {}, revision: {}", imageId, imageRevision);
+		
+		//TODO:: check if already processed, skip if exists
+		
 		try (
 			InputStream is = this.oqmCoreApiClientService.imageGetRevisionData(
 				this.serviceAccountService.getAuthString(),
 				database,
-				imageMetadata.get("id").asText(),
-				"latest"
+				imageId,
+				imageRevision + ""
 			).await().indefinitely()
 		) {
 			ImageVector.ImageVectorBuilder builder = ImageVector.builder();
 			
-			builder.imageId(imageMetadata.get("id").asText());
-			builder.imageRevision(1);//TODO:: update with refactor
+			builder.imageId(imageId);
+			builder.imageRevision(imageRevision);
 			builder.vector(ImageSearchService.generateImageFeatureVector(is));
-
+			
 			this.getTypedCollection().insertOne(builder.build());
 		} catch(IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
-
-	//Iterates db, operate on each image in turn
-	public void processImages() {
+	
+	private void processImage(String oqmDatabase, ObjectNode imageMetadata) {
+		String imageId = imageMetadata.get("id").asText();
+		int numRevisions = imageMetadata.get("numRevisions").asInt();
 		
+		log.info("Processing image: {}, # revisions: {}", imageId, numRevisions);
+		
+		for (int i = 1; i <= numRevisions; i++) {
+			this.processImage(oqmDatabase, imageId, i);
+		}
+	}
+	
+	//Iterates db, operate on each image in turn
+	public void initVectors() {
+		log.info("Processing images in all databases.");
 		ImageSearch imageSearch = new ImageSearch();
 		imageSearch.setPageNum(0);
 		imageSearch.setPageSize(100);
 		
+		
+		//TODO:: iterate through all databases; this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
+		
+		String curOqmDb = "default";
 		ObjectNode results;
+		
+		log.info("Processing images database: {}", curOqmDb);
 		
 		do {
 			results = this.oqmCoreApiClientService.imageSearch(
 				this.serviceAccountService.getAuthString(),
-				"default",
+				curOqmDb,
 				imageSearch
 			).await().indefinitely();
-			//TODO process each image in result
-			processImage("oqm-image-search", results);
+			
+			for (JsonNode curImageResult : results.get("results")) {
+				this.processImage(curOqmDb, (ObjectNode) curImageResult);
+			}
 			
 			imageSearch.setPageNum(imageSearch.getPageNum() + 1);
 		} while (!results.get("paginationCalculations").get("onLastPage").asBoolean());
 		
-		
+		// TODO:: remove vectors not in oqm core db
 	}
 	
 }

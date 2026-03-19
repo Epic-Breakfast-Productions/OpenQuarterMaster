@@ -13,6 +13,8 @@ mp:
         topic: "words"
 
 quarkus:
+  log:
+    level: "DEBUG"
   mongodb:
     database: "oqm-image-search"
   keycloak:
