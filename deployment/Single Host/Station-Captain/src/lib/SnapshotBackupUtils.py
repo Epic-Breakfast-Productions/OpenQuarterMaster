@@ -22,6 +22,7 @@ class SyncMethod(Enum):
     local = 1
     ssh = 2
     objStorage = 3
+    backupSubService = 3
 
 
 class SyncImpl:
@@ -176,7 +177,7 @@ class ObjStorageSync(SyncImpl):
     log = LogUtils.setupLogger("ObjStorageSync")
 
     @classmethod
-    def getS3(cls) -> BaseClient:
+    def __getS3(cls) -> BaseClient:
         cls.log.info("Getting new S3 interaction client")
         kwargs = {
             'aws_access_key_id': mainCM.getConfigVal("snapshots.backup.objStorage.accessKey"),
@@ -212,7 +213,7 @@ class ObjStorageSync(SyncImpl):
 
     @classmethod
     def addFile(cls, fileToAdd: str) -> (bool, str):
-        osClient = cls.getS3()
+        osClient = cls.__getS3()
         bucket = cls.getBucket(osClient)
 
         bucket.upload_file(
@@ -223,7 +224,7 @@ class ObjStorageSync(SyncImpl):
 
     @classmethod
     def delFile(cls, fileToDelete: str) -> (bool, str):
-        osClient = cls.getS3()
+        osClient = cls.__getS3()
         bucket = cls.getBucket(osClient)
 
         bucket.Object(cls.getDestFilePath(fileToDelete)).delete()
@@ -231,7 +232,7 @@ class ObjStorageSync(SyncImpl):
 
     @classmethod
     def pullFile(cls, fileToPull: str, destination: str = None) -> (bool, str):
-        osClient = cls.getS3()
+        osClient = cls.__getS3()
         bucket = cls.getBucket(osClient)
 
         # TODO:: respect destination
@@ -240,7 +241,7 @@ class ObjStorageSync(SyncImpl):
 
     @classmethod
     def listFiles(cls) -> list[str]:
-        osClient = cls.getS3()
+        osClient = cls.__getS3()
         bucket = osClient.Bucket(mainCM.getConfigVal("snapshots.backup.objStorage.bucket"))
 
         snapshotFiles = []
@@ -250,6 +251,133 @@ class ObjStorageSync(SyncImpl):
         snapshotFiles = list(filter(lambda curFile : curFile.startsWith(SnapshotSharedUtils.SNAPSHOT_FILE_PREFIX), snapshotFiles))
 
         return snapshotFiles
+
+
+class BackupSubServiceSync(SyncImpl):
+    log = LogUtils.setupLogger("BackupSubServiceSync")
+    OQM_BACKUP_SERVER_BASE_URI = "https://backups.sub.openquartermaster.com/api/sub/backupFiles/"
+
+    @staticmethod
+    def getDestFilePath(snapshotFile: str) -> str:
+        return mainCM.getConfigVal("snapshots.backup.local.path") + "/" + snapshotFile
+
+    @staticmethod
+    def method() -> SyncMethod:
+        return SyncMethod.backupSubService
+
+    @classmethod
+    def __authTuple(cls):
+        return (
+            mainCM.getConfigVal("snapshots.backup.backupSubService.subId"),
+            mainCM.getConfigVal("snapshots.backup.backupSubService.subSecret")
+        )
+
+    @classmethod
+    def __initNewUpload(cls, fileToAdd: str)->dict:
+        cls.log.info("Initializing new upload for file: %s", fileToAdd)
+
+        localFile = cls.getSnapshotFilePath(fileToAdd)
+        # initialize upload
+        initData = {
+            "fileName": fileToAdd,
+            "fileSize": os.path.getsize(localFile)
+        }
+        initResponse = requests.post(
+            url=cls.OQM_BACKUP_SERVER_BASE_URI + "upload/init",
+            json=initData,
+            auth=cls.__authTuple()
+        )
+
+        if initResponse.status_code != 200:
+            raise Exception("Failed to initialize upload ("+str(initResponse.status_code)+"): " + initResponse.text)
+
+        return initResponse.json()
+
+    @classmethod
+    def __uploadFile(cls, fileToAdd: str, initData: dict)->dict:
+        cls.log.info("Initializing new upload for file: %s", fileToAdd)
+        localFile = cls.getSnapshotFilePath(fileToAdd)
+        chunkSize = initData["maxChunkSize"]
+        fileId = initData["fileId"]
+
+        lastResponse = None
+        with open(localFile, 'rb') as file: # Open in binary mode for exact byte control
+            while True:
+                chunk = file.read(chunkSize)
+                if not chunk:
+                    break
+
+                multipart_form_data = {
+                    'chunk': (None, chunk)
+                }
+
+                lastResponse = requests.post(
+                    url=cls.OQM_BACKUP_SERVER_BASE_URI + "upload/file/" + fileId,
+                    files=multipart_form_data,
+                    auth=cls.__authTuple()
+                )
+                if lastResponse.status_code != 200:
+                    raise Exception("Failed to upload chunk ("+str(lastResponse.status_code)+"): " + lastResponse.text)
+        cls.log.info("Done uploading file.")
+        return lastResponse.json()
+
+
+    @classmethod
+    def addFile(cls, fileToAdd: str) -> (bool, str):
+
+        try:
+            initData = cls.__initNewUpload(fileToAdd)
+            result = cls.__uploadFile(fileToAdd, initData)
+        except Exception as e:
+            cls.log.exception("Failed to upload file: ")
+            return False, "Failed to upload file: " + str(e)
+
+        # TODO:: check result for file size, hash matching
+
+        return True, ""
+
+    @classmethod
+    def delFile(cls, fileToDelete: str) -> (bool, str):
+        cls.log.info("Deleting file: %s", fileToDelete)
+        deleteResponse = requests.delete(
+            url=cls.OQM_BACKUP_SERVER_BASE_URI + "file/" + fileToDelete,
+            auth=cls.__authTuple()
+        )
+
+        if deleteResponse.status_code != 200:
+            return False, Exception("Failed to delete file ("+str(deleteResponse.status_code)+"): " + deleteResponse.text)
+
+        return True, ""
+
+    @classmethod
+    def pullFile(cls, fileToPull: str, destination: str = None) -> (bool, str):
+        cls.log.info("Downloading file: %s", fileToPull)
+        pullResponse = requests.get(
+            url=cls.OQM_BACKUP_SERVER_BASE_URI + "file/" + fileToPull,
+            auth=cls.__authTuple(),
+            stream=True
+        )
+        pullResponse.raise_for_status()
+
+        with open(cls.getDestFilePath(fileToPull), 'wb') as f:
+            for chunk in pullResponse.iter_content(chunk_size=8192): # Iterate in chunks (e.g., 8KB)
+                f.write(chunk)
+
+        return True, ""
+
+    @classmethod
+    def listFiles(cls) -> list[str]:
+        cls.log.info("Getting list of files from backup server")
+        listResponse = requests.get(
+            url=cls.OQM_BACKUP_SERVER_BASE_URI,
+            auth=cls.__authTuple()
+        )
+
+        if listResponse.status_code != 200:
+            return False, Exception("Failed to list files ("+str(listResponse.status_code)+"): " + listResponse.text)
+
+        return listResponse.json()
+
 
 
 class SnapshotBackupUtils:
@@ -265,6 +393,8 @@ class SnapshotBackupUtils:
             return LocalSync
         elif syncMethod == "objStorage" :
             return ObjStorageSync
+        elif syncMethod == "backupSubService" :
+            return BackupSubServiceSync
         else:
             return None
 
