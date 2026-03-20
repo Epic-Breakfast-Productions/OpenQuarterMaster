@@ -43,6 +43,11 @@ jobs:
       - name: Setup Runner
         uses: ./.github/actions/wf-setup
 
+      - name: Setup gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: true
+
       - name: Download the build
         uses: actions/download-artifact@v4
         with:
@@ -89,16 +94,21 @@ jobs:
       - name: Setup Runner
         uses: ./.github/actions/wf-setup
 
+      - name: Setup gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: true
+
       - name: Download the build
         uses: actions/download-artifact@v4
         with:
           name: build-result
           path: ${{ inputs.path }}/build/quarkus-app
 
-      - uses: gradle/gradle-build-action@v2
-        with:
-          arguments: quarkusIntTest -x test -Pquarkus.container-image.build=${{ inputs.containerBased }}
-          build-root-directory: ${{ inputs.path }}
+      - name: Run Integration Tests
+        working-directory: ${{ inputs.path }}
+        run: |
+          ./gradlew quarkusIntTest -x test -Pquarkus.container-image.build=${{ inputs.containerBased }}
 
       - name: Archive Test Report
         env:
@@ -130,8 +140,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # - name: Setup Runner
-      #   uses: ./.github/actions/wf-setup
+      - name: Setup Runner
+        uses: ./.github/actions/wf-setup
+
+      - name: Setup gradle
+        uses: gradle/actions/setup-gradle@v5
+        with:
+          cache-read-only: true
 
       - name: Download the build
         uses: actions/download-artifact@v4
