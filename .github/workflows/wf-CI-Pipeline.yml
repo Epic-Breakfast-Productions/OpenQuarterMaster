@@ -30,8 +30,13 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: build-result
-          path: ${{ inputs.path }}/build/quarkus-app
+          path: |
+            ${{ inputs.path }}/build/quarkus-app
+            ${{ inputs.path }}/build/classes
+            ${{ inputs.path }}/build/generated-sources
+            ${{ inputs.path }}/build/quarkus-generated-sources
           retention-days: 1
+
 
   unit-test:
     needs: build

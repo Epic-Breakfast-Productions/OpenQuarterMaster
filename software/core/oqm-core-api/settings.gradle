@@ -14,4 +14,9 @@ buildCache {
     local {
         enabled = true
     }
+    remote(HttpBuildCache) {
+        url = System.getenv("GRADLE_BUILD_CACHE_URL") ?: ''
+        enabled = System.getenv("GRADLE_BUILD_CACHE_URL") != null
+        push = System.getenv("GRADLE_BUILD_CACHE_PUSH") == "true"
+    }
 }
