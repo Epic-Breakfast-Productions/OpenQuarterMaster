@@ -77,7 +77,7 @@ class InputValidators:
     @classmethod
     def isValidHostname(cls, val: str) -> Optional[str]:
         cls.log.info("Validating hostname: '" + val + "'")
-        if val is "#{#mdnsHost}":
+        if val == "#{#mdnsHost}":
             cls.log.info("Valid - default value")
             return None
         if cls.isNotEmpty(val) is not None:
