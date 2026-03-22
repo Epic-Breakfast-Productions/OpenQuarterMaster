@@ -324,29 +324,29 @@ Accepts:
     <div class="row">
         <div class="col">
             <h3>{#icons/items}{/icons/items} Items Stored:</h3>
-            <table class="table table-bordered table-striped table-hover table-sm">
-                <thead>
-                    <tr>
-                        <th>
-                            Image
-                        </th>
-                        <th>
-                            Name
-                        </th>
-                        <th>
-                            Stored Here
-                        </th>
-                        <th>
-                            Total Stored
-                        </th>
-                        <th>
-                            Actions
-                        </th>
-                    </tr>
-                </thead>
-                <tbody id="storageBlockViewItemsStoredContent">
-                </tbody>
-            </table>
+	
+			<div class="accordion" id="itemsInBlockSearchAccordion">
+				<div class="accordion-item">
+					<h2 class="accordion-header" id="itemsInBlockSearchHeader">
+						<button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+								data-bs-target="#itemsInBlockSearchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+								aria-controls="itemsInBlockSearchCollapse">
+							{#icons/search /}
+							Search Fields
+						</button>
+					</h2>
+					<div id="itemsInBlockSearchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+						 aria-labelledby="itemsInBlockSearchHeader" data-bs-parent="#itemsInBlockSearchAccordion">
+						<div class="accordion-body">
+							{#search/item/itemSearchForm id='itemsInBlockSearchForm' rootPrefix=rootPrefix allCategorySearchResults=allCategorySearchResults /}
+						</div>
+					</div>
+				</div>
+			</div>
+		
+			<table class=" table table-bordered table-striped table-hover table-sm" id="itemsInBlockSearchResults">
+			</table>
+			
         </div>
     </div>
     <div class="row">
@@ -410,6 +410,40 @@ Accepts:
 		console.log("Page modules loaded.");
 	</script>
 	<script defer>
+		let storageBlockViewModal = $('#storageBlockViewModal');
+	
+		let itemsInBlockSearchForm = $("#itemsInBlockSearchForm");
+		let itemsInBlockSearchResults = $("#itemsInBlockSearchResults");
+		console.log("Initializing item search select.");
+		itemsInBlockSearchForm.on("submit", function (event) {
+			event.preventDefault();
+			console.log("Submitting search form.");
+
+			let searchParams = new URLSearchParams(new FormData(event.target));
+			console.log("URL search params: " + searchParams);
+
+			Rest.call({
+				spinnerContainer: storageBlockViewModal.get(0),
+				url: Rest.passRoot + "/inventory/item?" + searchParams,
+				returnType: "html",
+				method: 'GET',
+				failNoResponse: null,
+				failNoResponseCheckStatus: true,
+				extraHeaders: {
+					"accept": "text/html",
+					"actionType": "view",
+					"searchFormId": "itemsInBlockSearchForm",
+					// "inputIdPrepend": ItemSearchSelect.itemSearchSelectModal.attr("data-bs-inputIdPrepend"),
+					// "otherModalId": ItemSearchSelect.itemSearchSelectModal.attr("data-bs-otherModalId")
+				},
+				async: false,
+				done: function (data) {
+					console.log("Got data!");
+					itemsInBlockSearchResults.html(data);
+				}
+			});
+		});
+		console.log("Done initializing item search select.");
 		
 		// Search.fillInQueryForm($("#mainStorageSearch"));
 		
@@ -534,7 +568,7 @@ Accepts:
 		
 		
 		
-		let storageBlockViewModal = $('#storageBlockViewModal');
+		
 		let storageBlockViewMessages = $("#storageBlockViewMessages");
 		let storageBlockViewModalLabel = $('#storageBlockViewModalLabel');
 		let storageBlockViewCarousel = $('#storageBlockViewCarousel');
@@ -555,7 +589,6 @@ Accepts:
 		let storageBlockViewBreadcrumbContainer = $('#storageBlockViewBreadcrumbContainer');
 		let storageBlockViewChildrenContainer = $('#storageBlockViewChildrenContainer');
 		let storageBlockViewChildrenContainerTitle = $('#storageBlockViewChildrenContainerTitle');
-		let storageBlockViewItemsStoredContent = $('#storageBlockViewItemsStoredContent');
 		let storageBlockViewStoredItemCategories = $("#storageBlockViewStoredItemCategories");
 		
 		function resetView(){
@@ -577,7 +610,11 @@ Accepts:
 			HistorySearchUtils.resetHistorySearch(storageBlockHistoryAccordionCollapse);
 			
 			storageBlockViewModalLabel.text("");
-			storageBlockViewItemsStoredContent.text("");
+			itemsInBlockSearchResults.text("");
+			
+			itemsInBlockSearchForm.trigger("reset");
+			//TODO:: clear item form
+			
 			Carousel.clearCarousel(storageBlockViewCarousel);
 			KeywordAttUtils.clearHideKeywordDisplay(viewKeywordsSection);
 			KeywordAttUtils.clearHideAttDisplay(viewAttsSection);
@@ -593,6 +630,10 @@ Accepts:
 			storageBlockViewModalLabel.text(blockId);
 			StorageBlockTree.getBlockBreadcrumbs(storageBlockViewBreadcrumbContainer, blockId);
 			
+			//TODO:: setup item search form with block data
+			
+			itemsInBlockSearchForm.trigger("submit");
+			
 			//TODO:: do this in await getter
 			Rest.call({
 				spinnerContainer: storageBlockViewModal,
@@ -601,7 +642,6 @@ Accepts:
 				done: async function(data){
 					let promises = [];
 					let children = Getters.StorageBlock.getStorageBlockChildrenData(blockId);
-					let storageBlockItems = Getters.StorageBlock.getStorageBlockItemData(blockId);
 					KeywordAttUtils.processKeywordDisplay(viewKeywordsSection, data.keywords);
 					KeywordAttUtils.processAttDisplay(viewAttsSection, data.attributes);
 					promises.push(ItemCategoryView.setupItemCategoryView(storageBlockViewStoredItemCategories, data.storedCategories))
@@ -637,26 +677,6 @@ Accepts:
 					} else {
 						console.log("Storage block had no images to show.");
 						storageBlockViewCarousel.hide();
-					}
-					
-					storageBlockItems = await storageBlockItems;
-					if(storageBlockItems.empty){
-						storageBlockViewItemsStoredContent.html("<tr><td colspan='5'><h4>No Items</h4></td></tr>");
-					} else {
-						console.log(storageBlockItems.numResults + " items stored.")
-						storageBlockItems.results.forEach(function (item){
-							let row = $('<tr>' +
-								'<td class="blockViewItemInImage"></td>' +//image
-								'<td class="blockViewItemName"></td>' +//name
-								'<td class="blockViewItemAmountIn"></td>' +//amount in
-								'<td class="blockViewItemTotal"></td>' +//total
-								'<td class="blockViewItemActions"><a href="{rootPrefix}/items?view='+item.id+'" class="btn btn-info btn-sm">{#icons/view}{/icons/view}</a> </td>' +//actions
-								'</tr>');
-							row.find(".blockViewItemName").text(item.name);
-							row.find(".blockViewItemAmountIn").text(item.stats.storageBlockStats[blockId].total.value + item.stats.storageBlockStats[blockId].total.unit.symbol);
-							row.find(".blockViewItemTotal").text(item.stats.total.value + item.stats.total.unit.symbol);
-							storageBlockViewItemsStoredContent.append(row);
-						});
 					}
 					
 					children = await children;

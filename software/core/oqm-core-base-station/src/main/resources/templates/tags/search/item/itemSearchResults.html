@@ -102,17 +102,18 @@
 		<button type="button" class="btn btn-sm btn-danger me-1" title="Remove"
 			onclick="removeItem('{id}');">{#icons/remove}{/icons/remove}
 		</button>
-		{#else if actionType == 'select'}
-	<td class="d-grid gap-2">
-		<button type="button" class="btn btn-sm btn-success" title="Select {name}"
-			data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
-			onclick="ItemSearchSelect.selectItem('{name}', '{id}', '{inputIdPrepend}');">
-			{#icons/select}{/icons/select} Select
-		</button>
-		{#else if actionType == 'view'}
-	<td class="d-grid gap-2">
-		<a href="{rootPrefix}/items?view={id}" class="btn btn-sm btn-info" title="View {name}">{#icons/view /}</a>
-		{/if}
+	{#else if actionType == 'select'}
+		<td class="d-grid gap-2">
+			<button type="button" class="btn btn-sm btn-success" title="Select {name}"
+				data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
+				onclick="ItemSearchSelect.selectItem('{name}', '{id}', '{inputIdPrepend}');">
+				{#icons/select}{/icons/select} Select
+			</button>
+	{#else if actionType == 'view'}
+		<td class="d-flex flex-row">
+			<a href="{rootPrefix}/items?view={id}" class="btn btn-sm btn-info me-1" title="View {name}">{#icons/view /} View</a>
+			{#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false itemId=id checkinButton=false /}
+	{/if}
 	
 	</td>
 </tr>
