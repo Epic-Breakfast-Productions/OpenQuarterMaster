@@ -321,34 +321,43 @@ Accepts:
         {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
     </div>
     <hr />
-    <div class="row">
-        <div class="col">
-            <h3>{#icons/items}{/icons/items} Items Stored:</h3>
+    <div class="d-flex flex-row mb-1">
+		<h3>{#icons/items /} Items Stored:</h3>
+		
+		<div class="ms-auto d-flex">
+			
+			{#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false checkinButton=false /}
+			
+			<div>
+			{!TODO:: functionality here!}
+				<button type="button" class="btn btn-sm btn-outline-success" style="display: inline-block; vertical-align: middle;">
+					{#icons/add /} Add Item
+				</button>
+			</div>
+		</div>
+	</div>
 	
-			<div class="accordion" id="itemsInBlockSearchAccordion">
-				<div class="accordion-item">
-					<h2 class="accordion-header" id="itemsInBlockSearchHeader">
-						<button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
-								data-bs-target="#itemsInBlockSearchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
-								aria-controls="itemsInBlockSearchCollapse">
-							{#icons/search /}
-							Search Fields
-						</button>
-					</h2>
-					<div id="itemsInBlockSearchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
-						 aria-labelledby="itemsInBlockSearchHeader" data-bs-parent="#itemsInBlockSearchAccordion">
-						<div class="accordion-body">
-							{#search/item/itemSearchForm id='itemsInBlockSearchForm' rootPrefix=rootPrefix allCategorySearchResults=allCategorySearchResults /}
-						</div>
-					</div>
+	<div class="accordion" id="itemsInBlockSearchAccordion">
+		<div class="accordion-item">
+			<h2 class="accordion-header" id="itemsInBlockSearchHeader">
+				<button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+						data-bs-target="#itemsInBlockSearchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+						aria-controls="itemsInBlockSearchCollapse">
+					{#icons/search /}
+					Search Fields
+				</button>
+			</h2>
+			<div id="itemsInBlockSearchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+				 aria-labelledby="itemsInBlockSearchHeader" data-bs-parent="#itemsInBlockSearchAccordion">
+				<div class="accordion-body">
+					{#search/item/itemSearchForm id='itemsInBlockSearchForm' rootPrefix=rootPrefix allCategorySearchResults=allCategorySearchResults /}
 				</div>
 			</div>
-		
-			<table class=" table table-bordered table-striped table-hover table-sm" id="itemsInBlockSearchResults">
-			</table>
+		</div>
+	</div>
+	<table class=" table table-bordered table-striped table-hover table-sm" id="itemsInBlockSearchResults">
+	</table>
 			
-        </div>
-    </div>
     <div class="row">
         <div class="col">
             {#objView/history/objHistoryView containerId='storageBlockHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/storage-block/')}{/objView/history/objHistoryView}
