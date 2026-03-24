@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import org.bson.types.ObjectId;
 
 @Data
@@ -14,8 +15,10 @@ public class ImageVector {
 	
 	private ObjectId id;
 	
-	private String oqmDbId;
+	@NonNull
+	private String oqmDb;
 	
+	@NonNull
 	private String imageId;
 	
 	private int imageRevision;

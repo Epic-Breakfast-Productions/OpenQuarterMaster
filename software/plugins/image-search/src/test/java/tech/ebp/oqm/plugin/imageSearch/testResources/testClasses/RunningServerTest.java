@@ -1,5 +1,7 @@
 package tech.ebp.oqm.plugin.imageSearch.testResources.testClasses;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.test.common.http.TestHTTPResource;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
@@ -14,11 +16,20 @@ import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 import tech.ebp.oqm.plugin.imageSearch.testResources.testUsers.TestUser;
 import tech.ebp.oqm.plugin.imageSearch.testResources.testUsers.TestUserService;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
 
@@ -27,9 +38,14 @@ import static io.restassured.RestAssured.given;
 @Execution(ExecutionMode.SAME_THREAD)
 public abstract class RunningServerTest extends WebServerTest {
 	
+	public static final String TEST_DB = "default";
+	private static final String TEST_IMG_DIR = "./dev/testImages/";
+	
+	@Getter
 	@RestClient
 	OqmCoreApiClientService oqmCoreApiClientService;
 	
+	@Getter
 	@Inject
 	KcClientAuthService serviceAccountService;
 	
@@ -40,18 +56,12 @@ public abstract class RunningServerTest extends WebServerTest {
 	
 	@Getter
 	private final TestUserService testUserService = TestUserService.getInstance();
+	@Inject
+	ObjectMapper objectMapper;
 	
 	@BeforeEach
 	public void beforeEach(TestInfo testInfo) {
 		log.info("Before test " + testInfo.getTestMethod().get().getName());
-		//TODO:: use our own db? necessary?
-		//		User adminUser = this.getTestUserService().getTestUser(true);
-		//		setupJwtCall(given(), this.getTestUserService().getUserToken(adminUser))
-		//			.basePath("")
-		//			.get("/api/v1/inventory/manage/db/refreshCache").then().statusCode(200);
-		//		setupJwtCall(given(), this.getTestUserService().getUserToken(adminUser))
-		//			.basePath("")
-		//			.put("/api/v1/inventory/manage/db/ensure/" + DEFAULT_TEST_DB_NAME).then().statusCode(200);
 	}
 	
 	@AfterEach
@@ -60,30 +70,68 @@ public abstract class RunningServerTest extends WebServerTest {
 	) {
 		log.info("Running after method for test {}", testInfo.getDisplayName());
 		
-		//TODO:: clear db
-		// this might be required for
-		//			if("intTest".equals(ConfigProvider.getConfig().getValue("quarkus.profile", String.class))){
-		//				setupJwtCall(given(), this.getTestUserService().getUserToken(this.getTestUserService().getTestUser(true)))
-		//					.basePath("")
-		//					.delete("/api/v1/inventory/manage/db/" + DEFAULT_TEST_DB_NAME+ "/clearDb").then().statusCode(200);
-		//			} else {
-		//				MongoTestConnector.getInstance().clearDb();
-		//			}
-		
-		
-		// this.index.toString() + PassthroughProvider.PASSTHROUGH_API_ROOT + "/manage/db/clearAllDbs
-		
 		this.oqmCoreApiClientService.manageDbClearAll(this.serviceAccountService.getAuthString()).await();
 		
 		log.info("Completed after step.");
 	}
 	
 	
-	protected void setupDb() {
+	protected void setupDb(String dbName) {
 		//TODO:: setup core api database with images, items, etc
-	
+		log.info("Setting up OQM Core API database with test images.");
+		try (Stream<Path> stream = Files.list(Paths.get(TEST_IMG_DIR))) {
+			List<Path> files = stream
+								   .filter(Files::isRegularFile)
+								   .collect(Collectors.toList());
+			
+			for (Path path : files) {
+				log.info("Adding Item/ file: {}", path.getFileName());
+				String fileName = path.getFileName().toString();
+				String itemName = fileName.toLowerCase()
+							   .substring(0, fileName.lastIndexOf('.'))
+							   .replaceAll("_", " ")
+							   .strip();
+				
+				ObjectNode image;
+				
+				try(
+					InputStream is = Files.newInputStream(path);
+					){
+					image = this.oqmCoreApiClientService.imageAdd(
+						this.serviceAccountService.getAuthString(),
+						dbName,
+						FileUploadBody.builder()
+							.fileName(fileName)
+							.file(is)
+							.description("Test Image")
+							.source("testFiles")
+							.build()
+					).await().indefinitely();
+				}
+				log.debug("Added image: {}", image);
+				
+				
+				ObjectNode curItem = objectMapper.createObjectNode()
+										 .put("name", itemName)
+										 .put("storageType", "BULK");
+				curItem.putArray("imageIds").add(image.get("id").asText());
+				curItem.putObject("unit").put("string", "units");
+				
+				curItem = this.oqmCoreApiClientService.invItemCreate(
+					this.serviceAccountService.getAuthString(),
+					dbName,
+					curItem
+				).await().indefinitely();
+				
+				log.debug("Added item: {}", curItem);
+				
+			}
+			
+		} catch(IOException e) {
+			throw new RuntimeException(e);
+		}
+		log.info("Completed setting up OQM Core API database with test images.");
 	}
-	
 	
 	
 }

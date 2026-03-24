@@ -56,7 +56,7 @@ public class BasicSetupTest extends RunningServerTest {
     //takes in the name of an image in the temporary testImages folder
     //
     public void uploadSingleImage(String resourceLocation, String outputFilename) throws IOException {
-        this.setupDb();
+        this.setupDb(TEST_DB);
         // ... init vectors
         
         

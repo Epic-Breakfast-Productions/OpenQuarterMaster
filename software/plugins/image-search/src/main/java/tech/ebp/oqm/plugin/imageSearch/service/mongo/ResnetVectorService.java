@@ -22,7 +22,6 @@ import tech.ebp.oqm.plugin.imageSearch.service.ImageSearchService;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URI;
 import java.util.Iterator;
 
 import static com.mongodb.client.model.Filters.and;
@@ -60,9 +59,15 @@ public class ResnetVectorService {
 		return this.getMongoDatabase().getCollection("resnet-image-vectors", ImageVector.class);
 	}
 	
+	public long getNumVectors(String database) {
+		return this.getTypedCollection().countDocuments(
+			Filters.eq("oqmDb", database)
+		);
+	}
+	
 	public Iterator<ImageVector> getAllVectors(String database) {
 		return this.getTypedCollection().find(
-			Filters.eq("database", database)
+			Filters.eq("oqmDb", database)
 		).iterator();
 		
 		//example
@@ -87,6 +92,7 @@ public class ResnetVectorService {
 		) {
 			ImageVector.ImageVectorBuilder builder = ImageVector.builder();
 			
+			builder.oqmDb(database);
 			builder.imageId(imageId);
 			builder.imageRevision(imageRevision);
 			builder.vector(ImageSearchService.generateImageFeatureVector(is));
@@ -112,7 +118,7 @@ public class ResnetVectorService {
 	public void initVectors() {
 		log.info("Processing images in all databases.");
 		ImageSearch imageSearch = new ImageSearch();
-		imageSearch.setPageNum(0);
+		imageSearch.setPageNum(1);
 		imageSearch.setPageSize(100);
 		
 		
@@ -123,20 +129,27 @@ public class ResnetVectorService {
 		
 		log.info("Processing images database: {}", curOqmDb);
 		
-		do {
-			results = this.oqmCoreApiClientService.imageSearch(
-				this.serviceAccountService.getAuthString(),
-				curOqmDb,
-				imageSearch
-			).await().indefinitely();
+		try {
+			do {
+				results = this.oqmCoreApiClientService.imageSearch(
+					this.serviceAccountService.getAuthString(),
+					curOqmDb,
+					imageSearch
+				).await().indefinitely();
+				
+				log.debug("Retrieved new page of results");
+				
+				for (JsonNode curImageResult : results.get("results")) {
+					this.processImage(curOqmDb, (ObjectNode) curImageResult);
+				}
+				
+				imageSearch.setPageNum(imageSearch.getPageNum() + 1);
+			} while (!results.get("pagingCalculations").get("onLastPage").asBoolean());
 			
-			for (JsonNode curImageResult : results.get("results")) {
-				this.processImage(curOqmDb, (ObjectNode) curImageResult);
-			}
-			
-			imageSearch.setPageNum(imageSearch.getPageNum() + 1);
-		} while (!results.get("paginationCalculations").get("onLastPage").asBoolean());
-		
+		}catch(Exception e) {
+			log.error("Error processing images database: {}", curOqmDb, e);
+			throw new RuntimeException(e);
+		}
 		// TODO:: remove vectors not in oqm core db
 	}
 	
