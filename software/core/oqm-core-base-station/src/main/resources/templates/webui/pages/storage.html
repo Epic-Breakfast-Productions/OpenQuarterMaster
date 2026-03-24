@@ -317,8 +317,8 @@ Accepts:
     </div>
     <hr />
     <div class="row">
-        {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
-        {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
+        {#objView/objKeywordsView id='viewKeywordsSection' classes='col' /}
+        {#objView/objAttsView id='viewAttsSection' classes='col' /}
     </div>
     <hr />
     <div class="d-flex flex-row mb-1">
@@ -326,11 +326,12 @@ Accepts:
 		
 		<div class="ms-auto d-flex">
 			
-			{#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false checkinButton=false /}
+			{! TODO:: once we know how we want to do this !}
+			{!{#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false checkinButton=false /}!}
 			
 			<div>
 			{!TODO:: functionality here!}
-				<button type="button" class="btn btn-sm btn-outline-success" style="display: inline-block; vertical-align: middle;">
+				<button type="button" class="btn btn-sm btn-outline-success" style="display: inline-block; vertical-align: middle;" onclick="addBlockToItemButtonClicked();" data-bs-toggle="modal" data-bs-target="#itemSearchSelectModal">
 					{#icons/add /} Add Item
 				</button>
 			</div>
@@ -364,6 +365,8 @@ Accepts:
         </div>
     </div>
 {/modal}
+{#search/item/itemSearchSelectModal rootPrefix=rootPrefix allCategorySearchResults=allCategorySearchResults /}
+	{#CodeScannerModal /}
 
 {/modals}
 
@@ -372,6 +375,7 @@ Accepts:
 	<script src="{rootPrefix}/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
 	<script src="{rootPrefix}/lib/treant-js/vendor/jquery.easing.js"></script>
 	<script src="{rootPrefix}/lib/treant-js/Treant.js"></script>
+	
 
 {/scripts}
 {#pageScript}
@@ -392,6 +396,8 @@ Accepts:
 		import { Carousel } from '{rootPrefix}/res/js/Carousel.js';
 		import { TextCopyUtils } from '{rootPrefix}/res/js/TextCopyUtils.js';
 		import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
+		import { ItemSearchSelect } from '{rootPrefix}/res/js/obj/item/ItemSearchSelect.js';
+		import { ModalUtils } from "{rootPrefix}/res/js/ModalUtils.js";
 		
 		// init necessary modules
 		StorageSearchSelect.initPage();
@@ -400,7 +406,9 @@ Accepts:
 		ImageAddFromSelect.initPage();
 		SearchUtils.initPage();
 		ItemCategoryInput.initPage();
+		ItemSearchSelect.initPage();
 		
+		window.ItemSearchSelect = ItemSearchSelect;
 		window.StorageSearchSelect = StorageSearchSelect;
 		window.StorageBlockTree = StorageBlockTree;
 		window.HistorySearchUtils = HistorySearchUtils;
@@ -415,6 +423,7 @@ Accepts:
 		window.Carousel = Carousel;
 		window.ImageAddFromSelect = ImageAddFromSelect;
 		window.TextCopyUtils = TextCopyUtils;
+		window.ModalUtils = ModalUtils;
 		
 		console.log("Page modules loaded.");
 	</script>
@@ -873,6 +882,49 @@ Accepts:
 			storageBlockInventorySheetPrintoutForm.attr("action", Rest.apiRoot + "/media/printouts/storage-block/"+storageBlockViewId.text()+"/storageSheet");
 			storageBlockInventorySheetPrintoutFormBlockNameInput.val(storageBlockViewModalLabel.text());
 		}
+		
+		
+		function addBlockToItem(storageBlockId, itemId){
+			console.log("Adding storage block " + storageBlockId + " to item " + itemId);
+			
+			Getters.InventoryItem.get(itemId, function(itemData){
+				let itemUpdateData = {
+					"storageBlocks": itemData.storageBlocks
+				}
+				itemUpdateData.storageBlocks.push(storageBlockId);
+				
+				Rest.call({
+					url: Rest.passRoot + "/inventory/item/" + itemData.id,
+					method: "PUT",
+					data: itemUpdateData,
+					async: false,
+					spinnerContainer: storageBlockViewModal,
+					done: function (data) {
+						console.log("Successfully added storage block to item. Response: ", data);
+						
+						itemsInBlockSearchForm.trigger("submit");
+						PageMessageUtils.addMessageToDiv(storageBlockViewMessages, "success", "Successfully added storage block to item.");
+					},
+					failMessagesDiv: storageBlockViewMessages
+				});
+				
+			})
+			
+			
+		}
+		
+		function addBlockToItemButtonClicked(){
+			console.log("Adding block to item button clicked.");
+			let storageBlockId = storageBlockViewId.text();
+			
+			ModalUtils.setReturnModal(ItemSearchSelect.itemSearchSelectModal, storageBlockViewModal);
+			
+			ItemSearchSelect.selectItem = function(itemName, itemId){
+				addBlockToItem(storageBlockId, itemId);
+			}
+			ItemSearchSelect.itemSearchSelectForm.trigger("submit");
+		}
+		
 		
 		// showTree("#mainTreeChart");
 	</script>

@@ -112,7 +112,7 @@
 	{#else if actionType == 'view'}
 		<td class="d-flex flex-row">
 			<a href="{rootPrefix}/items?view={id}" class="btn btn-sm btn-info me-1" title="View {name}">{#icons/view /} View</a>
-			{#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false itemId=id checkinButton=false /}
+			{!{#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false itemId=id checkinButton=false /}!}
 	{/if}
 	
 	</td>
