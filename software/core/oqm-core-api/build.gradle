@@ -96,7 +96,7 @@ test {
 		"--add-opens", "java.base/java.util=ALL-UNNAMED",
 		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
 	)
-	testLogging.showStandardStreams = !System.getenv["CI"]
+	testLogging.showStandardStreams = System.getenv("CI") == null
 	finalizedBy jacocoTestReport
 	jacoco {
 		excludeClassLoaders = ["*QuarkusClassLoader"]
