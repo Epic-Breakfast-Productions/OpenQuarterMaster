@@ -235,11 +235,6 @@ public class InvItemPassthrough extends PassthroughProvider {
 		)
 	)
 	@APIResponse(
-		responseCode = "404",
-		description = "Bad request given, could not find object at given id.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@APIResponse(
 		responseCode = "410",
 		description = "Object requested has already been deleted.",
 		content = @Content(mediaType = "text/plain")
