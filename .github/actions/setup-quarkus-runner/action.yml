@@ -1,0 +1,22 @@
+name: 'Setup Quarkus Runner'
+description: 'Sets up Java and Gradle for Quarkus CI builds. Replaces the legacy wf-setup action.'
+inputs:
+  java-version:
+    description: 'Java version to use'
+    default: '21'
+  cache-read-only:
+    description: 'Whether to treat the Gradle build cache as read-only. Set true for test/secondary jobs, false for the build job.'
+    default: 'false'
+runs:
+  using: composite
+  steps:
+    - name: Set up JDK ${{ inputs.java-version }}
+      uses: actions/setup-java@v4
+      with:
+        java-version: ${{ inputs.java-version }}
+        distribution: temurin
+
+    - name: Setup Gradle
+      uses: gradle/actions/setup-gradle@v4
+      with:
+        cache-read-only: ${{ inputs.cache-read-only }}
