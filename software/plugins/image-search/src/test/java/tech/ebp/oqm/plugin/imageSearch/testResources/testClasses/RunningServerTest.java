@@ -70,7 +70,7 @@ public abstract class RunningServerTest extends WebServerTest {
 	) {
 		log.info("Running after method for test {}", testInfo.getDisplayName());
 		
-		this.oqmCoreApiClientService.manageDbClearAll(this.serviceAccountService.getAuthString()).await();
+		this.oqmCoreApiClientService.manageDbClearAll(this.serviceAccountService.getAuthString()).await().indefinitely();
 		
 		log.info("Completed after step.");
 	}
