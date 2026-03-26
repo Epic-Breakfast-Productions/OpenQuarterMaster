@@ -60,7 +60,9 @@ jobs:
 
       - name: Build (skip tests)
         working-directory: ${{ inputs.path }}
-        run: ./gradlew build -x test
+        # Also exclude quarkusIntTest: build.gradle has `check { finalizedBy quarkusIntTest }`
+        # which means -x test alone does not prevent integration tests from running via check.
+        run: ./gradlew build -x test -x quarkusIntTest
 
 
   unit-test:
@@ -94,7 +96,9 @@ jobs:
 
       - name: Run unit tests
         working-directory: ${{ inputs.path }}
-        run: ./gradlew test jacocoTestReport
+        # quarkus-jacoco generates its report automatically during the test run;
+        # jacocoTestReport is explicitly disabled in build.gradle so we don't call it.
+        run: ./gradlew test
 
       - name: Publish unit test results
         uses: dorny/test-reporter@v1
@@ -108,7 +112,8 @@ jobs:
         uses: madrapps/jacoco-report@v1.7.1
         if: always()
         with:
-          paths: ${{ inputs.path }}/build/reports/jacoco/test/jacocoTestReport.xml
+          # quarkus-jacoco writes its XML report here (not the standard Gradle jacoco path)
+          paths: ${{ inputs.path }}/build/jacoco-report/jacoco.xml
           token: ${{ secrets.GITHUB_TOKEN }}
           title: Code Coverage
           min-coverage-overall: ${{ inputs.jacoco-min-coverage-overall }}
@@ -119,7 +124,7 @@ jobs:
         if: always()
         with:
           name: coverage-report
-          path: ${{ inputs.path }}/build/reports/jacoco/test
+          path: ${{ inputs.path }}/build/jacoco-report
           retention-days: 7
 
       - name: Archive unit test report

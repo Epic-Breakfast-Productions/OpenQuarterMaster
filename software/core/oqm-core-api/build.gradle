@@ -190,6 +190,7 @@ tasks.register('printVersion') {
 	}
 }
 
-dependencyLocking {
-    lockAllConfigurations()
+// lockAllConfigurations() is deprecated in Gradle 9; use the configurations API instead
+configurations.configureEach {
+    resolutionStrategy.activateDependencyLocking()
 }
