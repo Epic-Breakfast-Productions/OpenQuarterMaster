@@ -1,10 +1,8 @@
 package tech.ebp.oqm.plugin.imageSearch.testResources.testClasses;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.quarkus.test.common.http.TestHTTPResource;
-import io.restassured.http.ContentType;
-import io.restassured.http.Header;
 import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -18,12 +16,10 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
-import tech.ebp.oqm.plugin.imageSearch.testResources.testUsers.TestUser;
 import tech.ebp.oqm.plugin.imageSearch.testResources.testUsers.TestUserService;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -38,7 +34,7 @@ import static io.restassured.RestAssured.given;
 @Execution(ExecutionMode.SAME_THREAD)
 public abstract class RunningServerTest extends WebServerTest {
 	
-	public static final String TEST_DB = "default";
+	public static final String TEST_DB = "default"; //TODO:: instead of using this, get actual id from db
 	private static final String TEST_IMG_DIR = "./dev/testImages/";
 	
 	@Getter
@@ -56,6 +52,7 @@ public abstract class RunningServerTest extends WebServerTest {
 	
 	@Getter
 	private final TestUserService testUserService = TestUserService.getInstance();
+	
 	@Inject
 	ObjectMapper objectMapper;
 	
@@ -76,7 +73,7 @@ public abstract class RunningServerTest extends WebServerTest {
 	}
 	
 	
-	protected void setupDb(String dbName) {
+	protected void setupOqmDb(String dbName) {
 		//TODO:: setup core api database with images, items, etc
 		log.info("Setting up OQM Core API database with test images.");
 		try (Stream<Path> stream = Files.list(Paths.get(TEST_IMG_DIR))) {

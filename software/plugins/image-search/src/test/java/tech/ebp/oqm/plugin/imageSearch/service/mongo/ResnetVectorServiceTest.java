@@ -22,7 +22,7 @@ class ResnetVectorServiceTest extends RunningServerTest {
 	
 	@Test
 	public void testInitDb() {
-		this.setupDb(TEST_DB);
+		this.setupOqmDb(TEST_DB);
 		log.info("Testing initDb");
 		
 		this.resnetVectorService.initVectors();
@@ -45,7 +45,7 @@ class ResnetVectorServiceTest extends RunningServerTest {
 		for (Iterator<ImageVector> it = this.resnetVectorService.getAllVectors(TEST_DB); it.hasNext(); ) {
 			ImageVector imageVector = it.next();
 			
-			assertNotNull(imageVector.getId());
+			assertNotNull(imageVector.getImageId());
 			assertNotNull(imageVector.getVector());
 			
 			this.getOqmCoreApiClientService().imageGet(//if no exception, then it exists

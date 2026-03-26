@@ -3,7 +3,6 @@ import com.fasterxml.jackson.databind.node.JsonNodeFactory;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
-import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Assertions;
@@ -17,7 +16,6 @@ import tech.ebp.oqm.plugin.imageSearch.testResources.testClasses.RunningServerTe
 
 import java.io.*;
 import java.net.URISyntaxException;
-import java.util.Objects;
 
 @Slf4j
 @QuarkusTest
@@ -56,7 +54,7 @@ public class BasicSetupTest extends RunningServerTest {
     //takes in the name of an image in the temporary testImages folder
     //
     public void uploadSingleImage(String resourceLocation, String outputFilename) throws IOException {
-        this.setupDb(TEST_DB);
+        this.setupOqmDb(TEST_DB);
         // ... init vectors
         
         
