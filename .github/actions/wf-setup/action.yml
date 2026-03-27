@@ -1,5 +1,5 @@
 name: 'WF - setup runner'
-description: 'sets up java/gradle on the runner'
+description: 'sets up java on the runner'
 runs:
   using: composite
   steps:
