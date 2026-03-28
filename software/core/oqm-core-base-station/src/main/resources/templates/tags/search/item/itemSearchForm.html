@@ -18,8 +18,9 @@
         <div id="{id}-help" class="form-text">Find items of these {#links/itemCategory /}.</div>
     {/let}
 </div>
-
-{#inputs/storageBlock/storageBlockSelectInput id=id blockIdName='inStorageBlock' /}
+<div class="mb-3 col col-3">
+	{#inputs/storageBlock/storageBlockSelectInput id=(id + 'inBlock') blockIdName='inStorageBlock' /}
+</div>
 
 {/inputs}
 {/include}

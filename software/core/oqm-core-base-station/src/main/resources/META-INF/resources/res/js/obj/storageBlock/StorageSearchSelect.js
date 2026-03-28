@@ -1,30 +1,52 @@
 import {Rest} from "../../Rest.js";
 import {ModalUtils} from "../../ModalUtils.js";
-import {Getters} from "../Getters";
+import {Getters} from "../Getters.js";
 
 export const StorageSearchSelect = {
 	storageSearchSelectModal: $("#storageSearchSelectModal"),
 	storageSearchSelectForm: $("#storageSearchSelectForm"),
 	storageSearchSelectResults: $("#storageSearchSelectResults"),
 
-	setupStorageSearchModal(inputIdPrepend, initialModal) { //TODO:: make play nice with multiple inputs on one page
-		StorageSearchSelect.storageSearchSelectModal.attr("data-bs-inputIdPrepend", inputIdPrepend);
+	setupSearch(returnWith, modalBackTo = null){
+		console.log("Setting up storage block search select.", returnWith, modalBackTo);
+		if(typeof returnWith !== 'function'){
+			returnWith = StorageSearchSelect.input.getInputJqFromInner(returnWith);
+			ModalUtils.setReturnModal(StorageSearchSelect.storageSearchSelectModal, returnWith);
+		}
 
-		ModalUtils.setReturnModal(StorageSearchSelect.storageSearchSelectModal, initialModal);
+		if(modalBackTo){
+			ModalUtils.setReturnModal(StorageSearchSelect.storageSearchSelectModal, modalBackTo);
+		}
+
+		console.debug("Returning with ", returnWith);
+
+		StorageSearchSelect.storageSearchSelectForm.trigger("submit");
+		StorageSearchSelect.storageSearchSelectModal.data("search-select-return", returnWith);
 	},
-	selectStorageBlock(blockName, blockId, inputIdPrepend) {
-		let nameInputId = inputIdPrepend + "Id";
-		let nameInputName = inputIdPrepend + "Name";
+	selectStorageBlock(storageBlockId, storageBlockName = null){
+		let returnWith = StorageSearchSelect.storageSearchSelectModal.data("search-select-return");
+		console.log("Selected storage block: ",storageBlockId, storageBlockName, returnWith);
 
-		$("#" + nameInputId).val(blockId);
-		$("#" + nameInputName).val(blockName);
+		if(typeof returnWith !== 'function'){//is input jq
+			StorageSearchSelect.input.setValue(returnWith, storageBlockId, storageBlockName);
+		} else {
+			returnWith(storageBlockId, storageBlockName);
+		}
 	},
 
 
 	input: {
 		clear(inputJq){
+			inputJq = StorageSearchSelect.input.getInputJqFromInner(inputJq);
+
 			StorageSearchSelect.input.getIdInput(inputJq).val("");
 			StorageSearchSelect.input.getNameInput(inputJq).val("");
+		},
+		getInputJqFromInner(innerElem){
+			if(! (innerElem instanceof jQuery)){
+				innerElem = $(innerElem);
+			}
+			return innerElem.closest(".storageBlockInput");
 		},
 		getSearchButton(inputJq){
 			return inputJq.find("button.searchButton");
@@ -44,15 +66,17 @@ export const StorageSearchSelect = {
 			StorageSearchSelect.input.getClearButton(inputJq).prop("disabled", readonly);
 		},
 		setValue(inputJq, storageBlockId, storageBlockName = null){
-			StorageSearchSelect.input.getIdInput(inputJq).val(storageBlockId);
+			let idInput = StorageSearchSelect.input.getIdInput(inputJq);
+			idInput.val(storageBlockId);
 
 			if(storageBlockName){
 				StorageSearchSelect.input.getNameInput(inputJq).val(storageBlockName);
 			} else {
-				Getters.StorageBlock.getName(storageBlockId).then(function(name){
+				Getters.StorageBlock.getStorageBlockLabel(storageBlockId, function(name){
 					StorageSearchSelect.input.getNameInput(inputJq).val(name);
 				});
 			}
+			idInput.trigger("change");
 		},
 		setup(
 			inputJq,
@@ -62,10 +86,13 @@ export const StorageSearchSelect = {
 			StorageSearchSelect.input.clear(inputJq);
 
 			if(storageBlockId){
-				StorageSearchSelect.input.setValue(inputJq);
+				StorageSearchSelect.input.setValue(inputJq, storageBlockId);
 			}
 
 			StorageSearchSelect.input.setReadonly(inputJq, readOnly);
+		},
+		hasValue(inputJq){
+			return StorageSearchSelect.input.getIdInput(inputJq).val() !== "";
 		}
 	},
 	initPage: function () {
@@ -89,7 +116,6 @@ export const StorageSearchSelect = {
 					"accept": "text/html",
 					"actionType": "select",
 					"searchFormId": "storageSearchSelectForm",
-					"inputIdPrepend": StorageSearchSelect.storageSearchSelectModal.attr("data-bs-inputIdPrepend"),
 					"otherModalId": StorageSearchSelect.storageSearchSelectModal.attr("data-bs-otherModalId")
 				},
 				async: false,

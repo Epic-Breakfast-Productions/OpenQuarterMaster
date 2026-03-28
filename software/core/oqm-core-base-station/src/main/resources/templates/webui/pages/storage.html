@@ -113,14 +113,7 @@ Accepts:
             <div class="mb-3 row">
                 <label for="addEditParentInputName" class="col-sm-2 col-form-label">Parent</label>
                 <div class="col-sm-10">
-                    <div class="input-group">
-                        <input type="hidden" id="addEditParentInputId" name="parentId">
-                        <button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.setupStorageSearchModal('addEditParentInput', this);StorageSearchSelect.storageSearchSelectForm.submit();">{#icons/search}{/icons/search}</button>
-                        
-                        <input type="text" class="form-control" id="addEditParentInputName" placeholder="Parent" name="parentName" aria-describedby="addEditParentInputName-help" disabled>
-                        <button class="btn btn-outline-secondary" type="button" onclick="clearParentInput($(this));">{#icons/remove}{/icons/remove}</button>
-                    </div>
-                    <div id="addEditParentInputName-help" class="form-text">Optional. The storage block this block is to be located within.</div>
+                    {#inputs/storageBlock/storageBlockSelectInput id=id blockIdName='addEditParentInput' help="Optional. The storage block this block is to be located within." /}
                 </div>
             </div>
             <div class="mb-3 row">
@@ -433,6 +426,8 @@ Accepts:
 	
 		let itemsInBlockSearchForm = $("#itemsInBlockSearchForm");
 		let itemsInBlockSearchResults = $("#itemsInBlockSearchResults");
+		let itemsInBlockSearchStorageBlockInput = itemsInBlockSearchForm.find(".storageBlockInput");
+		
 		console.log("Initializing item search select.");
 		itemsInBlockSearchForm.on("submit", function (event) {
 			event.preventDefault();
@@ -505,8 +500,7 @@ Accepts:
 		let addEditNicknameInput = $("#addEditNicknameInput");
 		let addEditDescriptionInput = $("#addEditDescriptionInput");
 		let addEditLocationInput = $("#addEditLocationInput");
-		let addEditParentInputId = $("#addEditParentInputId");
-		let addEditParentInputName = $("#addEditParentInputName");
+		let addEditParentInput = $("#addEdit-storageBlockInput");
 		let addEditCategoriesInput = $("#addEditCategoriesInput");
 		let imagesSelected = $(".imagesSelected");
 		let capacityInputDiv = addEditStorageForm.find(".capacityInputDiv");
@@ -534,6 +528,7 @@ Accepts:
 			addBulkEnabledInput.prop("checked", false);
 			addBulkNumberInput.val(1);
 			setBulkInsertInputState();
+			StorageSearchSelect.input.clear(addEditParentInput);
 		}
 		
 		
@@ -571,10 +566,7 @@ Accepts:
 					addEditLocationInput.val(data.location);
 					DselectUtils.setValues(addEditCategoriesInput, data.storedCategories);
 					if(data.parent){
-						addEditParentInputId.val(data.parent);
-						Getters.StorageBlock.getStorageBlockLabel(data.parent, function(parentLabel){
-							addEditParentInputName.val(parentLabel);
-						});
+						StorageSearchSelect.input.setup(addEditParentInput, data.parent);
 					}
 					KeywordAttEdit.addKeywordInputs(keywordInputDiv, data.keywords);
 					KeywordAttEdit.addAttInputs(attInputDiv, data.attributes);
@@ -650,6 +642,8 @@ Accepts:
 			StorageBlockTree.getBlockBreadcrumbs(storageBlockViewBreadcrumbContainer, blockId);
 			
 			//TODO:: setup item search form with block data
+			
+			StorageSearchSelect.input.setup(itemsInBlockSearchStorageBlockInput, blockId, true);
 			
 			itemsInBlockSearchForm.trigger("submit");
 			
@@ -756,8 +750,8 @@ Accepts:
 				});
 				
 				
-				if (addEditParentInputId.val()) {
-					addEditData.parent = addEditParentInputId.val();
+				if (StorageSearchSelect.input.hasValue(addEditParentInput)) {
+					addEditData.parent = StorageSearchSelect.input.getIdInput(addEditParentInput).val();
 				} else {
 					addEditData.parent = null;
 				}
