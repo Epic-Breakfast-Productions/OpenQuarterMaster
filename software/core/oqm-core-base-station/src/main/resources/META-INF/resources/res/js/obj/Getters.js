@@ -1,4 +1,5 @@
 import {Rest} from "../Rest.js";
+import {StoredTypeUtils} from "../StoredTypeUtils.js";
 
 export const Getters = {
 	StorageBlock: {
