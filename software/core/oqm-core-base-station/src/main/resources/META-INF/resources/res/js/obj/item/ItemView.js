@@ -18,6 +18,7 @@ import {AssociatedLinks} from "../../AssociatedLinks.js";
 import {ItemCategoryView} from "../itemCategory/ItemCategoryView.js";
 import {StoredView} from "../itemStored/StoredView.js";
 import {TimeUtils} from "../../TimeUtils.js";
+import {StorageSearchSelect} from "../storageBlock/StorageSearchSelect.js";
 
 export const ItemView = {
 	itemViewModal: $("#itemViewModal"),
@@ -104,6 +105,8 @@ export const ItemView = {
 	allStoredSearchFormItemInputId: $("#itemViewAllStoredSearchForm-itemInputId"),
 	allStoredSearchFormItemInputName: $("#itemViewAllStoredSearchForm-itemInputName"),
 
+	allStoredSearchFormBlockInput: $("#itemViewAllStoredSearchForm-storageBlockInput"),
+
 	resetView: function () {
 		ItemView.itemViewModalLabel.text("");
 		ItemView.storedMultiContainer.hide();
@@ -170,6 +173,8 @@ export const ItemView = {
 		Carousel.clearCarousel(ItemView.itemViewCarousel);
 		KeywordAttUtils.clearHideKeywordDisplay(ItemView.viewKeywordsSection);
 		KeywordAttUtils.clearHideAttDisplay(ItemView.viewAttsSection);
+
+		StorageSearchSelect.input.setup(ItemView.allStoredSearchFormBlockInput, null, true);
 
 		// this.allStoredSearchFormItemInputDeleteButton.disable();//TODO
 		// this.allStoredSearchFormItemInputSearchButton.disable();//TODO

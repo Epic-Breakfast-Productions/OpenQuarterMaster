@@ -7,8 +7,12 @@ Ingests:
 {!{@tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch searchObject}!}
 {#include tags/search/searchForm id=id action='' showKeywords=true showAttributes=true onSubmit=str:fmt("ItemStoredSearch.search(this, event,'%s',false, true);",resultsContainer) defaultPageSize=config:['ui.itemsStored.search.defaultPageSize']}
     {#inputs}
-        {#inputs/item/itemSelectInput id=id /}
-        {#inputs/storageBlock/storageBlockSelectInput id=id blockIdName='blockId' /}
+        <div class="mb-3 col col-3">
+            {#inputs/item/itemSelectInput id=id /}
+        </div>
+        <div class="mb-3 col col-3">
+            {#inputs/storageBlock/storageBlockSelectInput id=id blockIdName='blockId' /}
+        </div>
 		<div class="mb-3 col col-3">
 			<div>
 				<label for="{id}-itemStoredGenIdInput" class="form-label">General Id</label>
