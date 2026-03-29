@@ -156,7 +156,7 @@ export const StoredView = {
 	},
 
 	getStoredPricing(stored){
-		if(Object.keys(stored.calculatedPrices).length) {
+		if(stored.calculatedPrices != null && Object.keys(stored.calculatedPrices).length) {
 			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row pricingContainer"></div></div>');
 
 			Pricing.View.CalculatedPricing.showInDiv(output.find(".pricingContainer"), stored.calculatedPrices, "col-6");
