@@ -323,13 +323,6 @@ export const ItemAddEdit = {
 // 	}
 // });
 
-		StorageSearchSelect.selectStorageBlock = function (blockName, blockId, inputIdPrepend, otherModalId) {
-			Main.processStart();
-			console.log("Selected " + blockId + " - " + blockName);
-			ItemAddEdit.storageInput.addStorage(blockName, blockId);
-			Main.processStop();
-		}
-
 		ItemAddEdit.addEditItemForm.submit(async function (event) {
 			event.preventDefault();
 			console.log("Submitting add/edit form.");

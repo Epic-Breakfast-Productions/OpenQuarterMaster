@@ -36,7 +36,7 @@ export const ItemSearchSelect = {
 			event.preventDefault();
 			console.log("Submitting search form.");
 
-			var searchParams = new URLSearchParams(new FormData(event.target));
+			let searchParams = new URLSearchParams(new FormData(event.target));
 			console.log("URL search params: " + searchParams);
 
 			Rest.call({
