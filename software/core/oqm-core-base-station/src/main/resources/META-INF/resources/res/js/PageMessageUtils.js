@@ -85,7 +85,7 @@ export class PageMessageUtils extends PageUtility {
 	}
 
 	static {
-		window.PageMessageUtils = PageMessageUtils;
+		window.PageMessageUtils = this;
 
 		console.log("Processing page message.");
 
