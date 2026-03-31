@@ -1,11 +1,12 @@
 import {Icons} from "./Icons.js";
 import {UriUtils} from "./UriUtils.js";
+import {PageUtility} from "./utilClasses/PageUtility.js";
 
-export const PageMessageUtils = {
-	mainMessageDiv: $("#messageDiv"),
-	alertIdCount: 0,
-	buildMessageDiv(type, message, heading, id, infoContent = null) {
+export class PageMessageUtils extends PageUtility {
+	static mainMessageDiv = $("#messageDiv");
+	static alertIdCount = 0;
 
+	static buildMessageDiv(type, message, heading, id, infoContent = null) {
 		if (id != null) {
 			id = 'id="' + id + '"'
 		} else {
@@ -43,15 +44,18 @@ export const PageMessageUtils = {
 		output = output.append(infoContentObj);
 
 		return output;
-	},
-	addMessageToDiv(jqueryObj, type, message, heading, id, infoContent = null) {
+	}
+
+	static addMessageToDiv(jqueryObj, type, message, heading, id, infoContent = null) {
 		let messageDiv = PageMessageUtils.buildMessageDiv(type, message, heading, id, infoContent);
 		messageDiv.appendTo(jqueryObj.get(0));
-	},
-	addMessage(type, message, heading, id, infoContent = null) {
+	}
+
+	static addMessage(type, message, heading, id, infoContent = null) {
 		PageMessageUtils.addMessageToDiv(PageMessageUtils.mainMessageDiv, type, message, heading, id, infoContent);
-	},
-	getMessageQuery(message, type, heading) {
+	}
+
+	static getMessageQuery(message, type, heading) {
 		let messageQuery = "message=" + message;
 
 		if (type) {
@@ -61,8 +65,9 @@ export const PageMessageUtils = {
 			messageQuery += "&messageHeading=" + heading;
 		}
 		return messageQuery;
-	},
-	reloadPageWithMessage(message, type, heading) {
+	}
+
+	static reloadPageWithMessage(message, type, heading) {
 		let messageQuery = PageMessageUtils.getMessageQuery(message, type, heading);
 		let url = window.location.href;
 
@@ -72,12 +77,16 @@ export const PageMessageUtils = {
 			url += '?' + messageQuery;
 		}
 		window.location.replace(url);
-	},
-	gotoPageWithMessage(page, message, type, heading) {
+	}
+
+	static gotoPageWithMessage(page, message, type, heading) {
 		let url = page + '?' + PageMessageUtils.getMessageQuery(message, type, heading);
 		window.location.replace(url);
-	},
-	initPage() {
+	}
+
+	static {
+		window.PageMessageUtils = PageMessageUtils;
+
 		console.log("Processing page message.");
 
 		if (UriUtils.getParams.has("message")) {
@@ -97,5 +106,7 @@ export const PageMessageUtils = {
 		}
 		console.log("Done processing page messages.");
 		Main.processStop();
+
+		console.log(this.name + " done initializing.");
 	}
-};
+}
