@@ -126,9 +126,9 @@
 	import { ItemCategoryInput } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js';
 	
 	SearchUtils.initPage();
-	ItemAddEdit.initPage();
-	ItemView.initPage();
-	ItemSearchSelect.initPage();
+	ItemAddEdit.init();
+	ItemView.init();
+	ItemSearchSelect.init();
 	ItemStoredEdit.initPage();
 	StorageSearchSelect.initPage();
 	IdGeneratorAddEdit.init();
@@ -147,7 +147,6 @@
 	window.Rest = Rest;
 	window.ItemAddEdit = ItemAddEdit;
 	window.ItemView = ItemView;
-	window.ItemSearchSelect = ItemSearchSelect;
 	window.ItemStoredEdit = ItemStoredEdit;
 	window.HistorySearchUtils = HistorySearchUtils;
 	window.StorageSearchSelect = StorageSearchSelect;
