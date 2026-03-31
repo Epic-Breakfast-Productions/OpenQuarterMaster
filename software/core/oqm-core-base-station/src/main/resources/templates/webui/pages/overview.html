@@ -451,5 +451,20 @@
 				}
 			});
 		</script>
+		<script type="module">
+			import { TestClass } from "{rootPrefix}/res/js/test/Test.js";
+			
+			TestClass.initialized();
+			// console.log("Test 1: ", Test.getTest());
+			
+			window.TestClass = TestClass;
+			
+		</script>
+		{!<script type="module">!}
+			{!import { Test, TestClass } from "{rootPrefix}/res/js/test/Test.js";!}
+			{!!}
+			{!console.log("Test 2: ",Test.getTest());!}
+			{!console.log("Test num: ",TestClass.num);!}
+		{!</script>!}
 	{/pageScript}
 {/include}
