@@ -1,8 +1,9 @@
 import {ModalUtils} from "../../../ModalUtils.js";
 import {FileAttachmentAddEdit} from "./FileAttachmentAddEdit.js";
 import {Rest} from "../../../Rest.js";
+import {PageUtility} from "../../../utilClasses/PageUtility.js";
 
-export class FileAttachmentSearchSelect {
+export class FileAttachmentSearchSelect extends PageUtility {
 	static curResultContainer = null;
 	static selectSearch = $("#fileAttachmentSearchSelectForm");
 	static modal = $("#fileAttachmentSearchSelectModal");
