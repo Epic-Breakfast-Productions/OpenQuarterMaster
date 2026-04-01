@@ -1,6 +1,6 @@
 
-export const KeywordAttEdit = {
-	addKeywordInput(container, keyword) {
+export class KeywordAttEdit {
+	static addKeywordInput(container, keyword) {
 		console.log("Adding keyword input.");
 		let newInputDiv = $('<div class="input-group mb-1"> \
   <input type="text" class="form-control keywordInput" placeholder="Keyword" name="keyword" required> \
@@ -11,8 +11,8 @@ export const KeywordAttEdit = {
 		);
 		newInputDiv.find(":input").val(keyword);
 		return newInputDiv;
-	},
-	addKeywordInputs(container, keywords) {
+	}
+	static addKeywordInputs(container, keywords) {
 		if (keywords.length > 0) {
 			console.log("had keywords");
 			keywords.forEach(function (keyword) {
@@ -20,8 +20,8 @@ export const KeywordAttEdit = {
 				KeywordAttEdit.addKeywordInput(container, keyword);
 			});
 		}
-	},
-	addAttInput(container, key, val) {
+	}
+	static addAttInput(container, key, val) {
 		console.log("Adding attribute input.");
 		let newInputDiv = $('<div class="input-group mb-1"> \
   <input type="text" class="form-control attInputKey" placeholder="key" name="attributeKey" required> \
@@ -34,8 +34,8 @@ export const KeywordAttEdit = {
 		newInputDiv.find(".attInputKey").val(key);
 		newInputDiv.find(".attInputValue").val(val);
 		return newInputDiv;
-	},
-	addAttInputs(container, atts) {
+	}
+	static addAttInputs(container, atts) {
 		if (Object.keys(atts).length > 0) {
 			console.log("had attributes");
 
@@ -45,25 +45,25 @@ export const KeywordAttEdit = {
 				KeywordAttEdit.addAttInput(container, key, val);
 			});
 		}
-	},
-	keywordsAttsInputRem(target) {
+	}
+	static keywordsAttsInputRem(target) {
 		console.log("Removing keyword or att input row");
 		target.parentElement.remove();
-	},
-	addKeywordData(data, container) {
+	}
+	static addKeywordData(data, container) {
 		data.keywords = [];
 		container.find(".keywordInput").each(function (i, keywordInput) {
 			data.keywords.push(keywordInput.value);
 		});
-	},
-	addAttData(data, container) {
+	}
+	static addAttData(data, container) {
 		data.attributes = {};
 		let attValArr = container.find(".attInputValue");
 		container.find(".attInputKey").each(function (i, attKeyInput) {
 			data.attributes[attKeyInput.value] = attValArr[i].value;
 		});
-	},
-	addKeywordAttData(data, keywordContainer, attContainer) {
+	}
+	static addKeywordAttData(data, keywordContainer, attContainer) {
 		KeywordAttEdit.addKeywordData(data, keywordContainer);
 		KeywordAttEdit.addAttData(data, attContainer)
 	}

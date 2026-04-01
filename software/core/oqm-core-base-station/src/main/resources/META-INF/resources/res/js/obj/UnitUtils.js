@@ -1,15 +1,15 @@
 import {Rest} from "../Rest.js";
 
-export const UnitUtils = {
-	compatibleUnitMap: null,
-	allUnitOptionsCache: null,
-	compatibleUnitOptionsCache: {},
+export class UnitUtils {
+	static compatibleUnitMap = null;
+	static allUnitOptionsCache = null;
+	static compatibleUnitOptionsCache = {};
 
-	newUnitCompatible(unitSelectJq, newUnit){
+	static newUnitCompatible(unitSelectJq, newUnit){
 		let found = unitSelectJq.find("option[value='"+newUnit+"']").length;
 		return !!found;
-	},
-	getAllUnitOptions: async function (selectedVal = null) {
+	}
+	static async getAllUnitOptions(selectedVal = null) {
 		if (this.allUnitOptionsCache == null) {
 			await Rest.call({
 				method: "GET",
@@ -30,8 +30,8 @@ export const UnitUtils = {
 			//TODO:: find value, mark as selected
 		}
 		return output;
-	},
-	getCompatibleUnitOptions: async function (unitStrOrAmtStored) {
+	}
+	static async getCompatibleUnitOptions(unitStrOrAmtStored) {
 		let wasStored = false;
 		let unitStr = unitStrOrAmtStored;
 
@@ -86,28 +86,28 @@ export const UnitUtils = {
 
 		console.debug("Got compatible unit options: ", output)
 		return output;
-	},
+	}
 
 	/**
 	 * Example input: {"unit":{"string":"units","name":"Units","symbol":"units"},"scale":"ABSOLUTE","value":8}
 	 * @param quantityObj
 	 */
-	quantityToDisplayStr(quantityObj) {
+	static quantityToDisplayStr(quantityObj) {
 		return quantityObj.value + quantityObj.unit.symbol;
-	},
-	getUnitObj(unitStr) {
+	}
+	static getUnitObj(unitStr) {
 		return {
 			string: unitStr
 		};
-	},
-	getQuantityObj(value, unit) {
+	}
+	static getQuantityObj(value, unit) {
 		return {
 			unit: UnitUtils.getUnitObj(unit),
 			scale: "ABSOLUTE",
 			value: value
 		};
-	},
-	getQuantityFromInputs(inputsContainerJq) {
+	}
+	static getQuantityFromInputs(inputsContainerJq) {
 		let output = this.getQuantityObj(
 			inputsContainerJq.find('input[name="amountStored"]').val(),
 			inputsContainerJq.find('select[name="amountStoredUnit"]').val()
@@ -115,14 +115,14 @@ export const UnitUtils = {
 		console.debug("Got quantity from form: ", output);
 
 		return output;
-	},
-	getConvertRequestObj(quantityObj, unitObj){
+	}
+	static getConvertRequestObj(quantityObj, unitObj){
 		return {
 			quantity: quantityObj,
 			newUnit: unitObj,
 		};
-	},
-	convertQuantity: async function(requestObj){
+	}
+	static async convertQuantity(requestObj){
 		let output = null;
 		await Rest.call({
 			spinnerContainer: null,
@@ -136,4 +136,4 @@ export const UnitUtils = {
 		});
 		return output;
 	}
-};
+}
