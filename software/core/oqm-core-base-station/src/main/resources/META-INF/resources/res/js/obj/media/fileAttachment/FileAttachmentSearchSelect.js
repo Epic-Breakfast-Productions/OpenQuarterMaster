@@ -2,23 +2,23 @@ import {ModalUtils} from "../../../ModalUtils.js";
 import {FileAttachmentAddEdit} from "./FileAttachmentAddEdit.js";
 import {Rest} from "../../../Rest.js";
 
-export const FileAttachmentSearchSelect = {
-	curResultContainer: null,
-	selectSearch: $("#fileAttachmentSearchSelectForm"),
-	modal: $("#fileAttachmentSearchSelectModal"),
-	modalCloseButton: $("#fileAttachmentSearchSelectModalLabelCloseButton"),
-	modalBs: new bootstrap.Modal("#fileAttachmentSearchSelectModal"),
-	fileSearchResults: $("#fileAttachmentSearchSelectResults"),
+export class FileAttachmentSearchSelect {
+	static curResultContainer = null;
+	static selectSearch = $("#fileAttachmentSearchSelectForm");
+	static modal = $("#fileAttachmentSearchSelectModal");
+	static modalCloseButton = $("#fileAttachmentSearchSelectModalLabelCloseButton");
+	static modalBs = new bootstrap.Modal("#fileAttachmentSearchSelectModal");
+	static fileSearchResults = $("#fileAttachmentSearchSelectResults");
 
-	setup(resultContainerJq){
+	static setup(resultContainerJq){
 		console.log("Setting up for file attachment search select.");
 		ModalUtils.setReturnModal(FileAttachmentSearchSelect.modal, resultContainerJq);
 		FileAttachmentAddEdit.setupForAdd();
 		this.curResultContainer = resultContainerJq;
 		this.selectSearch.submit();
-	},
+	}
 
-	selectFile(fileId, fileName){
+	static selectFile(fileId, fileName){
 		console.log("User selected file ", fileId);
 
 		let output = $('<tr class="selectedFile"></tr>');
@@ -28,12 +28,12 @@ export const FileAttachmentSearchSelect = {
 		output.append($('<td><button type="button" class="btn btn-danger btn-sm" onclick="$(this).parent().parent().remove();" title="Remove">'+Icons.remove+'</button></td>'));
 
 		this.curResultContainer.append(output);
-	},
+	}
 
-	resetInput(inputContainerJq){
+	static resetInput(inputContainerJq){
 		inputContainerJq.find(".fileAttachmentSelectInputTableContent").text("");
-	},
-	getFileListFromInput(inputContainerJq){
+	}
+	static getFileListFromInput(inputContainerJq){
 		let output = [];
 		inputContainerJq.find(".selectedFile").each(function (i, selectedFileRow){
 			output.push($(selectedFileRow).data("id"));
@@ -41,8 +41,8 @@ export const FileAttachmentSearchSelect = {
 		console.log("Got the following file ids: ", output);
 
 		return output;
-	},
-	populateFileInputFromObject(inputContainerJq, fileIdList, spinnerContainer, failMessagesDiv){
+	}
+	static populateFileInputFromObject(inputContainerJq, fileIdList, spinnerContainer, failMessagesDiv){
 		console.log("Populating file attachment input.");
 		this.curResultContainer = inputContainerJq.find(".fileAttachmentSelectInputTableContent");
 
@@ -56,8 +56,9 @@ export const FileAttachmentSearchSelect = {
 				}
 			});
 		});
-	},
-	initPage: function () {
+	}
+	static {
+		window.FileAttachmentSearchSelect = this;
 		FileAttachmentSearchSelect.selectSearch.on("submit", function (e){
 			e.preventDefault();
 			console.log("Submitting File Attachment Select Search");
@@ -93,4 +94,4 @@ export const FileAttachmentSearchSelect = {
 			FileAttachmentSearchSelect.modalCloseButton.click();
 		}
 	}
-};
+}
