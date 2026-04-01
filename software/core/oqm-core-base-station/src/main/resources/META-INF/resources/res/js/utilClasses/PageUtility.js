@@ -5,11 +5,11 @@
 export class PageUtility {
 
 	static {
-		//
+		//nothing to do
 	}
 
 	/**
-	 * Call this method to initialize the class. Moreseo to ensure proper setup and initialization of the inheriting class.
+	 * Call this method to initialize the class. Moreseo to ensure proper setup and initialization of the inheriting class, appease "unused" code import warnings
 	 */
 	static init(){
 		console.debug(this.name + " initialization assured.");

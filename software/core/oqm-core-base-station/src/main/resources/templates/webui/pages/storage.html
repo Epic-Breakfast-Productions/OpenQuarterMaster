@@ -387,7 +387,6 @@ Accepts:
 		import { ItemCategoryView } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryView.js';
 		import { UriUtils } from '{rootPrefix}/res/js/UriUtils.js';
 		import { ItemCategoryInput } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js';
-		import { Carousel } from '{rootPrefix}/res/js/Carousel.js';
 		import { TextCopyUtils } from '{rootPrefix}/res/js/TextCopyUtils.js';
 		import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
 		import { ItemSearchSelect } from '{rootPrefix}/res/js/obj/item/ItemSearchSelect.js';
@@ -402,12 +401,10 @@ Accepts:
 		ItemCategoryInput.init();
 		ItemSearchSelect.init();
 		StorageSearchSelect.init();
+		HistorySearchUtils.init();
+		Getters.init();
 
-		window.HistorySearchUtils = HistorySearchUtils;
-		window.KeywordAttEdit = KeywordAttEdit;
-		window.KeywordAttUtils = KeywordAttUtils;
 		window.Rest = Rest;
-		window.Getters = Getters;
 		window.UriUtils = UriUtils;
 		window.TextCopyUtils = TextCopyUtils;
 		window.ModalUtils = ModalUtils;

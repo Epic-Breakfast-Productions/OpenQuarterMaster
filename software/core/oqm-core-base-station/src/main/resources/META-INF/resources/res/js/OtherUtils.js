@@ -1,5 +1,5 @@
-export const OtherUtils = {
-	numBytesToHuman(size) {
+export class OtherUtils {
+	static numBytesToHuman(size) {
 		let sizes = [' Bytes', ' KB', ' MB', ' GB',
 			' TB', ' PB', ' EB', ' ZB', ' YB'];
 

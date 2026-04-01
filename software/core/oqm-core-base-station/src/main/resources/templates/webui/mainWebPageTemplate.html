@@ -410,14 +410,12 @@ Ingests:
 	PageMessageUtils.init();
 	Icons.init();
 	
-	DselectUtils.initPage();
+	DselectUtils.init();
+	OqmDbUtils.init();
+	
 	TimeUtils.initPage();
 	
 	//allow direct usage of imported utilities in html
-	window.OqmDbUtils = OqmDbUtils;
-	window.Icons = Icons;
-	window.DselectUtils = DselectUtils;
-	window.PageMessageUtils = PageMessageUtils;
 	window.TextCopyUtils = TextCopyUtils;
 	
 	console.log("Main modules loaded.");

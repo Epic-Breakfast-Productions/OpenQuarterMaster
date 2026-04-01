@@ -3,10 +3,10 @@ import {Links} from "./Links.js";
 import {Icons} from "./Icons.js";
 import {PageComponents} from "./PageComponents.js";
 
-export const AssociatedLinks = {
-	Form: {
-		Input: {
-			getInput(innerElem){
+export class AssociatedLinks {
+	static Form = class {
+		static Input = class {
+			static getInput(innerElem){
 				let output = innerElem;
 				if (!output.jquery) {
 					output = $(output);
@@ -15,8 +15,8 @@ export const AssociatedLinks = {
 					output = output.closest(".assocLinkInputLink");
 				}
 				return output;
-			},
-			newInput(data = null){
+			}
+			static newInput(data = null){
 				let newInput = $(PageComponents.Inputs.AssociatedLinks.linkInput);
 
 				if (data != null) {
@@ -33,24 +33,24 @@ export const AssociatedLinks = {
 				AssociatedLinks.Form.Input.updateDescDisplay(newInput);
 
 				return newInput;
-			},
-			getLabelInput(linkInputJq){
+			}
+			static getLabelInput(linkInputJq){
 				return linkInputJq.find(".assocLinkInputLinkLabel");
-			},
-			getLinkInput(linkInputJq){
+			}
+			static getLinkInput(linkInputJq){
 				return linkInputJq.find(".assocLinkInputLinkLink");
-			},
-			getDescToggle(linkInputJq){
+			}
+			static getDescToggle(linkInputJq){
 				return linkInputJq.find(".assocLinkInputLinkDescToggle");
-			},
-			getDescInput(linkInputJq){
+			}
+			static getDescInput(linkInputJq){
 				return linkInputJq.find(".assocLinkInputLinkDesc");
-			},
-			descEnabled(linkInputJq){
+			}
+			static descEnabled(linkInputJq){
 				let toggleButt =AssociatedLinks.Form.Input.getDescToggle(linkInputJq);
 				return toggleButt.is(":checked");
-			},
-			updateDescDisplay(innerElemJq){
+			}
+			static updateDescDisplay(innerElemJq){
 				console.log("Toggling display of link description: ", innerElemJq);
 				let input = AssociatedLinks.Form.Input.getInput(innerElemJq);
 				let descInput = AssociatedLinks.Form.Input.getDescInput(input);
@@ -60,8 +60,8 @@ export const AssociatedLinks = {
 				} else {
 					descInput.hide();
 				}
-			},
-			getData(linkInputJq){
+			}
+			static getData(linkInputJq){
 
 				return {
 					label: AssociatedLinks.Form.Input.getLabelInput(linkInputJq).val(),
@@ -69,13 +69,13 @@ export const AssociatedLinks = {
 					description: AssociatedLinks.Form.Input ?
 						AssociatedLinks.Form.Input.getDescInput(linkInputJq).val() : null
 				};
-			},
-			remove(removeButtonJq) {
+			}
+			static remove(removeButtonJq) {
 				if (confirm("Are you sure you want to remove this link?") === false) return;
 				SelectedObjectDivUtils.removeSelected(removeButtonJq.closest('.assocLinkInputLink'));
-			},
-		},
-		getInput: function (innerElem) {
+			}
+		}
+		static getInput(innerElem) {
 			let output = innerElem;
 			if (!output.jquery) {
 				output = $(output);
@@ -84,18 +84,17 @@ export const AssociatedLinks = {
 				output = output.closest(".associatedLinkInput");
 			}
 			return output;
-		},
-		getLinkInputs: function (linkInputJq) {
+		}
+		static getLinkInputs(linkInputJq) {
 			let linksContainer = AssociatedLinks.Form.getLinksContainer(linkInputJq);
 
 			return linksContainer.find(".assocLinkInputLink");
-		},
-		getLinksContainer: function (linkInputJq) {
+		}
+		static getLinksContainer(linkInputJq) {
 			return linkInputJq.find(".linksContainer");
-		},
+		}
 
-
-		addLink: function (linkInputJq, linkData = null) {
+		static addLink(linkInputJq, linkData = null) {
 			console.info("Adding new link input to ", linkInputJq);
 			let linksContainer = AssociatedLinks.Form.getLinksContainer(linkInputJq);
 
@@ -103,15 +102,15 @@ export const AssociatedLinks = {
 			linksContainer.append(newInput);
 
 			return newInput;
-		},
-		removeLink(remButtJq) {
+		}
+		static removeLink(remButtJq) {
 			if (confirm("Are you sure?") === false) return;
 			SelectedObjectDivUtils.removeSelected(
 				Links.Form.Input.getInput(remButtJq)
 			);
-		},
+		}
 
-		getLinkData: function (linkInputJq) {
+		static getLinkData(linkInputJq) {
 			let output = [];
 
 			let links = AssociatedLinks.Form.getLinkInputs(linkInputJq);
@@ -123,8 +122,8 @@ export const AssociatedLinks = {
 			});
 
 			return output;
-		},
-		populateInput: function (linkInputJq, linkList = null) {
+		}
+		static populateInput(linkInputJq, linkList = null) {
 			console.log("Populating associated link input: ",  linkInputJq, linkList);
 
 			if(linkList) {
@@ -132,14 +131,14 @@ export const AssociatedLinks = {
 					AssociatedLinks.Form.addLink(linkInputJq, curLinkListData);
 				});
 			}
-		},
-		reset: function (linkInputJq) {
+		}
+		static reset(linkInputJq) {
 			AssociatedLinks.Form.getLinksContainer(linkInputJq).html("");
-		},
-	},
+		}
+	}
 
-	View: {
-		newLinksContainer: function (linkData) {
+	static View = class {
+		static newLinksContainer(linkData) {
 			let output = $(`<li class="linkViewLink"></li>`);
 
 			output.append(
@@ -155,12 +154,12 @@ export const AssociatedLinks = {
 			}
 
 			return output;
-		},
-		toggleBreakdownView(breakdownButtonJq){
+		}
+		static toggleBreakdownView(breakdownButtonJq){
 			breakdownButtonJq.parent().parent().find(".priceBreakdownContainer").toggleClass("d-none");
-		},
+		}
 
-		showInDiv(containerJq, linkArray, extraClasses= ""){
+		static showInDiv(containerJq, linkArray, extraClasses= ""){
 			let output = $("<ul class='linkViewList'></ul>");
 
 			linkArray.forEach(function (linkData) {
@@ -171,4 +170,4 @@ export const AssociatedLinks = {
 			return output;
 		}
 	}
-};
+}

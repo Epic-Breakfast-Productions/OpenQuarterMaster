@@ -8,48 +8,48 @@ import "../../lib/overtype/2.3.4/overtype.min.js";
  *
  * @type {{Parsing: {parseMarkdown: function(*): *}}}
  */
-export let MarkdownUtils = {
-	Parsing: {
+export class MarkdownUtils {
+	static Parsing = class {
 		/**
 		 * Parses the given markdown string and returns the sanitized html.
 		 * @param markdown The markdown string to parse.
 		 * @returns {*} The sanitized html parsed from the markdown string.
 		 */
-		parseMarkdown: function (markdown) {
+		static parseMarkdown(markdown) {
 			return DOMPurify.sanitize(
 				marked.parse(
 					markdown.replace(/^[\u200B\u200C\u200D\u200E\u200F\uFEFF]/, "")
 				)
 			);
-		},
+		}
 
-		displayInDiv: function (markdown, divJq) {
+		static displayInDiv(markdown, divJq) {
 			divJq.html(this.parseMarkdown(markdown));
 		}
-	},
-	Editor: {
+	}
+	static Editor = class {
 		/**
 		 * https://github.com/panphora/overtype?tab=readme-ov-file#options
 		 */
-		inputDefaults: {
+		static inputDefaults = {
 			toolbar: true,
 			autoResize: true,      // Auto-expand height with content
 			minHeight: '100px',     // Minimum height when autoResize is enabled
 			maxHeight: '500px',
 			theme: PageTheme.isDarkMode()? "cave" : "solar"
-		},
+		}
 		/**
 		 * Initialize the markdown editor.
 		 * @param editorDivJq
 		 * @returns {*} The OverType instance.
 		 */
-		initInput(editorSelector){
+		static initInput(editorSelector){
 			console.log("Initializing markdown editor for element ", editorSelector);
 
 			return OverType.initFromData(
 				editorSelector,
 				MarkdownUtils.Editor.inputDefaults
 			);
-		},
+		}
 	}
 }

@@ -183,9 +183,9 @@
 			import { FileAttachmentView } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js';
 			import { KeywordAttEdit } from '{rootPrefix}/res/js/obj/ObjEditUtils.js';
 			
-			ItemStoredEdit.initPage();
-			ItemStoredTransaction.initPage();
-			CodeScanner.initPage();
+			ItemStoredEdit.init();
+			ItemStoredTransaction.init();
+			CodeScanner.init();
 			IdGeneratorAddEdit.init();
 			IdGeneratorSearchSelect.init();
 			ImageSearchSelect.init();
@@ -195,11 +195,6 @@
 			FileAttachmentAddEdit.init();
 			
 			window.Rest = Rest;
-			window.Getters = Getters;
-			window.UnitUtils = UnitUtils;
-			window.Identifiers = Identifiers;
-			window.Pricing = Pricing;
-			window.KeywordAttEdit = KeywordAttEdit;
 		</script>
 		<script defer>
 			let overviewParentBlocksTreeForm = $("#overviewParentBlocksTreeForm");

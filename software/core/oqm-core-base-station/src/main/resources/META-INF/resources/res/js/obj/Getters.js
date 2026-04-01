@@ -1,7 +1,8 @@
 import {Rest} from "../Rest.js";
 import {StoredTypeUtils} from "../StoredTypeUtils.js";
+import {PageUtility} from "../utilClasses/PageUtility.js";
 
-export class Getters {
+export class Getters extends PageUtility {
 	static StorageBlock = class {
 		static async getStorageBlockItemData(blockId) {
 			console.log("Getting item data for storage block \"" + blockId + "\"");

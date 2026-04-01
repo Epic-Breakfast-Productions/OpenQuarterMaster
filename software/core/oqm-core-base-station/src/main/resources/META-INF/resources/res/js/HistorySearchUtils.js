@@ -1,23 +1,23 @@
 import {Rest} from "./Rest.js";
 
-export const HistorySearchUtils = {
-	getHistorySearchForm(historyViewContainer) {
+export class HistorySearchUtils {
+	static getHistorySearchForm(historyViewContainer) {
 		return historyViewContainer.find(".historySearchForm");
-	},
+	}
 
-	getHistorySearchResults(historyViewContainer) {
+	static getHistorySearchResults(historyViewContainer) {
 		return historyViewContainer.find(".historyViewResults");
-	},
+	}
 
 	/**
 	 *
 	 * @param historyViewContainer
 	 */
-	resetHistorySearch(historyViewContainer) {
+	static resetHistorySearch(historyViewContainer) {
 		HistorySearchUtils.getHistorySearchResults(historyViewContainer).text('');
 		HistorySearchUtils.getHistorySearchForm(historyViewContainer)[0].reset();
 
-	},
+	}
 
 	setupHistorySearch(historyViewContainer, id) {
 		HistorySearchUtils.resetHistorySearch(historyViewContainer);
@@ -27,9 +27,9 @@ export const HistorySearchUtils = {
 		historySearchForm.find("input[name='objectId']").val(id);
 
 		historySearchForm.submit();
-	},
+	}
 
-	runHistorySearch: async function (historySearchFormJs, event) {
+	static async runHistorySearch(historySearchFormJs, event) {
 		event.preventDefault();
 
 		let historySearchForm = $(historySearchFormJs);
@@ -68,5 +68,7 @@ export const HistorySearchUtils = {
 			}
 		});
 	}
-
+	static {
+		window.HistorySearchUtils = this;
+	}
 }
