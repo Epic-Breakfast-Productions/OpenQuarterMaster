@@ -216,6 +216,7 @@ export const StoredView = {
 			includeEditButton = true,
 			includeIdentifier = false,
 			showCurrentlyStored = false,
+			showTransactionButton = true,
 			showAddTransaction = true,
 			showSubtractTransaction = true,
 			showTransferTransaction = true,
@@ -252,13 +253,15 @@ export const StoredView = {
 			StoredView.getStoredAttachedFiles(stored)
 		);
 
-		newContentButtons.append(StoredView.getTransactBlockLink(stored, true, {
-			showAddTransaction: showAddTransaction,
-			showSubtractTransaction: showSubtractTransaction,
-			showCheckoutTransaction: showCheckoutTransaction,
-			showTransferTransaction: showTransferTransaction,
-			showSetTransaction: showSetTransaction
-		}));
+		if(showTransactionButton) {
+			newContentButtons.append(StoredView.getTransactBlockLink(stored, true, {
+				showAddTransaction: showAddTransaction,
+				showSubtractTransaction: showSubtractTransaction,
+				showCheckoutTransaction: showCheckoutTransaction,
+				showTransferTransaction: showTransferTransaction,
+				showSetTransaction: showSetTransaction
+			}));
+		}
 
 		if (includeEditButton) {
 			newContentButtons.append($('<button class="btn btn-warning"  title="Edit This Stored Item" data-bs-toggle="modal" data-bs-target="#itemStoredEditModal" onclick="ItemStoredEdit.setupEditForm(this, \'' + stored.item + '\', \'' + stored.id + '\');">' +
