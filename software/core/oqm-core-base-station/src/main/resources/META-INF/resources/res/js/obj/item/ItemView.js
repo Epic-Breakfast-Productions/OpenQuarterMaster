@@ -27,6 +27,8 @@ export class ItemView extends PageUtility {
 	static itemViewMessages = $("#itemViewMessages");
 	static itemViewModalLabel = $("#itemViewModalLabel");
 
+	static itemTransactionButtonContainer = $("#itemViewTransactButtonContainer");
+
 	static storedMultiContainer = $("#itemViewStoredMultiContainer");
 
 	static storedSingleContainer = $("#itemViewStoredSingleContainer");
@@ -110,6 +112,7 @@ export class ItemView extends PageUtility {
 
 	static resetView() {
 		ItemView.itemViewModalLabel.text("");
+		ItemView.itemTransactionButtonContainer.text("");
 		ItemView.storedMultiContainer.hide();
 		ItemView.storedSingleContainer.hide();
 		ItemView.storedSingleContainer.text("");
@@ -328,6 +331,16 @@ export class ItemView extends PageUtility {
 				ItemAddEdit.setupAddEditForEdit(itemId, ItemView.itemViewModal);
 			});
 		}
+
+		ItemStoredTransaction.ModalButtons.getTransactionSelectDropdown(
+			itemId,
+			null,
+			{
+				showCheckinTransaction: false
+			}
+		).then(function (transactionSelect) {
+			ItemView.itemTransactionButtonContainer.append(transactionSelect);
+		});
 
 		ItemView.itemViewId.text(itemId);
 		UriUtils.addOrReplaceParams("view", itemId);
