@@ -238,4 +238,8 @@ export class Getters extends PageUtility {
 			});
 		}
 	}
+
+	static {
+		window.Getters = this;
+	}
 }

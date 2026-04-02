@@ -1,5 +1,5 @@
 import {DselectUtils} from "./DselectUtils.js";
-import {PageUtility} from "./utilClasses/PageUtility";
+import {PageUtility} from "./utilClasses/PageUtility.js";
 
 export class SearchUtils extends PageUtility {
 	static mainPageSearch = $('#mainPageSearch');
@@ -103,6 +103,7 @@ export class SearchUtils extends PageUtility {
 	}
 
 	static {
+		window.SearchUtils = this;
 		console.log("Initting search utils.");
 		// TODO:: attach handlers to all search forms
 		$(document).ready(function(){

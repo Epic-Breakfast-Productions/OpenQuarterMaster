@@ -57,4 +57,8 @@ export class Links {
 	static getItemViewButtonAsHtml(id, text = "") {
 		return Links.getItemViewButton(id, text).prop("outerHTML")
 	}
+
+	static {
+		window.Links = this;
+	}
 }

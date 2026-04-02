@@ -1,5 +1,6 @@
+import {PageUtility} from "../utilClasses/PageUtility.js";
 
-export class KeywordAttEdit {
+export class KeywordAttEdit extends PageUtility {
 	static addKeywordInput(container, keyword) {
 		console.log("Adding keyword input.");
 		let newInputDiv = $('<div class="input-group mb-1"> \
@@ -66,5 +67,8 @@ export class KeywordAttEdit {
 	static addKeywordAttData(data, keywordContainer, attContainer) {
 		KeywordAttEdit.addKeywordData(data, keywordContainer);
 		KeywordAttEdit.addAttData(data, attContainer)
+	}
+	static {
+		window.KeywordAttEdit = this;
 	}
 }

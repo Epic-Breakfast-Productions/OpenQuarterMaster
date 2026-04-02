@@ -1,6 +1,7 @@
 import {Rest} from "./Rest.js";
+import {PageUtility} from "./utilClasses/PageUtility.js";
 
-export class HistorySearchUtils {
+export class HistorySearchUtils extends PageUtility {
 	static getHistorySearchForm(historyViewContainer) {
 		return historyViewContainer.find(".historySearchForm");
 	}
@@ -19,7 +20,7 @@ export class HistorySearchUtils {
 
 	}
 
-	setupHistorySearch(historyViewContainer, id) {
+	static setupHistorySearch(historyViewContainer, id) {
 		HistorySearchUtils.resetHistorySearch(historyViewContainer);
 
 		let historySearchForm = HistorySearchUtils.getHistorySearchForm(historyViewContainer);

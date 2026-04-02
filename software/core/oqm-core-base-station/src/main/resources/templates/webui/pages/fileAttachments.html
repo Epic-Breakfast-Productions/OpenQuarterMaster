@@ -1,6 +1,5 @@
 {#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Files' page='files'}
 {#styleSheets}
-<link rel="stylesheet" href="{rootPrefix}/lib/Croppie-2.6.4/croppie.css"/>
 {/styleSheets}
 {#pageStyle}
 
@@ -50,7 +49,6 @@
 
 {/modals}
 {#scripts}
-    <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
 {/scripts}
 {#pageScript}
 <script type="module">
@@ -58,7 +56,7 @@
 	import { FileAttachmentAddEdit } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js';
 	import { FileAttachmentView } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js';
 	
-	SearchUtils.initPage();
+	SearchUtils.init();
 	FileAttachmentAddEdit.init();
 	FileAttachmentView.init();
 

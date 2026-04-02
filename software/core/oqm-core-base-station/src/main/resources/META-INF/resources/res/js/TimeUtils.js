@@ -1,3 +1,5 @@
+import {PageUtility} from "./utilClasses/PageUtility.js";
+
 /**
  *
  * TODO:: function to turn dt from server to client's tz, format
@@ -5,7 +7,7 @@
  * https://moment.github.io/luxon/demo/global.html
  * @type {{getNowTs(): *, setupDateTimeInputs(): void, getTsForServer(*): (null|*)}}
  */
-export class TimeUtils {
+export class TimeUtils extends PageUtility {
 
 	static tsToLocal(ts){
 		return ts.slice(0, 16);

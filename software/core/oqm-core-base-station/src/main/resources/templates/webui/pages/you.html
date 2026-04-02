@@ -67,7 +67,7 @@
                         <p>
                             This token is used to perform actions on the API. Use with caution.
                         </p>
-                        {#copyTextButton copyTextContainerJqSelector='$(\'#userCurrentToken\')' /}
+                        {#copyTextButton copyTextContainerJqSelector="$('#userCurrentToken')" /}
                         <p>
                             <code id="userCurrentToken" class="user-select-all">{jwt}</code>
                         </p>
@@ -94,8 +94,6 @@
 		import { TextCopyUtils } from '{rootPrefix}/res/js/TextCopyUtils.js';
 		
 		HistorySearchUtils.init();
-		
-		window.TextCopyUtils = TextCopyUtils;
 		
 		// $("#userHistoryForm").submit();
     </script>

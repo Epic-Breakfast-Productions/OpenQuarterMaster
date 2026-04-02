@@ -393,21 +393,16 @@ Accepts:
 		import { ModalUtils } from "{rootPrefix}/res/js/ModalUtils.js";
 		
 		// init necessary modules
-		StorageSearchSelect.initPage();
+		StorageSearchSelect.init();
 		ImageSearchSelect.init();
 		ImageAdd.init();
 		ImageAddFromSelect.init();
-		SearchUtils.initPage();
+		SearchUtils.init();
 		ItemCategoryInput.init();
 		ItemSearchSelect.init();
 		StorageSearchSelect.init();
 		HistorySearchUtils.init();
 		Getters.init();
-
-		window.Rest = Rest;
-		window.UriUtils = UriUtils;
-		window.TextCopyUtils = TextCopyUtils;
-		window.ModalUtils = ModalUtils;
 		
 		console.log("Page modules loaded.");
 	</script>

@@ -731,47 +731,47 @@ export class ItemStoredTransaction extends PageUtility {
 		}
 	}
 	static Checkout = class {
-		modal = $("#itemStoredTransactionCheckoutModal");
-		messages = $("#itemStoredTransactionCheckoutMessages");
-		form = $("#itemStoredTransactionCheckoutForm");
-		formContainer = $("#itemStoredTransactionCheckoutFormContainer");
+		static modal = $("#itemStoredTransactionCheckoutModal");
+		static messages = $("#itemStoredTransactionCheckoutMessages");
+		static form = $("#itemStoredTransactionCheckoutForm");
+		static formContainer = $("#itemStoredTransactionCheckoutFormContainer");
 
-		itemSearchContainer = $("#itemStoredTransactionCheckoutFormItemInputContainer");
-		itemSearchIdInput = $("#itemStoredTransactionCheckoutFormItem-itemInputId");
-		itemSearchClearButton = $("#itemStoredTransactionCheckoutFormItem-itemInputClearButton");
+		static itemSearchContainer = $("#itemStoredTransactionCheckoutFormItemInputContainer");
+		static itemSearchIdInput = $("#itemStoredTransactionCheckoutFormItem-itemInputId");
+		static itemSearchClearButton = $("#itemStoredTransactionCheckoutFormItem-itemInputClearButton");
 
-		itemIdInput = $("#itemStoredTransactionCheckoutFormItemIdInput");
+		static itemIdInput = $("#itemStoredTransactionCheckoutFormItemIdInput");
 
-		itemInfoContainer = $("#itemStoredTransactionCheckoutFormItemInfoContainer");
-		itemInfoName = $("#itemStoredTransactionCheckoutFormInfoItemName");
+		static itemInfoContainer = $("#itemStoredTransactionCheckoutFormItemInfoContainer");
+		static itemInfoName = $("#itemStoredTransactionCheckoutFormInfoItemName");
 
-		typeInputContainer = $("#itemStoredTransactionCheckoutFormTypeInputContainer");
-		typeInput = $("#itemStoredTransactionCheckoutFormTypeInput");
+		static typeInputContainer = $("#itemStoredTransactionCheckoutFormTypeInputContainer");
+		static typeInput = $("#itemStoredTransactionCheckoutFormTypeInput");
 
-		fromBlockContainer = $("#itemStoredTransactionCheckoutFormFromBlockContainer");
-		fromBlockSelect = $("#itemStoredTransactionCheckoutFormFromBlockSelect");
+		static fromBlockContainer = $("#itemStoredTransactionCheckoutFormFromBlockContainer");
+		static fromBlockSelect = $("#itemStoredTransactionCheckoutFormFromBlockSelect");
 
-		fromStoredContainer = $("#itemStoredTransactionCheckoutFormFromStoredContainer");
-		fromStoredInputGroup = $("#itemStoredTransactionCheckoutFormFromItemStored-inputGroup");
-		fromStoredBlockIdInput = $("#itemStoredTransactionCheckoutFormFromItemStored-itemStoredInputBlockId");
-		fromStoredStoredIdInput = $("#itemStoredTransactionCheckoutFormFromItemStored-itemStoredInputId");
+		static fromStoredContainer = $("#itemStoredTransactionCheckoutFormFromStoredContainer");
+		static fromStoredInputGroup = $("#itemStoredTransactionCheckoutFormFromItemStored-inputGroup");
+		static fromStoredBlockIdInput = $("#itemStoredTransactionCheckoutFormFromItemStored-itemStoredInputBlockId");
+		static fromStoredStoredIdInput = $("#itemStoredTransactionCheckoutFormFromItemStored-itemStoredInputId");
 
-		amountContainer = $("#itemStoredTransactionCheckoutFormAmountContainer");
-		amountInputs = $("#itemStoredTransactionCheckoutFormAmountInputs");
-		amountAllInput = $("#itemStoredTransactionCheckoutFormAmountAllInput");
+		static amountContainer = $("#itemStoredTransactionCheckoutFormAmountContainer");
+		static amountInputs = $("#itemStoredTransactionCheckoutFormAmountInputs");
+		static amountAllInput = $("#itemStoredTransactionCheckoutFormAmountAllInput");
 
-		forWhomSelect = $("#itemStoredTransactionCheckoutFormForSelectInput");
+		static forWhomSelect = $("#itemStoredTransactionCheckoutFormForSelectInput");
 
-		forUserContainer = $("#itemStoredTransactionCheckoutFormForUserContainer");
-		forUserSelect = $("#itemStoredTransactionCheckoutFormForUserInput");
+		static forUserContainer = $("#itemStoredTransactionCheckoutFormForUserContainer");
+		static forUserSelect = $("#itemStoredTransactionCheckoutFormForUserInput");
 
-		forExternalContainer = $("#itemStoredTransactionCheckoutFormForExtUserContainer");
-		forExternalNameInput = $("#itemStoredTransactionCheckoutFormForExtUserNameInput");
-		forExternalIdInput = $("#itemStoredTransactionCheckoutFormForExtUserIdInput");
+		static forExternalContainer = $("#itemStoredTransactionCheckoutFormForExtUserContainer");
+		static forExternalNameInput = $("#itemStoredTransactionCheckoutFormForExtUserNameInput");
+		static forExternalIdInput = $("#itemStoredTransactionCheckoutFormForExtUserIdInput");
 
-		dueBackInput = $("#itemStoredTransactionCheckoutFormDueBackInput");
-		reasonInput = $("#itemStoredTransactionCheckoutFormReasonInput");
-		detailsInput = $("#itemStoredTransactionCheckoutFormDetailDetailInput");
+		static dueBackInput = $("#itemStoredTransactionCheckoutFormDueBackInput");
+		static reasonInput = $("#itemStoredTransactionCheckoutFormReasonInput");
+		static detailsInput = $("#itemStoredTransactionCheckoutFormDetailDetailInput");
 
 		static resetForm() {
 			ItemStoredTransaction.Checkout.form.trigger("reset");
@@ -2001,6 +2001,7 @@ export class ItemStoredTransaction extends PageUtility {
 	}
 	static {
 		window.ItemStoredTransaction = this;
+
 		if (ItemStoredTransaction.Add.form) {
 			ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitFormHandler);
 			ItemStoredTransaction.Add.itemIdInput.on("change", function () {

@@ -104,5 +104,4 @@ export class ItemCategoryTree {
 	static {
 		window.ItemCategoryTree = this;
 	}
-};
-
+}

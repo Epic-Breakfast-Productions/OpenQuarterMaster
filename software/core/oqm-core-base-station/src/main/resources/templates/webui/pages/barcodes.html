@@ -140,11 +140,13 @@
 		import { ItemSearchSelect } from '{rootPrefix}/res/js/obj/item/ItemSearchSelect.js';
 		
 		// init necessary modules
-		SearchUtils.initPage();
+		SearchUtils.init();
 		StorageSearchSelect.init();
 		ItemSearchSelect.init();
 		
 		console.log("Page modules loaded.");
+	</script>
+	<script defer>
 		
 		const outputImageDisplay = $("#outputImageDisplay");
 		const noImageText = $("#noImageText");

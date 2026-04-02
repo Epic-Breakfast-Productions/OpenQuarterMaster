@@ -1,6 +1,7 @@
 import {Rest} from "../Rest.js";
+import {PageUtility} from "../utilClasses/PageUtility.js";
 
-export class KeywordAttUtils {
+export class KeywordAttUtils extends PageUtility {
 
 	static displayKeywordsIn(container, keywords) {
 		keywords.forEach(function (keyword) {
@@ -88,5 +89,9 @@ export class KeywordAttUtils {
 		}
 
 		//TODO:: move other related in here
+	}
+
+	static {
+		window.KeywordAttUtils = this;
 	}
 }

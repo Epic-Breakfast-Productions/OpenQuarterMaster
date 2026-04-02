@@ -124,7 +124,7 @@
 	import { CodeScanner } from '{rootPrefix}/res/js/CodeScanner.js';
 	import { ItemCategoryInput } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js';
 	
-	SearchUtils.initPage();
+	SearchUtils.init();
 	ItemAddEdit.init();
 	ItemView.init();
 	ItemSearchSelect.init();
@@ -144,12 +144,6 @@
 	CodeScanner.init();
 	ItemCategoryInput.init();
 	HistorySearchUtils.init();
-	
-	window.Rest = Rest;
-	window.Identifiers = Identifiers;
-	window.Pricing = Pricing;
-	window.AssociatedLinks = AssociatedLinks;
-	window.KeywordAttEdit = KeywordAttEdit;
 	
 	console.log("Page modules loaded.");
 </script>

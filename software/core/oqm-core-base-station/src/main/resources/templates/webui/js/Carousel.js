@@ -106,4 +106,8 @@ export class Carousel {
 		carousel.hide();
 		return [];
 	}
+
+	static {
+		window.Carousel = this;
+	}
 }
