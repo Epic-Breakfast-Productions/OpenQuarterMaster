@@ -1,11 +1,13 @@
 //import "../../lib/dselect/1.0.4/dist/js/dselect.min.js";//doesn't work. Unsure why
 
-export const DselectUtils = {
-	standardOps: {search: true, clearable: true},
-	setupDselect(selectJs) {
+import {PageUtility} from "./utilClasses/PageUtility.js";
+
+export class DselectUtils extends PageUtility {
+	static standardOps = {search: true, clearable: true};
+	static setupDselect(selectJs) {
 		dselect(selectJs, DselectUtils.standardOps);
-	},
-	setupPageDselects() {
+	}
+	static setupPageDselects() {
 		document.querySelectorAll(".dselect-select").forEach(function (cur) {
 			try {
 				DselectUtils.setupDselect(cur);
@@ -13,12 +15,12 @@ export const DselectUtils = {
 				console.error(error);
 			}
 		})
-	},
-	setValues(selectJq, value){
+	}
+	static setValues(selectJq, value){
 		selectJq.val(value);
 		DselectUtils.setupDselect(selectJq[0]);
-	},
-	resetDselect(selectJq) {
+	}
+	static resetDselect(selectJq) {
 		if (selectJq.prop("multiple")) {
 			selectJq.val('');
 		} else {
@@ -26,11 +28,13 @@ export const DselectUtils = {
 		}
 
 		DselectUtils.setupDselect(selectJq[0]);
-	},
-	initPage(){
+	}
+	static {
+		window.DselectUtils = this;
+
 		console.log("Setting up dselects");
 		DselectUtils.setupPageDselects();
 		Main.processStop();
 		console.log("Finished setting up dselects");
 	}
-};
+}

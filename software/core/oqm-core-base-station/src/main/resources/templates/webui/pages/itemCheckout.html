@@ -62,25 +62,18 @@
 		import { FileAttachmentSearchSelect } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js';
 		import { FileAttachmentAddEdit } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js';
 		
-		ItemSearchSelect.initPage();
-		SearchUtils.initPage();
-		ItemStoredTransaction.initPage();
-		StorageSearchSelect.initPage();
-		ImageSearchSelect.initPage();
-		FileAttachmentSearchSelect.initPage();
-		ImageAdd.initPage();
-		ImageAddFromSelect.initPage();
-		FileAttachmentAddEdit.initPage();
+		ItemSearchSelect.init();
+		SearchUtils.init();
+		ItemStoredTransaction.init();
+		StorageSearchSelect.init();
+		FileAttachmentSearchSelect.init();
+		ImageAdd.init();
+		ImageAddFromSelect.init();
+		ImageSearchSelect.init();
+		FileAttachmentAddEdit.init();
+		ItemCheckoutView.init();
+		HistorySearchUtils.init();
 		
-		window.HistorySearchUtils = HistorySearchUtils;
-		window.ItemSearchSelect = ItemSearchSelect;
-		window.StorageSearchSelect = StorageSearchSelect;
-		window.ItemCheckoutView = ItemCheckoutView;
-		window.ItemStoredTransaction = ItemStoredTransaction;
-		window.ImageSearchSelect = ImageSearchSelect;
-		window.FileAttachmentSearchSelect = FileAttachmentSearchSelect;
-		window.ImageAdd = ImageAdd;
-		window.ImageAddFromSelect = ImageAddFromSelect;
 		
 		console.log("Page modules loaded.");
     </script>

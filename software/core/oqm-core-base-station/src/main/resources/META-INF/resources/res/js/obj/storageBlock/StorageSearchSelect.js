@@ -1,13 +1,14 @@
 import {Rest} from "../../Rest.js";
 import {ModalUtils} from "../../ModalUtils.js";
 import {Getters} from "../Getters.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const StorageSearchSelect = {
-	storageSearchSelectModal: $("#storageSearchSelectModal"),
-	storageSearchSelectForm: $("#storageSearchSelectForm"),
-	storageSearchSelectResults: $("#storageSearchSelectResults"),
+export class StorageSearchSelect extends PageUtility {
+	static storageSearchSelectModal = $("#storageSearchSelectModal");
+	static storageSearchSelectForm = $("#storageSearchSelectForm");
+	static storageSearchSelectResults = $("#storageSearchSelectResults");
 
-	setupSearch(returnWith, modalBackTo = null){
+	static setupSearch(returnWith, modalBackTo = null){
 		console.log("Setting up storage block search select.", returnWith, modalBackTo);
 		if(typeof returnWith !== 'function'){
 			returnWith = StorageSearchSelect.input.getInputJqFromInner(returnWith);
@@ -22,8 +23,8 @@ export const StorageSearchSelect = {
 
 		StorageSearchSelect.storageSearchSelectForm.trigger("submit");
 		StorageSearchSelect.storageSearchSelectModal.data("search-select-return", returnWith);
-	},
-	selectStorageBlock(storageBlockId, storageBlockName = null){
+	}
+	static selectStorageBlock(storageBlockId, storageBlockName = null){
 		let returnWith = StorageSearchSelect.storageSearchSelectModal.data("search-select-return");
 		console.log("Selected storage block: ",storageBlockId, storageBlockName, returnWith);
 
@@ -32,40 +33,40 @@ export const StorageSearchSelect = {
 		} else {
 			returnWith(storageBlockId, storageBlockName);
 		}
-	},
+	}
 
 
-	input: {
-		clear(inputJq){
+	static input = class {
+		static clear(inputJq){
 			inputJq = StorageSearchSelect.input.getInputJqFromInner(inputJq);
 
 			StorageSearchSelect.input.getIdInput(inputJq).val("");
 			StorageSearchSelect.input.getNameInput(inputJq).val("");
-		},
-		getInputJqFromInner(innerElem){
+		}
+		static getInputJqFromInner(innerElem){
 			if(! (innerElem instanceof jQuery)){
 				innerElem = $(innerElem);
 			}
 			return innerElem.closest(".storageBlockInput");
-		},
-		getSearchButton(inputJq){
+		}
+		static getSearchButton(inputJq){
 			return inputJq.find("button.searchButton");
-		},
-		getIdInput(inputJq){
+		}
+		static getIdInput(inputJq){
 			return inputJq.find("input.idInput");
-		},
-		getNameInput(inputJq){
+		}
+		static getNameInput(inputJq){
 			return inputJq.find("input.nameInput");
-		},
-		getClearButton(inputJq){
+		}
+		static getClearButton(inputJq){
 			return inputJq.find("button.clearButton");
-		},
-		setReadonly(inputJq, readonly=true){
+		}
+		static setReadonly(inputJq, readonly=true){
 			StorageSearchSelect.input.getSearchButton(inputJq).prop("disabled", readonly);
 			StorageSearchSelect.input.getNameInput(inputJq).prop("disabled", readonly);
 			StorageSearchSelect.input.getClearButton(inputJq).prop("disabled", readonly);
-		},
-		setValue(inputJq, storageBlockId, storageBlockName = null){
+		}
+		static setValue(inputJq, storageBlockId, storageBlockName = null){
 			let idInput = StorageSearchSelect.input.getIdInput(inputJq);
 			idInput.val(storageBlockId);
 
@@ -77,8 +78,8 @@ export const StorageSearchSelect = {
 				});
 			}
 			idInput.trigger("change");
-		},
-		setup(
+		}
+		static setup(
 			inputJq,
 			storageBlockId = null,
 			readOnly = false
@@ -90,12 +91,13 @@ export const StorageSearchSelect = {
 			}
 
 			StorageSearchSelect.input.setReadonly(inputJq, readOnly);
-		},
-		hasValue(inputJq){
+		}
+		static hasValue(inputJq){
 			return StorageSearchSelect.input.getIdInput(inputJq).val() !== "";
 		}
-	},
-	initPage: function () {
+	}
+	static {
+		window.StorageSearchSelect = this;
 		console.log("Initializing storage block search select.");
 		StorageSearchSelect.storageSearchSelectForm.on("submit", function (event) {
 			event.preventDefault();
@@ -128,6 +130,4 @@ export const StorageSearchSelect = {
 		});
 		console.log("Done initializing storage block search select.");
 	}
-};
-
-
+}

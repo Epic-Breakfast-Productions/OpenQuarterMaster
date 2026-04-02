@@ -1,8 +1,10 @@
+import { Rest } from "./Rest.js";
 
-export const Carousel = {
-	carouselTemplate: '{carouselLines}\
-	',
-	newCarousel(id, objectData=null, toAppendTo=null){
+export class Carousel {
+	static carouselTemplate= '{carouselLines}\
+	';
+
+	static newCarousel(id, objectData=null, toAppendTo=null){
 		return new Promise(async (done, fail) => {
 			let newCarousel = $(Carousel.carouselTemplate);
 			newCarousel.prop("id", id);
@@ -24,12 +26,13 @@ export const Carousel = {
 
 			return newCarousel;
 		});
-	},
+	}
 
-	clearCarousel(carousel) {
+	static clearCarousel(carousel) {
 		carousel.find(".carousel-indicators").html("");
 		carousel.find(".carousel-inner").html("");
-	},
+	}
+
 	/**
 	 * Data format:
 	 *   [
@@ -41,7 +44,7 @@ export const Carousel = {
 	 *      },
 	 *   ]
 	 */
-	setCarouselImages(carousel, imageSrcs) {
+	static setCarouselImages(carousel, imageSrcs) {
 		Carousel.clearCarousel(carousel);
 		let carouselIndicators = carousel.find(".carousel-indicators");
 		let carouselImages = carousel.find(".carousel-inner");
@@ -60,8 +63,9 @@ export const Carousel = {
 			carouselImages.append(imageDiv);
 		});
 		carousel.carousel();
-	},
-	async setCarouselImagesFromIds(imageIds, carousel) {
+	}
+
+	static async setCarouselImagesFromIds(imageIds, carousel) {
 		console.log("Adding images to carousel: ", imageIds);
 		return new Promise(async (done, fail) => {
 			let ajaxPromises = []
@@ -90,8 +94,9 @@ export const Carousel = {
 
 			Carousel.setCarouselImages(carousel, carouselData);
 		});
-	},
-	async processImagedObjectImages(objectData, carousel) {
+	}
+
+	static async processImagedObjectImages(objectData, carousel) {
 		if (objectData.imageIds.length) {
 			console.log("Object had images to show.");
 			carousel.show();
@@ -100,5 +105,9 @@ export const Carousel = {
 		console.log("Object had no images to show.");
 		carousel.hide();
 		return [];
+	}
+
+	static {
+		window.Carousel = this;
 	}
 }

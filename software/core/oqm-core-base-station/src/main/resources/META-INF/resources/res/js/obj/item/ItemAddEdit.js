@@ -18,56 +18,57 @@ import {FileAttachmentSearchSelect} from "../media/fileAttachment/FileAttachment
 import {AssociatedLinks} from "../../AssociatedLinks.js";
 import {TimeUtils} from "../../TimeUtils.js";
 import {StorageTypeUtils} from "../../StoredTypeUtils.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const ItemAddEdit = {
-	addEditItemForm: $('#addEditItemForm'),
-	addEditItemFormSubmitButton: $('#addEditItemFormSubmitButton'),
-	addEditItemModal: $("#addEditItemModal"),
-	addEditItemModalBs: new bootstrap.Modal("#addEditItemModal"),
-	addEditItemFormMessages: $("#addEditItemFormMessages"),
-	addEditItemModalLabel: $('#addEditItemModalLabel'),
-	addEditItemModalLabelIcon: $('#addEditItemModalLabelIcon'),
-	addEditItemFormMode: $('#addEditItemFormMode'),
+export class ItemAddEdit extends PageUtility {
+	static addEditItemForm = $('#addEditItemForm');
+	static addEditItemFormSubmitButton = $('#addEditItemFormSubmitButton');
+	static addEditItemModal = $("#addEditItemModal");
+	static addEditItemModalBs = new bootstrap.Modal("#addEditItemModal");
+	static addEditItemFormMessages = $("#addEditItemFormMessages");
+	static addEditItemModalLabel = $('#addEditItemModalLabel');
+	static addEditItemModalLabelIcon = $('#addEditItemModalLabelIcon');
+	static addEditItemFormMode = $('#addEditItemFormMode');
 
-	addEditItemIdInput: $("#addEditItemIdInput"),
-	addEditItemNameInput: $('#addEditItemNameInput'),
-	addEditItemDescriptionInput: MarkdownUtils.Editor.initInput("#addEditItemDescriptionInput")[0],
-	addEditItemExpiryWarningThresholdInput: $('#addEditItemExpiryWarningThresholdInput'),
-	addEditItemExpiryWarningThresholdUnitInput: $('#addEditItemExpiryWarningThresholdUnitInput'),
-	addEditItemCategoriesInput: $("#addEditItemCategoriesInput"),
-	addEditItemTotalLowStockThresholdInput: $("#addEditItemTotalLowStockThresholdInput"),
-	addEditItemTotalLowStockThresholdUnitInput: $("#addEditItemTotalLowStockThresholdUnitInput"),
-	addEditItemPricingInput: $("#addEditItemPricingInput"),
-	defaultStoredLabelInput: $("#addEditItemDefaultStoredLabelInput"),
-	addEditItemStorageTypeInput: $('#addEditItemStorageTypeInput'),
-	addEditItemUnitInput: $('#addEditItemUnitInput'),
-	addEditItemIdentifyingAttInput: $('#addEditItemIdentifyingAttInput'),
+	static addEditItemIdInput = $("#addEditItemIdInput");
+	static addEditItemNameInput = $('#addEditItemNameInput');
+	static addEditItemDescriptionInput = MarkdownUtils.Editor.initInput("#addEditItemDescriptionInput")[0];
+	static addEditItemExpiryWarningThresholdInput = $('#addEditItemExpiryWarningThresholdInput');
+	static addEditItemExpiryWarningThresholdUnitInput = $('#addEditItemExpiryWarningThresholdUnitInput');
+	static addEditItemCategoriesInput = $("#addEditItemCategoriesInput");
+	static addEditItemTotalLowStockThresholdInput = $("#addEditItemTotalLowStockThresholdInput");
+	static addEditItemTotalLowStockThresholdUnitInput = $("#addEditItemTotalLowStockThresholdUnitInput");
+	static addEditItemPricingInput = $("#addEditItemPricingInput");
+	static defaultStoredLabelInput = $("#addEditItemDefaultStoredLabelInput");
+	static addEditItemStorageTypeInput = $('#addEditItemStorageTypeInput');
+	static addEditItemUnitInput = $('#addEditItemUnitInput');
+	static addEditItemIdentifyingAttInput = $('#addEditItemIdentifyingAttInput');
 
-	identifierInputContainer: Identifiers.getInputContainer($("#addEditItemIdentifiersInput")),
-	associatedGeneratorInput: $("#addEditItem-item-associatedIdGeneratorInput"),
+	static identifierInputContainer = Identifiers.getInputContainer($("#addEditItemIdentifiersInput"));
+	static associatedGeneratorInput = $("#addEditItem-item-associatedIdGeneratorInput");
 
-	// itemNotStoredCheck: $("#addEditItemNotStoredCheck"),
-	// itemNotStoredInputContainer: $("#addEditItemNotStoredInputContainer"),
+	// itemNotStoredCheck = $("#addEditItemNotStoredCheck");
+	// itemNotStoredInputContainer = $("#addEditItemNotStoredInputContainer");
 
-	linkInput: $('#addEditItemLinksInput'),
-	fileInput: $('#addEditItemForm').find(".fileAttachmentSelectInputTable"),
-	addEditKeywordDiv: $('#addEditItemForm').find(".keywordInputDiv"),
-	addEditAttDiv: $('#addEditItemForm').find(".attInputDiv"),
-	addEditItemImagesSelected: $('#addEditItemForm').find(".imagesSelected"),
-	associatedStorageInputContainer: $("#addEditItemAssociatedStorageInputContainer"),
-	addEditItemTrackedItemIdentifierNameRow: $('#addEditItemTrackedItemIdentifierNameRow'),
-	addEditItemUnitNameRow: $('#addEditItemUnitNameRow'),
-	compatibleUnitOptions: "",
+	static linkInput = $('#addEditItemLinksInput');
+	static fileInput = $('#addEditItemForm').find(".fileAttachmentSelectInputTable");
+	static addEditKeywordDiv = $('#addEditItemForm').find(".keywordInputDiv");
+	static addEditAttDiv = $('#addEditItemForm').find(".attInputDiv");
+	static addEditItemImagesSelected = $('#addEditItemForm').find(".imagesSelected");
+	static associatedStorageInputContainer = $("#addEditItemAssociatedStorageInputContainer");
+	static addEditItemTrackedItemIdentifierNameRow = $('#addEditItemTrackedItemIdentifierNameRow');
+	static addEditItemUnitNameRow = $('#addEditItemUnitNameRow');
+	static compatibleUnitOptions = "";
 
 
-	numAmountStoredClicked: 0,
-	numTrackedStoredClicked: 0,
+	static numAmountStoredClicked = 0;
+	static numTrackedStoredClicked = 0;
 
-	itemAdded(newItemName, newItemId) {
+	static itemAdded(newItemName, newItemId) {
 		PageMessageUtils.reloadPageWithMessage("Added \"" + newItemName + "\" item successfully!", "success", "Success!");
-	},
+	}
 
-	async foreachStorageTypeFromInput(
+	static async foreachStorageTypeFromInput(
 		whenBulk,
 		whenAmountList,
 		whenUniqueMulti,
@@ -80,8 +81,8 @@ export const ItemAddEdit = {
 			whenUniqueMulti,
 			whenUniqueSingle
 		);
-	},
-	async foreachStoredTypeFromStorageInput(
+	}
+	static async foreachStoredTypeFromStorageInput(
 		whenAmount,
 		whenUnique
 	) {
@@ -90,12 +91,12 @@ export const ItemAddEdit = {
 			whenAmount,
 			whenUnique
 		);
-	},
-	resetAddEditForm: async function () {
+	}
+	static async resetAddEditForm() {
 		let promises = [];
 		ExtItemSearch.hideAddEditProductSearchPane();
-		this.addEditItemIdInput.val("");
-		this.addEditItemFormMode.val("");
+		ItemAddEdit.addEditItemIdInput.val("");
+		ItemAddEdit.addEditItemFormMode.val("");
 		ItemAddEdit.addEditItemNameInput.val("");
 		ItemAddEdit.addEditItemDescriptionInput.setValue("");
 		// Identifiers.reset(ItemAddEdit.identifierInputContainer);
@@ -115,7 +116,7 @@ export const ItemAddEdit = {
 		ItemAddEdit.defaultStoredLabelInput.val("");
 
 		promises.push(ItemAddEdit.unitChanged());
-		this.associatedStorageInputContainer.html("");
+		ItemAddEdit.associatedStorageInputContainer.html("");
 
 		// this.itemNotStoredCheck.attr("checked", false);
 		// this.updateItemNotStored();
@@ -127,8 +128,8 @@ export const ItemAddEdit = {
 		ItemAddEdit.addEditAttDiv.text("");
 		await Promise.all(promises);
 		console.log("Reset item add/edit form.");
-	},
-	setupAddEditForAdd: async function () {
+	}
+	static async setupAddEditForAdd() {
 		console.log("Setting up add/edit form for add.");
 		await ItemAddEdit.resetAddEditForm();
 		ItemAddEdit.addEditItemModalLabelIcon.html(Icons.iconWithSub(Icons.item, Icons.add));
@@ -137,9 +138,9 @@ export const ItemAddEdit = {
 		ItemAddEdit.addEditItemFormSubmitButton.html(Icons.iconWithSub(Icons.item, Icons.add) + " Add Item");
 
 		await ItemAddEdit.unitChanged();
-	},
+	}
 
-	setupAddEditForEdit: async function (itemId, otherModal = null) {
+	static async setupAddEditForEdit(itemId, otherModal = null) {
 		console.log("Setting up add/edit form for editing item " + itemId);
 		ModalUtils.setReturnModal(ItemAddEdit.addEditItemModal, otherModal);
 		await ItemAddEdit.resetAddEditForm();
@@ -223,8 +224,8 @@ export const ItemAddEdit = {
 				await ItemAddEdit.unitChanged();
 			}
 		});
-	},
-	addEditStoredTypeInputChanged: async function (force = false) {
+	}
+	static async addEditStoredTypeInputChanged(force = false) {
 		await ItemAddEdit.foreachStoredTypeFromStorageInput(
 			function () {
 				ItemAddEdit.addEditItemUnitNameRow.show();
@@ -236,10 +237,10 @@ export const ItemAddEdit = {
 			}
 		);
 		return ItemAddEdit.unitChanged(force);
-	},
+	}
 
-	storageInput: {
-		addStorage: function (blockName, blockId) {
+	static storageInput = class {
+		static addStorage(blockName, blockId) {
 			Main.processStart();
 			let found = false;
 			ItemAddEdit.associatedStorageInputContainer.find('input[name="storageBlocks[]"]').each(function () {
@@ -269,28 +270,28 @@ export const ItemAddEdit = {
 
 			ItemAddEdit.associatedStorageInputContainer.append(newBlock);
 			Main.processStop();
-		},
-		removeStorage: function (removeButtonClicked) {//or input card?
+		}
+		static removeStorage(removeButtonClicked) {//or input card?
 			if (confirm("Are you sure you want to\nremove this associated storage?")) {
 				console.log("Removing associated storage.");
 				removeButtonClicked.parentElement.parentElement.parentElement.remove();
 			} else {
 				console.log("User canceled removing the associated storage.");
 			}
-		},
-		selectedStorageList: function () {
+		}
+		static selectedStorageList() {
 			return ItemAddEdit.associatedStorageInputContainer.find("input[name='storageBlocks[]']")
 				.map(function () {
 					return $(this).val();
 				}).get();
 		}
-	},
-	getUnit(force = false){
+	}
+	static getUnit(force = false){
 		return (force || ItemAddEdit.addEditItemUnitNameRow.is(":visible")) ?
 			ItemAddEdit.addEditItemUnitInput.val() :
 			"units";
-	},
-	unitChanged: async function(force = false){
+	}
+	static async unitChanged(force = false){
 		let itemUnit = ItemAddEdit.getUnit();
 
 		console.log("Item Unit Changed to ", itemUnit);
@@ -302,14 +303,16 @@ export const ItemAddEdit = {
 		);
 
 		await Promise.all([lowStockUnitPromise, pricingUnitPromise]);
-	},
-	updateLowStockUnits(itemUnit, force = false) {
+	}
+	static updateLowStockUnits(itemUnit, force = false) {
 		return UnitUtils.getCompatibleUnitOptions(itemUnit)
 			.then(function (options) {
 				ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.html(options);
 			});
-	},
-	initPage: function () {
+	}
+	static {
+		window.ItemAddEdit = this;
+
 		ItemAddEdit.addEditItemUnitInput.on("change", function () {
 			console.log("Changed unit!");
 			ItemAddEdit.unitChanged();
@@ -403,4 +406,4 @@ export const ItemAddEdit = {
 			}
 		});
 	}
-};
+}

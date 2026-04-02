@@ -1,9 +1,10 @@
 import {Rest} from "../Rest.js";
 import {StoredTypeUtils} from "../StoredTypeUtils.js";
+import {PageUtility} from "../utilClasses/PageUtility.js";
 
-export const Getters = {
-	StorageBlock: {
-		getStorageBlockItemData: async function (blockId) {
+export class Getters extends PageUtility {
+	static StorageBlock = class {
+		static async getStorageBlockItemData(blockId) {
 			console.log("Getting item data for storage block \"" + blockId + "\"");
 			return new Promise((done, fail) => {
 				Rest.call({
@@ -13,8 +14,8 @@ export const Getters = {
 					fail: fail
 				})
 			});
-		},
-		getStorageBlockChildrenData: async function (blockId) {
+		}
+		static async getStorageBlockChildrenData(blockId) {
 			console.log("Getting children of storage block \"" + blockId + "\"");
 			return new Promise((done, fail) => {
 				Rest.call({
@@ -24,8 +25,8 @@ export const Getters = {
 					fail: fail
 				})
 			});
-		},
-		getStorageBlockLabel(blockId, doneFunc) {
+		}
+		static getStorageBlockLabel(blockId, doneFunc) {
 			//TODO:: cache called ids
 			console.log("Getting label for storage block \"" + blockId + "\"");
 			return Rest.call({
@@ -37,9 +38,9 @@ export const Getters = {
 				}
 			});
 		}
-	},
-	InventoryItem: {
-		get(itemId, doneFunc = function () {
+	}
+	static InventoryItem = class {
+		static get(itemId, doneFunc = function () {
 		}) {
 			console.log("Getting inventory item \"" + itemId + "\"");
 			return Rest.call({
@@ -49,8 +50,8 @@ export const Getters = {
 					doneFunc(data);
 				}
 			});
-		},
-		getItemName(itemId, doneFunc) {
+		}
+		static getItemName(itemId, doneFunc) {
 			console.log("Getting name for inventory item \"" + itemId + "\"");
 			return Rest.call({
 				spinnerContainer: null,
@@ -61,9 +62,9 @@ export const Getters = {
 				}
 			});
 		}
-	},
-	StoredItem: {
-		getStoredForItem: async function (itemId, doneFunc = function () {
+	}
+	static StoredItem = class {
+		static async getStoredForItem(itemId, doneFunc = function () {
 		}) {
 			//TODO:: handle paging
 			return Rest.call({
@@ -73,8 +74,8 @@ export const Getters = {
 					doneFunc(storedSearchResults);
 				}
 			});
-		},
-		getStoredForItemInBlock: async function (itemId, blockId, doneFunc = function () {
+		}
+		static async getStoredForItemInBlock(itemId, blockId, doneFunc = function () {
 		}) {
 			//TODO:: handle paging
 			return Rest.call({
@@ -84,8 +85,8 @@ export const Getters = {
 					doneFunc(storedSearchResults);
 				}
 			});
-		},
-		getSingleStoredForItemInBlock: async function (itemId, blockId, doneFunc = function () {
+		}
+		static async getSingleStoredForItemInBlock(itemId, blockId, doneFunc = function () {
 		}, ifNone = null) {
 			return Rest.call({
 				method: "GET",
@@ -106,8 +107,8 @@ export const Getters = {
 					doneFunc(storedSearchResults.results[0]);
 				}
 			});
-		},
-		getSingleStoredForItem: async function (itemId, doneFunc = function () {
+		}
+		static async getSingleStoredForItem(itemId, doneFunc = function () {
 		}, ifNone = null) {
 			return Rest.call({
 				method: "GET",
@@ -127,8 +128,8 @@ export const Getters = {
 					doneFunc(storedSearchResults.results[0]);
 				}
 			});
-		},
-		getLabelForStored: async function (stored, doneFunc = function () {
+		}
+		static async getLabelForStored(stored, doneFunc = function () {
 		}) {
 			let storedLabel = stored["storageBlock-labelText"];
 
@@ -144,8 +145,8 @@ export const Getters = {
 			);
 			await doneFunc(storedLabel);
 			return storedLabel;
-		},
-		getStored: async function (itemId, storedId, doneFunc = function () {
+		}
+		static async getStored(itemId, storedId, doneFunc = function () {
 		}) {
 			return Rest.call({
 				method: "GET",
@@ -154,10 +155,10 @@ export const Getters = {
 					doneFunc(itemStored);
 				}
 			});
-		},
-	},
-	Checkout: {
-		getCheckout: async function (checkoutId, doneFunc = function () {
+		}
+	}
+	static Checkout = class {
+		static async getCheckout(checkoutId, doneFunc = function () {
 		}) {
 			let output = null;
 
@@ -171,9 +172,9 @@ export const Getters = {
 			});
 			return output;
 		}
-	},
-	InteractingEntities: {
-		getEntities: async function ({
+	}
+	static InteractingEntities = class {
+		static async getEntities({
 										 type = null, doneFunc = function () {
 			}
 									 }) {
@@ -196,9 +197,9 @@ export const Getters = {
 
 			return result;
 		}
-	},
-	Identifiers: {
-		generator: async function (generatorId, doneFunc = function () {
+	}
+	static Identifiers = class {
+		static async generator(generatorId, doneFunc = function () {
 		}) {
 			let output = null;
 
@@ -212,9 +213,9 @@ export const Getters = {
 			});
 			return output;
 		}
-	},
-	Images: {
-		getImageName(imageId, doneFunc) {
+	}
+	static Images = class {
+		static getImageName(imageId, doneFunc) {
 			return Rest.call({
 				spinnerContainer: null,
 				url: Rest.passRoot + "/media/image/" + imageId,
@@ -223,9 +224,9 @@ export const Getters = {
 				}
 			});
 		}
-	},
-	ItemCategories: {
-		getItemCategoryChildrenData: async function(categoryId) {
+	}
+	static ItemCategories = class {
+		static async getItemCategoryChildrenData(categoryId) {
 			console.log("Getting children of category \"" + categoryId + "\"");
 			return new Promise((done, fail) => {
 				Rest.call({
@@ -236,5 +237,9 @@ export const Getters = {
 				})
 			});
 		}
+	}
+
+	static {
+		window.Getters = this;
 	}
 }

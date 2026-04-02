@@ -2,23 +2,24 @@ import {Rest} from "../../../Rest.js";
 import {KeywordAttUtils} from "../../ObjViewUtils.js";
 import {OtherUtils} from "../../../OtherUtils.js";
 import {ModalUtils} from "../../../ModalUtils.js";
+import {PageUtility} from "../../../utilClasses/PageUtility.js";
 
-export const FileAttachmentView = {
-	viewModal: $("#fileAttachmentViewModal"),
-	viewModalMessages: $("#fileAttachmentViewMessages"),
-	previewContainer: $("#fileAttachmentViewPreviewContainer"),
-	fullViewTitle: $("#fileAttachmentViewContentModalLabel"),
-	fullViewContainer: $("#fileAttachmentViewFullContainer"),
-	fileViewDownloadButton: $("#fileAttachmentViewDownloadButton"),
-	contentViewDownloadButton: $("#fileAttachmentViewContentDownloadButton"),
-	fileName: $("#fileAttachmentViewFileName"),
-	description: $("#fileAttachmentViewDescription"),
-	keywords: $("#fileAttachmentViewKeywordsSection"),
-	atts: $("#fileAttachmentViewAttsSection"),
-	numRevisions: $("#fileAttachmentViewRevisionsExpandNumRevisions"),
-	revisionsAccord: $("#fileAttachmentViewRevisionsAccord"),
+export class FileAttachmentView extends PageUtility {
+	static viewModal = $("#fileAttachmentViewModal");
+	static viewModalMessages = $("#fileAttachmentViewMessages");
+	static previewContainer = $("#fileAttachmentViewPreviewContainer");
+	static fullViewTitle = $("#fileAttachmentViewContentModalLabel");
+	static fullViewContainer = $("#fileAttachmentViewFullContainer");
+	static fileViewDownloadButton = $("#fileAttachmentViewDownloadButton");
+	static contentViewDownloadButton = $("#fileAttachmentViewContentDownloadButton");
+	static fileName = $("#fileAttachmentViewFileName");
+	static description = $("#fileAttachmentViewDescription");
+	static keywords = $("#fileAttachmentViewKeywordsSection");
+	static atts = $("#fileAttachmentViewAttsSection");
+	static numRevisions = $("#fileAttachmentViewRevisionsExpandNumRevisions");
+	static revisionsAccord = $("#fileAttachmentViewRevisionsAccord");
 
-	async getFileContent(dataUrl) {
+	static async getFileContent(dataUrl) {
 		return await Rest.call({
 			url: dataUrl,
 			async: false,
@@ -27,8 +28,9 @@ export const FileAttachmentView = {
 				return data;
 			}
 		});
-	},
-	resetView() {
+	}
+
+	static resetView() {
 		this.previewContainer.text("");
 		this.fullViewContainer.text("");
 
@@ -41,8 +43,9 @@ export const FileAttachmentView = {
 		this.revisionsAccord.text("");
 		KeywordAttUtils.clearHideKeywordDisplay(this.keywords);
 		KeywordAttUtils.clearHideAttDisplay(this.atts);
-	},
-	async setupFileView(fileGetData, container, preview = true) {
+	}
+
+	static async setupFileView(fileGetData, container, preview = true) {
 		let latestMetadata = fileGetData.revisions[fileGetData.revisions.length - 1];
 		let newContent = null;
 		let dataUrl = Rest.passRoot + '/media/fileAttachment/' + fileGetData.id + '/revision/latest/data';
@@ -89,9 +92,9 @@ export const FileAttachmentView = {
 			}
 		}
 		container.append(newContent);
-	},
+	}
 
-	createFileHashView(hashes){
+	static createFileHashView(hashes) {
 		let output = $("<div></div>");
 
 		Object.entries(hashes).forEach(entry => {
@@ -104,8 +107,9 @@ export const FileAttachmentView = {
 		});
 
 		return output;
-	},
-	createFileMetadataView(fileMetadata) {
+	}
+
+	static createFileMetadataView(fileMetadata) {
 		let output = $('<div></div>');
 
 		output.append(
@@ -146,11 +150,11 @@ export const FileAttachmentView = {
 				));
 
 		return output;
-	},
+	}
 
-	setupView(fileId, oldModal = null) {
+	static setupView(fileId, oldModal = null) {
 		console.log("Setting up view for file ", fileId);
-		if(oldModal !== null){
+		if (oldModal !== null) {
 			ModalUtils.setReturnModal(FileAttachmentView.viewModal, oldModal);
 		}
 
@@ -191,21 +195,23 @@ export const FileAttachmentView = {
 				})
 			}
 		});
-	},
-	resetObjectView(fileObjViewContainerJq){
+	}
+
+	static resetObjectView(fileObjViewContainerJq) {
 		fileObjViewContainerJq.find(".fileAttachmentListTableContent").text("");
 		fileObjViewContainerJq.hide();
-	},
-	setupObjectView(fileObjViewContainerJq, fileList, failMessagesDiv){
+	}
+
+	static setupObjectView(fileObjViewContainerJq, fileList, failMessagesDiv) {
 		this.resetObjectView(fileObjViewContainerJq);
-		if(fileList.length === 0){
+		if (fileList.length === 0) {
 			console.log("No files to show.");
 			return;
 		}
 
 		let fileShowContent = fileObjViewContainerJq.find(".fileAttachmentListTableContent");
 
-		fileList.forEach(function (curFileId, i){
+		fileList.forEach(function (curFileId, i) {
 			Rest.call({
 				spinnerContainer: null,
 				url: Rest.passRoot + "/media/fileAttachment/" + curFileId,
@@ -213,7 +219,7 @@ export const FileAttachmentView = {
 				done: async function (data) {
 					let nextRow = $('<tr></tr>');
 					nextRow.append($('<td></td>').text(data.fileName));
-					nextRow.append($('<td><button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewModal" onclick="FileAttachmentView.setupView(\''+curFileId+'\', this);">'+Icons.view+'</button></td>'));
+					nextRow.append($('<td><button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#fileAttachmentViewModal" onclick="FileAttachmentView.setupView(\'' + curFileId + '\', this);">' + Icons.view + '</button></td>'));
 					fileShowContent.append(nextRow);
 				}
 			});
@@ -222,4 +228,8 @@ export const FileAttachmentView = {
 		fileObjViewContainerJq.show();
 
 	}
-};
+
+	static {
+		window.FileAttachmentView = this;
+	}
+}

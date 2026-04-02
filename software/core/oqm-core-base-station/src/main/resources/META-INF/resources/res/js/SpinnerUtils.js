@@ -1,8 +1,8 @@
 import {Spinner} from "../../lib/spin.js/spin.js";
 
 
-export const SpinnerUtils = {
-	spinnerOpts: {
+export class SpinnerUtils {
+	static spinnerOpts = {
 		lines: 20, // The number of lines to draw
 		length: 38, // The length of each line
 		width: 17, // The line thickness
@@ -21,8 +21,8 @@ export const SpinnerUtils = {
 		left: '50%', // Left position relative to parent
 		shadow: '0 0 1px transparent', // Box-shadow for the lines
 		position: 'absolute' // Element positioning
-	},
-	newSpinner(container = null){
+	}
+	static newSpinner(container = null){
 		let output = new Spinner(SpinnerUtils.spinnerOpts);
 
 		if(container != null || container != undefined){
@@ -31,4 +31,4 @@ export const SpinnerUtils = {
 
 		return output;
 	}
-};
+}

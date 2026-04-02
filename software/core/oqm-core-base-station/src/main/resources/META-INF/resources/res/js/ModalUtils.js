@@ -1,26 +1,26 @@
 
-export const ModalUtils = {
+export class ModalUtils {
 
-	getModalCloseButton: function (modalJq){
+	static getModalCloseButton (modalJq){
 		return modalJq.find("#" + modalJq.prop("id") + "LabelCloseButton")
-	},
-	clearModalReturn: function(destModalJq){
+	}
+	static clearModalReturn(destModalJq){
 		//   data-bs-target="#exampleModalToggle" data-bs-toggle="modal"
 		//  data-bs-otherModalId
 		destModalJq.removeAttr("data-bs-otherModalId");
 		let modalCloseButton = this.getModalCloseButton(destModalJq);
 		modalCloseButton.removeAttr("data-bs-target");
 		modalCloseButton.removeAttr("data-bs-toggle");
-	},
-	getModalOfElement(element){
+	}
+	static getModalOfElement(element){
 		return element.closest(".modal");
-	},
+	}
 	/**
 	 *
 	 * @param destModalJq The jQuery object of the modal we are going to.
 	 * @param returnModal Mixed type. The modal being returned to. If String, the tag to find using jquery. Can also be the modal element or an element within the modal both as plain js or jQuery. If Event, gets the element from the event's target. Null to reset the return modal.
 	 */
-	setReturnModal: function(destModalJq, returnModal = null){
+	static setReturnModal(destModalJq, returnModal = null){
 		//ensure using jquery object
 		if(returnModal === undefined || returnModal == null){
 			this.clearModalReturn(destModalJq);
@@ -47,4 +47,4 @@ export const ModalUtils = {
 		destModalCloseButton.attr("data-bs-target", "#" + returnModalId);
 		destModalCloseButton.attr("data-bs-toggle", "modal");
 	}
-};
+}
