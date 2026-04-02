@@ -281,7 +281,7 @@ export class Pricing extends PageUtility {
 			}
 		}
 		static TotalPricing = class {
-			showInDiv(divJq, pricingArray, extraClasses="") {
+			static showInDiv(divJq, pricingArray, extraClasses="") {
 				pricingArray.forEach(function (curTotalPriceData) {
 					let newDisplay = Pricing.View.newPriceContainer(curTotalPriceData, extraClasses);
 
