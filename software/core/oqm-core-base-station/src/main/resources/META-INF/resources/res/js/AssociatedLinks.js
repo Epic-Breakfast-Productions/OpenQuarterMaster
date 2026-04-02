@@ -106,7 +106,7 @@ export class AssociatedLinks {
 		static removeLink(remButtJq) {
 			if (confirm("Are you sure?") === false) return;
 			SelectedObjectDivUtils.removeSelected(
-				Links.Form.Input.getInput(remButtJq)
+				AssociatedLinks.Form.Input.getInput(remButtJq)
 			);
 		}
 
