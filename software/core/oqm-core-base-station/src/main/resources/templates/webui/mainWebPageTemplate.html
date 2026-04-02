@@ -407,16 +407,12 @@ Ingests:
 	import { TextCopyUtils } from "{rootPrefix}/res/js/TextCopyUtils.js";
 	
 	// init necessary modules
-	PageMessageUtils.initPage();
-	DselectUtils.initPage();
-	TimeUtils.initPage();
-	
-	//allow direct usage of imported utilities in html
-	window.OqmDbUtils = OqmDbUtils;
-	window.Icons = Icons;
-	window.DselectUtils = DselectUtils;
-	window.PageMessageUtils = PageMessageUtils;
-	window.TextCopyUtils = TextCopyUtils;
+	PageMessageUtils.init();
+	Icons.init();
+	DselectUtils.init();
+	OqmDbUtils.init();
+	TimeUtils.init();
+	TextCopyUtils.init();
 	
 	console.log("Main modules loaded.");
 </script>

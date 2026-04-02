@@ -1,7 +1,8 @@
 import {Icons} from "./Icons.js";
+import {PageUtility} from "./utilClasses/PageUtility.js";
 
-export const TextCopyUtils = {
-	copyText(buttonClicked, textContainerJq, fromTitle= false) {
+export class TextCopyUtils extends PageUtility {
+	static copyText(buttonClicked, textContainerJq, fromTitle= false) {
 		let copyText = fromTitle ?
 			textContainerJq.prop("title") :
 			textContainerJq.text()
@@ -20,5 +21,8 @@ export const TextCopyUtils = {
 			},
 			5_000
 		);
+	}
+	static {
+		window.TextCopyUtils = this;
 	}
 }

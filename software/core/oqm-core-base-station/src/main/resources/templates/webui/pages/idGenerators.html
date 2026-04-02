@@ -49,11 +49,9 @@
         <script type="module">
 		import { IdGeneratorUtils } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorUtils.js';
 		import { IdGeneratorAddEdit } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorAddEdit.js';
-			
-		IdGeneratorAddEdit.initPage();
 		
-		window.IdGeneratorUtils = IdGeneratorUtils;
-		window.IdGeneratorAddEdit = IdGeneratorAddEdit;
+		IdGeneratorUtils.init();
+		IdGeneratorAddEdit.init();
 		
         </script>
     {/pageScript}

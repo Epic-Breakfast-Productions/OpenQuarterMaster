@@ -1,8 +1,8 @@
 import {Rest} from "../../Rest.js";
 import {PageComponents} from "../../PageComponents.js";
 
-export const ItemCategoryView = {
-	async setupItemCategoryView(container, categoryIdList){
+export class ItemCategoryView {
+	static async setupItemCategoryView(container, categoryIdList){
 		let promises = [];
 		for (const categoryId of categoryIdList) {
 			 promises.push(Rest.call({

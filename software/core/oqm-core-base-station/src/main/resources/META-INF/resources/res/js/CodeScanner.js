@@ -1,5 +1,7 @@
 // import "../../lib/html5-qrcode/2.3.8/html5-qrcode.min.js";
 
+import {PageUtility} from "./utilClasses/PageUtility.js";
+
 /**
  *
  * Requires:
@@ -8,17 +10,18 @@
  *
  * @type {{scanningModal: (*|jQuery|HTMLElement), codeScanner}}
  */
-export const CodeScanner = {
-	scanningModal: $("#codeScannerModal"),
-	scanningModalObj: new bootstrap.Modal($("#codeScannerModal")),
-	codeScanner: new Html5QrcodeScanner(
+export class CodeScanner extends PageUtility {
+	static scanningModal= $("#codeScannerModal");
+	static scanningModalObj= new bootstrap.Modal($("#codeScannerModal"));
+	static codeScanner= new Html5QrcodeScanner(
 		"codeScannerRender",
 		{fps: 15, qrbox: {width: 250, height: 250}},
 		/* verbose= */ false
-	),
-	codeDestInput: null,
-	otherModal: null,
-	cleanupScanner(event){
+	);
+	static codeDestInput= null;
+	static otherModal= null;
+
+	static cleanupScanner(event){
 		CodeScanner.codeScanner.clear();
 		CodeScanner.codeDestInput = null;
 
@@ -26,8 +29,8 @@ export const CodeScanner = {
 			new bootstrap.Modal($("#"+CodeScanner.otherModal)).show();
 			CodeScanner.otherModal = null;
 		}
-	},
-	onScanSuccess(decodedText, decodedResult) {
+	}
+	static onScanSuccess(decodedText, decodedResult) {
 		// handle the scanned code as you like, for example:
 		console.log(`Code matched = ${decodedText}`, decodedResult);
 
@@ -37,11 +40,13 @@ export const CodeScanner = {
 			console.warn("No destination input!");
 		}
 		CodeScanner.scanningModalObj.hide();
-	},
-	onScanFailure(error) {
+	}
+	static onScanFailure(error) {
 		console.warn(`Code scan error = ${error}`);
-	},
-	initPage: function(){
+	}
+	static {
+		window.CodeScanner = this;
+
 		CodeScanner.scanningModal.on('hidden.bs.modal', CodeScanner.cleanupScanner);
 		CodeScanner.scanningModal.on('show.bs.modal', event => {
 			console.log("Opening Barcode Scanning Modal");

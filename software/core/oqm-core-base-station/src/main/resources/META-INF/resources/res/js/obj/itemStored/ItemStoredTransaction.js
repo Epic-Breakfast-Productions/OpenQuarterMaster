@@ -13,12 +13,13 @@ import {ItemCheckoutSearchSelect} from "../itemCheckout/ItemCheckoutSearchSelect
 import {ItemStoredSearchSelect} from "./ItemStoredSearchSelect.js";
 import {FileAttachmentSearchSelect} from "../media/fileAttachment/FileAttachmentSearchSelect.js";
 import {ItemCheckoutView} from "../itemCheckout/ItemCheckoutView.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const ItemStoredTransaction = {
+export class ItemStoredTransaction extends PageUtility {
 
 	// http://localhost:8080/api/passthrough/inventory/item/673c68565986ac44629caf6c/stored/transact
 	//                      /api/passthrough/inventory/item/{itemId}                /stored/transact
-	submitTransaction: async function (itemId, transaction, transactionModal) {
+	static submitTransaction(itemId, transaction, transactionModal) {
 		console.log("Submitting transaction for item " + itemId + ":", transaction);
 		Rest.call({
 			spinnerContainer: transactionModal.find(".modal-body")[0],
@@ -31,9 +32,9 @@ export const ItemStoredTransaction = {
 				PageMessageUtils.reloadPageWithMessage("Transaction Successful!", "success", "Success!");
 			}
 		});
-	},
-	ModalButtons: {
-		getTransactionSelectDropdown: async function (
+	}
+	static ModalButtons = class {
+		static async getTransactionSelectDropdown (
 			item = null,
 			stored = null,
 			{
@@ -76,36 +77,36 @@ export const ItemStoredTransaction = {
 
 			return output;
 		}
-	},
-	Add: {
-		modal: $("#itemStoredTransactionAddModal"),
-		messages: $("#itemStoredTransactionAddMessages"),
-		form: $("#itemStoredTransactionAddForm"),
+	}
+	static Add = class {
+		static modal = $("#itemStoredTransactionAddModal");
+		static messages = $("#itemStoredTransactionAddMessages");
+		static form = $("#itemStoredTransactionAddForm");
 
-		storedIdInput: $("#itemStoredTransactionAddFormStoredIdInput"),
-		itemInputContainer: $("#itemStoredTransactionAddFormItemInputContainer"),
-		itemIdInput: $("#itemStoredTransactionAddFormItem-itemInputId"),
-		itemSearchButton: $("#itemStoredTransactionAddFormItem-itemInputSearchButton"),
-		itemNameInput: $("#itemStoredTransactionAddFormItem-itemInputName"),
-		itemClearButton: $("#itemStoredTransactionAddFormItem-itemInputClearButton"),
+		static storedIdInput = $("#itemStoredTransactionAddFormStoredIdInput");
+		static itemInputContainer = $("#itemStoredTransactionAddFormItemInputContainer");
+		static itemIdInput = $("#itemStoredTransactionAddFormItem-itemInputId");
+		static itemSearchButton = $("#itemStoredTransactionAddFormItem-itemInputSearchButton");
+		static itemNameInput = $("#itemStoredTransactionAddFormItem-itemInputName");
+		static itemClearButton = $("#itemStoredTransactionAddFormItem-itemInputClearButton");
 
-		itemDisplayContainer: $("#itemStoredTransactionAddFormItemDisplayContainer"),
-		itemDisplayName: $("#itemStoredTransactionAddFormItemDisplayName"),
+		static itemDisplayContainer = $("#itemStoredTransactionAddFormItemDisplayContainer");
+		static itemDisplayName = $("#itemStoredTransactionAddFormItemDisplayName");
 
-		typeInputContainer: $("#itemStoredTransactionAddFormTypeInputContainer"),
-		typeInput: $("#itemStoredTransactionAddFormTypeInput"),
+		static typeInputContainer = $("#itemStoredTransactionAddFormTypeInputContainer");
+		static typeInput = $("#itemStoredTransactionAddFormTypeInput");
 
-		toBlockInputContainer: $("#itemStoredTransactionAddFormToBlockInputContainer"),
-		toBlockInput: $("#itemStoredTransactionAddFormToBlockInput"),
-		toBlockRadio: $("#itemStoredTransactionAddFormToBlockRadio"),
+		static toBlockInputContainer = $("#itemStoredTransactionAddFormToBlockInputContainer");
+		static toBlockInput = $("#itemStoredTransactionAddFormToBlockInput");
+		static toBlockRadio = $("#itemStoredTransactionAddFormToBlockRadio");
 
-		toStoredInputContainer: $("#itemStoredTransactionAddFormToStoredInputContainer"),
-		toStoredInput: $("#itemStoredTransactionAddFormToStoredInput"),
-		toStoredRadio: $("#itemStoredTransactionAddFormToStoredRadio"),
+		static toStoredInputContainer = $("#itemStoredTransactionAddFormToStoredInputContainer");
+		static toStoredInput = $("#itemStoredTransactionAddFormToStoredInput");
+		static toStoredRadio = $("#itemStoredTransactionAddFormToStoredRadio");
 
-		inputsContainer: $("#itemStoredTransactionAddFormInputsContainer"),
+		static inputsContainer = $("#itemStoredTransactionAddFormInputsContainer");
 
-		ableToInputs(inputsContainerJq, disabled = true, readonly = false, clearRadios = true) {
+		static ableToInputs(inputsContainerJq, disabled = true, readonly = false, clearRadios = true) {
 			let radioInputs = inputsContainerJq.find('input[name="toInput"]');
 			let inputs = inputsContainerJq.find(".card-body").find('input, select');
 			let cardBody = inputsContainerJq.find(".card-body");
@@ -126,13 +127,13 @@ export const ItemStoredTransaction = {
 
 			inputs.prop("disabled", disabled);
 			inputs.prop("readonly", radioInputs.prop("readonly"));
-		},
+		}
 
 		/**
 		 * Changes inputs based on state of type, and to inputs
 		 * @param item
 		 */
-		updateInputs: async function (item = null) {
+		static async updateInputs(item = null) {
 			Main.processStart("Update add transaction inputs.");
 			if (item == null) {
 				item = this.itemIdInput.val();
@@ -192,8 +193,8 @@ export const ItemStoredTransaction = {
 				});
 			console.debug("Done updating inputs.");
 			Main.processStop("Update add transaction inputs.");
-		},
-		resetForm: function (changeItemRelated = true) {
+		}
+		static resetForm(changeItemRelated = true) {
 			console.log("Resetting item stored add transaction form.");
 			this.form.trigger("reset");
 			this.storedIdInput.val("");
@@ -219,8 +220,8 @@ export const ItemStoredTransaction = {
 
 			this.toStoredInput.html("");
 			this.toBlockInput.html("");
-		},
-		setupFormForItem: async function (itemId) {
+		}
+		static async setupFormForItem(itemId) {
 			Main.processStart();
 			console.log("Setting up item stored add form for item ", itemId);
 			this.resetForm(false);
@@ -293,8 +294,8 @@ export const ItemStoredTransaction = {
 			await Promise.all(promises);
 			console.log("Finished setting up add transaction form .");
 			Main.processStop();
-		},
-		setupForm: async function (itemId = null, preselectedStoredId = null, buttonElement = null) {
+		}
+		static async setupForm(itemId = null, preselectedStoredId = null, buttonElement = null) {
 			//TODO:: do something wiht preselected stored
 			console.log("Setting up item stored add transaction form for item", itemId);
 			ModalUtils.setReturnModal(this.modal, buttonElement);
@@ -313,8 +314,8 @@ export const ItemStoredTransaction = {
 			if (preselectedStoredId != null) {
 				//TODO:: setup form for stored
 			}
-		},
-		submitForm: async function () {
+		}
+		static async submitForm() {
 			console.log("Submitting Add Transaction form");
 
 			let data = {
@@ -348,61 +349,61 @@ export const ItemStoredTransaction = {
 				data,
 				this.modal
 			);
-		},
+		}
 		/**
 		 * Handler for submitting the add transaction form.
 		 * Wrapper for submitForm, in order to enable the use of "this" in that method.
 		 * @param event
 		 * @returns {Promise<void>}
 		 */
-		submitFormHandler: async function (event) {
+		static async submitFormHandler(event) {
 			event.preventDefault();
 			await ItemStoredTransaction.Add.submitForm();
 		}
-	},
-	Checkin: {
-		modal: $("#itemStoredTransactionCheckinModal"),
-		messages: $("#itemStoredTransactionCheckinMessages"),
-		form: $("#itemStoredTransactionCheckinForm"),
+	}
+	static Checkin = class {
+		static modal = $("#itemStoredTransactionCheckinModal");
+		static messages = $("#itemStoredTransactionCheckinMessages");
+		static form = $("#itemStoredTransactionCheckinForm");
 
-		formContainer: $("#itemStoredTransactionCheckinFormContainer"),
+		static formContainer = $("#itemStoredTransactionCheckinFormContainer");
 
-		checkoutIdInput: $("#itemStoredTransactionCheckinFormCheckoutIdInput"),
+		static checkoutIdInput = $("#itemStoredTransactionCheckinFormCheckoutIdInput");
 
-		checkoutSearchContainer: $("#itemStoredTransactionCheckinCheckoutSearchContainer"),
-		checkoutSearchInputGroup: $("#itemStoredTransactionCheckinFormCheckoutSearch-inputGroup"),
-		checkoutDetailsContainer: $("#itemStoredTransactionCheckinCheckoutDetailsContainer"),
+		static checkoutSearchContainer = $("#itemStoredTransactionCheckinCheckoutSearchContainer");
+		static checkoutSearchInputGroup = $("#itemStoredTransactionCheckinFormCheckoutSearch-inputGroup");
+		static checkoutDetailsContainer = $("#itemStoredTransactionCheckinCheckoutDetailsContainer");
 
-		byWhoSelect: $("#itemStoredTransactionCheckinFormByWhoSelectInput"),
-		byOriginalContainer: $("#itemStoredTransactionCheckinFormByOriginalContainer"),
-		byOriginalContent: $("#itemStoredTransactionCheckinFormByOriginalContent"),
-		byUserContainer: $("#itemStoredTransactionCheckinFormByUserContainer"),
-		byUserInput: $("#itemStoredTransactionCheckinFormByUserInput"),
-		byExtContainer: $("#itemStoredTransactionCheckinFormByExtUserContainer"),
-		byExtNameInput: $("#itemStoredTransactionCheckinFormByExtUserNameInput"),
-		byExtIdInput: $("#itemStoredTransactionCheckinFormByExtUserIdInput"),
+		static byWhoSelect = $("#itemStoredTransactionCheckinFormByWhoSelectInput");
+		static byOriginalContainer = $("#itemStoredTransactionCheckinFormByOriginalContainer");
+		static byOriginalContent = $("#itemStoredTransactionCheckinFormByOriginalContent");
+		static byUserContainer = $("#itemStoredTransactionCheckinFormByUserContainer");
+		static 	byUserInput = $("#itemStoredTransactionCheckinFormByUserInput");
+		static byExtContainer = $("#itemStoredTransactionCheckinFormByExtUserContainer");
+		static byExtNameInput = $("#itemStoredTransactionCheckinFormByExtUserNameInput");
+		static byExtIdInput = $("#itemStoredTransactionCheckinFormByExtUserIdInput");
 
-		notesInput: $("#itemStoredTransactionCheckinFormNotesInput"),
+		static notesInput = $("#itemStoredTransactionCheckinFormNotesInput");
 
-		toSelectContainer: $("#itemStoredTransactionCheckinFormToSelectContainer"),
-		toSelectInput: $("#itemStoredTransactionCheckinFormToSelectInput"),
+		static toSelectContainer = $("#itemStoredTransactionCheckinFormToSelectContainer");
+		static toSelectInput = $("#itemStoredTransactionCheckinFormToSelectInput");
 
-		toOrigDescContainer: $("#itemStoredTransactionCheckinFormToOriginalDescContainer"),
-		toOrigDesc: $("#itemStoredTransactionCheckinFormToOriginalDesc"),
+		static toOrigDescContainer = $("#itemStoredTransactionCheckinFormToOriginalDescContainer");
+		static toOrigDesc = $("#itemStoredTransactionCheckinFormToOriginalDesc");
 
-		toBlockContainer: $("#itemStoredTransactionCheckinFormToBlockContainer"),
-		toBlockInput: $("#itemStoredTransactionCheckinFormToBlockSelect"),
+		static toBlockContainer = $("#itemStoredTransactionCheckinFormToBlockContainer");
+		static toBlockInput = $("#itemStoredTransactionCheckinFormToBlockSelect");
 
-		toStoredContainer: $("#itemStoredTransactionCheckinFormToStoredContainer"),
-		toStoredInputGroup: $("#itemStoredTransactionCheckinFormToItemStored-inputGroup"),
-		toStoredIdInput: $("#itemStoredTransactionCheckinFormToItemStored-itemStoredInputId"),
+		static toStoredContainer = $("#itemStoredTransactionCheckinFormToStoredContainer");
+		static toStoredInputGroup = $("#itemStoredTransactionCheckinFormToItemStored-inputGroup");
+		static toStoredIdInput = $("#itemStoredTransactionCheckinFormToItemStored-itemStoredInputId");
 
-		imageSelect: $("#itemStoredTransactionCheckinForm.imagesSelected"),
-		fileSelect: $("#itemStoredTransactionCheckinForm.fileAttachmentSelectInputTable"),
-		keywordInputs: $("#itemStoredTransactionCheckinForm.keywordInputDiv"),
-		attInputs: $("#itemStoredTransactionCheckinForm.attInputDiv"),
+		static imageSelect = $("#itemStoredTransactionCheckinForm.imagesSelected");
+		static fileSelect = $("#itemStoredTransactionCheckinForm.fileAttachmentSelectInputTable");
+		static keywordInputs = $("#itemStoredTransactionCheckinForm.keywordInputDiv");
+		static attInputs = $("#itemStoredTransactionCheckinForm.attInputDiv");
 
-		resetForm() {
+		static resetForm() {
 			ItemStoredTransaction.Checkin.form.trigger("reset");
 			ItemCheckoutSearchSelect.resetSearchInput(ItemStoredTransaction.Checkin.checkoutSearchInputGroup);
 
@@ -442,8 +443,8 @@ export const ItemStoredTransaction = {
 			ItemStoredTransaction.Checkin.keywordInputs.text("");
 			ItemStoredTransaction.Checkin.attInputs.text("");
 
-		},
-		setupForm: async function (checkout, buttonElement) {
+		}
+		static async setupForm(checkout, buttonElement) {
 			console.log("Setting up item stored checkin transaction form for checkin ", checkout);
 			ModalUtils.setReturnModal(this.modal, buttonElement);
 			this.resetForm();
@@ -569,8 +570,8 @@ export const ItemStoredTransaction = {
 			ItemStoredTransaction.Checkin.updateCheckedInBy();
 			ItemStoredTransaction.Checkin.intoChanged();
 			ItemStoredTransaction.Checkin.checkoutDetailsContainer.show();
-		},
-		updateCheckedInBy() {
+		}
+		static updateCheckedInBy() {
 			let checkedInBySelectVal = ItemStoredTransaction.Checkin.byWhoSelect.val();
 
 			ItemStoredTransaction.Checkin.byOriginalContainer.hide();
@@ -599,8 +600,8 @@ export const ItemStoredTransaction = {
 					ItemStoredTransaction.Checkin.byExtContainer.show();
 					break;
 			}
-		},
-		intoChanged() {
+		}
+		static intoChanged() {
 			ItemStoredTransaction.Checkin.toOrigDescContainer.hide();
 			ItemStoredTransaction.Checkin.toBlockContainer.hide();
 			ItemStoredTransaction.Checkin.toStoredContainer.hide();
@@ -616,8 +617,8 @@ export const ItemStoredTransaction = {
 					ItemStoredTransaction.Checkin.toStoredContainer.show();
 					break;
 			}
-		},
-		submitFormHandler: async function (e) {
+		}
+		static async submitFormHandler(e) {
 			e.preventDefault();
 			console.log("Submitting Checkin form");
 
@@ -728,51 +729,51 @@ export const ItemStoredTransaction = {
 				);
 			});
 		}
-	},
-	Checkout: {
-		modal: $("#itemStoredTransactionCheckoutModal"),
-		messages: $("#itemStoredTransactionCheckoutMessages"),
-		form: $("#itemStoredTransactionCheckoutForm"),
-		formContainer: $("#itemStoredTransactionCheckoutFormContainer"),
+	}
+	static Checkout = class {
+		static modal = $("#itemStoredTransactionCheckoutModal");
+		static messages = $("#itemStoredTransactionCheckoutMessages");
+		static form = $("#itemStoredTransactionCheckoutForm");
+		static formContainer = $("#itemStoredTransactionCheckoutFormContainer");
 
-		itemSearchContainer: $("#itemStoredTransactionCheckoutFormItemInputContainer"),
-		itemSearchIdInput: $("#itemStoredTransactionCheckoutFormItem-itemInputId"),
-		itemSearchClearButton: $("#itemStoredTransactionCheckoutFormItem-itemInputClearButton"),
+		static itemSearchContainer = $("#itemStoredTransactionCheckoutFormItemInputContainer");
+		static itemSearchIdInput = $("#itemStoredTransactionCheckoutFormItem-itemInputId");
+		static itemSearchClearButton = $("#itemStoredTransactionCheckoutFormItem-itemInputClearButton");
 
-		itemIdInput: $("#itemStoredTransactionCheckoutFormItemIdInput"),
+		static itemIdInput = $("#itemStoredTransactionCheckoutFormItemIdInput");
 
-		itemInfoContainer: $("#itemStoredTransactionCheckoutFormItemInfoContainer"),
-		itemInfoName: $("#itemStoredTransactionCheckoutFormInfoItemName"),
+		static itemInfoContainer = $("#itemStoredTransactionCheckoutFormItemInfoContainer");
+		static itemInfoName = $("#itemStoredTransactionCheckoutFormInfoItemName");
 
-		typeInputContainer: $("#itemStoredTransactionCheckoutFormTypeInputContainer"),
-		typeInput: $("#itemStoredTransactionCheckoutFormTypeInput"),
+		static typeInputContainer = $("#itemStoredTransactionCheckoutFormTypeInputContainer");
+		static typeInput = $("#itemStoredTransactionCheckoutFormTypeInput");
 
-		fromBlockContainer: $("#itemStoredTransactionCheckoutFormFromBlockContainer"),
-		fromBlockSelect: $("#itemStoredTransactionCheckoutFormFromBlockSelect"),
+		static fromBlockContainer = $("#itemStoredTransactionCheckoutFormFromBlockContainer");
+		static fromBlockSelect = $("#itemStoredTransactionCheckoutFormFromBlockSelect");
 
-		fromStoredContainer: $("#itemStoredTransactionCheckoutFormFromStoredContainer"),
-		fromStoredInputGroup: $("#itemStoredTransactionCheckoutFormFromItemStored-inputGroup"),
-		fromStoredBlockIdInput: $("#itemStoredTransactionCheckoutFormFromItemStored-itemStoredInputBlockId"),
-		fromStoredStoredIdInput: $("#itemStoredTransactionCheckoutFormFromItemStored-itemStoredInputId"),
+		static fromStoredContainer = $("#itemStoredTransactionCheckoutFormFromStoredContainer");
+		static fromStoredInputGroup = $("#itemStoredTransactionCheckoutFormFromItemStored-inputGroup");
+		static fromStoredBlockIdInput = $("#itemStoredTransactionCheckoutFormFromItemStored-itemStoredInputBlockId");
+		static fromStoredStoredIdInput = $("#itemStoredTransactionCheckoutFormFromItemStored-itemStoredInputId");
 
-		amountContainer: $("#itemStoredTransactionCheckoutFormAmountContainer"),
-		amountInputs: $("#itemStoredTransactionCheckoutFormAmountInputs"),
-		amountAllInput: $("#itemStoredTransactionCheckoutFormAmountAllInput"),
+		static amountContainer = $("#itemStoredTransactionCheckoutFormAmountContainer");
+		static amountInputs = $("#itemStoredTransactionCheckoutFormAmountInputs");
+		static amountAllInput = $("#itemStoredTransactionCheckoutFormAmountAllInput");
 
-		forWhomSelect: $("#itemStoredTransactionCheckoutFormForSelectInput"),
+		static forWhomSelect = $("#itemStoredTransactionCheckoutFormForSelectInput");
 
-		forUserContainer: $("#itemStoredTransactionCheckoutFormForUserContainer"),
-		forUserSelect: $("#itemStoredTransactionCheckoutFormForUserInput"),
+		static forUserContainer = $("#itemStoredTransactionCheckoutFormForUserContainer");
+		static forUserSelect = $("#itemStoredTransactionCheckoutFormForUserInput");
 
-		forExternalContainer: $("#itemStoredTransactionCheckoutFormForExtUserContainer"),
-		forExternalNameInput: $("#itemStoredTransactionCheckoutFormForExtUserNameInput"),
-		forExternalIdInput: $("#itemStoredTransactionCheckoutFormForExtUserIdInput"),
+		static forExternalContainer = $("#itemStoredTransactionCheckoutFormForExtUserContainer");
+		static forExternalNameInput = $("#itemStoredTransactionCheckoutFormForExtUserNameInput");
+		static forExternalIdInput = $("#itemStoredTransactionCheckoutFormForExtUserIdInput");
 
-		dueBackInput: $("#itemStoredTransactionCheckoutFormDueBackInput"),
-		reasonInput: $("#itemStoredTransactionCheckoutFormReasonInput"),
-		detailsInput: $("#itemStoredTransactionCheckoutFormDetailDetailInput"),
+		static dueBackInput = $("#itemStoredTransactionCheckoutFormDueBackInput");
+		static reasonInput = $("#itemStoredTransactionCheckoutFormReasonInput");
+		static detailsInput = $("#itemStoredTransactionCheckoutFormDetailDetailInput");
 
-		resetForm() {
+		static resetForm() {
 			ItemStoredTransaction.Checkout.form.trigger("reset");
 			ItemStoredTransaction.Checkout.formContainer.hide();
 			ItemStoredTransaction.Checkout.messages.text("");
@@ -801,8 +802,8 @@ export const ItemStoredTransaction = {
 
 
 			ItemStoredTransaction.Checkout.forExternalContainer.hide();
-		},
-		setupForm: async function (item, stored, buttonElement) {
+		}
+		static async setupForm(item, stored, buttonElement) {
 			Main.processStart();
 			ItemStoredTransaction.Checkout.resetForm();
 			if (buttonElement != null) {
@@ -922,8 +923,8 @@ export const ItemStoredTransaction = {
 			}
 
 			Main.processStop();
-		},
-		typeUpdated(force = false) {
+		}
+		static typeUpdated(force = false) {
 			if (force || ItemStoredTransaction.Checkout.typeInput.is(":visible")) {
 				console.log("Updating inputs based on selected subtract type.");
 
@@ -942,8 +943,8 @@ export const ItemStoredTransaction = {
 						break;
 				}
 			}
-		},
-		updateAmount: async function (item = null, stored = null, storageBlockId = null, force = false) {
+		}
+		static async updateAmount(item = null, stored = null, storageBlockId = null, force = false) {
 			if (force || ItemStoredTransaction.Checkout.amountInputsContainer.is(":visible")) {
 				console.log("Updating amounts");
 
@@ -1019,16 +1020,16 @@ export const ItemStoredTransaction = {
 			} else {
 				console.debug("Amounts not visible; not updating.");
 			}
-		},
-		updateAllAmount() {
+		}
+		static updateAllAmount() {
 			let inputs = ItemStoredTransaction.Checkout.amountInputs.find("input, select");
 			if (ItemStoredTransaction.Checkout.amountAllInput.is(":checked")) {
 				inputs.prop("disabled", true);
 			} else {
 				inputs.prop("disabled", false);
 			}
-		},
-		updateForWho() {
+		}
+		static updateForWho() {
 			ItemStoredTransaction.Checkout.forExternalContainer.hide();
 			ItemStoredTransaction.Checkout.forUserContainer.hide();
 			let who = ItemStoredTransaction.Checkout.forWhomSelect.val();
@@ -1041,8 +1042,8 @@ export const ItemStoredTransaction = {
 					ItemStoredTransaction.Checkout.forExternalContainer.show();
 					break;
 			}
-		},
-		submitFormHandler: async function (event) {
+		}
+		static async submitFormHandler(event) {
 			event.preventDefault();
 			console.log("Submitting Item Stored Checkout form.");
 
@@ -1098,29 +1099,29 @@ export const ItemStoredTransaction = {
 				ItemStoredTransaction.Checkout.modal
 			);
 		}
-	},
-	Set: {
-		modal: $("#itemStoredTransactionSetModal"),
-		messages: $("#itemStoredTransactionSetMessages"),
-		form: $("#itemStoredTransactionSetForm"),
+	}
+	static Set = class {
+		static modal = $("#itemStoredTransactionSetModal");
+		static messages = $("#itemStoredTransactionSetMessages");
+		static form = $("#itemStoredTransactionSetForm");
 
-		itemSelectContainer: $("#itemStoredTransactionSetFormItemInputContainer"),
-		itemIdInput: $("#itemStoredTransactionSetFormItemIdInput"),
-		itemName: $("#itemStoredTransactionSetItemInfoItemName"),
-		setTypeInput: $("#itemStoredTransactionSetFormItemSetType"),
+		static itemSelectContainer = $("#itemStoredTransactionSetFormItemInputContainer");
+		static itemIdInput = $("#itemStoredTransactionSetFormItemIdInput");
+		static itemName = $("#itemStoredTransactionSetItemInfoItemName");
+		static setTypeInput = $("#itemStoredTransactionSetFormItemSetType");
 
-		blockContainer: $("#itemStoredTransactionSetFormBlockContainer"),
-		blockSelect: $("#itemStoredTransactionSetFormBlockSelect"),
+		static blockContainer = $("#itemStoredTransactionSetFormBlockContainer");
+		static blockSelect = $("#itemStoredTransactionSetFormBlockSelect");
 
-		storedContainer: $("#itemStoredTransactionSetFormStoredContainer"),
-		storedItemIdInput: $("#itemStoredTransactionSetFormItemStored-itemStoredInputItemId"),
-		storedIdInput: $("#itemStoredTransactionSetFormItemStored-itemStoredInputId"),
-		storedItemBlockIdInput: $("#itemStoredTransactionSetFormItemStored-itemStoredInputBlockId"),
-		storedSelect: $("#itemStoredTransactionSetFormItemStored-inputGroup"),
+		static storedContainer = $("#itemStoredTransactionSetFormStoredContainer");
+		static storedItemIdInput = $("#itemStoredTransactionSetFormItemStored-itemStoredInputItemId");
+		static storedIdInput = $("#itemStoredTransactionSetFormItemStored-itemStoredInputId");
+		static storedItemBlockIdInput = $("#itemStoredTransactionSetFormItemStored-itemStoredInputBlockId");
+		static storedSelect = $("#itemStoredTransactionSetFormItemStored-inputGroup");
 
-		amountInputs: $("#itemStoredTransactionSetFormAmountContainer"),
+		static amountInputs = $("#itemStoredTransactionSetFormAmountContainer");
 
-		failNotAmountType() {
+		static failNotAmountType() {
 			PageMessageUtils.addMessageToDiv(
 				ItemStoredTransaction.Set.messages,
 				"danger",
@@ -1128,8 +1129,8 @@ export const ItemStoredTransaction = {
 				"Invalid Item Type"
 			);
 			Main.processStop();
-		},
-		resetForm() {
+		}
+		static resetForm() {
 			ItemStoredTransaction.Set.messages.text("");
 			ItemStoredTransaction.Set.itemSelectContainer.hide();
 			ItemStoredTransaction.Set.itemIdInput.val("");
@@ -1144,8 +1145,8 @@ export const ItemStoredTransaction = {
 			ItemStoredTransaction.Set.amountInputs.text("");
 			ItemSearchSelect.clearSearchInput(ItemStoredTransaction.Set.storedSelect, false);
 
-		},
-		setupForm: async function (item, stored, buttonElement) {
+		}
+		static async setupForm(item, stored, buttonElement) {
 			Main.processStart();
 			if (buttonElement != null) {
 				ModalUtils.setReturnModal(this.modal, buttonElement);
@@ -1213,8 +1214,8 @@ export const ItemStoredTransaction = {
 			ItemStoredTransaction.Set.updateAmounts();
 
 			Main.processStop();
-		},
-		updateAmounts: async function (item = null, stored = null, storageBlockId = null) {
+		}
+		static async updateAmounts(item = null, stored = null, storageBlockId = null) {
 			console.log("Updating amounts");
 
 			if (item == null) {
@@ -1282,8 +1283,8 @@ export const ItemStoredTransaction = {
 				}
 				throw new Error("Should not be able to get here.");
 			}
-		},
-		submitFormHandler: async function (event) {
+		}
+		static async submitFormHandler(event) {
 			event.preventDefault();
 			let transaction = {
 				type: "SET_AMOUNT",
@@ -1309,37 +1310,37 @@ export const ItemStoredTransaction = {
 				ItemStoredTransaction.Set.modal
 			);
 		}
-	},
-	Subtract: {
-		modal: $("#itemStoredTransactionSubtractModal"),
-		messages: $("#itemStoredTransactionSubtractMessages"),
-		form: $("#itemStoredTransactionSubtractForm"),
+	}
+	static Subtract = class {
+		static modal = $("#itemStoredTransactionSubtractModal");
+		static messages = $("#itemStoredTransactionSubtractMessages");
+		static form = $("#itemStoredTransactionSubtractForm");
 
-		itemSearchContainer: $("#itemStoredTransactionSubtractFormItemInputContainer"),
-		itemSearchIdInput: $("#itemStoredTransactionSubtractFormItem-itemInputId"),
+		static itemSearchContainer = $("#itemStoredTransactionSubtractFormItemInputContainer");
+		static itemSearchIdInput = $("#itemStoredTransactionSubtractFormItem-itemInputId");
 
-		itemInfoContainer: $("#itemStoredTransactionSubtractItemInfoContainer"),
-		itemInfoName: $("#itemStoredTransactionSubtractItemInfoItemName"),
+		static itemInfoContainer = $("#itemStoredTransactionSubtractItemInfoContainer");
+		static itemInfoName = $("#itemStoredTransactionSubtractItemInfoItemName");
 
-		itemIdInput: $("#itemStoredTransactionSubtractFormItemIdInput"),
+		static itemIdInput = $("#itemStoredTransactionSubtractFormItemIdInput");
 
-		typeInputContainer: $("#itemStoredTransactionSubtractFormTypeInputContainer"),
-		typeSelect: $("#itemStoredTransactionSubtractFormTypeInput"),
+		static typeInputContainer = $("#itemStoredTransactionSubtractFormTypeInputContainer");
+		static typeSelect = $("#itemStoredTransactionSubtractFormTypeInput");
 
-		fromBlockContainer: $("#itemStoredTransactionSubtractFormFromBlockContainer"),
-		fromBlockSelect: $("#itemStoredTransactionSubtractFormFromBlockSelect"),
+		static fromBlockContainer = $("#itemStoredTransactionSubtractFormFromBlockContainer");
+		static fromBlockSelect = $("#itemStoredTransactionSubtractFormFromBlockSelect");
 
-		fromStoredContainer: $("#itemStoredTransactionSubtractFormFromStoredContainer"),
-		fromStoredInputGroup: $("#itemStoredTransactionSubtractFormFromItemStored-inputGroup"),
-		fromStoredItemIdInput: $("#itemStoredTransactionSubtractFormFromItemStored-itemStoredInputItemId"),
-		fromStoredBlockIdInput: $("#itemStoredTransactionSubtractFormFromItemStored-itemStoredInputBlockId"),
-		fromStoredStoredIdInput: $("#itemStoredTransactionSubtractFormFromItemStored-itemStoredInputId"),
+		static fromStoredContainer = $("#itemStoredTransactionSubtractFormFromStoredContainer");
+		static fromStoredInputGroup = $("#itemStoredTransactionSubtractFormFromItemStored-inputGroup");
+		static fromStoredItemIdInput = $("#itemStoredTransactionSubtractFormFromItemStored-itemStoredInputItemId");
+		static fromStoredBlockIdInput = $("#itemStoredTransactionSubtractFormFromItemStored-itemStoredInputBlockId");
+		static fromStoredStoredIdInput = $("#itemStoredTransactionSubtractFormFromItemStored-itemStoredInputId");
 
-		amountContainer: $("#itemStoredTransactionSubtractFormAmountContainer"),
-		amountInputsContainer: $("#itemStoredTransactionSubtractFormAmountInputs"),
-		amountSubtractAllInput: $("#itemStoredTransactionSubtractFormAmountSubtractAllInput"),
+		static amountContainer = $("#itemStoredTransactionSubtractFormAmountContainer");
+		static amountInputsContainer = $("#itemStoredTransactionSubtractFormAmountInputs");
+		static amountSubtractAllInput = $("#itemStoredTransactionSubtractFormAmountSubtractAllInput");
 
-		resetForm() {
+		static resetForm() {
 			ItemStoredTransaction.Subtract.form.trigger("reset");
 			ItemStoredTransaction.Subtract.messages.text("");
 
@@ -1361,8 +1362,8 @@ export const ItemStoredTransaction = {
 
 			ItemStoredTransaction.Subtract.amountContainer.hide();
 			ItemStoredTransaction.Subtract.amountInputsContainer.text("");
-		},
-		setupForm: async function (item, stored, buttonElement) {
+		}
+		static async setupForm(item, stored, buttonElement) {
 			Main.processStart();
 			if (buttonElement != null) {
 				ModalUtils.setReturnModal(this.modal, buttonElement);
@@ -1464,8 +1465,8 @@ export const ItemStoredTransaction = {
 			}
 
 			Main.processStop();
-		},
-		typeUpdated(force = false) {
+		}
+		static typeUpdated(force = false) {
 			if (force || ItemStoredTransaction.Subtract.typeSelect.is(":visible")) {
 				console.log("Updating inputs based on selected subtract type.");
 
@@ -1484,8 +1485,8 @@ export const ItemStoredTransaction = {
 						break;
 				}
 			}
-		},
-		updateAmount: async function (item = null, stored = null, storageBlockId = null, force = false) {
+		}
+		static async updateAmount(item = null, stored = null, storageBlockId = null, force = false) {
 			if (force || ItemStoredTransaction.Subtract.amountInputsContainer.is(":visible")) {
 				console.log("Updating amounts");
 
@@ -1561,16 +1562,16 @@ export const ItemStoredTransaction = {
 			} else {
 				console.debug("Amounts not visible; not updating.");
 			}
-		},
-		updateAllAmount() {
+		}
+		static updateAllAmount() {
 			let inputs = ItemStoredTransaction.Subtract.amountInputsContainer.find("input, select");
 			if (ItemStoredTransaction.Subtract.amountSubtractAllInput.is(":checked")) {
 				inputs.prop("disabled", true);
 			} else {
 				inputs.prop("disabled", false);
 			}
-		},
-		submitFormHandler: async function (event) {
+		}
+		static async submitFormHandler(event) {
 			event.preventDefault();
 			console.log("Building and submitting subtract transaction.");
 			let transaction = {};
@@ -1603,44 +1604,44 @@ export const ItemStoredTransaction = {
 				ItemStoredTransaction.Subtract.modal
 			);
 		}
-	},
-	Transfer: {
-		modal: $("#itemStoredTransactionTransferModal"),
-		messages: $("#itemStoredTransactionTransferMessages"),
-		form: $("#itemStoredTransactionTransferForm"),
+	}
+	static Transfer = class {
+		static modal = $("#itemStoredTransactionTransferModal");
+		static messages = $("#itemStoredTransactionTransferMessages");
+		static form = $("#itemStoredTransactionTransferForm");
 
-		itemInputContainer: $("#itemStoredTransactionTransferFormItemInputContainer"),
-		itemSearchIdInput: $("#itemStoredTransactionTransferFormItem-itemInputId"),
-		itemInputClearButton: $("#itemStoredTransactionTransferFormItem-itemInputClearButton"),
+		static itemInputContainer = $("#itemStoredTransactionTransferFormItemInputContainer");
+		static itemSearchIdInput = $("#itemStoredTransactionTransferFormItem-itemInputId");
+		static itemInputClearButton = $("#itemStoredTransactionTransferFormItem-itemInputClearButton");
 
-		itemInfoContainer: $("#itemStoredTransactionTransferItemInfoContainer"),
-		itemInfoItemName: $("#itemStoredTransactionTransferItemInfoItemName"),
+		static itemInfoContainer = $("#itemStoredTransactionTransferItemInfoContainer");
+		static itemInfoItemName = $("#itemStoredTransactionTransferItemInfoItemName");
 
-		storedInfoContainer: $("#itemStoredTransactionTransferInfoContainer"),
+		static storedInfoContainer = $("#itemStoredTransactionTransferInfoContainer");
 
-		itemIdInput: $("#itemStoredTransactionTransferFormItemIdInput"),
-		transactionTypeContainer: $("#itemStoredTransactionTransferFormTypeInputContainer"),
-		transactionTypeInput: $("#itemStoredTransactionTransferFormTypeInput"),
-		fromBlockContainer: $("#itemStoredTransactionTransferFormFromBlockContainer"),
-		fromBlockSelect: $("#itemStoredTransactionTransferFormFromBlockSelect"),
-		fromStoredContainer: $("#itemStoredTransactionTransferFormFromStoredContainer"),
-		fromStoredSelect: $("#itemStoredTransactionTransferFormFromItemStored-inputGroup"),
-		fromStoredItemIdInput: $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputItemId"),
-		fromStoredBlockIdInput: $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputBlockId"),
-		fromStoredStoredIdInput: $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputId"),
+		static itemIdInput = $("#itemStoredTransactionTransferFormItemIdInput");
+		static transactionTypeContainer = $("#itemStoredTransactionTransferFormTypeInputContainer");
+		static transactionTypeInput = $("#itemStoredTransactionTransferFormTypeInput");
+		static fromBlockContainer = $("#itemStoredTransactionTransferFormFromBlockContainer");
+		static fromBlockSelect = $("#itemStoredTransactionTransferFormFromBlockSelect");
+		static fromStoredContainer = $("#itemStoredTransactionTransferFormFromStoredContainer");
+		static fromStoredSelect = $("#itemStoredTransactionTransferFormFromItemStored-inputGroup");
+		static fromStoredItemIdInput = $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputItemId");
+		static fromStoredBlockIdInput = $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputBlockId");
+		static fromStoredStoredIdInput = $("#itemStoredTransactionTransferFormFromItemStored-itemStoredInputId");
 
-		amountInputContainer: $("#itemStoredTransactionTransferFormAmountContainer"),
-		amountInputs: $("#itemStoredTransactionTransferFormAmountInputs"),
-		amountTransferAllInput: $("#itemStoredTransactionTransferFormAmountTransferAllInput"),
+		static amountInputContainer = $("#itemStoredTransactionTransferFormAmountContainer");
+		static amountInputs = $("#itemStoredTransactionTransferFormAmountInputs");
+		static amountTransferAllInput = $("#itemStoredTransactionTransferFormAmountTransferAllInput");
 
-		toBlockContainer: $("#itemStoredTransactionTransferFormToBlockContainer"),
-		toBlockSelect: $("#itemStoredTransactionTransferFormToBlockSelect"),
-		toStoredContainer: $("#itemStoredTransactionTransferFormToStoredContainer"),
-		toStoredSelect: $("#itemStoredTransactionTransferFormToItemStored-inputGroup"),
-		toStoredItemIdInput: $("#itemStoredTransactionTransferFormToItemStored-itemStoredInputItemId"),
-		toStoredIdInput: $("#itemStoredTransactionTransferFormToItemStored-itemStoredInputId"),
+		static toBlockContainer = $("#itemStoredTransactionTransferFormToBlockContainer");
+		static toBlockSelect = $("#itemStoredTransactionTransferFormToBlockSelect");
+		static toStoredContainer = $("#itemStoredTransactionTransferFormToStoredContainer");
+		static toStoredSelect = $("#itemStoredTransactionTransferFormToItemStored-inputGroup");
+		static toStoredItemIdInput = $("#itemStoredTransactionTransferFormToItemStored-itemStoredInputItemId");
+		static toStoredIdInput = $("#itemStoredTransactionTransferFormToItemStored-itemStoredInputId");
 
-		resetForm: function (triggerItemIdChange = true) {
+		static resetForm(triggerItemIdChange = true) {
 			ItemStoredTransaction.Transfer.itemInputContainer.hide();
 			ItemSearchSelect.clearSearchInput(ItemStoredTransaction.Transfer.itemInputClearButton, triggerItemIdChange);
 
@@ -1666,8 +1667,8 @@ export const ItemStoredTransaction = {
 			ItemStoredTransaction.Transfer.toBlockSelect.text("");
 			ItemStoredTransaction.Transfer.toStoredContainer.hide();
 			ItemStoredSearchSelect.resetSearchInput(ItemStoredTransaction.Transfer.toStoredSelect);
-		},
-		setupForm: async function (item, stored, buttonElement = null) {
+		}
+		static async setupForm(item, stored, buttonElement = null) {
 			Main.processStart();
 			if (buttonElement != null) {
 				ModalUtils.setReturnModal(this.modal, buttonElement);
@@ -1827,11 +1828,11 @@ export const ItemStoredTransaction = {
 
 			//TODO:: make & run update to block to not select same block as is selected in from
 			Main.processStop();
-		},
+		}
 		/**
 		 * Updates visibility of fields, selected/disabled in dropdowns based on what is selected
 		 */
-		typeChanged(force = false) {
+		static typeChanged(force = false) {
 			if (force || ItemStoredTransaction.Transfer.transactionTypeContainer.is(":visible")) {
 				let type = ItemStoredTransaction.Transfer.transactionTypeInput.val();
 				console.log("Transaction type changed: ", type);
@@ -1853,8 +1854,8 @@ export const ItemStoredTransaction = {
 						throw new Error("Invalid value for transfer type: " + type);
 				}
 			}
-		},
-		updateToBlock(selectedBlockId = null, force = false) {
+		}
+		static updateToBlock(selectedBlockId = null, force = false) {
 			//TODO:: update for from stored
 			if (force || ItemStoredTransaction.Transfer.toBlockSelect.is(":visible")) {
 				console.debug("Updating availability of to block options. Block to make unavailable: ", selectedBlockId);
@@ -1870,11 +1871,11 @@ export const ItemStoredTransaction = {
 			} else {
 				console.debug("ToBlock not visible; not updating.");
 			}
-		},
+		}
 		/**
 		 * Updates the amount input to the value of what is present in the stored selected.
 		 */
-		updateAmount: async function (item = null, stored = null, storageBlockId = null, force = false) {
+		static async updateAmount(item = null, stored = null, storageBlockId = null, force = false) {
 			if (force || ItemStoredTransaction.Transfer.amountInputContainer.is(":visible")) {
 				console.log("Updating amounts");
 
@@ -1945,16 +1946,16 @@ export const ItemStoredTransaction = {
 			} else {
 				console.debug("Amounts not visible; not updating.");
 			}
-		},
-		updateAllAmount() {
+		}
+		static updateAllAmount() {
 			let inputs = ItemStoredTransaction.Transfer.amountInputs.find("input, select");
 			if (ItemStoredTransaction.Transfer.amountTransferAllInput.is(":checked")) {
 				inputs.prop("disabled", true);
 			} else {
 				inputs.prop("disabled", false);
 			}
-		},
-		submitFormHandler: async function (event) {
+		}
+		static async submitFormHandler(event) {
 			event.preventDefault();
 			let transaction = {};
 
@@ -1997,8 +1998,10 @@ export const ItemStoredTransaction = {
 				ItemStoredTransaction.Transfer.modal
 			);
 		}
-	},
-	initPage: function () {
+	}
+	static {
+		window.ItemStoredTransaction = this;
+
 		if (ItemStoredTransaction.Add.form) {
 			ItemStoredTransaction.Add.form.on("submit", ItemStoredTransaction.Add.submitFormHandler);
 			ItemStoredTransaction.Add.itemIdInput.on("change", function () {
@@ -2051,4 +2054,4 @@ export const ItemStoredTransaction = {
 			ItemStoredTransaction.Checkin.form.on("submit", ItemStoredTransaction.Checkin.submitFormHandler);
 		}
 	}
-};
+}

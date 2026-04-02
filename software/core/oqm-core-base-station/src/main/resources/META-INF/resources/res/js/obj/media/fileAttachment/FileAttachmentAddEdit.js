@@ -1,22 +1,23 @@
 import {Rest} from "../../../Rest.js";
 import {PageMessageUtils} from "../../../PageMessageUtils.js";
+import {PageUtility} from "../../../utilClasses/PageUtility.js";
 
 // TODO:: #1149 editing
-export const FileAttachmentAddEdit = {
-	formMessages: $("#fileAttachmentAddEditFormMessages"),
-	form: $("#fileAttachmentAddEditForm"),
-	fileInput: $("#fileAttachmentAddEditFormFileInput"),
-	descriptionInput: $("#fileAttachmentAddEditFormDescriptionInput"),
+export class FileAttachmentAddEdit extends PageUtility {
+	static formMessages = $("#fileAttachmentAddEditFormMessages");
+	static form = $("#fileAttachmentAddEditForm");
+	static fileInput = $("#fileAttachmentAddEditFormFileInput");
+	static descriptionInput = $("#fileAttachmentAddEditFormDescriptionInput");
 
-	resetForm(){
+	static resetForm(){
 		this.fileInput.val(null);
 		this.descriptionInput.val("");
-	},
-	setupForAdd(){
+	}
+	static setupForAdd(){
 		this.resetForm();
-	},
+	}
 
-	submitForm(e){
+	static submitForm(e){
 		e.preventDefault();
 		console.log("Submitting FileAttachmentAddEdit form.");
 
@@ -39,11 +40,11 @@ export const FileAttachmentAddEdit = {
 			},
 			failMessagesDiv: FileAttachmentAddEdit.formMessages
 		});
-	},
-	fileAttachmentAdded(data) {
+	}
+	static fileAttachmentAdded(data) {
 		PageMessageUtils.reloadPageWithMessage("Added file successfully!", "success", "Success!");
-	},
-	removeFile(fileId){
+	}
+	static removeFile(fileId){
 		console.log("Attempting to remove file: ", fileId);
 		if(!confirm("Are you sure? This cannot be undone.")){
 			console.log("User chose not to delete after all.");
@@ -58,8 +59,9 @@ export const FileAttachmentAddEdit = {
 			},
 			failMessagesDiv: PageMessageUtils.mainMessageDiv
 		});
-	},
-	initPage: function () {
+	}
+	static {
+		window.FileAttachmentAddEdit = this;
 		FileAttachmentAddEdit.form.on("submit", function(e){FileAttachmentAddEdit.submitForm(e)});
 	}
-};
+}

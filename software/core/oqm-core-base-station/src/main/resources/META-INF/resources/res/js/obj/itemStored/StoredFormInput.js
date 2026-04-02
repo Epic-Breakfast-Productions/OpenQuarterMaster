@@ -9,8 +9,8 @@ import {UnitUtils} from "../UnitUtils.js";
 import {StoredTypeUtils} from "../../StoredTypeUtils.js";
 import {PageComponents} from "../../PageComponents.js";
 
-export const StoredFormInput = {
-	getBasicInputs(stored, item) {
+export class StoredFormInput {
+	static getBasicInputs(stored, item) {
 		let output = $(`
 <div class="commonStoredFormElements">
 	<div class="mb-3 ">
@@ -94,8 +94,8 @@ export const StoredFormInput = {
 		}
 
 		return output;
-	},
-	getAmountInputs: async function (item, stored, showAmount = true, maxFromStored = false) {
+	}
+	static async getAmountInputs(item, stored, showAmount = true, maxFromStored = false) {
 		console.log("Getting amount inputs");
 
 		let output = $(
@@ -141,20 +141,20 @@ export const StoredFormInput = {
 		}
 
 		return output;
-	},
-	updateMaxAmount(unitInputJq) {
+	}
+	static updateMaxAmount(unitInputJq) {
 		console.log("Updating max value for amount input.");
 		let amountStoredInputGroup = unitInputJq.parent();
 		let amountStoredValueInput = amountStoredInputGroup.find(".amountStoredValueInput");
 		amountStoredValueInput.attr("max", unitInputJq.find(":selected").attr("data-max-value"));
-	},
-	getUniqueInputs(stored) {
+	}
+	static getUniqueInputs(stored) {
 		let output = $('<div class="uniqueStoredFormInputs"></div>');
 		//TODO:: make inputs
 
 		return output;
-	},
-	getStoredInputs: async function (forStoredType, stored = null, item = null, forEdit = true) {
+	}
+	static async getStoredInputs(forStoredType, stored = null, item = null, forEdit = true) {
 		let output = $('<div class="storedInputs"></div>');
 
 		await StoredTypeUtils.runForType(forStoredType,
@@ -170,8 +170,8 @@ export const StoredFormInput = {
 		output.append(this.getBasicInputs(stored, item));
 
 		return output;
-	},
-	dataFromInputs(dataToAddTo, containerJq) {
+	}
+	static dataFromInputs(dataToAddTo, containerJq) {
 		//common inputs
 		let commonInputsContainer = containerJq.find(".commonStoredFormElements");
 		if (commonInputsContainer.length && commonInputsContainer.is(":visible")) {
@@ -204,4 +204,4 @@ export const StoredFormInput = {
 			//TODO
 		}
 	}
-};
+}

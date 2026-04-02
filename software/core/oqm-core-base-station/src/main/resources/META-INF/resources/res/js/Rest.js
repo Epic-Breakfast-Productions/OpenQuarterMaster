@@ -1,32 +1,33 @@
 import {SpinnerUtils} from "./SpinnerUtils.js";
 import {PageMessageUtils} from "./PageMessageUtils.js";
 
-export const Rest = {
-	wholeBody: $('body'),
-	webroot: Constants.rootPrefix,
-	apiRoot: Constants.rootPrefix + "/api",
-	passRoot: Constants.rootPrefix + "/api/passthrough",
-	componentRoot: Constants.rootPrefix + "/api/pageComponents",
-	csrfHeader: null,
-	csrfToken: null,
-	getCsrfHeader: function () {
+export class Rest {
+	static wholeBody = $('body');
+	static webroot = Constants.rootPrefix;
+	static apiRoot = Constants.rootPrefix + "/api";
+	static passRoot = Constants.rootPrefix + "/api/passthrough";
+	static componentRoot = Constants.rootPrefix + "/api/pageComponents";
+	static csrfHeader = null;
+	static csrfToken = null;
+
+	static getCsrfHeader() {
 		if(Rest.csrfHeader == null){
 			Rest.csrfHeader = $('body').data('csrfh');
 		}
 		return Rest.csrfHeader;
-	},
-	getCsrfToken: function () {
+	}
+	static getCsrfToken() {
 		if(Rest.csrfToken == null){
 			Rest.csrfToken = $('body').data('csrft');
 		}
 		return Rest.csrfToken;
-	},
-	addcsrf(data){
+	}
+	static addcsrf(data){
 		if(data instanceof FormData){
 			data.append("csrf-token", Rest.getCsrfToken());
 		}
-	},
-	buildErrorMessageFromResponse(response, statusMessage){
+	}
+	static buildErrorMessageFromResponse(response, statusMessage){
 		let output = "";
 
 		if(
@@ -53,7 +54,7 @@ export const Rest = {
 		}
 
 		return output;
-	},
+	}
 	/**
 	 *
 	 * @param spinnerContainer The container to throw the spinner on top of.
@@ -73,7 +74,7 @@ export const Rest = {
 	 * @param failNoResponseCheckStatus
 	 * @returns {jqXHR} the ajax promise from calling jquery ajax
 	 */
-	call : async function(
+	static async call(
 		{
 			spinnerContainer = Rest.wholeBody.get(0),
 			url = null,
@@ -209,5 +210,8 @@ export const Rest = {
 			await ajaxPromise;
 		}
 		return ajaxPromise;
+	}
+	static {
+		window.Rest = this;
 	}
 }
