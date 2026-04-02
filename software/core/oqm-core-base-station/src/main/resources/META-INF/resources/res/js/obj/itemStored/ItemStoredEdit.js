@@ -14,6 +14,7 @@ export class ItemStoredEdit extends PageUtility {
 	static infoBlockLabel = $("#itemStoredEditItemInfoBlockLabel");
 
 	static resetForm() {
+		ItemStoredEdit.formMessages.text("");
 		ItemStoredEdit.form.attr("action", "");
 		ItemStoredEdit.form.html("");
 		ItemStoredEdit.infoStoredLabel.text("");

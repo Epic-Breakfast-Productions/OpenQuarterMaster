@@ -5,7 +5,7 @@ import {ImageSearchSelect} from "./ImageSearchSelect.js";
 import {PageUtility} from "../../utilClasses/PageUtility.js";
 
 export class ImageAddFromSelect extends PageUtility{
-	static formMessages = $("addImageFormMessages");
+	static formMessages = $("#addImageFormMessages");
 	static imageSearchSelectModalLabelCloseButton = $("#imageSearchSelectModalLabelCloseButton");
 	static imageAddImageForm = $("#addImageForm");
 	static imageAddTitleInput = $("#addTitleInput");

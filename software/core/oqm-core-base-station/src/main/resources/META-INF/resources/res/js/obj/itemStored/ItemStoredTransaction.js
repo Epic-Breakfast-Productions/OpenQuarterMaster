@@ -945,7 +945,7 @@ export class ItemStoredTransaction extends PageUtility {
 			}
 		}
 		static async updateAmount(item = null, stored = null, storageBlockId = null, force = false) {
-			if (force || ItemStoredTransaction.Checkout.amountInputsContainer.is(":visible")) {
+			if (force || ItemStoredTransaction.Checkout.amountInputs.is(":visible")) {
 				console.log("Updating amounts");
 
 				if (item == null) {
