@@ -4,6 +4,7 @@ import io.quarkus.runtime.annotations.ConfigPhase;
 import io.quarkus.runtime.annotations.ConfigRoot;
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithDefault;
+import org.testcontainers.utility.DockerImageName;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 
 /**
@@ -32,7 +33,7 @@ public interface CoreApiLibBuildTimeConfig {
 	 * Config to manage the devservice stood up.
 	 * @return The devservice options
 	 */
-	DevserviceConfig devservice();
+	DevserviceConfig devservices();
 	
 	/**
 	 * Health options
@@ -80,11 +81,41 @@ public interface CoreApiLibBuildTimeConfig {
 		Integer port();
 		
 		/**
-		 * The version/ tag of the core api container image
-		 * @return The version/ tag of the core api container image
+		 * Configuration for the core api container image
+		 * @return Configuration for the core api container image
 		 */
-		@WithDefault("4.4.3")
-		String coreApiVersion();
+		ImageConfig image();
+		
+		/**
+		 * Configuration for the core api container image
+		 */
+		interface ImageConfig {
+			
+			/**
+			 * The version/ tag of the core api container image
+			 *
+			 * @return The version/ tag of the core api container image
+			 */
+			@WithDefault("4.4.3")
+			String version();
+			
+			/**
+			 * The name of the core api container image to use.
+			 *
+			 * @return The name of the core api container image to use.
+			 */
+			@WithDefault("docker.io/ebprod/oqm-core-api")
+			String name();
+			
+			/**
+			 * Converts this config into the object that testcontainers expects.
+			 *
+			 * @return A configured DockerImageName object
+			 */
+			default DockerImageName toTestContainerImageName() {
+				return DockerImageName.parse(this.name() + ":" + this.version());
+			}
+		}
 		
 		/**
 		 * Configuration for connecting to keycloak devservice setup by consuming service
@@ -110,6 +141,33 @@ public interface CoreApiLibBuildTimeConfig {
 			 */
 			@WithDefault("${quarkus.keycloak.devservices.realm-name:oqm}")
 			String realm();
+		}
+		
+		/**
+		 * Configuration for connecting to keycloak devservice setup by consuming service
+		 * @return Configuration for connecting to keycloak devservice setup by consuming service
+		 */
+		KafkaConfig kafka();
+		
+		/**
+		 * Configuration for connecting the devservice to an existing keycloak instance
+		 */
+		interface KafkaConfig {
+			
+			/**
+			 * Whether kafka devservices are enabled, and should connect the core api service to it
+			 * @return If the core api should connect to the kafka devservice
+			 */
+			@WithDefault("${quarkus.kafka.devservices.enabled:false}")
+			boolean enabled();
+			
+			/**
+			 * The port of kafka to look for
+			 * @return The port of kafka to look for
+			 */
+			@WithDefault("${quarkus.kafka.devservices.port:9192}")
+			Integer port();
+			
 		}
 	}
 }
