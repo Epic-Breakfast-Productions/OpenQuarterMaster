@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints.media.files;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -84,7 +83,6 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	public Response search(
 		@BeanParam FileAttachmentSearch searchObject
 	) {
@@ -151,7 +149,6 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	public FileAttachmentGet get(
 		@PathParam("id") String id
 	) {
@@ -192,7 +189,6 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	@WithSpan
 	public Integer updateFile(
 		@PathParam("id") String id,
 		@BeanParam FileUploadBody body
@@ -234,7 +230,6 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	@WithSpan
 	public FileAttachmentGet updateObj(
 		@PathParam("id")
 		String id,
@@ -284,7 +279,6 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	public FileMetadata getRevision(
 		@PathParam("id")
 		String id,
@@ -326,7 +320,6 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@Produces("*/*")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	public Response getRevisionData(
 		@PathParam("id")
 		String id,
@@ -368,7 +361,6 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
-	@WithSpan
 	public FileAttachmentGet remove(
 		@PathParam("id")
 		String id
@@ -403,7 +395,6 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	@Override
 	public Response getHistoryForObject(
 		@PathParam("id") String id,
@@ -431,7 +422,6 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	@Override
 	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@BeanParam HistorySearch searchObject

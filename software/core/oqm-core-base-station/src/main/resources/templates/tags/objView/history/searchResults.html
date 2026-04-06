@@ -27,7 +27,7 @@
 		{cdi:DateTimeService.formatForUi(event.get("timestamp").asText())}
 	</td>
 	<td>
-		{#interactingEntityRef entityRef=event.get("entityRef")}{/interactingEntityRef}
+		{#interactingEntityRef rootPrefix=rootPrefix entityRef=event.get("entityRef")}{/interactingEntityRef}
 	</td>
 	<td class="event-type">
 	{event.get("type").asText()}

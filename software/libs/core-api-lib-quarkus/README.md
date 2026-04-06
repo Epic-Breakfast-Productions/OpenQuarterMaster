@@ -18,7 +18,7 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
    quarkus:
      keycloak:
        devservices:
-         port: 9328
+         port: 9328 # Must set this port, use this port
          realm-name: oqm
          users:
            alice: alice
@@ -31,8 +31,15 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
             - inventoryView
             - inventoryEdit
             - itemCheckout
-   oqm.core.api:
-         baseUri:
+     kafka: # If using kafka, set these values. Can be any port
+       devservices:
+         enabled: true
+         port: 9192 
+   oqm:
+     core:
+       api:
+         devservices:
+           
    ```
 
 ## TODOs:
@@ -45,5 +52,9 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
 https://central.sonatype.org/publish/publish-portal-maven/
 
 `./mvnw deploy`
+
+then:
+
+https://central.sonatype.com/publishing/deployments
 
 

@@ -1,0 +1,22 @@
+import Cookies from "../../lib/js-cookie/3.0.5/js.cookie.esm.min.js";
+import {PageMessageUtils} from "./PageMessageUtils.js";
+import {PageUtility} from "./utilClasses/PageUtility.js";
+
+export class OqmDbUtils extends PageUtility {
+	static navDbSelectForm = $("#navDbSelectForm");
+	static navDatabaseSelector = $("#navDatabaseSelector");
+	static newDbSelected() {
+		let newDbId = this.navDatabaseSelector.val();
+		console.log("Input to select database changed. New selection: ", newDbId);
+
+		if (confirm("Are you sure you want to swap databases?")) {
+			console.log("User confirmed database switch.");
+
+			Cookies.set('oqmDb', newDbId, {expires: 365, sameSite: 'strict'});
+			PageMessageUtils.reloadPageWithMessage("Successfully swapped databases.", "success");
+		} else {
+			console.log("User canceled db swap.");
+			this.navDbSelectForm.trigger('reset');
+		}
+	}
+}

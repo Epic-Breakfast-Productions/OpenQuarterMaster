@@ -36,19 +36,19 @@ import java.util.Optional;
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class ItemTransactionPassthrough extends PassthroughProvider {
-
+	
 	@Getter
 	@Inject
 	@Location("tags/search/itemStored/searchResults")
 	Template searchResultTemplate;
-
+	
 	@Getter
 	@PathParam("itemId")
 	String itemId;
-
+	
 	@Inject
 	SearchResultTweak searchResultTweak;
-
+	
 	@PUT
 	@Path("/transact")
 	@Operation(
@@ -65,13 +65,15 @@ public class ItemTransactionPassthrough extends PassthroughProvider {
 	)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<String> transact(
+	public Uni<Response> transact(
 		ObjectNode transaction
 	) throws Exception {
 		log.info("Transacting item.");
-		return this.getOqmCoreApiClient().invItemStoredTransact(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, transaction);
+		return this.handleCall(
+			this.getOqmCoreApiClient().invItemStoredTransact(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, transaction)
+		);
 	}
-
+	
 	@GET
 	@Path("/transaction")
 	@Operation(
@@ -91,12 +93,14 @@ public class ItemTransactionPassthrough extends PassthroughProvider {
 		}
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> searchTransactions(
+	public Uni<Response> searchTransactions(
 		AppliedTransactionSearch appliedTransactionSearch
 	) {
-		return this.getOqmCoreApiClient().invItemStoredTransactionSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, appliedTransactionSearch);
+		return this.handleCall(
+			this.getOqmCoreApiClient().invItemStoredTransactionSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, appliedTransactionSearch)
+		);
 	}
-
+	
 	@GET
 	@Path("/transaction/{transactionId}")
 	@Operation(
@@ -107,9 +111,11 @@ public class ItemTransactionPassthrough extends PassthroughProvider {
 		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Uni<ObjectNode> getAppliedTransaction(
+	public Uni<Response> getAppliedTransaction(
 		@PathParam("transactionId") String transactionId
 	) {
-		return this.getOqmCoreApiClient().invItemStoredTransactionGet(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, transactionId);
+		return this.handleCall(
+			this.getOqmCoreApiClient().invItemStoredTransactionGet(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, transactionId)
+		);
 	}
 }

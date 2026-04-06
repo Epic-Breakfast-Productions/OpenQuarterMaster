@@ -10,11 +10,14 @@ quarkus.http.insecure-requests=enabled
 #quarkus.http.insecure-requests=redirect
 quarkus.log.level=INFO
 
+#quarkus.rest-csrf.token-signature-key={core.baseStation.csrfSigKey}
+quarkus.rest-csrf.cookie-path=/core/base-station/
+
 # SSL Config
 quarkus.tls.key-store.pem.0.cert=/etc/oqm/serviceConfig/core/base+station/files/serviceCert.crt
 quarkus.tls.key-store.pem.0.key=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKey.pem
-quarkus.tls.trust-store.p12.path=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKeystore.p12
-quarkus.tls.trust-store.p12.password={cert.selfSigned.internalKeystorePass}
+
+QUARKUS_TLS__EXT_INGRESS__TRUST_STORE_PEM_CERTS={cert.trustStore.files.selfSigned.crt}{% if cert.externalDefault == "acme" %},{cert.trustStore.files.acme.crt}{% endif %}
 
 # https://quarkus.io/guides/http-reference#reverse-proxy
 quarkus.http.proxy.proxy-address-forwarding=true
@@ -31,15 +34,12 @@ quarkus.oidc.auth-server-url={infra.keycloak.externalBaseUri}/realms/{infra.keyc
 
 quarkus.oidc.authentication.cookie-path=/core/base-station/
 quarkus.oidc.authentication.cookie-suffix=core-base-station
-quarkus.oidc.tls.trust-store-file=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKeystore.p12
-quarkus.oidc.tls.trust-store-password={cert.selfSigned.internalKeystorePass}
+quarkus.oidc.tls.tls-configuration-name=ext.ingress
 
 # Core API config
 oqm.core.api.baseUri={core.api.internalBaseUri}
-quarkus.rest-client."oqm.core.api".trust-store=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKeystore.p12
-quarkus.rest-client."oqm.core.api".trust-store-password={cert.selfSigned.internalKeystorePass}
-quarkus.rest-client."oqm.core.api-oidc".trust-store=/etc/oqm/serviceConfig/core/base+station/files/serviceCertKeystore.p12
-quarkus.rest-client."oqm.core.api-oidc".trust-store-password={cert.selfSigned.internalKeystorePass}
+quarkus.rest-client."oqm.core.api".tls-configuration-name=ext.ingress
+quarkus.rest-client."oqm.core.api-oidc".tls-configuration-name=ext.ingress
 
 runningInfo.protocol=https
 runningInfo.hostname={system.hostname}

@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.testResources.testClasses;
 
+import io.smallrye.reactive.messaging.kafka.companion.ConsumerBuilder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -9,8 +10,11 @@ import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 import tech.ebp.oqm.core.api.testResources.data.MongoTestConnector;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
+
+import java.time.Duration;
 
 import static io.restassured.RestAssured.given;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
@@ -33,6 +37,11 @@ public abstract class RunningServerTest extends WebServerTest {
 		setupJwtCall(given(), this.getTestUserService().getUserToken(adminUser))
 			.basePath("")
 			.put("/api/v1/inventory/manage/db/ensure/" + DEFAULT_TEST_DB_NAME).then().statusCode(200);
+		
+		//clear kafka queues
+		if(this instanceof KafkaTest){
+			((KafkaTest)this).clearKafkaQueues(log);
+		}
 	}
 	
 	@AfterEach
@@ -55,7 +64,12 @@ public abstract class RunningServerTest extends WebServerTest {
 //				MongoTestConnector.getInstance().clearDb();
 //			}
 		}
-
+		
+		//clear kafka queues
+		if(this instanceof KafkaTest){
+			((KafkaTest)this).clearKafkaQueues(log);
+		}
+		
 		log.info("Completed after step.");
 	}
 

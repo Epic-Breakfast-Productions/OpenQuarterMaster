@@ -5,6 +5,7 @@ import org.bson.types.ObjectId;
 import org.junit.jupiter.params.provider.Arguments;
 
 import java.time.LocalDateTime;
+import java.time.ZonedDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,7 +22,7 @@ class UniqueStoredValidationTest extends ObjectValidationTest<UniqueStored> {
 				UniqueStored.builder()
 					.item(new ObjectId())
 					.condition(50)
-					.expires(LocalDateTime.now())
+					.expires(ZonedDateTime.now())
 					.conditionNotes(FAKER.lorem().paragraph())
 					.imageIds(List.of(ObjectId.get()))
 					.attributes(Map.of("hello", "world"))

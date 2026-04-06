@@ -1,7 +1,5 @@
-# Overall Software Documentation
+# Open QuarterMaster System Overview
 
 [Back](../README.md)
 
- - [Versioning, Branching, Tagging.md](Versioning_Branching_Tagging.md)
-
-
+This documentation directory pertains to high-level design aspects of the Open QuarterMaster system.

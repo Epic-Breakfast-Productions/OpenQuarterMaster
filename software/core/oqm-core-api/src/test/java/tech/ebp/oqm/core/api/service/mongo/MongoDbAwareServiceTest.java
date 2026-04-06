@@ -4,21 +4,18 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.google.common.collect.Lists;
 import com.mongodb.client.model.Sorts;
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
-import org.junit.Assert;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.testResources.data.TestMainObject;
 import tech.ebp.oqm.core.api.testResources.data.TestMainObjectSearch;
 import tech.ebp.oqm.core.api.testResources.data.TestMongoService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 
@@ -35,7 +32,6 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(TestResourceLifecycleManager.class)
 class MongoDbAwareServiceTest extends RunningServerTest {
 	
 	@Inject
@@ -174,12 +170,47 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		assertEquals(1, result.getNumResultsForEntireQuery());
 		assertEquals("" + 3, result.getResults().get(0).getTestField());
 	}
+	
+	@Test
+	public void testSearchId() {
+		List<TestMainObject> objs = new ArrayList<>();
+		for (int i = 4; i >= 0; i--) {
+			objs.add(
+				this.testMongoService.add(
+					DEFAULT_TEST_DB_NAME,
+					(TestMainObject) new TestMainObject()
+										 .setTestField("" + i)
+										 .setAttributes(Map.of("key", "" + i))
+										 .setKeywords(List.of("" + i))
+				)
+			);
+		}
+		//test id
+		for(TestMainObject obj : objs){
+			SearchResult<TestMainObject> result = this.testMongoService.search(
+				DEFAULT_TEST_DB_NAME,
+				(TestMainObjectSearch) new TestMainObjectSearch()
+										   .setObjectIds(List.of(obj.getId()))
+			);
+			assertEquals(1, result.getNumResultsForEntireQuery());
+			assertEquals(obj, result.getResults().get(0));
+		}
+		//test all ids
+		SearchResult<TestMainObject> result = this.testMongoService.search(
+			DEFAULT_TEST_DB_NAME,
+			(TestMainObjectSearch) new TestMainObjectSearch()
+									   .setObjectIds(objs.stream().map(TestMainObject::getId).toList())
+		);
+		
+		assertEquals(objs.size(), result.getNumResultsForEntireQuery());
+		assertEquals(objs, result.getResults().reversed());
+	}
 	// </editor-fold>
 	
 	// <editor-fold desc="Adding">
 	@Test
 	public void testAddNullObj() {
-		Assert.assertThrows(
+		assertThrows(
 			NullPointerException.class,
 			()->this.testMongoService.add(DEFAULT_TEST_DB_NAME, null)
 		);
@@ -189,12 +220,12 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	public void testAdd() {
 		TestMainObject original = new TestMainObject("Hello world");
 		
-		ObjectId returned = this.testMongoService.add(DEFAULT_TEST_DB_NAME, original);
+		TestMainObject returned = this.testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		assertEquals(1, this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 		
 		assertNotNull(original.getId());
-		assertEquals(returned, original.getId());
+		assertEquals(returned, original);
 		
 		TestMainObject gotten = this.testMongoService.get(DEFAULT_TEST_DB_NAME, original.getId());
 		
@@ -209,14 +240,14 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 			originals.add(new TestMainObject("Hello world " + i));
 		}
 		
-		List<ObjectId> returned = this.testMongoService.addBulk(DEFAULT_TEST_DB_NAME, originals);
+		List<TestMainObject> returned = this.testMongoService.addBulk(DEFAULT_TEST_DB_NAME, originals);
 		
 		assertEquals(originals.size(), this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 		
 		for (TestMainObject original : originals) {
 			assertNotNull(original.getId());
 			
-			assertTrue(returned.contains(original.getId()));
+			assertTrue(returned.contains(original));
 			
 			TestMainObject gotten = this.testMongoService.get(DEFAULT_TEST_DB_NAME, original.getId());
 			

@@ -17,6 +17,7 @@ tls:
             - {{ san }}
             {%- endfor  %}
       {%- endif  %}
+  {%- if certs.method != "acme" %}
   certificates:
     {%- for cert in certs.certList %}
     - certFile: {{ cert.cert }}
@@ -24,6 +25,7 @@ tls:
       stores:
         - default
     {%- endfor %}
+  {%- endif  %}
 http:
   # https://doc.traefik.io/traefik/routing/services/
   services:

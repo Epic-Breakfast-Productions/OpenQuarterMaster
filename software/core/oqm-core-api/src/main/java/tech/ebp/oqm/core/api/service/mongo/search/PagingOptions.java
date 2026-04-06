@@ -1,7 +1,11 @@
 package tech.ebp.oqm.core.api.service.mongo.search;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 
@@ -9,7 +13,9 @@ import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
  * Object to describe paging options.
  */
 @Data
+@Setter(AccessLevel.PRIVATE)
 @AllArgsConstructor
+@NoArgsConstructor
 @Schema(description = "Options to inform paging behavior.")
 public class PagingOptions {
 	
@@ -52,6 +58,7 @@ public class PagingOptions {
 	/** The number of the page we are on */
 	@Schema(required = true, description = "The page to retrieve.", examples = {"1"})
 	public final int pageNum;
+
 	
 	public PagingOptions(int pageSize, int pageNum) {
 		if (pageSize < 1) {
@@ -65,6 +72,7 @@ public class PagingOptions {
 		this.pageNum = pageNum;
 	}
 	
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public int getSkipVal() {
 		return this.pageSize * (this.pageNum - 1);
 	}

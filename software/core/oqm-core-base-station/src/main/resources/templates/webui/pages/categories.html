@@ -1,4 +1,8 @@
 {#include webui/mainWebPageTemplate navbar="full" showTitle=true title="Categories" page='categories'}
+
+	{#styleSheets}
+		<link rel="stylesheet" href="{rootPrefix}/lib/Croppie/2.6.4/croppie.css"/>
+	{/styleSheets}
     {#pageStyle}
     
     {/pageStyle}
@@ -23,8 +27,7 @@
                 <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                         aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                     <div class="accordion-body">
-                        {#search/category/searchForm id='mainCategorySearch' rootPrefix=rootPrefix}
-                        {/search/category/searchForm}
+                        {#search/category/searchForm id='mainCategorySearch' rootPrefix=rootPrefix /}
                     </div>
                 </div>
             </div>
@@ -76,22 +79,18 @@
                         <div class="mb-3 row">
                             <label for="addEditItemCategoryParentInput" class=" col-form-label col-sm-2">Parent Category:</label>
                             <div class="col-sm-10">
-								{#inputs/categoryInput id="addEditItemCategoryParentInput" allCategorySearchResults=allCategorySearchResults}
-								{/inputs/categoryInput}
+								{#inputs/categoryInput id="addEditItemCategoryParentInput" allCategorySearchResults=allCategorySearchResults placeholder='Parent' name='itemCategoryParent' /}
                             </div>
                         </div>
-                        {#search/image/imageSelectFormInput}
-                        {/search/image/imageSelectFormInput}
-                        {#inputs/keywordInput}
-                        {/inputs/keywordInput}
-                        {#inputs/attInput}
-                        {/inputs/attInput}
+                        {#search/image/imageSelectFormInput /}
+                        {#inputs/keywordInput /}
+                        {#inputs/attInput /}
                     </form>
                 </div>
             </div>
         {/modal}
         {#modal id='itemCategoryView' size='xl' title='Item Category View'}
-            {#titleIcon}{#icons/categories}{/icons/categories}{/titleIcon}
+            {#titleIcon}{#icons/categories /}{/titleIcon}
             <div class="row">
                 {#carousel id='itemCategoryViewCarousel' carouselCss='col'}{/carousel}
                 <div class="col">
@@ -101,7 +100,7 @@
                                 <h5 class="card-title d-inline">Id:</h5>
                                 <p class="card-text d-inline">
                                     <small>
-                                        <span id="itemCategoryViewId"></span>{#copyTextButton textContainerId='itemCategoryViewId'}{/copyTextButton}
+                                        <span id="itemCategoryViewId"></span>{#copyTextButton /}
                                     </small>
                                 </p>
                             </div>
@@ -145,38 +144,50 @@
             </div>
             <div class="row">
                 <div class="col">
-                    {#objView/history/objHistoryView containerId='itemCategoryHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item-category/')}{/objView/history/objHistoryView}
+                    {#objView/history/objHistoryView containerId='itemCategoryHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item-category/') /}
                 </div>
             </div>
         {/modal}
-        {#search/image/imageSearchSelectModal otherModalId="addEditItemCategoryModal" rootPrefix=rootPrefix}
-        {/search/image/imageSearchSelectModal}
+        {#search/image/imageSearchSelectModal otherModalId="addEditItemCategoryModal" rootPrefix=rootPrefix /}
     {/modals}
     {#scripts}
-        <script src="{rootPrefix}/res/js/search.js"></script>
-        <script src="{rootPrefix}/res/js/historySearch.js"></script>
-        <script src="{rootPrefix}/res/js/obj/objEdit.js"></script>
-        <script src="{rootPrefix}/res/js/obj/objView.js"></script>
-        <script src="{rootPrefix}/res/js/obj/storageBlock/storageSearchSelect.js"></script>
-        <script src="{rootPrefix}/res/js/obj/media/imageSearchSelect.js"></script>
-        <script src="{rootPrefix}/res/js/obj/units.js"></script>
-        <script src="{rootPrefix}/res/js/obj/getters.js"></script>
-        <script src="{rootPrefix}/res/js/obj/storageBlock/capacities.js"></script>
-		<script src="{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js"></script>
-        <script src="{rootPrefix}/res/js/carousel.js"></script>
-        <script src="{rootPrefix}/lib/Croppie-2.6.4/croppie.min.js"></script>
-        <script src="{rootPrefix}/res/js/obj/media/imageAdd.js"></script>
-        <script src="{rootPrefix}/res/js/obj/media/imageAddFromSelect.js"></script>
-        <script src="{rootPrefix}/res/js/textCopy.js"></script>
-        <script src="{rootPrefix}/lib/treant-js/vendor/raphael.js"></script>
-        <script src="{rootPrefix}/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
-        <script src="{rootPrefix}/lib/treant-js/vendor/jquery.easing.js"></script>
-        <script src="{rootPrefix}/lib/treant-js/Treant.js"></script>
-        <script src="{rootPrefix}/res/js/obj/itemCategory/itemCategoryTree.js"></script>
+		<script src="{rootPrefix}/lib/treant-js/vendor/raphael.js"></script>
+		<script src="{rootPrefix}/lib/treant-js/vendor/perfect-scrollbar/perfect-scrollbar.js"></script>
+		<script src="{rootPrefix}/lib/treant-js/vendor/jquery.easing.js"></script>
+		<script src="{rootPrefix}/lib/treant-js/Treant.js"></script>
     {/scripts}
     
     {#pageScript}
-        <script>
+		<script type="module">
+			import { Rest } from '{rootPrefix}/res/js/Rest.js';
+			import { HistorySearchUtils } from '{rootPrefix}/res/js/HistorySearchUtils.js';
+			import { KeywordAttEdit } from '{rootPrefix}/res/js/obj/ObjEditUtils.js';
+			import { KeywordAttUtils } from '{rootPrefix}/res/js/obj/ObjViewUtils.js';
+			import { TextCopyUtils } from '{rootPrefix}/res/js/TextCopyUtils.js';
+			import { ImageAdd } from '{rootPrefix}/res/js/obj/media/ImageAdd.js';
+			import { ImageAddFromSelect } from '{rootPrefix}/res/js/obj/media/ImageAddFromSelect.js';
+			import { ImageSearchSelect } from '{rootPrefix}/res/js/obj/media/ImageSearchSelect.js';
+			import { Getters } from '{rootPrefix}/res/js/obj/Getters.js'
+			import { StorageSearchSelect } from '{rootPrefix}/res/js/obj/storageBlock/StorageSearchSelect.js';
+			import { UnitUtils } from '{rootPrefix}/res/js/obj/UnitUtils.js';
+			import { ItemCategoryView } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryView.js';
+			import { ItemCategoryTree } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryTree.js';
+			import { ItemCategoryInput } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js';
+			import { UriUtils } from '{rootPrefix}/res/js/UriUtils.js';
+			import { Carousel } from '{rootPrefix}/res/js/Carousel.js';
+			import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
+
+			StorageSearchSelect.init();
+			ImageAdd.init();
+			ImageAddFromSelect.init();
+			ImageSearchSelect.init();
+			SearchUtils.init();
+			ItemCategoryInput.init();
+			HistorySearchUtils.init();
+			
+			console.log("Page modules loaded.");
+		</script>
+        <script defer>
             const Category = {
                 addEditForm: $("#addEditItemCategoryForm"),
                 addEditModalLabel: $("#addEditItemCategoryModalLabel"),
@@ -208,7 +219,7 @@
                     Category.colorCheckInput.prop('checked', false);
                     Category.colorInput.val("#FFFFFF");
                     Category.colorCheckboxChanged();
-                    Dselect.resetDselect(Category.parentInput);
+                    DselectUtils.resetDselect(Category.parentInput);
                     Category.imagesInputDiv.html("");
                     Category.keywordInputs.text("");
                     Category.attInputs.text("");
@@ -234,14 +245,14 @@
                             Category.nameInput.val(data.name);
                             Category.descInput.val(data.description);
                             if(data.parent) {
-                                Dselect.setValues(Category.parentInput, data.parent);
+                                DselectUtils.setValues(Category.parentInput, data.parent);
                             }
                             if(data.color){
                                 Category.colorCheckInput.prop('checked', true);
                                 Category.colorCheckboxChanged();
                                 Category.colorInput.val(data.color);
                             }
-                            addSelectedImages(Category.imagesInputDiv, data.imageIds);
+                            ImageSearchSelect.addSelectedImages(Category.imagesInputDiv, data.imageIds);
 							KeywordAttEdit.addKeywordInputs(Category.keywordInputs, data.keywords);
 							KeywordAttEdit.addAttInputs(Category.attInputs, data.attributes);
                         },
@@ -263,7 +274,7 @@
 					color: (Category.colorCheckInput.is(":checked")?Category.colorInput.val():null)
                 };
 				KeywordAttEdit.addKeywordAttData(data, Category.keywordInputs, Category.attInputs);
-                addImagesToData(data, Category.imagesInputDiv);
+                ImageSearchSelect.addImagesToData(data, Category.imagesInputDiv);
                 
                 var result = false;
                 var verb = "";
@@ -304,7 +315,7 @@
                 }
     
                 if (result) {
-                    PageMessages.reloadPageWithMessage(verb + " item category successfully!", "success", "Success!");
+                    PageMessageUtils.reloadPageWithMessage(verb + " item category successfully!", "success", "Success!");
                 }
             });
             
@@ -319,9 +330,9 @@
                     method: "DELETE",
                     async: false,
                     done: function (data) {
-                        PageMessages.reloadPageWithMessage("Deleted item category successfully!", "success", "Success!");
+                        PageMessageUtils.reloadPageWithMessage("Deleted item category successfully!", "success", "Success!");
                     },
-                    failMessagesDiv: PageMessages.mainMessageDiv
+                    failMessagesDiv: PageMessageUtils.mainMessageDiv
                 });
             }
 
@@ -354,7 +365,7 @@
                     Carousel.clearCarousel(ItemCategoryView.carousel);
 					KeywordAttUtils.clearHideKeywordDisplay(ItemCategoryView.keywordView);
 					KeywordAttUtils.clearHideAttDisplay(ItemCategoryView.attsView);
-                    resetHistorySearch(ItemCategoryView.historyView);
+                    HistorySearchUtils.resetHistorySearch(ItemCategoryView.historyView);
                 },
                 async setupItemCategoryView(categoryId){
                     console.log("Setting up view for item category " + categoryId);
@@ -368,7 +379,7 @@
                         async: false,
                         done: async function (data) {
                             let promises = [];
-                            let children = getItemCategoryChildrenData(categoryId);
+                            let children = Getters.ItemCategories.getItemCategoryChildrenData(categoryId);
                             promises.push(ItemCategoryTree.getBreadcrumbs(ItemCategoryView.breadcrumbContainer, categoryId));
                             ItemCategoryView.modalLabel.text(data.name);
                             promises.push(Carousel.processImagedObjectImages(data, ItemCategoryView.carousel));
@@ -413,7 +424,7 @@
                         },
                         failMessagesDiv: Category.addEditFormMessages
                     });
-                    setupHistorySearch(ItemCategoryView.historyView, categoryId);
+                    HistorySearchUtils.setupHistorySearch(ItemCategoryView.historyView, categoryId);
                 }
             }
 
@@ -423,10 +434,12 @@
                 UriUtils.removeParam("view");
             });
 
-            if(UriUtils.getParams.has("view")){
-                ItemCategoryView.setupItemCategoryView(UriUtils.getParams.get("view"));
-                viewModal.show();
-            }
+			$(document).ready(function() {
+				if(UriUtils.getParams.has("view")){
+					ItemCategoryView.setupItemCategoryView(UriUtils.getParams.get("view"));
+					viewModal.show();
+				}
+			});
         </script>
     {/pageScript}
 {/include}
