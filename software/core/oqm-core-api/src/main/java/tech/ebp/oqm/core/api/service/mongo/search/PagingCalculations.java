@@ -27,6 +27,9 @@ public class PagingCalculations {
 	@Schema(required = true, description = "The number of pages in the query.", examples = {"11"})
 	private int numPages;
 	
+	@Schema(required = true, description = "The size of the pages in the query.", examples = {"25"})
+	private int pageSize;
+	
 	@Schema(required = true, description = "The last page number.", examples = {"10"})
 	private int lastPage;
 	
@@ -38,9 +41,11 @@ public class PagingCalculations {
 	
 	@Schema(required = true, description = "The previous page number.", examples = {"false"})
 	private int previousPage;
-  
-	private int pageSize;
+	
+	@Schema(required = true, description = "The start of the page by index in the overall search.", examples = {"false"})
 	private int pageResultIndexStart;
+	
+	@Schema(required = true, description = "The end of the page by index in the overall search.", examples = {"false"})
 	private int pageResultIndexEnd;
 	
 	protected PagingCalculations(int curPageNum, int numPages, int pageSize, int startIndex, int endIndex) {

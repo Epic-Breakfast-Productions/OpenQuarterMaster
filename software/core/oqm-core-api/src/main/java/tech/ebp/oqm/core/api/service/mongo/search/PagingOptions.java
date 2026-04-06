@@ -49,15 +49,15 @@ public class PagingOptions {
 	 * If paging is to be done.
 	 */
 	@Schema(required = true, description = "If we are to do paging for the request.", examples = {"true"})
-	public final boolean doPaging;
+	public boolean doPaging;
 	
 	/** The size of the pages */
 	@Schema(required = true, description = "The size of the pages.", examples = {"25"})
-	public final int pageSize;
+	public int pageSize;
 	
 	/** The number of the page we are on */
 	@Schema(required = true, description = "The page to retrieve.", examples = {"1"})
-	public final int pageNum;
+	public int pageNum;
 
 	
 	public PagingOptions(int pageSize, int pageNum) {
