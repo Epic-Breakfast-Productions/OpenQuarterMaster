@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 @Data
@@ -21,6 +22,6 @@ public abstract class MainObject implements Versionable {
 	 *
 	 * Openapi schema def in `openapi.yaml`
 	 */
-	@Schema(required = false, description = "The Id of this object.")
+	@Schema(type = SchemaType.STRING, description = "The Id of this object.", defaultValue = "null")
 	private ObjectId id;
 }

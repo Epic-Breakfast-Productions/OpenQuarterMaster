@@ -1,10 +1,2 @@
-# This file overrides some of the schema setup in java, specifically for ObjectId
+# This file overrides some of the schema setup in java
 components:
-  schemas:
-    ObjectId:
-      description: "Hex string representation of the ObjectId"
-      type:
-        - string
-      examples:
-        - null
-        - "<hex string>"
