@@ -126,7 +126,7 @@ class ItemCategoryServiceTest extends MongoHistoriedServiceTest<ItemCategory, It
 			
 			StorageBlock storageBlock =new StorageBlock().setLabel(FAKER.name().fullName());
 
-			storageBlock.setStoredCategories(List.of(itemCategory.getId()));
+			storageBlock.setStoredCategories(Set.of(itemCategory.getId()));
 			itemId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, storageBlock, testUser).getId();
 
 			expectedRefs.put(this.storageBlockService.getClazz().getSimpleName(), new TreeSet<>(List.of(itemId)));
