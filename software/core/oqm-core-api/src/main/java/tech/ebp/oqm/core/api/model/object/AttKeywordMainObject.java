@@ -40,7 +40,7 @@ public abstract class AttKeywordMainObject
 	@NotNull
 	@NonNull
 	@lombok.Builder.Default
-	@Schema(required = false, description = "Attribute key/value (string) pairs to associate with the object.")
+	@Schema(required = false, description = "Attribute key/value (string) pairs to associate with the object.", examples = {"{}", "{\"key\": \"value\"}"})
 	private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
 	
 	/**
@@ -49,7 +49,7 @@ public abstract class AttKeywordMainObject
 	@NotNull
 	@NonNull
 	@lombok.Builder.Default
-	@Schema(required = false, description = "Keywords to associate with the object.")
+	@Schema(required = false, description = "Keywords to associate with the object.", examples = {"[]", "[\"keyword\"]"})
 	private List<@NotBlank String> keywords = new ArrayList<>();
 	
 }
