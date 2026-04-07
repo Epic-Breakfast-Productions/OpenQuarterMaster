@@ -32,7 +32,7 @@ import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.ImageSearch;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
-import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
+import tech.ebp.oqm.core.api.service.mongo.file.MongoHistoriedFileService;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.core.api.service.mongo.MongoObjectService;
@@ -73,7 +73,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	
 	@Inject
 	@Getter
-	ImageService fileService;
+	MongoHistoriedFileService<Image, FileUploadBody, ImageSearch, ImageGet> fileService;
 	
 	@Getter
 	Class<Image> objectClass = Image.class;
@@ -119,7 +119,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response search(
+	public SearchResult<ImageGet> search(
 		@BeanParam ImageSearch searchObject
 	) {
 		return super.search(searchObject);
@@ -147,7 +147,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response add(
+	public ImageGet add(
 		@BeanParam FileUploadBody body
 	) throws IOException {
 		return super.add(body);
@@ -384,7 +384,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
-	public Response getHistoryForObject(
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject
 	) {

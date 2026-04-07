@@ -37,6 +37,7 @@ import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.utils.FileContentsGet;
 import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
+import tech.ebp.oqm.core.api.utils.FileUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -106,7 +107,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 				"txt",
 				0,
 				FileHashes.builder().md5("").sha1("").sha256("").build(),
-				FileMetadata.TIKA.detect("plain.txt"),
+				FileUtils.TIKA.detect("plain.txt"),
 				ZonedDateTime.now()
 			);
 			

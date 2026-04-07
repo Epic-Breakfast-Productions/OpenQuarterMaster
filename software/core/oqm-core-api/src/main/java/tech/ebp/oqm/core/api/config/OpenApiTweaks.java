@@ -6,7 +6,6 @@ import org.eclipse.microprofile.openapi.OASFactory;
 import org.eclipse.microprofile.openapi.OASFilter;
 import org.eclipse.microprofile.openapi.models.OpenAPI;
 import org.eclipse.microprofile.openapi.models.media.Schema;
-import org.jboss.jandex.IndexView;
 
 import java.util.HashMap;
 import java.util.List;
@@ -15,20 +14,22 @@ import java.util.Map;
 /**
  * Tweaks the openapi schema. Used to hard override certain schemas.
  * <p>
- * https://quarkus.io/guides/openapi-swaggerui#enhancing-the-openapi-schema-with-filters
+ * <a href="https://quarkus.io/guides/openapi-swaggerui#enhancing-the-openapi-schema-with-filters">Quarkus guide section</a>
  */
 @Slf4j
 @OpenApiFilter(OpenApiFilter.RunStage.BOTH)
 public class OpenApiTweaks implements OASFilter {
 	
 	private static final Map<String, Schema> SCHEMA_OVERRIDES = new HashMap<>() {{
-		Schema objectIdSchema = OASFactory.createSchema();
-		objectIdSchema.setComment("Hex string representation of a MongoDB ObjectId");
-		objectIdSchema.setType(List.of(Schema.SchemaType.STRING));
-		objectIdSchema.setFormat("objectId");
-		objectIdSchema.setPattern("^[0-9a-fA-F]{24}$");
-		objectIdSchema.setExamples(List.of("null", "5f9222222222222222222222"));
-		put("ObjectId", objectIdSchema);
+		{// ObjectId
+			Schema objectIdSchema = OASFactory.createSchema();
+			objectIdSchema.setComment("Hex string representation of a MongoDB ObjectId");
+			objectIdSchema.setType(List.of(Schema.SchemaType.STRING));
+			objectIdSchema.setFormat("objectId");
+			objectIdSchema.setPattern("^[0-9a-fA-F]{24}$");
+			objectIdSchema.setExamples(List.of("null", "5f9222222222222222222222"));
+			put("ObjectId", objectIdSchema);
+		}
 	}};
 	
 	@Override

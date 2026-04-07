@@ -33,6 +33,8 @@ public class SearchResult<T extends MainObject> {
 	
 	@Schema(description = "If any real search query parameters were given.")
 	private PagingCalculations pagingCalculations;
+	
+	@Schema(description = "The search object used to perform the search.")
 	private SearchObject<?> searchObject;
 	
 	public SearchResult(List<T> results) {
@@ -65,6 +67,7 @@ public class SearchResult<T extends MainObject> {
 		return this.results.isEmpty();
 	}
 	
+	@Schema(description = "If there are any pages in the results. As in, if the number of results was greater than the page size.")
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isHasPages() {
 		return this.pagingCalculations.isHasPages();

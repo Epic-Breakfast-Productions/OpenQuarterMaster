@@ -7,6 +7,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.history.EventType;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
@@ -20,6 +21,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 @EqualsAndHashCode(callSuper = true)
 @BsonDiscriminator
 @SuperBuilder(toBuilder = true)
+@Schema(title = "ItemExpiryWarningEvent", description = "An event describing when an item expiry warning happens.")
 public class ItemExpiryWarningEvent extends ItemExpiryEvent {
 	
 	public ItemExpiryWarningEvent(ObjectId objectId, InteractingEntity entity) {
@@ -31,6 +33,7 @@ public class ItemExpiryWarningEvent extends ItemExpiryEvent {
 	}
 	
 	@Override
+	@Schema(constValue = "ITEM_EXPIRY_WARNING", readOnly = true, required = true, examples = "ITEM_EXPIRY_WARNING")
 	public EventType getType() {
 		return EventType.ITEM_EXPIRY_WARNING;
 	}

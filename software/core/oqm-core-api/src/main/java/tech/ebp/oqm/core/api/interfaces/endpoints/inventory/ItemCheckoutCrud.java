@@ -201,7 +201,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getHistoryForObject(
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject
 	) {

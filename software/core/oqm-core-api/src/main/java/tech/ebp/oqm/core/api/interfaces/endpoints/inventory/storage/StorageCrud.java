@@ -296,13 +296,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			)
-		}
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -316,7 +310,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getHistoryForObject(
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
 		@PathParam("id") String id,
 		@BeanParam HistorySearch searchObject
 	) {

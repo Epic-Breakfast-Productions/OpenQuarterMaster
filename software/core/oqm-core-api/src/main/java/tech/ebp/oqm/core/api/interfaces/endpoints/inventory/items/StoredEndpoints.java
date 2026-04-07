@@ -207,7 +207,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getHistoryForObject(
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
 		@PathParam("storedItemId") String id,
 		@BeanParam HistorySearch searchObject
 	) {

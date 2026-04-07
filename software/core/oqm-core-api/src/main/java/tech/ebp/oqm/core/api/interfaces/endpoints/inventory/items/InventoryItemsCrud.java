@@ -254,7 +254,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getHistoryForObject(
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
 		@PathParam("itemId") String id,
 		@BeanParam HistorySearch searchObject
 	) {

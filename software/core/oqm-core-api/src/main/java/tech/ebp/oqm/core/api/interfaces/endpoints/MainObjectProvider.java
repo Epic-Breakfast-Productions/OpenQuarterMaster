@@ -90,10 +90,10 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		return output;
 	}
 	
-	protected Response.ResponseBuilder getSearchResponseBuilder(S searchObject) {
-		SearchResult<T> searchResult = this.getObjectService().search(this.getOqmDbIdOrName(), searchObject, false);
-		return this.getSearchResultResponseBuilder(searchResult);
-	}
+//	protected Response.ResponseBuilder getSearchResponseBuilder(S searchObject) {
+//		SearchResult<T> searchResult = this.getObjectService().search(this.getOqmDbIdOrName(), searchObject, false);
+//		return this.getSearchResultResponseBuilder(searchResult);
+//	}
 	
 	//	@GET
 	//	@Operation(
@@ -307,7 +307,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getHistoryForObject(
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
 		@PathParam("id") String id,
 		//@BeanParam
 		HistorySearch searchObject
@@ -319,8 +319,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		
 		log.info("Found {} history events matching query.", searchResult.getNumResultsForEntireQuery());
 		
-		Response.ResponseBuilder rb = this.getSearchResultResponseBuilder(searchResult);
-		return rb.build();
+		return searchResult;
 	}
 	
 	//	@GET

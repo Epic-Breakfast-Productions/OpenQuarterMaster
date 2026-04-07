@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.history.EventType;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
@@ -20,6 +21,7 @@ import static tech.ebp.oqm.core.api.model.object.history.EventType.SCHEMA_UPGRAD
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
+@Schema(title = "SchemaUpgradeEvent", description = "An event describing how an object's schema was upgraded.")
 public class SchemaUpgradeEvent extends ObjectHistoryEvent {
 	
 	private String upgradeId;
@@ -36,6 +38,7 @@ public class SchemaUpgradeEvent extends ObjectHistoryEvent {
 	
 	
 	@Override
+	@Schema(constValue = "SCHEMA_UPGRADE", readOnly = true, required = true, examples = "SCHEMA_UPGRADE")
 	public EventType getType() {
 		return SCHEMA_UPGRADE;
 	}
