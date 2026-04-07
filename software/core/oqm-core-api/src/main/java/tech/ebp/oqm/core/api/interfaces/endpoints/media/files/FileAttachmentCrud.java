@@ -191,13 +191,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object updated.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = Integer.class
-			)
-		)
+		description = "Object updated."
 	)
 	@APIResponse(
 		responseCode = "400",
