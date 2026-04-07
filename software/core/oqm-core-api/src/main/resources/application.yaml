@@ -92,6 +92,11 @@ quarkus:
       enabled: true
 
 mp:
+  openapi:
+    extensions:
+      smallrye:
+        remove-unused-schemas:
+          enable: true
   messaging:
     outgoing:
       events-outgoing:
