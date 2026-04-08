@@ -39,6 +39,8 @@ services:
     volumes:
       # Mounts the container's internal data directory to a named volume
       - ${SYS_DATA_DIR}/postgres:/var/lib/postgresql
+      # Mounts initialization scripts to refresh collations on container restart
+      - ./setup/init-db:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
