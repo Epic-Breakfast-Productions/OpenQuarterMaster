@@ -188,7 +188,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NotNull
 	@ValidUnit
 	@lombok.Builder.Default
-	@Schema(required = false, description = "The unit to use to track these items. Check the compatible units endpoints to see what is available.")
+	@Schema(required = true, description = "The unit to use to track these items. Check the compatible units endpoints to see what is available.")
 	public Unit<?> unit = OqmProvidedUnits.UNIT;
 	
 	/**
@@ -199,7 +199,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * Populated during add/updates/transaction
 	 */
 	@lombok.Builder.Default
-	@Schema(required = false, description = "Stats about this item's stored instances.")
+	@Schema(required = false, readOnly = true, description = "Stats about this item's stored instances.")
 	private ItemStoredStats stats = null;
 	
 

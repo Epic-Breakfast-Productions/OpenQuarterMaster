@@ -93,16 +93,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.OBJECT,
-					implementation = SearchResult.class
-				)
-			)
-		}
+		description = "Items retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -159,13 +150,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object updated.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = InventoryItem.class
-			)
-		)
+		description = "Object updated."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -234,13 +219,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			)
-		}
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -268,16 +247,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = ObjectHistoryEvent.class
-				)
-			)
-		}
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)

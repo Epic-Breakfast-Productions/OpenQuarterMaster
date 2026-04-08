@@ -7,6 +7,7 @@ import lombok.Setter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchUtils;
@@ -20,7 +21,10 @@ import static com.mongodb.client.model.Filters.*;
 @Getter
 @Setter
 public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
-	@QueryParam("name") String name;
+	@QueryParam("name")
+	@Parameter(description = "The name of the item to search for.")
+	String name;
+	
 	@QueryParam("storageTypes") List<StorageType> storageTypes;
 	@QueryParam("itemCategories") List<ObjectId> categories;
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;

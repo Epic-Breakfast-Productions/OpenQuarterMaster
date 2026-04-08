@@ -101,16 +101,7 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.OBJECT,
-					implementation = SearchResult.class
-				)
-			)
-		}
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)

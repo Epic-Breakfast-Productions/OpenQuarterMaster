@@ -93,6 +93,10 @@ quarkus:
 
 mp:
   openapi:
+    scan:
+      exclude:
+        packages:
+          - "tech.ebp.oqm.core.api.interfaces.ui"
     extensions:
       smallrye:
         remove-unused-schemas:

@@ -1,2 +1,5 @@
 # This file overrides some of the schema setup in java
 components:
+#  Unit:
+#    examples:
+#      - "{ string: \"units\", name: \"Units\", symbol: \"units\" }"

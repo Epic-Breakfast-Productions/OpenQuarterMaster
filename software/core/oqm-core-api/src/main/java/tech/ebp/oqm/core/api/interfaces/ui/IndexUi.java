@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.interfaces.ui;
 
 import io.smallrye.common.annotation.Blocking;
+import io.vertx.core.cli.annotations.Hidden;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.ws.rs.GET;
