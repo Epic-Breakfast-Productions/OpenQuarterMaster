@@ -17,7 +17,7 @@ import java.util.Map;
  * <a href="https://quarkus.io/guides/openapi-swaggerui#enhancing-the-openapi-schema-with-filters">Quarkus guide section</a>
  */
 @Slf4j
-@OpenApiFilter(OpenApiFilter.RunStage.BOTH)
+@OpenApiFilter(stages = {OpenApiFilter.RunStage.BUILD, OpenApiFilter.RunStage.RUNTIME_STARTUP, OpenApiFilter.RunStage.RUNTIME_PER_REQUEST})
 public class OpenApiTweaks implements OASFilter {
 	
 	private static Map<String, Schema> getSchemaOverrides(Map<String, Schema> existingSchemas) {
