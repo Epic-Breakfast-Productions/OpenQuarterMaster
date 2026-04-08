@@ -8,7 +8,7 @@ if [ -f /var/lib/postgresql/data/PG_VERSION ]; then
     echo "Checking and refreshing collation versions..."
     
     # Get list of databases that need collation refresh
-    su postgres -c "psql -d postgres -t -c \"SELECT datname FROM pg_database WHERE datname NOT IN ('template0','template1') AND EXISTS (SELECT 1 FROM pg_collation WHERE collversion <> pg_collation_actual_version COLLATE pg_catalog.default)\" 2>/dev/null" > /tmp/needs_refresh.txt || true
+    psql -d postgres -t -c "SELECT datname FROM pg_database WHERE datname NOT IN ('template0','template1') AND EXISTS (SELECT 1 FROM pg_collation WHERE collversion IS NOT NULL AND collversion <> pg_collation_actual_version(oid))" > /tmp/needs_refresh.txt 2>&1 || { echo "Warning: Could not check collation versions"; true; }
 
     # Run REFRESH for each DB that needs it
     while read -r db; do
@@ -16,8 +16,9 @@ if [ -f /var/lib/postgresql/data/PG_VERSION ]; then
         if [ -z "$(echo "$db" | xargs)" ]; then
             continue
         fi
+        db=$(echo "$db" | xargs)  # Trim whitespace
         echo "Refreshing collation for database: $db"
-        su postgres -c "psql -d $db -c 'ALTER DATABASE $db REFRESH COLLATION VERSION'"
+        psql -d "$db" -c "ALTER DATABASE \"$db\" REFRESH COLLATION VERSION"
     done < /tmp/needs_refresh.txt
     
     rm -f /tmp/needs_refresh.txt
