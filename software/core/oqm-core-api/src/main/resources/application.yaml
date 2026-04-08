@@ -95,8 +95,11 @@ mp:
   openapi:
     scan:
       exclude:
+        classes:
+          - "tech.ebp.oqm.core.api.interfaces.endpoints.inventory.ItemListCrud"
         packages:
           - "tech.ebp.oqm.core.api.interfaces.ui"
+        
     extensions:
       smallrye:
         remove-unused-schemas:
