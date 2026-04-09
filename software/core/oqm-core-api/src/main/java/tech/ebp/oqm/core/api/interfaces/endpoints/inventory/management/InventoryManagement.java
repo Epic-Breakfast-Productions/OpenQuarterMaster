@@ -115,10 +115,7 @@ public class InventoryManagement extends EndpointProvider {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON
-		)
+		description = "Object added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -128,7 +125,7 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response importData(
+	public DataImportResult importData(
 		@BeanParam ImportBundleFileBody body
 	) throws IOException {
 		DataImportResult result = this.dataImportService.importBundle(
@@ -138,7 +135,7 @@ public class InventoryManagement extends EndpointProvider {
 			body.options
 		);
 		
-		return Response.ok(result).build();
+		return result;
 	}
 	
 	@Blocking
@@ -223,10 +220,7 @@ public class InventoryManagement extends EndpointProvider {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Database added.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON
-		)
+		description = "Database added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -236,13 +230,13 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response addDb(
+	public OqmMongoDatabase addDb(
 		@Valid OqmMongoDatabase body
 	) {
 		log.info("Creating new database from REST call: {}", body);
-		ObjectId result = this.oqmDatabaseService.addOqmDatabase(body);
+		OqmMongoDatabase result = this.oqmDatabaseService.addOqmDatabase(body);
 		log.info("Created new database from REST call: {}", result);
-		return Response.ok(result).build();
+		return result;
 	}
 	
 	@Blocking
@@ -283,10 +277,7 @@ public class InventoryManagement extends EndpointProvider {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Database added.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON
-		)
+		description = "Databases listed."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -296,8 +287,8 @@ public class InventoryManagement extends EndpointProvider {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response listDatabases() {
-		return Response.ok(this.oqmDatabaseService.listIterator().into(new ArrayList<>())).build();
+	public List<OqmMongoDatabase> listDatabases() {
+		return this.oqmDatabaseService.listIterator().into(new ArrayList<>());
 	}
 	
 	@Blocking

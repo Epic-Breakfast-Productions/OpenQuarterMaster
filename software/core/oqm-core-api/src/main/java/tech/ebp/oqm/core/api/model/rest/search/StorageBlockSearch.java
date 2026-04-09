@@ -20,9 +20,6 @@ import static com.mongodb.client.model.Filters.ne;
 @ToString(callSuper = true)
 @Getter
 public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
-	public static StorageBlockSearch newInstance(){
-		return new StorageBlockSearch();
-	}
 	
 	//for actual queries
 	@QueryParam("labelOrNickname") String labelOrNickname;
@@ -83,8 +80,8 @@ public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
 		if (this.isParent) {
 			filters.add(eq("parent", null));
 		}
-		if(this.isChild || this.hasValue(this.isChildOf)){
-			if(this.hasValue(this.isChildOf)){
+		if(this.isChild || hasValue(this.isChildOf)){
+			if(hasValue(this.isChildOf)){
 				filters.add(eq("parent", this.isChildOf));
 			} else {
 				filters.add(ne("parent", null));
