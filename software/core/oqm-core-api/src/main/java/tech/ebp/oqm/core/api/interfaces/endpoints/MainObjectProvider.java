@@ -90,11 +90,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		return output;
 	}
 	
-//	protected Response.ResponseBuilder getSearchResponseBuilder(S searchObject) {
-//		SearchResult<T> searchResult = this.getObjectService().search(this.getOqmDbIdOrName(), searchObject, false);
-//		return this.getSearchResultResponseBuilder(searchResult);
-//	}
-	
 	//	@GET
 	//	@Operation(
 	//		summary = "Gets a list of objects, using search parameters."

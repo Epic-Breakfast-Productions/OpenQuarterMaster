@@ -26,22 +26,22 @@ public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 		
-		if (this.hasValue(this.getStillCheckedOut())) {
+		if (hasValue(this.getStillCheckedOut())) {
 			filters.add(
 				eq("stillCheckedOut", this.getStillCheckedOut())
 			);
 		}
-		if (this.hasValue(this.getItemCheckedOut())) {
+		if (hasValue(this.getItemCheckedOut())) {
 			filters.add(
 				eq("item", new ObjectId(this.getItemCheckedOut()))
 			);
 		}
-		if (this.hasValue(this.getStorageCheckedOutFrom())) {
+		if (hasValue(this.getStorageCheckedOutFrom())) {
 			filters.add(
 				eq("checkedOutFrom", new ObjectId(this.getStorageCheckedOutFrom()))
 			);
 		}
-		if (this.hasValue(this.getCheckOutTransaction())) {
+		if (hasValue(this.getCheckOutTransaction())) {
 			filters.add(
 				eq("checkOutTransaction", new ObjectId(this.getCheckOutTransaction()))
 			);

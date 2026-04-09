@@ -40,17 +40,17 @@ public class IdGeneratorSearch extends SearchObject<IdentifierGenerator> {
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 		
-		if (this.hasValue(this.name)) {
+		if (hasValue(this.name)) {
 			filters.add(SearchUtils.getBasicSearchFilter("name", this.name));
 		}
-		if (this.hasValue(this.label)) {
+		if (hasValue(this.label)) {
 			filters.add(SearchUtils.getBasicSearchFilter("label", this.label));
 		}
-		if (this.hasValue(this.format)) {
+		if (hasValue(this.format)) {
 			filters.add(SearchUtils.getBasicSearchFilter("format", this.format));
 		}
 		
-		if(this.hasValue(this.generatorFor)){
+		if(hasValue(this.generatorFor)){
 			filters.add(in("forObjectType", this.generatorFor));
 		}
 		
