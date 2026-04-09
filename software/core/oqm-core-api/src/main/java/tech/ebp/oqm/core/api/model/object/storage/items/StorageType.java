@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.model.object.storage.items;
 
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
 
 /**
@@ -10,6 +11,7 @@ public enum StorageType {
 	/**
 	 * The type to use for bulk amounts of stuff in a storage block. Examples; screws, mulch
 	 */
+//	@Schema(description = "A Bulk amount of something. Only one stored object per storage block allowed.")
 	BULK(StoredType.AMOUNT),
 	/**
 	 * The type to use where different amounts of stuff under the same block are useful. Examples; packed meat (different weights), milk (different expiration dates), shovels (different conditions)

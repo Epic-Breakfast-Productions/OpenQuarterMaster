@@ -53,9 +53,9 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 	}
 	
 	public String getInventoryItemId(){
-		if(this.hasValue(this.getInventoryItemIdFromPath())){
+		if(hasValue(this.getInventoryItemIdFromPath())){
 			return this.getInventoryItemIdFromPath();
-		} else if(this.hasValue(this.getInventoryItemIdFromQuery())){
+		} else if(hasValue(this.getInventoryItemIdFromQuery())){
 			return this.getInventoryItemIdFromQuery();
 		}
 		return null;
@@ -65,15 +65,15 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 
-		if(this.hasValue(this.getInventoryItemIdFromPath())){
+		if(hasValue(this.getInventoryItemIdFromPath())){
 			filters.add(eq("item", new ObjectId(this.getInventoryItemIdFromPath())));
-		} else if(this.hasValue(this.getInventoryItemIdFromQuery())){
+		} else if(hasValue(this.getInventoryItemIdFromQuery())){
 			filters.add(eq("item", new ObjectId(this.getInventoryItemIdFromQuery())));
 		}
 		
-		if(this.hasValue(this.getStorageBlockIdFromPath())){
+		if(hasValue(this.getStorageBlockIdFromPath())){
 			filters.add(eq("storageBlock", new ObjectId(this.getStorageBlockIdFromPath())));
-		} else if(this.hasValue(this.getStorageBlockIdFromQuery())){
+		} else if(hasValue(this.getStorageBlockIdFromQuery())){
 			filters.add(eq("storageBlock", new ObjectId(this.getStorageBlockIdFromQuery())));
 		}
 		
@@ -83,7 +83,7 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 //				eq("barcode", this.getItemBarcode())
 //			);
 //		}
-		if(this.hasValue(this.getInStorageBlocks())){
+		if(hasValue(this.getInStorageBlocks())){
 			if(this.getInStorageBlocks().size() == 1){
 				filters.add(
 					eq("storageBlock", this.getInStorageBlocks().getFirst())
@@ -97,24 +97,24 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 				));
 			}
 		}
-		if(this.hasValue(this.getHasExpiryDate())){
+		if(hasValue(this.getHasExpiryDate())){
 			filters.add(
 				ne("expires", null)
 			);
 		}
 
-		if(this.hasValue(this.getHasExpired())){
+		if(hasValue(this.getHasExpired())){
 			filters.add(eq("notificationStatus.expired", this.getHasExpired()));
 		}
-		if(this.hasValue(this.getHasExpiryWarn())){
+		if(hasValue(this.getHasExpiryWarn())){
 			filters.add(eq("notificationStatus.expiredWarning", this.getHasExpiryWarn()));
 		}
 		
-		if(this.hasValue(this.getHasLowStock())){
+		if(hasValue(this.getHasLowStock())){
 			filters.add(eq("notificationStatus.lowStock", this.getHasExpired()));
 		}
 		
-		if (this.hasValue(this.getIdentifiers())) {
+		if (hasValue(this.getIdentifiers())) {
 			List<Bson> typeFilterList = new ArrayList<>(this.getIdentifiers().size());
 			for (String curIdentifier : this.getIdentifiers()) {
 				typeFilterList.add(

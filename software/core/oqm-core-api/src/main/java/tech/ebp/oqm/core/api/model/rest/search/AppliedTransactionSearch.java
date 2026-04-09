@@ -24,7 +24,7 @@ public class AppliedTransactionSearch extends SearchKeyAttObject<AppliedTransact
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 
-		if (this.hasValue(this.getInventoryItemId())) {
+		if (hasValue(this.getInventoryItemId())) {
 			filters.add(
 				SearchUtils.getBasicSearchFilter("inventoryItem", this.getInventoryItemId())
 			);

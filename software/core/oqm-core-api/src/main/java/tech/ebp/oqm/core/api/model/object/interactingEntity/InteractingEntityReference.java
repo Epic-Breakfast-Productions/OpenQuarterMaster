@@ -13,7 +13,7 @@ import tech.ebp.oqm.core.api.model.validation.annotations.ValidInteractingEntity
  * An identifier for an interacting entity.
  */
 @Data
-@Setter()
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ValidInteractingEntityReference

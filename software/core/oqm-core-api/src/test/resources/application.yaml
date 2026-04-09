@@ -18,7 +18,7 @@ quarkus:
     write-concern:
       journal: false
   smallrye-openapi:
-    info-title: Open QuarterMaster Base Station API (TEST)
+    info-title: Open QuarterMaster Core API (TEST)
   messaging:
     health:
       enabled: true

@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.GeneralService;
@@ -45,11 +46,14 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
+@Schema(oneOf = {User.class, PluginService.class, GeneralService.class, CoreApiInteractingEntity.class})
 public abstract class InteractingEntity extends AttKeywordMainObject {
 	
 	public static final int CUR_SCHEMA_VERSION = 2;
 	
+	@Schema(description = "The id of the entity from the auth provider. This is used to link the user as kept track of here to the auth provider.")
 	private String idFromAuthProvider;
+	
 	private String authProvider;
 	
 	public abstract String getName();

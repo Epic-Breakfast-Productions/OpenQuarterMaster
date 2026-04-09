@@ -8,7 +8,6 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -17,7 +16,6 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityReference;
-import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.rest.search.InteractingEntitySearch;
 import tech.ebp.oqm.core.api.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
@@ -39,14 +37,7 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Entities searched.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				type = SchemaType.OBJECT,
-				implementation = SearchResult.class
-			)
-		)
+		description = "Entities searched."
 	)
 	@APIResponse(
 		responseCode = "404",
@@ -55,13 +46,10 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 	)
 	@Authenticated
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response search(
+	public SearchResult<InteractingEntity> search(
 		@BeanParam InteractingEntitySearch search
 	) {
-		SearchResult<InteractingEntity> searchResult = this.getInteractingEntityService().search(search);
-		return Response.status(Response.Status.OK)
-			.entity(searchResult)
-			.build();
+		return this.getInteractingEntityService().search(search);
 	}
 
 	@GET

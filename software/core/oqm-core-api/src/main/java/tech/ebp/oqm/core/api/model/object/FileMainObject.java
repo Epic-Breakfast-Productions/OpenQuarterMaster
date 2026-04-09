@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.model.object;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -12,6 +13,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
 
 import java.util.List;
@@ -26,29 +28,33 @@ import java.util.Map;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
+@Schema(title = "FileMainObject", description = "Describes a file that can be attached to an object.")
 public class FileMainObject
 	extends AttKeywordMainObject
 {
+	
 	public static final int CUR_SCHEMA_VERSION = 1;
 	
 	public FileMainObject(ObjectId id, Map<@NotBlank @NotNull String, String> attributes, List<@NotBlank String> keywords) {
 		super(id, attributes, keywords);
 	}
 	
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	public String getGridfsFileName(){
+	@JsonIgnore
+	public String getGridfsFileName() {
 		return this.getId().toHexString();
 	}
 	
 	@NotNull
 	@NonNull
 	@NotBlank
+	@Schema(description = "The file's name. Should be unique within the system.")
 	private String fileName;
 	
 	@NotNull
 	@NonNull
 	@Size(max = 500)
 	@lombok.Builder.Default
+	@Schema(description = "A description of the file.")
 	private String description = "";
 	
 	@NotNull
@@ -56,19 +62,20 @@ public class FileMainObject
 	@NotBlank
 	@Size(max = 500)
 	@lombok.Builder.Default
+	@Schema(description = "The source of the file. Can be user, system, url, etc.")
 	private String source = "user";
 	
-	public boolean updateFrom(FileUploadBody newUpload){
+	public boolean updateFrom(FileUploadBody newUpload) {
 		//TODO:: update to return true only when actually updated
-		if(newUpload.description != null && !newUpload.description.isBlank()){
+		if (newUpload.description != null && !newUpload.description.isBlank()) {
 			this.description = newUpload.description;
 		}
-		if(newUpload.source != null && !newUpload.source.isBlank()){
+		if (newUpload.source != null && !newUpload.source.isBlank()) {
 			this.source = newUpload.source;
 		}
 		return true;
 	}
-
+	
 	@Override
 	public int getSchemaVersion() {
 		return CUR_SCHEMA_VERSION;
