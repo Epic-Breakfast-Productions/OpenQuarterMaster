@@ -10,11 +10,11 @@ Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tr
 Wants=network-online.target
 After=docker.service
 Requires=docker.socket
-Requires=oqm-core-api.service
+BindsTo=oqm-core-api.service
 After=oqm-core-api.service
-Requires=oqm-infra-keycloak.service
+BindsTo=oqm-infra-keycloak.service
 After=oqm-infra-keycloak.service
-Requires=oqm-infra-keycloak-client_watch.service
+BindsTo=oqm-infra-keycloak-client_watch.service
 After=oqm-infra-keycloak-client_watch.service
 
 [Service]
