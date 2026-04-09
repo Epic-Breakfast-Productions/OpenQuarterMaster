@@ -8,19 +8,20 @@
 Description=Open QuarterMaster Base Station server for Open Quartermaster. Version ${version}.
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
 Wants=network-online.target
-After=docker.service
 Requires=docker.socket
-BindsTo=oqm-core-api.service
-After=oqm-core-api.service
-BindsTo=oqm-infra-keycloak.service
-After=oqm-infra-keycloak.service
-BindsTo=oqm-infra-keycloak-client_watch.service
-After=oqm-infra-keycloak-client_watch.service
+After=docker.service oqm-core-api.service oqm-infra-keycloak.service oqm-infra-keycloak-client_watch.service
+Requires=oqm-core-api.service oqm-infra-keycloak.service
+BindsTo=oqm-core-api.service oqm-infra-keycloak.service
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=oqm-core-api.service
 
 [Service]
 Type=simple
 Restart=always
 TimeoutSec=10m
+SuccessExitStatus=143
 # Setup operating variables
 Environment="CONTAINER_NAME=oqm-core-base_station"
 Environment="IMAGE_NAME=ebprod/oqm-core-base_station"
@@ -75,6 +76,3 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
 # Remove from docker
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop base station container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove base station container'"
-
-[Install]
-WantedBy=multi-user.target
