@@ -91,10 +91,19 @@ public class OpenApiTweaks implements OASFilter {
 					monetaryAmountSchema.addProperty("number", numberSchema);
 				}
 				
-				monetaryAmountSchema.addProperty("currency", this.get("Currency"));// ..don't know how this works just that it does?
+				monetaryAmountSchema.addProperty("currency", this.get("Currency"));
 				
 				monetaryAmountSchema.setRequired(List.of("currency", "number"));
 				put("MonetaryAmount", monetaryAmountSchema);
+			}
+			{// Color
+				Schema colorSchema = OASFactory.createSchema();
+				colorSchema.setComment("A hex string representing a color.");
+				colorSchema.setType(List.of(Schema.SchemaType.STRING));
+				colorSchema.setFormat("Color");
+				colorSchema.setPattern("^#?([0-9a-f]{6}|[0-9a-f]{3})$");
+				colorSchema.setExamples(List.of("#FFFFFF"));
+				put("Color", colorSchema);
 			}
 		}};
 	}
