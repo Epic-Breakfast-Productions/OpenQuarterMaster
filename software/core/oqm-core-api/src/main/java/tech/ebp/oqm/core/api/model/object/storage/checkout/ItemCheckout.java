@@ -13,6 +13,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.CheckInDetails;
 
@@ -36,9 +37,11 @@ import java.time.ZonedDateTime;
 	@JsonSubTypes.Type(value = ItemWholeCheckout.class, name = "WHOLE"),
 })
 @BsonDiscriminator
-public abstract class ItemCheckout <T> extends AttKeywordMainObject {
+@Schema(oneOf = {ItemAmountCheckout.class, ItemWholeCheckout.class})
+public abstract class ItemCheckout<T> extends AttKeywordMainObject {
+	
 	public static final int CUR_SCHEMA_VERSION = 2;
-
+	
 	@ToString.Include
 	public abstract CheckoutType getType();
 	
@@ -57,7 +60,7 @@ public abstract class ItemCheckout <T> extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	private ObjectId item;
-
+	
 	/**
 	 * The transaction that created this checkout.
 	 */
@@ -83,17 +86,17 @@ public abstract class ItemCheckout <T> extends AttKeywordMainObject {
 	 * Which OQM entity did the checking in
 	 */
 	private ObjectId checkedInByEntity;
-
+	
 	@NotNull
 	@NonNull
 	private CheckoutDetails checkoutDetails;
-
+	
 	/**
 	 * The details of checking back in this checkout.
 	 */
 	@lombok.Builder.Default
 	private CheckInDetails checkInDetails = null;
-
+	
 	/**
 	 * The transaction that checked in this.
 	 */
@@ -101,10 +104,10 @@ public abstract class ItemCheckout <T> extends AttKeywordMainObject {
 	private ObjectId checkInTransaction = null;
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	public boolean isStillCheckedOut(){
+	public boolean isStillCheckedOut() {
 		return this.checkInDetails == null;
-	};
-
+	}
+	
 	@Override
 	public int getSchemaVersion() {
 		return CUR_SCHEMA_VERSION;
