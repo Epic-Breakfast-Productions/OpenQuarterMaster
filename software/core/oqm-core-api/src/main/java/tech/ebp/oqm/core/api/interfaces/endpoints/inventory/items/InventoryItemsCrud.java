@@ -11,6 +11,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
@@ -72,13 +73,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = InvItemCollectionStats.class
-			)
-		)
+		description = "Object retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -110,13 +105,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = InventoryItem.class
-			)
-		)
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -136,7 +125,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public InventoryItem get(
-		@PathParam("itemId") String id
+		@PathParam("itemId") ObjectId id
 	) {
 		InventoryItem item = super.get(id);
 		return item;
@@ -170,7 +159,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem update(
-		@PathParam("itemId") String id,
+		@PathParam("itemId") ObjectId id,
 		@Schema(
 			implementation = InventoryItem.class
 		)
@@ -186,13 +175,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object deleted.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = InventoryItem.class
-			)
-		)
+		description = "Object deleted."
 	)
 	@APIResponse(
 		responseCode = "404",
@@ -207,7 +190,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem delete(
-		@PathParam("itemId") String id
+		@PathParam("itemId") ObjectId id
 	) {
 		return super.delete(id);
 	}
@@ -234,7 +217,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
-		@PathParam("itemId") String id,
+		@PathParam("itemId") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);

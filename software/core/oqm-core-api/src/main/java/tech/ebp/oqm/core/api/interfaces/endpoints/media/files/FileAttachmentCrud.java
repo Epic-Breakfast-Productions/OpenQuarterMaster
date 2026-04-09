@@ -137,7 +137,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@Produces(APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public FileAttachmentGet get(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.get(id);
 	}
@@ -177,7 +177,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(APPLICATION_JSON)
 	public Integer updateFile(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		@BeanParam FileUploadBody body
 	) throws IOException {
 		return super.updateFile(id, body);
@@ -213,7 +213,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@Produces(APPLICATION_JSON)
 	public FileAttachmentGet updateObj(
 		@PathParam("id")
-		String id,
+		ObjectId id,
 		@Schema(type = SchemaType.OBJECT, implementation = FileAttachment.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
@@ -263,7 +263,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public FileMetadata getRevision(
 		@PathParam("id")
-		String id,
+		ObjectId id,
 		@PathParam("rev")
 		String revision
 	) throws IOException {
@@ -305,7 +305,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getRevisionData(
 		@PathParam("id")
-		String id,
+		ObjectId id,
 		@Parameter(description = "The revision number of the file. Can also use \"latest\" and \"first\"")
 		@PathParam("rev")
 		String revision
@@ -341,7 +341,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public FileAttachmentGet remove(
 		@PathParam("id")
-		String id
+		ObjectId id
 	) {
 		return super.remove(id);
 	}
@@ -369,7 +369,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);

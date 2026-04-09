@@ -64,7 +64,7 @@ public abstract class MongoHistoriedServiceTest<T extends MainObject, S extends 
 		
 		T itemAdded = service.add(DEFAULT_TEST_DB_NAME, item, this.testUserService.getTestUser());
 		
-		T itemGot = service.get(DEFAULT_TEST_DB_NAME, itemAdded.getId().toHexString());
+		T itemGot = service.get(DEFAULT_TEST_DB_NAME, itemAdded.getId());
 		
 		assertNotNull(itemGot);
 		assertEquals(item, itemGot);

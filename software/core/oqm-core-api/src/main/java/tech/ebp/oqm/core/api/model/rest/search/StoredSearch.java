@@ -22,11 +22,11 @@ import static com.mongodb.client.model.Filters.*;
 @Setter
 public class StoredSearch extends SearchKeyAttObject<Stored> {
 
-	@PathParam("itemId") String inventoryItemIdFromPath;
-	@QueryParam("itemId") String inventoryItemIdFromQuery;
+	@PathParam("itemId") ObjectId inventoryItemIdFromPath;
+	@QueryParam("itemId") ObjectId inventoryItemIdFromQuery;
 
-	@PathParam("blockId") String storageBlockIdFromPath;
-	@QueryParam("blockId") String storageBlockIdFromQuery;
+	@PathParam("blockId") ObjectId storageBlockIdFromPath;
+	@QueryParam("blockId") ObjectId storageBlockIdFromQuery;
 
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
 
@@ -43,16 +43,16 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 	//TODO:: object specific fields, add to bson filter list
 	
 	
-	public StoredSearch setInventoryItemId(String itemId){
+	public StoredSearch setInventoryItemId(ObjectId itemId){
 		this.inventoryItemIdFromPath = itemId;
 		return this;
 	}
-	public StoredSearch setStorageBlockId(String blockId){
+	public StoredSearch setStorageBlockId(ObjectId blockId){
 		this.storageBlockIdFromPath = blockId;
 		return this;
 	}
 	
-	public String getInventoryItemId(){
+	public ObjectId getInventoryItemId(){
 		if(hasValue(this.getInventoryItemIdFromPath())){
 			return this.getInventoryItemIdFromPath();
 		} else if(hasValue(this.getInventoryItemIdFromQuery())){
@@ -66,15 +66,15 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 		List<Bson> filters = super.getSearchFilters();
 
 		if(hasValue(this.getInventoryItemIdFromPath())){
-			filters.add(eq("item", new ObjectId(this.getInventoryItemIdFromPath())));
+			filters.add(eq("item", this.getInventoryItemIdFromPath()));
 		} else if(hasValue(this.getInventoryItemIdFromQuery())){
-			filters.add(eq("item", new ObjectId(this.getInventoryItemIdFromQuery())));
+			filters.add(eq("item", this.getInventoryItemIdFromQuery()));
 		}
 		
 		if(hasValue(this.getStorageBlockIdFromPath())){
-			filters.add(eq("storageBlock", new ObjectId(this.getStorageBlockIdFromPath())));
+			filters.add(eq("storageBlock", this.getStorageBlockIdFromPath()));
 		} else if(hasValue(this.getStorageBlockIdFromQuery())){
-			filters.add(eq("storageBlock", new ObjectId(this.getStorageBlockIdFromQuery())));
+			filters.add(eq("storageBlock", this.getStorageBlockIdFromQuery()));
 		}
 		
 		//TODO:: redo these

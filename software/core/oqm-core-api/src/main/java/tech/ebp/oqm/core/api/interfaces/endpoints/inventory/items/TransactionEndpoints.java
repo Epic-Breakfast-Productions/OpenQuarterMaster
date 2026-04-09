@@ -54,7 +54,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	
 	@Getter
 	@PathParam("itemId")
-	String itemId;
+	ObjectId itemId;
 	
 	private InventoryItem inventoryItem;
 	
@@ -107,7 +107,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public AppliedTransaction getAppliedTransaction(
-		@PathParam("transactionId") String transactionId
+		@PathParam("transactionId") ObjectId transactionId
 	) {
 		return this.getAppliedTransactionService().get(this.getOqmDbIdOrName(), transactionId);
 	}

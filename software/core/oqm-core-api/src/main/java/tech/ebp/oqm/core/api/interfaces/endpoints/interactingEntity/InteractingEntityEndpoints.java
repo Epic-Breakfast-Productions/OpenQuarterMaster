@@ -7,6 +7,7 @@ import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
@@ -14,6 +15,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
+import tech.ebp.oqm.core.api.interfaces.endpoints.ObjectProvider;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityReference;
 import tech.ebp.oqm.core.api.model.rest.search.InteractingEntitySearch;
@@ -59,13 +61,7 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Item added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = InteractingEntity.class
-			)
-		)
+		description = "Your interacting entity object"
 	)
 	@APIResponse(
 		responseCode = "404",
@@ -74,8 +70,8 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 	)
 	@Authenticated
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getSelf() {
-		return Response.ok(this.getInteractingEntity()).build();
+	public InteractingEntity getSelf() {
+		return this.getInteractingEntity();
 	}
 	
 	@GET
@@ -100,12 +96,10 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 	)
 	@Authenticated
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getInteractingEntity(
-		@PathParam("entityId") String entityId
+	public InteractingEntity getInteractingEntity(
+		@PathParam("entityId") ObjectId entityId
 	) {
-		return Response.ok(
-			this.interactingEntityService.get(entityId)
-		).build();
+		return this.interactingEntityService.get(entityId);
 	}
 
 	@GET
@@ -131,7 +125,7 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 	@Authenticated
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response getInteractingEntityReference(
-		@PathParam("entityId") String entityId
+		@PathParam("entityId") ObjectId entityId
 	) {
 		InteractingEntity entity = this.interactingEntityService.get(entityId);
 

@@ -20,9 +20,6 @@ import static com.mongodb.client.model.Filters.ne;
 @ToString(callSuper = true)
 @Getter
 public class StorageBlockSearch extends SearchKeyAttObject<StorageBlock> {
-	public static StorageBlockSearch newInstance(){
-		return new StorageBlockSearch();
-	}
 	
 	//for actual queries
 	@QueryParam("labelOrNickname") String labelOrNickname;

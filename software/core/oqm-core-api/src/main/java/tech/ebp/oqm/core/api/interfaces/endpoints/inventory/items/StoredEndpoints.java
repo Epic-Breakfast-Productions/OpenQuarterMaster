@@ -68,7 +68,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 		if(!this.itemCache.containsKey(itemId)) {
 			this.itemCache.put(
 				itemId,
-				this.inventoryItemService.get(this.getOqmDbIdOrName(), itemId.toString())
+				this.inventoryItemService.get(this.getOqmDbIdOrName(), itemId)
 			);
 		}
 		return this.itemCache.get(itemId);
@@ -127,7 +127,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Stored get(@PathParam("storedItemId") String id) {
+	public Stored get(@PathParam("storedItemId") ObjectId id) {
 		return this.applyDefaults(super.get(id));
 	}
 	
@@ -160,7 +160,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	public Stored update(
 		@PathParam("storedItemId")
-		String id,
+		ObjectId id,
 		@Schema(type = SchemaType.OBJECT, implementation = Stored.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
@@ -189,7 +189,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
-		@PathParam("storedItemId") String id,
+		@PathParam("storedItemId") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);

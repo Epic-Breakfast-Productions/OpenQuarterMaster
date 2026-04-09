@@ -157,7 +157,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public StorageBlock get(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.get(id);
 	}
@@ -191,7 +191,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public StorageBlock update(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		@Schema(type = SchemaType.OBJECT, implementation = StorageBlock.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
@@ -221,7 +221,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public StorageBlock delete(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.delete(id);
 	}
@@ -273,7 +273,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);

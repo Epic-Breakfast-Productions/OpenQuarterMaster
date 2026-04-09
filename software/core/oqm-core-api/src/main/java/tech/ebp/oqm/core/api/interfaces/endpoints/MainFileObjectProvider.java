@@ -164,7 +164,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public G get(
 		//		@PathParam("id")
-		String id
+		ObjectId id
 	) {
 		log.info("Retrieving object with id {}", id);
 		return this.getFileService().getObjGet(this.getOqmDbIdOrName(), id);
@@ -205,7 +205,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@Produces(MediaType.APPLICATION_JSON)
 	public Integer updateFile(
 		//		@PathParam("id")
-		String id,
+		ObjectId id,
 		//		@BeanParam
 		U body
 	) throws IOException {
@@ -214,7 +214,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	
 	public G updateObj(
 		//		@PathParam("id")
-		String id,
+		ObjectId id,
 		//		@BeanParam
 		ObjectNode updates
 	) {
@@ -230,7 +230,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 		);
 	}
 	
-	protected <A> A getRevision(String id, String revision, Class<A> aClass) throws IOException {
+	protected <A> A getRevision(ObjectId id, String revision, Class<A> aClass) throws IOException {
 		int revisionNum;
 		if ("latest".equalsIgnoreCase(revision)) {
 			revisionNum = this.getFileService().getLatestVersionNum(this.getOqmDbIdOrName(), id);
@@ -282,7 +282,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public FileMetadata getRevision(
 		//		@PathParam("id")
-		String id,
+		ObjectId id,
 		//		@PathParam("rev")
 		String revision
 	) throws IOException {
@@ -325,7 +325,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public Response getRevisionData(
 		//		@PathParam("id")
-		String id,
+		ObjectId id,
 		//		@PathParam("rev")
 		String revision
 	) throws IOException {
@@ -378,10 +378,10 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public G remove(
 		//		@PathParam("id")
-		String id
+		ObjectId id
 	) {
 		log.info("Retrieving object with id {}", id);
-		return this.getFileService().removeFile(this.getOqmDbIdOrName(), null, new ObjectId(id), this.getInteractingEntity());
+		return this.getFileService().removeFile(this.getOqmDbIdOrName(), null, id, this.getInteractingEntity());
 	}
 	
 	//</editor-fold>
@@ -417,13 +417,13 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
 //		@PathParam("id")
-		String id,
+		ObjectId id,
 		//		@BeanParam
 		HistorySearch searchObject
 	) {
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getFileService().getClazz().getSimpleName(), id);
 		
-		searchObject.setObjectId(new ObjectId(id));
+		searchObject.setObjectId(id);
 		
 		return this.getFileService().getFileObjectService().searchHistory(this.getOqmDbIdOrName(), searchObject, false);
 	}

@@ -139,9 +139,9 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@Override
+//	@Override
 	public IdentifierGenerator get(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.get(id);
 	}
@@ -175,7 +175,7 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public IdentifierGenerator update(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		@Schema(type = SchemaType.OBJECT, implementation = IdentifierGenerator.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
@@ -211,7 +211,7 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public IdentifierGenerator delete(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.delete(id);
 	}
@@ -250,12 +250,12 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public IdGenResult generateNewId(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		@QueryParam("num") Optional<Integer> numToGenerate
 	) {
 		return this.getObjectService().getNextNIds(
 			this.getOqmDbIdOrName(),
-			new ObjectId(id),
+			id,
 			numToGenerate.orElse(1)
 		);
 	}

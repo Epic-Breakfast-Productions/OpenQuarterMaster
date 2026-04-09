@@ -169,7 +169,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public ImageGet get(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.get(id);
 	}
@@ -203,7 +203,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Integer updateFile(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		@BeanParam FileUploadBody body
 	) throws IOException {
 		return super.updateFile(id, body);
@@ -239,7 +239,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@Produces(MediaType.APPLICATION_JSON)
 	public ImageGet updateObj(
 		@PathParam("id")
-		String id,
+		ObjectId id,
 		@Schema(type = SchemaType.OBJECT, implementation = Image.class)
 		ObjectNode updates
 	) {
@@ -274,7 +274,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public FileMetadata getRevision(
 		@PathParam("id")
-		String id,
+		ObjectId id,
 		@PathParam("rev")
 		String revision
 	) throws IOException {
@@ -316,7 +316,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getRevisionData(
 		@PathParam("id")
-		String id,
+		ObjectId id,
 		@PathParam("rev")
 		String revision
 	) throws IOException {
@@ -346,7 +346,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);
@@ -371,7 +371,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	}
 	
 	
-	private Response getImageFromObject(MongoObjectService<? extends ImagedMainObject, ?, ?> service, String id) throws IOException {
+	private Response getImageFromObject(MongoObjectService<? extends ImagedMainObject, ?, ?> service, ObjectId id) throws IOException {
 		String objTypeName = service.getClazz().getSimpleName();
 		log.info("Retrieving image for {} of id \"{}\"", objTypeName, id);
 		
@@ -393,7 +393,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 		
 		ObjectId imageId = object.getImageIds().get(0);
 		
-		return this.getRevisionData(imageId.toHexString(), "latest");
+		return this.getRevisionData(imageId, "latest");
 	}
 	
 	@GET
@@ -413,7 +413,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getImageDataForObject(
 		@PathParam("object") IMAGED_OBJ_TYPE_NAME object,
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) throws IOException {
 		log.info("Retrieving image for {} of id \"{}\"", object, id);
 		

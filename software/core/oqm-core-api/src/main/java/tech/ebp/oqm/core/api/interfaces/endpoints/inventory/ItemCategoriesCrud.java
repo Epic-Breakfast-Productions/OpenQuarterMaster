@@ -138,7 +138,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public ItemCategory get(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.get(id);
 	}
@@ -172,7 +172,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemCategory update(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		@Schema(type = SchemaType.OBJECT, implementation = ItemCategory.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
@@ -202,7 +202,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemCategory delete(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.delete(id);
 	}
@@ -254,7 +254,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);

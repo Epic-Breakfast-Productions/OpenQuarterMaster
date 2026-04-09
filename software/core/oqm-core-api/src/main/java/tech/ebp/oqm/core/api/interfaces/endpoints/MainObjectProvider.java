@@ -154,7 +154,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public T get(
 		//		@PathParam("id")
-		String id
+		ObjectId id
 	) {
 		log.info("Retrieving {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
 		
@@ -223,7 +223,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@Produces(MediaType.APPLICATION_JSON)
 	public T update(
 		//		@PathParam("id")
-		String id,
+		ObjectId id,
 		ObjectNode updates
 	) {
 		log.info("Updating {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
@@ -263,7 +263,7 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@Produces(MediaType.APPLICATION_JSON)
 	public T delete(
 		//		@PathParam("id")
-		String id
+		ObjectId id
 	) {
 		log.info("Deleting {} with id {} from REST interface.", this.getObjectClass().getSimpleName(), id);
 		T output = this.getObjectService().remove(this.getOqmDbIdOrName(), id, this.getInteractingEntity());
@@ -303,13 +303,13 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		//@BeanParam
 		HistorySearch searchObject
 	) {
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
 		
-		searchObject.setObjectId(new ObjectId(id));
+		searchObject.setObjectId(id);
 		SearchResult<ObjectHistoryEvent> searchResult = this.getObjectService().searchHistory(this.getOqmDbIdOrName(), searchObject, false);
 		
 		log.info("Found {} history events matching query.", searchResult.getNumResultsForEntireQuery());

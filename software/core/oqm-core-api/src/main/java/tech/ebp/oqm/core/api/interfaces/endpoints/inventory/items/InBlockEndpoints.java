@@ -56,11 +56,11 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 
 	@Getter
 	@PathParam("itemId")
-	String itemId;
+	ObjectId itemId;
 	
 	@Getter
 	@PathParam("blockId")
-	String blockId;
+	ObjectId blockId;
 
 	private InventoryItem inventoryItem;
 	private StorageBlock storageBlock;

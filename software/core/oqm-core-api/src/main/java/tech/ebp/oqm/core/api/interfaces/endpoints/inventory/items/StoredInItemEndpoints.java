@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -53,7 +54,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 
 	@Getter
 	@PathParam("itemId")
-	String itemId;
+	ObjectId itemId;
 
 	private InventoryItem inventoryItem = null;
 
@@ -116,7 +117,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Stored get(@PathParam("storedItemId") String id) {
+	public Stored get(@PathParam("storedItemId") ObjectId id) {
 		return this.applyDefaults(super.get(id));
 	}
 	
@@ -149,7 +150,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	@Produces(MediaType.APPLICATION_JSON)
 	public Stored update(
 		@PathParam("storedItemId")
-		String id,
+		ObjectId id,
 		@Schema(type = SchemaType.OBJECT, implementation = Stored.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
@@ -178,7 +179,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
-		@PathParam("storedItemId") String id,
+		@PathParam("storedItemId") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);
