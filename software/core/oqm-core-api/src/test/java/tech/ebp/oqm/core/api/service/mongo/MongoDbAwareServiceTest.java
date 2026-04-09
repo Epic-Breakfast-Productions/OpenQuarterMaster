@@ -301,17 +301,6 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 	}
 	
 	@Test
-	public void testGetByString() {
-		TestMainObject original = new TestMainObject("hello world");
-		this.testMongoService.add(DEFAULT_TEST_DB_NAME, original);
-		
-		TestMainObject gotten = this.testMongoService.get(DEFAULT_TEST_DB_NAME, original.getId().toHexString());
-		
-		assertNotSame(original, gotten);
-		assertEquals(original, gotten);
-	}
-	
-	@Test
 	public void testGetByNullObjectId() {
 		TestMainObject original = new TestMainObject("hello world");
 		this.testMongoService.add(DEFAULT_TEST_DB_NAME, original);
@@ -352,26 +341,6 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		keywords.add("something");
 		
 		TestMainObject result = this.testMongoService.update(DEFAULT_TEST_DB_NAME, null, original.getId(), update);
-		
-		assertNotEquals(original, result);
-		assertEquals("something completely different", result.getTestField());
-		assertEquals(result.getAttributes(), Map.of("some", "val"));
-		assertEquals(result.getKeywords(), List.of("something"));
-	}
-	
-	@Test
-	public void testUpdateWithString() {
-		TestMainObject original = new TestMainObject("hello world");
-		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
-		
-		ObjectNode update = ObjectUtils.OBJECT_MAPPER.createObjectNode();
-		update.put("testField", "something completely different");
-		ObjectNode atts = update.putObject("attributes");
-		atts.put("some", "val");
-		ArrayNode keywords = update.putArray("keywords");
-		keywords.add("something");
-		
-		TestMainObject result = this.testMongoService.update(DEFAULT_TEST_DB_NAME, null, original.getId().toHexString(), update);
 		
 		assertNotEquals(original, result);
 		assertEquals("something completely different", result.getTestField());
@@ -467,18 +436,6 @@ class MongoDbAwareServiceTest extends RunningServerTest {
 		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
 		
 		TestMainObject result = this.testMongoService.remove(DEFAULT_TEST_DB_NAME, original.getId());
-		
-		assertEquals(0, this.testMongoService.count(DEFAULT_TEST_DB_NAME));
-		assertEquals(original.getId(), result.getId());
-		assertEquals(original.getTestField(), result.getTestField());
-	}
-	
-	@Test
-	public void testRemoveWithString() {
-		TestMainObject original = new TestMainObject("hello world");
-		testMongoService.add(DEFAULT_TEST_DB_NAME, original);
-		
-		TestMainObject result = this.testMongoService.remove(DEFAULT_TEST_DB_NAME, original.getId().toHexString());
 		
 		assertEquals(0, this.testMongoService.count(DEFAULT_TEST_DB_NAME));
 		assertEquals(original.getId(), result.getId());

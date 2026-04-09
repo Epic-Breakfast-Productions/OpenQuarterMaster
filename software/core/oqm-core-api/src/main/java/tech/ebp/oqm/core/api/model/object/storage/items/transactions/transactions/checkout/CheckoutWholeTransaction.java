@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 
 /**
@@ -20,6 +21,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
+@Schema(title = "CheckoutWholeTransaction", description = "A transaction to checkout a whole stored object.")
 public class CheckoutWholeTransaction extends CheckoutTransaction {
 
 	/**
@@ -30,6 +32,7 @@ public class CheckoutWholeTransaction extends CheckoutTransaction {
 	private ObjectId toCheckout;
 	
 	@Override
+	@Schema(constValue = "CHECKOUT_WHOLE", readOnly = true, required = true, examples = "CHECKOUT_WHOLE")
 	public TransactionType getType() {
 		return TransactionType.CHECKOUT_WHOLE;
 	}

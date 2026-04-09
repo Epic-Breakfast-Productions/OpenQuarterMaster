@@ -262,7 +262,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -315,7 +315,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -354,7 +354,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -400,7 +400,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(10, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -562,7 +562,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -605,7 +605,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		UniqueStored storedFromSearch = (UniqueStored) storedSearchResult.getResults().getFirst();
 		
@@ -647,7 +647,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		UniqueStored storedFromSearch = (UniqueStored) storedSearchResult.getResults().getFirst();
 		
@@ -806,7 +806,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 			entity
 		);
 		ObjectId checkoutId =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(appliedTransaction.getId().toHexString()))
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(appliedTransaction.getId()))
 				.getResults()
 				.getFirst()
 				.getId();
@@ -834,7 +834,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -851,7 +851,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		
 		SearchResult<ItemCheckout>
 			checkoutSearch =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId().toHexString()));
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -886,7 +886,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		).getId();
 		ObjectId
 			checkoutId =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId)).getResults().getFirst().getId();
 		//		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 		
 		ReturnFullCheckinDetails
@@ -911,7 +911,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 2);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -928,7 +928,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		
 		SearchResult<ItemCheckout>
 			checkoutSearch =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId().toHexString()));
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -960,7 +960,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		).getId();
 		ObjectId
 			checkoutId =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId)).getResults().getFirst().getId();
 		//		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 		
 		ReturnFullCheckinDetails
@@ -985,7 +985,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -1002,7 +1002,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		
 		SearchResult<ItemCheckout>
 			checkoutSearch =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId().toHexString()));
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -1034,7 +1034,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		).getId();
 		ObjectId
 			checkoutId =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId)).getResults().getFirst().getId();
 		//		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 		
 		ReturnFullCheckinDetails details =
@@ -1058,7 +1058,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -1075,7 +1075,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		
 		SearchResult<ItemCheckout>
 			checkoutSearch =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId().toHexString()));
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -1107,7 +1107,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		).getId();
 		ObjectId
 			checkoutId =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId)).getResults().getFirst().getId();
 		//		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 		
 		ReturnFullCheckinDetails
@@ -1132,7 +1132,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 2);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -1149,7 +1149,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		
 		SearchResult<ItemCheckout>
 			checkoutSearch =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId().toHexString()));
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -1180,7 +1180,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		).getId();
 		ObjectId
 			checkoutId =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId)).getResults().getFirst().getId();
 		//		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 		
 		ReturnFullCheckinDetails
@@ -1205,7 +1205,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -1222,7 +1222,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		
 		SearchResult<ItemCheckout>
 			checkoutSearch =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId().toHexString()));
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -1252,7 +1252,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		).getId();
 		ObjectId
 			checkoutId =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId)).getResults().getFirst().getId();
 		//		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 		
 		ReturnFullCheckinDetails
@@ -1277,7 +1277,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		UniqueStored storedFromSearch = (UniqueStored) storedSearchResult.getResults().getFirst();
 		
@@ -1293,7 +1293,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		
 		SearchResult<ItemCheckout>
 			checkoutSearch =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId().toHexString()));
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -1323,7 +1323,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		).getId();
 		ObjectId
 			checkoutId =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId.toHexString())).getResults().getFirst().getId();
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId)).getResults().getFirst().getId();
 		//		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
 		
 		ReturnFullCheckinDetails
@@ -1348,7 +1348,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		UniqueStored storedFromSearch = (UniqueStored) storedSearchResult.getResults().getFirst();
 		
@@ -1364,7 +1364,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		
 		SearchResult<ItemCheckout>
 			checkoutSearch =
-			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId().toHexString()));
+			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -1426,7 +1426,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -1440,7 +1440,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
 		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
 		
-		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId().toHexString()));
+		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -1488,7 +1488,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -1502,7 +1502,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
 		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
 		
-		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId().toHexString()));
+		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -1550,7 +1550,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -1564,7 +1564,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
 		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
 		
-		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId().toHexString()));
+		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -1866,7 +1866,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 0);
 		
 		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(initialStoredId));
@@ -1875,7 +1875,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
 		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
 		
-		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId().toHexString()));
+		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -1922,7 +1922,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 0);
 		
 		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(initialStoredId));
@@ -1931,7 +1931,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
 		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
 		
-		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId().toHexString()));
+		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -1977,7 +1977,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 0);
 		
 		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(initialStoredId));
@@ -1986,7 +1986,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
 		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
 		
-		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId().toHexString()));
+		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -2032,7 +2032,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 0);
 		
 		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(initialStoredId));
@@ -2041,7 +2041,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
 		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
 		
-		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId().toHexString()));
+		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
 		
@@ -2076,7 +2076,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -2123,7 +2123,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -2171,7 +2171,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(6, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -2352,7 +2352,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -2402,7 +2402,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -2452,7 +2452,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		//TODO:: storage block stats
 		
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 		
@@ -2819,7 +2819,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 2);
 		//'first' and 'second' are flipped here
 		AmountStored firstStoredFromSearch = (AmountStored) storedSearchResult.getResults().get(0);
@@ -2901,7 +2901,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 2);
 		//'first' and 'second' are flipped here
 		AmountStored firstStoredFromSearch = (AmountStored) storedSearchResult.getResults().get(0);
@@ -2984,7 +2984,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 2);
 		//'first' and 'second' are flipped here
 		AmountStored firstStoredFromSearch = (AmountStored) storedSearchResult.getResults().get(0);
@@ -3067,7 +3067,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 2);
 		//'first' and 'second' are flipped here
 		AmountStored firstStoredFromSearch = (AmountStored) storedSearchResult.getResults().get(0);
@@ -3151,7 +3151,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 2);
 		//'first' and 'second' are flipped here
 		AmountStored firstStoredFromSearch = (AmountStored) storedSearchResult.getResults().get(0);
@@ -3226,7 +3226,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 2);
 		//'first' and 'second' are flipped here
 		AmountStored firstStoredFromSearch = (AmountStored) storedSearchResult.getResults().get(0);
@@ -3507,7 +3507,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored firstStoredFromSearch = (AmountStored) storedSearchResult.getResults().get(0);
 		
@@ -3566,7 +3566,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored firstStoredFromSearch = (AmountStored) storedSearchResult.getResults().get(0);
 		
@@ -3624,7 +3624,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		UniqueStored firstStoredFromSearch = (UniqueStored) storedSearchResult.getResults().get(0);
 		
@@ -3682,7 +3682,7 @@ class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransa
 		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
 		
-		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		UniqueStored firstStoredFromSearch = (UniqueStored) storedSearchResult.getResults().get(0);
 		

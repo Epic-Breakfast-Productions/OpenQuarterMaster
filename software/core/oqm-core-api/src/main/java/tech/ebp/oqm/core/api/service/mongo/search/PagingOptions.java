@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 
 /**
@@ -15,6 +16,7 @@ import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 @Setter(AccessLevel.PRIVATE)
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(description = "Options to inform paging behavior.")
 public class PagingOptions {
 	
 	public static final int DEFAULT_PAGE_SIZE = Integer.MAX_VALUE;
@@ -43,11 +45,20 @@ public class PagingOptions {
 		return new PagingOptions(pageSize, pageNum);
 	}
 	
+	/**
+	 * If paging is to be done.
+	 */
+	@Schema(required = true, description = "If we are to do paging for the request.", examples = {"true"})
 	public boolean doPaging;
+	
 	/** The size of the pages */
+	@Schema(required = true, description = "The size of the pages.", examples = {"25"})
 	public int pageSize;
+	
 	/** The number of the page we are on */
+	@Schema(required = true, description = "The page to retrieve.", examples = {"1"})
 	public int pageNum;
+
 	
 	public PagingOptions(int pageSize, int pageNum) {
 		if (pageSize < 1) {

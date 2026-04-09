@@ -37,6 +37,7 @@ import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.utils.FileContentsGet;
 import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
+import tech.ebp.oqm.core.api.utils.FileUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -106,7 +107,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 				"txt",
 				0,
 				FileHashes.builder().md5("").sha1("").sha256("").build(),
-				FileMetadata.TIKA.detect("plain.txt"),
+				FileUtils.TIKA.detect("plain.txt"),
 				ZonedDateTime.now()
 			);
 			
@@ -179,13 +180,7 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	public G getObjGet(String dbIdOrName, ObjectId id) {
 		return this.fileObjToGet(dbIdOrName, this.getObj(dbIdOrName, id));
 	}
-	public G getObjGet(String dbIdOrName, String id) {
-		return this.fileObjToGet(dbIdOrName, this.getObj(dbIdOrName, id));
-	}
 	public T getObj(String dbIdOrName, ObjectId id) {
-		return this.getFileObjectService().get(dbIdOrName, id);
-	}
-	public T getObj(String dbIdOrName, String id) {
 		return this.getFileObjectService().get(dbIdOrName, id);
 	}
 	
@@ -259,8 +254,8 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	public int getLatestVersionNum(String dbIdOrName, ClientSession clientSession, ObjectId id) {
 		return this.getNumRevisions(dbIdOrName, clientSession, id);
 	}
-	public int getLatestVersionNum(String dbIdOrName, String id) {
-		return this.getLatestVersionNum(dbIdOrName, null, new ObjectId(id));
+	public int getLatestVersionNum(String dbIdOrName, ObjectId id) {
+		return this.getLatestVersionNum(dbIdOrName, null, id);
 	}
 	
 	public List<FileMetadata> getRevisions(String dbIdOrName, ClientSession clientSession, ObjectId id) {
@@ -291,8 +286,8 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 	public FileMetadata getFileMetadata(String dbIdOrName, ClientSession clientSession, ObjectId id, int revisionNum){
 		return this.getRevisions(dbIdOrName, clientSession, id).get(revisionNum - 1);
 	}
-	public FileMetadata getFileMetadata(String dbIdOrName, String id, int revisionNum){
-		return this.getFileMetadata(dbIdOrName, null, new ObjectId(id), revisionNum);
+	public FileMetadata getFileMetadata(String dbIdOrName, ObjectId id, int revisionNum){
+		return this.getFileMetadata(dbIdOrName, null, id, revisionNum);
 	}
 	
 	public FileContentsGet getFile(String dbIdOrName, ClientSession clientSession, ObjectId id, int revisionNum) throws IOException {
@@ -320,8 +315,8 @@ public abstract class MongoFileService<T extends FileMainObject, S extends Searc
 		return outputBuilder.build();
 	}
 	
-	public FileContentsGet getFile(String dbIdOrName, String id, int revisionNum) throws IOException {
-		return this.getFile(dbIdOrName, null, new ObjectId(id), revisionNum);
+	public FileContentsGet getFile(String dbIdOrName, ObjectId id, int revisionNum) throws IOException {
+		return this.getFile(dbIdOrName, null, id, revisionNum);
 	}
 	
 	protected File downloadGridfsFile(String dbIdOrName, ClientSession clientSession, String filename, String tempFilename, GridFSDownloadOptions options) throws IOException {

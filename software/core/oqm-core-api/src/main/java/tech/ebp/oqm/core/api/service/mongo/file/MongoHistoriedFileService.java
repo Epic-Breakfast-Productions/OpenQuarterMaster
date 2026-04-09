@@ -219,10 +219,6 @@ public abstract class MongoHistoriedFileService<T extends FileMainObject, U exte
 		return output;
 	}
 	
-	public int updateFile(String dbIdOrName, ClientSession clientSession, String id, U uploadBody, InteractingEntity interactingEntity) throws IOException {
-		return this.updateFile(dbIdOrName, clientSession, new ObjectId(id), uploadBody, interactingEntity);
-	}
-	
 	public long removeAll(String dbIdOrName, ClientSession clientSession, InteractingEntity entity) {
 		AtomicLong numRemoved = new AtomicLong();
 		boolean sessionGiven = clientSession != null;

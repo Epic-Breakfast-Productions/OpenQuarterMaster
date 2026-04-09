@@ -66,13 +66,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ItemCheckout.class
-			)
-		)
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -93,7 +87,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public ItemCheckout get(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.get(id);
 	}
@@ -106,13 +100,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Storage block updated.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ItemCheckout.class
-			)
-		)
+		description = "Storage block updated."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -133,7 +121,8 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemCheckout update(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
+		@Schema(type = SchemaType.OBJECT, implementation = ItemCheckout.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
 		return super.update(id, updates);
@@ -146,13 +135,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object deleted.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ItemCheckout.class
-			)
-		)
+		description = "Object deleted."
 	)
 	@APIResponse(
 		responseCode = "404",
@@ -168,7 +151,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemCheckout delete(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.delete(id);
 	}
@@ -181,13 +164,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			)
-		}
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -201,8 +178,8 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getHistoryForObject(
-		@PathParam("id") String id,
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
+		@PathParam("id") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);
@@ -215,20 +192,7 @@ public class ItemCheckoutCrud extends MainObjectProvider<ItemCheckout, ItemCheck
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = ObjectHistoryEvent.class
-				)
-			)
-		},
-		headers = {
-			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
-		}
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)

@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 
@@ -19,6 +20,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @Data
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
+@Schema(title = "AddWholeTransaction", description = "A transaction to add a stored object.")
 public class AddWholeTransaction extends AddTransaction {
 
 	/**
@@ -36,6 +38,7 @@ public class AddWholeTransaction extends AddTransaction {
 	private Stored toAdd;
 
 	@Override
+	@Schema(constValue = "ADD_WHOLE", readOnly = true, required = true, examples = "ADD_WHOLE")
 	public TransactionType getType() {
 		return TransactionType.ADD_WHOLE;
 	}
