@@ -18,6 +18,9 @@ Requires=docker.socket
 Requires=oqm-infra-postgres.service
 After=oqm-infra-postgres.service
 
+[Install]
+WantedBy=multi-user.target
+
 [Service]
 Type=simple
 Restart=always
@@ -103,6 +106,3 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
 
 ExecStop=/bin/bash -c "stop -t 10 $CONTAINER_NAME || echo 'Could not stop keycloak container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove keycloak container'"
-
-[Install]
-WantedBy=multi-user.target
