@@ -98,4 +98,7 @@ export class StorageBlockTree {
 			}
 		});
 	}
+	static {
+		window.StorageBlockTree = this;
+	}
 }
