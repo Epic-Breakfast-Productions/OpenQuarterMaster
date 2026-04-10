@@ -284,10 +284,6 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		);
 	}
 	
-	public List<InventoryItem> getItemsInBlock(String oqmDbIdOrName, String storageBlockId) {
-		return this.getItemsInBlock(oqmDbIdOrName, new ObjectId(storageBlockId));
-	}
-	
 	public long getNumStoredExpired(String oqmDbIdOrName) {
 		return this.getSumOfIntField(oqmDbIdOrName, "numExpired");
 	}

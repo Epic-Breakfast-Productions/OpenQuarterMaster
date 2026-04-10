@@ -2,8 +2,8 @@
 
 import {Rest} from "../../Rest.js";
 
-export const ItemCategoryTree = {
-	MAIN_CONFIG: {
+export class ItemCategoryTree {
+	static MAIN_CONFIG = {
 		chart: {
 			container: "",
 			animateOnInit: false,
@@ -22,9 +22,9 @@ export const ItemCategoryTree = {
 		nodeStructure: {
 			children: []
 		}
-	},
+	}
 
-	addChildrenToList(childrenList, curBlock) {
+	static addChildrenToList(childrenList, curBlock) {
 		let curNode = {
 			text: {
 				name: curBlock.catName,
@@ -43,8 +43,8 @@ export const ItemCategoryTree = {
 			});
 		}
 		childrenList.push(curNode);
-	},
-	showTree(containerSelector) {
+	}
+	static showTree(containerSelector) {
 		let chartConfig = $.extend(true, {}, ItemCategoryTree.MAIN_CONFIG);
 
 		chartConfig.chart.container = containerSelector;
@@ -65,8 +65,8 @@ export const ItemCategoryTree = {
 			fail: function () {
 			}
 		});
-	},
-	addCrumbs(cur, crumbList, toKeepId) {
+	}
+	static addCrumbs(cur, crumbList, toKeepId) {
 		if (cur.objectId != toKeepId) {
 			let curCrumb = $('<li class="breadcrumb-item"><a href="#"></a></li>');
 			curCrumb.find("a").text(cur.catName);
@@ -81,8 +81,8 @@ export const ItemCategoryTree = {
 			curCrumb = curCrumb.text(cur.catName + " (this)");
 			crumbList.append(curCrumb);
 		}
-	},
-	async getBreadcrumbs(crumbContainer, toKeepId) {
+	}
+	static async getBreadcrumbs(crumbContainer, toKeepId) {
 		Rest.call({
 			url: Rest.passRoot + "/inventory/item-category/tree?onlyInclude=" + toKeepId,
 			done: function (data) {
@@ -100,5 +100,8 @@ export const ItemCategoryTree = {
 			}
 		});
 	}
-};
 
+	static {
+		window.ItemCategoryTree = this;
+	}
+}

@@ -78,14 +78,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Objects added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = StorageBlock.class
-			)
-		)
+		description = "Objects added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -127,13 +120,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = CollectionStats.class
-			)
-		)
+		description = "Object retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -149,13 +136,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = StorageBlock.class
-			)
-		)
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -176,7 +157,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public StorageBlock get(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.get(id);
 	}
@@ -189,13 +170,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Storage block updated.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = StorageBlock.class
-			)
-		)
+		description = "Storage block updated."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -216,7 +191,8 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public StorageBlock update(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
+		@Schema(type = SchemaType.OBJECT, implementation = StorageBlock.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
 		return super.update(id, updates);
@@ -229,13 +205,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object deleted.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = MainObject.class
-			)
-		)
+		description = "Object deleted."
 	)
 	@APIResponse(
 		responseCode = "404",
@@ -251,7 +221,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public StorageBlock delete(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.delete(id);
 	}
@@ -263,15 +233,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Tree retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					implementation = StorageBlockTree.class
-				)
-			)
-		}
+		description = "Tree retrieved."
 	)
 	@APIResponse(
 		responseCode = "204",
@@ -296,13 +258,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			)
-		}
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -316,8 +272,8 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getHistoryForObject(
-		@PathParam("id") String id,
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
+		@PathParam("id") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);
@@ -330,16 +286,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = ObjectHistoryEvent.class
-				)
-			)
-		}
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)

@@ -1,3 +1,5 @@
+import {PageUtility} from "./utilClasses/PageUtility.js";
+
 /**
  *
  * TODO:: function to turn dt from server to client's tz, format
@@ -5,18 +7,18 @@
  * https://moment.github.io/luxon/demo/global.html
  * @type {{getNowTs(): *, setupDateTimeInputs(): void, getTsForServer(*): (null|*)}}
  */
-export const TimeUtils = {
+export class TimeUtils extends PageUtility {
 
-	tsToLocal(ts){
+	static tsToLocal(ts){
 		return ts.slice(0, 16);
-	},
+	}
 	/**
 	 * Get the current timestamp used for `datetime-local` inputs.
 	 */
-	getNowTs(){
+	static getNowTs(){
 		return TimeUtils.tsToLocal(luxon.DateTime.now().toISO());
-	},
-	getTsFromInput(dtInputJq){
+	}
+	static getTsFromInput(dtInputJq){
 		let value = dtInputJq.val();
 
 		if(!value){
@@ -29,11 +31,11 @@ export const TimeUtils = {
 
 		console.log("Returning dt value: " + value);
 		return value;
-	},
-	setDatetimelocalInput(dtInputJq, dt){
+	}
+	static setDatetimelocalInput(dtInputJq, dt){
 		dtInputJq.val(TimeUtils.tsToLocal(dt));
-	},
-	setupDateTimeInputs(){
+	}
+	static setupDateTimeInputs(){
 		let nowDateTimeStamp = this.getNowTs();
 		let futureInputs = $(".datetimeInputFuture");
 
@@ -43,8 +45,8 @@ export const TimeUtils = {
 					element.min = nowDateTimeStamp;
 				});
 		}
-	},
-	durationNumSecsToTimespan(duration){
+	}
+	static durationNumSecsToTimespan(duration){
 		if ((duration / 604800) % 1 == 0) {
 			console.log("Determined was weeks.");
 			return "weeks";
@@ -61,8 +63,8 @@ export const TimeUtils = {
 			console.log("Determined was seconds.");
 			return "seconds";
 		}
-	},
-	durationNumSecsTo(duration, timespanTo = null){
+	}
+	static durationNumSecsTo(duration, timespanTo = null){
 		if(timespanTo == null){
 			timespanTo = TimeUtils.durationNumSecsToTimespan(duration);
 		}
@@ -87,16 +89,16 @@ export const TimeUtils = {
 		}
 		console.debug("Turned duration " + duration + " to " + output + " " + timespanTo);
 		return output;
-	},
-	durationNumSecsToHuman(duration){
+	}
+	static durationNumSecsToHuman(duration){
 		let timespan = TimeUtils.durationNumSecsToTimespan(duration);
 		let num = TimeUtils.durationNumSecsTo(duration, timespan);
 		return num + " " + timespan;
-	},
-	initPage(){
+	}
+	static {
 		console.log("Initting dateTime inputs.");
 		TimeUtils.setupDateTimeInputs();
 		Main.processStop();
 		console.log("Done processing page message.");
 	}
-};
+}

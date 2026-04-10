@@ -1,8 +1,8 @@
 import {Rest} from "../../Rest.js";
 
 // https://fperucic.github.io/treant-js/
-export const StorageBlockTree = {
-	MAIN_CONFIG: {
+export class StorageBlockTree {
+	static MAIN_CONFIG = {
 		chart: {
 			container: "",
 			animateOnInit: false,
@@ -21,9 +21,9 @@ export const StorageBlockTree = {
 		nodeStructure: {
 			children: []
 		}
-	},
-	addChildrenToList(childrenList, curBlock) {
-		var curNode = {
+	}
+	static addChildrenToList(childrenList, curBlock) {
+		let curNode = {
 			text: {
 				name: curBlock.blockLabel,
 				title: curBlock.blockLocation
@@ -41,9 +41,9 @@ export const StorageBlockTree = {
 			});
 		}
 		childrenList.push(curNode);
-	},
-	showTree(containerSelector) {
-		chartConfig = $.extend(true, {}, StorageBlockTree.MAIN_CONFIG);
+	}
+	static showTree(containerSelector) {
+		let chartConfig = $.extend(true, {}, StorageBlockTree.MAIN_CONFIG);
 
 		chartConfig.chart.container = containerSelector;
 
@@ -63,8 +63,8 @@ export const StorageBlockTree = {
 			fail: function () {
 			}
 		});
-	},
-	addCrumbs(cur, crumbList, toKeepId) {
+	}
+	static addCrumbs(cur, crumbList, toKeepId) {
 		if (cur.objectId != toKeepId) {
 			let curCrumb = $('<li class="breadcrumb-item"><a href="#"></a></li>');
 			curCrumb.find("a").text(cur.blockLabel);
@@ -79,8 +79,8 @@ export const StorageBlockTree = {
 			curCrumb = curCrumb.text(cur.blockLabel + " (this)");
 			crumbList.append(curCrumb);
 		}
-	},
-	getBlockBreadcrumbs: async function(crumbContainer, toKeepId) {
+	}
+	static async getBlockBreadcrumbs(crumbContainer, toKeepId) {
 		Rest.call({
 			url: Rest.passRoot + "/inventory/storage-block/tree?onlyInclude=" + toKeepId,
 			done: function (data) {
@@ -97,5 +97,8 @@ export const StorageBlockTree = {
 			fail: function () {
 			}
 		});
+	}
+	static {
+		window.StorageBlockTree = this;
 	}
 }

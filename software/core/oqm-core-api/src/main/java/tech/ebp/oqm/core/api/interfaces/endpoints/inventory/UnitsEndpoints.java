@@ -18,8 +18,10 @@ import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.media.SchemaProperty;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
@@ -65,8 +67,14 @@ public class UnitsEndpoints extends EndpointProvider {
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				//TODO: better
-				implementation = Map.class
+				type = SchemaType.OBJECT,
+				properties = @SchemaProperty(
+					name = "unit category",
+					type = SchemaType.ARRAY,
+					description = "List of supported units for each category.",
+					contentSchema = Unit.class,
+												examples = {"[{\"string\": \"units\"}]"}
+				)
 			)
 		)
 	)
@@ -84,19 +92,11 @@ public class UnitsEndpoints extends EndpointProvider {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Got the list.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				//TODO: better
-				implementation = Map.class
-			)
-		)
+		description = "Got the list."
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public ValidUnitDimension[] getUnitDimensions() {
-		log.debug("Getting valid unit list.");
 		return ValidUnitDimension.values();
 	}
 	
@@ -107,14 +107,7 @@ public class UnitsEndpoints extends EndpointProvider {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Got the list.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				//TODO: better
-				implementation = Map.class
-			)
-		)
+		description = "Got the list."
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
@@ -125,7 +118,7 @@ public class UnitsEndpoints extends EndpointProvider {
 	@GET
 	@Path("compatibility")
 	@Operation(
-		summary = "Gets the set of compatible units."
+		summary = "Gets the map of which units are compatible with other units."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -133,37 +126,35 @@ public class UnitsEndpoints extends EndpointProvider {
 		content = @Content(
 			mediaType = "application/json",
 			schema = @Schema(
-				//TODO: better
-				implementation = Map.class
+				type = SchemaType.OBJECT,
+				properties = @SchemaProperty(
+					name = "unit",
+					type = SchemaType.ARRAY,
+					description = "List of units that are compatible with this unit.",
+					contentSchema = Unit.class,
+					examples = {"[{\"string\": \"units\"}]"}
+				)
 			)
 		)
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Map<Unit<?>, Set<Unit<?>>> getUnitCompatibleMap() {
-		log.debug("Getting unit set with lists of compatible units.");
 		return UnitUtils.UNIT_COMPATIBILITY_MAP;
 	}
 	
 	@GET
 	@Path("compatibility/{unit}")
 	@Operation(
-		summary = "Gets the compatible units of the unit given"
+		summary = "Gets the units that are compatible with the the unit given"
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Got the list.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				//TODO: better
-				implementation = Map.class
-			)
-		)
+		description = "Got the list."
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response getUnitCompatible(
+	public Set<Unit<?>> getUnitCompatible(
 		@PathParam("unit") String unitString
 	) {
 		log.debug("Getting unit set with lists of compatible units.");
@@ -171,15 +162,10 @@ public class UnitsEndpoints extends EndpointProvider {
 		try {
 			unit = UnitUtils.unitFromString(unitString);
 		} catch(IllegalArgumentException e) {
-			//TODO:: determine proper return code
-			return Response.status(Response.Status.NOT_ACCEPTABLE)
-					   .type(MediaType.TEXT_PLAIN_TYPE)
-					   .entity("Invalid Unit String given: \"" + unitString + "\"")
-					   .build();
+			//TODO:: determine proper error
+			throw new ValidationException("Invalid unit given: " + unitString, e);
 		}
-		Set<Unit<?>> units = UnitUtils.UNIT_COMPATIBILITY_MAP.get(unit);
-		return Response.ok(units).build();
-		
+		return  UnitUtils.UNIT_COMPATIBILITY_MAP.get(unit);
 	}
 	
 	@POST
@@ -189,13 +175,7 @@ public class UnitsEndpoints extends EndpointProvider {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "Object added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -218,13 +198,7 @@ public class UnitsEndpoints extends EndpointProvider {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "Object added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -233,14 +207,13 @@ public class UnitsEndpoints extends EndpointProvider {
 	)
 	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	@Produces(MediaType.APPLICATION_JSON)
-	public SearchResult<CustomUnitEntry>
-	getCustomUnits(
+	public SearchResult<CustomUnitEntry> getCustomUnits(
 		@BeanParam CustomUnitSearch search
 	) {
 		return this.customUnitService.search(search);
 	}
 	
-	private static Quantity<?> convert(@Valid ConvertRequest request){
+	private static Quantity<?> convert(@Valid ConvertRequest request) {
 		//noinspection unchecked
 		return request.getQuantity().to(request.getNewUnit());
 	}
@@ -248,17 +221,13 @@ public class UnitsEndpoints extends EndpointProvider {
 	@PUT
 	@Path("convert")
 	@Operation(
-		summary = "Converts a quantity to a different unit"
+		summary = "Converts a quantity to a different unit. Supply either a single ConvertRequest or an array of them. Returns just the object if given an object, array if given"
+				  + " array."
 	)
 	@APIResponse(
 		responseCode = "200",
 		description = "Quantity converted.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = Quantity.class
-			)
-		)
+		content = @Content(mediaType = "application/json", schema = @Schema(implementation = Quantity.class))
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -268,17 +237,18 @@ public class UnitsEndpoints extends EndpointProvider {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response convert(
+		@Schema(implementation = ConvertRequest.class)
 		JsonNode convertRequestJson
 	) {
 		//TODO:: wrap in a good exception for invalid conversions?
 		Object output = null;
-		if(convertRequestJson.isObject()){
+		if (convertRequestJson.isObject()) {
 			ConvertRequest convertRequest = this.objectMapper.convertValue(convertRequestJson, ConvertRequest.class);
 			output = convert(convertRequest);
-		} else if(convertRequestJson.isArray()){
+		} else if (convertRequestJson.isArray()) {
 			List<Quantity<?>> out = new ArrayList<>(convertRequestJson.size());
 			//TODO:: contemplate if OBJECT_MAPPER.readValue(response.extract().body().asString(), new TypeReference<List<Quantities>>() { }) is better
-			for(JsonNode curConvertRequestJson : (ArrayNode)convertRequestJson){
+			for (JsonNode curConvertRequestJson : (ArrayNode) convertRequestJson) {
 				ConvertRequest convertRequest = this.objectMapper.convertValue(curConvertRequestJson, ConvertRequest.class);
 				out.add(convert(convertRequest));
 			}

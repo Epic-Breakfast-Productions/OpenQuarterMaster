@@ -1,17 +1,18 @@
 import {ModalUtils} from "../../ModalUtils.js";
 import {Rest} from "../../Rest.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const ImageSearchSelect = {
-	imageSearchSelectModal: $("#imageSearchSelectModal"),
-	searchForm: $("#imageSearchSelectForm"),
-	searchResults: $("#imageSearchSelectResults"),
-	curImagesSelectedDiv: null,
+export class ImageSearchSelect extends PageUtility {
+	static imageSearchSelectModal = $("#imageSearchSelectModal");
+	static searchForm = $("#imageSearchSelectForm");
+	static searchResults = $("#imageSearchSelectResults");
+	static curImagesSelectedDiv = null;
 
-	setupImageSearchModal(selectedImagesDiv) {
+	static setupImageSearchModal(selectedImagesDiv) {
 		ModalUtils.setReturnModal(ImageSearchSelect.imageSearchSelectModal, selectedImagesDiv);
 		ImageSearchSelect.curImagesSelectedDiv = selectedImagesDiv;
-	},
-	selectImage(imageName, imageId) {
+	}
+	static selectImage(imageName, imageId) {
 		let newImageSelected = $(`<div class="card selectedImage g-0 p-1 m-1 text-center float-start" >
         <img src="` + Rest.passRoot + '/media/image/' + imageId + '/revision/latest/data" alt="' + imageName + '" class="card-img-top" onclick="ImageSearchSelect.removeSelectedImage(this.parentElement);" data-bs-imageId="' + imageId + `">
         <div class="input-group m-1 p-1">
@@ -21,8 +22,8 @@ export const ImageSearchSelect = {
     </div>`);
 
 		ImageSearchSelect.curImagesSelectedDiv.append(newImageSelected);
-	},
-	addSelectedImages(selectedImagesDiv, imageList) {
+	}
+	static addSelectedImages(selectedImagesDiv, imageList) {
 		ImageSearchSelect.setupImageSearchModal(selectedImagesDiv);
 		let titleArr = [];
 		imageList.forEach(async function (imageId, i) {
@@ -39,14 +40,14 @@ export const ImageSearchSelect = {
 		imageList.forEach(function (imageId, i) {
 			ImageSearchSelect.selectImage(titleArr[i], imageId);
 		});
-	},
-	moveImageInputUp(imageDiv) {
+	}
+	static moveImageInputUp(imageDiv) {
 		console.log("Moving image up");
 		if (imageDiv.previousSibling) {
 			imageDiv.parentElement.insertBefore(imageDiv, imageDiv.previousSibling);
 		}
-	},
-	moveImageInputDown(imageDiv) {
+	}
+	static moveImageInputDown(imageDiv) {
 		console.log("Moving image down");
 		if (imageDiv.nextSibling) {
 			if (imageDiv.nextSibling.nextSibling) {
@@ -55,17 +56,18 @@ export const ImageSearchSelect = {
 				imageDiv.parentElement.appendChild(imageDiv);
 			}
 		}
-	},
-	removeSelectedImage(toRemove) {
+	}
+	static removeSelectedImage(toRemove) {
 		toRemove.remove();
-	},
-	addImagesToData(data, selectedImageDiv){
+	}
+	static addImagesToData(data, selectedImageDiv){
 		data.imageIds = [];
 		selectedImageDiv.find("img").each(function(i, curImg){
 			data.imageIds.push($(curImg).attr('data-bs-imageId'));
 		});
-	},
-	initPage: function () {
+	}
+	static {
+		window.ImageSearchSelect = this;
 		ImageSearchSelect.searchForm.on("submit", function (event) {
 			event.preventDefault();
 			console.log("Submitting search form.");
@@ -95,4 +97,4 @@ export const ImageSearchSelect = {
 			});
 		});
 	}
-};
+}

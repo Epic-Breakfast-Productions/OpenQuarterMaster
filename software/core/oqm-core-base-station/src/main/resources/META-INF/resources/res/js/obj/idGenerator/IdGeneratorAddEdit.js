@@ -2,36 +2,37 @@ import {DselectUtils} from "../../DselectUtils.js";
 import {Rest} from "../../Rest.js";
 import {PageMessageUtils} from "../../PageMessageUtils.js";
 import {Getters} from "../Getters.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const IdGeneratorAddEdit = {
-	formGetters: {
-		messages: function(formJq){
+export class IdGeneratorAddEdit extends PageUtility {
+	static formGetters = class {
+		static messages(formJq){
 			return formJq.find("div.formMessages");
-		},
-		id: function(formJq){
+		}
+		static id(formJq){
 			return formJq.find("input[name='generatorId']");
-		},
-		generatesFor: function(formJq){
+		}
+		static generatesFor(formJq){
 			return formJq.find("select[name='generatesFor']");
-		},
-		name: function(formJq){
+		}
+		static name(formJq){
 			return formJq.find("input[name='name']");
-		},
-		encoded: function(formJq){
+		}
+		static encoded(formJq){
 			return formJq.find("input[name='encoded']");
-		},
-		barcode: function(formJq){
+		}
+		static barcode(formJq){
 			return formJq.find("input[name='barcode']");
-		},
-		format: function(formJq){
+		}
+		static format(formJq){
 			return formJq.find("input[name='format']");
 		}
-	},
-	forms: {
-		modal: $("#idGeneratorAddEditForm")
-	},
+	}
+	static forms = class {
+		static modal = $("#idGeneratorAddEditForm")
+	}
 
-	resetForm(formJq){
+	static resetForm(formJq){
 		console.log("Resetting unique id generator form.")
 		formJq.trigger("reset");
 		IdGeneratorAddEdit.formGetters.messages(formJq).text("");
@@ -46,9 +47,9 @@ export const IdGeneratorAddEdit = {
 			.prop("disabled", false);
 		IdGeneratorAddEdit.formGetters.format(formJq).val("")
 			.prop("disabled", false);
-	},
+	}
 
-	setupFormForAdd(formJq, modalJq=false, select=false){
+	static setupFormForAdd(formJq, modalJq=false, select=false){
 		IdGeneratorAddEdit.resetForm(formJq);
 
 		if(select){
@@ -58,9 +59,9 @@ export const IdGeneratorAddEdit = {
 		if(modalJq){
 			modalJq.find(".modalTitleText").text("Add ID Generator");
 		}
-	},
+	}
 
-	setupFormForEdit(formJq, uniqueIdGeneratorId, modalJq=false){
+	static setupFormForEdit(formJq, uniqueIdGeneratorId, modalJq=false){
 		IdGeneratorAddEdit.resetForm(formJq);
 		IdGeneratorAddEdit.formGetters.encoded(formJq)
 			.prop("disabled", true);
@@ -86,9 +87,9 @@ export const IdGeneratorAddEdit = {
 				IdGeneratorAddEdit.formGetters.encoded(formJq).prop("checked", generator.encoded);
 				IdGeneratorAddEdit.formGetters.format(formJq).val(generator.idFormat);
 			});
-	},
+	}
 
-	buildGeneratorObject(formJq){
+	static buildGeneratorObject(formJq){
 		let generatorObj = {
 			name: IdGeneratorAddEdit.formGetters.name(formJq).val(),
 			forObjectType: IdGeneratorAddEdit.formGetters.generatesFor(formJq).val(),
@@ -102,9 +103,9 @@ export const IdGeneratorAddEdit = {
 		}
 
 		return generatorObj;
-	},
+	}
 
-	submitAddEditForm(e, formJq, refreshOnSuccess = true){
+	static submitAddEditForm(e, formJq, refreshOnSuccess = true){
 		e.preventDefault();
 
 		let generatorObj = IdGeneratorAddEdit.buildGeneratorObject(formJq);
@@ -148,14 +149,17 @@ export const IdGeneratorAddEdit = {
 				}
 			});
 		}
-	},
+	}
 
-	setupFormSubmit(formJq, modalJq = false){
-		formJq.on("submit", function(event){
+	static setupFormSubmit(formJq, modalJq = false) {
+		formJq.on("submit", function (event) {
 			IdGeneratorAddEdit.submitAddEditForm(event, formJq);
 		});
-	},
-	initPage: function(){
+	}
+
+	static {
+		window.IdGeneratorAddEdit = this;
+
 		$(".idGeneratorAddEditForm").each(function(i, formJs){
 			IdGeneratorAddEdit.setupFormSubmit($(formJs));
 		});

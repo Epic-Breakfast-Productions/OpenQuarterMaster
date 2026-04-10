@@ -1,19 +1,21 @@
 import {DselectUtils} from "./DselectUtils.js";
+import {PageUtility} from "./utilClasses/PageUtility.js";
 
-export const SearchUtils = {
-	mainPageSearch: $('#mainPageSearch'),
-	hasMainPageSearch: function (){
+export class SearchUtils extends PageUtility {
+	static mainPageSearch = $('#mainPageSearch');
+
+	static hasMainPageSearch(){
 		return SearchUtils.mainPageSearch.length === 1;
-	},
-	paginationClick: function (formId, page) {
+	}
+	static paginationClick(formId, page) {
 		console.log("Paginating. Form Id: \"" + formId, "\", page: " + page);
 		let searchForm = $("#" + formId);
 
 		searchForm.find('input[name="pageNum"]').val(page);
 
 		searchForm.submit();
-	},
-	fillInQueryForm: function (queryForm) {
+	}
+	static fillInQueryForm(queryForm) {
 		let getParams = new URLSearchParams(window.location.search);
 
 		console.log("Filling in query form from page query.");
@@ -93,14 +95,15 @@ export const SearchUtils = {
 		}
 
 		console.log("DONE filling in query form from page query.");
-	},
+	}
 
-	resetPageToOne: function (pageNumInputId) {
+	static resetPageToOne(pageNumInputId) {
 		console.log("page num input reset to 1");
 		$("#" + pageNumInputId).val(1);
-	},
+	}
 
-	initPage: function(){
+	static {
+		window.SearchUtils = this;
 		console.log("Initting search utils.");
 		// TODO:: attach handlers to all search forms
 		$(document).ready(function(){

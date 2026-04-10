@@ -1,8 +1,9 @@
 import {Rest} from "./Rest.js";
 import {Icons} from "./Icons.js";
+import {PageUtility} from "./utilClasses/PageUtility.js";
 
-export const EntityRef = {
-	getEntityRef(entityId, doneFunc){
+export class EntityRef extends PageUtility {
+	static getEntityRef(entityId, doneFunc){
 		return Rest.call({
 			spinnerContainer: null,
 			url: Rest.passRoot + "/interacting-entity/"+entityId+"/reference",
@@ -15,8 +16,8 @@ export const EntityRef = {
 				doneFunc(data);
 			}
 		});
-	},
-	getEntityRefIcon(entityOrType){
+	}
+	static getEntityRefIcon(entityOrType){
 		if (typeof entityOrType === 'object' && entityOrType !== null) {
 			console.log("Entity is object: ", entityOrType);
 			entityOrType = entityOrType.type;
@@ -38,5 +39,8 @@ export const EntityRef = {
 		}
 
 		return $(output);
+	}
+	static {
+		window.EntityRef = this;
 	}
 }

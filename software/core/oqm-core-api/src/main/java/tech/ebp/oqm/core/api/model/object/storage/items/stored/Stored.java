@@ -19,6 +19,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.Labeled;
@@ -63,6 +64,7 @@ import java.util.stream.Collectors;
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @BsonDiscriminator
+@Schema(oneOf = {AmountStored.class, UniqueStored.class})
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
 	
 	public static final int CUR_SCHEMA_VERSION = 4;
@@ -233,6 +235,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		return newIdentifier;
 	}
 	
+	@Schema(required = true, description = "The type of stored object.")
 	public abstract StoredType getType();
 	
 	/**
@@ -240,12 +243,13 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 */
 	@NonNull
 	@NotNull
+	@Schema(description = "The item that this stored is associated with.")
 	private ObjectId item;
 	
 	/**
 	 * The {@link StorageBlock} this stored is stored in.
 	 */
-	//TODO:: determine if we can use null for 'no block in particular'
+	@Schema(required = true, description = "The storage block where this item is stored.")
 	private ObjectId storageBlock;
 	
 	/**
@@ -261,6 +265,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 * When the item(s) held expire. Null if it does not expire.
 	 */
 	@lombok.Builder.Default
+	@Schema(required = false, description = "When the item(s) held expire. Null if it does not expire.", examples = {"null", "2022-03-10T12:15:50"})
 	private ZonedDateTime expires = null;
 	
 	/**
@@ -304,6 +309,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@Schema(required = false, description = "State of the notifications sent about this item stored.")
 	private StoredNotificationStatus notificationStatus = new StoredNotificationStatus();
 	
 	/**
@@ -312,6 +318,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@Max(100)
 	@Min(0)
 	@lombok.Builder.Default
+	@Schema(required = false, description = "The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.", examples = {"null", "100"})
 	private Integer condition = null;
 	
 	/**
@@ -320,8 +327,9 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@Schema(required = false, description = "Notes on the condition on the thing(s) stored.", examples = {""})
 	private String conditionNotes = "";
-	
+
 	/**
 	 * List of images related to the object.
 	 */
@@ -355,6 +363,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PRIVATE)
 	@lombok.Builder.Default
+	@Schema(required = false, description = "A generated label text.")
 	private String labelText = null;
 	
 	private void processLabel(InventoryItem item) {

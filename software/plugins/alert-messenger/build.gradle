@@ -21,6 +21,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-oidc'
     implementation 'io.quarkus:quarkus-qute'
     implementation 'io.quarkus:quarkus-mailer'
+
     implementation 'jakarta.persistence:jakarta.persistence-api:3.1.0'
 
     // Added dependencies for database ORM and JWT for enhanced security and user management
@@ -31,7 +32,7 @@ dependencies {
     // Add Quarkus REST Client dependency
     implementation 'io.quarkus:quarkus-rest-client'
 
-    implementation 'tech.ebp.oqm.lib:core-api-lib-quarkus:2.2.0-SNAPSHOT'
+    implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.4.4-SNAPSHOT'
     implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'

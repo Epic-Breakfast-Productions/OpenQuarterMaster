@@ -1,9 +1,10 @@
 import {Rest} from "../../Rest.js";
 import {DselectUtils} from "../../DselectUtils.js";
-import {PageMessageUtils} from "../../PageMessageUtils.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const ItemCategoryInput = {
-	getValueFromInput(itemCatInputJq){
+export class ItemCategoryInput extends PageUtility {
+
+	static getValueFromInput(itemCatInputJq){
 		let inputIsMultiple = itemCatInputJq.prop("multiple");
 		let val = itemCatInputJq.val();
 
@@ -22,12 +23,12 @@ export const ItemCategoryInput = {
 		}
 
 		return val;
-	},
+	}
 
 	/**
 	 * Handle newly created categories from dselect creatable mode
  	 */
-	handleNewCategory(selectElementJs, newCategoryName) {
+	static handleNewCategory(selectElementJs, newCategoryName) {
 		console.log("Creating new category: ", newCategoryName);
 		let selectElement = $(selectElementJs);
 
@@ -55,9 +56,11 @@ export const ItemCategoryInput = {
 				DselectUtils.setupDselect(selectElementJs);
 			}
 		});
-	},
+	}
 
-	initPage: function () {
+	static {
+		window.ItemCategoryInput = this;
+
 		$(".category-input").on("change", function(e) {
 			let selectElement = this;
 			let values = $(selectElement).val();
@@ -82,4 +85,4 @@ export const ItemCategoryInput = {
 			});
 		});
 	}
-};
+}
