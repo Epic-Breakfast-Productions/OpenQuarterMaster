@@ -6,20 +6,21 @@
 #
 [Unit]
 Description=Open QuarterMaster Base Station server for Open Quartermaster. Version ${version}.
-Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
-After=docker.service
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-api
 Wants=network-online.target
 Wants=oqm-infra-kafka_red_panda.service
-Requires=docker.socket
-Requires=oqm-infra-mongodb.service
-After=oqm-infra-mongodb.service
-Requires=oqm-infra-keycloak.service
-After=oqm-infra-keycloak.service
+After=docker.service oqm-infra-mongodb.service oqm-infra-keycloak.service oqm-infra-kafka_red_panda.service
+Requires=docker.socket oqm-infra-mongodb.service oqm-infra-keycloak.service
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=oqm-infra-mongodb.service oqm-infra-keycloak.service
 
 [Service]
 Type=simple
 Restart=always
 TimeoutSec=10m
+SuccessExitStatus=143
 # Setup operating variables
 Environment="CONTAINER_NAME=oqm-core-api"
 Environment="IMAGE_NAME=ebprod/oqm-core-api"
@@ -75,6 +76,3 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
 # Remove from docker
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop core api container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove core api container'"
-
-[Install]
-WantedBy=multi-user.target
