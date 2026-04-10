@@ -96,7 +96,7 @@ test {
 		"--add-opens", "java.base/java.util=ALL-UNNAMED",
 		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
 	)
-	testLogging.showStandardStreams = true
+	testLogging.showStandardStreams = System.getenv("CI") == null
 	finalizedBy jacocoTestReport
 	jacoco {
 		excludeClassLoaders = ["*QuarkusClassLoader"]
@@ -190,3 +190,7 @@ tasks.register('printVersion') {
 	}
 }
 
+// lockAllConfigurations() is deprecated in Gradle 9; use the configurations API instead
+configurations.configureEach {
+    resolutionStrategy.activateDependencyLocking()
+}
