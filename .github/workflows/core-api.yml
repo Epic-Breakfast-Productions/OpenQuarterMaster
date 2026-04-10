@@ -6,8 +6,6 @@ on:
     paths:
       - "software/core/oqm-core-api/**"
       - ".github/workflows/core-api.yml"
-      - ".github/workflows/wf-quarkus-ci-pipeline.yml"
-      - ".github/actions/setup-quarkus-runner/**"
 
   # pull_request:
   #   branches: [ "**" ]
@@ -15,7 +13,6 @@ on:
   #     - "software/core/oqm-core-api/**"
   #     - ".github/workflows/core-api.yml"
   #     - ".github/workflows/wf-quarkus-ci-pipeline.yml"
-  #     - ".github/actions/setup-quarkus-runner/**"
 
   workflow_call:
   workflow_dispatch:
@@ -26,7 +23,7 @@ concurrency:
 
 jobs:
   CI-Pipeline:
-    uses: ./.github/workflows/wf-quarkus-ci-pipeline.yml
+    uses: Epic-Breakfast-Productions/ebp-ci/.github/workflows/quarkus-ci-pipeline.yml@main
     with:
       path: "software/core/oqm-core-api"
       java-version: "21"
