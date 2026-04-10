@@ -5,7 +5,7 @@
 #  OQM Base Station tags: https://hub.docker.com/repository/docker/ebprod/open-qm-base-station/tags
 #
 [Unit]
-Description=Open QuarterMaster Base Station server for Open Quartermaster. Version ${version}.
+Description=Open QuarterMaster Core API server for Open Quartermaster. Version ${version}.
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-api
 Wants=network-online.target
 Wants=oqm-infra-kafka_red_panda.service
