@@ -1,8 +1,8 @@
-# Service file for running an instance of the Open QuarterMaster Base Station.
+# Service file for running an instance of the Open QuarterMaster Core API.
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
 #
-#  OQM Base Station tags: https://hub.docker.com/repository/docker/ebprod/open-qm-base-station/tags
+#  OQM Core API tags: https://hub.docker.com/repository/docker/ebprod/oqm-core-api/tags
 #
 [Unit]
 Description=Open QuarterMaster Core API server for Open Quartermaster. Version ${version}.
