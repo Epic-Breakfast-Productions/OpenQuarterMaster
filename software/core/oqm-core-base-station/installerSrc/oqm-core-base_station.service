@@ -15,7 +15,7 @@ BindsTo=oqm-core-api.service oqm-infra-keycloak.service
 
 [Install]
 WantedBy=multi-user.target
-WantedBy=oqm-core-api.service
+WantedBy=oqm-core-api.service oqm-infra-keycloak.service
 
 [Service]
 Type=simple
