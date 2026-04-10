@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 
 import javax.measure.Quantity;
@@ -18,6 +19,7 @@ import javax.measure.Quantity;
 @Data
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
+@Schema(title = "SubAmountTransaction", description = "A transaction to subtract an amount from a stored object.")
 public class SubAmountTransaction extends SubtractTransaction {
 	
 	/**
@@ -46,6 +48,7 @@ public class SubAmountTransaction extends SubtractTransaction {
 	private boolean all = false;
 	
 	@Override
+	@Schema(constValue = "SUBTRACT_AMOUNT", readOnly = true, required = true, examples = "SUBTRACT_AMOUNT")
 	public TransactionType getType() {
 		return TransactionType.SUBTRACT_AMOUNT;
 	}

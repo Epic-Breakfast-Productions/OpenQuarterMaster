@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import tech.ebp.oqm.core.api.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.core.api.model.object.FileMainObject;
 import tech.ebp.oqm.core.api.model.object.MainObject;
@@ -34,18 +35,18 @@ import java.io.IOException;
 @NoArgsConstructor
 public abstract class MainFileObjectProvider<T extends FileMainObject, U extends FileUploadBody, S extends FileSearchObject<T>, G extends MainObject & FileGet> extends ObjectProvider {
 	
-	
+	@Parameter(description = "The OQM database id or name to use for this request.")
 	@Getter
 	@PathParam("oqmDbIdOrName")
 	String oqmDbIdOrName;
 	
 	public abstract MongoHistoriedFileService<T, U, S, G> getFileService();
 	
-	protected Response.ResponseBuilder getSearchResponseBuilder(
+	protected SearchResult<G> getSearchResponseBuilder(
 		String oqmDbIdOrName,
 		S searchObject
 	) {
-		return this.getSearchResultResponseBuilder(this.getFileService().search(oqmDbIdOrName, searchObject));
+		return this.getFileService().search(oqmDbIdOrName, searchObject);
 	}
 	
 	//<editor-fold desc="CRUD operations">
@@ -82,12 +83,12 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	public Response search(
+	public SearchResult<G> search(
 		//		@BeanParam
 		S searchObject
 	) {
 		//TODO:: this should produce results of the G type, not T
-		return this.getSearchResponseBuilder(this.getOqmDbIdOrName(), searchObject).build();
+		return this.getSearchResponseBuilder(this.getOqmDbIdOrName(), searchObject);
 	}
 	
 	protected abstract T getFileObjFromUpload(U upload);
@@ -114,16 +115,19 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@RolesAllowed(Roles.INVENTORY_ADMIN)
 	//	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	//	@Produces(MediaType.APPLICATION_JSON)
-	public Response add(
+	public G add(
 		//@BeanParam
 		U body
 	) throws IOException {
-		return Response.ok(this.getFileService().add(
+		return this.getFileService().fileObjToGet(
 			this.getOqmDbIdOrName(),
-			this.getFileObjFromUpload(body),
-			body,
-			this.getInteractingEntity()
-		)).build();
+			this.getFileService().add(
+				this.getOqmDbIdOrName(),
+				this.getFileObjFromUpload(body),
+				body,
+				this.getInteractingEntity()
+			)
+		);
 	}
 	
 	//	@Path("{id}")
@@ -160,7 +164,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public G get(
 		//		@PathParam("id")
-		String id
+		ObjectId id
 	) {
 		log.info("Retrieving object with id {}", id);
 		return this.getFileService().getObjGet(this.getOqmDbIdOrName(), id);
@@ -201,7 +205,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@Produces(MediaType.APPLICATION_JSON)
 	public Integer updateFile(
 		//		@PathParam("id")
-		String id,
+		ObjectId id,
 		//		@BeanParam
 		U body
 	) throws IOException {
@@ -210,7 +214,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	
 	public G updateObj(
 		//		@PathParam("id")
-		String id,
+		ObjectId id,
 		//		@BeanParam
 		ObjectNode updates
 	) {
@@ -226,7 +230,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 		);
 	}
 	
-	protected <A> A getRevision(String id, String revision, Class<A> aClass) throws IOException {
+	protected <A> A getRevision(ObjectId id, String revision, Class<A> aClass) throws IOException {
 		int revisionNum;
 		if ("latest".equalsIgnoreCase(revision)) {
 			revisionNum = this.getFileService().getLatestVersionNum(this.getOqmDbIdOrName(), id);
@@ -278,7 +282,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public FileMetadata getRevision(
 		//		@PathParam("id")
-		String id,
+		ObjectId id,
 		//		@PathParam("rev")
 		String revision
 	) throws IOException {
@@ -321,7 +325,7 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
 	public Response getRevisionData(
 		//		@PathParam("id")
-		String id,
+		ObjectId id,
 		//		@PathParam("rev")
 		String revision
 	) throws IOException {
@@ -374,10 +378,10 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public G remove(
 		//		@PathParam("id")
-		String id
+		ObjectId id
 	) {
 		log.info("Retrieving object with id {}", id);
-		return this.getFileService().removeFile(this.getOqmDbIdOrName(), null, new ObjectId(id), this.getInteractingEntity());
+		return this.getFileService().removeFile(this.getOqmDbIdOrName(), null, id, this.getInteractingEntity());
 	}
 	
 	//</editor-fold>
@@ -411,18 +415,17 @@ public abstract class MainFileObjectProvider<T extends FileMainObject, U extends
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getHistoryForObject(
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
 //		@PathParam("id")
-		String id,
+		ObjectId id,
 		//		@BeanParam
 		HistorySearch searchObject
 	) {
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getFileService().getClazz().getSimpleName(), id);
 		
-		searchObject.setObjectId(new ObjectId(id));
+		searchObject.setObjectId(id);
 		
-		SearchResult<ObjectHistoryEvent> searchResult = this.getFileService().getFileObjectService().searchHistory(this.getOqmDbIdOrName(), searchObject, false);
-		return this.getSearchResultResponseBuilder(searchResult).build();
+		return this.getFileService().getFileObjectService().searchHistory(this.getOqmDbIdOrName(), searchObject, false);
 	}
 	
 	//	@GET

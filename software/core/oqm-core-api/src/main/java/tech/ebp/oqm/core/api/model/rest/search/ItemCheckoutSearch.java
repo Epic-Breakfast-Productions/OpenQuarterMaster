@@ -16,34 +16,34 @@ import static com.mongodb.client.model.Filters.eq;
 @Getter
 @Setter
 public class ItemCheckoutSearch extends SearchKeyAttObject<ItemCheckout> {
-	@QueryParam("item") String itemCheckedOut;
-	@QueryParam("storageCheckedOutFrom") String storageCheckedOutFrom;
-	@QueryParam("entity") String checkedOutBy;
-	@QueryParam("checkOutTransaction") String checkOutTransaction;
+	@QueryParam("item") ObjectId itemCheckedOut;
+	@QueryParam("storageCheckedOutFrom") ObjectId storageCheckedOutFrom;
+	@QueryParam("entity") ObjectId checkedOutBy;
+	@QueryParam("checkOutTransaction") ObjectId checkOutTransaction;
 	@QueryParam("stillCheckedOut") Boolean stillCheckedOut = true;
 	
 	@Override
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 		
-		if (this.hasValue(this.getStillCheckedOut())) {
+		if (hasValue(this.getStillCheckedOut())) {
 			filters.add(
 				eq("stillCheckedOut", this.getStillCheckedOut())
 			);
 		}
-		if (this.hasValue(this.getItemCheckedOut())) {
+		if (hasValue(this.getItemCheckedOut())) {
 			filters.add(
-				eq("item", new ObjectId(this.getItemCheckedOut()))
+				eq("item", this.getItemCheckedOut())
 			);
 		}
-		if (this.hasValue(this.getStorageCheckedOutFrom())) {
+		if (hasValue(this.getStorageCheckedOutFrom())) {
 			filters.add(
-				eq("checkedOutFrom", new ObjectId(this.getStorageCheckedOutFrom()))
+				eq("checkedOutFrom", this.getStorageCheckedOutFrom())
 			);
 		}
-		if (this.hasValue(this.getCheckOutTransaction())) {
+		if (hasValue(this.getCheckOutTransaction())) {
 			filters.add(
-				eq("checkOutTransaction", new ObjectId(this.getCheckOutTransaction()))
+				eq("checkOutTransaction", this.getCheckOutTransaction())
 			);
 		}
 		
