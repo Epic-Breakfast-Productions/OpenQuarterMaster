@@ -24,7 +24,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-arc'
 	implementation 'io.quarkus:quarkus-oidc'
 
-	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.4.4-SNAPSHOT'
+	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.4.4'
 
 	implementation group: 'org.tensorflow', name: 'tensorflow-core-platform', version: '1.1.0'
 	// TODO:: apparently opencv-platform is more user friendly (dont have to call `System.loadLibrary()` for instance. Try it out and see if still works with tensorflow
