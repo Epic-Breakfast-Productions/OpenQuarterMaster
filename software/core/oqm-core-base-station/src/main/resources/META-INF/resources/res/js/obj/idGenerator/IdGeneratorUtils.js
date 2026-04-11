@@ -1,9 +1,11 @@
 import {Rest} from "../../Rest.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const IdGeneratorUtils = {
-	modalResultContainer: $("#idGeneratorGenerateResultModalContainer"),
+export class IdGeneratorUtils extends PageUtility {
+	static modalResultContainer = $("#idGeneratorGenerateResultModalContainer");
 
-	generate: async function(generatorId, n = 1, resultContainerJq = null, doneFunc = function(){}) {
+	static async generate(generatorId, n = 1, resultContainerJq = null, doneFunc = function(){}) {
+		console.log("Generating ids for generator: ", generatorId);
 		let output = null;
 
 		await Rest.call({
@@ -28,5 +30,9 @@ export const IdGeneratorUtils = {
 			}
 		});
 		return output;
+	}
+
+	static {
+		window.IdGeneratorUtils = this;
 	}
 }

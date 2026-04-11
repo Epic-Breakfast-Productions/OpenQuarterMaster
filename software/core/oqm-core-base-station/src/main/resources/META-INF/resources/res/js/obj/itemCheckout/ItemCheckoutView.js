@@ -8,16 +8,17 @@ import {Links} from "../../Links.js";
 import {HistorySearchUtils} from "../../HistorySearchUtils.js";
 import {UriUtils} from "../../UriUtils.js";
 import {Getters} from "../Getters.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const ItemCheckoutView = {
-	itemCheckoutViewModal: $("#itemCheckoutViewModal"),
-	viewBsModal: $("#itemCheckoutViewModal").length ? new bootstrap.Modal($("#itemCheckoutViewModal"), {}) : null,
-	messages: $("#itemCheckoutViewMessages"),
-	content: $("#itemCheckoutViewContent"),
-	checkinButton: $("#itemCheckoutViewCheckinButton"),
-	history: $("#itemCheckoutViewHistoryAccordionCollapse"),
+export class ItemCheckoutView extends PageUtility {
+	static itemCheckoutViewModal = $("#itemCheckoutViewModal");
+	static viewBsModal = $("#itemCheckoutViewModal").length ? new bootstrap.Modal($("#itemCheckoutViewModal"), {}) : null;
+	static messages = $("#itemCheckoutViewMessages");
+	static content = $("#itemCheckoutViewContent");
+	static checkinButton = $("#itemCheckoutViewCheckinButton");
+	static history = $("#itemCheckoutViewHistoryAccordionCollapse");
 
-	getCheckoutForDisplay: async function (checkedOutFor, addingToJq) {
+	static async getCheckoutForDisplay(checkedOutFor, addingToJq) {
 		switch (checkedOutFor.type) {
 			case "OQM_ENTITY":
 				await EntityRef.getEntityRef(
@@ -41,8 +42,8 @@ export const ItemCheckoutView = {
 				}
 				break;
 		}
-	},
-	getCheckoutDisplay(itemCheckoutData) {
+	}
+	static getCheckoutDisplay(itemCheckoutData) {
 		let output = $(`
 	<div class="itemCheckoutViewContainer">
 		<div class="row">
@@ -312,7 +313,10 @@ export const ItemCheckoutView = {
 					StoredView.getStoredViewContent(
 						itemCheckoutData.checkedOut,
 						{
-							includeEditButton: false
+							includeEditButton: false,
+							//TODO:: nothing shows here for a checked-in stored
+							// includeIdentifier: true,
+							showTransactionButton: false
 						}
 					)
 				);
@@ -357,7 +361,7 @@ export const ItemCheckoutView = {
 					output.find(".itemCheckoutViewCheckinDetailsTypeContainer").addClass("bg-success");
 					output.find(".itemCheckoutViewCheckinDetailsType").text("Returned");
 
-					getStorageBlockLabel(itemCheckoutData.fromBlock, function (label) {
+					Getters.StorageBlock.getStorageBlockLabel(itemCheckoutData.fromBlock, function (label) {
 						output.find(".itemCheckoutViewCheckinDetailsCheckedInto").append(
 							Links.getStorageViewLink(itemCheckoutData.checkInDetails.storageBlockCheckedInto, label)
 						);
@@ -384,15 +388,15 @@ export const ItemCheckoutView = {
 		Promise.all(promises);
 
 		return output;
-	},
-	resetCheckoutView() {
+	}
+	static resetCheckoutView() {
 		ItemCheckoutView.messages.text("");
 		ItemCheckoutView.content.text("");
 		ItemCheckoutView.checkinButton.hide();
 
 		HistorySearchUtils.resetHistorySearch(ItemCheckoutView.history);
-	},
-	async setupView(itemCheckoutId) {
+	}
+	static async setupView(itemCheckoutId) {
 		console.log("Setting up view for item checkout " + itemCheckoutId);
 		this.resetCheckoutView();
 
@@ -417,18 +421,8 @@ export const ItemCheckoutView = {
 		});
 
 		HistorySearchUtils.setupHistorySearch(ItemCheckoutView.history, itemCheckoutId);
-	},
-	initPage: function () {
-		//TODO:: bring back for item checkout view page, breaks when on other pages
-		// if (ItemCheckoutView.itemCheckoutViewModal.length) {
-		// 	ItemCheckoutView.itemCheckoutViewModal[0].addEventListener("hidden.bs.modal", function () {
-		// 		UriUtils.removeParam("view");
-		// 	});
-		// }
-		//
-		// if (UriUtils.getParams.has("view")) {
-		// 	ItemCheckoutView.setupView(UriUtils.getParams.get("view"));
-		// 	ItemCheckoutView.viewBsModal.show();
-		// }
 	}
-};
+	static {
+		window.ItemCheckoutView = this;
+	}
+}

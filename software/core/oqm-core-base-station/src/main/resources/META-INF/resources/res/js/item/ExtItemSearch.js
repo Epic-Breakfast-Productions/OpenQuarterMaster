@@ -6,22 +6,23 @@ import {KeywordAttUtils} from "../obj/ObjViewUtils.js";
 import {KeywordAttEdit} from "../obj/ObjEditUtils.js";
 import {PageMessageUtils} from "../PageMessageUtils.js";
 import {Identifiers} from "../Identifiers.js";
+import {PageUtility} from "../utilClasses/PageUtility.js";
 
-export const ExtItemSearch = {
-	extSearchResults: $("#extSearchResults"),
+export class ExtItemSearch extends PageUtility {
+	static extSearchResults= $("#extSearchResults");
 
-	prodBarcodeSearchForm: $("#prodBarcodeSearchForm"),
-	legoPartNumSearchForm: $("#legoPartNumSearchForm"),
-	websiteScanSearchForm: $("#websiteScanSearchForm"),
-	extItemSearchSearchFormMessages: $("#extItemSearchSearchFormMessages"),
+	static prodBarcodeSearchForm = $("#prodBarcodeSearchForm");
+	static legoPartNumSearchForm = $("#legoPartNumSearchForm");
+	static websiteScanSearchForm = $("#websiteScanSearchForm");
+	static extItemSearchSearchFormMessages = $("#extItemSearchSearchFormMessages");
 
-	prodBarcodeSearchBarcodeInput: $("#prodBarcodeSearchBarcodeInput"),
-	legoPartNumSearchInput: $("#legoPartNumSearchInput"),
-	websiteScanSearchInput: $("#websiteScanSearchInput"),
+	static prodBarcodeSearchBarcodeInput = $("#prodBarcodeSearchBarcodeInput");
+	static legoPartNumSearchInput = $("#legoPartNumSearchInput");
+	static websiteScanSearchInput = $("#websiteScanSearchInput");
 
-	addEditProductSearchPane: $("#addEditProductSearchPane"),
+	static addEditProductSearchPane = $("#addEditProductSearchPane");
 
-	getUseButton(text) {
+	static getUseButton(text) {
 		let newButton = $('<button type="button" class="btn btn-link mb-0 p-0" title="Use this value"></button>');
 
 		if (text) {
@@ -30,9 +31,9 @@ export const ExtItemSearch = {
 		newButton.append(Icons.useDatapoint);
 
 		return newButton;
-	},
+	}
 
-	createSearchResultSection(name, value, targetInput) {
+	static createSearchResultSection(name, value, targetInput) {
 		let section = $('<li class="list-group-item extProdResultSection"><h6 class="card-title"></h6></li>');
 
 		if (targetInput) {
@@ -56,8 +57,9 @@ export const ExtItemSearch = {
 		section.append(sectionText);
 
 		return section;
-	},
-	async getImageBase64FromUrl(imageUrl) {
+	}
+
+	static async getImageBase64FromUrl(imageUrl) {
 		let output = false;
 
 		try {
@@ -94,8 +96,9 @@ export const ExtItemSearch = {
 		}
 
 		return output;
-	},
-	addOrGetAndSelectImage(imageUrl, resultUnifiedName, imageData) {
+	}
+
+	static addOrGetAndSelectImage(imageUrl, resultUnifiedName, imageData) {
 		console.log("Setting image for item. Image source: " + imageUrl);
 
 		Rest.call({
@@ -154,9 +157,10 @@ export const ExtItemSearch = {
 			}
 		});
 		return true;
-	},
-	carouselNum: 0,
-	async handleExtItemSearchResult(result){
+	}
+
+	static carouselNum = 0;
+	static async handleExtItemSearchResult(result){
 		//TODO:: better formatting, method for filling out values
 		let resultCard = $('<div class="card col-12 p-0" style="height: fit-content"></div>');
 		{
@@ -266,8 +270,9 @@ export const ExtItemSearch = {
 
 		resultCard.append(resultMainBody);
 		ExtItemSearch.extSearchResults.append(resultCard);
-	},
-	async handleExtItemSearchResults(results) {
+	}
+
+	static async handleExtItemSearchResults(results) {
 		console.log("Got Results! # results: " + results.results.length + "  # errors: " + Object.keys(results.serviceErrs).length);
 
 		if (results.results.length === 0) {
@@ -284,22 +289,23 @@ export const ExtItemSearch = {
 		}
 		await Promise.all(resultPromises);
 		console.log("Finished processing ext item search results.");
-	},
+	}
 
 
-	toggleAddEditProductSearchPane() {
+	static toggleAddEditProductSearchPane() {
 		ExtItemSearch.addEditProductSearchPane.toggle();
-	},
+	}
 
-	hideAddEditProductSearchPane() {
+	static hideAddEditProductSearchPane() {
 		ExtItemSearch.addEditProductSearchPane.hide();
 	}
-	,
 
-	showAddEditProductSearchPane() {
+	static showAddEditProductSearchPane() {
 		ExtItemSearch.addEditProductSearchPane.show();
-	},
-	initPage: function () {
+	}
+
+	static {
+		window.ExtItemSearch = this;
 
 		ExtItemSearch.websiteScanSearchForm.submit(function (event) {
 			event.preventDefault();

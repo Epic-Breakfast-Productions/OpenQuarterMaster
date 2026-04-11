@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.headers.Header;
@@ -53,7 +54,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 
 	@Getter
 	@PathParam("itemId")
-	String itemId;
+	ObjectId itemId;
 
 	private InventoryItem inventoryItem = null;
 
@@ -97,13 +98,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = Stored.class
-			)
-		)
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -122,7 +117,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Stored get(@PathParam("storedItemId") String id) {
+	public Stored get(@PathParam("storedItemId") ObjectId id) {
 		return this.applyDefaults(super.get(id));
 	}
 	
@@ -134,13 +129,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object updated.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = Stored.class
-			)
-		)
+		description = "Object updated."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -160,7 +149,9 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Stored update(
-		@PathParam("storedItemId") String id,
+		@PathParam("storedItemId")
+		ObjectId id,
+		@Schema(type = SchemaType.OBJECT, implementation = Stored.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
 		return this.applyDefaults(super.update(id, updates));
@@ -173,13 +164,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			)
-		}
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -193,8 +178,8 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getHistoryForObject(
-		@PathParam("storedItemId") String id,
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
+		@PathParam("storedItemId") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);
@@ -208,15 +193,6 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	@APIResponse(
 		responseCode = "200",
 		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = ObjectHistoryEvent.class
-				)
-			)
-		},
 		headers = {
 			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
@@ -227,7 +203,6 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	public SearchResult<ObjectHistoryEvent> searchHistory(
 		@BeanParam HistorySearch searchObject
 	) {
-		//TODO:: adjust?
 		return super.searchHistory(searchObject);
 	}
 

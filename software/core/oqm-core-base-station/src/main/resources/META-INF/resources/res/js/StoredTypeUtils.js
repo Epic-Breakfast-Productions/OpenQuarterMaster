@@ -1,9 +1,9 @@
-export const StoredTypeUtils = {
-	types: ["AMOUNT", "UNIQUE"],
-	typeFromStored(stored) {
+export class StoredTypeUtils {
+	static types= ["AMOUNT", "UNIQUE"];
+	static typeFromStored(stored) {
 		return stored.type;
-	},
-	runForType(
+	}
+	static runForType(
 		storedType,
 		whenAmount,
 		whenUnique,
@@ -21,8 +21,8 @@ export const StoredTypeUtils = {
 				return whenUnique();
 			}
 		}
-	},
-	typeToDisplay(storedType) {
+	}
+	static typeToDisplay(storedType) {
 		if (storedType === "AMOUNT") {
 			return "Amount";
 		} else if (storedType === "UNIQUE") {
@@ -30,11 +30,11 @@ export const StoredTypeUtils = {
 		}
 		return "FAIL";
 	}
-};
+}
 
-export const StorageTypeUtils = {
-	types: ["BULK", "AMOUNT_LIST", "UNIQUE_MULTI", "UNIQUE_SINGLE"],
-	runForType(
+export class StorageTypeUtils {
+	static types = ["BULK", "AMOUNT_LIST", "UNIQUE_MULTI", "UNIQUE_SINGLE"];
+	static runForType(
 		storedType,
 		whenBulk,
 		whenAmountList,
@@ -67,8 +67,8 @@ export const StorageTypeUtils = {
 		} else {
 			console.warn("Storage type was not valid; ", storedType);
 		}
-	},
-	runForStoredType(
+	}
+	static runForStoredType(
 		storedType,
 		whenAmount,
 		whenUnique,
@@ -79,8 +79,8 @@ export const StorageTypeUtils = {
 			whenUnique,
 			whenUnique
 		);
-	},
-	typeToDisplay(storedType) {
+	}
+	static typeToDisplay(storedType) {
 		if (storedType === "BULK") {
 			return "Bulk"
 		} else if (storedType === "AMOUNT_LIST") {
@@ -91,8 +91,8 @@ export const StorageTypeUtils = {
 			return "Unique - Single"
 		}
 		return "FAIL";
-	},
-	storageToStoredType(itemStorageType) {
+	}
+	static storageToStoredType(itemStorageType) {
 		if (typeof itemStorageType !== "string" && !(itemStorageType instanceof String)) {
 			itemStorageType = itemStorageType.storageType;
 		}
@@ -106,14 +106,15 @@ export const StorageTypeUtils = {
 		}
 		console.warn("item storage type not mappable to stored type: ", itemStorageType);
 	}
-};
+}
 
-export const CheckoutTypeUtils = {
-	types: ["AMOUNT", "WHOLE"],
-	typeFromCheckout(checkout) {
+export class CheckoutTypeUtils {
+	static types= ["AMOUNT", "WHOLE"];
+
+	static typeFromCheckout(checkout) {
 		return checkout.type;
-	},
-	runForType(
+	}
+	static runForType(
 		type,
 		whenAmount,
 		whenWhole,

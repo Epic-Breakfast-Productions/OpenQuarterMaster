@@ -1,6 +1,8 @@
 {#modal id='itemView' size='xl' title='Item View'}
     {#titleIcon}{#icons/item /}{/titleIcon}
     {#footerButtons}
+    	<span id="itemViewTransactButtonContainer"></span>
+    	
     	<button type="button" class="btn btn-warning" id="itemViewEditButton" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal">
 			{#icons/edit /} Edit Item
 		</button>
@@ -259,7 +261,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewCheckedOutAccordionCollapse" aria-expanded="false" aria-controls="itemViewCheckedOutAccordionCollapse">
-                        {#icons/transactionCheckout}{/icons/transactionCheckout} Checked out:
+                        {#icons/transactionCheckout /} Checked out:
                     </button>
                 </h2>
                 <div id="itemViewCheckedOutAccordionCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewCheckedOutAccordion">
@@ -277,8 +279,7 @@
                                     <div id="itemViewCheckoutSearchAccordionFieldsCollapse" class="accordion-collapse collapse"
                                                  aria-labelledby="itemViewCheckoutSearchAccordionFieldsHeader" data-bs-parent="#itemViewCheckoutSearchAccordion">
                                         <div class="accordion-body">
-                                            {#search/itemCheckout/searchForm id='itemViewCheckoutSearchForm' rootPrefix=rootPrefix}
-                                            {/search/itemCheckout/searchForm}
+                                            {#search/itemCheckout/searchForm id='itemViewCheckoutSearchForm' rootPrefix=rootPrefix /}
                                         </div>
                                     </div>
                                 </div>

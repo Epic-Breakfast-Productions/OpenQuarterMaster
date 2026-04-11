@@ -1,47 +1,67 @@
 package tech.ebp.oqm.lib.core.api.quarkus.deployment.testContainers;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
-import org.testcontainers.utility.DockerImageName;
 import tech.ebp.oqm.lib.core.api.quarkus.deployment.config.CoreApiLibBuildTimeConfig;
 
+import java.util.Map;
+
+/**
+ * Container for the Open QuarterMaster Core API web service.
+ */
 public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServiceContainer> {
 	
-	public static final int PORT = 8123;
-	
 	private final CoreApiLibBuildTimeConfig.DevserviceConfig devserviceConfig;
+	private final Map<String, String> mongoConnectionInfo;
+	private final Map<String, String> kafkaConnectionInfo;
 	
-	public OqmCoreApiWebServiceContainer(DockerImageName image, CoreApiLibBuildTimeConfig.DevserviceConfig devserviceConfig) {
-		super(image);
+	/**
+	 * Initializes the container
+	 * @param devserviceConfig The devservice config to use to set this container up.
+	 */
+	public OqmCoreApiWebServiceContainer(
+		CoreApiLibBuildTimeConfig.DevserviceConfig devserviceConfig,
+		Map<String, String> mongoConnectionInfo,
+		Map<String, String> kafkaConnectionInfo
+	) {
+		super(devserviceConfig.image().toTestContainerImageName());
 		this.devserviceConfig = devserviceConfig;
+		this.mongoConnectionInfo = mongoConnectionInfo;
+		this.kafkaConnectionInfo = kafkaConnectionInfo;
 	}
 	
 	@Override
 	protected void configure() {
+		//configure network
 		withNetwork(Network.SHARED);
-		
 		Testcontainers.exposeHostPorts(this.devserviceConfig.keycloak().port());
-		
 		addFixedExposedPort(devserviceConfig.port(), 80);
+		//configure env
+		this.withEnv(mongoConnectionInfo);
+		this.withEnv(kafkaConnectionInfo);
 		
 		// Tell the dev service how to know the container is ready. All 3 is likely overkill, but eh
-		waitingFor(Wait.forHealthcheck());
-		waitingFor(Wait.forLogMessage(".*Open QuarterMaster Web Server starting.*", 1));
-		waitingFor(Wait.forHttp("/q/health").forResponsePredicate((String response)->{
-			ObjectNode status;
-			try {
-				status = (ObjectNode) new ObjectMapper().readTree(response);
-			} catch(Exception e) {
-				return false;
-			}
-			return status.get("status").asText().equals("UP");
-		}));
+		this.waitingFor(Wait.forHealthcheck());
+		this.waitingFor(Wait.forLogMessage(".*oqm-core-api .* started.*", 1));
+		
+		//don't need to do this, the docker healthcheck covers this. Not included as logs a superfluous stacktrace at startup.
+//		this.waitingFor(Wait.forHttp("/q/health").forResponsePredicate((String response)->{
+//			ObjectNode status;
+//			try {
+//				status = (ObjectNode) new ObjectMapper().readTree(response);
+//			} catch(Exception e) {
+//				return false;
+//			}
+//			return status.get("status").asText().equals("UP");
+//		}));
 	}
 	
+	/**
+	 * Gets the port that the dev service is listening on.
+	 * @return the port that the dev service is listening on.
+	 */
 	public Integer getPort() {
 		return this.devserviceConfig.port();
 	}

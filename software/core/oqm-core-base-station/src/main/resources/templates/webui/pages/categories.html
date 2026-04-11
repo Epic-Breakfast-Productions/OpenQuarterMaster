@@ -167,7 +167,6 @@
 			import { ImageAdd } from '{rootPrefix}/res/js/obj/media/ImageAdd.js';
 			import { ImageAddFromSelect } from '{rootPrefix}/res/js/obj/media/ImageAddFromSelect.js';
 			import { ImageSearchSelect } from '{rootPrefix}/res/js/obj/media/ImageSearchSelect.js';
-			import { Carousel } from '{rootPrefix}/res/js/Carousel.js';
 			import { Getters } from '{rootPrefix}/res/js/obj/Getters.js'
 			import { StorageSearchSelect } from '{rootPrefix}/res/js/obj/storageBlock/StorageSearchSelect.js';
 			import { UnitUtils } from '{rootPrefix}/res/js/obj/UnitUtils.js';
@@ -175,29 +174,16 @@
 			import { ItemCategoryTree } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryTree.js';
 			import { ItemCategoryInput } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js';
 			import { UriUtils } from '{rootPrefix}/res/js/UriUtils.js';
+			import { Carousel } from '{rootPrefix}/res/js/Carousel.js';
 			import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
 
-			StorageSearchSelect.initPage();
-			ImageAdd.initPage();
-			ImageAddFromSelect.initPage();
-			SearchUtils.initPage();
-			ItemCategoryInput.initPage();
-			
-			window.Rest = Rest;
-			window.StorageSearchSelect = StorageSearchSelect;
-			window.HistorySearchUtils = HistorySearchUtils;
-			window.KeywordAttEdit = KeywordAttEdit;
-			window.KeywordAttUtils = KeywordAttUtils;
-			window.TextCopyUtils = TextCopyUtils;
-			window.ImageAddFromSelect = ImageAddFromSelect;
-			window.ImageSearchSelect = ImageSearchSelect;
-			window.Carousel = Carousel;
-			window.Getters = Getters;
-			window.UnitUtils = UnitUtils;
-			window.UriUtils = UriUtils;
-			window.ItemCategoryView = ItemCategoryView;
-			window.ItemCategoryTree = ItemCategoryTree;
-			window.ItemCategoryInput = ItemCategoryInput;
+			StorageSearchSelect.init();
+			ImageAdd.init();
+			ImageAddFromSelect.init();
+			ImageSearchSelect.init();
+			SearchUtils.init();
+			ItemCategoryInput.init();
+			HistorySearchUtils.init();
 			
 			console.log("Page modules loaded.");
 		</script>

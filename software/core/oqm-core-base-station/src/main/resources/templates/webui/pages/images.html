@@ -137,15 +137,12 @@
 		import { KeywordAttUtils } from '{rootPrefix}/res/js/obj/ObjViewUtils.js';
 		import { ImageAdd } from '{rootPrefix}/res/js/obj/media/ImageAdd.js';
 		
-		SearchUtils.initPage();
-		ImageAdd.initPage();
+		SearchUtils.init();
+		ImageAdd.init();
+		KeywordAttEdit.init();
+		KeywordAttUtils.init();
+		HistorySearchUtils.init();
 		
-		window.Rest = Rest;
-		window.SearchUtils = SearchUtils;
-		window.HistorySearchUtils = HistorySearchUtils;
-		window.KeywordAttEdit = KeywordAttEdit;
-		window.KeywordAttUtils = KeywordAttUtils;
-		window.ImageAdd = ImageAdd;
 	</script>
 <script defer>
 	$(document).ready(function () {

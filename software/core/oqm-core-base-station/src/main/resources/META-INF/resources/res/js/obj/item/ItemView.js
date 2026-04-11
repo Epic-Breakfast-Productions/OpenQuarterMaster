@@ -18,94 +18,101 @@ import {AssociatedLinks} from "../../AssociatedLinks.js";
 import {ItemCategoryView} from "../itemCategory/ItemCategoryView.js";
 import {StoredView} from "../itemStored/StoredView.js";
 import {TimeUtils} from "../../TimeUtils.js";
+import {StorageSearchSelect} from "../storageBlock/StorageSearchSelect.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const ItemView = {
-	itemViewModal: $("#itemViewModal"),
-	viewBsModal: new bootstrap.Modal($("#itemViewModal"), {}),
-	itemViewMessages: $("#itemViewMessages"),
-	itemViewModalLabel: $("#itemViewModalLabel"),
+export class ItemView extends PageUtility {
+	static itemViewModal = $("#itemViewModal");
+	static viewBsModal = new bootstrap.Modal($("#itemViewModal"), {});
+	static itemViewMessages = $("#itemViewMessages");
+	static itemViewModalLabel = $("#itemViewModalLabel");
 
-	storedMultiContainer: $("#itemViewStoredMultiContainer"),
+	static itemTransactionButtonContainer = $("#itemViewTransactButtonContainer");
 
-	storedSingleContainer: $("#itemViewStoredSingleContainer"),
-	storedNonePresentContainer: $("#itemViewStoredNonePresentContainer"),
-	storedNonePresentHasStorageContainer: $("#itemViewStoredNonePresentHasStorageContainer"),
-	storedNonePresentNoStorageContainer: $("#itemViewStoredNonePresentNoStorageContainer"),
+	static storedMultiContainer = $("#itemViewStoredMultiContainer");
 
-	storedMultiByBlockAccordion: $("#itemViewStoredMultiByBlockAccordion"),
-	storedMultiAddStoredButton: $("#itemViewStoredMultiAddStoredButton"),
-	storedMultiNoneStoredInBlock: $("#itemViewStoredMultiNonePresentBlocksList"),
-	storedMultiNumStoredDisplay: $("#itemViewStoredMultiNumStoredDisplay"),
-	storedMultiNumBlocksDisplay: $("#itemViewStoredMultiBlockNum"),
-	storedViewTabAllStoredPane: $("#itemViewStoredViewTabAllStoredContainer"),
+	static storedSingleContainer = $("#itemViewStoredSingleContainer");
+	static storedNonePresentContainer = $("#itemViewStoredNonePresentContainer");
+	static storedNonePresentHasStorageContainer = $("#itemViewStoredNonePresentHasStorageContainer");
+	static storedNonePresentNoStorageContainer = $("#itemViewStoredNonePresentNoStorageContainer");
 
-	storedBulkContainer: $("#itemViewStoredBulkContainer"),
-	storedBulkAccordion: $("#itemViewStoredBulkAccordion"),
-	storedBulkNonePresentBlocksList: $("#itemViewStoredBulkNonePresentBlocksList"),
-	storedNonePresentBlocksList: $("#itemViewStoredNonePresentBlocksList"),
-	storedBulkNumStoredDisplay: $("#itemViewStoredBulkNumStoredDisplay"),
-	storedBulkBlockNum: $("#itemViewStoredBulkBlockNum"),
+	static storedMultiByBlockAccordion = $("#itemViewStoredMultiByBlockAccordion");
+	static storedMultiAddStoredButton = $("#itemViewStoredMultiAddStoredButton");
+	static storedMultiNoneStoredInBlock = $("#itemViewStoredMultiNonePresentBlocksList");
+	static storedMultiNumStoredDisplay = $("#itemViewStoredMultiNumStoredDisplay");
+	static storedMultiNumBlocksDisplay = $("#itemViewStoredMultiBlockNum");
+	static storedViewTabAllStoredPane = $("#itemViewStoredViewTabAllStoredContainer");
+
+	static storedBulkContainer = $("#itemViewStoredBulkContainer");
+	static storedBulkAccordion = $("#itemViewStoredBulkAccordion");
+	static storedBulkNonePresentBlocksList = $("#itemViewStoredBulkNonePresentBlocksList");
+	static storedNonePresentBlocksList = $("#itemViewStoredNonePresentBlocksList");
+	static storedBulkNumStoredDisplay = $("#itemViewStoredBulkNumStoredDisplay");
+	static storedBulkBlockNum = $("#itemViewStoredBulkBlockNum");
 
 
-	itemViewTotal: $("#itemViewTotal"),
-	itemViewTotalVal: $("#itemViewTotalVal"),
-	itemViewValPerUnitDefault: $("#itemViewValPerUnitDefault"),
-	itemViewValPerUnit: $("#itemViewValPerUnit"),
-	itemViewCategoriesContainer: $("#itemViewCategoriesContainer"),
-	itemViewCategories: $("#itemViewCategories"),
-	itemViewCarousel: $("#itemViewCarousel"),
-	itemViewStorageType: $("#itemViewStorageType"),
-	itemViewDescriptionContainer: $("#itemViewDescriptionContainer"),
-	itemViewDescription: $("#itemViewDescription"),
+	static itemViewTotal = $("#itemViewTotal");
+	static itemViewTotalVal = $("#itemViewTotalVal");
+	static itemViewValPerUnitDefault = $("#itemViewValPerUnitDefault");
+	static itemViewValPerUnit = $("#itemViewValPerUnit");
+	static itemViewCategoriesContainer = $("#itemViewCategoriesContainer");
+	static itemViewCategories = $("#itemViewCategories");
+	static itemViewCarousel = $("#itemViewCarousel");
+	static itemViewStorageType = $("#itemViewStorageType");
+	static itemViewDescriptionContainer = $("#itemViewDescriptionContainer");
+	static itemViewDescription = $("#itemViewDescription");
 
-	itemViewBarcodeContainer: $('#itemViewBarcodeContainer'),
-	itemViewBarcode: $("#itemViewBarcode"),
+	static itemViewBarcodeContainer = $('#itemViewBarcodeContainer');
+	static itemViewBarcode = $("#itemViewBarcode");
 
-	idsAccord: $("#itemViewIdsContainer"),
-	identifiersAccord: $("#itemViewIdentifiersAccord"),
-	identifierNumIds: $("#itemViewIdentifiersNumIdsLabel"),
-	identifierContent: $("#itemViewGeneralIdentifiersAccordContent"),
+	static idsAccord = $("#itemViewIdsContainer");
+	static identifiersAccord = $("#itemViewIdentifiersAccord");
+	static identifierNumIds = $("#itemViewIdentifiersNumIdsLabel");
+	static identifierContent = $("#itemViewGeneralIdentifiersAccordContent");
 
-	assocIdGensAccord: $("#itemViewIdGeneratorsAccord"),
-	assocIdGensNumIds: $("#itemViewIdGeneratorsNumIdsLabel"),
-	assocIdGensContent: $("#itemViewIdGeneratorsAccordContent"),
+	static assocIdGensAccord = $("#itemViewIdGeneratorsAccord");
+	static assocIdGensNumIds = $("#itemViewIdGeneratorsNumIdsLabel");
+	static assocIdGensContent = $("#itemViewIdGeneratorsAccordContent");
 
-	priceTotalsContainer: $("#itemViewPriceTotalsContainer"),
-	priceTotalsNumLabel: $("#itemViewPriceTotalsNumLabel"),
-	priceTotalsContent: $("#itemViewPriceTotalsContent"),
+	static priceTotalsContainer = $("#itemViewPriceTotalsContainer");
+	static priceTotalsNumLabel = $("#itemViewPriceTotalsNumLabel");
+	static priceTotalsContent = $("#itemViewPriceTotalsContent");
 
-	linksContainer: $("#itemViewLinksContainer"),
-	linksNumLabel: $("#itemViewLinksNumLabel"),
-	linksContent: $("#itemViewLinkContent"),
+	static linksContainer = $("#itemViewLinksContainer");
+	static linksNumLabel = $("#itemViewLinksNumLabel");
+	static linksContent = $("#itemViewLinkContent");
 
-	itemViewTotalLowStockThresholdContainer: $("#itemViewTotalLowStockThresholdContainer"),
-	itemViewTotalLowStockThreshold: $("#itemViewTotalLowStockThreshold"),
-	itemViewExpiryWarnThresholdContainer: $("#itemViewExpiryWarnThresholdContainer"),
-	itemViewExpiryWarnThreshold: $("#itemViewExpiryWarnThreshold"),
-	itemViewIdentifyingAttContainer: $("#itemViewIdentifyingAttContainer"),
-	itemViewIdentifyingAtt: $("#itemViewIdentifyingAtt"),
-	viewKeywordsSection: $("#viewKeywordsSection"),
-	viewAttsSection: $("#viewAttsSection"),
-	itemViewId: $("#itemViewId"),
-	itemViewEditButton: $('#itemViewEditButton'),
-	itemHistoryAccordionCollapse: $("#itemHistoryAccordionCollapse"),
-	itemViewCheckedOutResultsContainer: $("#itemViewCheckedOutResultsContainer"),
-	checkoutSearchForm: $("#itemViewCheckoutSearchForm"),
-	checkoutSearchResults: $("#itemViewCheckoutSearchResults"),
-	checkoutSearchFormItemNameInput: $("#itemViewCheckoutSearchForm-itemInputName"),
-	checkoutSearchFormItemIdInput: $("#itemViewCheckoutSearchForm-itemInputId"),
-	checkoutSearchFormItemSearchButt: $("#itemViewCheckoutSearchForm-itemInputSearchButton"),
-	checkoutSearchFormItemClearButt: $("#itemViewCheckoutSearchForm-itemInputClearButton"),
-	itemViewFiles: $("#itemViewFilesContainer"),
+	static itemViewTotalLowStockThresholdContainer = $("#itemViewTotalLowStockThresholdContainer");
+	static itemViewTotalLowStockThreshold = $("#itemViewTotalLowStockThreshold");
+	static itemViewExpiryWarnThresholdContainer = $("#itemViewExpiryWarnThresholdContainer");
+	static itemViewExpiryWarnThreshold = $("#itemViewExpiryWarnThreshold");
+	static itemViewIdentifyingAttContainer = $("#itemViewIdentifyingAttContainer");
+	static itemViewIdentifyingAtt = $("#itemViewIdentifyingAtt");
+	static viewKeywordsSection = $("#viewKeywordsSection");
+	static viewAttsSection = $("#viewAttsSection");
+	static itemViewId = $("#itemViewId");
+	static itemViewEditButton = $('#itemViewEditButton');
+	static itemHistoryAccordionCollapse = $("#itemHistoryAccordionCollapse");
+	static itemViewCheckedOutResultsContainer = $("#itemViewCheckedOutResultsContainer");
+	static checkoutSearchForm = $("#itemViewCheckoutSearchForm");
+	static checkoutSearchResults = $("#itemViewCheckoutSearchResults");
+	static checkoutSearchFormItemNameInput = $("#itemViewCheckoutSearchForm-itemInputName");
+	static checkoutSearchFormItemIdInput = $("#itemViewCheckoutSearchForm-itemInputId");
+	static checkoutSearchFormItemSearchButt = $("#itemViewCheckoutSearchForm-itemInputSearchButton");
+	static checkoutSearchFormItemClearButt = $("#itemViewCheckoutSearchForm-itemInputClearButton");
+	static itemViewFiles = $("#itemViewFilesContainer");
 
-	allStoredSearchForm: $("#itemViewAllStoredSearchForm"),
-	allStoredSearchFormItemInputDeleteButton: $("#itemViewAllStoredSearchForm-itemInputClearButton"),
-	allStoredSearchFormItemInputSearchButton: $("#itemViewAllStoredSearchForm-itemInputSearchButton"),
-	allStoredSearchFormItemInputId: $("#itemViewAllStoredSearchForm-itemInputId"),
-	allStoredSearchFormItemInputName: $("#itemViewAllStoredSearchForm-itemInputName"),
+	static allStoredSearchForm = $("#itemViewAllStoredSearchForm");
+	static allStoredSearchFormItemInputDeleteButton = $("#itemViewAllStoredSearchForm-itemInputClearButton");
+	static allStoredSearchFormItemInputSearchButton = $("#itemViewAllStoredSearchForm-itemInputSearchButton");
+	static allStoredSearchFormItemInputId = $("#itemViewAllStoredSearchForm-itemInputId");
+	static allStoredSearchFormItemInputName = $("#itemViewAllStoredSearchForm-itemInputName");
 
-	resetView: function () {
+	static allStoredSearchFormBlockInput = $("#itemViewAllStoredSearchForm-storageBlockInput");
+
+	static resetView() {
 		ItemView.itemViewModalLabel.text("");
+		ItemView.itemTransactionButtonContainer.text("");
 		ItemView.storedMultiContainer.hide();
 		ItemView.storedSingleContainer.hide();
 		ItemView.storedSingleContainer.text("");
@@ -171,6 +178,8 @@ export const ItemView = {
 		KeywordAttUtils.clearHideKeywordDisplay(ItemView.viewKeywordsSection);
 		KeywordAttUtils.clearHideAttDisplay(ItemView.viewAttsSection);
 
+		StorageSearchSelect.input.setup(ItemView.allStoredSearchFormBlockInput, null, true);
+
 		// this.allStoredSearchFormItemInputDeleteButton.disable();//TODO
 		// this.allStoredSearchFormItemInputSearchButton.disable();//TODO
 		this.allStoredSearchFormItemInputName.val("");
@@ -180,9 +189,9 @@ export const ItemView = {
 		if (ItemView.itemViewEditButton) {
 			ItemView.itemViewEditButton.off('click');
 		}
-	},
+	}
 
-	addStoredBlockViewAccordionItem: async function (item, blockId, accordionId, body) {
+	static async addStoredBlockViewAccordionItem(item, blockId, accordionId, body) {
 		let headerId = blockId + "-stored-view-accord-header";
 		let collapseId = headerId + "-collapse";
 
@@ -223,8 +232,8 @@ export const ItemView = {
 		});
 
 		return newAccordItem;
-	},
-	getStoredInBlockSearch: function (itemId, blockId) {
+	}
+	static getStoredInBlockSearch(itemId, blockId) {
 		let accordId = "itemViewStoredIn" + blockId + "SearchAccordion";
 		let accordHeaderId = accordId + "Header";
 		let accordCollapseId = accordId + "Collapse";
@@ -257,8 +266,9 @@ export const ItemView = {
 		});
 
 		return output;
-	},
-	getMultiStoredInBlockView: function (itemData, blockId) {
+	}
+
+	static getMultiStoredInBlockView (itemData, blockId) {
 		let output = $('<div></div>');
 
 		let dataRow = $('<div class="d-flex mb-5"></div>');
@@ -309,8 +319,9 @@ export const ItemView = {
 
 		output.append(ItemView.getStoredInBlockSearch(itemData.id, blockId));
 		return output;
-	},
-	setupView(itemId) {
+	}
+
+	static setupView(itemId) {
 		Main.processStart();
 		console.log("Setting up view for item " + itemId);
 		ItemView.resetView();
@@ -320,6 +331,16 @@ export const ItemView = {
 				ItemAddEdit.setupAddEditForEdit(itemId, ItemView.itemViewModal);
 			});
 		}
+
+		ItemStoredTransaction.ModalButtons.getTransactionSelectDropdown(
+			itemId,
+			null,
+			{
+				showCheckinTransaction: false
+			}
+		).then(function (transactionSelect) {
+			ItemView.itemTransactionButtonContainer.append(transactionSelect);
+		});
 
 		ItemView.itemViewId.text(itemId);
 		UriUtils.addOrReplaceParams("view", itemId);
@@ -592,8 +613,9 @@ export const ItemView = {
 		//TODO:: adjust html to match history
 		//ItemCheckoutSearch.setupSearchForItem(ItemView.itemViewCheckedOutResultsContainer, itemId);
 		HistorySearchUtils.setupHistorySearch(ItemView.itemHistoryAccordionCollapse, itemId);
-	},
-	initPage: function () {
+	}
+	static {
+		window.ItemView = this;
 
 		ItemView.itemViewModal[0].addEventListener("hidden.bs.modal", function () {
 			UriUtils.removeParam("view");

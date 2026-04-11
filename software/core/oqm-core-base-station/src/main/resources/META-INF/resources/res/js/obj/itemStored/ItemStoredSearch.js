@@ -1,10 +1,11 @@
 import {Rest} from "../../Rest.js";
 import {ModalUtils} from "../../ModalUtils.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
 
-export const ItemStoredSearch = {
+export class ItemStoredSearch extends PageUtility {
 
-	search: async function (
+	static async search(
 		searchFormJs,
 		event,
 		resultsContainerSelector,
@@ -62,5 +63,8 @@ export const ItemStoredSearch = {
 				resultsContainer.html(data);
 			}
 		});
+	}
+	static {
+		window.ItemStoredSearch = this;
 	}
 }

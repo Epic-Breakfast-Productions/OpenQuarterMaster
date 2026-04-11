@@ -81,7 +81,6 @@
 	{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
 	{#search/item/itemSearchSelectModal rootPrefix=rootPrefix allCategorySearchResults=allCategorySearchResults /}
 	{#search/itemStored/itemStoredSearchSelectModal rootPrefix=rootPrefix /}
-	{#itemCheckout/itemCheckoutModal otherModalId="itemViewModal" rootPrefix=rootPrefix /}
 	{#itemStored/itemStoredViewModal rootPrefix=rootPrefix /}
 	{#itemStored/itemStoredEditModal rootPrefix=rootPrefix /}
 	{#itemStored/transaction/allTransactionModals /}
@@ -100,6 +99,7 @@
 	import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
 	import { ItemAddEdit } from '{rootPrefix}/res/js/obj/item/ItemAddEdit.js';
 	import { ItemView } from '{rootPrefix}/res/js/obj/item/ItemView.js';
+	import { ItemSearchSelect } from '{rootPrefix}/res/js/obj/item/ItemSearchSelect.js';
 	import { ItemStoredEdit } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredEdit.js';
 	import { HistorySearchUtils } from '{rootPrefix}/res/js/HistorySearchUtils.js';
 	import { Identifiers } from '{rootPrefix}/res/js/Identifiers.js';
@@ -124,49 +124,26 @@
 	import { CodeScanner } from '{rootPrefix}/res/js/CodeScanner.js';
 	import { ItemCategoryInput } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js';
 	
-	SearchUtils.initPage();
-	ItemAddEdit.initPage();
-	ItemView.initPage();
-	ItemStoredEdit.initPage();
-	StorageSearchSelect.initPage();
-	IdGeneratorAddEdit.initPage();
-	IdGeneratorSearchSelect.initPage();
-	FileAttachmentSearchSelect.initPage();
-	FileAttachmentAddEdit.initPage();
-	ImageSearchSelect.initPage();
-	ImageAdd.initPage();
-	ImageAddFromSelect.initPage();
-	ItemStoredTransaction.initPage();
-	ItemStoredSearchSelect.initPage();
-	ExtItemSearch.initPage();
-	CodeScanner.initPage();
-	ItemCategoryInput.initPage();
-	
-	window.Rest = Rest;
-	window.ItemAddEdit = ItemAddEdit;
-	window.ItemView = ItemView;
-	window.ItemStoredEdit = ItemStoredEdit;
-	window.HistorySearchUtils = HistorySearchUtils;
-	window.StorageSearchSelect = StorageSearchSelect;
-	window.Identifiers = Identifiers;
-	window.IdGeneratorAddEdit = IdGeneratorAddEdit;
-	window.IdGeneratorSearchSelect = IdGeneratorSearchSelect;
-	window.Pricing = Pricing;
-	window.AssociatedLinks = AssociatedLinks;
-	window.FileAttachmentSearchSelect = FileAttachmentSearchSelect;
-	window.FileAttachmentAddEdit = FileAttachmentAddEdit;
-	window.FileAttachmentView = FileAttachmentView;
-	window.ImageSearchSelect = ImageSearchSelect;
-	window.ImageAdd = ImageAdd;
-	window.ImageAddFromSelect = ImageAddFromSelect;
-	window.KeywordAttEdit = KeywordAttEdit;
-	window.ItemStoredTransaction = ItemStoredTransaction;
-	window.ItemStoredSearch = ItemStoredSearch;
-	window.ItemStoredSearchSelect = ItemStoredSearchSelect;
-	window.ItemCheckoutSearchSelect = ItemCheckoutSearchSelect;
-	window.ExtItemSearch = ExtItemSearch;
-	window.StoredView = StoredView;
-	window.ItemCategoryInput = ItemCategoryInput;
+	SearchUtils.init();
+	ItemAddEdit.init();
+	ItemView.init();
+	ItemSearchSelect.init();
+	ItemStoredEdit.init();
+	StorageSearchSelect.init();
+	IdGeneratorAddEdit.init();
+	IdGeneratorSearchSelect.init();
+	FileAttachmentSearchSelect.init();
+	FileAttachmentAddEdit.init();
+	FileAttachmentView.init();
+	ImageSearchSelect.init();
+	ImageAdd.init();
+	ImageAddFromSelect.init();
+	ItemStoredTransaction.init();
+	ItemStoredSearchSelect.init();
+	ExtItemSearch.init();
+	CodeScanner.init();
+	ItemCategoryInput.init();
+	HistorySearchUtils.init();
 	
 	console.log("Page modules loaded.");
 </script>

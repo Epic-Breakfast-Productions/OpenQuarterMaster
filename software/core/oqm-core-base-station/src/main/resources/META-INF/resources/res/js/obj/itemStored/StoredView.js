@@ -10,16 +10,16 @@ import {Links} from "../../Links.js";
 import {Carousel} from "../../Carousel.js";
 import {PageComponents} from "../../PageComponents.js";
 
-export const StoredView = {
-	viewModal: $("#itemStoredViewModal"),
-	viewModalLabel: $("#itemStoredViewModalLabel"),
-	viewModalMessages: $("#itemStoredViewMessages"),
-	viewModalContent: $("#itemStoredViewDisplayContainer"),
-	viewModalKeywords: $("#itemStoredViewKeywordsSection"),
-	viewModalAtts: $("#itemStoredViewAttsSection"),
-	viewModalHistory: $("#itemStoredHistory"),
+export class StoredView {
+	static viewModal = $("#itemStoredViewModal");
+	static viewModalLabel = $("#itemStoredViewModalLabel");
+	static viewModalMessages = $("#itemStoredViewMessages");
+	static viewModalContent = $("#itemStoredViewDisplayContainer");
+	static viewModalKeywords = $("#itemStoredViewKeywordsSection");
+	static viewModalAtts = $("#itemStoredViewAttsSection");
+	static viewModalHistory = $("#itemStoredHistory");
 
-	getBlockViewCell(name, ...valueJqs) {
+	static getBlockViewCell(name, ...valueJqs) {
 		let output = $('<div class="col-sm-3 col-3 col-xs-6">' +
 			'<h5 class="storedDataTitle"></h5>' +
 			'<div class="storedDataContainer"></div>' +
@@ -31,31 +31,31 @@ export const StoredView = {
 		});
 
 		return output;
-	},
-	getSimpleBlockViewCell(name, value, classes = "") {
+	}
+	static getSimpleBlockViewCell(name, value, classes = "") {
 		let valueJq = $('<p class="' + classes + '"></p>');
 		valueJq.text(value);
 		return StoredView.getBlockViewCell(name, valueJq);
-	},
-	getStorageBlockTrackedIdentifierView(stored) {
+	}
+	static getStorageBlockTrackedIdentifierView(stored) {
 		if (stored.type.includes("UNIQUE")) {
 			return StoredView.getSimpleBlockViewCell("Identifier", stored.identifier);
 		}
 		return "";
-	},
-	getStorageBlockAmountHeldView(stored, showCurrently = false) {
+	}
+	static getStorageBlockAmountHeldView(stored, showCurrently = false) {
 		if (stored.type.includes("AMOUNT")) {
 			return StoredView.getSimpleBlockViewCell((showCurrently ? "Currently " : "") + "Stored:", stored.amount.value + stored.amount.unit.symbol, "storedViewAmount");
 		}
 		return "";
-	},
-	getStorageBlockIdentifyingDetailsView(stored) {
+	}
+	static getStorageBlockIdentifyingDetailsView(stored) {
 		if (stored.type.includes("TRACKED") && stored.identifyingDetails) {
 			return StoredView.getSimpleBlockViewCell("Identifying Details", stored.identifyingDetails);
 		}
 		return "";
-	},
-	getStorageBlockConditionView(stored) {
+	}
+	static getStorageBlockConditionView(stored) {
 		if (stored.condition || stored.conditionNotes) {
 			let conditionJqs = [];
 
@@ -77,14 +77,14 @@ export const StoredView = {
 			);
 		}
 		return "";
-	},
-	getStorageBlockExpiresView(stored) {
+	}
+	static getStorageBlockExpiresView(stored) {
 		if (stored.expires) {
 			return StoredView.getSimpleBlockViewCell("Expires", stored.expires);
 		}
 		return "";
-	},
-	getStoredBlockLink(storageBlockId, small = false) {
+	}
+	static getStoredBlockLink(storageBlockId, small = false) {
 		let output = $('<div class=""></div>');
 		output.html(Links.getStorageViewButton(storageBlockId, 'View Block'));
 
@@ -95,8 +95,8 @@ export const StoredView = {
 		}
 
 		return output;
-	},
-	getStoredKeywords(stored) {
+	}
+	static getStoredKeywords(stored) {
 		if (stored.keywords.length) {
 			let keywordContainer = $('<div class="keywordsViewContainer"></div>');
 			KeywordAttUtils.displayKeywordsIn(keywordContainer, stored.keywords);
@@ -107,8 +107,8 @@ export const StoredView = {
 			);
 		}
 		return "";
-	},
-	getStoredAtts(stored) {
+	}
+	static getStoredAtts(stored) {
 		if (Object.keys(stored.attributes).length) {
 			let keywordContainer = $('<div class="attsViewContainer"></div>');
 			KeywordAttUtils.displayAttsIn(keywordContainer, stored.attributes);
@@ -119,9 +119,9 @@ export const StoredView = {
 			);
 		}
 		return "";
-	},
+	}
 
-	getStoredImages(stored){
+	static getStoredImages(stored){
 		if(stored.imageIds.length) {
 
 			let output = $('<div class="col-sm-6 col-md-6 col-lg-3"></div>');
@@ -131,9 +131,9 @@ export const StoredView = {
 			return output;
 		}
 		return "";
-	},
+	}
 
-	getStoredAttachedFiles(stored){
+	static getStoredAttachedFiles(stored){
 		if(stored.attachedFiles.length) {
 			let output = $('<div class="col-sm-12 col-md-12 col-lg-6">'+PageComponents.View.attachedFileList+'</div>');
 
@@ -142,9 +142,9 @@ export const StoredView = {
 			return output;
 		}
 		return "";
-	},
+	}
 
-	getStoredIdentifiers(stored){
+	static getStoredIdentifiers(stored){
 		if(Object.keys(stored.identifiers).length) {
 			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row identifiersContainer"></div></div>');
 
@@ -153,10 +153,10 @@ export const StoredView = {
 			return output;
 		}
 		return "";
-	},
+	}
 
-	getStoredPricing(stored){
-		if(Object.keys(stored.calculatedPrices).length) {
+	static getStoredPricing(stored){
+		if(stored.calculatedPrices != null && Object.keys(stored.calculatedPrices).length) {
 			let output = $('<div class="col-sm-12 col-md-12 col-lg-6"><div class="row pricingContainer"></div></div>');
 
 			Pricing.View.CalculatedPricing.showInDiv(output.find(".pricingContainer"), stored.calculatedPrices, "col-6");
@@ -164,10 +164,10 @@ export const StoredView = {
 			return output;
 		}
 		return "";
-	},
+	}
 
 	//TODO: finish figuring this out
-	getTransactBlockLink(stored, small = false,
+	static getTransactBlockLink(stored, small = false,
 						 {
 							 showAddTransaction = true,
 							 showSubtractTransaction = true,
@@ -207,8 +207,8 @@ export const StoredView = {
 		}
 
 		return output;
-	},
-	getStoredViewContent(
+	}
+	static getStoredViewContent(
 		stored,
 		{
 			index = false,
@@ -216,6 +216,7 @@ export const StoredView = {
 			includeEditButton = true,
 			includeIdentifier = false,
 			showCurrentlyStored = false,
+			showTransactionButton = true,
 			showAddTransaction = true,
 			showSubtractTransaction = true,
 			showTransferTransaction = true,
@@ -252,13 +253,15 @@ export const StoredView = {
 			StoredView.getStoredAttachedFiles(stored)
 		);
 
-		newContentButtons.append(StoredView.getTransactBlockLink(stored, true, {
-			showAddTransaction: showAddTransaction,
-			showSubtractTransaction: showSubtractTransaction,
-			showCheckoutTransaction: showCheckoutTransaction,
-			showTransferTransaction: showTransferTransaction,
-			showSetTransaction: showSetTransaction
-		}));
+		if(showTransactionButton) {
+			newContentButtons.append(StoredView.getTransactBlockLink(stored, true, {
+				showAddTransaction: showAddTransaction,
+				showSubtractTransaction: showSubtractTransaction,
+				showCheckoutTransaction: showCheckoutTransaction,
+				showTransferTransaction: showTransferTransaction,
+				showSetTransaction: showSetTransaction
+			}));
+		}
 
 		if (includeEditButton) {
 			newContentButtons.append($('<button class="btn btn-warning"  title="Edit This Stored Item" data-bs-toggle="modal" data-bs-target="#itemStoredEditModal" onclick="ItemStoredEdit.setupEditForm(this, \'' + stored.item + '\', \'' + stored.id + '\');">' +
@@ -268,16 +271,16 @@ export const StoredView = {
 
 		//TODO:: history, applied transactions
 		return newContent;
-	},
-	resetViewModal() {
+	}
+	static resetViewModal() {
 		StoredView.viewModalMessages.text("");
 		StoredView.viewModalLabel.text("");
 		StoredView.viewModalAtts.text("");
 		StoredView.viewModalKeywords.text("");
 		StoredView.viewModalContent.text("");
 		//TODO:: clear history
-	},
-	setupViewModal: async function (itemId, blockId, storedId, previousModal) {
+	}
+	static async setupViewModal(itemId, blockId, storedId, previousModal) {
 		Main.processStart();
 		console.log("Setting up stored view for ", storedId);
 		ModalUtils.setReturnModal(StoredView.viewModal, previousModal);
@@ -294,11 +297,11 @@ export const StoredView = {
 		Promise.all(promises);
 		console.log("Finished setting up stored view for ", storedId);
 		Main.processStop();
-	},
-	setupViewResultTableRow(rowJq, itemId, storedId) {
+	}
+	static setupViewResultTableRow(rowJq, itemId, storedId) {
 		//TODO:: create new row under row of button pressed, display stored info
-	},
-	toggleViewResultTableRow: async function (buttonPressed, itemId, storedId) {
+	}
+	static async toggleViewResultTableRow (buttonPressed, itemId, storedId) {
 		Main.processStart();
 		let buttonPressedJq = $(buttonPressed);
 		let storedResultRow = buttonPressedJq.closest("tr.itemStoredResultRow");
@@ -334,4 +337,7 @@ export const StoredView = {
 
 		Main.processStop();
 	}
-};
+	static {
+		window.StoredView = this;
+	}
+}

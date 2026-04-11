@@ -1,10 +1,11 @@
 import {UnitUtils} from "./obj/UnitUtils.js";
 import {PageComponents} from "./PageComponents.js";
 import {SelectedObjectDivUtils} from "./SelectedObjectDivUtils.js";
+import {PageUtility} from "./utilClasses/PageUtility.js";
 
-export const Pricing = {
-	PriceInput: {
-		getInput: function (innerElem) {
+export class Pricing extends PageUtility {
+	static PriceInput = class {
+		static getInput(innerElem) {
 			let output = innerElem;
 			if (!output.jquery) {
 				output = $(output);
@@ -13,8 +14,8 @@ export const Pricing = {
 				output = output.closest(".pricingInputPrice");
 			}
 			return output;
-		},
-		newInput: async function (unit, data = null) {
+		}
+		static async newInput(unit, data = null) {
 			let newInput = $(PageComponents.Inputs.Pricing.storedPricing);
 
 			await UnitUtils.getCompatibleUnitOptions(unit).then(function (options) {
@@ -37,30 +38,30 @@ export const Pricing = {
 			Pricing.PriceInput.updateInputDisplays(newInput);
 
 			return newInput;
-		},
-		getLabelInput: function (priceInputJq) {
+		}
+		static getLabelInput(priceInputJq) {
 			return priceInputJq.find("input[name='label']");
-		},
-		getCurrency: function (priceInputJq) {
+		}
+		static getCurrency(priceInputJq) {
 			return priceInputJq.data("currency");
-		},
-		getFlatPriceInput: function (priceInputJq) {
+		}
+		static getFlatPriceInput(priceInputJq) {
 			return priceInputJq.find("input[name='flatPrice']");
-		},
-		getPerUnitSwitch: function (priceInputJq) {
+		}
+		static getPerUnitSwitch(priceInputJq) {
 			return priceInputJq.find("input[name='pricePerUnitToggle']");
-		},
-		getPerUnitInputContainer: function (priceInputJq) {
+		}
+		static getPerUnitInputContainer(priceInputJq) {
 			return priceInputJq.find(".pricingInputPricePerUnitContainer");
-		},
-		getPerUnitAmountInput: function (priceInputJq) {
+		}
+		static getPerUnitAmountInput(priceInputJq) {
 			return priceInputJq.find("input[name='pricePerUnitAmount']");
-		},
-		getPerUnitUnitInput: function (priceInputJq) {
+		}
+		static getPerUnitUnitInput(priceInputJq) {
 			return priceInputJq.find("select[name='pricePerUnitUnit']");
-		},
+		}
 
-		updateInputDisplays: function (priceInnerElem) {
+		static updateInputDisplays(priceInnerElem) {
 			console.log("Updating input displays for: ", priceInnerElem);
 			let priceInput = Pricing.PriceInput.getInput(priceInnerElem);
 
@@ -75,8 +76,8 @@ export const Pricing = {
 					perUnitContainer.hide();
 				}
 			}
-		},
-		getData: function (priceInputPriceJq) {
+		}
+		static getData(priceInputPriceJq) {
 			let data = {
 				label: Pricing.PriceInput.getLabelInput(priceInputPriceJq).val(),
 				flatPrice: {
@@ -97,15 +98,15 @@ export const Pricing = {
 
 			return data;
 		}
-	},
-	newInput: async function(unit, data = null){
+	}
+	static async newInput(unit, data = null){
 		let newInput = $(PageComponents.Inputs.Pricing.priceInput);
 
 		await Pricing.populateInput(newInput, unit, data);
 
 		return newInput;
-	},
-	getInput: function (innerElem) {
+	}
+	static getInput(innerElem) {
 		let output = innerElem;
 		if (!output.jquery) {
 			output = $(output);
@@ -114,20 +115,20 @@ export const Pricing = {
 			output = output.closest(".pricingInput");
 		}
 		return output;
-	},
-	getPricesContainer: function (priceInputJq) {
+	}
+	static getPricesContainer(priceInputJq) {
 		return priceInputJq.find(".pricesContainer");
-	},
-	getPrices: function (priceInputJq) {
+	}
+	static getPrices (priceInputJq) {
 		let pricesContainer = Pricing.getPricesContainer(priceInputJq);
 
 		return pricesContainer.find(".pricingInputPrice");
-	},
-	resetInput: function (priceInputJq) {
+	}
+	static resetInput (priceInputJq) {
 		Pricing.getPricesContainer(priceInputJq).html("");
 		Pricing.setUnit(priceInputJq, "");
-	},
-	setUnit: async function (priceInputJq, unit) {
+	}
+	static async setUnit(priceInputJq, unit) {
 		if (Pricing.getUnit(priceInputJq) == unit) {
 			console.debug("Unit set already the given unit: ", unit);
 			return;
@@ -164,12 +165,12 @@ export const Pricing = {
 		} else {
 			console.debug("No prices to update units of.");
 		}
-	},
-	getUnit: function (priceInputJq) {
+	}
+	static getUnit (priceInputJq) {
 		return priceInputJq.data("unit");
-	},
+	}
 
-	addPrice: async function (priceInputJq, priceData = null) {
+	static async addPrice(priceInputJq, priceData = null) {
 		console.info("Adding new price input to ", priceInputJq);
 		let pricesContainer = Pricing.getPricesContainer(priceInputJq);
 
@@ -181,15 +182,15 @@ export const Pricing = {
 		pricesContainer.append(newInput);
 
 		return newInput;
-	},
-	removePrice(remButtJq) {
+	}
+	static removePrice(remButtJq) {
 		if (confirm("Are you sure?") === false) return;
 		SelectedObjectDivUtils.removeSelected(
 			Pricing.PriceInput.getInput(remButtJq)
 		);
-	},
+	}
 
-	getPricingData: function (priceInputJq) {
+	static getPricingData(priceInputJq) {
 		let output = [];
 
 		let prices = Pricing.getPrices(priceInputJq);
@@ -201,8 +202,8 @@ export const Pricing = {
 		});
 
 		return output;
-	},
-	populateInput: async function (priceInputJq, unit, priceList = null) {
+	}
+	static async populateInput(priceInputJq, unit, priceList = null) {
 		console.log("Populating pricing input: ",  priceInputJq, unit, priceList);
 		let tasks = [];
 
@@ -215,9 +216,9 @@ export const Pricing = {
 		}
 
 		await Promise.all(tasks);
-	},
-	View: {
-		newPriceContainer: function (priceData, extraClasses="") {
+	}
+	static View = class {
+		static newPriceContainer(priceData, extraClasses="") {
 			let output = $(`
 			<div class="priceDisplayContainer p-1 `+extraClasses+`">
 				<div class="priceDisplay card">
@@ -252,13 +253,13 @@ export const Pricing = {
 			}
 
 			return output;
-		},
-		toggleBreakdownView(breakdownButtonJq){
+		}
+		static toggleBreakdownView(breakdownButtonJq){
 			breakdownButtonJq.parent().parent().find(".priceBreakdownContainer").toggleClass("d-none");
-		},
+		}
 
-		CalculatedPricing: {
-			showInDiv(divJq, pricingArray, extraClasses="") {
+		static CalculatedPricing = class {
+			static showInDiv(divJq, pricingArray, extraClasses="") {
 				pricingArray.forEach(function (curPriceData) {
 					let newDisplay = Pricing.View.newPriceContainer(curPriceData, extraClasses);
 					newDisplay.find(".pricePrice").text(curPriceData.totalPriceString);
@@ -278,9 +279,9 @@ export const Pricing = {
 					newDisplay.find(".showPriceDropdownButton").removeClass("d-none");
 				});
 			}
-		},
-		TotalPricing: {
-			showInDiv(divJq, pricingArray, extraClasses="") {
+		}
+		static TotalPricing = class {
+			static showInDiv(divJq, pricingArray, extraClasses="") {
 				pricingArray.forEach(function (curTotalPriceData) {
 					let newDisplay = Pricing.View.newPriceContainer(curTotalPriceData, extraClasses);
 
@@ -291,4 +292,7 @@ export const Pricing = {
 			}
 		}
 	}
-};
+	static {
+		window.Pricing = Pricing;
+	}
+}
