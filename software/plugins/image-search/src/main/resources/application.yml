@@ -2,19 +2,16 @@ greeting:
   message: "hello"
 mp:
   messaging:
-    outgoing:
-      words-out:
-        topic: "words"
     incoming:
-      words-in:
-        auto:
-          offset:
-            reset: "earliest"
-        topic: "words"
+      oqm-events:
+        topic: "oqm-core-all-events"
+#        auto:
+#          offset:
+#            reset: "earliest"
 
 quarkus:
   log:
-    level: "DEBUG"
+    level: "INFO"
   mongodb:
     database: "oqm-image-search"
   keycloak:
@@ -22,6 +19,10 @@ quarkus:
       port: 9328
       realm-path: "dev/oqm-realm.json"
       realm-name: oqm
+  kafka:
+    devservices:
+      enabled: true
+      port: 9192
 
 "%dev":
   quarkus:

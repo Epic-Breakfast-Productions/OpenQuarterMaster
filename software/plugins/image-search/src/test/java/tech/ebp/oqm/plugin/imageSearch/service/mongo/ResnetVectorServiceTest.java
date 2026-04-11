@@ -33,7 +33,7 @@ class ResnetVectorServiceTest extends RunningServerTest {
 		ObjectNode imageSearch = this.getOqmCoreApiClientService().imageSearch(
 			this.getServiceAccountService().getAuthString(),
 			TEST_DB,
-			new ImageSearch() //TODO:: swap to builder after lib updates
+			ImageSearch.builder().build()
 		).await().indefinitely();
 		
 		assertEquals(
