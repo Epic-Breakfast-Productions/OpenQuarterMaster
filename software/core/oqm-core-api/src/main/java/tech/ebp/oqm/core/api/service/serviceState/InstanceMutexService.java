@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.mongo;
+package tech.ebp.oqm.core.api.service.serviceState;
 
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.UpdateResult;
@@ -15,6 +15,7 @@ import tech.ebp.oqm.core.api.exception.MutexWaitTimeoutException;
 import tech.ebp.oqm.core.api.model.InstanceMutex;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.rest.search.InstanceMutexSearch;
+import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
 
 import java.io.Closeable;
 import java.io.IOException;

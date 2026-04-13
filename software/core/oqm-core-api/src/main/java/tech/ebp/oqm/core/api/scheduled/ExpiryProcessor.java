@@ -8,6 +8,18 @@ import tech.ebp.oqm.core.api.service.ItemStatsService;
 import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
+/**
+ * Scheduled processor for handling item expiry events.
+ * <p>
+ * Runs periodically to scan all databases for items that have expired or are approaching
+ * their expiry dates. For each database, it triggers expiry/warning event processing
+ * via {@link ItemStatsService#scanForExpired(String)}.
+ * </p>
+ * <p>
+ * Configuration: The execution schedule is controlled by the {@code service.item.expiryCheck.cron}
+ * property. Concurrent executions are skipped if one is already running.
+ * </p>
+ */
 @Slf4j
 @ApplicationScoped
 public class ExpiryProcessor {
@@ -19,6 +31,13 @@ public class ExpiryProcessor {
 	@Inject
 	ItemStatsService itemStatsService;
 	
+	/**
+	 * Main scheduled task that processes expiry events for all databases.
+	 * <p>
+	 * Iterates through all registered databases and calls the item stats service
+	 * to scan for expired items and generate appropriate events.
+	 * </p>
+	 */
 	@Scheduled(
 		identity = "searchAndProcessExpiredItems",
 		cron = "{service.item.expiryCheck.cron}",
