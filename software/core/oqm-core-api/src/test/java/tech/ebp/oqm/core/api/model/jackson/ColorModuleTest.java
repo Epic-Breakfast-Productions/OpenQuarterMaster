@@ -19,6 +19,7 @@ class ColorModuleTest extends BasicTest {
 		return Stream.of(
 			Arguments.of("#000000", Color.BLACK),
 			Arguments.of("#FFFFFF", Color.WHITE)
+//			Arguments.of("white", Color.WHITE)
 //			Arguments.of("#FFF", Color.WHITE)//no-go
 		);
 	}

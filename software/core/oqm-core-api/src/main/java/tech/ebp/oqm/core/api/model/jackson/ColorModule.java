@@ -14,8 +14,7 @@ import java.io.IOException;
  * Jackson module for serializing and deserializing {@link Color} objects.
  * <p>
  * Colors are serialized as hex strings (e.g., "#FF5733") and deserialized from
- * hex string format or standard color name strings supported by {@link Color#decode(String)}.
- * </p>
+ * that same hex string format
  */
 public class ColorModule extends TestableModule<Color> {
 	
