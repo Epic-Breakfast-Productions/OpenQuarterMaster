@@ -53,7 +53,7 @@ import tech.ebp.oqm.core.api.model.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.transactions.AppliedTransactionService;
-import tech.ebp.oqm.core.api.service.notification.EventNotificationWrapper;
+import tech.ebp.oqm.core.api.model.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.StorageBlockTestObjectCreator;

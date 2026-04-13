@@ -11,10 +11,20 @@ import java.awt.*;
 import java.io.IOException;
 
 /**
- * Jackson module to handle the Mongodb ObjectId in a reasonable manner (as its hex string)
+ * Jackson module for serializing and deserializing {@link Color} objects.
+ * <p>
+ * Colors are serialized as hex strings (e.g., "#FF5733") and deserialized from
+ * hex string format or standard color name strings supported by {@link Color#decode(String)}.
+ * </p>
  */
 public class ColorModule extends TestableModule<Color> {
 	
+	/**
+	 * Converts a Color to its hex string representation.
+	 *
+	 * @param c the color to convert
+	 * @return hex string in format "#RRGGBB"
+	 */
 	public static String toHexString(Color c){
 		int R = c.getRed();
 		int G = c.getGreen();
@@ -23,6 +33,14 @@ public class ColorModule extends TestableModule<Color> {
 		String rgb = String.format("#%02X%02X%02X", R, G, B);
 		return rgb;
 	}
+	
+	/**
+	 * Parses a hex string or color name into a Color object.
+	 *
+	 * @param c the string to parse (hex or color name)
+	 * @return the Color object
+	 * @throws NumberFormatException if the string is not a valid color format
+	 */
 	public static Color toColor(String c){
 		return Color.decode(c);
 	}
@@ -35,6 +53,9 @@ public class ColorModule extends TestableModule<Color> {
 		);
 	}
 	
+	/**
+	 * Serializer that writes Color as hex string.
+	 */
 	public static class ColorSerializer extends JsonSerializer<Color> {
 		@Override
 		public void serialize(Color c, JsonGenerator gen, SerializerProvider serializers) throws IOException {
@@ -42,12 +63,14 @@ public class ColorModule extends TestableModule<Color> {
 		}
 	}
 	
+	/**
+	 * Deserializer that parses hex strings or color names into Color objects.
+	 */
 	public static class ColorDeserializer extends JsonDeserializer<Color> {
 		@Override
 		public Color deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
 			return toColor(p.getValueAsString());
 		}
 	}
-	
 	
 }

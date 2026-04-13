@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.notification;
+package tech.ebp.oqm.core.api.model.messaging;
 
 import lombok.*;
 import org.bson.types.ObjectId;

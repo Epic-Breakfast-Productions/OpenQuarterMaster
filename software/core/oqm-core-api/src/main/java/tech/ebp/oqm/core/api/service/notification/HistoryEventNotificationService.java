@@ -14,6 +14,7 @@ import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.OnOverflow;
+import tech.ebp.oqm.core.api.model.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 
 import java.util.Arrays;

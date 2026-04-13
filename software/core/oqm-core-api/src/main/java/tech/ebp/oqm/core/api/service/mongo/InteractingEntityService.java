@@ -17,6 +17,7 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.rest.search.InteractingEntitySearch;
+import tech.ebp.oqm.core.api.service.serviceState.InstanceMutexService;
 
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
