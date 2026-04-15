@@ -87,6 +87,8 @@ public class LifecycleBean {
 			// Image: https://www.text-image.com/convert/ascii.html
 			// Text: https://manytools.org/hacker-tools/ascii-banner/ (Colossal font)
 			log.info("""
+
+
             &&&&
         &&&&&&&&&&&
      &&&&&&&    &&&&&&&
