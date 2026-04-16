@@ -19,7 +19,7 @@ Restart=always
 TimeoutStartSec=600
 Environment="CONTAINER_NAME=oqm-metrics-otel_lgtm"
 Environment="IMAGE_NAME=docker.io/grafana/otel-lgtm"
-Environment="IMAGE_VERSION=0.19.1"
+Environment="IMAGE_VERSION=0.24.1"
 Environment="DATA_DIR=/metrics/lgtm"
 
 ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
@@ -48,22 +48,22 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         -e GF_PATHS_DATA=/data/grafana \
                                         -e GF_SERVER_ROOT_URL=$(oqm-config g metrics.otel-lgtm.externalBaseUri) \
                                         $IMAGE_NAME:$IMAGE_VERSION"
-# Ensure is up, healthy TODO:: https://github.com/grafana/docker-otel-lgtm/issues/1104
-#ExecStartPost=/bin/bash -c "running=\"false\"; \
-#                            while [ \"$running\" != \"true\" ]; do \
-#                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
-#                                if [ \"$status\" == \"healthy\" ]; then \
-#                                    echo \"Container running!\"; \
-#                                    running=\"true\"; \
-#                                    continue; \
-#                                fi; \
-#                                sleep 0.05s; \
-#                                if [ $SECONDS -gt 30 ]; then \
-#                                    echo \"Container not running after 30 seconds!\"; \
-#                                    exit 1; \
-#                                fi; \
-#                            done; \
-#                            "
+# Ensure is up, healthy
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+                                if [ \"$status\" == \"healthy\" ]; then \
+                                    echo \"Container running!\"; \
+                                    running=\"true\"; \
+                                    continue; \
+                                fi; \
+                                sleep 0.05s; \
+                                if [ $SECONDS -gt 240 ]; then \
+                                    echo \"Container not running after 240 seconds!\"; \
+                                    exit 1; \
+                                fi; \
+                            done; \
+                            "
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop kafka container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove kafka container'"
 
