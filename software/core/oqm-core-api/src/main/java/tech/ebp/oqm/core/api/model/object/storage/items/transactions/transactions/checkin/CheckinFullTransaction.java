@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.ReturnFullCheckinDetails;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 
@@ -19,6 +20,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
+@Schema(title = "CheckinFullTransaction", description = "A transaction to checkin a checkout.")
 public class CheckinFullTransaction extends CheckinTransaction<ReturnFullCheckinDetails> {
 
 
@@ -33,6 +35,7 @@ public class CheckinFullTransaction extends CheckinTransaction<ReturnFullCheckin
 	private ObjectId toStored;
 
 	@Override
+	@Schema(constValue = "CHECKIN_FULL", readOnly = true, required = true, examples = "CHECKIN_FULL")
 	public TransactionType getType() {
 		return TransactionType.CHECKIN_FULL;
 	}

@@ -1,44 +1,50 @@
+import { PageUtility } from "./utilClasses/PageUtility.js";
 
-export const Icons = {
-	add: '{#icons/add /}',
-	copy: '{#icons/copy /}',
-	copyChecked: '{#icons/copyChecked /}',
-	dropdown: '{#icons/dropdown /}',
-	itemCheckin: '',
-	itemCheckout: '',
-	itemCheckouts: '{#icons/itemCheckouts /}',
-	edit: '{#icons/edit /}',
-	info: '{#icons/info /}',
-	link: '{#icons/link /}',
-	locked: '{#icons/locked /}',
-	item: '{#icons/item /}',
-	items: '{#icons/items /}',
-	pricing: '{#icons/pricing /}',
-	stored: '{#icons/stored /}',
-	newTab: '{#icons/newTab /}',
-	remove: '{#icons/remove /}',
-	unlocked: '{#icons/unlocked /}',
-	storageBlock: '{#icons/storageBlock /}',
-	storageBlocks: '{#icons/storageBlocks /}',
-	useDatapoint: '{#icons/useDatapoint /}',
-	view: '{#icons/view /}',
-	viewClose: '{#icons/viewClose /}',
+export class Icons extends PageUtility {
+	static add = '{#icons/add /}';
+	static copy = '{#icons/copy /}';
+	static copyChecked = '{#icons/copyChecked /}';
+	static dropdown = '{#icons/dropdown /}';
+	static itemCheckin = '';
+	static itemCheckout = '';
+	static itemCheckouts = '{#icons/itemCheckouts /}';
+	static edit = '{#icons/edit /}';
+	static info = '{#icons/info /}';
+	static link = '{#icons/link /}';
+	static locked = '{#icons/locked /}'
+	static item = '{#icons/item /}';
+	static items = '{#icons/items /}';
+	static pricing = '{#icons/pricing /}';
+	static stored = '{#icons/stored /}';
+	static newTab = '{#icons/newTab /}';
+	static remove = '{#icons/remove /}';
+	static unlocked = '{#icons/unlocked /}';
+	static storageBlock = '{#icons/storageBlock /}';
+	static storageBlocks = '{#icons/storageBlocks /}';
+	static useDatapoint = '{#icons/useDatapoint /}';
+	static view = '{#icons/view /}';
+	static viewClose = '{#icons/viewClose /}';
 	//transactions
-	transaction: '{#icons/transaction /}',
-	addTransaction: '{#icons/transactionAdd /}',
-	subtractTransaction: '{#icons/transactionSubtract /}',
-	checkoutTransaction: '{#icons/transactionCheckout /}',
-	checkinTransaction: '{#icons/transactionCheckin /}',
-	transferTransaction: '{#icons/transactionTransfer /}',
-	setTransaction: '{#icons/transactionSet /}',
-	identifiers: '{#icons/identifiers /}',
-	idGenerators: '{#icons/idGenerators /}',
+	static transaction = '{#icons/transaction /}';
+	static addTransaction = '{#icons/transactionAdd /}';
+	static subtractTransaction = '{#icons/transactionSubtract /}';
+	static checkoutTransaction = '{#icons/transactionCheckout /}';
+	static checkinTransaction = '{#icons/transactionCheckin /}';
+	static transferTransaction = '{#icons/transactionTransfer /}';
+	static setTransaction = '{#icons/transactionSet /}';
+	static identifiers = '{#icons/identifiers /}';
+	static idGenerators = '{#icons/idGenerators /}';
 	//interacting entities
-	user: '{#icons/user /}',
-	extService: '{#icons/extService /}',
-	coreApi: '{#icons/coreApi /}',
-
-	iconWithSub(icon, subIcon){
+	static user = '{#icons/user /}';
+	static extService = '{#icons/extService /}';
+	static coreApi = '{#icons/coreApi /}';
+		
+	static iconWithSub(icon, subIcon){
 		return icon + '<sup>' + subIcon + '</sup>';
+	}
+
+	static {
+		window.Icons = this;
+		console.log(this.name + " done initializing.");
 	}
 }

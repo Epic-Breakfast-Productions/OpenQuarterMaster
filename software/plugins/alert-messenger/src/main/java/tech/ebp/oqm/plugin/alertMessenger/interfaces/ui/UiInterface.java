@@ -13,7 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmDatabaseService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.dataHelpers.OqmDatabaseService;
 import tech.ebp.oqm.plugin.alertMessenger.model.UserInfo;
 import tech.ebp.oqm.plugin.alertMessenger.utils.JwtUtils;
 
@@ -88,6 +88,11 @@ public abstract class UiInterface {
 
 	@PostConstruct
 	void initialLogAndEntityProcess() {
+		if (this.getUserToken() == null) {
+			log.warn("JWT token is null. Skipping user initialization.");
+			return;
+		}
+
 		this.oqmDatabases = this.oqmDatabaseService.getDatabases();
 		this.userInfo = JwtUtils.getUserInfo(this.getUserToken());
 
@@ -99,7 +104,6 @@ public abstract class UiInterface {
 			if(this.oqmDatabases == null || this.oqmDatabases.isEmpty()){
 				throw new IllegalStateException("Cannot have no databases.");
 			}
-			//TODO: this but smarter?
 			return this.getOqmDatabases().get(0).get("id").asText();
 		}
 		return this.oqmDb;

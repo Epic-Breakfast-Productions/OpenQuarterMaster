@@ -2,17 +2,19 @@ import {ImageAdd} from "./ImageAdd.js";
 import {Rest} from "../../Rest.js";
 import {PageMessageUtils} from "../../PageMessageUtils.js";
 import {ImageSearchSelect} from "./ImageSearchSelect.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const ImageAddFromSelect = {
-	formMessages: $("addImageFormMessages"),
-	imageSearchSelectModalLabelCloseButton: $("#imageSearchSelectModalLabelCloseButton"),
-	imageAddImageForm: $("#addImageForm"),
-	imageAddTitleInput: $("#addTitleInput"),
-	imageAddDescriptionInput: $("#addDescriptionInput"),
-	imageUploadInput: $("#imageUploadInput"),
-	imageAddKeywordInputDiv: $("#addImageForm").find(".keywordInputDiv"),
-	imageAddAttInputDiv: $("#addImageForm").find(".attInputDiv"),
-	resetImageAdd(){
+export class ImageAddFromSelect extends PageUtility{
+	static formMessages = $("#addImageFormMessages");
+	static imageSearchSelectModalLabelCloseButton = $("#imageSearchSelectModalLabelCloseButton");
+	static imageAddImageForm = $("#addImageForm");
+	static imageAddTitleInput = $("#addTitleInput");
+	static imageAddDescriptionInput = $("#addDescriptionInput");
+	static imageUploadInput = $("#imageUploadInput");
+	static imageAddKeywordInputDiv = $("#addImageForm").find(".keywordInputDiv");
+	static imageAddAttInputDiv = $("#addImageForm").find(".attInputDiv");
+
+	static resetImageAdd(){
 		ImageAddFromSelect.imageAddImageForm.trigger("reset");
 		ImageAddFromSelect.imageAddTitleInput.text("");
 		ImageAddFromSelect.imageAddDescriptionInput.html("");
@@ -20,8 +22,10 @@ export const ImageAddFromSelect = {
 		ImageAddFromSelect.imageAddKeywordInputDiv.html("");
 		ImageAddFromSelect.imageAddAttInputDiv.html("");
 		ImageAdd.resetCroppie();
-	},
-	initPage: function () {
+	}
+	static {
+		window.ImageAddFromSelect = this;
+
 		ImageAddFromSelect.imageAddImageForm.submit(function (ev) {
 			ev.preventDefault();
 

@@ -1,35 +1,36 @@
 import {Getters} from "../Getters.js";
 import {ModalUtils} from "../../ModalUtils.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const ItemStoredSearchSelect = {
-	modal: $("#itemStoredSearchSelectModal"),
-	form: $("#itemStoredSearchSelectForm"),
-	results: $("#itemStoredSearchSelectResults"),
-	itemIdInput: $("#itemStoredSearchSelectForm-itemInputId"),
-	itemSearchButton: $("#itemStoredSearchSelectForm-itemInputSearchButton"),
-	itemNameInput: $("#itemStoredSearchSelectForm-itemInputName"),
-	itemClearButton: $("#itemStoredSearchSelectForm-itemInputClearButton"),
-	curDestinationId: null,
+export class ItemStoredSearchSelect extends PageUtility {
+	static modal = $("#itemStoredSearchSelectModal");
+	static form = $("#itemStoredSearchSelectForm");
+	static results = $("#itemStoredSearchSelectResults");
+	static itemIdInput = $("#itemStoredSearchSelectForm-itemInputId");
+	static itemSearchButton = $("#itemStoredSearchSelectForm-itemInputSearchButton");
+	static itemNameInput = $("#itemStoredSearchSelectForm-itemInputName");
+	static itemClearButton = $("#itemStoredSearchSelectForm-itemInputClearButton");
+	static curDestinationId = null;
 
-	getItemIdInput(storedItemInputGroupJq){
+	static getItemIdInput(storedItemInputGroupJq){
 		return storedItemInputGroupJq.find("input[name=item]");
-	},
-	getBlockIdInput(storedItemInputGroupJq){
+	}
+	static getBlockIdInput(storedItemInputGroupJq){
 		return storedItemInputGroupJq.find("input[name=block]");
-	},
-	getIdInput(storedItemInputGroupJq){
+	}
+	static getIdInput(storedItemInputGroupJq){
 		return storedItemInputGroupJq.find("input[name=itemStored]")
-	},
-	getLabelInput(storedItemInputGroupJq){
+	}
+	static getLabelInput(storedItemInputGroupJq){
 		return storedItemInputGroupJq.find("input[name=itemStoredLabel]");
-	},
-	enableInputs(storedItemInputGroupJq){
+	}
+	static enableInputs(storedItemInputGroupJq){
 		storedItemInputGroupJq.find("button").attr("disabled", false);
-	},
-	disableInputs(storedItemInputGroupJq){
+	}
+	static disableInputs(storedItemInputGroupJq){
 		storedItemInputGroupJq.find("button").attr("disabled", true);
-	},
-	selectStoredItem(storedLabel, storageBlock, storedItemId, inputGroupId, trigger = true) {
+	}
+	static selectStoredItem(storedLabel, storageBlock, storedItemId, inputGroupId, trigger = true) {
 		console.log("Selected stored item: " + storedItemId + " - " + storedLabel);
 		let inputGroup = $("#" + inputGroupId);
 		let storedLabelJq = ItemStoredSearchSelect.getLabelInput(inputGroup);
@@ -53,9 +54,9 @@ export const ItemStoredSearchSelect = {
 		if (trigger) {
 			storedIdInput.trigger("change");
 		}
-	},
+	}
 
-	setupItemStoredSearchModal(buttonPressed) {
+	static setupItemStoredSearchModal(buttonPressed) {
 		console.log("setting up itemStoredSearchModal");
 		ModalUtils.setReturnModal(ItemStoredSearchSelect.modal, buttonPressed);
 		let inputGroup = $(buttonPressed).parent();
@@ -70,29 +71,29 @@ export const ItemStoredSearchSelect = {
 
 		ItemStoredSearchSelect.modal.attr("data-bs-destination", inputGroupId);
 		ItemStoredSearchSelect.form.submit();
-	},
-	clearSearchInput(clearButtPushed, trigger = true) {
+	}
+	static clearSearchInput(clearButtPushed, trigger = true) {
 		let itemStoredInput = clearButtPushed.siblings("input[name=itemStored]");
 		itemStoredInput.val("");
 		clearButtPushed.siblings("input[name=itemStoredLabel]").val("");
 		if (trigger) {
 			itemStoredInput.trigger("change");
 		}
-	},
-	resetSearchInput(itemStoredInputGroupJq) {
+	}
+	static resetSearchInput(itemStoredInputGroupJq) {
 		ItemStoredSearchSelect.clearSearchInput(itemStoredInputGroupJq.find(".clearButton"), false);
 
 		// clearButtPushed.siblings("input[name=itemName]").val("");
 		ItemStoredSearchSelect.getItemIdInput(itemStoredInputGroupJq).val("");
 		ItemStoredSearchSelect.getBlockIdInput(itemStoredInputGroupJq).val("");
 		ItemStoredSearchSelect.enableInputs(itemStoredInputGroupJq);
-	},
+	}
 	/**
 	 * Use this function to setup a stored input group for use
 	 * @param storedItemInputGroupJq
 	 * @param item
 	 */
-	setupInputs: async function(storedItemInputGroupJq, item, stored = null) {
+	static async setupInputs(storedItemInputGroupJq, item, stored = null) {
 		ItemStoredSearchSelect.resetSearchInput(storedItemInputGroupJq);
 		if (typeof item === 'object' && item !== null && !Array.isArray(item)) {
 			item = item.id;
@@ -115,8 +116,10 @@ export const ItemStoredSearchSelect = {
 			ItemStoredSearchSelect.getIdInput(storedItemInputGroupJq).val(id);
 			ItemStoredSearchSelect.disableInputs(storedItemInputGroupJq);
 		}
-	},
-	initPage: function() {
+	}
+	static {
+		window.ItemStoredSearchSelect = this;
+		
 		ItemStoredSearchSelect.form.on(
 			"submit",
 			function (event) {

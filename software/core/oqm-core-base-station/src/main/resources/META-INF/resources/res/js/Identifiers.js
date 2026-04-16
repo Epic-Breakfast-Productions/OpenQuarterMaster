@@ -1,60 +1,61 @@
 import {Rest} from "./Rest.js";
 import {SelectedObjectDivUtils} from "./SelectedObjectDivUtils.js";
+import {PageComponents} from "./PageComponents.js";
 
-export const Identifiers = {
-	getInputContainer(subElementJq) {
+export class Identifiers {
+	static getInputContainer(subElementJq) {
 		return subElementJq.closest('.identifierInputContainer');
-	},
-	getIdentifiersContainer(identifierInputContainerJq) {
+	}
+	static getIdentifiersContainer(identifierInputContainerJq) {
 		return identifierInputContainerJq.find(".identifiersContainer");
-	},
-	getMessagesContainer(identifierInputContainerJq) {
+	}
+	static getMessagesContainer(identifierInputContainerJq) {
 		return identifierInputContainerJq.find(".identifierMessagesContainer");
-	},
-	getAssociateButton(identifierInputContainerJq) {
+	}
+	static getAssociateButton(identifierInputContainerJq) {
 		return identifierInputContainerJq.find(".idGeneratorGenerateButton");
-	},
-	getNewIdentifierInput(identifierInputContainerJq) {
+	}
+	static getNewIdentifierInput(identifierInputContainerJq) {
 		return identifierInputContainerJq.find("input[name='newIdentifier']");
-	},
-	getNewIdentifierValue(identifierInputContainerJq) {
+	}
+	static getNewIdentifierValue(identifierInputContainerJq) {
 		return Identifiers.getNewIdentifierInput(identifierInputContainerJq).val();
-	},
-	getIdentifierContainer(subElementJq) {
+	}
+	static getIdentifierContainer(subElementJq) {
 		return subElementJq.closest('.addedIdentifierContainer');
-	},
-	getIdentifierImage(idContainerJq) {
+	}
+	static getIdentifierImage(idContainerJq) {
 		return idContainerJq.find(".identifierImage");
-	},
-	getIdentifierValueContainer(idContainerJq) {
+	}
+	static getIdentifierValueContainer(idContainerJq) {
 		return idContainerJq.find(".identifierValue");
-	},
-	getIdentifierValue(idContainerJq) {
+	}
+	static getIdentifierValue(idContainerJq) {
 		return Identifiers.getIdentifierValueContainer(idContainerJq).text();
-	},
-	getIdentifierTypeContainer(idContainerJq) {
+	}
+	static getIdentifierTypeContainer(idContainerJq) {
 		return idContainerJq.find(".identifierType");
-	},
-	getIdentifierType(idContainerJq) {
+	}
+	static getIdentifierType(idContainerJq) {
 		return Identifiers.getIdentifierTypeContainer(idContainerJq).text();
-	},
-	getIdentifierLabelInput(idContainerJq) {
+	}
+	static getIdentifierLabelInput(idContainerJq) {
 		return idContainerJq.find("input[name='label']");
-	},
-	getIdentifierLabel(idContainerJq) {
+	}
+	static getIdentifierLabel(idContainerJq) {
 		return Identifiers.getIdentifierLabelInput(idContainerJq).val();
-	},
-	getIdentifierIsBarcodeCheckbox(idContainerJq) {
+	}
+	static getIdentifierIsBarcodeCheckbox(idContainerJq) {
 		return idContainerJq.find("input[name='identifierIsBarcode']");
-	},
-	clearInput(identifierInputContainerJq) {
+	}
+	static clearInput(identifierInputContainerJq) {
 		Identifiers.getNewIdentifierInput(identifierInputContainerJq).val("");
-	},
-	reset(identifierInputContainerJq) {
+	}
+	static reset(identifierInputContainerJq) {
 		Identifiers.clearInput(identifierInputContainerJq);
 		Identifiers.getIdentifiersContainer(identifierInputContainerJq).html("");
-	},
-	addIdentifier(identifierInputContainerJq) {
+	}
+	static addIdentifier(identifierInputContainerJq) {
 		let newIdentifier = Identifiers.getNewIdentifierValue(identifierInputContainerJq);
 		if(newIdentifier === "") {
 			console.log("Not adding empty identifier.");
@@ -75,11 +76,11 @@ export const Identifiers = {
 				Identifiers.clearInput(identifierInputContainerJq);
 			}
 		});
-	},
-	addToGenerate(generateIdButtonJq, generatorData) {
+	}
+	static addToGenerate(generateIdButtonJq, generatorData) {
 		let idContainer = Identifiers.getIdentifiersContainer(Identifiers.getInputContainer(generateIdButtonJq));
-	},
-	handleIsBarcodeNeedUpdate(inputJq) {
+	}
+	static handleIsBarcodeNeedUpdate(inputJq) {
 		console.debug("Handling barcode checkbox change.");
 		let idContainerJq = Identifiers.getIdentifierContainer(inputJq);
 		let isBarcodeCheckboxJq = Identifiers.getIdentifierIsBarcodeCheckbox(idContainerJq);
@@ -112,18 +113,18 @@ export const Identifiers = {
 			identifierValueContainer.removeClass("d-none");
 			identifierImage.addClass("d-none");
 		}
-	},
-	moveUp(upButtonJq) {
+	}
+	static moveUp(upButtonJq) {
 		SelectedObjectDivUtils.moveUp(Identifiers.getIdentifierContainer(upButtonJq));
-	},
-	moveDown(downButtonJq) {
+	}
+	static moveDown(downButtonJq) {
 		SelectedObjectDivUtils.moveDown(Identifiers.getIdentifierContainer(downButtonJq));
-	},
-	removeIdentifier(removeButtonJq) {
+	}
+	static removeIdentifier(removeButtonJq) {
 		if (confirm("Are you sure you want to remove this identifier?") === false) return;
 		SelectedObjectDivUtils.removeSelected(Identifiers.getIdentifierContainer(removeButtonJq));
-	},
-	getIdentifierData(identifierInputContainerJq) {
+	}
+	static getIdentifierData(identifierInputContainerJq) {
 		let getIdentifiersContainer = Identifiers.getIdentifiersContainer(identifierInputContainerJq);
 		let output = [];
 
@@ -152,8 +153,8 @@ export const Identifiers = {
 		console.log("Identifiers gathered: ", output);
 
 		return output;
-	},
-	newAddedIdentifier(identifier) {
+	}
+	static newAddedIdentifier(identifier) {
 		let idInput = $(PageComponents.Inputs.Identifiers.identifierAdded);
 
 		Identifiers.getIdentifierValueContainer(idInput).text(identifier.value);
@@ -175,21 +176,21 @@ export const Identifiers = {
 		}
 
 		return idInput;
-	},
+	}
 
-	populateEdit: function (identifierInputContainerJq, identifierList) {
+	static populateEdit(identifierInputContainerJq, identifierList) {
 		let getIdentifiersContainer = Identifiers.getIdentifiersContainer(identifierInputContainerJq);
 		for (const identifier of identifierList) {
 			let idInput = Identifiers.newAddedIdentifier(identifier);
 
 			getIdentifiersContainer.append(idInput);
 		}
-	},
-	setupForAssociated: function(identifierInputContainerJq, identifierList){
+	}
+	static setupForAssociated(identifierInputContainerJq, identifierList){
 		Identifiers.getAssociateButton(identifierInputContainerJq).data("idGeneratorList", identifierList);
-	},
-	View: {
-		showInDiv(divJq, identifierArray) {
+	}
+	static View = class {
+		static showInDiv(divJq, identifierArray) {
 			for (const identifier of identifierArray) {
 				let newIdShow = $(`
 <div class="col-sm-6 col-md-6 col-lg-4 mb-1 identifierContainer">
@@ -230,5 +231,8 @@ export const Identifiers = {
 				divJq.append(newIdShow);
 			}
 		}
+	}
+	static {
+		window.Identifiers = Identifiers;
 	}
 }

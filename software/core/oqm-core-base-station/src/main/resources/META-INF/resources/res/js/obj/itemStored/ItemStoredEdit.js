@@ -3,22 +3,25 @@ import {ModalUtils} from "../../ModalUtils.js";
 import {Rest} from "../../Rest.js";
 import {PageMessageUtils} from "../../PageMessageUtils.js";
 import {StoredFormInput} from "./StoredFormInput.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const ItemStoredEdit = {
-	modal: $("#itemStoredEditModal"),
-	form: $("#itemStoredEditForm"),
-	formMessages: $("#itemStoredEditMessages"),
-	infoStoredLabel: $("#itemStoredEditItemInfoStoredLabel"),
-	infoItemName: $("#itemStoredEditItemInfoItemName"),
-	infoBlockLabel: $("#itemStoredEditItemInfoBlockLabel"),
-	resetForm(){
+export class ItemStoredEdit extends PageUtility {
+	static modal = $("#itemStoredEditModal");
+	static form = $("#itemStoredEditForm");
+	static formMessages = $("#itemStoredEditMessages");
+	static infoStoredLabel = $("#itemStoredEditItemInfoStoredLabel");
+	static infoItemName = $("#itemStoredEditItemInfoItemName");
+	static infoBlockLabel = $("#itemStoredEditItemInfoBlockLabel");
+
+	static resetForm() {
+		ItemStoredEdit.formMessages.text("");
 		ItemStoredEdit.form.attr("action", "");
 		ItemStoredEdit.form.html("");
 		ItemStoredEdit.infoStoredLabel.text("");
 		ItemStoredEdit.infoItemName.text("");
 		ItemStoredEdit.infoBlockLabel.text("");
-	},
-	setupEditForm: async function(buttonPressed, item, stored){
+	}
+	static async setupEditForm(buttonPressed, item, stored){
 		Main.processStart();
 		if (typeof item === "string" || (item instanceof String)) {
 			return Getters.InventoryItem.get(item, function (itemData){
@@ -53,8 +56,10 @@ export const ItemStoredEdit = {
 		await Promise.all(promises);
 
 		Main.processStop();
-	},
-	initPage: function () {
+	}
+	static {
+		window.ItemStoredEdit = this;
+
 		ItemStoredEdit.form.on("submit", async function (e) {
 			e.preventDefault();
 			console.log("Stored item edit form submitted.");

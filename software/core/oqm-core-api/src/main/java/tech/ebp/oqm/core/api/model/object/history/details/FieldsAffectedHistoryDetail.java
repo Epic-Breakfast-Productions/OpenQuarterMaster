@@ -12,6 +12,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -26,25 +27,27 @@ import java.util.stream.Collectors;
 @ToString(callSuper = true)
 @SuperBuilder
 @BsonDiscriminator
+@Schema(title = "FieldsAffectedHistoryDetail", description = "Details of the fields that were updated.")
 public class FieldsAffectedHistoryDetail extends HistoryDetail {
+	
 	private static List<String> getFields(ObjectNode updates) {
 		List<String> fields = new ArrayList<>();
-
+		
 		Iterator<Map.Entry<String, JsonNode>> fieldIterator = updates.fields();
-
+		
 		while (fieldIterator.hasNext()) {
 			Map.Entry<String, JsonNode> entry = fieldIterator.next();
 			String field = entry.getKey();
 			JsonNode value = entry.getValue();
-
+			
 			List<String> subFields = getFields(value);
-			if(subFields.isEmpty()) {
+			if (subFields.isEmpty()) {
 				fields.add(field);
 			} else {
 				fields.addAll(
 					subFields.stream()
-						.map((cur) -> {
-							if(cur.startsWith("[")){
+						.map((cur)->{
+							if (cur.startsWith("[")) {
 								return field + cur;
 							} else {
 								return field + "." + cur;
@@ -56,18 +59,18 @@ public class FieldsAffectedHistoryDetail extends HistoryDetail {
 		}
 		return fields;
 	}
-
+	
 	private static List<String> getFields(ArrayNode updates) {
 		List<String> fields = new ArrayList<>();
-
+		
 		for (int i = 0; i < updates.size(); i++) {
 			JsonNode curArrayElement = updates.get(i);
 			List<String> subFields = getFields(curArrayElement);
-
+			
 			int finalI = i;
 			fields.addAll(
 				subFields.stream()
-					.map((cur) -> {
+					.map((cur)->{
 						String index = "[" + finalI + "]";
 						return index + cur;
 					})
@@ -76,7 +79,7 @@ public class FieldsAffectedHistoryDetail extends HistoryDetail {
 		}
 		return fields;
 	}
-
+	
 	public static List<String> getFields(JsonNode updates) {
 		if (updates.isObject()) {
 			return getFields((ObjectNode) updates);
@@ -85,13 +88,15 @@ public class FieldsAffectedHistoryDetail extends HistoryDetail {
 		}
 		return List.of();
 	}
-
+	
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@Schema(description = "The fields that were updated.")
 	private List<String> fieldsUpdated = new ArrayList<>();
-
+	
 	@Override
+	@Schema(constValue = "FIELDS_AFFECTED", readOnly = true, required = true, examples = "FIELDS_AFFECTED")
 	public HistoryDetailType getType() {
 		return HistoryDetailType.FIELDS_AFFECTED;
 	}

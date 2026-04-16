@@ -141,7 +141,7 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 	 * @return The new id of the new database
 	 * @throws IllegalArgumentException If the new database's name already exists
 	 */
-	public ObjectId addOqmDatabase(@Valid OqmMongoDatabase newDatabase) throws IllegalArgumentException {
+	public OqmMongoDatabase addOqmDatabase(@Valid OqmMongoDatabase newDatabase) throws IllegalArgumentException {
 		//TODO:: add logic to validator
 		boolean dbNameExists = !this.getTypedCollection().find(Filters.eq("name", newDatabase.getName())).into(new ArrayList<>()).isEmpty();
 		if (dbNameExists) {
@@ -153,7 +153,7 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 
 		log.info("Created new database, id: {}", newDatabase.getId());
 		this.refreshCache();
-		return newDatabase.getId();
+		return newDatabase;
 	}
 
 	public boolean hasDatabase(OqmMongoDatabase newDb) {

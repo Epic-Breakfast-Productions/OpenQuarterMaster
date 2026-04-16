@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
@@ -12,8 +13,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
+import org.jetbrains.annotations.NotNull;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items.StoredInItemEndpoints;
 import tech.ebp.oqm.core.api.model.collectionStats.InvItemCollectionStats;
@@ -21,8 +22,7 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
@@ -160,33 +160,44 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			//if new item, and stats are null, set new stats. No stored should exist so this should be representative enough to start. Maybe generate stats?
 			if (newOrChangedObject.getStats() == null) {
 				newOrChangedObject.setStats(
-					new ItemStoredStats(newOrChangedObject.getUnit())
+					new ItemStoredStats(newOrChangedObject.getUnit(), newOrChangedObject.getDefaultPrices())
 				);
 			}
 		}
 	}
 	
 	@Override
-	public boolean needsDerivedUpdatesAfterUpdate(InventoryItem item, ObjectNode updates) {
+	public boolean needsDerivedUpdatesAfterUpdate(@NotNull InventoryItem item, ObjectNode updates) {
 		try {
-			log.debug("Was unit updated? {} vs {}", item.getUnit(), updates.get("unit"));
 			if (//unit
 				updates.has("unit") &&
 				!item.getUnit().equals(
 					this.getObjectMapper().treeToValue(updates.get("unit"), Unit.class)
 				)
 			) {
+				log.debug("Unit changed for item {}. Recalculating stats.", item.getId());
 				return true;
 			}
 			
+			if(//storage blocks
+				updates.has("storageBlocks") &&
+				!item.getStorageBlocks().equals(
+					this.getObjectMapper().treeToValue(updates.get("storageBlocks"), new TypeReference<List<ObjectId>>(){})
+				)
+			){
+				log.debug("Storage Blocks changed for item {}. Recalculating stats.", item.getId());
+				return true;
+			}
 			
 			if (updates.has("expiryWarningThreshold")) {
 				if (item.getExpiryWarningThreshold() == null) {
 					if (!updates.get("expiryWarningThreshold").isNull()) {
+						log.debug("Expiry warning threshold changed for item {}. Recalculating stats.", item.getId());
 						return true;
 					}
 				} else {
 					if (updates.get("expiryWarningThreshold").isNull()) {
+						log.debug("Expiry warning threshold changed for item {}. Recalculating stats.", item.getId());
 						return true;
 					}
 					
@@ -195,6 +206,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 							Duration.of(updates.get("expiryWarningThreshold").asLong(), ChronoUnit.SECONDS)
 						)
 					) {
+						log.debug("Expiry warning threshold changed for item {}. Recalculating stats.", item.getId());
 						return true;
 					}
 				}
@@ -203,10 +215,12 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			if (updates.has("lowStockThreshold")) {
 				if (item.getLowStockThreshold() == null) {
 					if (!updates.get("lowStockThreshold").isNull()) {
+						log.debug("Low Stock threshold changed for item {}. Recalculating stats.", item.getId());
 						return true;
 					}
 				} else {
 					if (updates.get("lowStockThreshold").isNull()) {
+						log.debug("Low Stock threshold changed for item {}. Recalculating stats.", item.getId());
 						return true;
 					}
 					
@@ -215,13 +229,20 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 							this.getObjectMapper().treeToValue(updates.get("lowStockThreshold"), Quantity.class)
 						)
 					) {
+						log.debug("Low Stock threshold changed for item {}. Recalculating stats.", item.getId());
 						return true;
 					}
 				}
 			}
 			
-			if(updates.has("defaultPrices")){
-				//TODO:: this #929
+			if(
+				updates.has("defaultPrices") &&
+				!item.getDefaultPrices().equals(
+					this.getObjectMapper().treeToValue(updates.get("defaultPrices"), new TypeReference<List<StoredPricing>>(){})
+				)
+			){
+				log.debug("Default pricing changed for item {}. Recalculating stats.", item.getId());
+				return true;
 			}
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException("Failed to process update node. This likely shouldn't happen here.", e);
@@ -261,10 +282,6 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			null,
 			null
 		);
-	}
-	
-	public List<InventoryItem> getItemsInBlock(String oqmDbIdOrName, String storageBlockId) {
-		return this.getItemsInBlock(oqmDbIdOrName, new ObjectId(storageBlockId));
 	}
 	
 	public long getNumStoredExpired(String oqmDbIdOrName) {

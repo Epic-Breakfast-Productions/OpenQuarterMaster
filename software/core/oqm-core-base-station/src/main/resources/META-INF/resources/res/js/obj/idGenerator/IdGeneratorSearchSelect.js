@@ -5,16 +5,19 @@ import {ModalUtils} from "../../ModalUtils.js";
 import {IdGeneratorAddEdit} from "./IdGeneratorAddEdit.js";
 import {DselectUtils} from "../../DselectUtils.js";
 import {Rest} from "../../Rest.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const IdGeneratorSearchSelect = {
-	AssociatedInput: {
-		getInputContainer(innerElementJq) {
+export class IdGeneratorSearchSelect extends PageUtility {
+	static AssociatedInput = class {
+		static getInputContainer(innerElementJq) {
 			return innerElementJq.closest(".idGeneratorAssociatedInput");
-		},
-		getAssociatedGeneratorList(idGenInputJq) {
+		}
+
+		static getAssociatedGeneratorList(idGenInputJq) {
 			return idGenInputJq.find(".associatedIdentifierGeneratorTableContent");
-		},
-		associateButtonClicked: function (buttonJs) {
+		}
+
+		static associateButtonClicked(buttonJs) {
 			console.debug("Clicked associate button.");
 			let buttonJq = $(buttonJs);
 			let idGenInputContainer = IdGeneratorSearchSelect.AssociatedInput.getInputContainer(buttonJq);
@@ -23,8 +26,9 @@ export const IdGeneratorSearchSelect = {
 				idGenInputContainer,
 				idGenInputContainer.data("for-object")
 			);
-		},
-		associateIdGenerator: function (idGenInputJq, idGenData) {
+		}
+
+		static associateIdGenerator(idGenInputJq, idGenData) {
 			let associatedGeneratorList = IdGeneratorSearchSelect.AssociatedInput.getAssociatedGeneratorList(idGenInputJq);
 
 			if(associatedGeneratorList.find(`[data-id='${idGenData.id}']`).length > 0) {
@@ -47,11 +51,13 @@ export const IdGeneratorSearchSelect = {
 			);
 
 			associatedGeneratorList.append(newRow);
-		},
-		resetAssociatedIdGenListData: function (idGenInputJq) {
+		}
+
+		static resetAssociatedIdGenListData(idGenInputJq) {
 			IdGeneratorSearchSelect.AssociatedInput.getAssociatedGeneratorList(idGenInputJq).text("");
-		},
-		getAssociatedIdGenListData: function (idGenInputJq) {
+		}
+
+		static getAssociatedIdGenListData(idGenInputJq) {
 			let output = [];
 
 			IdGeneratorSearchSelect.AssociatedInput.getAssociatedGeneratorList(idGenInputJq).find("tr").each(function (i, curIdGenRow) {
@@ -59,17 +65,19 @@ export const IdGeneratorSearchSelect = {
 			})
 
 			return output;
-		},
-		populateAssociatedIdGenListData: function (idGenInputJq, list) {
+		}
+
+		static populateAssociatedIdGenListData(idGenInputJq, list) {
 			list.forEach(function (item) {
 				Getters.Identifiers.generator(item).then(function (idGenData){
 					IdGeneratorSearchSelect.AssociatedInput.associateIdGenerator(idGenInputJq, idGenData);
 				});
 			});
 		}
-	},
-	GenerateInput: {
-		generateButtonClicked: function (buttonJs) {
+	}
+
+	static GenerateInput = class {
+		static generateButtonClicked(buttonJs) {
 			console.debug("Clicked generate button: ", buttonJs);
 			let buttonJq = $(buttonJs);
 
@@ -80,8 +88,9 @@ export const IdGeneratorSearchSelect = {
 				buttonJq.data("for-object"),
 				list
 			);
-		},
-		generateFor(generateButtonJq, idGeneratorData){
+		}
+
+		static generateFor(generateButtonJq, idGeneratorData){
 			console.log("Adding to generate");
 			let generates = generateButtonJq.data("generates");
 			// let newId = IdGeneratorSearchSelect.GenerateInput.newToGenerateId(idGeneratorData, generates);//TODO:: needed?
@@ -129,18 +138,18 @@ export const IdGeneratorSearchSelect = {
 			addedToGenerate.find(".removeButton").on("click", function(e){Identifiers.removeIdentifier($(this))});
 
 			Identifiers.getIdentifiersContainer(Identifiers.getInputContainer(generateButtonJq)).append(addedToGenerate);
-		},
-	},
+		}
+	}
 
-	searchSelectModal: $("#idGeneratorSearchSelectModal"),
-	searchSelectContainer: $("#idGeneratorSelectSearchAddContainer"),
-	associatedContainer: $("#idGeneratorSelectSearchFromAssociatedContainer"),
-	searchSelectForm: $("#idGeneratorSearchSelectForm"),
-	searchSelectSearchResults: $("#idGeneratorSearchSelectResults"),
-	newGeneratorForm: $("#idGeneratorSearchSelectNewGeneratorForm"),
-	associatedList: $("#idGeneratorSelectSearchFromAssociatedList"),
+	static searchSelectModal = $("#idGeneratorSearchSelectModal");
+	static searchSelectContainer = $("#idGeneratorSelectSearchAddContainer");
+	static associatedContainer = $("#idGeneratorSelectSearchFromAssociatedContainer");
+	static searchSelectForm = $("#idGeneratorSearchSelectForm");
+	static searchSelectSearchResults = $("#idGeneratorSearchSelectResults");
+	static newGeneratorForm = $("#idGeneratorSearchSelectNewGeneratorForm");
+	static associatedList = $("#idGeneratorSelectSearchFromAssociatedList");
 
-	setupSearchSelect: function (idGenSelectAddInputJq, forObject, genList = null) {
+	static setupSearchSelect(idGenSelectAddInputJq, forObject, genList = null) {
 		console.log("Setting up id generator search select for: ", forObject);
 
 		ModalUtils.setReturnModal(IdGeneratorSearchSelect.searchSelectModal, idGenSelectAddInputJq);
@@ -202,13 +211,13 @@ export const IdGeneratorSearchSelect = {
 		}
 
 		IdGeneratorSearchSelect.searchSelectForm.trigger("submit");
-	},
+	}
 
-	closeModal() {
+	static closeModal() {
 		IdGeneratorSearchSelect.searchSelectModal.find(".btn-close").click();
-	},
+	}
 
-	selectIdGenerator: async function (idGenData) {
+	static async selectIdGenerator(idGenData) {
 		console.log("Selected id generator: ", idGenData);
 		if(typeof idGenData === 'string' || idGenData instanceof String){
 			return Getters.Identifiers.generator(idGenData)
@@ -224,8 +233,10 @@ export const IdGeneratorSearchSelect = {
 		} else {
 			console.warn("Destination of selected generator could not be determined.");
 		}
-	},
-	initPage: function () {
+	}
+	static {
+		window.IdGeneratorSearchSelect = this;
+
 		console.log("Initializing id generator search select.");
 		IdGeneratorSearchSelect.searchSelectForm.on("submit", function (event) {
 			event.preventDefault();

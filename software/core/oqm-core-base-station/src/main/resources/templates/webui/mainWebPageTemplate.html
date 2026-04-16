@@ -404,17 +404,15 @@ Ingests:
 	import { Icons } from '{rootPrefix}/res/js/Icons.js';
 	import { DselectUtils } from '{rootPrefix}/res/js/DselectUtils.js';
 	import { TimeUtils } from '{rootPrefix}/res/js/TimeUtils.js';
+	import { TextCopyUtils } from "{rootPrefix}/res/js/TextCopyUtils.js";
 	
 	// init necessary modules
-	PageMessageUtils.initPage();
-	DselectUtils.initPage();
-	TimeUtils.initPage();
-	
-	//allow direct usage of imported utilities in html
-	window.OqmDbUtils = OqmDbUtils;
-	window.Icons = Icons;
-	window.DselectUtils = DselectUtils;
-	window.PageMessageUtils = PageMessageUtils;
+	PageMessageUtils.init();
+	Icons.init();
+	DselectUtils.init();
+	OqmDbUtils.init();
+	TimeUtils.init();
+	TextCopyUtils.init();
 	
 	console.log("Main modules loaded.");
 </script>

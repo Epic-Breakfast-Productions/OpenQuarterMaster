@@ -1,10 +1,11 @@
 import Cookies from "../../lib/js-cookie/3.0.5/js.cookie.esm.min.js";
 import {PageMessageUtils} from "./PageMessageUtils.js";
+import {PageUtility} from "./utilClasses/PageUtility.js";
 
-export const OqmDbUtils = {
-	navDbSelectForm: $("#navDbSelectForm"),
-	navDatabaseSelector: $("#navDatabaseSelector"),
-	newDbSelected: function () {
+export class OqmDbUtils extends PageUtility {
+	static navDbSelectForm = $("#navDbSelectForm");
+	static navDatabaseSelector = $("#navDatabaseSelector");
+	static newDbSelected() {
 		let newDbId = this.navDatabaseSelector.val();
 		console.log("Input to select database changed. New selection: ", newDbId);
 

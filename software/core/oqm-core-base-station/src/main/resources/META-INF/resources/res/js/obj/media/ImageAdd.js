@@ -1,9 +1,10 @@
 import {Rest} from "../../Rest.js";
 import "../../../../lib/Croppie/2.6.4/croppie.min.js";
+import {PageUtility} from "../../utilClasses/PageUtility.js";
 
-export const ImageAdd = {
-	defaultCroppieImage: Rest.webroot + "/media/logoSymbolSquare.svg",
-	uploadCrop: $('#imageUploadCroppieDiv').croppie({
+export class ImageAdd extends PageUtility {
+	static defaultCroppieImage = Rest.webroot + "/media/logoSymbolSquare.svg";
+	static uploadCrop = $('#imageUploadCroppieDiv').croppie({
 		enableExif: true,
 		viewport: {
 			width: 250,
@@ -14,11 +15,11 @@ export const ImageAdd = {
 			width: 300,
 			height: 300
 		}
-	}),
-	getCroppieSlider(){
+	});
+	static getCroppieSlider(){
 		return ImageAdd.uploadCrop.find(":input.cr-slider");
-	},
-	bindCroppie(bindVal) {
+	}
+	static bindCroppie(bindVal) {
 		console.log("Binding croppie to image: ", bindVal);
 		return ImageAdd.uploadCrop.croppie('bind', {
 			url: bindVal
@@ -30,12 +31,13 @@ export const ImageAdd = {
 				ImageAdd.getCroppieSlider().attr('min')
 			);
 		});
-	},
-	resetCroppie() {
+	}
+	static resetCroppie() {
 		console.log("Resetting croppie.");
 		ImageAdd.bindCroppie(ImageAdd.defaultCroppieImage);
-	},
-	initPage: function () {
+	}
+	static {
+		window.ImageAdd = this;
 		console.log("Created croppie instance: ", ImageAdd.uploadCrop);
 
 		$('#imageUploadInput').on('change', function () {

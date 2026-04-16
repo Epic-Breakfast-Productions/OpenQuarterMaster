@@ -17,7 +17,6 @@ import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
 import org.jboss.logging.Logger;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
-import org.testcontainers.redpanda.RedpandaContainer;
 import org.testcontainers.utility.DockerImageName;
 import tech.ebp.oqm.lib.core.api.quarkus.deployment.config.CoreApiLibBuildTimeConfig;
 import tech.ebp.oqm.lib.core.api.quarkus.deployment.testContainers.OqmCoreApiWebServiceContainer;
@@ -38,8 +37,10 @@ class CoreApiLibQuarkusProcessor {
 	private static final Logger log = Logger.getLogger(CoreApiLibQuarkusProcessor.class);
 	
 	private static final String FEATURE = "core-api-lib-quarkus";
-	private static final String MONGODB_DEVSERVICE_HOSTNAME = "oqm-dev-mongodb-server";
-	private static final String KAFKA_DEVSERVICE_HOSTNAME = "oqm-dev-kafka-server";
+	private static final String MONGODB_DEVSERVICE_HOSTNAME = "localhost";
+	private static final String HOST = "localhost";
+	private static final String KEYCLOAK_DEVSERVICE_HOSTNAME = HOST;
+	private static final String KAFKA_DEVSERVICE_HOSTNAME = HOST;
 	
 	private static volatile boolean firstSetup = true;
 	
@@ -65,45 +66,38 @@ class CoreApiLibQuarkusProcessor {
 	}
 	
 	private MongoDBContainer newMongoDbContainer() {
+		log.info("Starting new MongoDB dev container");
 		DockerImageName mongoImageName = DockerImageName.parse("mongo:7");
 		
 		MongoDBContainer mongoDBContainer = new MongoDBContainer(mongoImageName);
 		mongoDBContainer.addExposedPorts();
 		mongoDBContainer.withNetwork(Network.SHARED);
-		mongoDBContainer.withNetworkAliases(MONGODB_DEVSERVICE_HOSTNAME);
+//		mongoDBContainer.withNetworkAliases(MONGODB_DEVSERVICE_HOSTNAME);
 		mongoDBContainer.start();
 		
 		return mongoDBContainer;
 	}
 	
-	private RedpandaContainer newKafkaContainer() {
-		RedpandaContainer
-			kafka =
-			new RedpandaContainer(DockerImageName.parse("docker.redpanda.com/redpandadata/redpanda:v23.1.2")).withNetwork(Network.SHARED)
-				.withAccessToHost(true)
-				.withNetworkAliases(KAFKA_DEVSERVICE_HOSTNAME)
-				.withListener(()->KAFKA_DEVSERVICE_HOSTNAME + ":19092");
-		kafka.start();
-		
-		return kafka;
-	}
-	
-	private OqmCoreApiWebServiceContainer newCoreApiContainer(CoreApiLibBuildTimeConfig config, Map<String, String> mongoConnectionInfo, Map<String, String> kafkaConnectionInfo) {
-		DockerImageName dockerImageName = DockerImageName.parse("docker.io/ebprod/oqm-core-api:" + config.devservice().coreApiVersion());
-		
+	private OqmCoreApiWebServiceContainer newCoreApiContainer(
+		CoreApiLibBuildTimeConfig config,
+		Map<String, String> mongoConnectionInfo,
+		Map<String, String> kafkaConnectionInfo
+	) {
+		log.info("Starting new OQM Core API dev container");
 		OqmCoreApiWebServiceContainer
 			container =
-			new OqmCoreApiWebServiceContainer(dockerImageName, config.devservice()).withAccessToHost(true)
-				.withEnv(mongoConnectionInfo)
-				.withEnv(kafkaConnectionInfo)
-				.withNetwork(Network.SHARED);
+			new OqmCoreApiWebServiceContainer(config.devservices(), mongoConnectionInfo, kafkaConnectionInfo)
+			//				.withAccessToHost(true)
+			//				.withNetwork(Network.SHARED)
+			;
 		
 		container.withEnv(
 			"smallrye.jwt.verify.key.location",
 			String.format(
-				"http://host.testcontainers.internal:%s/realms/%s/protocol/openid-connect/certs",
-				config.devservice().keycloak().port(),
-				config.devservice().keycloak().realm()
+				"http://%s:%s/realms/%s/protocol/openid-connect/certs",
+				KEYCLOAK_DEVSERVICE_HOSTNAME,
+				config.devservices().keycloak().port(),
+				config.devservices().keycloak().realm()
 			)
 		);
 		
@@ -115,57 +109,59 @@ class CoreApiLibQuarkusProcessor {
 	
 	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
 	public List<DevServicesResultBuildItem> createContainer(LaunchModeBuildItem launchMode, CoreApiLibBuildTimeConfig config, CuratedApplicationShutdownBuildItem closeBuildItem) {
+		log.info("Setting up OQM Core API related dev services.");
 		//TODO:: handle needing to restart services?
 		List<DevServicesResultBuildItem> output = new ArrayList<>();
 		Map<String, String> mongoConnectionInfo = new HashMap<>();
 		Map<String, String> kafkaConnectionInfo = new HashMap<>();
 		{//mongodb
-			mongoConnectionInfo.put("quarkus.mongodb.connection-string", "mongodb://" + MONGODB_DEVSERVICE_HOSTNAME + ":27017");
 			
 			DevServicesResultBuildItem.RunningDevService mongoDevService = DEVSERVICES.get("mongodb");
 			
 			if (mongoDevService == null) {
 				MongoDBContainer mongoDBContainer = newMongoDbContainer();
-				mongoDevService = new DevServicesResultBuildItem.RunningDevService(FEATURE, mongoDBContainer.getContainerId(), mongoDBContainer::close, Map.of());
+				mongoDevService = new DevServicesResultBuildItem.RunningDevService(
+					FEATURE,
+					mongoDBContainer.getContainerId(),
+					mongoDBContainer::close,
+					Map.of(
+						"port",
+						String.valueOf(mongoDBContainer.getMappedPort(27017))
+					)
+				);
+				
 				
 				DEVSERVICES.put("mongodb", mongoDevService);
 			}
 			
+			mongoConnectionInfo.put(
+				"quarkus.mongodb.connection-string",
+				"mongodb://" + MONGODB_DEVSERVICE_HOSTNAME + ":" + mongoDevService.getConfig().get("port")
+			);
+			
 			output.add(mongoDevService.toBuildItem());
 		}
-		{
-			DevServicesResultBuildItem.RunningDevService kafkaDevService = DEVSERVICES.get("kafka");
-			
-			if (kafkaDevService == null) {
-				RedpandaContainer kafka = this.newKafkaContainer();
-				
-				kafkaDevService = new DevServicesResultBuildItem.RunningDevService(FEATURE, kafka.getBootstrapServers(), kafka.getContainerId(), kafka::close, Map.of());
-				DEVSERVICES.put("kafka", kafkaDevService);
-			}
-			
+		if (config.devservices().kafka().enabled()) {//connect to existent
+			log.info("Connecting to existing kafka dev service.");
 			kafkaConnectionInfo.putAll(Map.of(
-				"quarkus.reactive-messaging.health.enabled",
-				"true",
-				"mp.messaging.outgoing.events-outgoing.bootstrap.servers",
-				String.format("PLAINTEXT://%s:%d", KAFKA_DEVSERVICE_HOSTNAME, 19092),
-				"devservice.kafka.bootstrapServers",
-				kafkaDevService.getDescription()
+				"mp.messaging.outgoing.events-outgoing.enabled", "true",
+				"mp.messaging.outgoing.events-outgoing.bootstrap.servers", String.format("OUTSIDE://%s:%d", KAFKA_DEVSERVICE_HOSTNAME, config.devservices().kafka().port())
 			));
-			
-			output.add(kafkaDevService.toBuildItem());
+		} else {
+			log.info("NOT Connecting to existing kafka dev service.");
+			kafkaConnectionInfo.putAll(Map.of(
+				"mp.messaging.outgoing.events-outgoing.enabled", "false"
+			));
 		}
 		{//Core API
 			DevServicesResultBuildItem.RunningDevService coreApiDevService = DEVSERVICES.get("coreApi");
 			
 			if (coreApiDevService == null) {
 				OqmCoreApiWebServiceContainer container = this.newCoreApiContainer(config, mongoConnectionInfo, kafkaConnectionInfo);
+				
 				Map<String, String> props = new HashMap<>();
 				props.put(Constants.CONFIG_ROOT_NAME + ".baseUri", "http://" + container.getHost() + ":" + container.getPort());
 				props.put("quarkus.rest-client.\"" + Constants.CORE_API_CLIENT_NAME + "\".url", "${" + Constants.CONFIG_ROOT_NAME + ".baseUri}");
-				
-				if (!kafkaConnectionInfo.isEmpty()) {
-					props.put("devservice.kafka.bootstrapServers", kafkaConnectionInfo.get("devservice.kafka.bootstrapServers"));
-				}
 				
 				coreApiDevService = new DevServicesResultBuildItem.RunningDevService(FEATURE, container.getContainerId(), container::close, props);
 				DEVSERVICES.put("coreApi", coreApiDevService);
@@ -206,7 +202,7 @@ class CoreApiLibQuarkusProcessor {
 		//show oqm core api ui
 		cardPageBuildItem.addPage(
 			Page.externalPageBuilder("OQM Core API UI")
-				.url("http://localhost:" + config.devservice().port())
+				.url("http://localhost:" + config.devservices().port())
 				.doNotEmbed()//needed as embedded fails due to CORS
 		);
 		

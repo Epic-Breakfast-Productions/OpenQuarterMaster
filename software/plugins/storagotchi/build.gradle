@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'tech.ebp.oqm.plugin'
-version = '1.0.0'
+version = '1.0.1'
 
 repositories {
 	mavenCentral()
@@ -30,7 +30,7 @@ dependencies {
 
 	implementation 'org.webjars:jquery:4.0.0'
 
-	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.4.1'
+	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.4.5'
 
 	testImplementation 'io.quarkus:quarkus-junit5'
 	testImplementation 'io.rest-assured:rest-assured'

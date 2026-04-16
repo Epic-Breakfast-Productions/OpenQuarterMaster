@@ -1,36 +1,43 @@
-export const PageComponents = {
-	Inputs: {
-		attribute: '{attInputLines}\
-',
-		keywords: '{keywordInputLines}\
-',
-		image: '{imageInputLines}\
-',
-		file: '{fileInputLines}\
-',
-		copyButton: '{copyButtonLines}\
-',
-		Pricing: {
-			priceInput: '{storedPricingInputLines}\
-',
-			storedPricing: '{storedPricingInputPriceLines}\
-'
-		},
-		Identifiers: {
-			identifierInput: '{identifierInputLines}\
-',
-			identifierAdded: '{identifierAddedLines}\
-'
-		},
-		AssociatedLinks: {
-			linkInput: '{assocLinkLinkInputLines}\
-'
+export class PageComponents {
+	static Inputs = class {
+		static attribute = '{attInputLines}\
+';
+		static keywords= '{keywordInputLines}\
+';
+		static image= '{imageInputLines}\
+';
+		static file= '{fileInputLines}\
+';
+		static copyButton= '{copyButtonLines}\
+';
+
+
+		static Pricing = class {
+			static priceInput = '{storedPricingInputLines}\
+';
+			static storedPricing = '{storedPricingInputPriceLines}\
+';
+		};
+
+
+		static Identifiers = class {
+			static identifierInput = '{identifierInputLines}\
+';
+			static identifierAdded = '{identifierAddedLines}\
+';
+		};
+
+
+		static AssociatedLinks = class {
+			static linkInput = '{assocLinkLinkInputLines}\
+';
 		}
-	},
-	View: {
-		itemCatBadge: '{itemCatBadgeLines}\
-',
-		attachedFileList: '{attachedFileListLines}\
-',
+	}
+
+	static View = class {
+		static itemCatBadge = '{itemCatBadgeLines}\
+';
+		static attachedFileList = '{attachedFileListLines}\
+';
 	}
 }

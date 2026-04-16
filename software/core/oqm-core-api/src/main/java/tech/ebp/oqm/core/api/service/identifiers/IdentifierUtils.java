@@ -16,13 +16,28 @@ import tech.ebp.oqm.core.api.service.identifiers.upc.GTINCodeUtilities;
 import tech.ebp.oqm.core.api.service.identifiers.upc.ISBNCodeUtilities;
 import tech.ebp.oqm.core.api.service.identifiers.upc.UpcCodeUtilities;
 
-
 /**
- *
- * https://www.computalabel.com/m/UPCexamplesM.htm
+ * Utility class for working with product and item identifiers.
+ * <p>
+ * Provides methods for detecting identifier types, validating codes, and creating
+ * identifier objects from raw code strings. Supports standard identifier formats
+ * including UPC-A, UPC-E, EAN-8, EAN-13, ISBN-10, ISBN-13, GTIN-14, and generic identifiers.
+ * </p>
  */
 public class IdentifierUtils {
 	
+	/**
+	 * Determines the type of identifier from the given code and returns the appropriate
+	 * Identifier implementation.
+	 * <p>
+	 * Checks the code against all supported identifier formats in order: UPC-A, UPC-E,
+	 * ISBN-13, ISBN-10, EAN-13, EAN-8, GTIN-14, and finally GenericIdentifier.
+	 * </p>
+	 *
+	 * @param code the identifier code string
+	 * @return the appropriate Identifier subtype
+	 * @throws IllegalArgumentException if the code doesn't match any supported identifier format
+	 */
 	public static Identifier determineGeneralIdType(String code) {
 		if(UpcCodeUtilities.isValidUPCACode(code)){
 			return UPC_A.builder().value(code).build();
@@ -52,6 +67,14 @@ public class IdentifierUtils {
 		throw new IllegalArgumentException("Code given does not fit into any category of id.");
 	}
 	
+	/**
+	 * Validates that the given code is valid for the specified identifier type.
+	 *
+	 * @param type the identifier type to validate against
+	 * @param code the code string to validate
+	 * @return true if the code is valid for the given type, false otherwise
+	 * @throws IllegalArgumentException if the identifier type is unknown
+	 */
 	public static boolean isValidCode(IdentifierType type, String code) {
 		switch (type){
 			case UPC_A -> {
@@ -82,6 +105,15 @@ public class IdentifierUtils {
 		throw new IllegalArgumentException("Unknown id type: " + type);
 	}
 	
+	/**
+	 * Creates an Identifier object of the specified type from the given code string.
+	 * Validates the code before creating the identifier and throws an exception if invalid.
+	 *
+	 * @param type the identifier type to create
+	 * @param code the code string to use
+	 * @return the created Identifier object
+	 * @throws IllegalArgumentException if the identifier type is unknown or the code is invalid
+	 */
 	public static Identifier objFromParts(IdentifierType type, String code) {
 		switch (type){
 			case UPC_A -> {
@@ -136,6 +168,12 @@ public class IdentifierUtils {
 		throw new IllegalArgumentException("Unknown id type: " + type);
 	}
 	
+	/**
+	 * Validates that a generic identifier is not blank.
+	 *
+	 * @param id the identifier to validate
+	 * @return true if the identifier is not blank, false otherwise
+	 */
 	public static boolean isValidGenericId(@NonNull String id) {
 		return !id.isBlank();
 	}

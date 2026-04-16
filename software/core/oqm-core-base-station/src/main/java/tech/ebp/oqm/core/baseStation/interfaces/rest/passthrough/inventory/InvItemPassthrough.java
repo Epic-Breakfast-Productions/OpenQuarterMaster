@@ -133,7 +133,8 @@ public class InvItemPassthrough extends PassthroughProvider {
 		@HeaderParam("Accept") String acceptType,
 		@HeaderParam("searchFormId") String searchFormId,
 		@HeaderParam("otherModalId") String otherModalId,
-		@HeaderParam("inputIdPrepend") String inputIdPrepend
+		@HeaderParam("inputIdPrepend") String inputIdPrepend,
+		@HeaderParam("actionType") String actionType
 	) {
 		return this.handleCall(
 			this.processSearchResults(
@@ -143,7 +144,7 @@ public class InvItemPassthrough extends PassthroughProvider {
 				searchFormId,
 				otherModalId,
 				inputIdPrepend,
-				"select"
+				actionType
 			)
 		);
 	}
@@ -233,11 +234,6 @@ public class InvItemPassthrough extends PassthroughProvider {
 		content = @Content(
 			mediaType = "application/json"
 		)
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "Bad request given, could not find object at given id.",
-		content = @Content(mediaType = "text/plain")
 	)
 	@APIResponse(
 		responseCode = "410",

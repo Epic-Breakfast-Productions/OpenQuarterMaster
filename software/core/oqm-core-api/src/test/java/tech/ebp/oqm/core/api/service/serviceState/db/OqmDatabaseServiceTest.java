@@ -38,7 +38,7 @@ class OqmDatabaseServiceTest extends WebServerTest {
 			.name("newDb")
 			.description(FAKER.lorem().sentence())
 			.build();
-		ObjectId newDatabaseId = this.databaseService.addOqmDatabase(newDatabaseNew);
+		ObjectId newDatabaseId = this.databaseService.addOqmDatabase(newDatabaseNew).getId();
 
 		assertNotNull(newDatabaseId);
 

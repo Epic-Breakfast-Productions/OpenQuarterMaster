@@ -72,11 +72,8 @@
 		import { UriUtils } from '{rootPrefix}/res/js/UriUtils.js';
 		import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
 		
-		SearchUtils.initPage();
-		
-		window.Rest = Rest;
-		window.EntityRef = EntityRef;
-		window.UriUtils = UriUtils;
+		SearchUtils.init();
+		EntityRef.init();
 		
 		console.log("Page modules loaded.");
     </script>
