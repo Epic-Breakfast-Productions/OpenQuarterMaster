@@ -46,6 +46,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         -v $(oqm-config g system.dataDir)${DATA_DIR}/prometheus:/data/prometheus \
                                         -v $(oqm-config g system.dataDir)${DATA_DIR}/loki:/data/loki \
                                         -e GF_PATHS_DATA=/data/grafana \
+                                        -e GF_SERVER_ROOT_URL=$(oqm-config g metrics.otel-lgtm.externalBaseUri) \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up, healthy TODO:: https://github.com/grafana/docker-otel-lgtm/issues/1104
 #ExecStartPost=/bin/bash -c "running=\"false\"; \
