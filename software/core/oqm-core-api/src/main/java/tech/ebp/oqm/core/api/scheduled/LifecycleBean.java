@@ -75,13 +75,6 @@ public class LifecycleBean {
 	private void startLogAnnounce(){
 		this.startDateTime = ZonedDateTime.now();
 		log.info("Open QuarterMaster Core API Server starting.");
-		//		log.info("Base URL: {}", this.serverUrlService.getBaseServerUrl());
-		//		log.debug("Version: {}", this.serverVersion);
-		//		log.debug("build time: {}", this.buildTime);
-		//		log.debug("Core lib version: {}", this.coreVersion);
-		//		log.debug("ManagerIO lib version: {}", this.managerIOVersion);
-		//		log.debug("Stats lib version: {}", this.statsVersion);
-		//		log.debug("Web lib version: {}", this.webLibVersion);
 		
 		if(log.isInfoEnabled()) {
 			// Image: https://www.text-image.com/convert/ascii.html
@@ -120,6 +113,7 @@ public class LifecycleBean {
 
 Version:     {}
 API Version: {}
+
 """,
 				this.serviceVersion,
 				this.apiVersion
