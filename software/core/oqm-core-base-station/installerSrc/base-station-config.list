@@ -46,10 +46,9 @@ runningInfo.hostname={system.hostname}
 runningInfo.depotUri={infra.homepage.externalBaseUri}
 
 
-{% if metrics is defined and metrics.jaeger is defined %}
-# Jaeger Config:
-#quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
-#quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
+{% if metrics is defined %}
+# Metrics Config:
+quarkus.otel.exporter.otlp.endpoint={metrics.otel-lgtm.otlp-collector.internalGrpcUrl}
 {% endif %}
 
 #
