@@ -33,7 +33,7 @@ externalService:
   
 quarkus:
   application:
-    name: ${service.nameShort} - V${service.apiVersion}
+    name: ${service.nameShort} - ${service.version} / ${service.apiVersion}
   container-image:
     name: oqm-core-api
     group: ebprod
@@ -46,12 +46,21 @@ quarkus:
         level: INFO
   mongodb:
     database: openQuarterMaster
+    tracing:
+      enabled: true
   #  package:
   #    type: uber-jar
   scheduler:
   smallrye-health:
     openapi:
       included: true
+  otel:
+    metrics:
+      enabled: true
+    traces:
+      enabled: true
+    logs:
+      enabled: true
   
   # https://quarkus.io/guides/openapi-swaggerui
   smallrye-openapi:
