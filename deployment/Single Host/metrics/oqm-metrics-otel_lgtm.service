@@ -1,8 +1,8 @@
-# Service file for running an instance of Apache Kafka.
+# Service file for running an instance of Otel-LGTM.
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
 #
-#  Kafka tags: https://hub.docker.com/r/apache/kafka/tags
+#  Otel-lgtm tags: https://hub.docker.com/r/grafana/otel-lgtm/tags
 #
 # TODO:: figure out better username/password situation
 
@@ -17,7 +17,7 @@ Requires=docker.socket
 Type=simple
 Restart=always
 TimeoutStartSec=600
-Environment="CONTAINER_NAME=oqm-metrics-otel_lgtm"
+Environment="CONTAINER_NAME=oqm-metrics-otel-lgtm"
 Environment="IMAGE_NAME=docker.io/grafana/otel-lgtm"
 Environment="IMAGE_VERSION=0.24.1"
 Environment="DATA_DIR=/metrics/lgtm"
@@ -46,7 +46,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         -v $(oqm-config g system.dataDir)${DATA_DIR}/prometheus:/data/prometheus \
                                         -v $(oqm-config g system.dataDir)${DATA_DIR}/loki:/data/loki \
                                         -e GF_PATHS_DATA=/data/grafana \
-                                        -e GF_SERVER_ROOT_URL=$(oqm-config g metrics.otel-lgtm.externalBaseUri) \
+                                        -e GF_SERVER_ROOT_URL=$(oqm-config g metrics.otel-lgtm.grafana.externalBaseUri) \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \

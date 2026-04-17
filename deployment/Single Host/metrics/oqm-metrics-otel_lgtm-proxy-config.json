@@ -2,7 +2,7 @@
 	"type": "metrics",
 	"name": "otel-lgtm",
 	"title": "Otel LGTM",
-	"internalBaseUriConfig": "metrics.otel-lgtm.internalBaseUri",
+	"internalBaseUriConfig": "metrics.otel-lgtm.grafana.internalBaseUri",
 	"preservePath": true,
 	"stripPrefixes": true
 }

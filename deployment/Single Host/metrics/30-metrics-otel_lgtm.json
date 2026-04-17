@@ -1,10 +1,16 @@
 {
 	"metrics": {
 		"otel-lgtm": {
-			"internalHost": "oqm-metrics-otel_lgtm",
-			"internalHttpPort": 3000,
-			"externalBaseUri": "#{infra.traefik.externalRootUri}/metrics/otel-lgtm",
-			"internalBaseUri": "http://#{metrics.otel-lgtm.internalHost}:#{metrics.otel-lgtm.internalHttpPort}"
+			"internalHost": "oqm-metrics-otel-lgtm",
+			"grafana": {
+				"internalHttpPort": 3000,
+				"externalBaseUri": "#{infra.traefik.externalRootUri}/metrics/otel-lgtm",
+				"internalBaseUri": "http://#{metrics.otel-lgtm.internalHost}:#{metrics.otel-lgtm.grafana.internalHttpPort}"
+			},
+			"otlp-collector": {
+				"internalGrpcPort": 4317,
+				"internalGrpcUrl": "http://#{metrics.otel-lgtm.internalHost}:#{metrics.otel-lgtm.otlp-collector.internalGrpcPort}"
+			}
 		}
 	}
 }
