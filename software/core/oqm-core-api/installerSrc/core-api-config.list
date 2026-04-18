@@ -44,5 +44,5 @@ mp.messaging.outgoing.events-outgoing.enabled=false
 
 {% if metrics is defined %}
 # Metrics Config:
-quarkus.otel.exporter.otlp.endpoint={metrics.otel-lgtm.otlp-collector.internalGrpcUrl}
+quarkus.otel.exporter.otlp.endpoint={metrics.otlp-collector.endpoint}
 {% endif %}
