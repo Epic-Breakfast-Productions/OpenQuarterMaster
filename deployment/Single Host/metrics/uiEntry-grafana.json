@@ -3,8 +3,7 @@
 	"order": 0,
 	"name": "Grafana",
 	"description": "The Grafana UI for OQM.",
-	"urlConfigKey": "metrics.otel-lgtm.externalBaseUri",
-
+	"urlConfigKey": "metrics.otel-lgtm.grafana.externalBaseUri",
 	"icon": "/core/api/core-api.svg",
 	"monitorEndpoint": "/"
 }

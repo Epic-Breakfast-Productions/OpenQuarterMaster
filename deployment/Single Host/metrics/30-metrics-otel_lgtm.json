@@ -1,5 +1,8 @@
 {
 	"metrics": {
+		"otlp-collector": {
+			"endpoint": "#{metrics.otel-lgtm.otlp-collector.internalGrpcUrl}"
+		},
 		"otel-lgtm": {
 			"internalHost": "oqm-metrics-otel-lgtm",
 			"grafana": {

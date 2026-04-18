@@ -4,7 +4,6 @@
 #
 #  Otel-lgtm tags: https://hub.docker.com/r/grafana/otel-lgtm/tags
 #
-# TODO:: figure out better username/password situation
 
 [Unit]
 Description=Otel-LGTM server for Open Quartermaster. Version ${version}.
@@ -21,6 +20,10 @@ Environment="CONTAINER_NAME=oqm-metrics-otel-lgtm"
 Environment="IMAGE_NAME=docker.io/grafana/otel-lgtm"
 Environment="IMAGE_VERSION=0.24.1"
 Environment="DATA_DIR=/metrics/lgtm"
+Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/metrics/otel-lgtm/main-config.list"
+Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/metrics/otel-lgtm/main-config.list"
+Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/metrics/otel-lgtm/user-config.list"
+Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/metrics/otel-lgtm/user-config.list"
 
 ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
 ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop kafka container'"
@@ -29,24 +32,21 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR/grafana"
 ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR/prometheus"
 ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR/loki"
+# Config file
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/metrics/otel-lgtm/"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config t $USER_CONFIG_FILE_TEMPLATE > $USER_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"
 
-#
-#                                        -p 3000:3000 \ # Grafana web port
-#                                        -p 4040:4040 \ # Pyroscope web port
-#                                        -p 4317:4317 \
-#                                        -p 4318:4318 \
-#                                        -p 9090:9090 \ # Prometheus Endpoint
-
-#  -e GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH=/var/lib/grafana/dashboards/home.json
-#  -v ./my-custom-dashboards:/var/lib/grafana/dashboards:ro
-# -e GF_AUTH_ANONYMOUS_ENABLED=false
+# Start service
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --network=oqm-internal \
                                         -v $(oqm-config g system.dataDir)${DATA_DIR}/grafana:/data/grafana \
                                         -v $(oqm-config g system.dataDir)${DATA_DIR}/prometheus:/data/prometheus \
                                         -v $(oqm-config g system.dataDir)${DATA_DIR}/loki:/data/loki \
-                                        -e GF_PATHS_DATA=/data/grafana \
-                                        -e GF_SERVER_ROOT_URL=$(oqm-config g metrics.otel-lgtm.grafana.externalBaseUri) \
+                                        --env-file /tmp/oqm/serviceConfig/metrics/otel-lgtm/main-config.list \
+                                        --env-file /tmp/oqm/serviceConfig/metrics/otel-lgtm/user-config.list \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \

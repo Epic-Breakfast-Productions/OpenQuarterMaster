@@ -48,12 +48,11 @@ mkdir "$buildDir"
 mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
-#mkdir -p "$buildDir/$debDir/etc/oqm/static/media/core/base-station/"
-#mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/core/base+station/"
 mkdir -p "$buildDir/$debDir/etc/oqm/config/configs/"
 mkdir -p "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 mkdir -p "$buildDir/$debDir/etc/oqm/kcClients/"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
+mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/metrics/otel-lgtm/"
 
 
 install -m 755 -D "uiEntry-grafana.json" "$buildDir/$debDir/etc/oqm/ui.d/oqm-metrics-otel_lgtm-grafana.json"
@@ -61,6 +60,7 @@ install -m 755 -D "30-metrics-otel_lgtm.json" "$buildDir/$debDir/etc/oqm/config/
 install -m 755 -D "oqm-metrics-otel_lgtm.desktop" "$buildDir/$debDir/usr/share/applications/"
 install -m 755 -D "oqm-metrics-otel_lgtm-proxy-config.json" "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 install -m 755 -D "oqm-metrics-otel_lgtm-grafana-client.json" "$buildDir/$debDir/etc/oqm/kcClients/"
+install -m 755 -D "metrics-otel_lgtm-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/metrics/otel-lgtm/main-config.list"
 
 serviceFile="oqm-metrics-otel_lgtm.service"
 serviceFileEscaped="$serviceFile" # "$(systemd-escape "$serviceFile")"
@@ -98,10 +98,10 @@ EOT
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/preinst"
 #!/bin/bash
 
-mkdir -p /etc/oqm/serviceConfig/metrics/otel-lgtm/files/
+mkdir -p /etc/oqm/serviceConfig/metrics/otel-lgtm/
 
-if [ ! -f "/etc/oqm/serviceConfig/metrics/otel-lgtm/files/user-config.list" ]; then
-	cat <<EOF >> "/etc/oqm/serviceConfig/metrics/otel-lgtm/files/user-config.list"
+if [ ! -f "/etc/oqm/serviceConfig/metrics/otel-lgtm/user-config.list" ]; then
+	cat <<EOF >> "/etc/oqm/serviceConfig/metrics/otel-lgtm/user-config.list"
 # Add your own config here.
 
 EOF

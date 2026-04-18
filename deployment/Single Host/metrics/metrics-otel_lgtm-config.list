@@ -3,47 +3,25 @@
 # /etc/oqm/serviceConfig/core/api/user-config.list
 #
 
-# Basic configs
-quarkus.http.insecure-requests=redirect
-quarkus.log.level=INFO
+# General setup
+GF_PATHS_DATA=/data/grafana
+GF_SERVER_ROOT_URL={metrics.otel-lgtm.grafana.externalBaseUri}
 
-# Files brought over in shared volume
-quarkus.tls.key-store.pem.0.cert=/etc/oqm/serviceConfig/core/api/files/serviceCert.crt
-quarkus.tls.key-store.pem.0.key=/etc/oqm/serviceConfig/core/api/files/serviceCertKey.pem
+# OAUTH Setup
+GF_AUTH_ANONYMOUS_ENABLED=false
+GF_AUTH_DISABLE_LOGIN_FORM=true
+GF_AUTH_GENERIC_OAUTH_ENABLED=true
+GF_AUTH_GENERIC_OAUTH_CLIENT_ID=oqm-metrics-otel_lgtm-grafana
+GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET={infra.keycloak.clientSecrets.oqm-metrics-otel_lgtm-grafana}
 
-quarkus.tls.trust-store.p12.path=/etc/oqm/serviceConfig/core/api/files/serviceCertKeystore.p12
-quarkus.tls.trust-store.p12.password={cert.selfSigned.internalKeystorePass}
+GF_AUTH_GENERIC_OAUTH_AUTH_URL={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/auth
+GF_AUTH_GENERIC_OAUTH_TOKEN_URL={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/token
+GF_AUTH_GENERIC_OAUTH_API_URL={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/userinfo
 
-# https://quarkus.io/guides/http-reference#reverse-proxy
-quarkus.http.proxy.proxy-address-forwarding=true
-quarkus.http.proxy.allow-x-forwarded=true
-quarkus.http.proxy.enable-forwarded-host=true
-quarkus.http.proxy.enable-forwarded-prefix=true
+GF_AUTH_GENERIC_OAUTH_SCOPES=openid email profile offline_access roles
+GF_AUTH_GENERIC_OAUTH_USE_PROXY=false
 
-#quarkus.smallrye-openapi.path=/core/api/q/openapi
-#quarkus.swagger-ui.path=/core/api/q/swagger-ui
-
-# jwt verification
-smallrye.jwt.verify.key.location={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/certs
-{% if cert.externalDefault != "acme" %} # TODO:: #998 figure out. Supplying acme cert file results in "the trustAnchors parameter must be non-empty"
-smallrye.jwt.client.tls.certificate.path={cert.trustStore.files.selfSigned.crt}
-{% endif %}
-
-# Mongo Config:
-quarkus.mongodb.connection-string=mongodb://{core.api.mongodb.user}:{core.api.mongodb.pass}@{infra.mongodb.host}:{infra.mongodb.port}
-quarkus.mongodb.database={core.api.mongodb.database}
-
-# Kafka Config:
-{% if infra.kafka is defined %}
-mp.messaging.outgoing.events-outgoing.enabled=true
-mp.messaging.outgoing.events-outgoing.bootstrap.servers=OUTSIDE://{infra.kafka.host}:{infra.kafka.port}
-{% else %}
-#    Kafka instance not installed
-mp.messaging.outgoing.events-outgoing.enabled=false
-{% endif %}
-
-{% if metrics is defined and metrics.jaeger is defined %}
-# Jaeger Config:
-#quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
-#quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
-{% endif %}
+#TODO:: #1203
+GF_AUTH_GENERIC_OAUTH_TLS_SKIP_VERIFY_INSECURE=true
+#GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH=contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'editor') && 'Editor' || 'Viewer'
+GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH='Admin'
