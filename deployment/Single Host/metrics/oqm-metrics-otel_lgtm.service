@@ -26,8 +26,8 @@ Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/metrics/otel-lgtm/
 Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/metrics/otel-lgtm/user-config.list"
 
 ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
-ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop kafka container'"
-ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove kafka container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop otel-lgtm container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove otel-lgtm container'"
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
 ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR/grafana"
 ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR/prometheus"
@@ -37,7 +37,7 @@ ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/metrics/otel-lgtm/"
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"
 ExecStartPre=/bin/bash -c "/usr/bin/oqm-config t $USER_CONFIG_FILE_TEMPLATE > $USER_CONFIG_FILE"
-ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
 
 # Start service
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
@@ -64,8 +64,8 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 fi; \
                             done; \
                             "
-ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop kafka container'"
-ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove kafka container'"
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop otel-lgtm container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove otel-lgtm container'"
 
 [Install]
 WantedBy=multi-user.target
