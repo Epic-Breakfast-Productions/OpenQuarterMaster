@@ -11,7 +11,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -26,9 +25,9 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.rest.management.CollectionClearResult;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbDeleteRelationalException;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbDeletedException;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
+import tech.ebp.oqm.core.api.exception.db.DbDeletedException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
@@ -65,6 +64,23 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	) {
 		super(objectMapper, mongoClient, database, oqmDatabaseService, collectionName, clazz);
 	}
+	
+	/**
+	 * Any data massaging needed to do just before insertion/updates.
+	 * @param object
+	 */
+	public void massageIncomingData(String oqmDbIdOrName, ClientSession session, @NonNull T object, boolean recalculateDerived) {
+		//nothing to do
+	}
+	
+	public void massageIncomingData(String oqmDbIdOrName, ClientSession session, @NonNull T object) {
+		this.massageIncomingData(oqmDbIdOrName, session, object, true);
+	}
+	
+	public boolean needsDerivedUpdatesAfterUpdate(@NonNull T object, ObjectNode updates){
+		return false;
+	}
+	
 	
 	private FindIterable<T> find(String oqmDbIdOrName, ClientSession session, Bson filter) {
 		log.debug("Filter for find: {}", filter);
@@ -197,7 +213,6 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 *
 	 * @return The search results for the search given
 	 */
-	@WithSpan
 	public SearchResult<T> search(String oqmDbIdOrName, ClientSession cs, @NonNull S searchObject) {
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 		
@@ -216,9 +231,10 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		
 		return new SearchResult<>(
 			list,
-			this.count(oqmDbIdOrName, filter),
+			(int) this.count(oqmDbIdOrName, filter),
 			!filters.isEmpty(),
-			pagingOptions
+			pagingOptions,
+			searchObject
 		);
 	}
 	
@@ -329,19 +345,6 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	/**
-	 * Gets an object with a particular id.
-	 * <p>
-	 * Wrapper for {@link #get(String, ObjectId)}, to be able to use String representation of ObjectId.
-	 *
-	 * @param objectId The id of the object to get
-	 *
-	 * @return The object found. Null if not found.
-	 */
-	public T get(String oqmDbIdOrName, String objectId) throws DbNotFoundException, DbDeletedException {
-		return this.get(oqmDbIdOrName, new ObjectId(objectId));
-	}
-	
-	/**
 	 * Updates the object at the id given. Validates the object before updating in the database.
 	 *
 	 * @param id The id of the object to update
@@ -355,6 +358,8 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		}
 		
 		T object = this.get(oqmDbIdOrName, id);
+		boolean updateDerivedAfter = this.needsDerivedUpdatesAfterUpdate(object, updateJson);
+		log.debug("Need to update derived fields after initial update? {}", updateDerivedAfter);
 		ObjectNode origJsonObj = this.getObjectMapper().valueToTree(object);
 		
 		Iterator<String> updatingFields = updateJson.fieldNames();
@@ -387,6 +392,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 												   .collect(Collectors.joining(", ")));
 		}
 		this.ensureObjectValid(oqmDbIdOrName, false, object, cs);
+		this.massageIncomingData(oqmDbIdOrName, cs, object, updateDerivedAfter);
 		
 		if (cs == null) {
 			this.getTypedCollection(oqmDbIdOrName).findOneAndReplace(eq("_id", id), object);
@@ -397,21 +403,11 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		return object;
 	}
 	
-	/**
-	 * Updates the object at the id given. Validates the object before updating in the database.
-	 *
-	 * @param id The id of the object to update
-	 * @param updateJson Generic JSON to describe the update. Meant to be individual fields set to the new values.
-	 *
-	 * @return The updated object.
-	 */
-	public T update(String oqmDbIdOrName, ClientSession cs, String id, ObjectNode updateJson) {
-		return this.update(oqmDbIdOrName, cs, new ObjectId(id), updateJson);
-	}
-	
-	public T update(String oqmDbIdOrName, ClientSession clientSession, @Valid T object) throws DbNotFoundException {
-		//TODO:: review this
+	public T update(String oqmDbIdOrName, ClientSession clientSession, @Valid T object, boolean deriveApplied) throws DbNotFoundException {
 		this.get(oqmDbIdOrName, clientSession, object.getId());
+		this.ensureObjectValid(oqmDbIdOrName, false, object, clientSession);
+		this.massageIncomingData(oqmDbIdOrName, clientSession, object, !deriveApplied);
+		
 		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
 		if (clientSession != null) {
 			return collection.findOneAndReplace(clientSession, eq("_id", object.getId()), object);
@@ -421,7 +417,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	public T update(String oqmDbIdOrName, @Valid T object) throws DbNotFoundException {
-		return this.update(oqmDbIdOrName, null, object);
+		return this.update(oqmDbIdOrName, null, object, false);
 	}
 	
 	/**
@@ -431,11 +427,12 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 *
 	 * @return The id of the newly added object.
 	 */
-	public ObjectId add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid T object) {
+	public T add(String oqmDbIdOrName, ClientSession session, @NonNull @Valid T object) {
 		log.info("Adding new {}", this.getCollectionName());
 		log.debug("New object: {}", object);
 		
 		this.ensureObjectValid(oqmDbIdOrName, true, object, session);
+		this.massageIncomingData(oqmDbIdOrName, session, object);
 		
 		InsertOneResult result;
 		MongoCollection<T> collection = this.getTypedCollection(oqmDbIdOrName);
@@ -448,15 +445,15 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		object.setId(result.getInsertedId().asObjectId().getValue());
 		
 		log.info("Added. Id: {}", object.getId());
-		return object.getId();
+		return object;
 	}
 	
-	public ObjectId add(String oqmDbIdOrName, @NonNull @Valid T object) {
+	public T add(String oqmDbIdOrName, @NonNull @Valid T object) {
 		return this.add(oqmDbIdOrName, null, object);
 	}
 	
-	public List<ObjectId> addBulk(String oqmDbIdOrName, ClientSession clientSession, @NonNull List<@Valid @NonNull T> objects) {
-		List<ObjectId> output = new ArrayList<>(objects.size());
+	public List<T> addBulk(String oqmDbIdOrName, ClientSession clientSession, @NonNull List<@Valid @NonNull T> objects) {
+		List<T> output = new ArrayList<>(objects.size());
 		try (
 			MongoSessionWrapper w = new MongoSessionWrapper(clientSession, this);
 		) {
@@ -482,7 +479,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		return output;
 	}
 	
-	public List<ObjectId> addBulk(String oqmDbIdOrName, @NonNull List<@Valid @NonNull T> objects) {
+	public List<T> addBulk(String oqmDbIdOrName, @NonNull List<@Valid @NonNull T> objects) {
 		return this.addBulk(oqmDbIdOrName, null, objects);
 	}
 	
@@ -543,19 +540,6 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	
 	public T remove(String oqmDbIdOrName, ObjectId objectId) {
 		return this.remove(oqmDbIdOrName, null, objectId);
-	}
-	
-	/**
-	 * Removes the object with the id given.
-	 * <p>
-	 * Wrapper for {@link #remove(String, ObjectId)}, to be able to use String representation of ObjectId.
-	 *
-	 * @param objectId The id of the object to remove
-	 *
-	 * @return The object that was removed
-	 */
-	public T remove(String oqmDbIdOrName, String objectId) {
-		return this.remove(oqmDbIdOrName, new ObjectId(objectId));
 	}
 	
 	/**

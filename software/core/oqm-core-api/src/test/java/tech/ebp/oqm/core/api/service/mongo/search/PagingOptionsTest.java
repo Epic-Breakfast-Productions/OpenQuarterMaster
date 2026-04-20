@@ -32,9 +32,9 @@ class PagingOptionsTest {
 		Integer pageSize,
 		Integer pageNum,
 		boolean expectedDoPaging,
-		long expectedPageSize,
-		long expectedPageNum,
-		long expectedSkipVal,
+		int expectedPageSize,
+		int expectedPageNum,
+		int expectedSkipVal,
 		Class<Throwable> expectedE
 	) {
 		if (expectedE == null) {

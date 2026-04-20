@@ -1,6 +1,7 @@
 import base64
 import datetime
 import socket
+import time
 import uuid
 from pathlib import Path
 from cryptography.fernet import Fernet
@@ -196,7 +197,7 @@ class SecretManager:
 # Exception to throw when config errors occur
 class ConfigKeyNotFoundException(Exception):
     def __init__(self, message):
-        super().__init__("Config key error. " + message)
+        super().__init__("Config key error. \"" + message + "\"")
     pass
 
 
@@ -349,6 +350,20 @@ class ConfigManager:
         output = dict(self.configData)
         self.updateReplacements("", output)
         return output
+
+    def waitForConfig(self, configKey: str, timeout: int = 10) -> (bool, any):
+        startTime = time.time()
+
+        while True:
+            try:
+                val = self.getConfigVal(configKey)
+                return True, val
+            except ConfigKeyNotFoundException:
+                time.sleep(0.25)
+                self.rereadConfigData()
+                pass
+            if time.time() - startTime > timeout:
+                return False, None
 
     @staticmethod
     def getArrRef(configKey: str):

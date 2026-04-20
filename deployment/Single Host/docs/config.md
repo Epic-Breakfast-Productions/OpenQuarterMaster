@@ -6,6 +6,19 @@ Configuration on a single node host is facilitated by the `oqm-config` utility.
 
 Use `oqm-config -h` to get started.
 
+## Overview
+
+TODO:: this
+
+## Config Sections
+
+
+
+## Config Files
+
+### File conventions
+
+
 TODO:: more practical examples
 
 TODO:: go over how config is read

@@ -56,11 +56,11 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 
 	@Getter
 	@PathParam("itemId")
-	String itemId;
+	ObjectId itemId;
 	
 	@Getter
 	@PathParam("blockId")
-	String blockId;
+	ObjectId blockId;
 
 	private InventoryItem inventoryItem;
 	private StorageBlock storageBlock;
@@ -84,6 +84,16 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 		return this.inventoryItem;
 	}
 	
+	private Stored applyDefaults(Stored stored){
+		stored.applyDefaultsFromItem(this.getInventoryItem());
+		return stored;
+	}
+	
+	private SearchResult<Stored> applyDefaults(SearchResult<Stored> searchResult){
+		searchResult.getResults().forEach(this::applyDefaults);
+		return searchResult;
+	}
+	
 	@GET
 	@Path("stored")
 	@Operation(
@@ -91,22 +101,13 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.OBJECT,
-					implementation = SearchResult.class
-				)
-			)
-		}
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public SearchResult<Stored> search(
 		@BeanParam StoredSearch storedSearch
 	) {
-		return super.search(storedSearch);
+		return this.applyDefaults(super.search(storedSearch));
 	}
 }

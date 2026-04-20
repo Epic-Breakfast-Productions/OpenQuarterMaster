@@ -1,11 +1,11 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -49,13 +49,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Item added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "Item added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -65,8 +59,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
-	public ObjectId create(
-		@Valid InventoryItem item
+	public InventoryItem create(
+		@NotNull @Valid InventoryItem item
 	) {
 		return super.create(item);
 	}
@@ -79,17 +73,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = InvItemCollectionStats.class
-			)
-		)
+		description = "Object retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	public InvItemCollectionStats getCollectionStats(
 	) {
 		return (InvItemCollectionStats) super.getCollectionStats();
@@ -101,16 +88,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.OBJECT,
-					implementation = SearchResult.class
-				)
-			)
-		}
+		description = "Items retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -127,13 +105,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = InventoryItem.class
-			)
-		)
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -153,9 +125,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public InventoryItem get(
-		@PathParam("itemId") String id
+		@PathParam("itemId") ObjectId id
 	) {
-		return super.get(id);
+		InventoryItem item = super.get(id);
+		return item;
 	}
 	
 	@PUT
@@ -166,13 +139,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object updated.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = InventoryItem.class
-			)
-		)
+		description = "Object updated."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -192,7 +159,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem update(
-		@PathParam("itemId") String id,
+		@PathParam("itemId") ObjectId id,
 		@Schema(
 			implementation = InventoryItem.class
 		)
@@ -208,13 +175,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object deleted.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = InventoryItem.class
-			)
-		)
+		description = "Object deleted."
 	)
 	@APIResponse(
 		responseCode = "404",
@@ -226,15 +187,10 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 		description = "Object requested has already been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No object found to delete.",
-		content = @Content(mediaType = "text/plain")
-	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	public InventoryItem delete(
-		@PathParam("itemId") String id
+		@PathParam("itemId") ObjectId id
 	) {
 		return super.delete(id);
 	}
@@ -246,13 +202,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			)
-		}
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -266,8 +216,8 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getHistoryForObject(
-		@PathParam("itemId") String id,
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
+		@PathParam("itemId") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);
@@ -280,16 +230,7 @@ public class InventoryItemsCrud extends MainObjectProvider<InventoryItem, Invent
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = ObjectHistoryEvent.class
-				)
-			)
-		}
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)

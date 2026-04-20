@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.model.units;
 
+import systems.uom.common.Imperial;
 import systems.uom.common.USCustomary;
 import tech.units.indriya.unit.Units;
 
@@ -28,13 +29,16 @@ public final class LibUnits {
 		public static final Unit<Mass> KILOGRAM = Units.KILOGRAM;
 		public static final Unit<Mass> OUNCE = UnitTools.getUnitWithNameSymbol(USCustomary.OUNCE, "Ounce", "oz");
 		public static final Unit<Mass> POUND = UnitTools.getUnitWithNameSymbol(USCustomary.POUND, null, "lb");
-		public static final Unit<Mass> TON = UnitTools.getUnitWithNameSymbol(USCustomary.TON, "Ton", "t");
+		public static final Unit<Mass> TON = UnitTools.getUnitWithNameSymbol(USCustomary.TON, "Ton", "t_us");
 
 		//TODO:: add rest
 	}
 
 	/**
 	 * List of units that are applicable to storage.
+	 *
+	 * https://github.com/unitsofmeasurement/uom-systems/blob/master/common/src/main/java/systems/uom/common/USCustomary.java
+	 * https://github.com/unitsofmeasurement/uom-systems/blob/master/common/src/main/java/systems/uom/common/Imperial.java
 	 */
 	public static final Map<UnitCategory, Set<Unit<?>>> LIB_UNITS_MAP = new LinkedHashMap<>() {{
 		put(
@@ -62,7 +66,9 @@ public final class LibUnits {
 				UnitProxies.KILOGRAM,
 				UnitProxies.OUNCE,
 				UnitProxies.POUND,
-				UnitProxies.TON
+				UnitProxies.TON,
+				UnitTools.getUnitWithNameSymbol(Imperial.METRIC_TON, "Metric Ton", Imperial.METRIC_TON.toString()),
+				UnitTools.getUnitWithNameSymbol(Imperial.TON_UK, "UK Ton", Imperial.TON_UK.toString())
 			)
 		);
 		put(
@@ -87,6 +93,8 @@ public final class LibUnits {
 				UnitTools.getUnitWithNameSymbol(USCustomary.BARREL, null, USCustomary.BARREL.toString()),
 				UnitTools.getUnitWithNameSymbol(USCustomary.GALLON_DRY, null, "gal dry"),
 				UnitTools.getUnitWithNameSymbol(USCustomary.GALLON_LIQUID, null, USCustomary.GALLON_LIQUID.toString()),
+				UnitTools.getUnitWithNameSymbol(USCustomary.GALLON_LIQUID.divide(4), "Quart US", "qt_us"),
+				UnitTools.getUnitWithNameSymbol(USCustomary.PINT, null, USCustomary.PINT.toString()),
 				UnitTools.getUnitWithNameSymbol(USCustomary.FLUID_OUNCE, null, USCustomary.FLUID_OUNCE.toString()),
 				UnitTools.getUnitWithNameSymbol(USCustomary.GILL_LIQUID, null, USCustomary.GILL_LIQUID.toString()),
 				UnitTools.getUnitWithNameSymbol(USCustomary.MINIM, null, "min"),
@@ -94,7 +102,7 @@ public final class LibUnits {
 				UnitTools.getUnitWithNameSymbol(USCustomary.CUP, null, USCustomary.CUP.toString()),
 				UnitTools.getUnitWithNameSymbol(USCustomary.TEASPOON, null, USCustomary.TEASPOON.toString()),
 				UnitTools.getUnitWithNameSymbol(USCustomary.TABLESPOON, null, USCustomary.TABLESPOON.toString()),
-				UnitTools.getUnitWithNameSymbol(USCustomary.PINT, null, USCustomary.PINT.toString())
+				UnitTools.getUnitWithNameSymbol(Imperial.QUART, null, Imperial.QUART.toString())
 			)
 		);
 		put(

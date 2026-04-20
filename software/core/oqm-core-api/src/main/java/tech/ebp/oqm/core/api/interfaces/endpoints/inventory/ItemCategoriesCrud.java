@@ -5,6 +5,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -51,13 +52,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "Object added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -68,8 +63,8 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public ObjectId create(
-		@Valid ItemCategory itemCategory
+	public ItemCategory create(
+		@NotNull @Valid ItemCategory itemCategory
 	) {
 		return super.create(itemCategory);
 	}
@@ -81,14 +76,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Objects added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = ObjectId.class
-			)
-		)
+		description = "Objects added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -99,7 +87,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public List<ObjectId> createBulk(
+	public List<ItemCategory> createBulk(
 		@Valid List<ItemCategory> itemCategories
 	) {
 		return super.createBulk(itemCategories);
@@ -125,17 +113,11 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Path("{id}")
 	@GET
 	@Operation(
-		summary = "Gets a particular Storage Block."
+		summary = "Gets a particular item category."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ItemCategory.class
-			)
-		)
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -156,7 +138,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public ItemCategory get(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.get(id);
 	}
@@ -164,18 +146,12 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@PUT
 	@Path("{id}")
 	@Operation(
-		summary = "Updates a storage block.",
+		summary = "Updates an item category.",
 		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Storage block updated.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ItemCategory.class
-			)
-		)
+		description = "Storage block updated."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -196,7 +172,8 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemCategory update(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
+		@Schema(type = SchemaType.OBJECT, implementation = ItemCategory.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
 		return super.update(id, updates);
@@ -209,13 +186,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object deleted.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ItemCategory.class
-			)
-		)
+		description = "Object deleted."
 	)
 	@APIResponse(
 		responseCode = "404",
@@ -227,16 +198,11 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 		description = "Object requested has already been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No object found to delete.",
-		content = @Content(mediaType = "text/plain")
-	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemCategory delete(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.delete(id);
 	}
@@ -248,15 +214,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Tree retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					implementation = ItemCategoryTree.class
-				)
-			)
-		}
+		description = "Tree retrieved."
 	)
 	@APIResponse(
 		responseCode = "204",
@@ -281,13 +239,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			)
-		}
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -301,8 +253,8 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getHistoryForObject(
-		@PathParam("id") String id,
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
+		@PathParam("id") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);
@@ -315,20 +267,7 @@ public class ItemCategoriesCrud extends MainObjectProvider<ItemCategory, ItemCat
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.ARRAY,
-					implementation = ObjectHistoryEvent.class
-				)
-			)
-		},
-		headers = {
-			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
-		}
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)

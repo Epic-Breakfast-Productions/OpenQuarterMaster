@@ -22,17 +22,18 @@ import static com.mongodb.client.model.Filters.*;
 @Setter
 public class StoredSearch extends SearchKeyAttObject<Stored> {
 
-	@PathParam("itemId") String inventoryItemIdFromPath;
-	@QueryParam("itemId") String inventoryItemIdFromQuery;
+	@PathParam("itemId") ObjectId inventoryItemIdFromPath;
+	@QueryParam("itemId") ObjectId inventoryItemIdFromQuery;
 
-	@PathParam("blockId") String storageBlockIdFromPath;
-	@QueryParam("blockId") String storageBlockIdFromQuery;
+	@PathParam("blockId") ObjectId storageBlockIdFromPath;
+	@QueryParam("blockId") ObjectId storageBlockIdFromQuery;
 
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
 
 	@QueryParam("hasExpiryDate") Boolean hasExpiryDate;
 	@QueryParam("hasLowStockThreshold") Boolean hasLowStockThreshold;
-
+	
+	@QueryParam("identifier") List<String> identifiers;
 
 	//TODO:: are these outdated?
 	@QueryParam("expired") Boolean hasExpired;
@@ -42,19 +43,19 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 	//TODO:: object specific fields, add to bson filter list
 	
 	
-	public StoredSearch setInventoryItemId(String itemId){
+	public StoredSearch setInventoryItemId(ObjectId itemId){
 		this.inventoryItemIdFromPath = itemId;
 		return this;
 	}
-	public StoredSearch setStorageBlockId(String blockId){
+	public StoredSearch setStorageBlockId(ObjectId blockId){
 		this.storageBlockIdFromPath = blockId;
 		return this;
 	}
 	
-	public String getInventoryItemId(){
-		if(this.hasValue(this.getInventoryItemIdFromPath())){
+	public ObjectId getInventoryItemId(){
+		if(hasValue(this.getInventoryItemIdFromPath())){
 			return this.getInventoryItemIdFromPath();
-		} else if(this.hasValue(this.getInventoryItemIdFromQuery())){
+		} else if(hasValue(this.getInventoryItemIdFromQuery())){
 			return this.getInventoryItemIdFromQuery();
 		}
 		return null;
@@ -64,16 +65,16 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 
-		if(this.hasValue(this.getInventoryItemIdFromPath())){
-			filters.add(eq("item", new ObjectId(this.getInventoryItemIdFromPath())));
-		} else if(this.hasValue(this.getInventoryItemIdFromQuery())){
-			filters.add(eq("item", new ObjectId(this.getInventoryItemIdFromQuery())));
+		if(hasValue(this.getInventoryItemIdFromPath())){
+			filters.add(eq("item", this.getInventoryItemIdFromPath()));
+		} else if(hasValue(this.getInventoryItemIdFromQuery())){
+			filters.add(eq("item", this.getInventoryItemIdFromQuery()));
 		}
 		
-		if(this.hasValue(this.getStorageBlockIdFromPath())){
-			filters.add(eq("storageBlock", new ObjectId(this.getStorageBlockIdFromPath())));
-		} else if(this.hasValue(this.getStorageBlockIdFromQuery())){
-			filters.add(eq("storageBlock", new ObjectId(this.getStorageBlockIdFromQuery())));
+		if(hasValue(this.getStorageBlockIdFromPath())){
+			filters.add(eq("storageBlock", this.getStorageBlockIdFromPath()));
+		} else if(hasValue(this.getStorageBlockIdFromQuery())){
+			filters.add(eq("storageBlock", this.getStorageBlockIdFromQuery()));
 		}
 		
 		//TODO:: redo these
@@ -82,7 +83,7 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 //				eq("barcode", this.getItemBarcode())
 //			);
 //		}
-		if(this.hasValue(this.getInStorageBlocks())){
+		if(hasValue(this.getInStorageBlocks())){
 			if(this.getInStorageBlocks().size() == 1){
 				filters.add(
 					eq("storageBlock", this.getInStorageBlocks().getFirst())
@@ -96,21 +97,31 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 				));
 			}
 		}
-		if(this.hasValue(this.getHasExpiryDate())){
+		if(hasValue(this.getHasExpiryDate())){
 			filters.add(
 				ne("expires", null)
 			);
 		}
 
-		if(this.hasValue(this.getHasExpired())){
+		if(hasValue(this.getHasExpired())){
 			filters.add(eq("notificationStatus.expired", this.getHasExpired()));
 		}
-		if(this.hasValue(this.getHasExpiryWarn())){
+		if(hasValue(this.getHasExpiryWarn())){
 			filters.add(eq("notificationStatus.expiredWarning", this.getHasExpiryWarn()));
 		}
 		
-		if(this.hasValue(this.getHasLowStock())){
+		if(hasValue(this.getHasLowStock())){
 			filters.add(eq("notificationStatus.lowStock", this.getHasExpired()));
+		}
+		
+		if (hasValue(this.getIdentifiers())) {
+			List<Bson> typeFilterList = new ArrayList<>(this.getIdentifiers().size());
+			for (String curIdentifier : this.getIdentifiers()) {
+				typeFilterList.add(
+					eq("identifiers.value", curIdentifier)
+				);
+			}
+			filters.add(Filters.or(typeFilterList));
 		}
 		
 		return filters;

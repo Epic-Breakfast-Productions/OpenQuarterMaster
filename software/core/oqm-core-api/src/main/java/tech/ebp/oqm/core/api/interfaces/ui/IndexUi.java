@@ -18,6 +18,9 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import java.text.MessageFormat;
 import java.util.Optional;
 
+/**
+ * A Simple splash page to show, and direct to swagger.
+ */
 @SuppressWarnings("LombokGetterMayBeUsed")
 @Blocking
 @Slf4j
@@ -59,7 +62,7 @@ public class IndexUi {
 		This service serves the core api forming the base functionality of the Open QuarterMaster system.
 	</p>
 	<p>
-		See <a href="{0}/q/swagger-ui">Swagger</a> for API documentation.
+		See <a href="{0}/q/swagger-ui/">Swagger</a> for API documentation.
 	</p>
 </main>
 <hr />
@@ -68,7 +71,7 @@ public class IndexUi {
 		Version {1}
 	</p>
 	<p>
-		&copy; 2024 <a href="https://epic-breakfast-productions.tech">EBP</a>
+		&copy; 2026 <a href="https://epic-breakfast-productions.tech">EBP</a>
 	</p>
 </footer>
 </body>

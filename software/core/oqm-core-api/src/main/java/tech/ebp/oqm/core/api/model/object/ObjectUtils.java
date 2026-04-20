@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.Module;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.datatype.javax.money.JavaxMoneyModule;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import com.fasterxml.jackson.module.blackbird.BlackbirdModule;
 import tech.ebp.oqm.core.api.model.jackson.ColorModule;
@@ -40,7 +41,8 @@ public final class ObjectUtils {
 		new MongoObjectIdModule(),
 		new ColorModule(),
 		new TempQuantityJacksonModule(),
-		new UnitModule()
+		new UnitModule(),
+		new JavaxMoneyModule().withQuotedDecimalNumbers()
 	};
 	
 	static {
@@ -61,26 +63,5 @@ public final class ObjectUtils {
 		
 		//set the timezone to this server's.
 		mapper.setTimeZone(TimeZone.getDefault());
-	}
-	
-	public static List<String> fieldListFromJson(ObjectNode updateJson) {
-		List<String> output = new ArrayList<>();
-		
-		for (Iterator<Map.Entry<String, JsonNode>> it = updateJson.fields(); it.hasNext(); ) {
-			Map.Entry<String, JsonNode> cur = it.next();
-			String curKey = cur.getKey();
-			
-			if (cur.getValue().isObject()) {
-				List<String> curSubs = fieldListFromJson((ObjectNode) cur.getValue());
-				
-				for (String curSubKey : curSubs) {
-					output.add(curKey + "." + curSubKey);
-				}
-			} else {
-				output.add(curKey);
-			}
-		}
-		
-		return output;
 	}
 }

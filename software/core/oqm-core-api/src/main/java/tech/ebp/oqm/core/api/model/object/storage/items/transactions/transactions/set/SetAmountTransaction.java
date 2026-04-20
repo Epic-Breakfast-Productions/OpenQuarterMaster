@@ -8,6 +8,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 
 import javax.measure.Quantity;
@@ -20,6 +21,7 @@ import javax.measure.Quantity;
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
+@Schema(title = "SetAmountTransaction", description = "A transaction to set an amount in a stored object.")
 public class SetAmountTransaction extends SetTransaction {
 	
 	/**
@@ -42,6 +44,7 @@ public class SetAmountTransaction extends SetTransaction {
 	private Quantity<?> amount;
 	
 	@Override
+	@Schema(constValue = "SET_AMOUNT", readOnly = true, required = true, examples = "SET_AMOUNT")
 	public TransactionType getType() {
 		return TransactionType.SET_AMOUNT;
 	}

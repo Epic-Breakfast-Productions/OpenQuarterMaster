@@ -10,7 +10,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddAmountTransaction;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.units.indriya.quantity.Quantities;
 
 import java.util.Set;

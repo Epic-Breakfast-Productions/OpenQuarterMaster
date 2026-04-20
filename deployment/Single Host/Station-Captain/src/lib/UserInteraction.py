@@ -15,6 +15,9 @@ from LogManagement import *
 from InputValidators import *
 from CertsUtils import *
 from LogUtils import *
+from SystemInfoUtils import *
+from RegistrationUtils import *
+from SystemCheckUtils import SystemCheckUtils
 
 
 class UserInteraction:
@@ -67,39 +70,47 @@ class UserInteraction:
         """
         UserInteraction.log.info("Prompting to change config key " + configKey)
 
-        if secret:
-            code, value = self.dialog.passwordbox(text + "\n\n(No input will be shown when typing)", title=title)
-        else:
-            code, value = self.dialog.inputbox(
-                text,
-                title=title,
-                init=mainCM.getConfigVal(configKey, exceptOnNotPresent=False),
-                width=75
-            )
+        gotValue = False
 
-        if code != self.dialog.OK:
-            self.dialog.msgbox("Canceled Setting value.")
-            return
+        while not gotValue:
+            if secret:
+                code, value = self.dialog.passwordbox(text + "\n\n(No input will be shown when typing)", title=title)
+            else:
+                code, value = self.dialog.inputbox(
+                    text,
+                    title=title,
+                    init=mainCM.getConfigVal(configKey, exceptOnNotPresent=False),
+                    width=75
+                )
 
-        for validator in validators:
-            validationErr = validator(value)
-            if validationErr is not None:
-                UserInteraction.log.warning("Got validation error from value given from user.")
-                self.dialog.msgbox("Invalid value given. Error: \n\t" + validationErr)
+            if code != self.dialog.OK:
+                self.dialog.msgbox("Canceled Setting value.")
                 return
 
-        try:
-            if secret:
-                mainCM.setSecretValInFile(configKey, value, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
-            else:
-                mainCM.setConfigValInFile(configKey, value, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
-        except Exception:
-            UserInteraction.log.error("FAILED to set config value.")
-            self.dialog.msgbox("FAILED Setting value. Please try again.")
-            return
+            failed = False
+            for validator in validators:
+                validationErr = validator(value)
+                if validationErr is not None:
+                    failed = True
+                    UserInteraction.log.warning("Got validation error from value given from user.")
+                    self.dialog.msgbox("Invalid value given. Error: \n\t" + validationErr)
+                    break
+            if failed:
+                continue
 
-        mainCM.rereadConfigData()
-        self.dialog.msgbox("Set new value")
+            try:
+                if secret:
+                    mainCM.setSecretValInFile(configKey, value, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+                else:
+                    mainCM.setConfigValInFile(configKey, value, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
+            except Exception:
+                UserInteraction.log.error("FAILED to set config value.")
+                self.dialog.msgbox("FAILED Setting value. Please try again.")
+                continue
+
+            gotValue = True
+            mainCM.rereadConfigData()
+            self.dialog.msgbox("Set new value")
 
         UserInteraction.log.info("Done prompting to change config key " + configKey)
 
@@ -150,7 +161,7 @@ class UserInteraction:
                     ("(3)", "Plugins"),
                     ("(4)", "Snapshots"),
                     ("(5)", "Cleanup, Maintenance, and Updates"),
-                    # ("(6)", "Captain Settings"),
+                    ("(6)", "Registration"),
                 ]
             )
             UserInteraction.clearScreen()
@@ -168,6 +179,8 @@ class UserInteraction:
                 self.snapshotsMenu()
             if choice == "(5)":
                 self.cleanMaintUpdatesMenu()
+            if choice == "(6)":
+                self.checkRegistration()
 
         UserInteraction.log.debug("Done running main menu.")
 
@@ -199,7 +212,7 @@ class UserInteraction:
         self.dialog.infobox("Gathering system information. please wait.")
         textToShow = ""
         try:
-            textToShow += LogManagement.getSystemInfo()
+            textToShow += SystemInfoUtils.getSystemInfo()
         except subprocess.CalledProcessError:
             UserInteraction.log.error("Failed to call necessary commands.")
         UserInteraction.log.debug("Done compiling host info.")
@@ -544,12 +557,12 @@ class UserInteraction:
             if choice == "(1)":
                 self.dialog.msgbox(
                     "Keycloak access information:\n\n" +
-                    "\tURL: https://" + mainCM.getConfigVal("system.hostname") + ":" + mainCM.getConfigVal(
-                        "infra.keycloak.port") + "/admin/master/console/#/oqm\n" +
+                    "\tURL: " + mainCM.getConfigVal("infra.keycloak.externalBaseUri") + "/admin/master/console/#/oqm\n" +
                     "\tAdmin user: " + mainCM.getConfigVal("infra.keycloak.adminUser") + "\n" +
                     "\tAdmin Password: " + mainCM.getConfigVal("infra.keycloak.adminPass"),
                     title="Keycloak Access",
-                    width=UserInteraction.WIDE_WIDTH
+                    width=UserInteraction.WIDE_WIDTH,
+                    height=20
                 )
 
         UserInteraction.log.debug("Done running user admin menu.")
@@ -825,6 +838,11 @@ class UserInteraction:
         #         UserInteraction.log.info("User chose to uninstall OQM.")
         #         # TODO:: uninstall, uncomment this
 
+
+        #
+        # OS updates
+        #
+
         code = self.dialog.yesno(
             "Perform OS/system updates and restart?\n\nHighly recommend doing this if:\n - you have not yet today\n - this is your first time logging into the system\n - you just changed the hostname and haven't restarted yet\n\nThe system tends to install better when things are up to date.\n\nIf you just did this, you can say no.",
             title="Update system? - Setup Wizard"
@@ -837,6 +855,23 @@ class UserInteraction:
             result, message = PackageManagement.updateSystem()
             # TODO:: error check
             os.system('reboot')
+            
+        self.checkSystem()
+
+        code = self.dialog.yesno(
+            "Set hostname used by OQM?\n\nThis defaults to the system's hostname, plus '.local'.",
+            title="Set Hostname? - Setup Wizard"
+        )
+        if code != self.dialog.OK:
+            UserInteraction.log.info("User chose not to automatically perform snapshots.")
+        else:
+            UserInteraction.log.info("User chose to update the hostname.")
+            self.promptForConfigChange(
+                "Use '#{#mdnsHost}', to use this host's hostname plus '.local', for use with mdns. (This is the default, but will display the resolved hostname here)",
+                "Set Hostname - Setup Wizard",
+                "system.hostname",
+                validators=[InputValidators.isValidHostname]
+            )
 
         # Check if not installed, prompt to install
         if not PackageManagement.coreInstalled():
@@ -853,8 +888,9 @@ class UserInteraction:
                 PackageManagement.installCore()
                 self.dialog.msgbox("Core components installed!", title="Setup Wizard")
 
-        # TODO: set simple settings; domain name, run by details, email settings
-
+        #
+        # Snapshots
+        #
         code = self.dialog.yesno(
             "Perform snapshots automatically?\n\nRecommend turning on. This can be managed later in settings.",
             title="Automatic Snapshots? - Setup Wizard"
@@ -866,13 +902,6 @@ class UserInteraction:
             UserInteraction.log.info("User chose to automatically perform snapshots.")
             SnapshotUtils.enableAutomatic()
 
-        self.dialog.msgbox(
-            "You will now be prompted to perform automatic updates.\n\nRecommend turning on. This can be managed "
-            "later in settings.",
-            title="Setup Wizard"
-        )
-        PackageManagement.promptForAutoUpdates()
-
         code = self.dialog.yesno(
             "Encrypt snapshots?\n\nRecommend turning on if syncing your snapshots or saving them offsite. This can be managed later in settings.",
             title="Encrypt snapshots? - Setup Wizard"
@@ -883,11 +912,34 @@ class UserInteraction:
             UserInteraction.log.info("User chose to encrypt snapshots.")
             mainCM.setConfigValInFile("snapshots.encryption.enabled", True, ScriptInfo.CONFIG_DEFAULT_UPDATE_FILE)
             self.dialog.msgbox(
-                "Snapshot encryption was enabled!\n\nPlease keep the following text saved. It is the password to decrypt, and will be required to unpack the snapshots on a different system.\n\n" + mainCM.getConfigVal("snapshots.encryption.pass"),
+                "Snapshot encryption was enabled!\n\nPlease keep the following text saved. It is the password to decrypt, and will be required to unpack the snapshots on a different system.\n\n" +
+                mainCM.getConfigVal("snapshots.encryption.pass"),
                 title="Snapshot encryption enabled! - Setup Wizard"
             )
 
-        # TODO: if not .local, ask to select cert type
+        #
+        # Automatic updates
+        #
+
+        self.dialog.msgbox(
+            "You will now be prompted to perform automatic updates.\n\nRecommend turning on. This can be managed "
+            "later in settings.",
+            title="Setup Wizard"
+        )
+        PackageManagement.promptForAutoUpdates()
+
+        #
+        # Registration
+        #
+        code = self.dialog.yesno(
+            "Would you like to register this instance?",
+            title="Register? - Setup Wizard"
+        )
+        if code != self.dialog.OK:
+            UserInteraction.log.info("User chose not to register.")
+        else:
+            UserInteraction.log.info("User chose to register.")
+            self.registrationWizard()
 
         self.dialog.msgbox(
             "Setup Wizard complete!",
@@ -916,11 +968,34 @@ class UserInteraction:
 
         UserInteraction.log.debug("Done running manage install menu.")
 
+    def checkSystem(self):
+        self.log.debug("Checking system.")
+
+        self.dialog.infobox("Checking system...")
+
+        errs = SystemCheckUtils.checkSystem()
+
+        if not errs:
+            self.dialog.msgbox("System check yielded no alerts!", title="System Check")
+            return
+
+        toShow = ""
+        for curErr in errs:
+            toShow += curErr['level'] + " - " + curErr["title"] + "\n"
+            toShow += "\t" + curErr['description'] + "\n"
+            toShow += "\n\n\n"
+        self.dialog.scrollbox(toShow, title="System Issues Found",
+                              #    height=UserInteraction.TALL_HEIGHT,
+                              # width=UserInteraction.WIDE_WIDTH,
+                              #    tab_correct=True, trim=False,
+                              # cr_wrap=True
+                              )
+
     @staticmethod
     def mapPluginSelection(pluginFromPm):
         return (
             pluginFromPm['package'],
-            PackageManagement.getPluginDisplayName(pluginFromPm['package']),
+            PackageManagement.getPackageDisplayName(pluginFromPm['package']),
             pluginFromPm['installed']
         )
 
@@ -954,7 +1029,7 @@ class UserInteraction:
             toShow += "\tVersion: " + curPackage['version'] + "\n"
             toShow += "\tInstalled?: " + str(curPackage['installed']) + "\n"
             toShow += "\tDescription: " + curPackage['description'] + "\n"
-            toShow += "\n\n\n"
+            toShow += "\n"
         self.dialog.scrollbox(toShow, title="Available Plugins",
                               #    height=UserInteraction.TALL_HEIGHT,
                               # width=UserInteraction.WIDE_WIDTH,
@@ -962,5 +1037,92 @@ class UserInteraction:
                               # cr_wrap=True
                               )
 
+    def checkRegistration(self):
+        if not RegistrationUtils.isRegistered():
+            self.registrationWizard()
+        else:
+            self.registrationMenu()
+
+    def registrationMenu(self):
+        UserInteraction.log.debug("Running registration menu.")
+
+        while True:
+            code, choice = self.dialog.menu(
+                "Please choose an option:",
+                title="Registration",
+                choices=[
+                    ("(1)", "Registration Wizard"),
+                    # ("(2)", "Host information"),
+                ]
+            )
+            self.clearScreen()
+            UserInteraction.log.debug('Main menu choice: %s, code: %s', choice, code)
+            if code != self.dialog.OK:
+                break
+            if choice == "(1)":
+                self.registrationWizard()
+            # TODO:: more; show status, info
+
+        UserInteraction.log.debug("Done running registration wizard.")
+
+    def registrationWizard(self):
+        UserInteraction.log.debug("Running registration wizard.")
+
+        if RegistrationUtils.isRegistered():
+            self.dialog.msgbox(
+                "Your instance is already registered.\nThank you for registering!",
+                title="Registration"
+            )
+            return
+
+        registered = False
+
+        while not registered:
+            self.dialog.msgbox(
+                """
+                Go to the following link to start your registration:
+                
+                {}
+                
+                Once registered, continue here. You will then enter your registration id and secret.
+                """.format(RegistrationUtils.getRegistrationLink()),
+                title="Registration",
+                width=200,
+                height= 15
+            )
+
+            returnCode, registrationId = self.dialog.inputbox(
+                text="Enter your Registration ID:",
+                title="Registration",
+            )
+            if returnCode != self.dialog.OK:
+                break
+
+            returnCode, registrationSecret = self.dialog.inputbox(
+                text="Enter your Registration Secret:",
+                title="Registration",
+            )
+            if returnCode != self.dialog.OK:
+                break
+
+            self.dialog.infobox(
+                "Setting up registration...!\n\nPlease wait",
+            )
+
+            success, message = RegistrationUtils.registerSys(registrationId, registrationSecret)
+            if success:
+                registered = True
+
+        if registered:
+            self.dialog.msgbox(
+                "Registration successful!\n\nThank you for registering!",
+            )
+        else:
+            self.dialog.msgbox(
+                "Registration cancelled.",
+                title="Registration"
+            )
+
+        UserInteraction.log.debug("Done running registration wizard.")
 
 ui = UserInteraction()

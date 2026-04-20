@@ -1,0 +1,9 @@
+{
+	"type": "Plugins",
+	"order": 0,
+	"name": "Storagotchi",
+	"description": "An inventory themed digital pet.",
+	"urlConfigKey": "plugin.storagotchi.externalBaseUri",
+	"icon": "/plugin/storagotchi/plugin-storagotchi.svg",
+	"monitorEndpoint": "/q/health"
+}

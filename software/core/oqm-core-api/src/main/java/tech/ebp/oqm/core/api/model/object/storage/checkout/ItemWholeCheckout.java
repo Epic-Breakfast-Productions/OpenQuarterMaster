@@ -1,11 +1,13 @@
 package tech.ebp.oqm.core.api.model.object.storage.checkout;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 
 /**
@@ -17,6 +19,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 //@AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
+@Schema(title = "ItemWholeCheckout", description = "A Checkout for a whole stored item.")
 public class ItemWholeCheckout extends ItemCheckout<Stored> {
 	public static final int CUR_SCHEMA_VERSION = 2;
 	
@@ -25,6 +28,7 @@ public class ItemWholeCheckout extends ItemCheckout<Stored> {
 	}
 
 	@Override
+	@Schema(constValue = "WHOLE", readOnly = true, required = true, examples = "WHOLE")
 	public CheckoutType getType(){
 		return CheckoutType.WHOLE;
 	}

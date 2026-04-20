@@ -1,12 +1,12 @@
 {
 	"packageName":"oqm-infra-postgres",
-	"version":"1.2.4",
+	"version":"1.2.5",
 	"description":"Postgresql instance for Open QuarterMaster.",
 	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/postgresql",
 	"configs": [
 	],
 	"dependencies": {
-		"deb": ", oqm-manager-station+captain (>= 2.9.0)"
+		"deb": ", oqm-manager-station+captain (>= 2.10.0)"
 	},
 	"configFiles":{
 	},

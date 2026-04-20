@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 import com.mongodb.client.ClientSession;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -17,8 +16,8 @@ import tech.ebp.oqm.core.api.model.rest.tree.ParentedMainObjectTree;
 import tech.ebp.oqm.core.api.model.rest.tree.storageBlock.StorageBlockTree;
 import tech.ebp.oqm.core.api.model.rest.tree.storageBlock.StorageBlockTreeNode;
 import tech.ebp.oqm.core.api.model.rest.search.StorageBlockSearch;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbModValidationException;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbModValidationException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 
 import java.util.List;
 import java.util.Map;
@@ -48,7 +47,6 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 				   .build();
 	}
 	
-	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, StorageBlock storageBlock, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, storageBlock, clientSession);
@@ -157,7 +155,6 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 		return list;
 	}
 	
-	@WithSpan
 	@Override
 	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession cs, StorageBlock storageBlock) {
 		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(oqmDbIdOrName, cs, storageBlock);

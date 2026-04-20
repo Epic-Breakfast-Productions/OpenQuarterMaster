@@ -1,10 +1,17 @@
 {#modal id='itemView' size='xl' title='Item View'}
-    {#titleIcon}{#icons/item}{/icons/item}{/titleIcon}
+    {#titleIcon}{#icons/item /}{/titleIcon}
+    {#footerButtons}
+    	<span id="itemViewTransactButtonContainer"></span>
+    	
+    	<button type="button" class="btn btn-warning" id="itemViewEditButton" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal">
+			{#icons/edit /} Edit Item
+		</button>
+    {/footerButtons}
     <div class="row">
         <div class="col" id="itemViewMessages"></div>
     </div>
 <div class="row">
-    {#carousel id='itemViewCarousel' carouselCss='col'}{/carousel}
+    {#carousel id='itemViewCarousel' carouselCss='col-md-12 col-sm-12 col-lg-6 col-xl-4'}{/carousel}
     <div class="col">
         <div class="row">
             <div class="card col-sm-12 col-md-6">
@@ -19,7 +26,7 @@
                     <h5 class="card-title d-inline">Id:</h5>
                     <p class="card-text d-inline">
                         <small>
-                            <span id="itemViewId"></span>{#copyTextButton textContainerId='itemViewId'}{/copyTextButton}
+                            <span id="itemViewId"></span>{#copyTextButton /}
                         </small>
                     </p>
                 </div>
@@ -59,39 +66,92 @@
                     </p>
                 </div>
             </div>
-            <div class="card col-sm-12 col-md-6 col-lg-4">
-                <div class="card-body">
-                    <h5 class="card-title d-inline">Value per Unit <span id="itemViewValPerUnitDefault">(default)</span>:</h5>
-                    <p class="d-inline">
-                        {currency.getSymbol()}<span id="itemViewValPerUnit"></span>
-                    </p>
-                </div>
-            </div>
-            <div class="card col-sm-12 col-md-6 col-lg-4">
-                <div class="card-body">
-                    <h5 class="card-title d-inline">Total Value:</h5>
-                    <p class="d-inline">
-                        {currency.getSymbol()}<span id="itemViewTotalVal"></span>
-                    </p>
-                </div>
-            </div>
-            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewIdentifyingAttContainer">
+            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewIdentifyingAttContainer">{!TODO:: remove? !}
                 <div class="card-body">
                     <h5 class="card-title d-inline">Identifying Attribute:</h5>
                     <p id="itemViewIdentifyingAtt" class="d-inline">
                     </p>
                 </div>
             </div>
-            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewBarcodeContainer">
+            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewIdsContainer">
                 <div class="card-body">
-                    <h5 class="card-title">Barcode:</h5>
-                    <img src="" id="itemViewBarcode" class="barcodeViewImg" alt="Item Barcode">
+					<div class="accordion" id="itemViewIdsAccord">
+					  <div class="accordion-item" id="itemViewIdentifiersAccord">
+						<h2 class="accordion-header">
+						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewGeneralIdentifiersAccordCollapse" aria-expanded="false" aria-controls="itemViewGeneralIdentifiersAccordCollapse">
+							{#icons/identifiers /}
+							Identifiers (<span id="itemViewIdentifiersNumIdsLabel"></span>)
+						  </button>
+						</h2>
+						<div id="itemViewGeneralIdentifiersAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
+						  <div class="accordion-body">
+						  	<div class="row" id="itemViewGeneralIdentifiersAccordContent">
+						  	</div>
+						  </div>
+						</div>
+					  </div>
+					  <div class="accordion-item" id="itemViewIdGeneratorsAccord">
+						<h2 class="accordion-header">
+						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewIdGeneratorsAccordCollapse" aria-expanded="false" aria-controls="itemViewIdGeneratorsAccordCollapse">
+							{#icons/idGenerators /}
+							ID Generators (<span id="itemViewIdGeneratorsNumIdsLabel"></span>)
+						  </button>
+						</h2>
+						<div id="itemViewIdGeneratorsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
+						  <div class="accordion-body">
+						  	<div class="row">
+						  		<ul id="itemViewIdGeneratorsAccordContent">
+								</ul>
+						  	</div>
+						  </div>
+						</div>
+					  </div>
+					</div>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewPriceTotalsContainer">
+                <div class="card-body" id="">
+					<div class="accordion" id="itemViewPriceTotalsAccord">
+						<div class="accordion-item" id="itemViewPriceTotalsAccordItem">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewPriceTotalsAccordCollapse" aria-expanded="false" aria-controls="itemViewPriceTotalsAccordCollapse">
+									{#icons/pricing /}
+									Price Totals (<span id="itemViewPriceTotalsNumLabel"></span>)
+								</button>
+							</h2>
+							<div id="itemViewPriceTotalsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewPriceTotalsAccord">
+								<div class="accordion-body">
+									<div class="row" id="itemViewPriceTotalsContent">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+                </div>
+            </div>
+            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewLinksContainer">
+                <div class="card-body" id="">
+					<div class="accordion" id="itemViewLinksAccord">
+						<div class="accordion-item" id="itemViewLinksAccordItem">
+							<h2 class="accordion-header">
+								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewLinkAccordCollapse" aria-expanded="false" aria-controls="itemViewLinksAccordCollapse">
+									{#icons/link /}
+									Links (<span id="itemViewLinksNumLabel"></span>)
+								</button>
+							</h2>
+							<div id="itemViewLinkAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewLinkAccord">
+								<div class="accordion-body">
+									<div class="row" id="itemViewLinkContent">
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
                 </div>
             </div>
 			<div class="card col-sm-12 col-md-6" id="itemViewFilesContainer">
 				<div class="card-body" style="padding: 2px 0;">
-					{#fileAttachment/FileAttachmentObjectView id='itemViewFiles'}
-					{/fileAttachment/FileAttachmentObjectView}
+					{#fileAttachment/FileAttachmentObjectView id='itemViewFiles' /}
 				</div>
 			</div>
         </div>
@@ -127,11 +187,13 @@
             <ul class="nav nav-tabs" id="itemViewStoredViewTab" role="tablist">
               <li class="nav-item" role="presentation">
                 <button class="nav-link active" id="itemViewStoredViewTabByBlock" data-bs-toggle="tab" data-bs-target="#itemViewStoredViewTabByBlockPane" type="button" role="tab" aria-controls="itemViewStoredViewTabByBlockPane" aria-selected="true">
-                    By Block
+                    {#icons/storageBlock /}
+					By Block
                 </button>
               </li>
               <li class="nav-item" role="presentation">
                 <button class="nav-link" id="itemViewStoredViewTabAllStored" data-bs-toggle="tab" data-bs-target="#itemViewStoredViewTabAllStoredPane" type="button" role="tab" aria-controls="itemViewStoredViewTabAllStoredPane" aria-selected="false">
+                    {#icons/storageBlocks /}
                     All Stored
                 </button>
               </li>
@@ -199,7 +261,7 @@
             <div class="accordion-item">
                 <h2 class="accordion-header">
                     <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewCheckedOutAccordionCollapse" aria-expanded="false" aria-controls="itemViewCheckedOutAccordionCollapse">
-                        {#icons/transactionCheckout}{/icons/transactionCheckout} Checked out:
+                        {#icons/transactionCheckout /} Checked out:
                     </button>
                 </h2>
                 <div id="itemViewCheckedOutAccordionCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewCheckedOutAccordion">
@@ -217,8 +279,7 @@
                                     <div id="itemViewCheckoutSearchAccordionFieldsCollapse" class="accordion-collapse collapse"
                                                  aria-labelledby="itemViewCheckoutSearchAccordionFieldsHeader" data-bs-parent="#itemViewCheckoutSearchAccordion">
                                         <div class="accordion-body">
-                                            {#search/itemCheckout/searchForm id='itemViewCheckoutSearchForm' rootPrefix=rootPrefix}
-                                            {/search/itemCheckout/searchForm}
+                                            {#search/itemCheckout/searchForm id='itemViewCheckoutSearchForm' rootPrefix=rootPrefix /}
                                         </div>
                                     </div>
                                 </div>

@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 import com.mongodb.client.ClientSession;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
@@ -27,7 +26,6 @@ public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemL
 				   .build();
 	}
 	
-	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, ItemList list, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, list, clientSession);
@@ -48,28 +46,16 @@ public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemL
 		return list;
 	}
 	
-	public ItemList addAction(String oqmDbIdOrName, String listId, String itemId, ItemListAction action, InteractingEntity entity) {
-		return this.addAction(oqmDbIdOrName, new ObjectId(listId), new ObjectId(itemId), action, entity);
-	}
-	
 	public ItemList remAction(String oqmDbIdOrName, ObjectId listId, ObjectId itemId, int index, InteractingEntity entity) {
 		ItemList list = this.get(oqmDbIdOrName, listId);
 		//TODO
 		return list;
 	}
 	
-	public ItemList remAction(String oqmDbIdOrName, String listId, String itemId, int index, InteractingEntity entity) {
-		return this.remAction(oqmDbIdOrName, new ObjectId(listId), new ObjectId(itemId), index, entity);
-	}
-	
 	public ItemList updateAction(String oqmDbIdOrName, ObjectId listId, ObjectId itemId, int index, JsonObject updateJson, InteractingEntity entity) {
 		ItemList list = this.get(oqmDbIdOrName, listId);
 		//TODO
 		return list;
-	}
-	
-	public ItemList updateAction(String oqmDbIdOrName, String listId, String itemId, int index, JsonObject updateJson, InteractingEntity entity) {
-		return this.updateAction(oqmDbIdOrName, new ObjectId(listId), new ObjectId(itemId), index, updateJson, entity);
 	}
 	
 	@Override

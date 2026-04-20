@@ -1,19 +1,23 @@
-//TODO:: handle edit
-const FileAttachmentAddEdit = {
-	formMessages: $("#fileAttachmentAddEditFormMessages"),
-	form: $("#fileAttachmentAddEditForm"),
-	fileInput: $("#fileAttachmentAddEditFormFileInput"),
-	descriptionInput: $("#fileAttachmentAddEditFormDescriptionInput"),
+import {Rest} from "../../../Rest.js";
+import {PageMessageUtils} from "../../../PageMessageUtils.js";
+import {PageUtility} from "../../../utilClasses/PageUtility.js";
 
-	resetForm(){
+// TODO:: #1149 editing
+export class FileAttachmentAddEdit extends PageUtility {
+	static formMessages = $("#fileAttachmentAddEditFormMessages");
+	static form = $("#fileAttachmentAddEditForm");
+	static fileInput = $("#fileAttachmentAddEditFormFileInput");
+	static descriptionInput = $("#fileAttachmentAddEditFormDescriptionInput");
+
+	static resetForm(){
 		this.fileInput.val(null);
 		this.descriptionInput.val("");
-	},
-	setupForAdd(){
+	}
+	static setupForAdd(){
 		this.resetForm();
-	},
+	}
 
-	submitForm(e){
+	static submitForm(e){
 		e.preventDefault();
 		console.log("Submitting FileAttachmentAddEdit form.");
 
@@ -36,11 +40,11 @@ const FileAttachmentAddEdit = {
 			},
 			failMessagesDiv: FileAttachmentAddEdit.formMessages
 		});
-	},
-	fileAttachmentAdded(data) {
-		PageMessages.reloadPageWithMessage("Added file successfully!", "success", "Success!");
-	},
-	removeFile(fileId){
+	}
+	static fileAttachmentAdded(data) {
+		PageMessageUtils.reloadPageWithMessage("Added file successfully!", "success", "Success!");
+	}
+	static removeFile(fileId){
 		console.log("Attempting to remove file: ", fileId);
 		if(!confirm("Are you sure? This cannot be undone.")){
 			console.log("User chose not to delete after all.");
@@ -51,11 +55,13 @@ const FileAttachmentAddEdit = {
 			method: "delete",
 			done: function (data){
 				console.log("Successfully removed file attachment.");
-				PageMessages.reloadPageWithMessage("Removed file successfully!", "success", "Success!");
+				PageMessageUtils.reloadPageWithMessage("Removed file successfully!", "success", "Success!");
 			},
-			failMessagesDiv: PageMessages.mainMessageDiv
+			failMessagesDiv: PageMessageUtils.mainMessageDiv
 		});
 	}
-};
-
-FileAttachmentAddEdit.form.on("submit", function(e){FileAttachmentAddEdit.submitForm(e)});
+	static {
+		window.FileAttachmentAddEdit = this;
+		FileAttachmentAddEdit.form.on("submit", function(e){FileAttachmentAddEdit.submitForm(e)});
+	}
+}

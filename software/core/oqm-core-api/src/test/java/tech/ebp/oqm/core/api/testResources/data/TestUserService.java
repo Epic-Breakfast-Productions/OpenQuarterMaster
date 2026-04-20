@@ -105,10 +105,8 @@ public class TestUserService {
 				.claim(Claims.preferred_username, testUser.getName())
 				.claim("name", testUser.getName())
 				.subject(testUser.getIdFromAuthProvider())
-				.sign(
-					ConfigProvider.getConfig().getValue("smallrye.jwt.sign.key.location", String.class)
-				)
-
+//				.sign()
+				.sign(ConfigProvider.getConfig().getValue("smallrye.jwt.sign.key.location", String.class))
 			;
 		return token;
 	}
@@ -118,9 +116,9 @@ public class TestUserService {
 	}
 	
 	public User getTestUser(Set<String> roles, boolean create) {
-		User.Builder builder = User.builder();
+		User.UserBuilder builder = User.builder();
 		
-		builder.username(FAKER.name().username());
+		builder.username(FAKER.credentials().username());
 		builder.email(FAKER.internet().emailAddress());
 		builder.name(FAKER.name().fullName());
 		builder.roles(roles);

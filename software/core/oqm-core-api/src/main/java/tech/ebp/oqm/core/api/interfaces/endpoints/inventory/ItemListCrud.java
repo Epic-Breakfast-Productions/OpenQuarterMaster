@@ -5,6 +5,7 @@ import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -52,13 +53,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "List added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "List added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -69,8 +64,8 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public ObjectId create(
-		@Valid ItemList itemList
+	public ItemList create(
+		@NotNull @Valid ItemList itemList
 	) {
 		return super.create(itemList);
 	}
@@ -87,7 +82,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 			mediaType = "application/json",
 			schema = @Schema(
 				type = SchemaType.ARRAY,
-				implementation = ObjectId.class
+				implementation = ItemList.class
 			)
 		)
 	)
@@ -100,7 +95,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Consumes(MediaType.APPLICATION_JSON)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
-	public List<ObjectId> createBulk(
+	public List<ItemList> createBulk(
 		@Valid List<ItemList> itemLists
 	) {
 		return super.createBulk(itemLists);
@@ -157,7 +152,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public ItemList get(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.get(id);
 	}
@@ -197,7 +192,7 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemList update(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		ObjectNode updates
 	) {
 		return super.update(id, updates);
@@ -228,16 +223,11 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 		description = "Object requested has already been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No object found to delete.",
-		content = @Content(mediaType = "text/plain")
-	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public ItemList delete(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.delete(id);
 	}
@@ -270,8 +260,8 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response getHistoryForObject(
-		@PathParam("id") String id,
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
+		@PathParam("id") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);
@@ -342,8 +332,8 @@ public class ItemListCrud extends MainObjectProvider<ItemList, ItemListSearch> {
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public ItemList addAction(
-		@PathParam("listId") String listId,
-		@PathParam("itemId") String itemId,
+		@PathParam("listId") ObjectId listId,
+		@PathParam("itemId") ObjectId itemId,
 		ItemListAction action
 	) {
 		return ((ItemListService) this.getObjectService()).addAction(this.getOqmDbIdOrName(), listId, itemId, action, this.getInteractingEntity());

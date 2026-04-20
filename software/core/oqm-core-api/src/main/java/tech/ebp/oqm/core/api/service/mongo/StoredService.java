@@ -1,11 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
-import com.mongodb.client.FindIterable;
-import com.mongodb.client.MongoCursor;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
-import io.quarkus.arc.Arc;
-import io.quarkus.arc.InstanceHandle;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -15,31 +11,21 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.jetbrains.annotations.NotNull;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
-import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
-import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
-import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
-import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemExpiryLowStockItemProcessResults;
-import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemPostTransactionProcessResults;
-import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.StoredExpiryLowStockProcessResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.*;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.*;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
-import tech.ebp.oqm.core.api.model.units.UnitUtils;
-import tech.ebp.oqm.core.api.service.mongo.exception.DbNotFoundException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.ItemAwareSearchResult;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
-import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 
-import javax.measure.Quantity;
-import java.time.Duration;
-import java.time.LocalDateTime;
 import java.util.*;
-import java.util.stream.Collectors;
 
+import static com.mongodb.client.model.Filters.and;
+import static com.mongodb.client.model.Filters.eq;
 import static tech.ebp.oqm.core.api.model.object.storage.items.StorageType.*;
 
 /**
@@ -60,11 +46,15 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
+	IdentifierGenerationService identifierGenerationService;
+	
+	@Inject
+	@Getter(AccessLevel.PRIVATE)
 	ItemCheckoutService itemCheckoutService;
 	
+	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
-	
 	
 	@Override
 	public Set<String> getDisallowedUpdateFields() {
@@ -78,12 +68,8 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	
 	public StoredService() {
 		super(Stored.class, false);
-		try (InstanceHandle<HistoryEventNotificationService> container = Arc.container().instance(HistoryEventNotificationService.class)) {
-			this.hens = container.get();
-		}
 	}
 	
-	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, Stored newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
@@ -119,8 +105,8 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			SearchResult<Stored> inBlock = this.search(
 				oqmDbIdOrName,
 				new StoredSearch()
-					.setInventoryItemId(item.getId().toHexString())
-					.setStorageBlockId(newOrChangedObject.getStorageBlock().toHexString())
+					.setInventoryItemId(item.getId())
+					.setStorageBlockId(newOrChangedObject.getStorageBlock())
 			);
 			
 			if (!inBlock.isEmpty()) {
@@ -135,7 +121,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 		
 		if (item.getStorageType() == UNIQUE_SINGLE) {
-			SearchResult<Stored> inItem = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+			SearchResult<Stored> inItem = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId()));
 			if (!inItem.isEmpty()) {
 				if (inItem.getNumResults() != 1) {
 					throw new ValidationException("More than one globally unique stored held");
@@ -147,6 +133,43 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 				}
 			}
 		}
+		
+//		for (UniqueId curUniqueId : newOrChangedObject.getUniqueIds()) {
+//			if (curUniqueId.getType() == UniqueIdType.TO_GENERATE) {
+//				continue;
+//			}
+//
+//			List<Stored> uniqueIdresults = this.getItemsWithUniqueId(oqmDbIdOrName, clientSession, curUniqueId, newOrChangedObject.getItem());
+//			if (!uniqueIdresults.isEmpty()) {
+//				if (newObject) {
+//					throw new ValidationException("Item stored with unique id '" + curUniqueId + "' already exists.");
+//				} else {
+//					for (Stored curMatcingName : uniqueIdresults) {
+//						if (!curMatcingName.getId().equals(newOrChangedObject.getId())) {
+//							throw new ValidationException("Item stored with unique id '" + curUniqueId + "' already exists.");
+//						}
+//					}
+//				}
+//			}
+//		}
+	}
+	
+	
+	@Override
+	public boolean needsDerivedUpdatesAfterUpdate(@NotNull Stored stored, ObjectNode updates) {
+		
+		return false;
+	}
+	
+	@Override
+	public void massageIncomingData(String oqmDbIdOrName, ClientSession session, @NonNull Stored stored, boolean recalculateDerived) {
+		super.massageIncomingData(oqmDbIdOrName, session, stored, recalculateDerived);
+		
+		if(recalculateDerived) {
+			//TODO:: potentially trigger refresh of item stats #929. Doublecheck to make sure not doubling up stats calculation on transaction
+		}
+		
+		stored.setIdentifiers(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, stored.getIdentifiers()));
 	}
 	
 	@Override
@@ -154,7 +177,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		SearchResult<Stored> results = super.search(oqmDbIdOrName, cs, searchObject);
 		
 		if (searchObject.getInventoryItemId() != null) {
-			results = new ItemAwareSearchResult<>(this.getInventoryItemService().get(oqmDbIdOrName, cs, new ObjectId(searchObject.getInventoryItemId())), results);
+			results = new ItemAwareSearchResult<>(this.getInventoryItemService().get(oqmDbIdOrName, cs, searchObject.getInventoryItemId()), results);
 		}
 		
 		return results;
@@ -168,8 +191,8 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	
 	public <T extends Stored> SearchResult<T> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
 		StoredSearch search = new StoredSearch()
-								  .setInventoryItemId(itemId == null ? null : itemId.toHexString())
-								  .setStorageBlockId(storageBlockId == null ? null : storageBlockId.toHexString());
+								  .setInventoryItemId(itemId)
+								  .setStorageBlockId(storageBlockId);
 		
 		//noinspection unchecked
 		SearchResult<T> result = (SearchResult<T>) this.search(

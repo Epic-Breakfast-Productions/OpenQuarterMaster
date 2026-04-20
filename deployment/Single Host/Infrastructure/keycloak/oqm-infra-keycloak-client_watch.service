@@ -18,11 +18,12 @@ Requires=docker.socket
 Requires=oqm-infra-keycloak.service
 After=oqm-infra-keycloak.service
 
+[Install]
+WantedBy=multi-user.target
+WantedBy=oqm-infra-keycloak.service
+
 [Service]
 Type=simple
 Restart=always
 TimeoutSec=5m
-ExecStart=/bin/bash -c "/etc/oqm/static/keycloak/kc-realm-manager --monitor-client-changes"
-
-[Install]
-WantedBy=multi-user.target
+ExecStart=/bin/bash -c "/etc/oqm/static/keycloak/kc-realm-manager monitor"

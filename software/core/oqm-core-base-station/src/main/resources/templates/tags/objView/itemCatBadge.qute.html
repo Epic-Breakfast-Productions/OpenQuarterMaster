@@ -1,0 +1,9 @@
+<a
+	class="badge m-1 itemCatBadge text-decoration-none {#if category?? && category.get("color").isNull()}bg-secondary{/if}"
+	href="{#if category??}{rootPrefix}/itemCategories?view={category.get('id').asText()}{/if}"
+	style="{#if category?? && !category.get("color").isNull()}background-color:{category.get("color").asText()}; color:{category.get("textColor").asText()}{/if}"
+	title="{#if category??}{category.get("description").asText()}{/if}"
+>
+	<img class="itemCatBadgeImage {#if category?? && !category.get("imageIds").isEmpty()}{#else}d-none{/if}" src="{#if category??}{rootPrefix}/api/passthrough/media/image/for/item_category/{category.get("id").asText()}{/if}" />
+	<span class="itemCatBadgeText">{#if category??}{category.get("name").asText()}{/if}</span>
+</a>

@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.baseStation.service.modelTweak;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.node.TextNode;
 import io.smallrye.mutiny.Uni;
 import io.smallrye.mutiny.groups.UniJoin;
 import io.smallrye.mutiny.tuples.Tuple2;
@@ -218,6 +219,57 @@ public class SearchResultTweak {
 							   curResult.put(newFieldName, curLabelText);
 						   }
 					   }
+					   return searchResults;
+				   });
+	}
+	
+	
+	public Uni<ObjectNode> addCategoriesObjectsToSearchResult(ObjectNode searchResults, String oqmDb, String key, String apiToken) {
+		if (searchResults.get("empty").asBoolean()) {
+			return Uni.createFrom().item(searchResults);
+		}
+		String objSetKey = key+"-objs";
+		
+		// id -> results with that id?
+		Map<String, List<ObjectNode>> resultIdMap = new HashMap<>();
+		for (JsonNode curResult : searchResults.get("results")) {
+			//TODO:: this is probably bad for performance
+			
+			for(JsonNode curCatNode : curResult.get(key)){
+				String curCat = curCatNode.asText();
+				
+				resultIdMap.merge(
+					curCat,
+					List.of((ObjectNode) curResult),
+					(objectNodes, collection)->Stream.concat(objectNodes.stream(), collection.stream()).toList()
+				);
+			}
+			
+			((ObjectNode)curResult).putArray(objSetKey);
+		}
+		
+		if(resultIdMap.isEmpty()){
+			return Uni.createFrom().item(searchResults);
+		}
+		
+		UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
+		
+		for (String catId : resultIdMap.keySet()) {
+			uniJoinBuilder.add(getOqmCoreApiClient().itemCatGet(apiToken, oqmDb, catId));
+		}
+		
+		//returns a uni, not a response
+		return uniJoinBuilder.joinAll()
+				   .andCollectFailures()
+				   .map((List<ObjectNode> resultList)->{
+					   
+					   for(ObjectNode curCategory : resultList){
+						   for(ObjectNode curResult : resultIdMap.get(curCategory.get("id").asText())){
+							   //TODO:: might need a mutex
+							   ((ArrayNode)curResult.get(objSetKey)).add(curCategory);
+						   }
+					   }
+					   
 					   return searchResults;
 				   });
 	}

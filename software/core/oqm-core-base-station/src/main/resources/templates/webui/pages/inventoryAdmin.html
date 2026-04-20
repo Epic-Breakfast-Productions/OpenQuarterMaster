@@ -7,7 +7,9 @@
 			<div class="col">
 				<ul class="nav nav-tabs mb-3" id="mainTab" role="tablist">
 					<li class="nav-item" role="presentation">
-						<button class="nav-link active" id="unitsTab" data-bs-toggle="tab" data-bs-target="#unitsContent" type="button" role="tab" aria-controls="pruningContent" aria-selected="true">Custom Units</button>
+						<button class="nav-link active" id="unitsTab" data-bs-toggle="tab" data-bs-target="#unitsContent" type="button" role="tab" aria-controls="pruningContent" aria-selected="true">
+							{#icons/units /} Custom Units
+						</button>
 					</li>
                     <li class="nav-item" role="presentation">
                         <button class="nav-link" id="databasesTab" data-bs-toggle="tab" data-bs-target="#databasesContent" type="button" role="tab" aria-controls="databasesContent" aria-selected="false">
@@ -15,15 +17,19 @@
                         </button>
                     </li>
 					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="importExportTab" data-bs-toggle="tab" data-bs-target="#importExportContent" type="button" role="tab" aria-controls="importExportContent" aria-selected="false">Import/Export</button>
+						<button class="nav-link" id="importExportTab" data-bs-toggle="tab" data-bs-target="#importExportContent" type="button" role="tab" aria-controls="importExportContent" aria-selected="false">
+							Import/Export
+						</button>
 					</li>
 					<li class="nav-item" role="presentation">
-						<button class="nav-link" id="pruningTab" data-bs-toggle="tab" data-bs-target="#pruningContent" type="button" role="tab" aria-controls="pruningContent" aria-selected="false">Data Pruning</button>
+						<button class="nav-link" id="pruningTab" data-bs-toggle="tab" data-bs-target="#pruningContent" type="button" role="tab" aria-controls="pruningContent" aria-selected="false">
+							Data Pruning
+						</button>
 					</li>
 				</ul>
 				<div class="tab-content" id="mainTabContent">
 					<div class="tab-pane fade show active" id="unitsContent" role="tabpanel" aria-labelledby="unitsTab">
-						<h2>Custom Units</h2>
+						<h2>{#icons/units /} Custom Units</h2>
 						<p>Define custom units here for use in the application.</p>
 						<hr />
 
@@ -68,7 +74,7 @@
 													<label for="unitAddBaseDimensionInput" class="form-label">Unit Dimension</label>
 													<select class="form-select" id="unitAddBaseDimensionInput" required>
 														{#for curDimension in unitDimensions}
-															<option value="{curDimension}">{curDimension}</option>
+															<option value="{curDimension.asText()}">{curDimension.asText()}</option>
 														{/for}
 													</select>
 												</div>
@@ -229,7 +235,7 @@
 															</div>
 															<div class="mb-3">
 																<label for="importBulkFileInput" class="form-label">Exported bundle file:</label>
-																<input class="form-control" type="file" id="importBulkFileInput" name="file">
+																<input class="form-control" type="file" id="importBulkFileInput" name="file" accept=".oqmdb">
 															</div>
 															<div class="">
 																<button type="submit" class="btn btn-primary">
@@ -255,13 +261,25 @@
 								<div id="exportCollapse" class="accordion-collapse collapse" aria-labelledby="exportHeading" data-bs-parent="#importExportAccordion">
 									<div class="accordion-body">
 										<form target="_blank" method="get" action="{rootPrefix}/api/passthrough/inventory/manage/export">
-											<div class="col-12 mb-2">
+											<div class="mb-3">
+												<label for="addEditItemUnitInput" class="col-sm-2 col-form-label">Databases</label>
+													<div class="col-sm-10">
+														<select class="form-select dselect-select" id="addEditItemUnitInput" multiple name="dbs">
+															{#for curOqmDb in oqmDbs}
+																{#let curId=curOqmDb.get("id").asText()}
+																	<option value="{curId}" >{curOqmDb.get("displayName").asText()}</option>
+																{/let}
+															{/for}
+														</select>
+													</div>
+											</div>
+											<div class="mb-3">
 												<div class="form-check form-switch">
 													<input class="form-check-input" type="checkbox" role="switch" id="excludeHistoryCheckbox" name="excludeHistory" value="true">
 													<label class="form-check-label" for="excludeHistoryCheckbox">Exclude History</label>
 												</div>
 											</div>
-											<div class="col-12">
+											<div class="">
 												<button type="submit" class="btn btn-primary">
 													{#icons/icon icon='cloud-download'}{/icons/icon}
 													Export
@@ -284,23 +302,29 @@
 		</div>
 	{/pageContent}
 	{#scripts}
-		<script src="{rootPrefix}/res/js/obj/units.js"></script>
+	<script type="module">
+		import { Rest } from '{rootPrefix}/res/js/Rest.js';
+		import { UnitUtils } from '{rootPrefix}/res/js/obj/UnitUtils.js';
+		
+		window.Rest = Rest;
+		window.UnitUtils = UnitUtils;
+		
+		console.log("Page modules loaded.");
+	</script>
 	{/scripts}
 	{#pageScript}
-		<script>
-
-			var importBulkFileInput = $("#importBulkFileInput")[0];
+		<script defer>
+			let importBulkFileInput = $("#importBulkFileInput")[0];
 
 			$("#bulkImportForm").submit(function (e){
 				e.preventDefault();
 
 				let formData = new FormData();
-
-
 				let file = importBulkFileInput.files[0];
 
 				formData.append("fileName", file.name);
 				formData.append("file", file);
+				formData.append("options", "{ }")
 
 				Rest.call({
 					url: Rest.passRoot + '/inventory/manage/import/file/bundle',
@@ -309,25 +333,25 @@
 					failMessagesDiv: $("#dataImportMessages"),
 					done: function (data){
 						console.log("Successfully imported the data.");
-						PageMessages.reloadPageWithMessage("Imported data successfully!", "success", "Success!");
+						PageMessageUtils.reloadPageWithMessage("Imported data successfully!", "success", "Success!");
 					}
 					//TODO:: fail message
 				});
 			});
 
-			var unitAddForm = $("#unitAddForm");
-			var unitAddCategoryInput = $("#unitAddCategoryInput");
-			var unitAddNameInput = $("#unitAddNameInput");
-			var unitAddSymbolInput = $("#unitAddSymbolInput");
-			var unitAddTypeInput = $("#unitAddTypeInput");
+			let unitAddForm = $("#unitAddForm");
+			let unitAddCategoryInput = $("#unitAddCategoryInput");
+			let unitAddNameInput = $("#unitAddNameInput");
+			let unitAddSymbolInput = $("#unitAddSymbolInput");
+			let unitAddTypeInput = $("#unitAddTypeInput");
 
-			var baseFormInputRow = $("#baseFormInputRow");
-			var unitAddBaseDimensionInput = $("#unitAddBaseDimensionInput");
+			let baseFormInputRow = $("#baseFormInputRow");
+			let unitAddBaseDimensionInput = $("#unitAddBaseDimensionInput");
 
-			var derivedFormInputRow = $("#derivedFormInputRow");
-			var unitAddDerivedFromInput = $("#unitAddDerivedFromInput");
-			var unitAddDerivedTypeInput = $("#unitAddDerivedTypeInput");
-			var unitAddDerivedValueInput = $("#unitAddDerivedValueInput");
+			let derivedFormInputRow = $("#derivedFormInputRow");
+			let unitAddDerivedFromInput = $("#unitAddDerivedFromInput");
+			let unitAddDerivedTypeInput = $("#unitAddDerivedTypeInput");
+			let unitAddDerivedValueInput = $("#unitAddDerivedValueInput");
 
 			function newUnitTypeChanged(){
 				switch (unitAddTypeInput.val()){
@@ -374,7 +398,7 @@
 					method: 'POST',
 					data: newUnitRequest,
 					done: function (data){
-						PageMessages.reloadPageWithMessage("Added custom unit successfully!", "success", "Success!");
+						PageMessageUtils.reloadPageWithMessage("Added custom unit successfully!", "success", "Success!");
 					},
 					fail: function (data){
 					}
@@ -405,7 +429,7 @@
                     data: addDbData,
                     failMessagesDiv: addDatabaseFormMessages,
                     done: function (data){
-                        PageMessages.reloadPageWithMessage("Added Database successfully!", "success", "Success!");
+                        PageMessageUtils.reloadPageWithMessage("Added Database successfully!", "success", "Success!");
                     },
                     fail: function (data){
                     }
