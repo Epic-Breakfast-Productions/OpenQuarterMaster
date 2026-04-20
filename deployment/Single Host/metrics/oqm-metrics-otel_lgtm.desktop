@@ -4,8 +4,8 @@ GenericName=Grafana - OQM
 
 Comment=View your OQM instance's Metrics
 
-Exec=bash -c 'xdg-open $(oqm-config g metrics.otel-lgtm.externalBaseUri)'
-Icon=/etc/oqm/static/media/oqm-icon.svg
+Exec=bash -c 'xdg-open $(oqm-config g metrics.otel-lgtm.grafana.externalBaseUri)'
+Icon=/etc/oqm/static/media/metrics/otel-lgtm/oqm-grafana-icon.svg
 Terminal=false
 
 Type=Application

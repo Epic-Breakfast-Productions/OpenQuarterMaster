@@ -53,6 +53,7 @@ mkdir -p "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 mkdir -p "$buildDir/$debDir/etc/oqm/kcClients/"
 mkdir -p "$buildDir/$debDir/usr/share/applications"
 mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/metrics/otel-lgtm/"
+mkdir -p "$buildDir/$debDir/etc/oqm/static/media/metrics/otel-lgtm/"
 
 
 install -m 755 -D "uiEntry-grafana.json" "$buildDir/$debDir/etc/oqm/ui.d/oqm-metrics-otel_lgtm-grafana.json"
@@ -61,6 +62,7 @@ install -m 755 -D "oqm-metrics-otel_lgtm.desktop" "$buildDir/$debDir/usr/share/a
 install -m 755 -D "oqm-metrics-otel_lgtm-proxy-config.json" "$buildDir/$debDir/etc/oqm/proxyConfig.d/"
 install -m 755 -D "oqm-metrics-otel_lgtm-grafana-client.json" "$buildDir/$debDir/etc/oqm/kcClients/"
 install -m 755 -D "metrics-otel_lgtm-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/metrics/otel-lgtm/main-config.list"
+install -m 755 -D "oqm-grafana-icon.svg" "$buildDir/$debDir/etc/oqm/static/media/metrics/otel-lgtm/"
 
 serviceFile="oqm-metrics-otel_lgtm.service"
 serviceFileEscaped="$serviceFile" # "$(systemd-escape "$serviceFile")"
