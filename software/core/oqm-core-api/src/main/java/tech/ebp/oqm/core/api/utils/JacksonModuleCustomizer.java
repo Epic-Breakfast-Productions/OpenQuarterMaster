@@ -6,6 +6,9 @@ import io.quarkus.jackson.ObjectMapperCustomizer;
 import jakarta.inject.Singleton;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 
+/**
+ * Customizes the Jackson ObjectMapper for the Core API.
+ */
 @Singleton
 public class JacksonModuleCustomizer implements ObjectMapperCustomizer {
 	

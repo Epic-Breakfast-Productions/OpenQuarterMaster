@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.service.mongo;
+package tech.ebp.oqm.core.api.service.serviceState;
 
 
 import io.quarkus.test.junit.QuarkusTest;
