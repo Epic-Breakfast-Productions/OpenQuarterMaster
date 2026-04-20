@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.15.3'
+version '1.15.4-SNAPSHOT'
 
 repositories {
     mavenCentral()
@@ -28,7 +28,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-container-image-docker'
     implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation 'io.quarkus:quarkus-smallrye-openapi'
-    implementation 'io.quarkus:quarkus-opentelemetry'
+    implementation 'io.quarkus:quarkus-micrometer-opentelemetry'
     implementation 'io.quarkus:quarkus-scheduler'
 
     implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.4.5'

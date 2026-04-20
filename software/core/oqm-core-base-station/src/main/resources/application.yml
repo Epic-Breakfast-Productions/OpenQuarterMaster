@@ -142,6 +142,13 @@ quarkus:
       path: /logout
       post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
   rest-csrf:
+  otel:
+    metrics:
+      enabled: true
+    traces:
+      enabled: true
+    logs:
+      enabled: true
     
   keycloak:
     devservices:
