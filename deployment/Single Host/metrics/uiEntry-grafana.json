@@ -1,0 +1,9 @@
+{
+	"type": "Metrics",
+	"order": 0,
+	"name": "Grafana",
+	"description": "The Grafana UI for OQM.",
+	"urlConfigKey": "metrics.otel-lgtm.grafana.externalBaseUri",
+	"icon": "/metrics/otel-lgtm/oqm-grafana-icon.svg",
+	"monitorEndpoint": "/"
+}

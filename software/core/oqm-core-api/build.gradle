@@ -3,12 +3,12 @@ plugins {
 	id 'io.quarkus'
 	id "io.freefair.lombok" version "9.2.0"
 	id 'jacoco'
-	id 'org.cyclonedx.bom' version '3.2.3'
+	id 'org.cyclonedx.bom' version '3.2.4'
 	id("org.spdx.sbom") version "0.10.0"
 }
 
 group 'com.ebp.openQuarterMaster'
-version '4.4.5'
+version '4.4.6-SNAPSHOT'
 
 repositories {
 	mavenCentral()
@@ -24,7 +24,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-rest-jackson'
 	implementation 'io.quarkus:quarkus-smallrye-openapi'
 	implementation 'io.quarkus:quarkus-smallrye-health'
-//	implementation 'io.quarkus:quarkus-opentelemetry'
+	implementation 'io.quarkus:quarkus-micrometer-opentelemetry'
 	implementation 'io.quarkus:quarkus-hibernate-validator'
 	implementation 'io.quarkus:quarkus-container-image-docker'
 	implementation 'io.quarkus:quarkus-scheduler'

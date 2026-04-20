@@ -29,4 +29,4 @@ jobs:
       path: "software/core/oqm-core-api"
       java-version: "21"
       run-int-tests: true
-      container-based-int-tests: false
+      container-based-int-tests: true
