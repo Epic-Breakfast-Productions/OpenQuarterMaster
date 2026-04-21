@@ -45,16 +45,16 @@ quarkus:
   rest-client:
     logging:
       scope: all
-    upc-barcodelookup-com:
-      url: ${productLookup.providers.barcodelookup-com.url}
+    barcodelookup-com:
+      url: https://api.barcodelookup.com/
       scope: jakarta.inject.Singleton
-    upc-datakick:
+    datakick:
       url: https://www.gtinsearch.org
       scope: jakarta.inject.Singleton
-    upc-upcitemdb:
-      url: ${productLookup.providers.upcitemdb.url}
+    upcitemdb:
+      url: https://api.upcitemdb.com
       scope: jakarta.inject.Singleton
-    lego-rebrickable:
+    rebrickable:
       url: https://rebrickable.com
       scope: jakarta.inject.Singleton
   smallrye-openapi:
@@ -86,14 +86,8 @@ quarkus:
   productLookup:
     providers:
       rebrickable:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
         apiKey: devKey
-      upcitemdb:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
-      datakick:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
       barcodelookup-com:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
         apiKey: devKey
 
   quarkus:
@@ -102,3 +96,17 @@ quarkus:
       ssl-port: 8443
     log:
       level: DEBUG
+    rest-client:
+      logging:
+        scope: all
+      barcodelookup-com:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
+        scope: jakarta.inject.Singleton
+      datakick:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
+        scope: jakarta.inject.Singleton
+      upcitemdb:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
+        scope: jakarta.inject.Singleton
+      rebrickable:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/

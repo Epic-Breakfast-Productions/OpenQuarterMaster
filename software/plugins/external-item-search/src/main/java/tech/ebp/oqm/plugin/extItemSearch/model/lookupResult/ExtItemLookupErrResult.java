@@ -33,4 +33,10 @@ public class ExtItemLookupErrResult extends LookupResult {
 	}
 	
 	private String errMessage;
+	private Integer errCode;
+	
+	public String getDisplayMessage() {
+		return (this.getErrCode() == null? "" : this.getErrCode() + " - ") + this.errMessage;
+	}
+	
 }

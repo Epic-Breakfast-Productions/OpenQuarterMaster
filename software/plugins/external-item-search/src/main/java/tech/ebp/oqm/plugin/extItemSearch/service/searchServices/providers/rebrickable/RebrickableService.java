@@ -47,7 +47,7 @@ public class RebrickableService extends ItemSearchService {
 		RebrickableLookupClient rebrickableLookupClient,
 		@ConfigProperty(name = "productLookup.providers.rebrickable.enabled", defaultValue = "false")
 		boolean enabled,
-		@ConfigProperty(name = "productLookup.providers.rebrickable.homepage", defaultValue = "")
+		@ConfigProperty(name = "productLookup.providers.rebrickable.apiKey", defaultValue = "")
 		String apiKey
 	) {
 		this.rebrickableLookupClient = rebrickableLookupClient;

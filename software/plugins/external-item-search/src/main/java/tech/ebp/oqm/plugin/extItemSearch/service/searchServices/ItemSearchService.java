@@ -2,14 +2,19 @@ package tech.ebp.oqm.plugin.extItemSearch.service.searchServices;
 
 
 import io.smallrye.mutiny.Multi;
+import lombok.extern.slf4j.Slf4j;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupErrResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupType;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+@Slf4j
 public abstract class ItemSearchService {
 	
 	public abstract ExtItemLookupProviderInfo getProviderInfo();
@@ -62,4 +67,22 @@ public abstract class ItemSearchService {
 		};
 	}
 	
+	
+	protected ExtItemLookupErrResult handleError(Throwable error) {
+		log.warn("Error searching for ext items: {}", error.getMessage(), error);
+		ExtItemLookupErrResult.Builder<?, ?> builder = ExtItemLookupErrResult.builder();
+		builder.source(this.getProviderInfo().getId());
+		
+		builder.errMessage(error.getMessage());
+		
+		if(error instanceof ClientWebApplicationException) {
+			builder.errCode(((ClientWebApplicationException) error).getResponse().getStatus());
+			builder.errMessage(((ClientWebApplicationException) error).getResponse().getStatusInfo().getReasonPhrase());
+		}
+		
+		return builder.build();
+	}
+	protected Collection<LookupResult> handleErrorRetCollection(Throwable error) {
+		return List.of(this.handleError(error));
+	}
 }

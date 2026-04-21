@@ -4,6 +4,7 @@ import io.smallrye.mutiny.Multi;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -78,7 +79,7 @@ public class ItemLookupRestInterface {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Multi<LookupResult> allProviderInfo(@BeanParam ExtItemSearch search) {
+	public Multi<LookupResult> search(@Valid @BeanParam ExtItemSearch search) {
 		return this.productLookupService.search(search);
 	}
 

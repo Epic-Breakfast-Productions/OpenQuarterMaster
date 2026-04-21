@@ -57,7 +57,7 @@ public class DatakickService extends ItemSearchService {
 								.build();
 	}
 	
-	@CacheResult(cacheName = "rebrickable-part-num-search")
+	@CacheResult(cacheName = "datakick-barcode-search")
 	public Uni<ArrayNode> performBarcodeSearch(String barcode) {
 		return this.dataKickLookupClient.getFromUpcCode(barcode);
 	}
@@ -130,6 +130,8 @@ public class DatakickService extends ItemSearchService {
 		return Optional.of(
 			this.performBarcodeSearch(search)
 				.map(this::jsonNodeToSearchResults)
+				.onFailure().recoverWithItem(this::handleErrorRetCollection)
+				
 				.onItem().transformToMulti(collection ->
 											   Multi.createFrom().iterable(collection)
 				)

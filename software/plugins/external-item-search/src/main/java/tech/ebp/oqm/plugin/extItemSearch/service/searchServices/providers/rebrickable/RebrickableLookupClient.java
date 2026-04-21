@@ -13,7 +13,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import java.util.concurrent.CompletionStage;
 
 @Path("/api/v3/lego/")
-@RegisterRestClient(configKey = "lego-rebrickable")
+@RegisterRestClient(configKey = "rebrickable")
 public interface RebrickableLookupClient {
 	
 	@GET

@@ -14,7 +14,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import java.util.concurrent.CompletionStage;
 
 @Path("/api/items/")
-@RegisterRestClient(configKey = "upc-datakick")
+@RegisterRestClient(configKey = "datakick")
 public interface DataKickLookupClient {
 	
 	@WithSpan
