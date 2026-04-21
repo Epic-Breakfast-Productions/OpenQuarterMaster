@@ -5,9 +5,6 @@ on:
     paths:
       - "software/core/oqm-core-api/**"
       - ".github/workflows/core-api.yml"
-       - "software/core/oqm-core-api/**"
-       - ".github/workflows/core-api.yml"
-
   workflow_call:
   workflow_dispatch:
 
