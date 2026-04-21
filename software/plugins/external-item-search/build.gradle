@@ -26,6 +26,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-micrometer'
     implementation 'io.quarkus:quarkus-hibernate-validator'
     implementation 'io.quarkus:quarkus-container-image-docker'
+    implementation 'io.quarkus:quarkus-cache'
     implementation 'io.quarkus:quarkus-arc'
 
     implementation group: 'org.jsoup', name: 'jsoup', version: '1.22.1'
@@ -38,8 +39,8 @@ dependencies {
 }
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_17
-    targetCompatibility = JavaVersion.VERSION_17
+    sourceCompatibility = JavaVersion.VERSION_21
+    targetCompatibility = JavaVersion.VERSION_21
 }
 
 test {

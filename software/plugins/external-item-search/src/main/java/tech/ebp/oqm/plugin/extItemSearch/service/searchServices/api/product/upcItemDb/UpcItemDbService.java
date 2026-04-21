@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
-import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product.ApiProductSearchService;
 
 import java.net.URL;

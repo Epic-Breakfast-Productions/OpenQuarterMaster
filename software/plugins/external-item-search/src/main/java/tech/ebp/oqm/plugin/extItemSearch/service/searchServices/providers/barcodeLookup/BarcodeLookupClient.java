@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product.barcodeLookup;
+package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.barcodeLookup;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;

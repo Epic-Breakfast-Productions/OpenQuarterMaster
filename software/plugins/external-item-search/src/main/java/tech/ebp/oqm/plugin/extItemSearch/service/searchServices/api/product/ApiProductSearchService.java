@@ -4,7 +4,7 @@ package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product;
 import com.fasterxml.jackson.databind.JsonNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import lombok.extern.slf4j.Slf4j;
-import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.ItemApiSearchService;
 
 import java.util.List;

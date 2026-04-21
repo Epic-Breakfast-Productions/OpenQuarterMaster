@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product.barcodeLookup;
+package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.barcodeLookup;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -12,7 +12,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
-import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product.ApiProductSearchService;
 
 import java.net.URL;
@@ -26,7 +27,7 @@ import java.util.concurrent.CompletionStage;
 @ApplicationScoped
 @Slf4j
 @NoArgsConstructor
-public class BarcodeLookupService extends ApiProductSearchService {
+public class BarcodeLookupService extends ItemSearchService {
 	
 	BarcodeLookupClient barcodeLookupClient;
 	@Getter
@@ -55,14 +56,14 @@ public class BarcodeLookupService extends ApiProductSearchService {
 		this.barcodeLookupClient = barcodeLookupClient;
 		
 		ExtItemLookupProviderInfo.Builder infoBuilder = ExtItemLookupProviderInfo
-			.builder()
-			.displayName(displayName)
-			.description(description)
-			.acceptsContributions(acceptsContributions)
-			.homepage(homepage)
-			.cost(cost);
+															.builder()
+															.displayName(displayName)
+															.description(description)
+															.acceptsContributions(acceptsContributions)
+															.homepage(homepage)
+															.cost(cost);
 		
-		if(apiKey == null || apiKey.isBlank()){
+		if (apiKey == null || apiKey.isBlank()) {
 			log.warn("API key for {} was null or blank.", displayName);
 			infoBuilder.enabled(false);
 			this.apiKey = null;
@@ -83,6 +84,7 @@ public class BarcodeLookupService extends ApiProductSearchService {
 	 * https://www.barcodelookup.com/api
 	 *
 	 * @param results
+	 *
 	 * @return
 	 */
 	@WithSpan
@@ -102,7 +104,7 @@ public class BarcodeLookupService extends ApiProductSearchService {
 			for (Iterator<Map.Entry<String, JsonNode>> iter = curResultJson.fields(); iter.hasNext(); ) {
 				Map.Entry<String, JsonNode> curField = iter.next();
 				
-				if(curField.getValue().isObject() || curField.getValue().isArray()){
+				if (curField.getValue().isObject() || curField.getValue().isArray()) {
 					//TODO:: handle?
 					continue;
 				}

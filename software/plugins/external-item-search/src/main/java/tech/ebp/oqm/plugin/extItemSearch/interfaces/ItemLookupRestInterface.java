@@ -1,8 +1,10 @@
 package tech.ebp.oqm.plugin.extItemSearch.interfaces;
 
+import io.smallrye.mutiny.Multi;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -18,7 +20,9 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
-import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupResults;
+import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemSearch;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResults;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.service.ExtItemLookupService;
 
 import java.net.MalformedURLException;
@@ -33,7 +37,7 @@ public class ItemLookupRestInterface {
 
 	@Inject
 	ExtItemLookupService productLookupService;
-
+	
 	@GET
 	@Path("/providers")
 	@Operation(
@@ -53,76 +57,29 @@ public class ItemLookupRestInterface {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response allProviderInfo() {
-		return Response.ok(this.productLookupService.getAllProviderInfo()).build();
+		return Response.ok(this.productLookupService.getProductProviderInfo()).build();
 	}
-
+	
 	@GET
-	@Path("barcode/{barcode}")
+	@Path("/search")
 	@Operation(
-		summary = "Searches enabled providers for the barcode given."
+		summary = "Searches."
 	)
 	@APIResponse(
 		responseCode = "200",
 		description = "Image retrieved.",
 		content = @Content(
-			mediaType = "application/json",
+			mediaType = MediaType.APPLICATION_JSON,
 			schema = @Schema(
-				implementation = ExtItemLookupResults.class
+				type = SchemaType.ARRAY,
+				implementation = ExtItemLookupProviderInfo.class
 			)
 		)
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response searchBarcode(
-		@PathParam("barcode") String barcode
-	) {
-		return Response.ok(this.productLookupService.searchBarcode(barcode)).build();
-	}
-
-	@GET
-	@Path("webpage-scrape/{webpage}")
-	@Operation(
-		summary = "Scans the given webpage for product details."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Image retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ExtItemLookupResults.class
-			)
-		)
-	)
-	@PermitAll
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response scanWebpage(
-		@PathParam("webpage") String page
-	) throws MalformedURLException, ExecutionException, InterruptedException {
-		return Response.ok(this.productLookupService.scanPage(new URL(page))).build();
-	}
-
-	@GET
-	@Path("lego/part/{partNo}")
-	@Operation(
-		summary = "Searches enabled providers for the lego part number."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Image retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ExtItemLookupResults.class
-			)
-		)
-	)
-	@PermitAll
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response searchLegoPart(
-		@PathParam("partNo") String partNo
-	) {
-		return Response.ok(this.productLookupService.searchLegoPart(partNo)).build();
+	public Multi<LookupResult> allProviderInfo(@BeanParam ExtItemSearch search) {
+		return this.productLookupService.search(search);
 	}
 
 }

@@ -2,8 +2,11 @@ package tech.ebp.oqm.plugin.extItemSearch.model;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.ItemKind;
 
+import java.net.URI;
 import java.net.URL;
+import java.util.List;
 
 /**
  * Information about an external item lookup provider
@@ -13,6 +16,10 @@ import java.net.URL;
 @NoArgsConstructor
 @Builder
 public class ExtItemLookupProviderInfo implements Comparable<ExtItemLookupProviderInfo> {
+	
+	@NotNull
+	@NonNull
+	private String id;
 	
 	@NotNull
 	@NonNull
@@ -32,7 +39,17 @@ public class ExtItemLookupProviderInfo implements Comparable<ExtItemLookupProvid
 	
 	@NotNull
 	@NonNull
-	private URL homepage;
+	private URI homepage;
+	
+	@NotNull
+	@NonNull
+	@lombok.Builder.Default
+	private List<String> brands = List.of();
+	
+	@NotNull
+	@NonNull
+	@lombok.Builder.Default
+	private List<ItemKind> kinds = List.of();
 	
 	private boolean enabled;
 	

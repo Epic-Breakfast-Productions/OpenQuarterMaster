@@ -1,7 +1,9 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.lego.rebrickable;
+package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.rebrickable;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -14,8 +16,8 @@ import java.util.concurrent.CompletionStage;
 @RegisterRestClient(configKey = "lego-rebrickable")
 public interface RebrickableLookupClient {
 	
-	@WithSpan
-	@Path("parts/{partNo}/")
 	@GET
-	CompletionStage<JsonNode> getFromPartNum(@QueryParam("key") String apiKey, @PathParam("partNo") String partNumber);
+	@Path("parts/{partNo}/")
+	@WithSpan
+	Uni<ObjectNode> getFromPartNum(@QueryParam("key") String apiKey, @PathParam("partNo") String partNumber);
 }

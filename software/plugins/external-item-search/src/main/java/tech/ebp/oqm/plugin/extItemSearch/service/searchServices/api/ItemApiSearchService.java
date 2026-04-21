@@ -1,7 +1,7 @@
 package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
 
 import java.util.List;

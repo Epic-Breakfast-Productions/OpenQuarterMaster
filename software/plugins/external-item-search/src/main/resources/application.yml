@@ -15,13 +15,7 @@ productLookup:
       url: https://api.barcodelookup.com/
       apiKey: " "
     datakick:
-      displayName: Datakick
-      description: The open product database, free and open database of products. Mostly for home and food goods. Limited size of database, but free and open to contributions.
-      cost: Free
-      acceptsContributions: true
-      homepage: https://gtinsearch.org/
       enabled: true
-      url: https://www.gtinsearch.org
     upcitemdb:
       displayName: upcitemdb.com
       description: A lookup database with good number of records, and a free tier with 100 requests per day.
@@ -32,13 +26,7 @@ productLookup:
       url: https://api.upcitemdb.com
       apiKey: " "
     rebrickable:
-      displayName: Rebrickable
-      description: A database of LEGO(TM) pieces. Free, but requires you to get your own key.
-      cost: Free
-      acceptsContributions: false
-      homepage: https://rebrickable.com
       enabled: true
-      url: https://rebrickable.com
       apiKey: " "
 
 quarkus:
@@ -61,13 +49,13 @@ quarkus:
       url: ${productLookup.providers.barcodelookup-com.url}
       scope: jakarta.inject.Singleton
     upc-datakick:
-      url: ${productLookup.providers.datakick.url}
+      url: https://www.gtinsearch.org
       scope: jakarta.inject.Singleton
     upc-upcitemdb:
       url: ${productLookup.providers.upcitemdb.url}
       scope: jakarta.inject.Singleton
     lego-rebrickable:
-      url: ${productLookup.providers.rebrickable.url}
+      url: https://rebrickable.com
       scope: jakarta.inject.Singleton
   smallrye-openapi:
     info-title: External Item Search API
@@ -87,6 +75,12 @@ quarkus:
   health:
     openapi:
       included: true
+  wiremock:
+    devservices:
+      enabled: true
+      reload: true
+      files-mapping: ./dev/services/
+      global-response-templating: true
 
 "%dev":
   productLookup:
@@ -108,9 +102,3 @@ quarkus:
       ssl-port: 8443
     log:
       level: DEBUG
-    wiremock:
-      devservices:
-        enabled: true
-        reload: true
-        files-mapping: ../../../../dev/wmMapping
-        global-response-templating: true

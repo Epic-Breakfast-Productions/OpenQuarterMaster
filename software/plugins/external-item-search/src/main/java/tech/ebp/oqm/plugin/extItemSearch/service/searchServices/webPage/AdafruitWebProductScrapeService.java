@@ -7,7 +7,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.jsoup.nodes.Document;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
-import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 
 import java.net.URL;
 import java.util.HashMap;

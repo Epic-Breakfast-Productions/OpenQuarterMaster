@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.extItemSearch.model;
+package tech.ebp.oqm.plugin.extItemSearch.model.lookupResult;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -13,15 +13,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder
 public class ExtItemLookupResults {
+	
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
 	private List<ExtItemLookupResult> results = new ArrayList<>();
+	
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default

@@ -1,7 +1,11 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product.dataKick;
+package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.dataKick;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.smallrye.mutiny.Multi;
+import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -12,8 +16,9 @@ import java.util.concurrent.CompletionStage;
 @Path("/api/items/")
 @RegisterRestClient(configKey = "upc-datakick")
 public interface DataKickLookupClient {
+	
 	@WithSpan
 	@GET
 	@Path("{upc}")
-	CompletionStage<JsonNode> getFromUpcCode(@PathParam("upc") String barcode);
+	Uni<ArrayNode> getFromUpcCode(@PathParam("upc") String barcode);
 }
