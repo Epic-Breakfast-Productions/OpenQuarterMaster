@@ -1,20 +1,10 @@
 name: CI - Core - API
 
 on:
-  push:
-    branches: [ "**" ]
+  pull_request:
     paths:
       - "software/core/oqm-core-api/**"
       - ".github/workflows/core-api.yml"
-
-
-  # pull_request:
-  #   branches: [ "**" ]
-  #   paths:
-  #     - "software/core/oqm-core-api/**"
-  #     - ".github/workflows/core-api.yml"
-  #     - ".github/workflows/wf-quarkus-ci-pipeline.yml"
-
   workflow_call:
   workflow_dispatch:
 
