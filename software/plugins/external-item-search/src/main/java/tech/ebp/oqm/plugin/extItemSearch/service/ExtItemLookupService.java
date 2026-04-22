@@ -12,6 +12,7 @@ import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchServic
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.barcodeLookup.BarcodeLookupService;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.dataKick.DatakickService;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.rebrickable.RebrickableService;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.upcItemDb.UpcItemDbService;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.ItemKind;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupType;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
@@ -40,11 +41,13 @@ public class ExtItemLookupService {
 	public ExtItemLookupService(
 		DatakickService datakickService,
 		RebrickableService rebrickableService,
-		BarcodeLookupService barcodeLookupService
+		BarcodeLookupService barcodeLookupService,
+		UpcItemDbService upcItemDbService
 	) {
 		this.searchServices.add(datakickService);
 		this.searchServices.add(rebrickableService);
 		this.searchServices.add(barcodeLookupService);
+		this.searchServices.add(upcItemDbService);
 	}
 	
 	public List<ExtItemLookupProviderInfo> getProductProviderInfo() {

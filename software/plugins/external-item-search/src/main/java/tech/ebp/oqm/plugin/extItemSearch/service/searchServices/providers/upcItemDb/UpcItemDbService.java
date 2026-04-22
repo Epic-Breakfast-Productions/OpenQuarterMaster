@@ -1,9 +1,11 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product.upcItemDb;
+package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.upcItemDb;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.smallrye.mutiny.Multi;
+import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -13,11 +15,13 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product.ApiProductSearchService;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupType;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.ResultMappingUtils;
 
-import java.net.URL;
+import java.net.URI;
 import java.util.*;
-import java.util.concurrent.CompletionStage;
 
 /**
  *
@@ -27,7 +31,7 @@ import java.util.concurrent.CompletionStage;
 @ApplicationScoped
 @Slf4j
 @NoArgsConstructor
-public class UpcItemDbService extends ApiProductSearchService {
+public class UpcItemDbService extends ItemSearchService {
 	
 	@Inject
 	@RestClient
@@ -41,18 +45,8 @@ public class UpcItemDbService extends ApiProductSearchService {
 	public UpcItemDbService(
 		@RestClient
 		UpcItemDbLookupClient upcItemDbLookupClient,
-		@ConfigProperty(name = "productLookup.providers.upcitemdb.displayName")
-		String displayName,
 		@ConfigProperty(name = "productLookup.providers.upcitemdb.enabled", defaultValue = "false")
 		boolean enabled,
-		@ConfigProperty(name = "productLookup.providers.upcitemdb.description", defaultValue = "")
-		String description,
-		@ConfigProperty(name = "productLookup.providers.upcitemdb.acceptsContributions", defaultValue = "")
-		boolean acceptsContributions,
-		@ConfigProperty(name = "productLookup.providers.upcitemdb.homepage", defaultValue = "")
-		URL homepage,
-		@ConfigProperty(name = "productLookup.providers.upcitemdb.cost", defaultValue = "")
-		String cost,
 		@ConfigProperty(name = "productLookup.providers.upcitemdb.apiKey", defaultValue = "")
 		String apiKey
 	) {
@@ -60,12 +54,13 @@ public class UpcItemDbService extends ApiProductSearchService {
 		this.apiKey = apiKey;
 		this.providerInfo = ExtItemLookupProviderInfo
 								.builder()
-								.displayName(displayName)
+								.id("upcitemdb-com")
+								.displayName("upcitemdb.com")
+								.description("A lookup database with good number of records, and a free tier with 100 requests per day.")
+								.acceptsContributions(false)
+								.homepage(URI.create("https://www.upcitemdb.com/"))
+								.cost("Paid, Free tier")
 								.enabled(enabled)
-								.description(description)
-								.acceptsContributions(acceptsContributions)
-								.homepage(homepage)
-								.cost(cost)
 								.build();
 	}
 	
@@ -78,59 +73,53 @@ public class UpcItemDbService extends ApiProductSearchService {
 		return this.apiKey != null && !this.apiKey.isBlank();
 	}
 	
-	private ExtItemLookupResult jsonToResult(ObjectNode json) {
-		String brandName = "";
-		String name = "";
+	private ExtItemLookupResult jsonToResult(LookupType type, ObjectNode json) {
+		ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), type);
+		
 		Map<String, String> attributes = new HashMap<>();
-		ExtItemLookupResult.Builder<?, ?> resultBuilder = ExtItemLookupResult.builder();
+		Map<String, String> identifiers = new HashMap<>();
+		List<String> images = new ArrayList<>();
 		
-		
-		for (Iterator<Map.Entry<String, JsonNode>> iter = json.fields(); iter.hasNext(); ) {
-			Map.Entry<String, JsonNode> curField = iter.next();
+		for (Map.Entry<String, JsonNode> curField : json.properties()) {
 			String curFieldName = curField.getKey();
 			JsonNode curFieldVal = curField.getValue();
 			
-			
-			if (curField.getValue().isNull() || curFieldVal == null) {
+			if (ResultMappingUtils.isFieldEmpty(curFieldVal)) {
 				continue;
 			}
 			
 			switch (curFieldName) {
 				case "ean":
-					resultBuilder.barcode(curFieldVal.asText());
-					break;
-				case "brand":
-					brandName = curFieldVal.asText();
+				case "upc":
+				case "asin":
+				case "elid":
+					identifiers.put(curFieldName, curFieldVal.asText());
 					break;
 				case "title":
-					name = curFieldVal.asText();
+					resultBuilder.name(curFieldVal.asText());
+					resultBuilder.unifiedName(curFieldVal.asText());
 					break;
 				case "description":
 					resultBuilder.description(curFieldVal.asText());
 					break;
 				case "images":
-					ArrayList<String> images = new ArrayList<>(curFieldVal.size());
-					for (JsonNode curImg : (ArrayNode) curFieldVal) {
+					for (JsonNode curImg : curFieldVal) {
 						images.add(curImg.asText());
 					}
-					resultBuilder.images(images);
 					break;
-				default: {
-					String text = curFieldVal.asText();
-					if (!text.isBlank()) {
-						attributes.put(curFieldName, text);
+				default:
+					if(curFieldVal.isTextual()){
+						attributes.put(curFieldName, curFieldVal.asText());
 					}
 					break;
-				}
 			}
 		}
 		
 		return resultBuilder
 				   .source(this.getProviderInfo().getDisplayName())
-				   .name(name)
-				   .brand(brandName)
-				   .unifiedName((brandName != null && !brandName.isBlank() ? brandName + " " + name : name))
 				   .attributes(attributes)
+				   .identifiers(identifiers)
+				   .images(images)
 				   .build();
 	}
 	
@@ -142,23 +131,33 @@ public class UpcItemDbService extends ApiProductSearchService {
 	 * @return
 	 */
 	@WithSpan
-	@Override
-	public List<ExtItemLookupResult> jsonNodeToSearchResults(JsonNode results) {
+	public Collection<LookupResult> jsonNodeToSearchResults(LookupType type, ObjectNode results) {
 		log.debug("Data from upcitemdb: {}", results.toPrettyString());
 		
 		ArrayNode resultsAsArr = (ArrayNode) results.get("items");
-		List<ExtItemLookupResult> resultList = new ArrayList<>(resultsAsArr.size());
+		List<LookupResult> resultList = new ArrayList<>(resultsAsArr.size());
 		
 		for (JsonNode result : resultsAsArr) {
-			resultList.add(this.jsonToResult((ObjectNode) result));
+			resultList.add(this.jsonToResult(type, (ObjectNode) result));
 		}
 		
 		return resultList;
 	}
 	
-	@WithSpan
 	@Override
-	protected CompletionStage<JsonNode> performBarcodeSearchCall(String barcode) {
+	public Optional<Multi<LookupResult>> searchBarcode(String barcode) {
+		return Optional.of(
+			this.performBarcodeSearchCall(barcode)
+				.map(result->this.jsonNodeToSearchResults(LookupType.BARCODE, result))
+				.onFailure().recoverWithItem(e->this.handleErrorRetCollection(LookupType.BARCODE, e))
+				.onItem().transformToMulti(collection->
+											   Multi.createFrom().iterable(collection)
+				)
+		);
+	}
+	
+	
+	protected Uni<ObjectNode> performBarcodeSearchCall(String barcode) {
 		if (this.hasKey()) {
 			return this.upcItemDbLookupClient.getFromUpcCode(
 				this.apiKey,

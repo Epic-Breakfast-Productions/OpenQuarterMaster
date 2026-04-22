@@ -11,13 +11,7 @@ productLookup:
     datakick:
       enabled: true
     upcitemdb:
-      displayName: upcitemdb.com
-      description: A lookup database with good number of records, and a free tier with 100 requests per day.
-      cost: Free tier, Paid
-      acceptsContributions: false
-      homepage: https://www.upcitemdb.com/
       enabled: true
-      url: https://api.upcitemdb.com
       apiKey: " "
     rebrickable:
       enabled: true

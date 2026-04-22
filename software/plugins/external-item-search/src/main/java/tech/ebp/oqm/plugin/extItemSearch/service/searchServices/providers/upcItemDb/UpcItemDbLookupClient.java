@@ -1,7 +1,10 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product.upcItemDb;
+package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.upcItemDb;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.quarkus.cache.CacheResult;
+import io.smallrye.mutiny.Uni;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -11,14 +14,15 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import java.util.concurrent.CompletionStage;
 
 @Path("/prod/")
-@RegisterRestClient(configKey = "upc-upcitemdb")
+@RegisterRestClient(configKey = "upcitemdb")
 public interface UpcItemDbLookupClient {
 	
 	@WithSpan
 	@POST
 	@Path("v1/lookup")
 	@Consumes(MediaType.APPLICATION_JSON)
-	CompletionStage<JsonNode> getFromUpcCode(
+	@CacheResult(cacheName = "upcitemdb-barcode-search")
+	Uni<ObjectNode> getFromUpcCode(
 		@HeaderParam("user_key") String key,
 		@HeaderParam("key_type") String keyType,
 		Request barcode
@@ -28,7 +32,8 @@ public interface UpcItemDbLookupClient {
 	@GET
 	@Path("trial/lookup")
 	@Consumes(MediaType.APPLICATION_JSON)
-	CompletionStage<JsonNode> getFromUpcCodeTrial(
+	@CacheResult(cacheName = "upcitemdb-trial-barcode-search")
+	Uni<ObjectNode> getFromUpcCodeTrial(
 		@QueryParam("upc") String barcode
 	);
 	
