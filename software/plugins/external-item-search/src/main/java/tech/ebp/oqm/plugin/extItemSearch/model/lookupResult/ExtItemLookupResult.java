@@ -46,9 +46,11 @@ public class ExtItemLookupResult extends LookupResult {
 	@lombok.Builder.Default
 	private String description = "";
 	
-	private BigDecimal price;
+	@lombok.Builder.Default
+	private Map<String, String> prices = new HashMap<>();
 	
-	private String barcode;
+	@lombok.Builder.Default
+	private Map<String, String> identifiers = new HashMap<>();
 	
 	@NonNull
 	@NotNull
@@ -59,6 +61,11 @@ public class ExtItemLookupResult extends LookupResult {
 	@NotNull
 	@lombok.Builder.Default
 	private List<@NotNull @NonNull @NotBlank String> images = new ArrayList<>();
+	
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	private Map<String, String> links = new HashMap<>();
 	
 	public ExtItemLookupResult addAttIfNotBlank(String key, String val) {
 		if (

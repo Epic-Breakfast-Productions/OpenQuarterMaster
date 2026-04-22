@@ -24,6 +24,7 @@ import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemSearch;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResults;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ResultType;
 import tech.ebp.oqm.plugin.extItemSearch.service.ExtItemLookupService;
 
 import java.net.MalformedURLException;
@@ -80,7 +81,7 @@ public class ItemLookupRestInterface {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Multi<LookupResult> search(@Valid @BeanParam ExtItemSearch search) {
-		return this.productLookupService.search(search);
+		return this.productLookupService.search(search).filter(r -> !r.getType().equals(ResultType.NO_RESULTS));
 	}
 
 }

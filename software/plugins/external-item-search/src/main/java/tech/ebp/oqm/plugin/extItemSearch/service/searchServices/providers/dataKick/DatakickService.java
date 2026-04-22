@@ -18,6 +18,7 @@ import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupType;
 
 import java.net.URI;
 import java.util.*;
@@ -57,11 +58,6 @@ public class DatakickService extends ItemSearchService {
 								.build();
 	}
 	
-	@CacheResult(cacheName = "datakick-barcode-search")
-	public Uni<ArrayNode> performBarcodeSearch(String barcode) {
-		return this.dataKickLookupClient.getFromUpcCode(barcode);
-	}
-	
 	@Override
 	public boolean isEnabled() {
 		return this.getProviderInfo().isEnabled();
@@ -75,12 +71,12 @@ public class DatakickService extends ItemSearchService {
 	 * @return
 	 */
 	@WithSpan
-	public Collection<LookupResult> jsonNodeToSearchResults(ArrayNode results) {
+	public Collection<LookupResult> jsonNodeToSearchResults(LookupType type, ArrayNode results) {
 		log.debug("Data from Datakick: {}", results);
 		
 		List<LookupResult> resultsList = new ArrayList<>(results.size());
 		
-		for(JsonNode curResult : results) {
+		for (JsonNode curResult : results) {
 			ObjectNode curResultJson = (ObjectNode) curResult;
 			String brandName = "";
 			String name = "";
@@ -113,13 +109,14 @@ public class DatakickService extends ItemSearchService {
 			}
 			
 			resultsList.add(ExtItemLookupResult
-				.builder()
-				.source(this.getProviderInfo().getDisplayName())
-				.name(name)
-				.brand(brandName)
-				.unifiedName(name)
-				.attributes(attributes)
-				.build()
+								.builder()
+								.lookupType(type)
+								.source(this.getProviderInfo().getDisplayName())
+								.name(name)
+								.brand(brandName)
+								.unifiedName(name)
+								.attributes(attributes)
+								.build()
 			);
 		}
 		return resultsList;
@@ -128,11 +125,11 @@ public class DatakickService extends ItemSearchService {
 	@Override
 	public Optional<Multi<LookupResult>> searchBarcode(String search) {
 		return Optional.of(
-			this.performBarcodeSearch(search)
-				.map(this::jsonNodeToSearchResults)
-				.onFailure().recoverWithItem(this::handleErrorRetCollection)
+			this.dataKickLookupClient.getFromUpcCode(search)
+				.map(results->this.jsonNodeToSearchResults(LookupType.BARCODE, results))
+				.onFailure().recoverWithItem(e -> this.handleErrorRetCollection(LookupType.BARCODE, e))
 				
-				.onItem().transformToMulti(collection ->
+				.onItem().transformToMulti(collection->
 											   Multi.createFrom().iterable(collection)
 				)
 		);

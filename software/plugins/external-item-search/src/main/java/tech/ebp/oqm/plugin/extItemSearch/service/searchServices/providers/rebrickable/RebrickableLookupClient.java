@@ -3,8 +3,10 @@ package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.rebri
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.quarkus.cache.CacheResult;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
@@ -19,5 +21,6 @@ public interface RebrickableLookupClient {
 	@GET
 	@Path("parts/{partNo}/")
 	@WithSpan
-	Uni<ObjectNode> getFromPartNum(@QueryParam("key") String apiKey, @PathParam("partNo") String partNumber);
+	@CacheResult(cacheName = "rebrickable-part-num-search")
+	Uni<ObjectNode> getFromPartNum(@HeaderParam("Authorization") String apiKey, @PathParam("partNo") String partNumber);
 }

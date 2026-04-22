@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.quarkus.cache.CacheResult;
 import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.GET;
@@ -20,5 +21,6 @@ public interface DataKickLookupClient {
 	@WithSpan
 	@GET
 	@Path("{upc}")
+	@CacheResult(cacheName = "datakick-barcode-search")
 	Uni<ArrayNode> getFromUpcCode(@PathParam("upc") String barcode);
 }

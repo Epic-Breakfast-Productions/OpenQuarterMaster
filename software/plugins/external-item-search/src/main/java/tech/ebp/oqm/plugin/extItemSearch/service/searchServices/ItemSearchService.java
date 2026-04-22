@@ -2,6 +2,7 @@ package tech.ebp.oqm.plugin.extItemSearch.service.searchServices;
 
 
 import io.smallrye.mutiny.Multi;
+import jakarta.ws.rs.WebApplicationException;
 import lombok.extern.slf4j.Slf4j;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
@@ -67,22 +68,46 @@ public abstract class ItemSearchService {
 		};
 	}
 	
+	protected Optional<LookupResult> handleClientError(
+		LookupType type,
+		ClientWebApplicationException e
+	) {
+		//noting to do by default.
+		return Optional.empty();
+	}
 	
-	protected ExtItemLookupErrResult handleError(Throwable error) {
+	protected LookupResult handleError(LookupType type, Throwable error) {
 		log.warn("Error searching for ext items: {}", error.getMessage(), error);
-		ExtItemLookupErrResult.Builder<?, ?> builder = ExtItemLookupErrResult.builder();
+		ExtItemLookupErrResult.Builder<?, ?> builder = this.setupResponseBuilder(ExtItemLookupErrResult.builder(), type);
+		
+		builder.lookupType(type);
 		builder.source(this.getProviderInfo().getId());
 		
 		builder.errMessage(error.getMessage());
 		
-		if(error instanceof ClientWebApplicationException) {
-			builder.errCode(((ClientWebApplicationException) error).getResponse().getStatus());
-			builder.errMessage(((ClientWebApplicationException) error).getResponse().getStatusInfo().getReasonPhrase());
+		if(error instanceof WebApplicationException) {
+			builder.errCode(((WebApplicationException) error).getResponse().getStatus());
+			builder.errMessage(((WebApplicationException) error).getResponse().getStatusInfo().getReasonPhrase());
+			
+			if(error instanceof ClientWebApplicationException){
+				Optional<LookupResult> handled = this.handleClientError(type, (ClientWebApplicationException) error);
+				if(handled.isPresent()){
+					return handled.get();
+				}
+			}
 		}
 		
 		return builder.build();
 	}
-	protected Collection<LookupResult> handleErrorRetCollection(Throwable error) {
-		return List.of(this.handleError(error));
+	
+	protected Collection<LookupResult> handleErrorRetCollection(LookupType type, Throwable error) {
+		return List.of(this.handleError(type, error));
+	}
+	
+	protected <T extends LookupResult.Builder<?,?>> T setupResponseBuilder(T builder, LookupType type) {
+		builder.lookupType(type);
+		builder.source(this.getProviderInfo().getId());
+		
+		return builder;
 	}
 }
