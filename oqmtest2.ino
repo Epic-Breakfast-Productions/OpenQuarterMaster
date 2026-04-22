@@ -55,27 +55,22 @@ void loop() {
     time_at_auth = millis();
     delay(1000);
   } else {
-    Serial.print("Key still, valid time is: ");
+    Serial.print("Key still valid, time is: ");
     Serial.println(time_at_auth);
     Serial.print("time to expire: ");
     Serial.println(authdoc["expires_in"].as<unsigned long>());
 
+    delay(1000);
     Serial.println("getting count...");
     GetCount("P5400E");
+    
     Serial.print("Found ");
-    Serial.print(getdoc["results"]["stats"]["total"]["value"].as<int>()); 
+    Serial.print(getdoc["results"][0]["stats"]["total"]["value"].as<int>()); 
     Serial.print(" of item ");
-    Serial.println(getdoc["results"]["name"].as<String>());
+    Serial.println(getdoc["results"][0]["name"].as<String>());
+    Serial.println();
 
   }
-
-  Serial.print("time at auth: ");
-  Serial.println(time_at_auth);
-  Serial.print("current time: ");
-  Serial.println(millis());
-  Serial.print("difference: ");
-  Serial.println(millis() - time_at_auth);
-  Serial.println(authdoc["expires_in"].as<unsigned long>() * 1000 * (3/4));
 
   delay(1000);
 }
@@ -130,12 +125,13 @@ void requestAuth() {
 }
 
 void GetCount(String Identifier){
-  getdoc.clear();
-
   if (WiFi.status() == WL_CONNECTED) {
+    //creates path string
     iden_str = settings.get_path + Identifier;
+    //creates authstring with key from getauth()
     key_str = "Bearer " + authdoc["access_token"].as<String>();
 
+    //Begins request, sends response format and auth as headers
     client.beginRequest();
     client.get(iden_str);
     client.sendHeader("accept", "application/json");
@@ -143,10 +139,6 @@ void GetCount(String Identifier){
     client.endRequest();
 
     String responseBody = client.responseBody();
-    Serial.print("response: ");
-    Serial.println(responseBody);
-    Serial.println("end response");
-    Serial.println();
 
     deserializeJson(getdoc, responseBody);
   } else {
