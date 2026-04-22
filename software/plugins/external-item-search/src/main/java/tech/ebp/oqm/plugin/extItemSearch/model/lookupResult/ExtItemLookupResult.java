@@ -32,8 +32,6 @@ public class ExtItemLookupResult extends LookupResult {
 		return ResultType.SUCCESS;
 	}
 	
-	private String brand;
-	
 	private String name;
 	
 	@NonNull

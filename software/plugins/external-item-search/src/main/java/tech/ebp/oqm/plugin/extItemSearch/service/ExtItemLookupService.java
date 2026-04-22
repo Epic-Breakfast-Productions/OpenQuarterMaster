@@ -9,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemSearch;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.barcodeLookup.BarcodeLookupService;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.dataKick.DatakickService;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.rebrickable.RebrickableService;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.ItemKind;
@@ -38,10 +39,12 @@ public class ExtItemLookupService {
 	@Inject
 	public ExtItemLookupService(
 		DatakickService datakickService,
-		RebrickableService rebrickableService
+		RebrickableService rebrickableService,
+		BarcodeLookupService barcodeLookupService
 	) {
 		this.searchServices.add(datakickService);
 		this.searchServices.add(rebrickableService);
+		this.searchServices.add(barcodeLookupService);
 	}
 	
 	public List<ExtItemLookupProviderInfo> getProductProviderInfo() {

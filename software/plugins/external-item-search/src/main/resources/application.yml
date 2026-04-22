@@ -6,13 +6,7 @@ service:
 productLookup:
   providers:
     barcodelookup-com:
-      displayName: BarcodeLookup.com
-      description: Comprehensive database of products, but a paid service. Can get a 2-week trial API key.
-      cost: Paid
-      acceptsContributions: true
-      homepage: https://www.barcodelookup.com/
       enabled: true
-      url: https://api.barcodelookup.com/
       apiKey: " "
     datakick:
       enabled: true

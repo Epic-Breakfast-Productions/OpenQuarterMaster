@@ -23,6 +23,7 @@ import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResultNoResult
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.ItemKind;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupType;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.ResultMappingUtils;
 
 import java.io.InputStream;
 import java.net.URI;
@@ -97,28 +98,20 @@ public class RebrickableService extends ItemSearchService {
 		log.info("Search result: {}", results);
 		ExtItemLookupResult.Builder<?, ?> resultBuilder = ExtItemLookupResult.builder()
 															  .lookupType(type)
-															  .source(this.getProviderInfo().getDisplayName())
-															  .brand(BRAND);
+															  .source(this.getProviderInfo().getDisplayName());
 		
 		List<String> images = new ArrayList<>();
 		Map<String, String> links = new HashMap<>();
 		Map<String, String> identifiers = new HashMap<>();
 		Map<String, String> attributes = new HashMap<>();
 		
+		attributes.put("brand", BRAND);
+		
 		for (Map.Entry<String, JsonNode> curField : results.properties()) {
 			String curFieldName = curField.getKey();
 			JsonNode curFieldVal = curField.getValue();
 			
-			if (curField.getValue().isNull() || curFieldVal == null) {
-				continue;
-			}
-			if (curFieldVal.isTextual() && curFieldVal.asText().isBlank()) {
-				continue;
-			}
-			if (curFieldVal.isArray() && curFieldVal.isEmpty()) {
-				continue;
-			}
-			if (curFieldVal.isObject() && curFieldVal.isEmpty()) {
+			if(ResultMappingUtils.isFieldEmpty(curFieldVal)){
 				continue;
 			}
 			

@@ -1,0 +1,29 @@
+{
+	"request": {
+		"urlPathPattern": "/barcodelookup/v3/products",
+		"method": "GET",
+		"queryParameters": {
+			"key": {
+				"equalTo": "devKeyBad"
+			},
+			"barcode": {
+				"matches": ".*"
+			}
+		}
+	},
+	"response": {
+		"status": 403,
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"delayDistribution": {
+			"type": "lognormal",
+			"median": 500,
+			"sigma": 0.4
+		}
+	}
+}
+
+
+
+

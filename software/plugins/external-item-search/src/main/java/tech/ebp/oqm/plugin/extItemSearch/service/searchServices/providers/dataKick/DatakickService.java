@@ -14,12 +14,15 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResultNoResults;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupType;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.*;
 
@@ -113,7 +116,6 @@ public class DatakickService extends ItemSearchService {
 								.lookupType(type)
 								.source(this.getProviderInfo().getDisplayName())
 								.name(name)
-								.brand(brandName)
 								.unifiedName(name)
 								.attributes(attributes)
 								.build()
@@ -133,5 +135,17 @@ public class DatakickService extends ItemSearchService {
 											   Multi.createFrom().iterable(collection)
 				)
 		);
+	}
+	
+	@Override
+	protected Optional<LookupResult> handleClientError(LookupType type, ClientWebApplicationException e) {
+		if (e.getResponse().getStatus() == 404) {
+			return Optional.of(
+				this.setupResponseBuilder(LookupResultNoResults.builder(), type)
+					.detail("No items found.")
+					.build()
+			);
+		}
+		return Optional.empty();
 	}
 }
