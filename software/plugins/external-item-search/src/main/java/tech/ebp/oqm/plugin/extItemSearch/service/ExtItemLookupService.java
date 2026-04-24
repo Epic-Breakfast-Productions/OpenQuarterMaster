@@ -47,6 +47,10 @@ public class ExtItemLookupService {
 		this.searchServices.add(upcItemDbService);
 	}
 	
+	public Set<ItemSearchService> getSearchServices() {
+		return this.searchServices;
+	}
+	
 	public List<ExtItemLookupProviderInfo> getProductProviderInfo() {
 		return servicesToInfoList(this.searchServices);
 	}

@@ -1,7 +1,6 @@
 package tech.ebp.oqm.plugin.extItemSearch.model;
 
 
-import io.smallrye.config.WithDefault;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.DefaultValue;
@@ -51,6 +50,6 @@ public class ExtItemSearch {
 	String search;
 	
 	@QueryParam("keepNotFound")
-	@DefaultValue("true")
+	@DefaultValue("false")
 	boolean keepNotFound;
 }

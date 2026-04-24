@@ -30,14 +30,9 @@ import java.util.*;
  */
 @ApplicationScoped
 @Slf4j
-@NoArgsConstructor
 public class DatakickService extends ItemSearchService {
 	
-	@Inject
-	@RestClient
-	DataKickLookupClient dataKickLookupClient;
-	@Getter
-	ExtItemLookupProviderInfo providerInfo;
+	private DataKickLookupClient dataKickLookupClient;
 	
 	@Inject
 	public DatakickService(
@@ -68,7 +63,6 @@ public class DatakickService extends ItemSearchService {
 	 *
 	 * @return
 	 */
-	@WithSpan
 	public Collection<LookupResult> jsonNodeToSearchResults(LookupSource source, LookupMethod method, ArrayNode results) {
 		log.debug("Data from Datakick: {}", results);
 		

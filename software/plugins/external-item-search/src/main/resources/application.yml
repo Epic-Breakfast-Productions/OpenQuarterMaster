@@ -10,10 +10,10 @@ productLookup:
       apiKey: " "
     datakick:
       enabled: true
-    upcitemdb:
+    rebrickable:
       enabled: true
       apiKey: " "
-    rebrickable:
+    upcitemdb:
       enabled: true
       apiKey: " "
 

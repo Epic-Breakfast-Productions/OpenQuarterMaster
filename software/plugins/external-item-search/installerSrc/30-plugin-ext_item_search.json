@@ -5,8 +5,22 @@
 			"internalHttpPort": 80,
 			"internalHttpsPort": 443,
 			"internalBaseUri": "http://#{plugin.externalItemSearch.internalHost}:#{plugin.externalItemSearch.internalHttpPort}",
-			"apiKeys": {
-
+			"services": {
+				"barcodelookup": {
+					"enabled": true,
+					"apiKey": null
+				},
+				"datakick": {
+					"enabled": true,
+				},
+				"rebrickable": {
+					"enabled": true,
+					"apiKey": null
+				},
+				"upcitemdb": {
+					"enabled": true,
+					"apiKey": null
+				}
 			}
 		}
 	}

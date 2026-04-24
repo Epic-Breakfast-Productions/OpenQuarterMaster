@@ -3,9 +3,13 @@ package tech.ebp.oqm.plugin.extItemSearch.lifecycle;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.event.Observes;
+import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
+import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.plugin.extItemSearch.service.ExtItemLookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;
@@ -16,6 +20,8 @@ import java.util.TreeMap;
 @Slf4j
 public class LifecycleBean {
 
+	@Inject
+	ExtItemLookupService extItemLookupService;
 	private ZonedDateTime startDateTime;
 	
 	public static void logConfig(){
@@ -64,6 +70,10 @@ public class LifecycleBean {
 		StartupEvent ev
 	) {
 		this.startLogAnnounce();
+		
+		for(ItemSearchService curService : this.extItemLookupService.getSearchServices()) {
+			log.info("Loaded service: {}", curService.getProviderInfo());
+		}
 	}
 	
 	void onStop(

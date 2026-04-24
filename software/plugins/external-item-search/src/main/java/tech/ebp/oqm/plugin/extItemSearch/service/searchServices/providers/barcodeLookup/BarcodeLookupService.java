@@ -31,13 +31,10 @@ import java.util.*;
  */
 @ApplicationScoped
 @Slf4j
-@NoArgsConstructor
 public class BarcodeLookupService extends ItemSearchService {
 	
-	BarcodeLookupClient barcodeLookupClient;
-	@Getter
-	ExtItemLookupProviderInfo providerInfo;
-	String apiKey;
+	private BarcodeLookupClient barcodeLookupClient;
+	private String apiKey;
 	
 	@Inject
 	public BarcodeLookupService(

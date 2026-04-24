@@ -29,6 +29,7 @@ import tech.ebp.oqm.plugin.extItemSearch.service.ExtItemLookupService;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Slf4j
@@ -58,8 +59,8 @@ public class ItemLookupRestInterface {
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response allProviderInfo() {
-		return Response.ok(this.productLookupService.getProductProviderInfo()).build();
+	public List<ExtItemLookupProviderInfo> allProviderInfo() {
+		return this.productLookupService.getProductProviderInfo();
 	}
 	
 	@GET
@@ -81,7 +82,7 @@ public class ItemLookupRestInterface {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Multi<LookupResult> search(@Valid @BeanParam ExtItemSearch search) {
-		log.debug("Searching for: {}", search);
+		log.debug("Search parameters: {}", search);
 		return this.productLookupService.search(search);
 	}
 

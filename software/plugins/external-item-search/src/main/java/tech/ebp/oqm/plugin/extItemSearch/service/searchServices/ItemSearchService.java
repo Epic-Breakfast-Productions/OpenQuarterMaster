@@ -25,6 +25,7 @@ public abstract class ItemSearchService {
 	
 	@Getter
 	private LookupService service;
+	
 	@Getter
 	private ExtItemLookupProviderInfo providerInfo;
 	

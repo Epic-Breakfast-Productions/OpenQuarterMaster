@@ -39,12 +39,11 @@ import java.util.Optional;
  */
 @ApplicationScoped
 @Slf4j
-@NoArgsConstructor
 public class RebrickableService extends ItemSearchService {
 	
 	private static final String BRAND = "LEGO";
 	
-	RebrickableLookupClient rebrickableLookupClient;
+	private RebrickableLookupClient rebrickableLookupClient;
 	private String apiKey;
 	private ObjectMapper objectMapper;
 	
@@ -75,8 +74,8 @@ public class RebrickableService extends ItemSearchService {
 				.displayName("Rebrickable")
 				.description("A database of LEGO(TM) pieces. Free, but requires you to get your own key.")
 				.acceptsContributions(false)
-				.cost("Free")
 				.homepage(URI.create("https://rebrickable.com"))
+				.cost("Free")
 		);
 	}
 	

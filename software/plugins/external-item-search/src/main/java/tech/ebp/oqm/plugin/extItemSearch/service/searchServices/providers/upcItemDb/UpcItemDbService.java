@@ -8,8 +8,6 @@ import io.smallrye.mutiny.Multi;
 import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -35,15 +33,9 @@ import static tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.Loo
  */
 @ApplicationScoped
 @Slf4j
-@NoArgsConstructor
 public class UpcItemDbService extends ItemSearchService {
 	
-	@Inject
-	@RestClient
-	UpcItemDbLookupClient upcItemDbLookupClient;
-	@Getter
-	ExtItemLookupProviderInfo providerInfo;
-	
+	private UpcItemDbLookupClient upcItemDbLookupClient;
 	private String apiKey;
 	
 	@Inject
@@ -56,7 +48,12 @@ public class UpcItemDbService extends ItemSearchService {
 		String apiKey
 	) {
 		this.upcItemDbLookupClient = upcItemDbLookupClient;
-		this.apiKey = apiKey;
+		if (apiKey == null || apiKey.isBlank()) {
+			log.warn("API key for UPCItemDb was null or blank.");
+			this.apiKey = null;
+		} else {
+			this.apiKey = apiKey;
+		}
 		super(
 			enabled,
 			LookupService.UPC_ITEM_DB,
@@ -67,7 +64,6 @@ public class UpcItemDbService extends ItemSearchService {
 				.acceptsContributions(false)
 				.homepage(URI.create("https://www.upcitemdb.com/"))
 				.cost("Paid, Free tier")
-				.enabled(enabled)
 		);
 	}
 	

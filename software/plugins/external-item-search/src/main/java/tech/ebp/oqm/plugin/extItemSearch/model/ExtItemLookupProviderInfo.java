@@ -17,6 +17,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class ExtItemLookupProviderInfo implements Comparable<ExtItemLookupProviderInfo> {
 	
 	@NotNull
@@ -35,7 +36,7 @@ public class ExtItemLookupProviderInfo implements Comparable<ExtItemLookupProvid
 	@NotNull
 	@NonNull
 	private String cost;
-
+	
 	@lombok.Builder.Default
 	private boolean acceptsContributions = false;
 	
@@ -43,11 +44,11 @@ public class ExtItemLookupProviderInfo implements Comparable<ExtItemLookupProvid
 	@NonNull
 	private URI homepage;
 	
-	public Collection<LookupMethod> getLookupMethods(){
+	public Collection<LookupMethod> getLookupMethods() {
 		return this.getId().supportedMethods;
 	}
 	
-	public Collection<LookupSource> getLookupSources(){
+	public Collection<LookupSource> getLookupSources() {
 		return this.getId().supportedSources;
 	}
 	
@@ -64,6 +65,9 @@ public class ExtItemLookupProviderInfo implements Comparable<ExtItemLookupProvid
 		
 		@Override
 		public int compare(ExtItemLookupProviderInfo one, ExtItemLookupProviderInfo two) {
+			if(one == two) {return 0;}
+			if(one == null) {return 1;}
+			if(two == null) {return -1;}
 			int enabledResult = Boolean.compare(two.isEnabled(), one.isEnabled());
 			if (enabledResult != 0) {
 				return enabledResult;
