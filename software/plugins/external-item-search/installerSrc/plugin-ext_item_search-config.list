@@ -17,6 +17,11 @@ quarkus.http.ssl.certificate.trust-store-password={cert.selfSigned.internalKeyst
 #smallrye.jwt.verify.key.location={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/certs
 #smallrye.jwt.client.tls.certificate.path=/etc/oqm/serviceConfig/plugin/external-item-search/files/publicCert.pem
 
+{% if metrics is defined %}
+# Metrics Config:
+quarkus.otel.exporter.otlp.endpoint={metrics.otlp-collector.endpoint}
+{% endif %}
+
 #
 # Lookup config
 #

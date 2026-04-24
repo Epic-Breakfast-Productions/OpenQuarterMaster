@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'tech.ebp.openQuarterMaster'
-version '1.0.6-SNAPSHOT'
+version '2.0.0-SNAPSHOT'
 
 repositories {
 	mavenCentral()
@@ -19,7 +19,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-rest-client'
 	implementation 'io.quarkus:quarkus-smallrye-openapi'
 	implementation 'io.quarkus:quarkus-rest-jackson'
-	implementation 'io.quarkus:quarkus-opentelemetry'
+	implementation 'io.quarkus:quarkus-micrometer-opentelemetry'
 	implementation 'io.quarkus:quarkus-config-yaml'
 	implementation 'io.quarkus:quarkus-smallrye-jwt'
 	implementation 'io.quarkus:quarkus-smallrye-health'
