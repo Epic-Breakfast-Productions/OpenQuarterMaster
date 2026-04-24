@@ -55,6 +55,10 @@ compileTestJava {
 	options.encoding = 'UTF-8'
 }
 
+check {
+	finalizedBy quarkusIntTest
+}
+
 /**
  * Used to print the current version of this project.
  *
