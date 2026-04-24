@@ -1,9 +1,10 @@
 package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils;
 
-public enum LookupType {
-	FREE_TEXT,
-	NAME,
+public enum LookupMethod {
+	TEXT,
 	BARCODE,
 	PART_NUM,
-	URL,
+	SET_NUM,
+	WEBPAGE;
+	
 }

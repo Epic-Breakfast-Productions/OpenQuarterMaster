@@ -81,7 +81,8 @@ public class ItemLookupRestInterface {
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public Multi<LookupResult> search(@Valid @BeanParam ExtItemSearch search) {
-		return this.productLookupService.search(search).filter(r -> !r.getType().equals(ResultType.NO_RESULTS));
+		log.debug("Searching for: {}", search);
+		return this.productLookupService.search(search);
 	}
 
 }

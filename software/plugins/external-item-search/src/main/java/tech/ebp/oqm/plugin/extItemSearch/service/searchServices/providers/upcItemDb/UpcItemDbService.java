@@ -13,20 +13,25 @@ import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResultNoResults;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupType;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupSource;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.ResultMappingUtils;
 
 import java.net.URI;
 import java.util.*;
 
+import static tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupMethod.BARCODE;
+
 /**
  *
- * - Docs: https://www.upcitemdb.com/wp/docs/main/development/getting-started/
- * - Trial docs: https://www.upcitemdb.com/api/explorer#!/lookup/get_trial_lookup
+ * - Docs: https://www.upcitemdb.com/wp/docs/main/development/getting-started/ - Trial docs: https://www.upcitemdb.com/api/explorer#!/lookup/get_trial_lookup
  */
 @ApplicationScoped
 @Slf4j
@@ -52,29 +57,26 @@ public class UpcItemDbService extends ItemSearchService {
 	) {
 		this.upcItemDbLookupClient = upcItemDbLookupClient;
 		this.apiKey = apiKey;
-		this.providerInfo = ExtItemLookupProviderInfo
-								.builder()
-								.id("upcitemdb-com")
-								.displayName("upcitemdb.com")
-								.description("A lookup database with good number of records, and a free tier with 100 requests per day.")
-								.acceptsContributions(false)
-								.homepage(URI.create("https://www.upcitemdb.com/"))
-								.cost("Paid, Free tier")
-								.enabled(enabled)
-								.build();
-	}
-	
-	@Override
-	public boolean isEnabled() {
-		return this.getProviderInfo().isEnabled();
+		super(
+			enabled,
+			LookupService.UPC_ITEM_DB,
+			ExtItemLookupProviderInfo
+				.builder()
+				.displayName("upcitemdb.com")
+				.description("A lookup database with good number of records, and a free tier with 100 requests per day.")
+				.acceptsContributions(false)
+				.homepage(URI.create("https://www.upcitemdb.com/"))
+				.cost("Paid, Free tier")
+				.enabled(enabled)
+		);
 	}
 	
 	public boolean hasKey() {
 		return this.apiKey != null && !this.apiKey.isBlank();
 	}
 	
-	private ExtItemLookupResult jsonToResult(LookupType type, ObjectNode json) {
-		ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), type);
+	private ExtItemLookupResult jsonToResult(LookupSource source, LookupMethod method, ObjectNode json) {
+		ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
 		
 		Map<String, String> attributes = new HashMap<>();
 		Map<String, String> identifiers = new HashMap<>();
@@ -108,7 +110,7 @@ public class UpcItemDbService extends ItemSearchService {
 					}
 					break;
 				default:
-					if(curFieldVal.isTextual()){
+					if (curFieldVal.isTextual()) {
 						attributes.put(curFieldName, curFieldVal.asText());
 					}
 					break;
@@ -116,7 +118,6 @@ public class UpcItemDbService extends ItemSearchService {
 		}
 		
 		return resultBuilder
-				   .source(this.getProviderInfo().getDisplayName())
 				   .attributes(attributes)
 				   .identifiers(identifiers)
 				   .images(images)
@@ -131,29 +132,17 @@ public class UpcItemDbService extends ItemSearchService {
 	 * @return
 	 */
 	@WithSpan
-	public Collection<LookupResult> jsonNodeToSearchResults(LookupType type, ObjectNode results) {
+	public Collection<LookupResult> jsonNodeToSearchResults(LookupSource source, LookupMethod type, ObjectNode results) {
 		log.debug("Data from upcitemdb: {}", results.toPrettyString());
 		
 		ArrayNode resultsAsArr = (ArrayNode) results.get("items");
 		List<LookupResult> resultList = new ArrayList<>(resultsAsArr.size());
 		
 		for (JsonNode result : resultsAsArr) {
-			resultList.add(this.jsonToResult(type, (ObjectNode) result));
+			resultList.add(this.jsonToResult(source, type, (ObjectNode) result));
 		}
 		
 		return resultList;
-	}
-	
-	@Override
-	public Optional<Multi<LookupResult>> searchBarcode(String barcode) {
-		return Optional.of(
-			this.performBarcodeSearchCall(barcode)
-				.map(result->this.jsonNodeToSearchResults(LookupType.BARCODE, result))
-				.onFailure().recoverWithItem(e->this.handleErrorRetCollection(LookupType.BARCODE, e))
-				.onItem().transformToMulti(collection->
-											   Multi.createFrom().iterable(collection)
-				)
-		);
 	}
 	
 	
@@ -167,5 +156,34 @@ public class UpcItemDbService extends ItemSearchService {
 		}
 		
 		return this.upcItemDbLookupClient.getFromUpcCodeTrial(barcode);
+	}
+	
+	@Override
+	protected Multi<LookupResult> performSearch(LookupSource source, LookupMethod method, String term) {
+		return switch (source) {
+			case UPC_ITEM_DB ->
+				switch (method) {
+					case BARCODE -> this.performBarcodeSearchCall(term)
+										.map(result->this.jsonNodeToSearchResults(source, method, result))
+										.onFailure().recoverWithItem(e->this.handleErrorRetCollection(source, method, e))
+										.onItem().transformToMulti(collection->
+																	   Multi.createFrom().iterable(collection)
+						);
+					default -> throw new IllegalArgumentException("Invalid lookup method: " + method);
+				};
+			default -> throw new IllegalArgumentException("Invalid lookup source: " + source);
+		};
+	}
+	
+	@Override
+	protected Optional<LookupResult> handleClientError(LookupSource source, LookupMethod method, ClientWebApplicationException e) {
+		if (e.getResponse().getStatus() == 404) {
+			return Optional.of(
+				this.setupResponseBuilder(LookupResultNoResults.builder(), source, method)
+					.detail("No results found.")
+					.build()
+			);
+		}
+		return Optional.empty();
 	}
 }

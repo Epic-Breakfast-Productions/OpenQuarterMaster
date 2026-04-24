@@ -4,9 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
-import io.quarkus.cache.CacheResult;
 import io.smallrye.mutiny.Multi;
-import io.smallrye.mutiny.Uni;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.Getter;
@@ -20,9 +18,10 @@ import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResultNoResults;
 import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupType;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupSource;
 
-import java.io.InputStream;
 import java.net.URI;
 import java.util.*;
 
@@ -48,22 +47,18 @@ public class DatakickService extends ItemSearchService {
 		boolean enabled
 	) {
 		this.dataKickLookupClient = dataKickLookupClient;
-		this.providerInfo = ExtItemLookupProviderInfo
-								.builder()
-								.id("datakick")
-								.displayName("Datakick")
-								.enabled(enabled)
-								.description(
-									"The open product database, free and open database of products. Mostly for home and food goods. Limited size of database, but free and open to contributions.")
-								.acceptsContributions(true)
-								.homepage(URI.create("https://gtinsearch.org/"))
-								.cost("Free")
-								.build();
-	}
-	
-	@Override
-	public boolean isEnabled() {
-		return this.getProviderInfo().isEnabled();
+		super(
+			enabled,
+			LookupService.DATAKICK,
+			ExtItemLookupProviderInfo
+				.builder()
+				.displayName("Datakick")
+				.description(
+					"The open product database, free and open database of products. Mostly for home and food goods. Limited size of database, but free and open to contributions.")
+				.acceptsContributions(true)
+				.homepage(URI.create("https://gtinsearch.org/"))
+				.cost("Free")
+		);
 	}
 	
 	/**
@@ -74,7 +69,7 @@ public class DatakickService extends ItemSearchService {
 	 * @return
 	 */
 	@WithSpan
-	public Collection<LookupResult> jsonNodeToSearchResults(LookupType type, ArrayNode results) {
+	public Collection<LookupResult> jsonNodeToSearchResults(LookupSource source, LookupMethod method, ArrayNode results) {
 		log.debug("Data from Datakick: {}", results);
 		
 		List<LookupResult> resultsList = new ArrayList<>(results.size());
@@ -111,37 +106,38 @@ public class DatakickService extends ItemSearchService {
 				}
 			}
 			
-			resultsList.add(ExtItemLookupResult
-								.builder()
-								.lookupType(type)
-								.source(this.getProviderInfo().getDisplayName())
-								.name(name)
-								.unifiedName(name)
-								.attributes(attributes)
-								.build()
+			resultsList.add(
+				this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method)
+					.name(name)
+					.unifiedName(name)
+					.attributes(attributes)
+					.build()
 			);
 		}
 		return resultsList;
 	}
 	
 	@Override
-	public Optional<Multi<LookupResult>> searchBarcode(String search) {
-		return Optional.of(
-			this.dataKickLookupClient.getFromUpcCode(search)
-				.map(results->this.jsonNodeToSearchResults(LookupType.BARCODE, results))
-				.onFailure().recoverWithItem(e -> this.handleErrorRetCollection(LookupType.BARCODE, e))
-				
-				.onItem().transformToMulti(collection->
-											   Multi.createFrom().iterable(collection)
-				)
-		);
+	protected Multi<LookupResult> performSearch(LookupSource source, LookupMethod method, String term) {
+		return switch (source) {
+			case DATAKICK ->
+				switch (method) {
+					case BARCODE -> this.dataKickLookupClient.getFromUpcCode(term)
+										 .map(result->this.jsonNodeToSearchResults(source, method, result))
+										 .onFailure().recoverWithItem(e->this.handleErrorRetCollection(source, method, e))
+										.onItem().transformToMulti(collection-> Multi.createFrom().iterable(collection));
+					default -> throw new IllegalArgumentException("Invalid lookup method: " + method);
+				};
+			default -> throw new IllegalArgumentException("Invalid lookup source: " + source);
+		};
 	}
 	
+	
 	@Override
-	protected Optional<LookupResult> handleClientError(LookupType type, ClientWebApplicationException e) {
+	protected Optional<LookupResult> handleClientError(LookupSource source, LookupMethod method, ClientWebApplicationException e) {
 		if (e.getResponse().getStatus() == 404) {
 			return Optional.of(
-				this.setupResponseBuilder(LookupResultNoResults.builder(), type)
+				this.setupResponseBuilder(LookupResultNoResults.builder(), source, method)
 					.detail("No items found.")
 					.build()
 			);

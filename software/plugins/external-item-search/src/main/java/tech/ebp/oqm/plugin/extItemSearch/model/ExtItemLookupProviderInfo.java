@@ -2,10 +2,12 @@ package tech.ebp.oqm.plugin.extItemSearch.model;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.ItemKind;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupSource;
 
 import java.net.URI;
-import java.net.URL;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -19,7 +21,7 @@ public class ExtItemLookupProviderInfo implements Comparable<ExtItemLookupProvid
 	
 	@NotNull
 	@NonNull
-	private String id;
+	private LookupService id;
 	
 	@NotNull
 	@NonNull
@@ -41,15 +43,13 @@ public class ExtItemLookupProviderInfo implements Comparable<ExtItemLookupProvid
 	@NonNull
 	private URI homepage;
 	
-	@NotNull
-	@NonNull
-	@lombok.Builder.Default
-	private List<String> brands = List.of();
+	public Collection<LookupMethod> getLookupMethods(){
+		return this.getId().supportedMethods;
+	}
 	
-	@NotNull
-	@NonNull
-	@lombok.Builder.Default
-	private List<ItemKind> kinds = List.of();
+	public Collection<LookupSource> getLookupSources(){
+		return this.getId().supportedSources;
+	}
 	
 	private boolean enabled;
 	

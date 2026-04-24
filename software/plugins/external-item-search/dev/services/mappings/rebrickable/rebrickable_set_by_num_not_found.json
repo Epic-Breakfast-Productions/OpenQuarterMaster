@@ -1,25 +1,25 @@
 {
 	"request": {
-		"urlPathPattern": "/rebrickable/api/v3/lego/parts/(.*)/",
+		"urlPathPattern": "/rebrickable/api/v3/lego/sets/(?!21309-1(?=/|$))([^/]+)/$",
 		"method": "GET",
 		"headers": {
 			"Authorization": {
-				"equalTo": "key devKeyBad"
+				"equalTo": "key devKey"
 			}
 		}
 	},
 	"response": {
-		"status": 401,
+		"status": 404,
 		"delayDistribution": {
 			"type": "lognormal",
-			"median": 100,
+			"median": 500,
 			"sigma": 0.4
 		},
 		"headers": {
 			"Content-Type": "application/json"
 		},
 		"jsonBody": {
-			"detail": "Invalid Token."
+			"detail": "No Set matches the given query."
 		}
 	}
 }

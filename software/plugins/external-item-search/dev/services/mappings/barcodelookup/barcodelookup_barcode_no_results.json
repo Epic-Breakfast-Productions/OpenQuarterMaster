@@ -7,7 +7,9 @@
 				"equalTo": "devKey"
 			},
 			"barcode": {
-				"matches": "^((?!886736874135).)*$"
+				"not": {
+					"equalTo": "886736874135"
+				}
 			}
 		}
 	},

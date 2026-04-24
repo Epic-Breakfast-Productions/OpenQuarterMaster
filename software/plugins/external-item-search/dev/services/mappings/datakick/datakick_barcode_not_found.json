@@ -1,20 +1,20 @@
 {
-  "request": {
-    "urlPathPattern": "/datakick/api/items/(?!00888109010058(?=/|$))$",
-    "method": "GET"
-  },
-  "response": {
-    "status": 200,
-    "delayDistribution": {
-      "type": "lognormal",
-      "median": 5000,
-      "sigma": 0.4
-    },
-    "headers": {
-      "Content-Type": "application/json"
-    },
-    "jsonBody": []
-  }
+	"request": {
+		"urlPathPattern": "/datakick/api/items/(?!00888109010058(?=/|$))$",
+		"method": "GET"
+	},
+	"response": {
+		"status": 200,
+		"delayDistribution": {
+			"type": "lognormal",
+			"median": 5000,
+			"sigma": 0.4
+		},
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"jsonBody": []
+	}
 }
 
 

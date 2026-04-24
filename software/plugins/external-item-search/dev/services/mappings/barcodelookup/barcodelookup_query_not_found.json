@@ -4,25 +4,26 @@
 		"method": "GET",
 		"queryParameters": {
 			"key": {
-				"not": {
-					"equalTo": "devKey"
-				}
+				"equalTo": "devKey"
 			},
-			"barcode": {
-				"matches": ".*"
+			"search": {
+				"not": {
+					"equalTo": "GPS"
+				}
 			}
 		}
 	},
 	"response": {
-		"status": 403,
+		"status": 400,
 		"headers": {
 			"Content-Type": "application/json"
 		},
 		"delayDistribution": {
 			"type": "lognormal",
-			"median": 500,
+			"median": 3000,
 			"sigma": 0.4
-		}
+		},
+		"body": "\"\""
 	}
 }
 

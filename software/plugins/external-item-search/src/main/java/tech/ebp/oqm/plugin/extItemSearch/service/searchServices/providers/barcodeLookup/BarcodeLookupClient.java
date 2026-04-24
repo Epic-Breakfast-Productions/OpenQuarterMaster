@@ -17,4 +17,9 @@ public interface BarcodeLookupClient {
 	@GET
 	@CacheResult(cacheName = "barcodelookup-barcode-search")
 	Uni<ObjectNode> searchBarcode(@QueryParam("key") String apiKey, @QueryParam("barcode") String barcode);
+	
+	@WithSpan
+	@GET
+	@CacheResult(cacheName = "barcodelookup-query-search")
+	Uni<ObjectNode> searchQuery(@QueryParam("key") String apiKey, @QueryParam("search") String barcode);
 }

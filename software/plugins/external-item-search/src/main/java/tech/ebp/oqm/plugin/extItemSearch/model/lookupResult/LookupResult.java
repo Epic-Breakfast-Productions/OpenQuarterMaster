@@ -9,7 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupType;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupSource;
 
 @Data
 @AllArgsConstructor
@@ -30,10 +32,13 @@ public abstract class LookupResult {
 	
 	@NonNull
 	@NotNull
-	@NotBlank
-	private String source;
+	private LookupService service;
 	
 	@NonNull
 	@NotNull
-	private LookupType lookupType;
+	private LookupSource source;
+	
+	@NonNull
+	@NotNull
+	private LookupMethod method;
 }

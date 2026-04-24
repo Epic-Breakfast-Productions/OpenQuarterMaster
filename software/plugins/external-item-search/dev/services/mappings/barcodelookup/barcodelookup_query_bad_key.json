@@ -8,7 +8,7 @@
 					"equalTo": "devKey"
 				}
 			},
-			"barcode": {
+			"search": {
 				"matches": ".*"
 			}
 		}
