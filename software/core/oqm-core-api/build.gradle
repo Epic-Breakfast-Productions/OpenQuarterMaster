@@ -1,14 +1,14 @@
 plugins {
 	id 'java'
 	id 'io.quarkus'
-	id "io.freefair.lombok" version "9.2.0"
+	id "io.freefair.lombok" version "9.4.0"
 	id 'jacoco'
 	id 'org.cyclonedx.bom' version '3.2.4'
 	id("org.spdx.sbom") version "0.10.0"
 }
 
 group 'com.ebp.openQuarterMaster'
-version '4.4.6-SNAPSHOT'
+version '4.4.6'
 
 repositories {
 	mavenCentral()
