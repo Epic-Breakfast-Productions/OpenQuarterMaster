@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'com.ebp.openQuarterMaster'
-version '1.15.4-SNAPSHOT'
+version '1.15.4'
 
 repositories {
     mavenCentral()
@@ -49,7 +49,7 @@ dependencies {
     testImplementation 'net.datafaker:datafaker:2.5.4'
 
     testImplementation 'com.microsoft.playwright:playwright:1.59.0'
-    testImplementation 'com.deque.html.axe-core:playwright:4.11.1'
+    testImplementation 'com.deque.html.axe-core:playwright:4.11.2'
 }
 
 java {
