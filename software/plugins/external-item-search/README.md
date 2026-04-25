@@ -1,6 +1,6 @@
 # External Item Search Plugin
 
-
+![Plugin - External Item Search](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/plugin-extItemSearch.yml/badge.svg)
 
 This service enables searching for items outside the OQM system, in order to get their data into it.
 
