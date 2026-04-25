@@ -1,10 +1,10 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils;
+package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils;
 
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.barcodeLookup.BarcodeLookupService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.dataKick.DatakickService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.rebrickable.RebrickableService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.upcItemDb.UpcItemDbService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.ItemSearchService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.barcodeLookup.BarcodeLookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.dataKick.DatakickService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.rebrickable.RebrickableService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.upcItemDb.UpcItemDbService;
 
 import java.util.Collection;
 import java.util.List;

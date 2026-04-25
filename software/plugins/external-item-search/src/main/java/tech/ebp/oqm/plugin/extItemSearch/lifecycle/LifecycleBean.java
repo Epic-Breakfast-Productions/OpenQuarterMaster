@@ -7,9 +7,8 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
-import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.plugin.extItemSearch.service.ExtItemLookupService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.ItemSearchService;
 
 import java.time.Duration;
 import java.time.ZonedDateTime;

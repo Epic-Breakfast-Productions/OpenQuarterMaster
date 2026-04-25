@@ -7,19 +7,19 @@
 			"internalBaseUri": "http://#{plugin.externalItemSearch.internalHost}:#{plugin.externalItemSearch.internalHttpPort}",
 			"services": {
 				"barcodelookup": {
-					"enabled": true,
-					"apiKey": null
+					"enabled": "true",
+					"apiKey": " "
 				},
 				"datakick": {
-					"enabled": true,
+					"enabled": "true"
 				},
 				"rebrickable": {
-					"enabled": true,
-					"apiKey": null
+					"enabled": "true",
+					"apiKey": " "
 				},
 				"upcitemdb": {
-					"enabled": true,
-					"apiKey": null
+					"enabled": "true",
+					"apiKey": " "
 				}
 			}
 		}

@@ -1,14 +1,11 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.dataKick;
+package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.dataKick;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.smallrye.mutiny.Multi;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -17,10 +14,10 @@ import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResultNoResults;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupMethod;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupSource;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.ItemSearchService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource;
 
 import java.net.URI;
 import java.util.*;

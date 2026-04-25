@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.dataKick;
+package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.dataKick;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;

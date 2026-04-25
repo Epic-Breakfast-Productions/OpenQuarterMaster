@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices;
+package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService;
 
 
 import io.smallrye.mutiny.Multi;
@@ -10,9 +10,9 @@ import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupErrResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupMethod;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupSource;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource;
 
 import java.util.ArrayList;
 import java.util.Collection;

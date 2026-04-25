@@ -58,20 +58,11 @@ public class ExtItemLookupResult extends LookupResult {
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
-	private List<@NotNull @NonNull @NotBlank String> images = new ArrayList<>();
+	private List<String> images = new ArrayList<>();
 	
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
 	private Map<String, String> links = new HashMap<>();
 	
-	public ExtItemLookupResult addAttIfNotBlank(String key, String val) {
-		if (
-			key != null && !key.isBlank() &&
-			val != null && !val.isBlank()
-		) {
-			this.getAttributes().put(key, val);
-		}
-		return this;
-	}
 }

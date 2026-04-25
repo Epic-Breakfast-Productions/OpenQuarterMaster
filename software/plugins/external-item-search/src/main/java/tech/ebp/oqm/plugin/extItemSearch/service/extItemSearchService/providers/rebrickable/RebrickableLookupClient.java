@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.rebrickable;
+package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.rebrickable;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.opentelemetry.instrumentation.annotations.WithSpan;

@@ -2,16 +2,15 @@ package tech.ebp.oqm.plugin.extItemSearch.model.lookupResult;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupMethod;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupSource;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource;
 
 @Data
 @AllArgsConstructor

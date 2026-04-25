@@ -13,9 +13,9 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.ToString;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupMethod;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupSource;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource;
 
 import java.util.List;
 

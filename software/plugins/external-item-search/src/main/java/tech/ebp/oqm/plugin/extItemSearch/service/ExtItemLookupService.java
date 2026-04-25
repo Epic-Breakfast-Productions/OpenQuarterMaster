@@ -8,11 +8,11 @@ import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemSearch;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ResultType;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.barcodeLookup.BarcodeLookupService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.dataKick.DatakickService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.rebrickable.RebrickableService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.upcItemDb.UpcItemDbService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.ItemSearchService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.barcodeLookup.BarcodeLookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.dataKick.DatakickService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.rebrickable.RebrickableService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.upcItemDb.UpcItemDbService;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 
 import java.util.*;

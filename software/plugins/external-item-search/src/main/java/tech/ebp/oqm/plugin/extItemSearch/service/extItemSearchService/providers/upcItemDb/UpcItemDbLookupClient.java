@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.upcItemDb;
+package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.upcItemDb;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;

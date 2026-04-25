@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils;
+package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils;
 
 public enum LookupMethod {
 	TEXT,

@@ -2,13 +2,12 @@ package tech.ebp.oqm.plugin.extItemSearch.model;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupMethod;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupSource;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource;
 
 import java.net.URI;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * Information about an external item lookup provider

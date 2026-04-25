@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.extItemSearch.service.searchServices.providers.upcItemDb;
+package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.upcItemDb;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -16,16 +16,14 @@ import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResultNoResults;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupMethod;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupSource;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.ResultMappingUtils;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.ItemSearchService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.ResultMappingUtils;
 
 import java.net.URI;
 import java.util.*;
-
-import static tech.ebp.oqm.plugin.extItemSearch.service.searchServices.utils.LookupMethod.BARCODE;
 
 /**
  *
@@ -76,6 +74,8 @@ public class UpcItemDbService extends ItemSearchService {
 		
 		Map<String, String> attributes = new HashMap<>();
 		Map<String, String> identifiers = new HashMap<>();
+		Map<String, String> links = new HashMap<>();
+		Map<String, String> prices = new HashMap<>();
 		List<String> images = new ArrayList<>();
 		
 		for (Map.Entry<String, JsonNode> curField : json.properties()) {
@@ -105,6 +105,19 @@ public class UpcItemDbService extends ItemSearchService {
 						images.add(curImg.asText());
 					}
 					break;
+				case "offers":
+					for (JsonNode curOffer : curFieldVal) {
+						String name = curOffer.get("merchant").asText();
+						
+						if(!ResultMappingUtils.isFieldEmpty(curOffer.get("link"))){
+							links.put(name, curOffer.get("link").asText());
+						}
+						
+						if(!ResultMappingUtils.isFieldEmpty(curOffer.get("price"))){
+							prices.put(name, curOffer.get("price").asText());
+						}
+					}
+					break;
 				default:
 					if (curFieldVal.isTextual()) {
 						attributes.put(curFieldName, curFieldVal.asText());
@@ -117,6 +130,8 @@ public class UpcItemDbService extends ItemSearchService {
 				   .attributes(attributes)
 				   .identifiers(identifiers)
 				   .images(images)
+				   .links(links)
+				   .prices(prices)
 				   .build();
 	}
 	
