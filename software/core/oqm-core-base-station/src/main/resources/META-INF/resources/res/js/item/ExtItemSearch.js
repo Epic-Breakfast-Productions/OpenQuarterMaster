@@ -6,14 +6,32 @@ import {KeywordAttUtils} from "../obj/ObjViewUtils.js";
 import {KeywordAttEdit} from "../obj/ObjEditUtils.js";
 import {PageMessageUtils} from "../PageMessageUtils.js";
 import {Identifiers} from "../Identifiers.js";
+import {Pricing} from "../Pricing.js";
 import {PageUtility} from "../utilClasses/PageUtility.js";
+import {AssociatedLinks} from "../AssociatedLinks.js";
 
 export class ExtItemSearch extends PageUtility {
 	static addEditProductSearchPane = $("#addEditProductSearchPane");
 
 	static searchForm = $("#addEditProductSearchForm");
 
-	static extSearchResults= $("#extSearchResults");
+	static extSearchResultsContainer = $("#extSearchResults");
+	static searchResultsCount = $("#extItemSearchSearchResultsTabNumResults");
+	static searchResultsErrCount = $("#extItemSearchSearchResultsTabNumErrors");
+	static extSearchResultsTableContent = $("#extItemSearchSearchResultsTableResults");
+	static extItemSearchSearchFormMessages = $("#extItemSearchSearchFormMessages");
+
+
+	static resetSearchResults() {
+		ExtItemSearch.extSearchResultsContainer.hide();
+		ExtItemSearch.searchResultsCount.text("-");
+		ExtItemSearch.searchResultsErrCount.text("-");
+		ExtItemSearch.extSearchResultsTableContent.text("");
+	}
+
+	static sourceMethodToDisplay(sourceMethod) {
+		return sourceMethod;//TODO
+	}
 
 
 	static getUseButton(text) {
@@ -28,7 +46,7 @@ export class ExtItemSearch extends PageUtility {
 	}
 
 	static createSearchResultSection(name, value, targetInput) {
-		let section = $('<li class="list-group-item extProdResultSection"><h6 class="card-title"></h6></li>');
+		let section = $('<div><h6 class="card-title"></h6></div>');
 
 		if (targetInput) {
 			let useButton = ExtItemSearch.getUseButton(name);
@@ -40,7 +58,7 @@ export class ExtItemSearch extends PageUtility {
 					valElement = $(e.target.parentElement.nextElementSibling)
 				}
 
-				if(targetInput.jquery){
+				if (targetInput.jquery) {
 					targetInput.val(valElement.text());
 				} else {//assuming overType
 					targetInput.setValue(valElement.text());
@@ -54,6 +72,7 @@ export class ExtItemSearch extends PageUtility {
 		let sectionText = $('<p class="card-text"></p>');
 		sectionText.text(value);
 		section.append(sectionText);
+		section.append($('<hr style="width:50%;">'));
 
 		return section;
 	}
@@ -110,15 +129,15 @@ export class ExtItemSearch extends PageUtility {
 				let imageName = resultUnifiedName;
 				if (!data.length) {
 					console.log("No results for given source. Adding.");
-					//TODO:: use image add form to add image, come back to this?
+					//TODO:: use image add form to add image?
 					let saveImageFail = false;
 
 					let filename = new URL(imageUrl).pathname;
 					filename = filename.substring(filename.lastIndexOf('/') + 1);
-					if(filename.includes(".")){
+					if (filename.includes(".")) {
 						filename = filename.split('.').slice(0, -1).join('.')
 					}
-					filename += "."+imageData.split(';')[0].split('/')[1];
+					filename += "." + imageData.split(';')[0].split('/')[1];
 
 					let addData = new FormData();
 					addData.append("fileName", filename);
@@ -158,36 +177,46 @@ export class ExtItemSearch extends PageUtility {
 		return true;
 	}
 
-	static async handleErrResult(result){
-		//TODO
-	}
-	static async handleNotFoundResult(result){
+	static async handleErrResult(result) {
 		//TODO
 	}
 
+	static async handleNotFoundResult(result) {
+		//TODO
+	}
+
+	static resultCount = 0;
+
+	static getItemResultRow(result) {
+		let resultRow = $('<tr></tr>');
+
+		resultRow.append($('<td class="text-center align-middle"></td>').text(ExtItemSearch.resultCount++));
+		resultRow.append($('<td class="align-middle"></td>').text(result.service));//TODO:: better name
+		resultRow.append($('<td class="align-middle"></td>').text(result.source));//TODO:: better name
+		resultRow.append($('<td class="align-middle"></td>').text(result.method));//TODO:: better name
+		resultRow.append($('<td class="text-center align-middle"></td>').text(result.images.length));
+		resultRow.append($('<td class="text-center align-middle"></td>').text(Object.keys(result.prices).length));
+		resultRow.append($('<td class="text-center align-middle"></td>').text(Object.keys(result.links).length));
+		resultRow.append($('<td class="text-center align-middle"></td>').text(Object.keys(result.identifiers).length));
+		resultRow.append($('<td class="text-center align-middle"><button class="btn btn-sm btn-primary viewButton">' + Icons.view + '</button></td>'));
+
+		return resultRow;
+	}
 
 	static carouselNum = 0;
-	static async handleItemResult(result){
-		//TODO:: promise for waiting on image load
-		//TODO:: fix image add/selecting
-		//TODO:: links
-		//TODO:: identifiers
-		//TODO:: better formatting, method for filling out values
-		//TODO:: get display name for source name, list result #
-		//TODO:: move to use expanding table to display this
-		let resultCard = $('<div class="card col-12 p-0" style="height: fit-content"></div>');
-		{
-			let header = $('<div class="card-header"></div>');
-			header.text(result.source);
-			resultCard.append(header);
-		}
-		let resultMainBody = $('<ul class="list-group list-group-flush"></ul>');
+
+	static async getItemResultViewRow(result) {
+		//TODO:: promise for waiting on image load... need to diagnose this
+
+		let resultViewRow = $('<tr></tr>');
+		let resultMainBody = $('<td colspan="9"></td>');
+
 		resultMainBody.append(ExtItemSearch.createSearchResultSection("Name", result.unifiedName, ItemAddEdit.addEditItemNameInput));
 		resultMainBody.append(ExtItemSearch.createSearchResultSection("Description", result.description, ItemAddEdit.addEditItemDescriptionInput));
 
 		if (result.images.length) {
 			let carouselId = "extSearchResultImgCarousel-" + ExtItemSearch.carouselNum++;
-			let imagesSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Images:</h6></li>');
+			let imagesSection = $('<div class="extProdResultSection"><h6 class="card-title">Images:</h6></div>');
 
 			let carousel = $('<div id="' + carouselId + '" class="carousel slide border border-1 extProductResultCarousel">\n' +
 				'  <div class="carousel-inner">\n' +
@@ -242,18 +271,103 @@ export class ExtItemSearch extends PageUtility {
 
 			$(carouselInner.children()[0]).addClass('active');
 
-
-			//TODO:: if no images, don't append
-
 			console.log("Finished getting " + carouselInner.children().length + " images");
 			if (carouselInner.children().length) {
 				imagesSection.append(carousel);
+				imagesSection.append($('<hr style="width:50%;">'));
 				resultMainBody.append(imagesSection);
 			}
-		}/* */
+		}
+
+		if (Object.keys(result.prices).length) {
+			let pricesSection = $('<div class="extProdResultSection"><h6 class="card-title">Prices:</h6></div>');
+
+			let pricesList = $('<span></span>');
+			Object.keys(result.prices).forEach(key => {
+				let val = result.prices[key];
+
+				let curAtt = KeywordAttUtils.getAttDisplay(key, val);
+				let useButt = ExtItemSearch.getUseButton();
+
+				useButt.on("click", function (e) {
+					Pricing.addPrice(ItemAddEdit.addEditItemPricingInput, {
+						"label": key,
+						"flatPrice": {
+							"amount": val
+						}
+					})
+				});
+
+				curAtt.append(useButt);
+
+				pricesList.append(curAtt);
+			});
+			pricesSection.append(pricesList);
+
+			pricesSection.append($('<hr style="width:50%;">'));
+			resultMainBody.append(pricesSection);
+		}
+
+		if (Object.keys(result.identifiers).length) {
+			let identifierSection = $('<div class="extProdResultSection"><h6 class="card-title">Identifiers:</h6></div>');
+
+			let idList = $('<span></span>');
+			Object.keys(result.identifiers).forEach(key => {
+				let val = result.identifiers[key];
+
+				let curAtt = KeywordAttUtils.getAttDisplay(key, val);
+				let useButt = ExtItemSearch.getUseButton();
+
+				useButt.on("click", function (e) {
+					Identifiers.addIdentifierFromValue(
+						ItemAddEdit.identifierInputContainer,
+						val
+					)
+				});
+
+				curAtt.append(useButt);
+
+				idList.append(curAtt);
+			});
+			identifierSection.append(idList);
+
+			identifierSection.append($('<hr style="width:50%;">'));
+			resultMainBody.append(identifierSection);
+		}
+
+		if (Object.keys(result.links).length) {
+			let linksSection = $('<div class="extProdResultSection"><h6 class="card-title">Links:</h6></div>');
+
+			let linkList = $('<span></span>');
+			Object.keys(result.links).forEach(key => {
+				let val = result.links[key];
+
+				let curAtt = KeywordAttUtils.getAttDisplay(key, val);
+				let useButt = ExtItemSearch.getUseButton();
+
+				useButt.on("click", function (e) {
+					AssociatedLinks.Form.addLink(
+						ItemAddEdit.linkInput,
+						{
+							"label": key,
+							"link": val
+						}
+					)
+				});
+
+				curAtt.append(useButt);
+
+				linkList.append(curAtt);
+			});
+			linksSection.append(linkList);
+
+
+			linksSection.append($('<hr style="width:50%;">'));
+			resultMainBody.append(linksSection);
+		}
 
 		if (result.attributes) {
-			let attsSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Attributes:</h6></li>');
+			let attsSection = $('<div class="extProdResultSection"><h6 class="card-title">Attributes:</h6></div>');
 
 			let attsList = $('<span></span>');
 			Object.keys(result.attributes).forEach(key => {
@@ -279,11 +393,25 @@ export class ExtItemSearch extends PageUtility {
 			resultMainBody.append(attsSection);
 		}
 
-		resultCard.append(resultMainBody);
-		ExtItemSearch.extSearchResults.append(resultCard);
+		resultViewRow.append(resultMainBody);
+		resultViewRow.hide();
+		return resultViewRow;
 	}
 
-	static async handleExtItemSearchResult(result){
+	static async handleItemResult(result) {
+		let resultRow = ExtItemSearch.getItemResultRow(result);
+		let resultViewRow = await ExtItemSearch.getItemResultViewRow(result);
+
+		resultRow.find("button.viewButton").on("click", function () {
+			resultViewRow.toggle();
+		});
+
+		ExtItemSearch.extSearchResultsTableContent.append(resultRow);
+		ExtItemSearch.extSearchResultsTableContent.append(resultViewRow);
+	}
+
+	static async handleExtItemSearchResult(result) {
+		console.debug("Handling external item search result: ", result);
 		switch (result.type) {
 			case "SUCCESS":
 				return ExtItemSearch.handleItemResult(result);
@@ -301,13 +429,17 @@ export class ExtItemSearch extends PageUtility {
 			ExtItemSearch.extSearchResults.html("<p>No Results!</p>");
 		}
 
+		ExtItemSearch.resultCount = 1;
 		let resultPromises = [];
-		results.forEach(function (result) {
+		results.forEach(
+			function (result) {
 				resultPromises.push(ExtItemSearch.handleExtItemSearchResult(result));
 			}
 		);
 
 		await Promise.all(resultPromises);
+		ExtItemSearch.searchResultsCount.text(ExtItemSearch.resultCount);
+		ExtItemSearch.extSearchResultsContainer.show();
 		console.log("Finished processing ext item search results.");
 	}
 
@@ -327,11 +459,12 @@ export class ExtItemSearch extends PageUtility {
 	static {
 		window.ExtItemSearch = this;
 
+		ExtItemSearch.resetSearchResults();
+
 		ExtItemSearch.searchForm.on("submit", function (event) {
 			event.preventDefault();
 			console.log("Performing external item search.");
-
-			ExtItemSearch.extSearchResults.html("");
+			ExtItemSearch.resetSearchResults();
 
 			let formData = new FormData(event.target);
 			let params = new URLSearchParams(formData);

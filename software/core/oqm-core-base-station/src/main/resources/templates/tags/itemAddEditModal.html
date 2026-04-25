@@ -48,13 +48,46 @@
 					</div>
 				</form>
             </div>
-            <div id="extItemSearchSearchFormMessages">
-            </div>
-            <div class="card-header">
-                Search Results:
-            </div>
-            <div class="card-body h-100 row" id="extSearchResults">
-            </div>
+			<div class="card-body h-100" id="extSearchResults">
+				<div id="extItemSearchSearchFormMessages">
+				</div>
+				<ul class="nav nav-tabs" id="extItemSearchSearchResultsTab" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" id="extItemSearchSearchResultsTabResultsTab" data-bs-toggle="tab" data-bs-target="#extItemSearchSearchResultsTabResultsTabContent" type="button" role="tab" aria-controls="extItemSearchSearchResultsTabResultsTabContent" aria-selected="true">
+							Results (<span id="extItemSearchSearchResultsTabNumResults"></span>)
+						</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="extItemSearchSearchResultsTabErrorsTab" data-bs-toggle="tab" data-bs-target="#extItemSearchSearchResultsTabErrorsTabContent" type="button" role="tab" aria-controls="extItemSearchSearchResultsTabErrorsTabContent" aria-selected="false">
+							Errors (<span id="extItemSearchSearchResultsTabNumErrors"></span>)
+						</button>
+					</li>
+				</ul>
+				<div class="tab-content" id="extItemSearchSearchResultsTabContent">
+					<div class="tab-pane fade show active" id="extItemSearchSearchResultsTabResultsTabContent" role="tabpanel" aria-labelledby="extItemSearchSearchResultsTabResultsTab" tabindex="0">
+						<table class="table table-bordered table-sm" id="extItemSearchSearchResultsTable">
+							<thead>
+								<tr>
+									<th class="text-center">#</th>
+									<th>Service</th>
+									<th>Source</th>
+									<th>Method</th>
+									<th class="text-center">{#icons/images /}</th>
+									<th class="text-center">{#icons/pricing /}</th>
+									<th class="text-center">{#icons/link /}</th>
+									<th class="text-center">{#icons/identifiers /}</th>
+									<th class="text-center">{#icons/view /}</th>
+								</tr>
+							</thead>
+							<tbody id="extItemSearchSearchResultsTableResults"></tbody>
+						</table>
+					</div>
+					<div class="tab-pane fade" id="extItemSearchSearchResultsTabErrorsTabContent" role="tabpanel" aria-labelledby="extItemSearchSearchResultsTabErrorsTab" tabindex="0">
+						foo
+					</div>
+				</div>
+			</div>
+			
         </div>
         <div class="col">
             <form id="addEditItemForm">
