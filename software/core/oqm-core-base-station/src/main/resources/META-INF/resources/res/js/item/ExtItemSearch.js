@@ -9,18 +9,12 @@ import {Identifiers} from "../Identifiers.js";
 import {PageUtility} from "../utilClasses/PageUtility.js";
 
 export class ExtItemSearch extends PageUtility {
+	static addEditProductSearchPane = $("#addEditProductSearchPane");
+
+	static searchForm = $("#addEditProductSearchForm");
+
 	static extSearchResults= $("#extSearchResults");
 
-	static prodBarcodeSearchForm = $("#prodBarcodeSearchForm");
-	static legoPartNumSearchForm = $("#legoPartNumSearchForm");
-	static websiteScanSearchForm = $("#websiteScanSearchForm");
-	static extItemSearchSearchFormMessages = $("#extItemSearchSearchFormMessages");
-
-	static prodBarcodeSearchBarcodeInput = $("#prodBarcodeSearchBarcodeInput");
-	static legoPartNumSearchInput = $("#legoPartNumSearchInput");
-	static websiteScanSearchInput = $("#websiteScanSearchInput");
-
-	static addEditProductSearchPane = $("#addEditProductSearchPane");
 
 	static getUseButton(text) {
 		let newButton = $('<button type="button" class="btn btn-link mb-0 p-0" title="Use this value"></button>');
@@ -45,7 +39,12 @@ export class ExtItemSearch extends PageUtility {
 				} else {
 					valElement = $(e.target.parentElement.nextElementSibling)
 				}
-				targetInput.val(valElement.text());
+
+				if(targetInput.jquery){
+					targetInput.val(valElement.text());
+				} else {//assuming overType
+					targetInput.setValue(valElement.text());
+				}
 			});
 			section.children("h6").append(useButton);
 		} else {
@@ -159,9 +158,23 @@ export class ExtItemSearch extends PageUtility {
 		return true;
 	}
 
+	static async handleErrResult(result){
+		//TODO
+	}
+	static async handleNotFoundResult(result){
+		//TODO
+	}
+
+
 	static carouselNum = 0;
-	static async handleExtItemSearchResult(result){
+	static async handleItemResult(result){
+		//TODO:: promise for waiting on image load
+		//TODO:: fix image add/selecting
+		//TODO:: links
+		//TODO:: identifiers
 		//TODO:: better formatting, method for filling out values
+		//TODO:: get display name for source name, list result #
+		//TODO:: move to use expanding table to display this
 		let resultCard = $('<div class="card col-12 p-0" style="height: fit-content"></div>');
 		{
 			let header = $('<div class="card-header"></div>');
@@ -172,9 +185,7 @@ export class ExtItemSearch extends PageUtility {
 		resultMainBody.append(ExtItemSearch.createSearchResultSection("Name", result.unifiedName, ItemAddEdit.addEditItemNameInput));
 		resultMainBody.append(ExtItemSearch.createSearchResultSection("Description", result.description, ItemAddEdit.addEditItemDescriptionInput));
 
-		/* TODO:: */
 		if (result.images.length) {
-			//TODO:: add minimum height/width, set unique car id
 			let carouselId = "extSearchResultImgCarousel-" + ExtItemSearch.carouselNum++;
 			let imagesSection = $('<li class="list-group-item extProdResultSection"><h6 class="card-title">Images:</h6></li>');
 
@@ -196,7 +207,7 @@ export class ExtItemSearch extends PageUtility {
 			let imgPromises = [];
 			result.images.forEach(function (curImageLoc, i) {
 				let curPromise = async function () {
-					console.log("Getting image " + i);
+					console.log("Getting image ", i);
 
 					let imageData = await ExtItemSearch.getImageBase64FromUrl(curImageLoc);
 
@@ -272,21 +283,30 @@ export class ExtItemSearch extends PageUtility {
 		ExtItemSearch.extSearchResults.append(resultCard);
 	}
 
-	static async handleExtItemSearchResults(results) {
-		console.log("Got Results! # results: " + results.results.length + "  # errors: " + Object.keys(results.serviceErrs).length);
+	static async handleExtItemSearchResult(result){
+		switch (result.type) {
+			case "SUCCESS":
+				return ExtItemSearch.handleItemResult(result);
+			case "NO_RESULTS":
+				return ExtItemSearch.handleNotFoundResult(result);
+			case "ERROR":
+				return ExtItemSearch.handleErrResult(result);
+		}
+	}
 
-		if (results.results.length === 0) {
+	static async handleExtItemSearchResults(results) {
+		console.log("Got Results! # results: " + results.length);
+
+		if (results.length === 0) {
 			ExtItemSearch.extSearchResults.html("<p>No Results!</p>");
 		}
+
 		let resultPromises = [];
-		results.results.forEach(function (result) {
+		results.forEach(function (result) {
 				resultPromises.push(ExtItemSearch.handleExtItemSearchResult(result));
 			}
 		);
 
-		for (const [service, error] of Object.entries(results.serviceErrs)) {
-			PageMessageUtils.addMessageToDiv(ExtItemSearch.extItemSearchSearchFormMessages, "danger", error, "Failed calling " + service);
-		}
 		await Promise.all(resultPromises);
 		console.log("Finished processing ext item search results.");
 	}
@@ -307,14 +327,17 @@ export class ExtItemSearch extends PageUtility {
 	static {
 		window.ExtItemSearch = this;
 
-		ExtItemSearch.websiteScanSearchForm.submit(function (event) {
+		ExtItemSearch.searchForm.on("submit", function (event) {
 			event.preventDefault();
-			let webpage = ExtItemSearch.websiteScanSearchInput.val();
-			console.log("Scanning a web page: " + webpage);
+			console.log("Performing external item search.");
+
 			ExtItemSearch.extSearchResults.html("");
 
+			let formData = new FormData(event.target);
+			let params = new URLSearchParams(formData);
+
 			Rest.call({
-				url: Rest.passRoot + "/plugin/itemLookup/webpage/scrape/" + encodeURIComponent(webpage),
+				url: Rest.passRoot + "/plugin/itemLookup/search?" + params.toString(),
 				done: async function (data) {
 					await ExtItemSearch.handleExtItemSearchResults(data);
 				},
@@ -322,36 +345,5 @@ export class ExtItemSearch extends PageUtility {
 			});
 		});
 
-		ExtItemSearch.prodBarcodeSearchForm.submit(function (event) {
-			event.preventDefault();
-			let barcodeText = ExtItemSearch.prodBarcodeSearchBarcodeInput.val();
-			console.log("Searching for a barcode: ", barcodeText);
-			Identifiers.getNewIdentifierInput(ItemAddEdit.identifierInputContainer).val(barcodeText);
-			Identifiers.addIdentifier(ItemAddEdit.identifierInputContainer);
-			ExtItemSearch.extSearchResults.html("");
-
-			Rest.call({
-				url: Rest.passRoot + "/plugin/itemLookup/barcode/" + barcodeText,
-				done: async function (data) {
-					await ExtItemSearch.handleExtItemSearchResults(data);
-				},
-				failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
-			});
-		});
-
-		ExtItemSearch.legoPartNumSearchForm.submit(function (event) {
-			event.preventDefault();
-			let partNumber = ExtItemSearch.legoPartNumSearchInput.val();
-			console.log("Searching for a lego part: " + partNumber);
-			ExtItemSearch.extSearchResults.html("");
-
-			Rest.call({
-				url: Rest.passRoot + "/plugin/itemLookup/lego/part/" + partNumber,
-				done: async function (data) {
-					await ExtItemSearch.handleExtItemSearchResults(data)
-				},
-				failMessagesDiv: ExtItemSearch.extItemSearchSearchFormMessages
-			});
-		});
 	}
 }
