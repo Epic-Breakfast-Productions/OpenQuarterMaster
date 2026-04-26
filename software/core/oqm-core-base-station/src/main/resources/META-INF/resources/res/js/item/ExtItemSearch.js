@@ -17,7 +17,9 @@ export class ExtItemSearch extends PageUtility {
 
 	static extSearchResultsContainer = $("#extSearchResults");
 	static searchResultsCount = $("#extItemSearchSearchResultsTabNumResults");
+	static searchResultsErrTab = $("#extItemSearchSearchResultsTabErrorsTab");
 	static searchResultsErrCount = $("#extItemSearchSearchResultsTabNumErrors");
+	static searchResultsErrContent = $("#extItemSearchSearchResultsTabErrorsTabContent");
 	static extSearchResultsTableContent = $("#extItemSearchSearchResultsTableResults");
 	static extItemSearchSearchFormMessages = $("#extItemSearchSearchFormMessages");
 
@@ -27,10 +29,18 @@ export class ExtItemSearch extends PageUtility {
 		ExtItemSearch.searchResultsCount.text("-");
 		ExtItemSearch.searchResultsErrCount.text("-");
 		ExtItemSearch.extSearchResultsTableContent.text("");
+		ExtItemSearch.searchResultsErrContent.text("");
+		ExtItemSearch.searchResultsErrTab.prop("disabled", true);
 	}
 
-	static sourceMethodToDisplay(sourceMethod) {
-		return sourceMethod;//TODO
+	static sourceToDisplay(source) {
+		return source;//TODO
+	}
+	static serviceToDisplay(service) {
+		return service;//TODO
+	}
+	static methodToDisplay(method) {
+		return method;//TODO
 	}
 
 
@@ -177,8 +187,16 @@ export class ExtItemSearch extends PageUtility {
 		return true;
 	}
 
+	static errCount = 0;
 	static async handleErrResult(result) {
-		//TODO
+		ExtItemSearch.errCount++;
+
+		let newAlert = $('<div class="alert alert-danger" role="alert"></div>');
+
+		newAlert.append($('<h4 class="alert-heading">Service:</h4>').text("Service: " + result.service));
+		newAlert.append($('<p></p>p>').text(result.displayMessage));
+
+		ExtItemSearch.searchResultsErrContent.append(newAlert);
 	}
 
 	static async handleNotFoundResult(result) {
@@ -191,9 +209,16 @@ export class ExtItemSearch extends PageUtility {
 		let resultRow = $('<tr></tr>');
 
 		resultRow.append($('<td class="text-center align-middle"></td>').text(ExtItemSearch.resultCount++));
-		resultRow.append($('<td class="align-middle"></td>').text(result.service));//TODO:: better name
-		resultRow.append($('<td class="align-middle"></td>').text(result.source));//TODO:: better name
-		resultRow.append($('<td class="align-middle"></td>').text(result.method));//TODO:: better name
+
+		let service = ExtItemSearch.serviceToDisplay(result.service);
+
+		if(result.service === result.source) {
+			resultRow.append($('<td colspan="2" class="text-center align-middle"></td>').text(service));
+		}else {
+			resultRow.append($('<td class="align-middle"></td>').text(service));
+			resultRow.append($('<td class="align-middle"></td>').text(ExtItemSearch.sourceToDisplay(result.source)));
+		}
+		resultRow.append($('<td class="align-middle"></td>').text(ExtItemSearch.methodToDisplay(result.method)));
 		resultRow.append($('<td class="text-center align-middle"></td>').text(result.images.length));
 		resultRow.append($('<td class="text-center align-middle"></td>').text(Object.keys(result.prices).length));
 		resultRow.append($('<td class="text-center align-middle"></td>').text(Object.keys(result.links).length));
@@ -214,70 +239,6 @@ export class ExtItemSearch extends PageUtility {
 		resultMainBody.append(ExtItemSearch.createSearchResultSection("Name", result.unifiedName, ItemAddEdit.addEditItemNameInput));
 		resultMainBody.append(ExtItemSearch.createSearchResultSection("Description", result.description, ItemAddEdit.addEditItemDescriptionInput));
 
-		if (result.images.length) {
-			let carouselId = "extSearchResultImgCarousel-" + ExtItemSearch.carouselNum++;
-			let imagesSection = $('<div class="extProdResultSection"><h6 class="card-title">Images:</h6></div>');
-
-			let carousel = $('<div id="' + carouselId + '" class="carousel slide border border-1 extProductResultCarousel">\n' +
-				'  <div class="carousel-inner">\n' +
-
-				'  </div>\n' +
-				'  <button class="carousel-control-prev" type="button" data-bs-target="#' + carouselId + '" data-bs-slide="prev">\n' +
-				'    <span class="carousel-control-prev-icon" aria-hidden="true"></span>\n' +
-				'    <span class="visually-hidden">Previous</span>\n' +
-				'  </button>\n' +
-				'  <button class="carousel-control-next" type="button" data-bs-target="#' + carouselId + '" data-bs-slide="next">\n' +
-				'    <span class="carousel-control-next-icon" aria-hidden="true"></span>\n' +
-				'    <span class="visually-hidden">Next</span>\n' +
-				'  </button>\n' +
-				'</div>');
-			let carouselInner = carousel.find(".carousel-inner");
-
-			let imgPromises = [];
-			result.images.forEach(function (curImageLoc, i) {
-				let curPromise = async function () {
-					console.log("Getting image ", i);
-
-					let imageData = await ExtItemSearch.getImageBase64FromUrl(curImageLoc);
-
-					if (!imageData) {
-						console.error("FAILED to get image data for " + i + " - " + curImageLoc);
-						return;
-					}
-					let newCarImageDir = $(
-						'    <div class="carousel-item">\n' +
-						'      <img src="" class="d-block w-100" alt="External Item Search Result Image">\n' +
-						'      <div class="carousel-caption d-md-block">' +
-						'          ' +
-						'      </div>' +
-						'    </div>\n'
-					);
-					let newCarImage = newCarImageDir.find("img");
-					newCarImage.prop("src", imageData);
-
-					let useButton = $('<button type="button" class="btn btn-secondary" title="Use this image">Add & Select ' + Icons.useDatapoint + '</button>');
-					useButton.on("click", function () {
-						ExtItemSearch.addOrGetAndSelectImage(curImageLoc, result.unifiedName, imageData);
-					});
-					newCarImageDir.find(".carousel-caption").append(useButton);
-
-					carouselInner.append(newCarImageDir);
-					console.log("Finished getting image " + i);
-				}
-
-				imgPromises.push(curPromise());
-			});
-			await Promise.all(imgPromises);
-
-			$(carouselInner.children()[0]).addClass('active');
-
-			console.log("Finished getting " + carouselInner.children().length + " images");
-			if (carouselInner.children().length) {
-				imagesSection.append(carousel);
-				imagesSection.append($('<hr style="width:50%;">'));
-				resultMainBody.append(imagesSection);
-			}
-		}
 
 		if (Object.keys(result.prices).length) {
 			let pricesSection = $('<div class="extProdResultSection"><h6 class="card-title">Prices:</h6></div>');
@@ -393,6 +354,71 @@ export class ExtItemSearch extends PageUtility {
 			resultMainBody.append(attsSection);
 		}
 
+		if (result.images.length) {
+			let carouselId = "extSearchResultImgCarousel-" + ExtItemSearch.carouselNum++;
+			let imagesSection = $('<div class="extProdResultSection"><h6 class="card-title">Images:</h6></div>');
+
+			let carousel = $('<div id="' + carouselId + '" class="carousel slide border border-1 extProductResultCarousel">\n' +
+				'  <div class="carousel-inner">\n' +
+
+				'  </div>\n' +
+				'  <button class="carousel-control-prev" type="button" data-bs-target="#' + carouselId + '" data-bs-slide="prev">\n' +
+				'    <span class="carousel-control-prev-icon" aria-hidden="true"></span>\n' +
+				'    <span class="visually-hidden">Previous</span>\n' +
+				'  </button>\n' +
+				'  <button class="carousel-control-next" type="button" data-bs-target="#' + carouselId + '" data-bs-slide="next">\n' +
+				'    <span class="carousel-control-next-icon" aria-hidden="true"></span>\n' +
+				'    <span class="visually-hidden">Next</span>\n' +
+				'  </button>\n' +
+				'</div>');
+			let carouselInner = carousel.find(".carousel-inner");
+
+			let imgPromises = [];
+			result.images.forEach(function (curImageLoc, i) {
+				let curPromise = async function () {
+					console.log("Getting image ", i);
+
+					let imageData = await ExtItemSearch.getImageBase64FromUrl(curImageLoc);
+
+					if (!imageData) {
+						console.error("FAILED to get image data for " + i + " - " + curImageLoc);
+						return;
+					}
+					let newCarImageDir = $(
+						'    <div class="carousel-item">\n' +
+						'      <img src="" class="d-block w-100" alt="External Item Search Result Image">\n' +
+						'      <div class="carousel-caption d-md-block">' +
+						'          ' +
+						'      </div>' +
+						'    </div>\n'
+					);
+					let newCarImage = newCarImageDir.find("img");
+					newCarImage.prop("src", imageData);
+
+					let useButton = $('<button type="button" class="btn btn-secondary" title="Use this image">Add & Select ' + Icons.useDatapoint + '</button>');
+					useButton.on("click", function () {
+						ExtItemSearch.addOrGetAndSelectImage(curImageLoc, result.unifiedName, imageData);
+					});
+					newCarImageDir.find(".carousel-caption").append(useButton);
+
+					carouselInner.append(newCarImageDir);
+					console.log("Finished getting image " + i);
+				}
+
+				imgPromises.push(curPromise());
+			});
+			await Promise.all(imgPromises);
+
+			$(carouselInner.children()[0]).addClass('active');
+
+			console.log("Finished getting " + carouselInner.children().length + " images");
+			if (carouselInner.children().length) {
+				imagesSection.append(carousel);
+				imagesSection.append($('<hr style="width:50%;">'));
+				resultMainBody.append(imagesSection);
+			}
+		}
+
 		resultViewRow.append(resultMainBody);
 		resultViewRow.hide();
 		return resultViewRow;
@@ -410,7 +436,7 @@ export class ExtItemSearch extends PageUtility {
 		ExtItemSearch.extSearchResultsTableContent.append(resultViewRow);
 	}
 
-	static async handleExtItemSearchResult(result) {
+	static handleExtItemSearchResult(result) {
 		console.debug("Handling external item search result: ", result);
 		switch (result.type) {
 			case "SUCCESS":
@@ -429,6 +455,7 @@ export class ExtItemSearch extends PageUtility {
 			ExtItemSearch.extSearchResults.html("<p>No Results!</p>");
 		}
 
+		ExtItemSearch.errCount = 0;
 		ExtItemSearch.resultCount = 1;
 		let resultPromises = [];
 		results.forEach(
@@ -439,7 +466,13 @@ export class ExtItemSearch extends PageUtility {
 
 		await Promise.all(resultPromises);
 		ExtItemSearch.searchResultsCount.text(ExtItemSearch.resultCount);
+		ExtItemSearch.searchResultsErrCount.text(ExtItemSearch.errCount);
 		ExtItemSearch.extSearchResultsContainer.show();
+
+		if(ExtItemSearch.errCount) {
+			ExtItemSearch.searchResultsErrTab.prop("disabled", false);
+		}
+
 		console.log("Finished processing ext item search results.");
 	}
 

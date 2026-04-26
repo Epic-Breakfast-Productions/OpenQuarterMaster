@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.baseStation.service;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
@@ -13,11 +14,16 @@ import tech.ebp.oqm.core.baseStation.interfaces.rest.passthrough.plugins.externa
 @Path("/api/v1")
 @RegisterRestClient(configKey = "externalItemSearch")
 public interface ExternalItemSearchClient {
-
+	
 	@GET
-	@Path("/providers")
+	@Path("/info/providers")
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ArrayNode> allProviderInfo();
+	
+	@GET
+	@Path("/info/methods")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> allMethodInfo();
 
 	@GET
 	@Path("/search")

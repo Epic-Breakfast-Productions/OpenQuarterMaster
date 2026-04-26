@@ -25,19 +25,19 @@
             </div>
             <div class="card-body h-auto">
 				<form id="addEditProductSearchForm">
-					<div class="mb-1">
-						<label for="addEditProductSearchSourceInput" class="form-label">Source</label>
-						<select class="form-select dselect-select method-input" id="addEditProductSearchSourceInput" name="lookupSource" multiple>
-						
-						</select>
-						<div id="addEditProductSearchTermInput" class="form-text">Specify none to use "any".</div>
-					</div>
-					
+					{!<div class="mb-1">!}
+						{!<label for="addEditProductSearchSourceInput" class="form-label">Source</label>!}
+						{!<select class="form-select dselect-select method-input" id="addEditProductSearchSourceInput" name="lookupSource" multiple>!}
+						{!!}
+						{!</select>!}
+						{!<div id="addEditProductSearchTermInput" class="form-text">Specify none to use "any".</div>!}
+					{!</div>!}
 					<div class="mb-1">
 						<label for="addEditProductSearchMethodInput" class="form-label">Search Metod</label>
-						<select class="form-select dselect-select method-input" id="addEditProductSearchMethodInput" name="lookupMethod" multiple required>
-							<option value="TEXT" selected>Text</option>
-							<option value="BARCODE" selected>Barcode</option>
+						<select class="form-select dselect-select method-input" id="addEditProductSearchMethodInput" name="lookupMethod" required>
+							{#for curMethod in extSearchMethods.properties()}
+								<option value="{curMethod.getKey()}" {#if curMethod_isFirst}selected{/if}>{curMethod.getKey()}</option>
+							{/for}
 						</select>
 					</div>
 					
