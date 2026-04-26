@@ -63,6 +63,13 @@ quarkus:
   health:
     openapi:
       included: true
+  otel:
+    metrics:
+      enabled: true
+    traces:
+      enabled: true
+    logs:
+      enabled: true
   wiremock:
     devservices:
       enabled: true
