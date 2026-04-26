@@ -230,7 +230,7 @@ class ConfigManager:
 
     def rereadConfigData(self):
         self.configData = self.readFile(self.mainConfigFile)
-        for file in os.listdir(self.additionalConfigsDir):
+        for file in sorted(os.listdir(self.additionalConfigsDir)):
             if file.endswith(".json"):
                 curUpdates = self.readFile(self.additionalConfigsDir + "/" + file)
                 self.configData = ConfigManager.mergeDicts(self.configData, curUpdates)
