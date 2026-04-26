@@ -377,6 +377,7 @@ export class ExtItemSearch extends PageUtility {
 				'</div>');
 			let carouselInner = carousel.find(".carousel-inner");
 
+			let failedImages = [];
 			let imgPromises = [];
 			result.images.forEach(function (curImageLoc, i) {
 				let curPromise = async function () {
@@ -386,7 +387,7 @@ export class ExtItemSearch extends PageUtility {
 
 					if (!imageData) {
 						console.error("FAILED to get image data for " + i + " - " + curImageLoc);
-						//TODO:: add to list of failed image URL's
+						failedImages.push(curImageLoc);
 						return;
 					}
 					let newCarImageDir = $(
@@ -417,8 +418,25 @@ export class ExtItemSearch extends PageUtility {
 			$(carouselInner.children()[0]).addClass('active');
 
 			console.log("Finished getting " + carouselInner.children().length + " images");
+			let hadContent = false;
 			if (carouselInner.children().length) {
+				hadContent=true;
 				imagesSection.append(carousel);
+			}
+			if(failedImages.length){
+				hadContent=true;
+				imagesSection.append($("<p>Failed to load images:</p>"));
+				let failedImgList = $('<ul></ul>');
+				failedImages.forEach(function(curFailedImg){
+					failedImgList.append(
+						$('<a target="_blank"></a>')
+							.text(curFailedImg)
+							.attr("href", curFailedImg)
+					);
+				});
+				imagesSection.append(failedImgList);
+			}
+			if(hadContent){
 				imagesSection.append($('<hr style="width:50%;">'));
 				resultMainBody.append(imagesSection);
 			}
