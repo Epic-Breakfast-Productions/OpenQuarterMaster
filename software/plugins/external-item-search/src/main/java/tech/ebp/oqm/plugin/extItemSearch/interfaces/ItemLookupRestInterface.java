@@ -22,8 +22,11 @@ import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemSearch;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.service.ExtItemLookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Path("/api/v1")
@@ -35,25 +38,33 @@ public class ItemLookupRestInterface {
 	ExtItemLookupService productLookupService;
 	
 	@GET
-	@Path("/providers")
+	@Path("/info/providers")
 	@Operation(
 		summary = "Gets all supported providers."
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Image retrieved.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = ExtItemLookupProviderInfo.class
-			)
-		)
+		description = "Image retrieved."
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)
 	public List<ExtItemLookupProviderInfo> allProviderInfo() {
 		return this.productLookupService.getProductProviderInfo();
+	}
+	
+	@GET
+	@Path("/info/methods")
+	@Operation(
+		summary = "Gets all search methods currently enabled."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Image retrieved."
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Map<LookupMethod, List<LookupService>> availableMethods() {
+		return this.productLookupService.getAvailableSearchMethods();
 	}
 	
 	@GET
@@ -63,14 +74,7 @@ public class ItemLookupRestInterface {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Image retrieved.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				type = SchemaType.ARRAY,
-				implementation = ExtItemLookupProviderInfo.class
-			)
-		)
+		description = "Image retrieved."
 	)
 	@PermitAll
 	@Produces(MediaType.APPLICATION_JSON)

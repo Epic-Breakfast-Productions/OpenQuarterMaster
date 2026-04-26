@@ -1,5 +1,6 @@
 package tech.ebp.oqm.plugin.extItemSearch.service;
 
+import io.quarkus.cache.CacheResult;
 import io.smallrye.mutiny.Multi;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -14,6 +15,9 @@ import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.rebrickable.RebrickableService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.upcItemDb.UpcItemDbService;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource;
 
 import java.util.*;
 
@@ -51,10 +55,27 @@ public class ExtItemLookupService {
 		return this.searchServices;
 	}
 	
+	@CacheResult(cacheName = "productProviderInfo")
 	public List<ExtItemLookupProviderInfo> getProductProviderInfo() {
 		return servicesToInfoList(this.searchServices);
 	}
 	
+	@CacheResult(cacheName = "availableSearchMethods")
+	public Map<LookupMethod, List<LookupService>> getAvailableSearchMethods() {
+		Map<LookupMethod, List<LookupService>> output = new LinkedHashMap<>();
+		
+		for (ItemSearchService curService : this.searchServices) {
+			if(!curService.isEnabled()){
+				continue;
+			}
+			for (LookupMethod curMethod : curService.getProviderInfo().getLookupMethods()) {
+				output.computeIfAbsent(curMethod, k->new ArrayList<>())
+					.add(curService.getService());
+			}
+		}
+		
+		return output;
+	}
 	
 	
 	public Multi<LookupResult> search(ExtItemSearch search) {
