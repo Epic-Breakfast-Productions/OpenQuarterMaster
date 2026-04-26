@@ -194,7 +194,7 @@ export class ExtItemSearch extends PageUtility {
 		let newAlert = $('<div class="alert alert-danger" role="alert"></div>');
 
 		newAlert.append($('<h4 class="alert-heading">Service:</h4>').text("Service: " + result.service));
-		newAlert.append($('<p></p>p>').text(result.displayMessage));
+		newAlert.append($('<p></p>').text(result.displayMessage));
 
 		ExtItemSearch.searchResultsErrContent.append(newAlert);
 	}
@@ -317,6 +317,10 @@ export class ExtItemSearch extends PageUtility {
 				});
 
 				curAtt.append(useButt);
+				curAtt.append($('<a target="_blank"></a>')
+					.html(Icons.link)
+					.attr("href", val)
+				);
 
 				linkList.append(curAtt);
 			});
@@ -382,6 +386,7 @@ export class ExtItemSearch extends PageUtility {
 
 					if (!imageData) {
 						console.error("FAILED to get image data for " + i + " - " + curImageLoc);
+						//TODO:: add to list of failed image URL's
 						return;
 					}
 					let newCarImageDir = $(
@@ -452,7 +457,7 @@ export class ExtItemSearch extends PageUtility {
 		console.log("Got Results! # results: " + results.length);
 
 		if (results.length === 0) {
-			ExtItemSearch.extSearchResults.html("<p>No Results!</p>");
+			ExtItemSearch.extSearchResultsTableContent.html("<tr><td colspan='9'>No Results!</td></tr>");
 		}
 
 		ExtItemSearch.errCount = 0;
