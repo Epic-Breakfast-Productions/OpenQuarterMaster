@@ -73,6 +73,10 @@ public class ResnetVectorService {
 		//			Filters.eq("database", database)
 		//		)
 	}
+
+	public Iterator<ImageVector> getAllVectors(){
+		return this.getTypedCollection().find().iterator();
+	}
 	
 	private void processImage(String database, String imageId, int imageRevision) {
 		log.info("Processing image revision: {}, revision: {}", imageId, imageRevision);
@@ -128,8 +132,6 @@ public class ResnetVectorService {
 									  .pageSize(100)
 									  .build();
 		
-		
-		//TODO:: iterate through all databases; this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
 		ArrayNode dbList = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
 		for (JsonNode db : dbList) {
 			
@@ -141,7 +143,7 @@ public class ResnetVectorService {
 			try {
 				do {
 					results = this.oqmCoreApiClientService.imageSearch(this.serviceAccountService.getAuthString(), curOqmDb, imageSearch).await().indefinitely();
-					
+
 					log.debug("Retrieved new page of results");
 					
 					for (JsonNode curImageResult : results.get("results")) {
@@ -158,6 +160,27 @@ public class ResnetVectorService {
 		}
 		
 		// TODO:: remove vectors not in oqm core db
+		Iterator<ImageVector> allVec = this.getAllVectors();
+		while (allVec.hasNext()) {
+			ImageVector imageVector = allVec.next();
+			String imageID = imageVector.getImageId();
+			String db = imageVector.getOqmDb();
+			// TODO:: check which error is being thrown
+			ObjectNode imageData = this.oqmCoreApiClientService
+					.imageGet(
+							this.serviceAccountService.getAuthString(), db, imageID)
+					.onFailure()
+					.recoverWithNull()
+					.await().indefinitely();
+			if(imageData == null) {
+				this.getTypedCollection().deleteOne(Filters.eq("_id", imageVector.getId()));
+			}
+
+		}
+
 	}
-	
+
+	public void deleteAll(){
+		this.getTypedCollection().deleteMany(Filters.empty());
+	}
 }

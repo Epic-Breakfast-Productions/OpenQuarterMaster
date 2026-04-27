@@ -52,8 +52,9 @@ public class ImageSearchService {
 		log.info("Loading OpenCV");
 		OpenCV.loadLocally();
 		log.info("OpenCV loaded");
-		
-		model = SavedModelBundle.load(dir.getFile());
+		log.info("Loading ResNet Model: {}", dir);
+		log.debug("Passing in: {}", dir.getFile());
+		model = SavedModelBundle.load(dir.getFile().substring(1)); //Don't commit
 	}
 	
 	@RestClient
