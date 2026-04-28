@@ -1,201 +1,106 @@
 package tech.ebp.oqm.plugin.extItemSearch.service;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
+import io.quarkus.cache.CacheResult;
+import io.smallrye.mutiny.Multi;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.ItemSearchService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.lego.LegoLookupService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.lego.rebrickable.RebrickableService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product.ApiProductSearchService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product.barcodeLookup.BarcodeLookupService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product.dataKick.DataKickService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.api.product.upcItemDb.UpcItemDbService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.webPage.AdafruitWebProductScrapeService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.webPage.AmazonWebProductScrapeService;
-import tech.ebp.oqm.plugin.extItemSearch.service.searchServices.webPage.WebPageProductScrapeService;
+import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemSearch;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ResultType;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.ItemSearchService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.barcodeLookup.BarcodeLookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.dataKick.DatakickService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.rebrickable.RebrickableService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.upcItemDb.UpcItemDbService;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
-import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupResult;
-import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupResults;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource;
 
-import java.net.URL;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.ExecutionException;
 
 @ApplicationScoped
 @Slf4j
 @NoArgsConstructor
 public class ExtItemLookupService {
 	
-	private static <T extends Collection<? extends ItemSearchService>> List<ExtItemLookupProviderInfo> servicesToInfoList(T services){
+	private static <T extends Collection<? extends ItemSearchService>> List<ExtItemLookupProviderInfo> servicesToInfoList(T services) {
 		List<ExtItemLookupProviderInfo> output = new ArrayList<>(services.size());
-
-		for (ItemSearchService curService :services) {
+		
+		for (ItemSearchService curService : services) {
 			output.add(curService.getProviderInfo());
 		}
 		output.sort(ExtItemLookupProviderInfo.Comparator.INSTANCE);
 		return output;
 	}
 	
-	private final Set<WebPageProductScrapeService> pageProductSearchServices = new HashSet<>();
-	private final Set<ApiProductSearchService> productSearchServices = new HashSet<>();
-	private final Set<LegoLookupService> legoSearchServices = new HashSet<>();
+	Set<ItemSearchService> searchServices = new HashSet<>();
 	
 	@Inject
 	public ExtItemLookupService(
-		AdafruitWebProductScrapeService adafruitWebProductScrapeService,
-		AmazonWebProductScrapeService amazonWebProductScrapeService,
-		DataKickService dataKickService,
+		DatakickService datakickService,
+		RebrickableService rebrickableService,
 		BarcodeLookupService barcodeLookupService,
-		UpcItemDbService upcItemDbService,
-		RebrickableService rebrickableService
+		UpcItemDbService upcItemDbService
 	) {
-		this.pageProductSearchServices.add(adafruitWebProductScrapeService);
-		this.pageProductSearchServices.add(amazonWebProductScrapeService);
-		
-		this.productSearchServices.add(dataKickService);
-		this.productSearchServices.add(barcodeLookupService);
-		this.productSearchServices.add(upcItemDbService);
-		
-		this.legoSearchServices.add(rebrickableService);
+		this.searchServices.add(datakickService);
+		this.searchServices.add(rebrickableService);
+		this.searchServices.add(barcodeLookupService);
+		this.searchServices.add(upcItemDbService);
 	}
 	
-	private ExtItemLookupResults processRequestsList(Map<String, CompletableFuture<List<ExtItemLookupResult>>> requests) {
-		List<ExtItemLookupResult> resultList = new ArrayList<>(requests.size());
-		Map<String, String> errList = new HashMap<>();
-		
-		for (Map.Entry<String, CompletableFuture<List<ExtItemLookupResult>>> curRequest : requests.entrySet()) {
-			String curService = curRequest.getKey();
-			CompletableFuture<List<ExtItemLookupResult>> curFuture = curRequest.getValue();
-			List<ExtItemLookupResult> results;
-			
-			try {
-				results = curFuture.join();
-			} catch(CompletionException e) {
-				log.error("FAILED to call {} service- ", curService, e);
-				errList.put(curService, e.getCause().getMessage());
-				continue;
-			}
-			
-			resultList.addAll(results);
-			log.info("Got {} results from {}", results.size(), curService);
-		}
-		
-		
-		return ExtItemLookupResults.builder()
-								   .results(resultList)
-								   .serviceErrs(errList)
-								   .build();
+	public Set<ItemSearchService> getSearchServices() {
+		return this.searchServices;
 	}
 	
-	private ExtItemLookupResults processRequestsSingle(Map<String, CompletableFuture<ExtItemLookupResult>> requests) {
-		List<ExtItemLookupResult> resultList = new ArrayList<>(requests.size());
-		Map<String, String> errList = new HashMap<>();
-		
-		for (Map.Entry<String, CompletableFuture<ExtItemLookupResult>> curRequest : requests.entrySet()) {
-			String curService = curRequest.getKey();
-			CompletableFuture<ExtItemLookupResult> curFuture = curRequest.getValue();
-			ExtItemLookupResult results;
-			
-			try {
-				results = curFuture.join();
-			} catch(CompletionException e) {
-				log.error("FAILED to call {} service- ", curService, e);
-				errList.put(curService, e.getCause().getMessage());
-				continue;
-			}
-			
-			resultList.add(results);
-			log.info("Got a result from {}", curService);
-		}
-		
-		return ExtItemLookupResults.builder()
-								   .results(resultList)
-								   .serviceErrs(errList)
-								   .build();
-	}
-
-	public Map<String, List<ExtItemLookupProviderInfo>> getAllProviderInfo(){
-		return Map.of(
-			"product", this.getProductProviderInfo(),
-			"lego", this.getLegoProviderInfo(),
-			"webpage", this.getSupportedPageScanInfo()
-		);
-	}
-	
-	@WithSpan
-	public ExtItemLookupResults searchBarcode(String barcode) {
-		Map<String, CompletableFuture<List<ExtItemLookupResult>>> resultMap = new HashMap<>();
-		
-		for (ApiProductSearchService curService : this.productSearchServices) {
-			Optional<CompletableFuture<List<ExtItemLookupResult>>> result = curService.searchBarcode(barcode);
-			
-			if (result.isPresent()) {
-				resultMap.put(curService.getProviderInfo().getDisplayName(), result.get());
-			}
-		}
-		
-		return this.processRequestsList(resultMap);
-	}
-	
-	public ExtItemLookupResults searchProduct(String brand, String product) {
-		//TODO
-		return null;
-	}
-	
+	@CacheResult(cacheName = "productProviderInfo")
 	public List<ExtItemLookupProviderInfo> getProductProviderInfo() {
-		return servicesToInfoList(this.productSearchServices);
+		return servicesToInfoList(this.searchServices);
 	}
 	
-	@WithSpan
-	public ExtItemLookupResults searchLegoPart(String legoPartNum) {
-		Map<String, CompletableFuture<List<ExtItemLookupResult>>> resultMap = new HashMap<>();
+	@CacheResult(cacheName = "availableSearchMethods")
+	public Map<LookupMethod, List<LookupService>> getAvailableSearchMethods() {
+		Map<LookupMethod, List<LookupService>> output = new LinkedHashMap<>();
 		
-		for (LegoLookupService curService : this.legoSearchServices) {
-			Optional<CompletableFuture<List<ExtItemLookupResult>>> result = curService.searchPartNumber(legoPartNum);
-			
-			if (result.isPresent()) {
-				resultMap.put(curService.getProviderInfo().getDisplayName(), result.get());
-			}
-		}
-		
-		return this.processRequestsList(resultMap);
-	}
-	
-	public List<ExtItemLookupProviderInfo> getLegoProviderInfo() {
-		return servicesToInfoList(this.legoSearchServices);
-	}
-	
-	/**
-	 * TODO:: many sites behind a wall checking for robots...
-	 * @param page
-	 * @return
-	 * @throws ExecutionException
-	 * @throws InterruptedException
-	 */
-	@WithSpan
-	public ExtItemLookupResults scanPage(URL page) throws ExecutionException, InterruptedException {
-		Map<String, CompletableFuture<ExtItemLookupResult>> resultMap = new HashMap<>();
-		
-		for (WebPageProductScrapeService curService : this.pageProductSearchServices) {
-			if(!curService.canParsePage(page)){
+		for (ItemSearchService curService : this.searchServices) {
+			if(!curService.isEnabled()){
 				continue;
 			}
-			Optional<CompletableFuture<ExtItemLookupResult>> result = curService.scrapeWebPage(page);
-			
-			if (result.isPresent()) {
-				resultMap.put(curService.getProviderInfo().getDisplayName(), result.get());
+			for (LookupMethod curMethod : curService.getProviderInfo().getLookupMethods()) {
+				output.computeIfAbsent(curMethod, k->new ArrayList<>())
+					.add(curService.getService());
 			}
 		}
 		
-		return this.processRequestsSingle(resultMap);
+		return output;
 	}
 	
-	public List<ExtItemLookupProviderInfo> getSupportedPageScanInfo() {
-		return servicesToInfoList(this.pageProductSearchServices);
-	}
 	
+	public Multi<LookupResult> search(ExtItemSearch search) {
+		List<Multi<LookupResult>> resultUnis = new ArrayList<>(this.searchServices.size());
+		
+		for (ItemSearchService curService : this.searchServices) {
+			if(search.getServices().isEmpty() || search.getServices().contains(curService.getProviderInfo().getId()))
+				resultUnis.add(
+					curService.search(
+						search.getSources(),
+						search.getLookupMethods(),
+						search.getSearch()
+					)
+				);
+		}
+		
+		Multi<LookupResult> output = Multi.createBy().merging().streams(
+			resultUnis.stream()
+				.toList()
+		);
+		
+		if(!search.isKeepNotFound()){
+			output = output.filter(r -> !r.getType().equals(ResultType.NO_RESULTS));
+		}
+		
+		return output;
+	}
 }

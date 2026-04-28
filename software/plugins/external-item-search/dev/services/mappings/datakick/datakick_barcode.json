@@ -1,0 +1,54 @@
+{
+	"request": {
+		"urlPathPattern": "/datakick/api/items/00888109010058",
+		"method": "GET"
+	},
+	"response": {
+		"status": 200,
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"delayDistribution": {
+			"type": "lognormal",
+			"median": 7000,
+			"sigma": 0.4
+		},
+		"jsonBody": [
+			{
+				"id": 7471,
+				"user_id": 0,
+				"gtin14": "00888109010058",
+				"brand_name": "Cloud",
+				"name": "-  Blackberry peach",
+				"size": "30ML",
+				"ingredients": "s",
+				"serving_size": null,
+				"serving_per_container": null,
+				"calories": null,
+				"fat_calories": null,
+				"fat": null,
+				"saturated_fat": null,
+				"trans_fat": null,
+				"polyunsaturated_fat": null,
+				"monounsaturated_fat": null,
+				"cholesterol": null,
+				"sodium": null,
+				"potassium": null,
+				"carbohydrate": null,
+				"fiber": null,
+				"sugar": null,
+				"protein": null,
+				"author": null,
+				"publisher": null,
+				"pages": null,
+				"alcohol": null,
+				"created_at": "2022-04-14T08:12:24.000000Z",
+				"updated_at": "2024-11-03T19:25:59.000000Z"
+			}
+		]
+	}
+}
+
+
+
+

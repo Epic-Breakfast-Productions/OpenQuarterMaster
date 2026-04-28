@@ -99,7 +99,7 @@ export class ItemAddEdit extends PageUtility {
 		ItemAddEdit.addEditItemFormMode.val("");
 		ItemAddEdit.addEditItemNameInput.val("");
 		ItemAddEdit.addEditItemDescriptionInput.setValue("");
-		// Identifiers.reset(ItemAddEdit.identifierInputContainer);
+		Identifiers.reset(ItemAddEdit.identifierInputContainer);
 		IdGeneratorSearchSelect.AssociatedInput.resetAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput);
 		ItemAddEdit.addEditItemModalLabel.text("Item");
 		ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(0);
