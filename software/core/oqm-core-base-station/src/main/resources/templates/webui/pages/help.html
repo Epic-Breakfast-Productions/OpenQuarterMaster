@@ -249,39 +249,8 @@
 			</p>
 			{#if extSearchEnabled}
 				<hr/>
-				<h3>
-					Products
-				</h3>
-				<p>
-					Services to search for Products by UPC/Barcode
-				</p>
 				<div class="row">
-					{#for productProvider in allProviderInfo.get("product")}
-						{#providerInfoCard providerInfo = productProvider /}
-					{/for}
-				</div>
-				<hr/>
-				<h3>
-					Websites
-				</h3>
-				<p>
-					These websites are supported to glean data from. The intent is for you to enter a specific
-					product's page.
-				</p>
-				<div class="row">
-					{#for productProvider in allProviderInfo.get("webpage")}
-						{#providerInfoCard providerInfo = productProvider /}
-					{/for}
-				</div>
-				<hr/>
-				<h3>
-					Lego
-				</h3>
-				<p>
-					This describes the external services to search for Lego(tm) bricks.
-				</p>
-				<div class="row">
-					{#for productProvider in allProviderInfo.get("lego")}
+					{#for productProvider in allProviderInfo}
 						{#providerInfoCard providerInfo = productProvider /}
 					{/for}
 				</div>

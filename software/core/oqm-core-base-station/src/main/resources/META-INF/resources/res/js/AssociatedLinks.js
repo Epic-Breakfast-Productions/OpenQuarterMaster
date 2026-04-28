@@ -2,8 +2,9 @@ import {SelectedObjectDivUtils} from "./SelectedObjectDivUtils.js";
 import {Links} from "./Links.js";
 import {Icons} from "./Icons.js";
 import {PageComponents} from "./PageComponents.js";
+import {PageUtility} from "./utilClasses/PageUtility.js";
 
-export class AssociatedLinks {
+export class AssociatedLinks extends PageUtility {
 	static Form = class {
 		static Input = class {
 			static getInput(innerElem){
@@ -169,5 +170,9 @@ export class AssociatedLinks {
 			containerJq.append(output);
 			return output;
 		}
+	}
+
+	static {
+		window.AssociatedLinks = this;
 	}
 }

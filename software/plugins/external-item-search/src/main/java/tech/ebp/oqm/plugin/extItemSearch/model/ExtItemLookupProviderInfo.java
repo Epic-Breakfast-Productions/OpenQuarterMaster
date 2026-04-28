@@ -2,8 +2,12 @@ package tech.ebp.oqm.plugin.extItemSearch.model;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource;
 
-import java.net.URL;
+import java.net.URI;
+import java.util.Collection;
 
 /**
  * Information about an external item lookup provider
@@ -12,7 +16,12 @@ import java.net.URL;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@ToString
 public class ExtItemLookupProviderInfo implements Comparable<ExtItemLookupProviderInfo> {
+	
+	@NotNull
+	@NonNull
+	private LookupService id;
 	
 	@NotNull
 	@NonNull
@@ -26,13 +35,21 @@ public class ExtItemLookupProviderInfo implements Comparable<ExtItemLookupProvid
 	@NotNull
 	@NonNull
 	private String cost;
-
+	
 	@lombok.Builder.Default
 	private boolean acceptsContributions = false;
 	
 	@NotNull
 	@NonNull
-	private URL homepage;
+	private URI homepage;
+	
+	public Collection<LookupMethod> getLookupMethods() {
+		return this.getId().supportedMethods;
+	}
+	
+	public Collection<LookupSource> getLookupSources() {
+		return this.getId().supportedSources;
+	}
 	
 	private boolean enabled;
 	
@@ -47,6 +64,9 @@ public class ExtItemLookupProviderInfo implements Comparable<ExtItemLookupProvid
 		
 		@Override
 		public int compare(ExtItemLookupProviderInfo one, ExtItemLookupProviderInfo two) {
+			if(one == two) {return 0;}
+			if(one == null) {return 1;}
+			if(two == null) {return -1;}
 			int enabledResult = Boolean.compare(two.isEnabled(), one.isEnabled());
 			if (enabledResult != 0) {
 				return enabledResult;

@@ -10,6 +10,7 @@ import static org.hamcrest.CoreMatchers.is;
 class BootTest {
     @Test
     void testHelloEndpoint() {
+        
         given()
           .when().get("/api/v1/providers")
           .then()

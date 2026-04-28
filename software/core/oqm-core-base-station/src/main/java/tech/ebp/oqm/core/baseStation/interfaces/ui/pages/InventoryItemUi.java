@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
+import io.quarkus.rest.client.reactive.QuarkusRestClientBuilder;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -19,6 +20,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.core.baseStation.service.ExternalItemSearchClient;
 import tech.ebp.oqm.core.baseStation.service.modelTweak.SearchResultTweak;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
@@ -26,6 +28,8 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.Invent
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCategorySearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 
 @Slf4j
@@ -50,10 +54,14 @@ public class InventoryItemUi extends UiProvider {
 	@Inject
 	SearchResultTweak searchResultTweak;
 	
+	@ConfigProperty(name = "quarkus.rest-client.externalItemSearch.url", defaultValue = " ")
+	String extSearchUrl;
+	
 	@GET
 	@Path("items")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Uni<Response> itemsPage(@BeanParam InventoryItemSearch search) {
+	public Uni<Response> itemsPage(@BeanParam InventoryItemSearch search) throws MalformedURLException {
+		boolean extSearchEnabled = !this.extSearchUrl.isBlank();
 		this.ensureSearchDefaults(search);
 		
 		return this.getUni(
@@ -63,7 +71,12 @@ public class InventoryItemUi extends UiProvider {
 				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), new ItemCategorySearch()),
 				"searchResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search)
 									 .call(results->searchResultTweak.addCategoriesObjectsToSearchResult(results, this.getSelectedDb(), "categories", this.getBearerHeaderStr())),
-				"allUnitMap", this.coreApiClient.unitGetAll(this.getBearerHeaderStr())
+				"allUnitMap", this.coreApiClient.unitGetAll(this.getBearerHeaderStr()),
+				"extSearchMethods", extSearchEnabled ?
+										QuarkusRestClientBuilder.newBuilder()
+											.baseUrl(new URL(this.extSearchUrl))
+											.build(ExternalItemSearchClient.class).allMethodInfo()
+										: Uni.createFrom().nullItem()
 			)
 		);
 	}
