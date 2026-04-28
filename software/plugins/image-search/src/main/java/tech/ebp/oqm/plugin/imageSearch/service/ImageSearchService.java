@@ -2,11 +2,9 @@ package tech.ebp.oqm.plugin.imageSearch.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
 
-import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.net.URL;
 
-import com.fasterxml.jackson.core.type.TypeReference;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import nu.pattern.OpenCV;
@@ -25,9 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
-import tech.ebp.oqm.plugin.imageSearch.model.resnet.ImageVector;
+import tech.ebp.oqm.plugin.imageSearch.interfaces.ImageSearchEndpoint;
+import tech.ebp.oqm.plugin.imageSearch.model.search.ImageSearch;
+import tech.ebp.oqm.plugin.imageSearch.model.search.SearchResults;
 import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
 
 @Slf4j
@@ -38,14 +37,16 @@ public class ImageSearchService {
 	public static final String inputTensorName = "serving_default_inputs";
 	public static final String outputTensorName = "StatefulPartitionedCall";
 	private static final URL dir = ImageSearchService.class.getClassLoader().getResource(RESNET_V2_MODEL_PATH);
-
 	public static final Size modelImageSize = new Size(500, 500);
+	//likely move to instance
+	public static final SavedModelBundle model;
+	
+	//to remove
 	public static String imageFolderPath = "./dev/testImages";
 	public static File imageFolder = new File(imageFolderPath);
 	public static ImageData queryData;
 	public static int numSimilar;
 	public static HashMap<String, ImageData> jsonMap;
-	public static final SavedModelBundle model;
 
 	static {
 		log.info("Loading OpenCV");
@@ -71,7 +72,7 @@ public class ImageSearchService {
 
 
 
-	public Map<Double, String> search(String query) throws IOException {
+	public SearchResults search(ImageSearch query) throws IOException {
 		log.info("Searching for query: " + query);
 		
 		File queryImage = new File("./dev/testImages/" + query);
@@ -95,7 +96,8 @@ public class ImageSearchService {
 			}
 		}
 		
-		return tree;
+//		return tree;
+		return null;
 	}
 
 	//Creates an ImageData object for provided image file

@@ -17,6 +17,7 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ImageSearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
+import tech.ebp.oqm.plugin.imageSearch.interfaces.ImageSearchEndpoint;
 import tech.ebp.oqm.plugin.imageSearch.model.resnet.ImageVector;
 
 import tech.ebp.oqm.plugin.imageSearch.service.ImageSearchService;
@@ -47,9 +48,6 @@ public class ResnetVectorService {
 	
 	@Inject
 	ImageSearchService imageSearchService;
-	
-	@Inject
-	tech.ebp.oqm.plugin.imageSearch.interfaces.ImageSearch imageSearch;
 	
 	
 	protected MongoDatabase getMongoDatabase() {
