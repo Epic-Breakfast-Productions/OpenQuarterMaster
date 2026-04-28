@@ -36,9 +36,11 @@ export class ExtItemSearch extends PageUtility {
 	static sourceToDisplay(source) {
 		return source;//TODO
 	}
+
 	static serviceToDisplay(service) {
 		return service;//TODO
 	}
+
 	static methodToDisplay(method) {
 		return method;//TODO
 	}
@@ -188,6 +190,7 @@ export class ExtItemSearch extends PageUtility {
 	}
 
 	static errCount = 0;
+
 	static async handleErrResult(result) {
 		ExtItemSearch.errCount++;
 
@@ -208,17 +211,28 @@ export class ExtItemSearch extends PageUtility {
 	static getItemResultRow(result) {
 		let resultRow = $('<tr></tr>');
 
-		resultRow.append($('<td class="text-center align-middle"></td>').text(ExtItemSearch.resultCount++));
+		resultRow.append($('<td class="text-center align-middle"></td>').text(++ExtItemSearch.resultCount));
+
 
 		let service = ExtItemSearch.serviceToDisplay(result.service);
 
-		if(result.service === result.source) {
-			resultRow.append($('<td colspan="2" class="text-center align-middle"></td>').text(service));
-		}else {
-			resultRow.append($('<td class="align-middle"></td>').text(service));
-			resultRow.append($('<td class="align-middle"></td>').text(ExtItemSearch.sourceToDisplay(result.source)));
-		}
-		resultRow.append($('<td class="align-middle"></td>').text(ExtItemSearch.methodToDisplay(result.method)));
+		resultRow.append($('<td class=" align-middle"></td>')
+			.append($('<span></span>').text(result.name))
+			.append($('<br />'))
+			.append(
+				$('<small class="text-muted"></small>')
+					.append($('<span></span>').text(
+							result.service === result.source ?
+								service :
+								service + " (" + ExtItemSearch.sourceToDisplay(result.source) + ")"
+						)
+					)
+					.append(' / ')
+					.append($('<span></span>').text(ExtItemSearch.methodToDisplay(result.method)))
+			)
+
+		);
+
 		resultRow.append($('<td class="text-center align-middle"></td>').text(result.images.length));
 		resultRow.append($('<td class="text-center align-middle"></td>').text(Object.keys(result.prices).length));
 		resultRow.append($('<td class="text-center align-middle"></td>').text(Object.keys(result.links).length));
@@ -234,7 +248,7 @@ export class ExtItemSearch extends PageUtility {
 		//TODO:: promise for waiting on image load... need to diagnose this
 
 		let resultViewRow = $('<tr></tr>');
-		let resultMainBody = $('<td colspan="9"></td>');
+		let resultMainBody = $('<td colspan="7"></td>');
 
 		resultMainBody.append(ExtItemSearch.createSearchResultSection("Name", result.unifiedName, ItemAddEdit.addEditItemNameInput));
 		resultMainBody.append(ExtItemSearch.createSearchResultSection("Description", result.description, ItemAddEdit.addEditItemDescriptionInput));
@@ -317,9 +331,10 @@ export class ExtItemSearch extends PageUtility {
 				});
 
 				curAtt.append(useButt);
-				curAtt.append($('<a target="_blank"></a>')
-					.html(Icons.link)
-					.attr("href", val)
+				curAtt.append(
+					$('<a target="_blank"></a>')
+						.html(Icons.link)
+						.attr("href", val)
 				);
 
 				linkList.append(curAtt);
@@ -420,23 +435,25 @@ export class ExtItemSearch extends PageUtility {
 			console.log("Finished getting " + carouselInner.children().length + " images");
 			let hadContent = false;
 			if (carouselInner.children().length) {
-				hadContent=true;
+				hadContent = true;
 				imagesSection.append(carousel);
 			}
-			if(failedImages.length){
-				hadContent=true;
+			if (failedImages.length) {
+				hadContent = true;
 				imagesSection.append($("<p>Failed to load images:</p>"));
 				let failedImgList = $('<ul></ul>');
-				failedImages.forEach(function(curFailedImg){
+				failedImages.forEach(function (curFailedImg) {
 					failedImgList.append(
-						$('<a target="_blank"></a>')
-							.text(curFailedImg)
-							.attr("href", curFailedImg)
+						$("<li></li>").append(
+							$('<a target="_blank"></a>')
+								.text(curFailedImg)
+								.attr("href", curFailedImg)
+						)
 					);
 				});
 				imagesSection.append(failedImgList);
 			}
-			if(hadContent){
+			if (hadContent) {
 				imagesSection.append($('<hr style="width:50%;">'));
 				resultMainBody.append(imagesSection);
 			}
@@ -474,12 +491,9 @@ export class ExtItemSearch extends PageUtility {
 	static async handleExtItemSearchResults(results) {
 		console.log("Got Results! # results: " + results.length);
 
-		if (results.length === 0) {
-			ExtItemSearch.extSearchResultsTableContent.html("<tr><td colspan='9'>No Results!</td></tr>");
-		}
 
 		ExtItemSearch.errCount = 0;
-		ExtItemSearch.resultCount = 1;
+		ExtItemSearch.resultCount = 0;
 		let resultPromises = [];
 		results.forEach(
 			function (result) {
@@ -487,12 +501,16 @@ export class ExtItemSearch extends PageUtility {
 			}
 		);
 
+		if (ExtItemSearch.resultCount === 0) {
+			ExtItemSearch.extSearchResultsTableContent.html("<tr><td colspan='7'>No Results!</td></tr>");
+		}
+
 		await Promise.all(resultPromises);
 		ExtItemSearch.searchResultsCount.text(ExtItemSearch.resultCount);
 		ExtItemSearch.searchResultsErrCount.text(ExtItemSearch.errCount);
 		ExtItemSearch.extSearchResultsContainer.show();
 
-		if(ExtItemSearch.errCount) {
+		if (ExtItemSearch.errCount) {
 			ExtItemSearch.searchResultsErrTab.prop("disabled", false);
 		}
 
