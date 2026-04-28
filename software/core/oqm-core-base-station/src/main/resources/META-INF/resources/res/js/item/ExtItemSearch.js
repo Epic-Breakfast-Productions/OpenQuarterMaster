@@ -500,12 +500,12 @@ export class ExtItemSearch extends PageUtility {
 				resultPromises.push(ExtItemSearch.handleExtItemSearchResult(result));
 			}
 		);
+		await Promise.all(resultPromises);
 
 		if (ExtItemSearch.resultCount === 0) {
 			ExtItemSearch.extSearchResultsTableContent.html("<tr><td colspan='7'>No Results!</td></tr>");
 		}
 
-		await Promise.all(resultPromises);
 		ExtItemSearch.searchResultsCount.text(ExtItemSearch.resultCount);
 		ExtItemSearch.searchResultsErrCount.text(ExtItemSearch.errCount);
 		ExtItemSearch.extSearchResultsContainer.show();
