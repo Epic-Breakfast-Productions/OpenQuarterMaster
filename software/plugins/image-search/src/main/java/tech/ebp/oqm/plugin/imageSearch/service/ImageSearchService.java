@@ -27,6 +27,7 @@ import java.util.*;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
+import tech.ebp.oqm.plugin.imageSearch.model.resnet.ImageVector;
 import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
 
 @Slf4j
@@ -37,17 +38,15 @@ public class ImageSearchService {
 	public static final String inputTensorName = "serving_default_inputs";
 	public static final String outputTensorName = "StatefulPartitionedCall";
 	private static final URL dir = ImageSearchService.class.getClassLoader().getResource(RESNET_V2_MODEL_PATH);
-	public static final SavedModelBundle model;
+
 	public static final Size modelImageSize = new Size(500, 500);
-	
-	//stuff to cleanup
-	//no more json, upload to mongo when finding new image
-	public static final String jsonPath = "./build/imageData.json";
 	public static String imageFolderPath = "./dev/testImages";
 	public static File imageFolder = new File(imageFolderPath);
-	public static File jsonFile;
-	
-	
+	public static ImageData queryData;
+	public static int numSimilar;
+	public static HashMap<String, ImageData> jsonMap;
+	public static final SavedModelBundle model;
+
 	static {
 		log.info("Loading OpenCV");
 		OpenCV.loadLocally();
@@ -56,7 +55,8 @@ public class ImageSearchService {
 		log.debug("Passing in: {}", dir.getFile());
 		model = SavedModelBundle.load(dir.getFile().substring(1)); //Don't commit
 	}
-	
+
+
 	@RestClient
 	OqmCoreApiClientService coreApiClient;
 	
@@ -68,15 +68,12 @@ public class ImageSearchService {
 	 * @param query
 	 * @return
 	 */
-	public static ImageData queryData;
-	public static int numSimilar;
-	public static HashMap<String, ImageData> jsonMap;
-	
-	
+
+
+
 	public Map<Double, String> search(String query) throws IOException {
 		log.info("Searching for query: " + query);
 		
-		jsonFile = generateJson();
 		File queryImage = new File("./dev/testImages/" + query);
 		
 		if (!queryImage.exists() || !queryImage.isFile()) {
@@ -86,13 +83,7 @@ public class ImageSearchService {
 		
 		
 		//queryImage = new File(query);
-		queryData = getImageData(queryImage);
-		numSimilar = jsonMap.size();
-		
-		if (queryData == null) {
-			log.warn("Query Image could not be processed");
-			return null;
-		}
+		queryData = null; //TODO
 		
 		TreeMap<Double, String> tree = getSimilarities(queryData);
 		int tmpIter = 0;
@@ -106,120 +97,11 @@ public class ImageSearchService {
 		
 		return tree;
 	}
-	
-	//Checks if there is a pre-existing json file
-	//if so, ensure it perfectly matches the contents of the images folder
-	//if not, creates one with image data from all images in folder
-	
-	//wont need any of these functions, mongo will keep add/delete image data as it goes
-	private static File generateJson() throws IOException {
-		File jsonF = new File(jsonPath);
-		log.info("Generating JSON file: {}", jsonF.getAbsolutePath());
-		boolean changesMade;
-		if (jsonF.exists() && jsonF.isFile()) {
-			fetchJsonData(jsonF);
-			changesMade = removeExtras() || addMissing();
-		} else {
-			jsonMap = new HashMap<>();
-			for (File f : Objects.requireNonNull(imageFolder.listFiles())) {
-				ImageData obj = getImageData(f);
-				if (obj != null) {
-					jsonMap.put(f.getName(), obj);
-				}
-			}
-			try {
-				jsonF.createNewFile();
-			} catch(IOException e) {
-				throw new RuntimeException(e);
-			}
-			changesMade = true;
-		}
-		if (changesMade) {
-			try {
-				ObjectMapper mapper = new ObjectMapper();
-				mapper.writeValue(jsonF, jsonMap);
-			} catch(Exception e) {
-				e.printStackTrace();
-			}
-		}
-		return jsonF;
-	}
-	
-	private static void fetchJsonData(File jsonFileObj) {
-		try {
-			ObjectMapper mapper = new ObjectMapper();
-			jsonMap = mapper.readValue(
-				jsonFileObj, new TypeReference<HashMap<String, ImageData>>() {
-				}
-			);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	//Compares images in hashmap to images in the folder, removes any unnecessary
-	//data from the hashmap
-	private static boolean removeExtras() {
-		ArrayList<String> extraKeys = new ArrayList<>();
-		
-		for (String cur : jsonMap.keySet()) {
-			boolean existsInFolder = false;
-			
-			for (File f : Objects.requireNonNull(imageFolder.listFiles())) {
-				if (cur.equals(f.getName())) {
-					existsInFolder = true;
-					break;
-				}
-			}
-			
-			if (!existsInFolder) {
-				extraKeys.add(cur);
-			}
-		}
-		
-		for (String extraKey : extraKeys) {
-			jsonMap.remove(extraKey);
-		}
-		
-		return !extraKeys.isEmpty();
-	}
-	
-	//Compares images in the hashmap to images in the folder
-	//Adds images to the hashmap that were not already there
-	private static boolean addMissing() {
-		boolean changesMade = false;
-		for (File f : Objects.requireNonNull(imageFolder.listFiles())) {
-			String name = f.getName();
-			if (name.endsWith(".jpg") || name.endsWith(".jpeg") || name.endsWith(".png")) {
-				if (!jsonMap.containsKey(name)) {
-					ImageData obj = getImageData(f);
-					if (obj != null) {
-						jsonMap.put(name, obj);
-						changesMade = true;
-					}
-				}
-			}
-		}
-		return changesMade;
-	}
-	
+
 	//Creates an ImageData object for provided image file
 	//including the image path, filename, and the image features obtained from tensorflow
 	
 	//get rid of ImageData class, just push float[] to mongo
-	private static ImageData getImageData(File imageFile) {
-		try {
-			if (imageFile.exists() && imageFile.isFile()) {
-				float[] deepFeatures = extractDeepFeatures(imageFile);
-				return new ImageData(imageFile.getAbsolutePath(), imageFile.getName(), deepFeatures);
-			} else {
-				throw new IOException("File not found: " + imageFile.getAbsolutePath());
-			}
-		} catch(IOException e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
 	
 	//Runs input image through TensorFlow model
 	//Returns float array of image feature data
@@ -235,56 +117,42 @@ public class ImageSearchService {
 	 * @return The processes image feature vector
 	 */
 	public static float[] generateImageFeatureVector(byte[] imageBytes) {
-		MatOfByte matOfByte = new MatOfByte(imageBytes);
-		
-		// Decode the image (like cv::imdecode in C++)
-		Mat mat = Imgcodecs.imdecode(matOfByte, Imgcodecs.IMREAD_UNCHANGED);
-		
-		//TODO:: not this exactly, but need to handle this case
-		if (mat.empty()) {//invalid image / unable to process image
-			throw new RuntimeException("Failed to decode image!");
-		}
 		
 		//TODO:: need to release all `Mat` objects
-		matOfByte.release(); // Release temporary buffer.
-		return new float[0];
+		// Release temporary buffer.
+		try (
+				Tensor inputTensor = preprocessImage(imageBytes);
+				Result outputTensor = model.session().runner()
+						.feed(inputTensorName, inputTensor)
+						.fetch(outputTensorName)
+						.run()
+		) {
+			return StdArrays.array2dCopyOf((FloatNdArray) outputTensor.get(0))[0];
+		} catch(Exception e) {
+				e.printStackTrace(); //better logging and exception
+				return null;
+		}
 	}
 	
 	public static float[] generateImageFeatureVector(InputStream imageStream) throws IOException {
 		return generateImageFeatureVector(imageStream.readAllBytes());
 	}
 	
-	
-	public static float[] extractDeepFeatures(File imageFile) {
-		try (Tensor inputTensor = preprocessImage(imageFile)) {
-			try (
-				Result outputTensor = model.session().runner()
-										  .feed(inputTensorName, inputTensor)
-										  .fetch(outputTensorName)
-										  .run()
-			) {
-				return StdArrays.array2dCopyOf((FloatNdArray) outputTensor.get(0))[0];
-			} catch(Exception e) {
-				e.printStackTrace();
-				return null;
-			}
-		} catch(Exception e) {
-			e.printStackTrace();
-			return null;
-		}
-	}
-	
 	//Converts image file to matrix, resize, normalize values,
 	//convert to tensor type to prepare image for tensorflow model
-	public static Tensor preprocessImage(File imageFile) {
-		log.info("Preprocessing image: {}", imageFile);
-		
-		Mat tmp = Imgcodecs.imread(imageFile.getAbsolutePath());
-		Imgproc.resize(tmp, tmp, modelImageSize);
-		tmp.convertTo(tmp, CvType.CV_32FC3);
-		Core.normalize(tmp, tmp, 0, 1, Core.NORM_MINMAX);
-		float[] imageData = new float[(int) (tmp.total() * tmp.channels())];
-		tmp.get(0, 0, imageData);
+	public static Tensor preprocessImage(byte[] imageBytes) {
+		MatOfByte matOfBytes= new MatOfByte(imageBytes);
+		Mat mat = Imgcodecs.imdecode(matOfBytes, Imgcodecs.IMREAD_UNCHANGED);
+
+		//TODO:: Mat handling and buffers empty and release
+		if (mat.empty()) {//invalid image / unable to process image
+			throw new RuntimeException("Failed to decode image!");
+		}
+		Imgproc.resize(mat, mat, modelImageSize);
+		mat.convertTo(mat, CvType.CV_32FC3);
+		Core.normalize(mat, mat, 0, 1, Core.NORM_MINMAX);
+		float[] imageData = new float[(int) (mat.total() * mat.channels())];
+		mat.get(0, 0, imageData);
 		int heightVal = (int) modelImageSize.height;
 		int widthVal = (int) modelImageSize.width;
 		
@@ -298,7 +166,6 @@ public class ImageSearchService {
 				}
 			}
 		}
-		log.debug("Done preprocessing image: {}", imageFile);
 		return TFloat32.tensorOf(StdArrays.ndCopyOf(newImageData));
 	}
 	
@@ -306,8 +173,7 @@ public class ImageSearchService {
 	//Runs the cosineSimilarity function on the query feature vector against
 	//every image present in the previously generated jsonData
 	//Returns a reverse sorted TreeMap containing the similarity score and image filename
-	
-	//traverse mongo DB instead of json file
+	//TODO: Change JSONMap to ResnetDB
 	private static TreeMap<Double, String> getSimilarities(ImageData queryObject) {
 		log.info("Getting similarities for query.");
 		float[] queryFeatures = queryData.getImageFeatureVector();
