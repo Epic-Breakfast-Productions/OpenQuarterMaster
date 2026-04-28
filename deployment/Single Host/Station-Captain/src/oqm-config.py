@@ -138,9 +138,9 @@ def set(args):
 
     if secret:
         json = mainCM.setSecretValInFile(
-            configKeyToSet=secret[0],
-            configValToSet=secret[1],
-            configFile=secret[2]
+            configKeyToSet=configKeyToSet,
+            configValToSet=configValToSet,
+            configFile=configFile
         )
     else:
         json = mainCM.setConfigValInFile(
