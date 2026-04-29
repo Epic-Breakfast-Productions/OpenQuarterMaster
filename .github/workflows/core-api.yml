@@ -17,6 +17,6 @@ jobs:
     uses: Epic-Breakfast-Productions/ebp-ci/.github/workflows/quarkus-ci-pipeline.yml@main
     with:
       path: "software/core/oqm-core-api"
-      java-version: "21"
+      java-version: "25"
       run-int-tests: true
       container-based-int-tests: true
