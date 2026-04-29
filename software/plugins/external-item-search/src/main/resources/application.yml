@@ -24,10 +24,6 @@ quarkus:
   http:
     port: 80
     ssl-port: 443
-  jib:
-    ports:
-      - 80
-      - 443
   application:
 #    name: ${service.nameShort} - V${service.apiVersion}
   rest-client:
@@ -60,9 +56,6 @@ quarkus:
     title: External Item Search v${quarkus.application.version}
     theme: flattop
     footer: With ❤️, EBP
-  health:
-    openapi:
-      included: true
   otel:
     metrics:
       enabled: true
