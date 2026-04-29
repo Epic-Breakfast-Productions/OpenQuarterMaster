@@ -303,6 +303,7 @@ void UpdateCount(const char* stblock, const char* itemID, int transaction, int v
   // Construct the simplified JSON Body
   JsonDocument doc;
   
+  // Check out and Check in are not finished, need more JSON
   switch(transaction){
     case 1: {
       doc["type"] = "ADD_AMOUNT";
