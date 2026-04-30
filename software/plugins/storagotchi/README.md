@@ -1,5 +1,7 @@
 # storagotchi
 
+![Plugin - Storagotchi](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/plugin-storagotchi.yml/badge.svg)
+
 This app is meant to be a cute semi-interactable entity to play with in the background. Support your Storagotchi by performing storage related tasks!
 
 ## Features

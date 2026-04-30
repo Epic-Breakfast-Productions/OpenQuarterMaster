@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
 	id 'io.quarkus'
-	id "io.freefair.lombok" version "9.4.0"
+	id "io.freefair.lombok" version "9.5.0"
 }
 
 group = 'tech.ebp.oqm.plugin'
@@ -30,7 +30,7 @@ dependencies {
 
 	implementation 'org.webjars:jquery:4.0.0'
 
-	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.4.5'
+	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.4.7'
 
 	testImplementation 'io.quarkus:quarkus-junit5'
 	testImplementation 'io.rest-assured:rest-assured'
@@ -38,14 +38,19 @@ dependencies {
 
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 test {
 	systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
 	jvmArgs "--add-opens", "java.base/java.lang=ALL-UNNAMED"
 }
+
+check {
+	finalizedBy quarkusIntTest
+}
+
 compileJava {
 	options.encoding = 'UTF-8'
 	options.compilerArgs << '-parameters'
