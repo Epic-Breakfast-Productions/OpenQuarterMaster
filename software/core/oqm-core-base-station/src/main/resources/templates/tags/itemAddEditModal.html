@@ -19,6 +19,7 @@
     </div>
     {/if}
     <div class="row">
+		{#if config:['quarkus.rest-client.externalItemSearch.url'] != " "}
         <div class="col-md-6 card p-0" id="addEditProductSearchPane">
             <div class="card-header">
                 Search for items:
@@ -87,6 +88,7 @@
 			</div>
 			
         </div>
+		{/if}
         <div class="col">
             <form id="addEditItemForm">
                 <input type="hidden" id="addEditItemFormMode" value="">
