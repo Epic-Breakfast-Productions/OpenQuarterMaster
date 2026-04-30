@@ -8,13 +8,14 @@ import static org.hamcrest.CoreMatchers.is;
 
 @QuarkusTest
 class BootTest {
-    @Test
-    void testHelloEndpoint() {
-        
-        given()
-          .when().get("/api/v1/providers")
-          .then()
-             .statusCode(200);
-    }
-
+	
+	@Test
+	void testHelloEndpoint() {
+		
+		given()
+			.when().get("/api/v1/info/providers")
+			.then()
+			.statusCode(200);
+	}
+	
 }
