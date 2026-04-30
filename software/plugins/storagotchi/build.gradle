@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
 	id 'io.quarkus'
-	id "io.freefair.lombok" version "9.4.0"
+	id "io.freefair.lombok" version "9.5.0"
 }
 
 group = 'tech.ebp.oqm.plugin'
@@ -38,8 +38,8 @@ dependencies {
 
 
 java {
-	sourceCompatibility = JavaVersion.VERSION_21
-	targetCompatibility = JavaVersion.VERSION_21
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 test {
