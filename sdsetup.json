@@ -2,8 +2,6 @@
     "ssid": "speedscanner",
     "password": "Admin1$$$",
     "oqm-address": "10.1.6.27",
-    "database": "speedscanner",
-    "storage-block": "69a873a5580e0a527ea6b2fd",
     "oqm-user": "scanner",
     "oqm-secret": "h5j9inH-cx4LbQKnYmG6wvrvMUi7TEAv"
 }
