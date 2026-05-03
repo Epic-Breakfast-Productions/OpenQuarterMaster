@@ -56,7 +56,7 @@ public class DatabaseExportService {
 	public static final String OQM_EXPORT_PREFIX = "oqm_export";
 	public static final String OQM_EXPORT_FILE_EXT = ".oqmdb";
 	public static final String TEMP_FOLDER = "export";
-	public static final String GZIP_COMMENT = "Created by Open QuarterMaster Base Station. Full data export, intended to be re-imported by the Base Station software.";
+	public static final String GZIP_COMMENT = "Created by Open QuarterMaster Core API. Full data export, intended to be re-imported by the Core API software.";
 	public static final int GZIP_COMPRESSION_LEVEL = Deflater.BEST_COMPRESSION;
 	private static final DateFormat fileRevisionTimestampFormat = new SimpleDateFormat("MM-dd-yyyy_hh-mm-ss-SSS");
 	
@@ -123,8 +123,8 @@ public class DatabaseExportService {
 		sw.stop();
 		log.info("Took {} to write all data for {}", sw, dataTypeName);
 	}
-	
-	private static <T extends FileMainObject, S extends SearchObject<T>, G extends FileGet> void recordRecords(
+
+	private static <T extends FileMainObject, S extends SearchObject<T>, G extends MainObject & FileGet> void recordRecords(
 		String oqmDbIdOrName,
 		File tempDir,
 		MongoFileService<T, S, ?, G> fileService,

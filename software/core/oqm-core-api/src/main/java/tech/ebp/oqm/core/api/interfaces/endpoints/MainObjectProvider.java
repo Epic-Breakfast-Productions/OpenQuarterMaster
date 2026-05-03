@@ -2,7 +2,6 @@ package tech.ebp.oqm.core.api.interfaces.endpoints;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -11,7 +10,6 @@ import jakarta.ws.rs.core.Response;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
@@ -71,7 +69,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Consumes(MediaType.APPLICATION_JSON)
 	//	@Produces(MediaType.APPLICATION_JSON)
-	@WithSpan
 	public T create(
 		@NotNull @Valid T object
 	) {
@@ -83,7 +80,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		return object;
 	}
 	
-	@WithSpan
 	public List<T> createBulk(
 		@Valid List<T> objects
 	) {
@@ -92,11 +88,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 		List<T> output = this.getObjectService().addBulk(this.getOqmDbIdOrName(), objects, this.getInteractingEntity());
 		log.info("{} {} created with ids: {}", output.size(), this.getObjectClass().getSimpleName(), output);
 		return output;
-	}
-	
-	protected Response.ResponseBuilder getSearchResponseBuilder(S searchObject) {
-		SearchResult<T> searchResult = this.getObjectService().search(this.getOqmDbIdOrName(), searchObject, false);
-		return this.getSearchResultResponseBuilder(searchResult);
 	}
 	
 	//	@GET
@@ -122,7 +113,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	@WithSpan
 	public SearchResult<T> search(
 		//		@BeanParam
 		S searchObject
@@ -162,10 +152,9 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	@WithSpan
 	public T get(
 		//		@PathParam("id")
-		String id
+		ObjectId id
 	) {
 		log.info("Retrieving {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
 		
@@ -232,10 +221,9 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Produces(MediaType.APPLICATION_JSON)
-	@WithSpan
 	public T update(
 		//		@PathParam("id")
-		String id,
+		ObjectId id,
 		ObjectNode updates
 	) {
 		log.info("Updating {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
@@ -271,17 +259,11 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//		description = "Object requested has already been deleted.",
 	//		content = @Content(mediaType = "text/plain")
 	//	)
-	//	@APIResponse(
-	//		responseCode = "404",
-	//		description = "No object found to delete.",
-	//		content = @Content(mediaType = "text/plain")
-	//	)
 	//	@RolesAllowed(UserRoles.INVENTORY_EDIT)
 	//	@Produces(MediaType.APPLICATION_JSON)
-	@WithSpan
 	public T delete(
 		//		@PathParam("id")
-		String id
+		ObjectId id
 	) {
 		log.info("Deleting {} with id {} from REST interface.", this.getObjectClass().getSimpleName(), id);
 		T output = this.getObjectService().remove(this.getOqmDbIdOrName(), id, this.getInteractingEntity());
@@ -320,21 +302,19 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
-	public Response getHistoryForObject(
-		@PathParam("id") String id,
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
+		@PathParam("id") ObjectId id,
 		//@BeanParam
 		HistorySearch searchObject
 	) {
 		log.info("Retrieving specific {} history with id {} from REST interface", this.getObjectClass().getSimpleName(), id);
 		
-		searchObject.setObjectId(new ObjectId(id));
+		searchObject.setObjectId(id);
 		SearchResult<ObjectHistoryEvent> searchResult = this.getObjectService().searchHistory(this.getOqmDbIdOrName(), searchObject, false);
 		
 		log.info("Found {} history events matching query.", searchResult.getNumResultsForEntireQuery());
 		
-		Response.ResponseBuilder rb = this.getSearchResultResponseBuilder(searchResult);
-		return rb.build();
+		return searchResult;
 	}
 	
 	//	@GET
@@ -361,7 +341,6 @@ public abstract class MainObjectProvider<T extends MainObject, S extends SearchO
 	//	)
 	//	@Produces(MediaType.APPLICATION_JSON)
 	//	@RolesAllowed(UserRoles.INVENTORY_VIEW)
-	@WithSpan
 	public SearchResult<ObjectHistoryEvent> searchHistory(
 		//@BeanParam
 		HistorySearch searchObject

@@ -5,9 +5,12 @@
 
 version: 2
 updates:
-#
+
+###############################################################################
+###############################################################################
 # Core components
-#
+###############################################################################
+###############################################################################
 
   # Core API
   - package-ecosystem: "gradle"
@@ -48,10 +51,12 @@ updates:
     labels:
       - "area-dependencies"
       - "project-core-baseStation"
-
-#
+  
+###############################################################################
+###############################################################################
 # Libraries
-#
+###############################################################################
+###############################################################################
 
   # Core API Lib Quarkus
   - package-ecosystem: "gradle"
@@ -62,12 +67,16 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
-
-#
+  
+###############################################################################
+###############################################################################
 # Plugins
-#
+###############################################################################
+###############################################################################
 
+  #
   # External Item Search
+  #
   - package-ecosystem: "gradle"
     directory: "/software/plugins/external-item-search"
     target-branch: "development"
@@ -76,7 +85,21 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
+      - "project-plugin-extItemSearch"
+  -
+    package-ecosystem: "docker"
+    directory: "/software/plugins/external-item-search/src/main/docker"
+    target-branch: "development"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    labels:
+      - "area-dependencies"
+      - "project-plugin-extItemSearch"
+
+  #
   # Mss Controller
+  #
   - package-ecosystem: "gradle"
     directory: "/software/plugins/mss-controller"
     target-branch: "development"
@@ -85,14 +108,25 @@ updates:
       day: "tuesday"
     labels:
       - "area-dependencies"
-
-  # Demo
-#  - package-ecosystem: "gradle"
-#    directory: "/software/plugins/open-qm-plugin-demo"
-#    target-branch: "dev"
-#    schedule:
-#      interval: "weekly"
-#    labels:
-#      - "area-dependencies"
-#      - "project-plugins"
-
+  
+  #
+  # Storagotchi
+  #
+  - package-ecosystem: "gradle"
+    directory: "/software/plugins/storagotchi"
+    target-branch: "development"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    labels:
+      - "area-dependencies"
+      - "project-plugin-storagotchi"
+  - package-ecosystem: "docker"
+    directory: "/software/plugins/storagotchi/src/main/docker"
+    target-branch: "development"
+    schedule:
+      interval: "weekly"
+      day: "tuesday"
+    labels:
+      - "area-dependencies"
+      - "project-plugin-storagotchi"

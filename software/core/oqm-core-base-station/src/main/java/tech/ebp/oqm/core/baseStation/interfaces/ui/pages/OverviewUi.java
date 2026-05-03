@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
+import io.quarkus.rest.client.reactive.QuarkusRestClientBuilder;
 import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -18,6 +19,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.core.baseStation.service.ExternalItemSearchClient;
 import tech.ebp.oqm.core.baseStation.service.modelTweak.SearchResultTweak;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 import tech.ebp.oqm.core.baseStation.utils.Searches;
@@ -27,6 +29,8 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ItemCa
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StorageBlockSearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.StoredSearch;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ExecutorService;
@@ -63,6 +67,9 @@ public class OverviewUi extends UiProvider {
 	@Inject
 	SearchResultTweak searchResultTweak;
 	
+	@ConfigProperty(name = "quarkus.rest-client.externalItemSearch.url", defaultValue = " ")
+	String extSearchUrl;
+	
 	@GET
 	@Path("overview")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -71,7 +78,8 @@ public class OverviewUi extends UiProvider {
 		@QueryParam("lowStockPage") Optional<Integer> lowStockPage,
 		@QueryParam("expiringPage") Optional<Integer> expiringPage,
 		@QueryParam("expiredPage") Optional<Integer> expiredPage
-	) {
+	) throws MalformedURLException {
+		boolean extSearchEnabled = !this.extSearchUrl.isBlank();
 		StorageBlockSearch treeBlockSearch = Searches.BLOCK_PARENT_SEARCH.toBuilder()
 												 .pageSize(this.getStorageTreeDefaultPageSize())
 												 .pageNum(storageBlockPage.orElse(1))
@@ -103,7 +111,12 @@ public class OverviewUi extends UiProvider {
 				"lowStockResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), lowStockSearch),
 				"currency", this.coreApiClient.getCurrency(this.getBearerHeaderStr()),
 				"allUnitMap", this.coreApiClient.unitGetAll(this.getBearerHeaderStr()),
-				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), new ItemCategorySearch())
+				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), new ItemCategorySearch()),
+				"extSearchMethods", extSearchEnabled ?
+										QuarkusRestClientBuilder.newBuilder()
+											.baseUrl(new URL(this.extSearchUrl))
+											.build(ExternalItemSearchClient.class).allMethodInfo()
+										: Uni.createFrom().nullItem()
 				)
 		);
 	}

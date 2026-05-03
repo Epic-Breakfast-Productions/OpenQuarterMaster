@@ -1,0 +1,16 @@
+{
+	"packageName":"oqm-metrics-otel+lgtm",
+	"version":"1.0.0",
+	"description":"Otel-LGTM instance for Open QuarterMaster.",
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/metrics",
+	"configs": [],
+	"dependencies": {
+		"deb": "oqm-manager-station+captain (>= 2.11.0)"
+	},
+	"dependencyConflicts": {
+	},
+	"configFiles":{
+	},
+	"files":{
+	}
+}

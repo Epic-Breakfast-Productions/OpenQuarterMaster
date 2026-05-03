@@ -55,10 +55,11 @@ public class HelpUi extends UiProvider {
 				"unitCategoryMap", this.coreApiClient.unitGetAll(this.getBearerHeaderStr()),
 				"extSearchEnabled", Uni.createFrom().item(extSearchEnabled),
 				"allProviderInfo", extSearchEnabled ?
-					QuarkusRestClientBuilder.newBuilder()
-						.baseUrl(new URL(this.extSearchUrl))
-						.build(ExternalItemSearchClient.class).allProviderInfo()
-					: Uni.createFrom().nullItem()
+									   QuarkusRestClientBuilder.newBuilder()
+										   .baseUrl(new URL(this.extSearchUrl))
+										   .build(ExternalItemSearchClient.class).allProviderInfo()
+									   : Uni.createFrom().nullItem()
+				
 			)
 		);
 	}

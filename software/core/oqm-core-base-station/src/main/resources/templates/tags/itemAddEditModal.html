@@ -13,76 +13,82 @@
     <div class="row">
         <div class="col">
             <button type="button" class="btn btn-primary mb-1" onclick="ExtItemSearch.toggleAddEditProductSearchPane();" title="Search for Products">
-                {#icons/search}{/icons/search} Search for Products
+                {#icons/search /} Search for Products
             </button>
         </div>
     </div>
     {/if}
     <div class="row">
+		{#if config:['quarkus.rest-client.externalItemSearch.url'] != " "}
         <div class="col-md-6 card p-0" id="addEditProductSearchPane">
             <div class="card-header">
                 Search for items:
             </div>
-            <div class="card-body p-0 h-auto">
-                <ul class="nav nav-tabs" id="extItemSearchTab" role="tablist">
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="extItemSearch-product-tab" data-bs-toggle="tab" data-bs-target="#extItemSearch-product-content" type="button" role="tab" aria-controls="extItemSearch-product-content" aria-selected="true">Product</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="extItemSearch-lego-tab" data-bs-toggle="tab" data-bs-target="#extItemSearch-lego-content" type="button" role="tab" aria-controls="extItemSearch-lego-content" aria-selected="false">Lego&trade;</button>
-                    </li>
-                    <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="extItemSearch-website-tab" data-bs-toggle="tab" data-bs-target="#extItemSearch-website-contenr" type="button" role="tab" aria-controls="extItemSearch-website-contenr" aria-selected="false">Website</button>
-                    </li>
-                </ul>
-                <div class="tab-content p-1" id="searchTabContent">
-                    <div class="tab-pane fade show active" id="extItemSearch-product-content" role="tabpanel" aria-labelledby="extItemSearch-product-tab">
-                        <form id="prodBarcodeSearchForm">
-                            <div class="mb-3">
-                                <label for="prodBarcodeSearchBarcodeInput" class="form-label">Search with Barcode</label>
-                                {#inputs/barcodeInput id='prodBarcodeSearchBarcodeInput' searchSubmit=true /}
-                                <div id="barcodeInputHelp" class="form-text">Scan in or enter a barcode on a product.</div>
-                            </div>
-                        </form>
-                    </div>
-                    <div class="tab-pane fade" id="extItemSearch-lego-content" role="tabpanel" aria-labelledby="extItemSearch-lego-tab">
-                        <form id="legoPartNumSearchForm">
-                            <div class="mb-3">
-                                <label for="legoPartNumSearchInput" class="form-label">Search with Lego&trade; part number</label>
-                                <div class="input-group">
-                                    <input type="number" class="form-control" id="legoPartNumSearchInput" aria-describedby="legoPartNumInputHelp" required>
-                                    <button class="btn btn-success" type="submit">Search</button>
-                                </div>
-                                <div id="legoPartNumInputHelp" class="form-text">Most legos have a number on them, it's that parts numbers.</div>
-                            </div>
-                        </form>
-                        <div id="legoPartNumSearchFormMessages">
-                        </div>
-                    </div>
-                    <div class="tab-pane fade" id="extItemSearch-website-contenr" role="tabpanel" aria-labelledby="extItemSearch-website-tab">
-                        <form id="websiteScanSearchForm">
-                            <div class="mb-3">
-                                <label for="websiteScanSearchInput" class="form-label">Scan a website</label>
-                                <div class="input-group">
-                                    <input type="url" class="form-control" id="websiteScanSearchInput" aria-describedby="websiteScanInputHelp" required>
-                                    <button class="btn btn-success" type="submit">Search</button>
-                                </div>
-                                <div id="websiteScanInputHelp" class="form-text">Very limited number of supported sites.</div>
-                            </div>
-                        </form>
-                        <div id="websiteScanSearchFormMessages">
-                        </div>
-                    </div>
-                </div>
+            <div class="card-body h-auto">
+				<form id="addEditProductSearchForm">
+					{!<div class="mb-1">!}
+						{!<label for="addEditProductSearchSourceInput" class="form-label">Source</label>!}
+						{!<select class="form-select dselect-select method-input" id="addEditProductSearchSourceInput" name="lookupSource" multiple>!}
+						{!!}
+						{!</select>!}
+						{!<div id="addEditProductSearchTermInput" class="form-text">Specify none to use "any".</div>!}
+					{!</div>!}
+					<div class="mb-1">
+						<label for="addEditProductSearchMethodInput" class="form-label">Search Metod</label>
+						<select class="form-select dselect-select method-input" id="addEditProductSearchMethodInput" name="lookupMethod" required>
+							{#for curMethod in extSearchMethods.properties()}
+								<option value="{curMethod.getKey()}" {#if curMethod_isFirst}selected{/if}>{curMethod.getKey()}</option>
+							{/for}
+						</select>
+					</div>
+					
+					<div class="mb-3">
+						<label for="addEditProductSearchTermInput" class="form-label">Search Term</label>
+						{#inputs/barcodeInput id='addEditProductSearchTermInput' name='q' type='text' searchSubmit=true required=true /}
+						<div id="addEditProductSearchTermInput" class="form-text">Scan in or enter a search term.</div>
+					</div>
+				</form>
             </div>
-            <div id="extItemSearchSearchFormMessages">
-            </div>
-            <div class="card-header">
-                Search Results:
-            </div>
-            <div class="card-body h-100 row" id="extSearchResults">
-            </div>
+			<div class="card-body h-100" id="extSearchResults">
+				<div id="extItemSearchSearchFormMessages">
+				</div>
+				<ul class="nav nav-tabs" id="extItemSearchSearchResultsTab" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" id="extItemSearchSearchResultsTabResultsTab" data-bs-toggle="tab" data-bs-target="#extItemSearchSearchResultsTabResultsTabContent" type="button" role="tab" aria-controls="extItemSearchSearchResultsTabResultsTabContent" aria-selected="true">
+							Results (<span id="extItemSearchSearchResultsTabNumResults"></span>)
+						</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="extItemSearchSearchResultsTabErrorsTab" data-bs-toggle="tab" data-bs-target="#extItemSearchSearchResultsTabErrorsTabContent" type="button" role="tab" aria-controls="extItemSearchSearchResultsTabErrorsTabContent" aria-selected="false">
+							Errors (<span id="extItemSearchSearchResultsTabNumErrors"></span>)
+						</button>
+					</li>
+				</ul>
+				<div class="tab-content" id="extItemSearchSearchResultsTabContent">
+					<div class="tab-pane fade show active" id="extItemSearchSearchResultsTabResultsTabContent" role="tabpanel" aria-labelledby="extItemSearchSearchResultsTabResultsTab" tabindex="0">
+						<table class="table table-bordered table-sm" id="extItemSearchSearchResultsTable">
+							<thead>
+								<tr>
+									<th class="text-center">#</th>
+									<th>Name / Service / Source / Method</th>
+									<th class="text-center">{#icons/images /}</th>
+									<th class="text-center">{#icons/pricing /}</th>
+									<th class="text-center">{#icons/link /}</th>
+									<th class="text-center">{#icons/identifiers /}</th>
+									<th class="text-center">{#icons/view /}</th>
+								</tr>
+							</thead>
+							<tbody id="extItemSearchSearchResultsTableResults"></tbody>
+						</table>
+					</div>
+					<div class="tab-pane fade" id="extItemSearchSearchResultsTabErrorsTabContent" role="tabpanel" aria-labelledby="extItemSearchSearchResultsTabErrorsTab" tabindex="0">
+						foo
+					</div>
+				</div>
+			</div>
+			
         </div>
+		{/if}
         <div class="col">
             <form id="addEditItemForm">
                 <input type="hidden" id="addEditItemFormMode" value="">
@@ -153,8 +159,8 @@
                         <div class="row mt-2" id="addEditItemAssociatedStorageInputContainer">
                         </div>
                         <div class="col d-grid gap-2 mt-3">
-                            <button type="button" class="btn btn-sm btn-success mt-2" id="addEditItemAssociatedStorageAddButton" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.storageSearchSelectForm.submit();">
-                                {#icons/add}{/icons/add} Add Associated Storage
+                            <button type="button" class="btn btn-sm btn-success mt-2" id="addEditItemAssociatedStorageAddButton" data-bs-toggle="modal" data-bs-target="#storageSearchSelectModal" onclick="StorageSearchSelect.setupSearch(function(blockId, blockName){ ItemAddEdit.storageInput.addStorage(blockName, blockId); }, this);">
+                                {#icons/add /} Add Associated Storage
                             </button>
                             <div class="form-text">
                             </div>
@@ -163,25 +169,16 @@
                 </div>
                 <hr />
                 <div class="mb-5 row">
-                    <label for="addEditItemGeneralIdInput" class="col-form-label col-sm-2">
-                    	{#icons/generalIds /}
-                    	General Identifiers:
+                    <label for="addEditItemIdentifiersInput" class="col-form-label col-sm-2">
+                    	{#icons/identifiers /}
+                    	Identifiers:
                     </label>
                     <div class="col-sm-10">
-                        {#inputs/identifiers/generalIdInput id="addEditItemGeneralIdInput" /}
-                    </div>
-                </div>
-                <div class="mb-5 row">
-                    <label for="addEditItemUniqueIdInput" class="col-form-label col-sm-2">
-                    	{#icons/uniqueIds /}
-                    	Unique Identifiers:
-                    </label>
-                    <div class="col-sm-10">
-                        {#inputs/identifiers/uniqueIdInput id="addEditItemUniqueIdInput" /}
+                        {#inputs/identifiers/associatedIdentifierInput id="addEditItemIdentifiersInput" name="newIdentifier" forObject='ITEM'/}
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label for="addEditItemUniqueIdInput" class="col-form-label col-sm-2">
+                    <label for="" class="col-form-label col-sm-2">
                     	{#icons/idGenerators /}
                     	Associated ID Generators:
                     </label>
@@ -296,10 +293,7 @@
 									  Expiration: <code class="user-select-all">\{exp;datetime format}</code> - Writes out the expiration for this stored. Format should match standard <a href="https://www.digitalocean.com/community/tutorials/java-simpledateformat-java-date-format#patterns" target="_blank">Java datetime syntax</a>. Default format is <code>MM/dd/yyyy</code>
 							      </li>
 							      <li>
-							          General Id: <code class="user-select-all">\{gid;name of general identifier}</code> - Use a general identifier value.
-							      </li>
-							      <li>
-							          Unique Id: <code class="user-select-all">\{uid;name of unique identifier}</code> - Use a unique identifier value.
+							          Identifier: <code class="user-select-all">\{ident;name of identifier}</code> - Use an identifier value.
 							      </li>
 							      <li>
 							          Price: <code class="user-select-all">\{price;name of calculated price}</code> - Use a price value. Does not include price label.

@@ -1,0 +1,29 @@
+{
+	"request": {
+		"urlPathPattern": "/rebrickable/api/v3/lego/sets/(?!21309-1(?=/|$))([^/]+)/$",
+		"method": "GET",
+		"headers": {
+			"Authorization": {
+				"equalTo": "key devKey"
+			}
+		}
+	},
+	"response": {
+		"status": 404,
+		"delayDistribution": {
+			"type": "lognormal",
+			"median": 500,
+			"sigma": 0.4
+		},
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"jsonBody": {
+			"detail": "No Set matches the given query."
+		}
+	}
+}
+
+
+
+

@@ -19,7 +19,7 @@ public class StorageBlockTestObjectCreator extends TestObjectCreator<StorageBloc
 			faker.theRoom().locations(),
 			null,
 			new ArrayList<>(),
-			new ArrayList<>(),
+			new LinkedHashSet<>(),
 			new LinkedHashSet<>()
 		);
 		

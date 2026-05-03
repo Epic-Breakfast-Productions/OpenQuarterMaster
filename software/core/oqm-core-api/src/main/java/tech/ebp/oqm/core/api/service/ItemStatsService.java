@@ -71,7 +71,7 @@ public class ItemStatsService {
 	@Inject
 	StoredService storedService;
 	
-	
+	//<editor-fold desc="Add To Stats Methods">
 	private void addToStats(InventoryItem item, BasicStatsContaining statsToAddTo, Stored stored) {
 		statsToAddTo.setNumStored(statsToAddTo.getNumStored() + 1L);
 		
@@ -180,17 +180,19 @@ public class ItemStatsService {
 //		return output;
 //	}
 	
+	//</editor-fold>
+	
 	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, InventoryItem item) {
 		log.info("Getting stats for item: {}", item.getId());
 		
-		ItemStoredStats output = new ItemStoredStats(item.getUnit());
+		ItemStoredStats output = new ItemStoredStats(item.getUnit(), item.getDefaultPrices());
 		
 		for (ObjectId storageBlock : item.getStorageBlocks()) {
 			output.getStorageBlockStats().put(storageBlock, new StoredInBlockStats(output.getTotal().getUnit()));
 		}
 		
 		if(item.getId() != null) {
-			FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+			FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(item.getId()));
 			try (
 				MongoCursor<Stored> storedIterator = storedInItem.iterator()
 			) {
@@ -339,7 +341,7 @@ public class ItemStatsService {
 		{
 			FindIterable<Stored> storedInItem = this.getStoredService().listIterator(
 				oqmDbIdOrName, cs, new StoredSearch()
-									   .setInventoryItemId(item.getId().toHexString())
+									   .setInventoryItemId(item.getId())
 									   .setInStorageBlocks(concerning.stream().map(Stored::getStorageBlock).distinct().collect(Collectors.toList()))
 			);
 			try (

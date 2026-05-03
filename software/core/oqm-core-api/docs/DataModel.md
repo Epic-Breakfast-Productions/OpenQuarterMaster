@@ -1,4 +1,4 @@
-# Open QuarterMaster Base Station Data Models
+# Open QuarterMaster Core API Data Models
 
 [Back](README.md)
 

@@ -1,6 +1,7 @@
 import base64
 import datetime
 import socket
+import time
 import uuid
 from pathlib import Path
 from cryptography.fernet import Fernet
@@ -229,7 +230,7 @@ class ConfigManager:
 
     def rereadConfigData(self):
         self.configData = self.readFile(self.mainConfigFile)
-        for file in os.listdir(self.additionalConfigsDir):
+        for file in sorted(os.listdir(self.additionalConfigsDir)):
             if file.endswith(".json"):
                 curUpdates = self.readFile(self.additionalConfigsDir + "/" + file)
                 self.configData = ConfigManager.mergeDicts(self.configData, curUpdates)
@@ -349,6 +350,20 @@ class ConfigManager:
         output = dict(self.configData)
         self.updateReplacements("", output)
         return output
+
+    def waitForConfig(self, configKey: str, timeout: int = 10) -> (bool, any):
+        startTime = time.time()
+
+        while True:
+            try:
+                val = self.getConfigVal(configKey)
+                return True, val
+            except ConfigKeyNotFoundException:
+                time.sleep(0.25)
+                self.rereadConfigData()
+                pass
+            if time.time() - startTime > timeout:
+                return False, None
 
     @staticmethod
     def getArrRef(configKey: str):

@@ -54,7 +54,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	
 	@Getter
 	@PathParam("itemId")
-	String itemId;
+	ObjectId itemId;
 	
 	private InventoryItem inventoryItem;
 	
@@ -71,16 +71,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "The id of the applied transaction record.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.OBJECT,
-					implementation = AppliedTransaction.class
-				)
-			)
-		}
+		description = "The id of the applied transaction record."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -94,20 +85,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.OBJECT,
-					implementation = SearchResult.class
-				)
-			)
-		},
-		headers = {
-			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
-			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
-		}
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -129,7 +107,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public AppliedTransaction getAppliedTransaction(
-		@PathParam("transactionId") String transactionId
+		@PathParam("transactionId") ObjectId transactionId
 	) {
 		return this.getAppliedTransactionService().get(this.getOqmDbIdOrName(), transactionId);
 	}

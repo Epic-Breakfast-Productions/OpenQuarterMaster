@@ -4,8 +4,6 @@
 #
 
 # Basic configs
-quarkus.http.port=80
-quarkus.http.ssl.port=443
 quarkus.http.insecure-requests=enabled
 quarkus.log.level=INFO
 
@@ -19,5 +17,26 @@ quarkus.http.ssl.certificate.trust-store-password={cert.selfSigned.internalKeyst
 #smallrye.jwt.verify.key.location={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/certs
 #smallrye.jwt.client.tls.certificate.path=/etc/oqm/serviceConfig/plugin/external-item-search/files/publicCert.pem
 
-# Lookup config
+{% if metrics is defined %}
+# Metrics Config:
+quarkus.otel.exporter.otlp.endpoint={metrics.otlp-collector.endpoint}
+{% endif %}
 
+#
+# Lookup config
+#
+
+# Barcode lookup
+productLookup.providers.barcodelookup-com.enabled={plugin.externalItemSearch.services.barcodelookup.enabled}
+productLookup.providers.barcodelookup-com.apiKey={plugin.externalItemSearch.services.barcodelookup.apiKey}
+
+# Datakick
+productLookup.providers.datakick.enabled={plugin.externalItemSearch.services.datakick.enabled}
+
+# UPC Item DB
+productLookup.providers.upcitemdb.enabled={plugin.externalItemSearch.services.upcitemdb.enabled}
+productLookup.providers.upcitemdb.apiKey={plugin.externalItemSearch.services.upcitemdb.apiKey}
+
+# Rebrickable
+productLookup.providers.rebrickable.enabled={plugin.externalItemSearch.services.rebrickable.enabled}
+productLookup.providers.rebrickable.apiKey={plugin.externalItemSearch.services.rebrickable.apiKey}
