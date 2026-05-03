@@ -1,6 +1,7 @@
 import {Rest} from "../Rest.js";
+import {PageUtility} from "../utilClasses/PageUtility.js";
 
-export class UnitUtils {
+export class UnitUtils extends PageUtility {
 	static compatibleUnitMap = null;
 	static allUnitOptionsCache = null;
 	static compatibleUnitOptionsCache = {};
@@ -135,5 +136,8 @@ export class UnitUtils {
 			}
 		});
 		return output;
+	}
+	static {
+		window.UnitUtils = this;
 	}
 }
