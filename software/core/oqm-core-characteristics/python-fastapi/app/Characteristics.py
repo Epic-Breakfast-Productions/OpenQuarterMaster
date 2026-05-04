@@ -1,12 +1,10 @@
 import os
 from dataclasses import dataclass
-from io import BytesIO
-from pathlib import Path
 
 import yaml
-from PIL import Image
 from fastapi import HTTPException
-from starlette.responses import StreamingResponse
+
+from .Shared import CachedImage, ImageUtils
 
 
 @dataclass()
@@ -32,19 +30,13 @@ class CharacteristicsReturn:
     banner: BannerReturn | None
 
 @dataclass()
-class CharacteristicImage:
-    name: str
-    type: str
-    data: bytes
-
-@dataclass()
 class RunByCache:
     name: str|None
     email: str|None
     phone: str|None
     website: str|None
-    logoImg: CharacteristicImage|None
-    bannerImg: CharacteristicImage|None
+    logoImg: CachedImage|None
+    bannerImg: CachedImage|None
 
     def to_response(self) -> RunByReturn|None:
         return RunByReturn(
@@ -88,40 +80,7 @@ class CharacteristicsCache:
         )
 
 class CharacteristicsUtils:
-    characteristics_file = os.getenv('CHARACTERISTICS_FILE', './characteristics.yaml')
-
-    @classmethod
-    def __validate_image(cls, imagePathStr:str|None) -> CharacteristicImage|None:
-        if not imagePathStr:
-            return None
-        imagePath = Path(imagePathStr)
-
-        if not imagePath.exists() and imagePath.is_file():
-            print(f"ERROR: Image path does not exist: {imagePath}")
-            return None
-
-        try:
-            with Image.open(imagePath) as image:
-                image.verify()
-        except (IOError, SyntaxError) as e:
-            print(f"ERROR: Image at path does pass verification: {imagePath}")
-
-        try:
-            with Image.open(imagePath) as image:
-                mimetype = image.get_format_mimetype()
-                img_byte_arr = BytesIO()
-                image.save(img_byte_arr, format=mimetype.split('/')[1])
-
-                return CharacteristicImage(
-                    os.path.basename(imagePathStr),
-                    mimetype,
-                    img_byte_arr.getvalue()
-                )
-        except (IOError, SyntaxError) as e:
-            print(f"ERROR: Image at path does pass verification: {imagePath}")
-
-
-
+    characteristics_file = os.getenv('CHARACTERISTICS_FILE', '/data/characteristics.yaml')
 
     @classmethod
     def __get_banner(cls, characteristicsYaml) -> BannerCache | None:
@@ -142,8 +101,8 @@ class CharacteristicsUtils:
             os.getenv('CHARACTERISTICS_VAL_RUNBY_EMAIL', characteristicsYaml['runBy']['email']),
             os.getenv('CHARACTERISTICS_VAL_RUNBY_PHONE', characteristicsYaml['runBy']['phone']),
             os.getenv('CHARACTERISTICS_VAL_RUNBY_WEBSITE', characteristicsYaml['runBy']['website']),
-            cls.__validate_image(os.getenv('CHARACTERISTICS_VAL_RUNBY_LOGOIMG', characteristicsYaml['runBy']['logoImg'])),
-            cls.__validate_image(os.getenv('CHARACTERISTICS_VAL_RUNBY_BANNERIMG', characteristicsYaml['runBy']['bannerImg'])),
+            ImageUtils.get_image(os.getenv('CHARACTERISTICS_VAL_RUNBY_LOGOIMG', characteristicsYaml['runBy']['logoImg'])),
+            ImageUtils.get_image(os.getenv('CHARACTERISTICS_VAL_RUNBY_BANNERIMG', characteristicsYaml['runBy']['bannerImg'])),
         )
 
 
@@ -167,16 +126,3 @@ class CharacteristicsUtils:
     @classmethod
     def get_characteristics_return(cls)->CharacteristicsReturn:
         return cls.get_characteristics_cache().to_response()
-
-    @classmethod
-    def get_image_response(cls, image: CharacteristicImage|None)->StreamingResponse:
-        if not image:
-            raise HTTPException(status_code=400, detail="No logo image has been provided to serve.")
-
-        return StreamingResponse(
-            BytesIO(image.data),
-            media_type=image.type,
-            headers={
-                "Content-Disposition": "attachment;filename=" + image.name
-            }
-        )

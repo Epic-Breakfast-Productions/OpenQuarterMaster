@@ -18,6 +18,21 @@ This service is responsible for serving:
 
 ## Interface
 
+### All
+
+`/all` will return all of the following datas, like:
+
+```json
+{
+   "characteristics" : {
+      // data from /characteristics
+   },
+   "uis": {
+      // data from /uis
+   }
+}
+```
+
 ### Characteristics
 
 The endpoint to get characteristics data is:
@@ -30,13 +45,80 @@ Format:
 
 ```
 
-These values match 1:1 in the data outlined below.
+
+These values match 1:1 in the characteristics file data outlined below.
+
+
+#### Images
+
+To actually retrieve image data (if available), use
+
+`/characteristics/logo`
+
+and
+
+`/characteristics/banner`
+
+(if no image was available, these endpoints will return with a `400` error)
+
+
+### UIs
+
+These values are a list of ui's available on the system. This data is used to infer where else the user can go.
+
+Endpoint: `/uis`
+
+Format:
+
+```json
+{
+   "core": [
+      // UI entries
+   ],
+   "plugin": [
+      // UI entries
+   ],
+   "metrics": [
+      // UI entries
+   ],
+   "infra": [
+      // UI entries
+   ]
+}
+```
+
+Where a single UI entry is described as:
+
+```json
+{
+   "name": "",
+   "description": "",
+   "baseUri": "",
+   "icon": true,
+   "endpoints": {
+      "health": "/q/health",
+      "item": {
+         "view": "/items?item={item}"
+      }
+   }
+}
+```
+
+#### Icons
+
+To actually retrieve image data (if available), use
+
+`/uis/{category}/{index}/icon`
+
+Where `category` is the type of ui, like `plugin`, and `index` is the index of the entry in the array of results.
+
+(if no image was available, these endpoints will return with a `400` error)
 
 ## Configuration
 
 ### Characteristics
 
-The characteristics are loaded in via a file specified by `characteristics.fileLocation`.
+The characteristics are loaded in via a file specified by the `CHARACTERISTICS_FILE` environment var, or `/data/characteristics.yaml` by default.
 
 Schema of this file (shown in `yaml` for comments, all fields optional, except where noted):
 
@@ -82,7 +164,28 @@ banner:
 
 ### UI's
 
-This feature has yet to be implemented. Stay tuned!
+UIs are defined by files listed in the `/data/uis/` directory.
+
+Format of each file:
+
+```json
+{
+   "type": "Core",
+   "order": 0,
+   "name": "Base Station",
+   "description": "The Main UI for Open QuarterMaster. If you are unsure where to start, start here!",
+   "urlConfigKey": "core.baseStation.externalBaseUri",
+   "icon": "/core/api/core-api.svg",
+   "monitorEndpoint": "/q/health",
+   "endpoints": {
+      "item": {
+         "view": "/items?item={item}"
+      }
+   }
+}
+```
+
+These get interpolated into the format that is returned by the app.
 
 ## Developing
 
