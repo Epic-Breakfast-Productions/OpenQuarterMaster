@@ -1,0 +1,60 @@
+# Service file for running an instance of the OQM Characteristics server.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+
+[Unit]
+Description=Characteristics server for Open Quartermaster. Version 1.0.0-SNAPSHOT".
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=simple
+Restart=always
+TimeoutSec=5m
+Environment="CONTAINER_NAME=oqm-core-characteristics"
+Environment="IMAGE_NAME=ebprod/oqm-core-characteristics"
+Environment="IMAGE_VERSION=1.0.0-SNAPSHOT"
+Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/core/characteristics/env.list"
+
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
+
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/characteristics/config/"
+
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
+# setup env list file
+ExecStartPre=/bin/bash -c "if [ -d \"/tmp/oqm/serviceConfig/core/characteristics/config\" ]; then rm -Rf /tmp/oqm/serviceConfig/core/characteristics/config; fi"
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/characteristics/config/"
+
+ExecStart=/bin/bash -c "/usr/bin/docker run \
+                                 --rm \
+                                 --name $CONTAINER_NAME \
+                                 --network=oqm-internal \
+                                 -v /etc/oqm/static/media/:/data/oqm/media:ro \
+                                 $IMAGE_NAME:$IMAGE_VERSION"
+# ensure up, healthy
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+                                if [ \"$status\" == \"healthy\" ]; then \
+                                    echo \"Container running!\"; \
+                                    running=\"true\"; \
+                                    continue; \
+                                fi; \
+                                sleep 0.05s; \
+                                if [ $SECONDS -gt 30 ]; then \
+                                    echo \"Container not running after 30 seconds!\"; \
+                                    exit 1; \
+                                fi; \
+                            done; \
+                            "
+
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove container'"
+
+[Install]
+WantedBy=multi-user.target

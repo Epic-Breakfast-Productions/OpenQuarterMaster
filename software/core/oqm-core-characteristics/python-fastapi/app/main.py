@@ -11,6 +11,10 @@ logger = logging.getLogger(__name__)
 app = FastAPI()
 
 
+@app.get("/health")
+def health():
+    return {"status": "UP"}
+
 @app.get("/all")
 def get_all():
     return {

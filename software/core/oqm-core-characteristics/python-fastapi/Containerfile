@@ -9,3 +9,6 @@ RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 COPY ./app /code/app
 
 CMD ["fastapi", "run", "app/main.py", "--port", "80"]
+
+HEALTHCHECK --interval=3s --timeout=5s --start-period=5s --retries=20 \
+	CMD curl -sSkL --fail http://localhost:80/health

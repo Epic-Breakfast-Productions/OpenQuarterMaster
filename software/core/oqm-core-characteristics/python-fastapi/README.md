@@ -13,7 +13,7 @@ This service is responsible for serving:
  - Characteristics:
    - handle SVG images
    - Handle images from URL?
- - Service Listing
+ - Caching of data read from file
  
 
 ## Interface
