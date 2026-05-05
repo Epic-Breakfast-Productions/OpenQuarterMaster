@@ -1,0 +1,5 @@
+# Default config for oqm core characteristics server.
+
+UIS_ICON_DIR=/app/public/oqm/media
+
+
