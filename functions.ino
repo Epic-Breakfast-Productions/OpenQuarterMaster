@@ -40,10 +40,11 @@ void requestAuth();
 JsonDocument GetDB();
 String SetDB();
 JsonDocument GetStorageBlocks();
+String SetStorageBlock(JsonDocument stblocks);
 JsonDocument GetCount(String identifier);
 void UpdateCount(String stblock, String itemID, int transaction, int value);
 void DetailedUpdate(JsonDocument item, JsonDocument stblocks);
-void QuickUpdate(JsonDocument item, JsonDocument stblocks, bool add);
+void QuickUpdate(bool add);
 
 void setup() {
   Serial.begin(115200);
@@ -117,7 +118,7 @@ void loop() {
 
   Serial.println("--- Fetching Item Count ---");
   DetailedUpdate(GetCount("X004WAJ2H7"), GetStorageBlocks());
-  QuickUpdate(GetCount("X004WAJ2H7"), GetStorageBlocks(), true);
+  QuickUpdate(true);
   
   
 
@@ -262,6 +263,30 @@ JsonDocument GetStorageBlocks() {
 
   http.end();
   return doc;
+}
+
+String SetStorageBlock(JsonDocument stblocks) {
+  int block_found = 0;                              //To change storage block or add/subtract bool, will need to restart function
+  int choice = 1000;
+  Serial.println("Choose a storage block: ");  //Choose a storage block for the duration of the loop
+  for (int i = 0; i < stblocks["results"].size(); i++){
+    Serial.printf("[%i] Storage block: %s\n",
+      i,
+      stblocks["results"][i]["label"].as<String>());
+  }
+
+  while (choice > stblocks["results"].size()){
+    while (Serial.available() == 0){
+          delay(5);
+        }
+        choice = Serial.parseInt();
+  }
+  while(Serial.available() > 0) { Serial.read(); }
+
+  String block_chosen;
+  block_chosen = stblocks["results"][choice].as<String>();
+  
+  return block_chosen;
 }
 
 JsonDocument GetCount(String identifier) {
@@ -451,23 +476,9 @@ void DetailedUpdate(JsonDocument item, JsonDocument stblocks){
   }
 }
 
-void QuickUpdate(JsonDocument stblocks, bool add){  //Constantly looks for a new scanned item, then +- 1 to the count in the chosen storage block
-  int block_found = 0;                              //To change storage block or add/subtract bool, will need to restart function
-  int choice = 1000;
-  Serial.println("Choose a storage block: ");  //Choose a storage block for the duration of the loop
-  for (int i = 0; i < stblocks["results"].size(); i++){
-    Serial.printf("[%i] Storage block: %s\n",
-      i,
-      stblocks["results"][i]["label"].as<String>());
-  }
-
-  while (choice > stblocks["results"].size()){
-    while (Serial.available() == 0){
-          delay(5);
-        }
-        choice = Serial.parseInt();
-  }
-  while(Serial.available() > 0) { Serial.read(); }
+void QuickUpdate(bool add){  //Constantly looks for a new scanned item, then +- 1 to the count in the chosen storage block
+  String block;
+  block = SetStorageBlock(GetStorageBlocks());
 
   while(true) {
       if(digitalRead(BUTTON) == LOW) { //interrupt to end loop
@@ -476,9 +487,9 @@ void QuickUpdate(JsonDocument stblocks, bool add){  //Constantly looks for a new
       }
       Serial.println("Updating..."); //This is where we will add the scanning loop
       if (add){
-        UpdateCount(GetCount("P5400E"), item_ID, 1, 1);
+        UpdateCount(block, GetCount("P5400E")["results"][0]["id"].as<String>(), 1, 1);
       } else {
-        UpdateCount(GetCount("P5400E"), item_ID, 1, 2);
+        UpdateCount(block, GetCount("P5400E")["results"][0]["id"].as<String>(), 1, 2);
       }
       delay(1000);
 
