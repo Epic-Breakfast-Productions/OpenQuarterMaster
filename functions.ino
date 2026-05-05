@@ -30,6 +30,7 @@ bool gotSD = false;
 uint choice = 100000;
 
 unsigned long time_at_auth = 0;
+unsigned long expiry = 0;
 JsonDocument authdoc;
 JsonDocument dbdoc;
 JsonDocument stblockdoc;
@@ -37,13 +38,13 @@ JsonDocument getdoc;
 JsonDocument secretdoc;
 
 void requestAuth();
-JsonDocument GetDB();
+void GetDB();
 String SetDB();
-JsonDocument GetStorageBlocks();
-String SetStorageBlock(JsonDocument stblocks);
-JsonDocument GetCount(String identifier);
+void GetStorageBlocks();
+String SetStorageBlock();
+void GetCount(String identifier);
 void UpdateCount(String stblock, String itemID, int transaction, int value);
-void DetailedUpdate(JsonDocument item, JsonDocument stblocks);
+void DetailedUpdate();
 void QuickUpdate(bool add);
 
 void setup() {
@@ -85,7 +86,6 @@ void setup() {
       }
       file.close();
     }
-    serializeJson(secretdoc, Serial);
     secretdoc.clear(); // Free up memory immediately after use
   } else {
     Serial.println("SD Fail. Proceeding with defaults.");
@@ -111,13 +111,14 @@ void setup() {
 
 void loop() {
   // Check if token needs refreshing
-  unsigned long expiry = authdoc["expires_in"].as<unsigned long>();
   if (time_at_auth == 0 || (millis() - time_at_auth) > (expiry * 1000 * 0.75)) {
     requestAuth();
   }
 
-  Serial.println("--- Fetching Item Count ---");
-  DetailedUpdate(GetCount("X004WAJ2H7"), GetStorageBlocks());
+  // Serial.println("Detailed Update...");
+  // DetailedUpdate();
+  // delay(1000);
+  Serial.println("Quick Update...");
   QuickUpdate(true);
   
   
@@ -156,11 +157,10 @@ void requestAuth() {
     Serial.printf("Auth failed (%d)\n", httpCode);
   }
   http.end();
+  expiry = authdoc["expires_in"].as<unsigned long>();
 }
 
-JsonDocument GetDB(){
-  JsonDocument doc;
-
+void GetDB(){
   WiFiClientSecure secureClient;
   secureClient.setInsecure(); // Handles the -k flag
 
@@ -181,9 +181,8 @@ JsonDocument GetDB(){
   int httpCode = http.GET();
 
   if (httpCode == HTTP_CODE_OK) {
-    doc.clear();
     // Parse directly from the stream to save RAM
-    DeserializationError error = deserializeJson(doc, http.getStream());
+    DeserializationError error = deserializeJson(dbdoc, http.getStream());
     
     if (!error) {
       Serial.println("Database info retrieved successfully.");
@@ -196,37 +195,33 @@ JsonDocument GetDB(){
   }
 
   http.end();
-  return doc;
 }
 
 String SetDB(){
-  JsonDocument doc;
     Serial.println("--- Fetching DB List ---");
   do {
-    doc = GetDB();
-  } while (doc[0]["name"].isNull());
+    GetDB();
+  } while (dbdoc[0]["name"].isNull());
   int choice;
   String db;
-  for (int i = 0; i < doc.size(); i++){
+  for (int i = 0; i < dbdoc.size(); i++){
         Serial.printf("[%i] Found db: %s\n",
           i,
-          doc[i]["name"].as<const char*>());
+          dbdoc[i]["name"].as<const char*>());
       }
-      while(choice > doc.size()){
+      while(choice > dbdoc.size()){
         while (Serial.available() == 0){
           delay(1);
         }
         choice = Serial.parseInt();
       }
-      db = doc[choice]["name"].as<const char*>();
+      db = dbdoc[choice]["name"].as<const char*>();
       choice = 100000;
       while(Serial.available() > 0) { Serial.read(); }
       return db;
 }
 
-JsonDocument GetStorageBlocks() {
-  JsonDocument doc;
-
+void GetStorageBlocks() {
   WiFiClientSecure secureClient;
   secureClient.setInsecure(); // Handles the -k (insecure) flag
 
@@ -249,8 +244,8 @@ JsonDocument GetStorageBlocks() {
   int httpCode = http.GET();
 
   if (httpCode == HTTP_CODE_OK) {
-    doc.clear(); // Reusing getdoc to save memory
-    DeserializationError error = deserializeJson(doc, http.getStream());
+    stblockdoc.clear();
+    DeserializationError error = deserializeJson(stblockdoc, http.getStream());
     
     if (!error) {
       Serial.println("Storage blocks retrieved successfully.");
@@ -262,20 +257,19 @@ JsonDocument GetStorageBlocks() {
   }
 
   http.end();
-  return doc;
 }
 
-String SetStorageBlock(JsonDocument stblocks) {
-  int block_found = 0;                              //To change storage block or add/subtract bool, will need to restart function
+String SetStorageBlock() {
+  int block_found = 0;                            
   int choice = 1000;
-  Serial.println("Choose a storage block: ");  //Choose a storage block for the duration of the loop
-  for (int i = 0; i < stblocks["results"].size(); i++){
+  Serial.println("Choose a storage block: ");
+  for (int i = 0; i < stblockdoc["results"].size(); i++){
     Serial.printf("[%i] Storage block: %s\n",
       i,
-      stblocks["results"][i]["label"].as<String>());
+      stblockdoc["results"][i]["label"].as<String>());
   }
 
-  while (choice > stblocks["results"].size()){
+  while (choice > stblockdoc["results"].size()){
     while (Serial.available() == 0){
           delay(5);
         }
@@ -284,13 +278,12 @@ String SetStorageBlock(JsonDocument stblocks) {
   while(Serial.available() > 0) { Serial.read(); }
 
   String block_chosen;
-  block_chosen = stblocks["results"][choice].as<String>();
+  block_chosen = stblockdoc["results"][choice]["id"].as<String>();
   
   return block_chosen;
 }
 
-JsonDocument GetCount(String identifier) {
-  JsonDocument doc;
+void GetCount(String identifier) {
   WiFiClientSecure secureClient;
   secureClient.setInsecure();
 
@@ -310,8 +303,7 @@ JsonDocument GetCount(String identifier) {
     int httpCode = http.GET();
 
     if (httpCode == HTTP_CODE_OK) {
-      doc.clear();
-      DeserializationError error = deserializeJson(doc, http.getStream());
+      DeserializationError error = deserializeJson(getdoc, http.getStream());
       if (!error) success = true;
     } else {
       Serial.printf("GET failed (%d)\n", httpCode);
@@ -319,7 +311,6 @@ JsonDocument GetCount(String identifier) {
     }
   }
   http.end();
-  return doc;
 }
 
 void UpdateCount(String stblock, String itemID, int transaction, int value) {
@@ -335,7 +326,7 @@ void UpdateCount(String stblock, String itemID, int transaction, int value) {
                + String(settings.def_path)
                + String(db_name)
                + "/inventory/item/" 
-               + String(itemID) + "/stored/transaction";
+               + itemID + "/stored/transaction";
 
   http.begin(secureClient, url);
 
@@ -403,48 +394,48 @@ void UpdateCount(String stblock, String itemID, int transaction, int value) {
     // Print server message to see if 'toBlock' or 'toStored' are rejected
     Serial.println("Response: " + http.getString());
   }
-
   http.end();
 }
 
-void DetailedUpdate(JsonDocument item, JsonDocument stblocks){
+void DetailedUpdate(){
+  GetCount("P5400E"); //Replace with scan
   uint transaction = 10;
   uint value;
   int choice = 1000;
   int block_found = 0;
-  if (!item["results"][0]["name"].isNull()) { //Prints details of item found through barcode
+  if (!getdoc["results"][0]["name"].isNull()) { //Prints details of item found through barcode
     Serial.printf("Found %d of item %s\n", 
-                  item["results"][0]["stats"]["total"]["value"].as<int>(),
-                  item["results"][0]["name"].as<const char*>());
-    item_ID = item["results"][0]["id"].as<const char*>();
-    item_name = item["results"][0]["name"].as<const char*>();
+                  getdoc["results"][0]["stats"]["total"]["value"].as<int>(),
+                  getdoc["results"][0]["name"].as<const char*>());
+    item_ID = getdoc["results"][0]["id"].as<const char*>();
+    item_name = getdoc["results"][0]["name"].as<const char*>();
 
-    if (item["results"][0]["storageBlocks"].size() > 1){ //If there are more than one storage block containing the item, allow the user to choose which block to update
-    for(int i = 0; i < stblocks["results"].size(); i++){ //Prints storage blocks that contain the item
-      for (int j = 0; j < item["results"][0]["storageBlocks"].size(); j++){
-        if(item["results"][0]["storageBlocks"][j].as<String>() == stblocks["results"][i]["id"].as<String>()){
+    if (getdoc["results"][0]["storageBlocks"].size() > 1){ //If there are more than one storage block containing the item, allow the user to choose which block to update
+    for(int i = 0; i < stblockdoc["results"].size(); i++){ //Prints storage blocks that contain the item
+      for (int j = 0; j < getdoc["results"][0]["storageBlocks"].size(); j++){
+        if(getdoc["results"][0]["storageBlocks"][j].as<String>() == stblockdoc["results"][i]["id"].as<String>()){
           Serial.printf("[%i] Found storage block: %s\n",
             block_found,
-            stblocks["results"][i]["label"].as<const char*>());
+            stblockdoc["results"][i]["label"].as<const char*>());
             block_found++;
         }
       }
     }
-      while (choice > item["results"][0]["storageBlocks"].size()){
+      while (choice > getdoc["results"][0]["storageBlocks"].size()){
         while (Serial.available() == 0){
           delay(5);
         }
         choice = Serial.parseInt();
       }
       while(Serial.available() > 0) { Serial.read(); }
-      storage_block = item["results"][0]["storageBlocks"][choice].as<const char*>();
+      storage_block = getdoc["results"][0]["storageBlocks"][choice].as<const char*>();
       choice = 1000;
     } else {
-      storage_block = item["results"][0]["storageBlocks"][0].as<const char*>();
+      storage_block = getdoc["results"][0]["storageBlocks"][0].as<const char*>();
     }
-    for(int i = 0; i < stblocks["results"].size(); i++){ //Retrieve label of storage block chosen
-      if(stblocks["results"][i]["id"].as<String>() == storage_block){
-        block_name = stblocks["results"][i]["label"].as<const char*>();
+    for(int i = 0; i < stblockdoc["results"].size(); i++){ //Retrieve label of storage block chosen
+      if(stblockdoc["results"][i]["id"].as<String>() == storage_block){
+        block_name = stblockdoc["results"][i]["label"].as<const char*>();
       }
     }
     Serial.println("Enter transaction type: "); //choose transaction type, fairly obvious
@@ -478,18 +469,31 @@ void DetailedUpdate(JsonDocument item, JsonDocument stblocks){
 
 void QuickUpdate(bool add){  //Constantly looks for a new scanned item, then +- 1 to the count in the chosen storage block
   String block;
-  block = SetStorageBlock(GetStorageBlocks());
+  GetStorageBlocks();
+
+  block = SetStorageBlock();
 
   while(true) {
       if(digitalRead(BUTTON) == LOW) { //interrupt to end loop
         Serial.println("End of update...");
         break;
       }
-      Serial.println("Updating..."); //This is where we will add the scanning loop
-      if (add){
-        UpdateCount(block, GetCount("P5400E")["results"][0]["id"].as<String>(), 1, 1);
+
+      if (time_at_auth == 0 || (millis() - time_at_auth) > (expiry * 1000 * 0.75)) {
+        requestAuth();
+      }
+
+      Serial.println("Updating...");
+      GetCount("P5400E"); //replace with scan
+      item_ID = getdoc["results"][0]["id"].as<const char*>();
+      if (getdoc["results"][0]["id"].isNull()) {
+          Serial.println("Error: Item ID not found in getdoc!");
       } else {
-        UpdateCount(block, GetCount("P5400E")["results"][0]["id"].as<String>(), 1, 2);
+        if (add){
+          UpdateCount(block, item_ID, 1, 1);
+        } else {
+          UpdateCount(block, item_ID, 2, 1);
+        }
       }
       delay(1000);
 
