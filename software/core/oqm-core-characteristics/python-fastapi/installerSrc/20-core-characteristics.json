@@ -3,7 +3,7 @@
 		"characteristics": {
 			"internalHost": "oqm-core-characteristics",
 			"internalHttpPort": 80,
-			"internalBaseUri": "http://#{core.baseStation.internalHost}:#{core.baseStation.internalHttpPort}",
+			"internalBaseUri": "http://#{core.characteristics.internalHost}:#{core.baseStation.internalHttpPort}",
             "characteristics": {
                 "title": null,
                 "motd": null,
@@ -11,12 +11,12 @@
                     "name": null,
                     "email": null,
                     "phone": null,
-                    "website": null,
+                    "website": null
                 },
                 "banner": {
                     "text": null,
                     "textColor": null,
-                    "backgroundColor": null,
+                    "backgroundColor": null
                 }
             }
 		}

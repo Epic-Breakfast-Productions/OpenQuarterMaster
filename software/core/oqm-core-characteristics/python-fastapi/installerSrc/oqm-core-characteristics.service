@@ -4,7 +4,7 @@
 #
 
 [Unit]
-Description=Characteristics server for Open Quartermaster. Version 1.0.0-SNAPSHOT".
+Description=Characteristics server for Open Quartermaster. Version ${version}".
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core
 After=docker.service
 Wants=network-online.target docker.socket
@@ -15,9 +15,12 @@ Type=simple
 Restart=always
 TimeoutSec=5m
 Environment="CONTAINER_NAME=oqm-core-characteristics"
-Environment="IMAGE_NAME=ebprod/oqm-core-characteristics"
-Environment="IMAGE_VERSION=1.0.0-SNAPSHOT"
+Environment="IMAGE_NAME=docker.io/ebprod/oqm-core-characteristics"
+Environment="IMAGE_VERSION=${version}"
+Environment="ENV_CONFIG_TEMPLATE=/etc/oqm/serviceConfig/core/characteristics/core-characteristics-config.list"
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/core/characteristics/env.list"
+Environment="USER_CONFIG_TEMPLATE=/etc/oqm/serviceConfig/core/characteristics/user-config.list"
+Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/core/characteristics/user.list"
 
 ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
 
@@ -29,12 +32,20 @@ ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || ec
 # setup env list file
 ExecStartPre=/bin/bash -c "if [ -d \"/tmp/oqm/serviceConfig/core/characteristics/config\" ]; then rm -Rf /tmp/oqm/serviceConfig/core/characteristics/config; fi"
 ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/core/characteristics/config/"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config t $ENV_CONFIG_TEMPLATE > $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $ENV_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config t $USER_CONFIG_TEMPLATE > $USER_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
 
 ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --rm \
                                  --name $CONTAINER_NAME \
+                                 -v /etc/oqm/static/media/:/app/public/oqm/media:ro \
+                                 -v /etc/oqm/ui.d/:/data/uis/:ro \
                                  --network=oqm-internal \
                                  -v /etc/oqm/static/media/:/data/oqm/media:ro \
+                                 --env-file $ENV_CONFIG_FILE \
+                                 --env-file $USER_CONFIG_FILE \
                                  $IMAGE_NAME:$IMAGE_VERSION"
 # ensure up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \

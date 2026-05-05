@@ -81,6 +81,7 @@ class CharacteristicsCache:
 
 class CharacteristicsUtils:
     characteristics_file = os.getenv('CHARACTERISTICS_FILE', '/data/characteristics.yaml')
+    cache = None
 
     @classmethod
     def __get_banner(cls, characteristicsYaml) -> BannerCache | None:
@@ -108,6 +109,10 @@ class CharacteristicsUtils:
 
     @classmethod
     def get_characteristics_cache(cls)->CharacteristicsCache:
+        if cls.cache is not None:
+            return cls.cache
+
+
         characteristicsYaml = yaml.safe_load(open(cls.characteristics_file))
 
         if not isinstance(characteristicsYaml, dict):
@@ -120,6 +125,8 @@ class CharacteristicsUtils:
             cls.__get_run_by(characteristicsYaml),
             cls.__get_banner(characteristicsYaml)
         )
+
+        cls.cache = output
 
         return output
 

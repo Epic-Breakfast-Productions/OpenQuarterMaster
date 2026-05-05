@@ -25,6 +25,7 @@ class UiResponse:
 @dataclass()
 class UiCache:
     order: int | None
+    id: str
     name: str
     description: str
     baseUri: str
@@ -70,33 +71,43 @@ class UisCache:
 
 class UiUtils:
     ui_dir = os.getenv('UI_DIR', '/data/uis/')
+    ui_cache = None
 
     @classmethod
     def __get_ui_endpoints(cls, uiRaw) -> UiEndpoints:
         return UiEndpoints(
             uiRaw["monitorEndpoint"],
-            uiRaw["item"]
+            uiRaw["item"] if "item" in uiRaw else None,
         )
 
     @classmethod
     def __get_ui(cls, uiRaw) -> UiCache:
         return UiCache(
             uiRaw["order"],
+            uiRaw["id"] if "id" in uiRaw else None,
             uiRaw["name"],
             uiRaw["description"],
             uiRaw["url"],
-            ImageUtils.get_image(uiRaw["icon"]),
+            ImageUtils.get_image(
+                os.path.join(
+                    os.getenv('UIS_ICON_DIR', "/"),
+                    uiRaw["icon"].removeprefix("/")
+                )
+            ) if "icon" in uiRaw else None,
             cls.__get_ui_endpoints(uiRaw)
         )
 
     @classmethod
     def get_uis_cache(cls) -> UisCache:
-        directory = os.fsencode(os.getenv('UIS_DATA_DIR', "/data/uis/"))
+        if cls.ui_cache is not None:
+            return cls.ui_cache
+
+        directory = os.getenv('UIS_DATA_DIR', "/data/uis/")
 
         uisRawData: list[dict] = list()
 
         for file in os.listdir(directory):
-            filename = os.fsdecode(file)
+            filename = os.path.basename(file)
             if filename.endswith(".json"):
                 curUiFileLoc = os.path.join(directory, filename)
                 with open(curUiFileLoc) as curUiFile:
@@ -107,19 +118,23 @@ class UiUtils:
         for rawUi in uisRawData:
             uiCache = cls.__get_ui(rawUi)
 
-            if rawUi["type"].casefold == "core":
+            if rawUi["type"].casefold() == "core":
                 output.core.append(uiCache)
-            elif rawUi["type"].casefold == "plugins":
+            elif rawUi["type"].casefold() == "plugins":
                 output.plugin.append(uiCache)
-            elif rawUi["type"].casefold == "metrics":
+            elif rawUi["type"].casefold() == "metrics":
                 output.metrics.append(uiCache)
-            elif rawUi["type"].casefold == "infra":
+            elif rawUi["type"].casefold() == "infra":
                 output.infra.append(uiCache)
+            else:
+                print("WARN:: invalid type: " + rawUi["type"].casefold())
 
         output.core = sorted(output.core, key=lambda c: c.order)
         output.metrics = sorted(output.metrics, key=lambda c: c.order)
         output.infra = sorted(output.infra, key=lambda c: c.order)
         output.plugin = sorted(output.plugin, key=lambda c: c.order)
+
+        cls.ui_cache = output
 
         return output
 

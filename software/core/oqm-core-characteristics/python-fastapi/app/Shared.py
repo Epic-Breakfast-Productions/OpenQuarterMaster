@@ -21,29 +21,37 @@ class ImageUtils:
             return None
         imagePath = Path(imagePathStr)
 
-        if not imagePath.exists() and imagePath.is_file():
-            print(f"ERROR: Image path does not exist: {imagePath}")
+        if not imagePath.exists() or not imagePath.is_file():
+            print(f"ERROR: Image file does not exist: {imagePath}")
             return None
 
-        try:
-            with Image.open(imagePath) as image:
-                image.verify()
-        except (IOError, SyntaxError) as e:
-            print(f"ERROR: Image at path does pass verification: {imagePath}")
-
-        try:
-            with Image.open(imagePath) as image:
-                mimetype = image.get_format_mimetype()
-                img_byte_arr = BytesIO()
-                image.save(img_byte_arr, format=mimetype.split('/')[1])
-
+        if imagePath.suffix == ".svg":
+            with open(imagePath, "rb") as f:
                 return CachedImage(
                     os.path.basename(imagePathStr),
-                    mimetype,
-                    img_byte_arr.getvalue()
+                    "image/svg+xml",
+                    f.read()
                 )
-        except (IOError, SyntaxError) as e:
-            print(f"ERROR: Image at path does pass verification: {imagePath}")
+        else:
+            try:
+                with Image.open(imagePath) as image:
+                    image.verify()
+            except (IOError, SyntaxError) as e:
+                print(f"ERROR: Image at path does not pass verification: {imagePath}")
+
+            try:
+                with Image.open(imagePath) as image:
+                    mimetype = image.get_format_mimetype()
+                    img_byte_arr = BytesIO()
+                    image.save(img_byte_arr, format=mimetype.split('/')[1])
+
+                    return CachedImage(
+                        os.path.basename(imagePathStr),
+                        mimetype,
+                        img_byte_arr.getvalue()
+                    )
+            except (IOError, SyntaxError) as e:
+                print(f"ERROR: Image at path does pass verification: {imagePath}")
 
     @classmethod
     def get_image_response(cls, image: CachedImage|None)->StreamingResponse:

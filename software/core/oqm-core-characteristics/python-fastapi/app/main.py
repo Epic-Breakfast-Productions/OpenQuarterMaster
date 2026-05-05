@@ -13,6 +13,7 @@ app = FastAPI()
 
 @app.get("/health")
 def health():
+    get_all()
     return {"status": "UP"}
 
 @app.get("/all")
@@ -45,6 +46,6 @@ def characteristics_get_logo():
 def uis_get():
     return UiUtils.get_uis_return()
 
-@app.get("/uis/{category}/{index}")
+@app.get("/uis/{category}/{index}/image")
 def uis_get(category: str, index: int):
     return UiUtils.get_ui_icon(category, index)

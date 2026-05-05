@@ -11,10 +11,7 @@ This service is responsible for serving:
 ## TODOs:
 
  - Characteristics:
-   - handle SVG images
    - Handle images from URL?
- - Caching of data read from file
- 
 
 ## Interface
 
@@ -172,8 +169,10 @@ Format of each file:
 {
    "type": "Core",
    "order": 0,
+   "id": "oqm-core-base_station",
    "name": "Base Station",
    "description": "The Main UI for Open QuarterMaster. If you are unsure where to start, start here!",
+   "url": "http://foo",
    "urlConfigKey": "core.baseStation.externalBaseUri",
    "icon": "/core/api/core-api.svg",
    "monitorEndpoint": "/q/health",
@@ -206,8 +205,16 @@ These get interpolated into the format that is returned by the app.
 
 ### Building container
 
-`docker build -t ebprod/oqm-core-characteristics .`
+`docker buildx build --platform linux/amd64,linux/arm64 -t ebprod/oqm-core-characteristics:$(cat "./installerSrc/installerProperties.json" | jq -r '.version') .`
+
+For Release:
+
+`docker push ebprod/oqm-core-characteristics:$(cat "./installerSrc/installerProperties.json" | jq -r '.version')`
 
 ### Tests
 
+## Helpful Tips n Tricks
 
+`docker run --rm --network oqm-internal curlimages/curl:8.20.0 -L -v http://oqm-core-characteristics/all | jq`
+
+`time docker run --rm --network oqm-internal curlimages/curl:8.20.0 -L -vvvv -w 'Total: %{time_total}s\n' http://oqm-core-characteristics/all`

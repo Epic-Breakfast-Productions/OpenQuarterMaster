@@ -1,14 +1,19 @@
 FROM python:3.14-slim
 
+EXPOSE 80/tcp
+
 WORKDIR /code
 COPY ./requirements.txt /code/requirements.txt
 COPY ./characteristics.yaml /data/characteristics.yaml
 
+RUN useradd -ms /bin/bash appRunner
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+RUN mkdir -p /data/uis/
 
 COPY ./app /code/app
 
-CMD ["fastapi", "run", "app/main.py", "--port", "80"]
+USER appRunner
 
+CMD ["fastapi", "run", "app/main.py", "--port", "80"]
 HEALTHCHECK --interval=3s --timeout=5s --start-period=5s --retries=20 \
-	CMD curl -sSkL --fail http://localhost:80/health
+	CMD python3 -c "import http.client; conn=conn = http.client.HTTPConnection('localhost', 80); conn.request('GET', '/health'); res = conn.getresponse(); exit(0 if res.status == 200 else 1)"
