@@ -32,7 +32,7 @@ These are the steps to take to perform a release of the software:
 5. Be logged into docker hub with ebprod user `docker login`
 6. Deploy jvm version
    1. Clean/build/push project:
-     - `./gradlew build -Pquarkus.container-image.build=true -Pquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Pquarkus.container-image.push=true`
+     - `./gradlew clean build -Pquarkus.container-image.build=true -Pquarkus.docker.buildx.platform=linux/arm64,linux/amd64 -Pquarkus.container-image.push=true`
    2. Ensure was deployed successfully: https://hub.docker.com/r/ebprod/oqm-core-base_station
 7. Make installers: `./makeInstallers.sh`
 8. Make release for version on Github, attach all installers to it (`build/installers`)
