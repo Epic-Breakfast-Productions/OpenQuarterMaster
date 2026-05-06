@@ -39,7 +39,7 @@ mkdir -p "$buildDir"
 mkdir "$buildDir/$debDir"
 mkdir "$buildDir/$debDir/DEBIAN"
 mkdir -p "$buildDir/$debDir/etc/systemd/system/"
-mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/core/characteristics/"
+mkdir -p "$buildDir/$debDir/etc/oqm/serviceConfig/core/characteristics/runBy/"
 mkdir -p "$buildDir/$debDir/etc/oqm/config/configs/"
 
 install -m 755 -D "$srcDir/core-characteristics-config.list" "$buildDir/$debDir/etc/oqm/serviceConfig/core/characteristics/"
@@ -50,6 +50,16 @@ serviceFileEscaped="$serviceFile" # "$(systemd-escape "$serviceFile")"
 
 cp "$srcDir/$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 sed -i "s/\${version}/$(cat "$configFile" | jq -r '.version')/" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
+
+
+cat <<EOT >> "$buildDir/$debDir/etc/oqm/serviceConfig/core/characteristics/runBy/README.md"
+# Run By Images
+
+The files in this directory are presented to the Characteristics service.
+
+Place images in her to be made available for `runBy` image config.
+
+EOT
 
 # TODO:: license information https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
 # https://www.debian.org/doc/debian-policy/ch-controlfields.html#s-binarycontrolfiles

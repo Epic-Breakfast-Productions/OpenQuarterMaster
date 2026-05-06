@@ -41,6 +41,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --rm \
                                  --name $CONTAINER_NAME \
                                  -v /etc/oqm/static/media/:/app/public/oqm/media:ro \
+                                 -v /etc/oqm/serviceConfig/core/characteristics/runBy/:/app/public/oqm/runBy:ro \
                                  -v /etc/oqm/ui.d/:/data/uis/:ro \
                                  --network=oqm-internal \
                                  -v /etc/oqm/static/media/:/data/oqm/media:ro \
