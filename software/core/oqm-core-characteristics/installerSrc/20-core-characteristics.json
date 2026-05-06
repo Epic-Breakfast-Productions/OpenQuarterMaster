@@ -3,7 +3,7 @@
 		"characteristics": {
 			"internalHost": "oqm-core-characteristics",
 			"internalHttpPort": 80,
-			"internalBaseUri": "http://#{core.characteristics.internalHost}:#{core.baseStation.internalHttpPort}",
+			"internalBaseUri": "http://#{core.characteristics.internalHost}:#{core.characteristics.internalHttpPort}",
 			"characteristics": {
 				"title": " ",
 				"motd": " ",

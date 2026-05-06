@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Script to make installers for OQM- Base Station.
+# Script to make installers for OQM- Characteristics.
 #
 # Intended to be run from the dir this resides
 #
@@ -78,7 +78,7 @@ EOT
 
 cat <<EOT >> "$buildDir/$debDir/DEBIAN/copyright"
 Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
-Upstream-Name: Open QuarterMaster Base Station
+Upstream-Name: Open QuarterMaster Characteristics
 Upstream-Contact: $(cat "$configFile" | jq -r '.copyright.contact')
 Source: $(cat "$configFile" | jq -r '.homepage')
 
@@ -96,7 +96,7 @@ mkdir -p /etc/oqm/serviceConfig/core/characteristics/
 if [ ! -f "/etc/oqm/serviceConfig/core/characteristics/user-config.list" ]; then
 	cat <<EOF >> "/etc/oqm/serviceConfig/core/characteristics/user-config.list"
 # Add your own config here.
-# Configuration here will override those in base-station-config.list
+# Configuration here will override those in characteristics-config.list
 # Reference: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/software/oqm-characteristics
 
 
@@ -127,14 +127,14 @@ cat <<EOT >> "$buildDir/$debDir/DEBIAN/postrm"
 
 systemctl daemon-reload
 # Remove docker image
-if [[ "$(docker images -q oqm-core-base_station 2> /dev/null)" != "" ]]; then
-        docker rmi oqm-core-base_station
+if [[ "$(docker images -q oqm-core-characteristics 2> /dev/null)" != "" ]]; then
+        docker rmi oqm-core-characteristics
         echo "Removed docker image."
 else
         echo "Docker image was already gone."
 fi
-if [ $( docker ps -a | grep oqm-core-base_station | wc -l ) -gt 0 ]; then
-        docker rm oqm-core-base_station
+if [ $( docker ps -a | grep oqm-core-characteristics | wc -l ) -gt 0 ]; then
+        docker rm oqm-core-characteristics
         echo "Removed docker container."
 else
         echo "Docker container was already gone."

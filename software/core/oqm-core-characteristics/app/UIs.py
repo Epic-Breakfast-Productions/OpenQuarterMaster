@@ -145,6 +145,11 @@ class UiUtils:
 			else:
 				print("WARN:: invalid type: " + rawUi["type"].casefold())
 		
+		cls.validate_ui_list(output.core)
+		cls.validate_ui_list(output.metrics)
+		cls.validate_ui_list(output.infra)
+		cls.validate_ui_list(output.plugin)
+		
 		output.core = sorted(output.core, key=lambda c: c.order)
 		output.metrics = sorted(output.metrics, key=lambda c: c.order)
 		output.infra = sorted(output.infra, key=lambda c: c.order)
@@ -160,7 +165,7 @@ class UiUtils:
 	
 	@classmethod
 	def get_ui_icon(cls, category: str, id: str) -> StreamingResponse:
-		if category not in cls.ui_cache:
+		if category not in cls.get_uis_cache():
 			raise HTTPException(status_code=404, detail="Invalid UI category: " + category)
 		
 		ui = list(
