@@ -1,0 +1,17 @@
+#!/bin/bash
+
+systemctl daemon-reload
+# Remove docker image
+if [[ "" != "" ]]; then
+        docker rmi oqm-core-base_station
+        echo "Removed docker image."
+else
+        echo "Docker image was already gone."
+fi
+if [ 0 -gt 0 ]; then
+        docker rm oqm-core-base_station
+        echo "Removed docker container."
+else
+        echo "Docker container was already gone."
+fi
+

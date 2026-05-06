@@ -1,0 +1,8 @@
+Format: https://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: Open QuarterMaster Base Station
+Upstream-Contact: Greg Stewart <greg@epic-breakfast-productions.tech>
+Source: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-characteristics
+
+Files: *
+Copyright: 2021-2026 Epic Breakfast Productions
+License: GPL-3+
