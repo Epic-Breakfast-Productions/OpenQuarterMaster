@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>tech.epic-breakfast-productions.openquartermaster.lib.core</groupId>
 		<artifactId>core-api-lib-quarkus-parent</artifactId>
-		<version>4.4.7</version>
+		<version>4.4.8-SNAPSHOT</version>
 	</parent>
 	<artifactId>core-api-lib-quarkus</artifactId>
 	<name>Core Api Lib Quarkus - Runtime</name>
@@ -37,7 +37,7 @@
 			<dependency>
 				<groupId>org.projectlombok</groupId>
 				<artifactId>lombok</artifactId>
-				<version>1.18.30</version>
+				<version>1.18.46</version>
 				<scope>provided</scope>
 			</dependency>
 	</dependencies>
@@ -71,7 +71,7 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.30</version>
+							<version>1.18.46</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>

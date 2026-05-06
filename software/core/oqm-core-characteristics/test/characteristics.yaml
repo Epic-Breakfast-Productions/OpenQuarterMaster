@@ -1,0 +1,30 @@
+# What to call this instance
+title:
+
+# A message to display
+motd:
+
+# Information directly about who's running the system
+runBy:
+  # The name of the group running the system
+  name:
+  # The email of the group running the system
+  email:
+  # The phone number of the group running the system
+  phone:
+  # The website of the group running the system
+  website:
+  # The path to where to load the logo image *
+  logoImg:
+   # The path to where to load the banner image *
+  bannerImg:
+
+
+# Defines a banner to be displayed at the top of the screen. Example would be a classification marking. All fields are mandatory if specifying a banner.
+banner:
+  # The text to display.
+  text:
+  # The color of the text +
+  textColor:
+  # The color of the background +
+  backgroundColor:
