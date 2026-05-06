@@ -24,12 +24,26 @@ The endpoint to get characteristics data is:
 Format:
 
 ```json
-
+{
+  "title": null,
+  "motd": null,
+  "runBy": {
+    "name": null,
+    "email": null,
+    "phone": null,
+    "website": null,
+    "hasLogoImg": false,
+    "hasBannerImg": false
+  },
+  "banner": { //this can be null if no values
+    "text": null,
+    "textColor": null,
+    "backgroundColor": null
+  }
+}
 ```
 
-
-These values match 1:1 in the characteristics file data outlined below.
-
+These values match 1:1 in the characteristics file data outlined in [config](./configuration.md).
 
 ### Images
 

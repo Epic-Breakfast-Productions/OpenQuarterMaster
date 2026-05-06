@@ -6,6 +6,7 @@ This service is responsible for serving:
 
  - "characteristic" data; information about the running system to label or otherwise identify it:
    - "Run By" information
+   - Banner declaration; I.E, for system classification
  - Available UI data; what UI's are available and how to get to them for easy navigation and integration
 
 Further documentation available [here](./docs/README.md).
@@ -48,9 +49,9 @@ Simply run `pytest` in the project root.
 
 ## Helpful Tips n Tricks
 
-`docker run --rm --network oqm-internal curlimages/curl:8.20.0 -L -v http://oqm-core-characteristics/all | jq`
+`docker run --rm --network oqm-internal curlimages/curl:latest -L -v http://oqm-core-characteristics/all | jq`
 
-`time docker run --rm --network oqm-internal curlimages/curl:8.20.0 -L -vvvv -w 'Total: %{time_total}s\n' http://oqm-core-characteristics/all`
+`time docker run --rm --network oqm-internal curlimages/curl:latest -L -vvvv -w 'Total: %{time_total}s\n' http://oqm-core-characteristics/all`
 
 ## TODOs:
 

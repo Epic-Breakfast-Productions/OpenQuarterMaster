@@ -1,4 +1,0 @@
-#!/bin/bash
-
-systemctl disable "oqm-core-characteristics.service"
-systemctl stop "oqm-core-characteristics.service"

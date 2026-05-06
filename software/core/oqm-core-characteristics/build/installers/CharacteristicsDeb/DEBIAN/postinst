@@ -1,5 +1,0 @@
-#!/bin/bash
-
-systemctl daemon-reload
-systemctl enable "oqm-core-characteristics.service"
-systemctl start "oqm-core-characteristics.service"

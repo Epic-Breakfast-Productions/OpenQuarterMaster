@@ -49,6 +49,7 @@ class ImageUtils:
 					image.verify()
 			except (IOError, SyntaxError) as e:
 				print(f"ERROR: Image at path does not pass verification: {imagePath}")
+				return None
 			
 			try:
 				with Image.open(imagePath) as image:
@@ -62,7 +63,8 @@ class ImageUtils:
 						img_byte_arr.getvalue()
 					)
 			except (IOError, SyntaxError) as e:
-				print(f"ERROR: Image at path does pass verification: {imagePath}")
+				print(f"ERROR: Image at path was not able to be read: {imagePath}")
+				return None
 	
 	@classmethod
 	def get_image_response(cls, image: CachedImage | None) -> StreamingResponse:

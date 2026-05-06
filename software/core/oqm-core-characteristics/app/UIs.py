@@ -150,9 +150,6 @@ class UiUtils:
 		output.infra = sorted(output.infra, key=lambda c: c.order)
 		output.plugin = sorted(output.plugin, key=lambda c: c.order)
 		
-		
-		
-		
 		cls.ui_cache = output
 		
 		return output
