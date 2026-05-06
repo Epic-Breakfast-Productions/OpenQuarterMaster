@@ -1,19 +1,14 @@
 # OQM Core Characteristics Service
 
+[Back](../README.md)
+
 This service is responsible for serving:
 
  - "characteristic" data; information about the running system to label or otherwise identify it:
    - "Run By" information
-   - Logo / Banner
-   - System Banner
  - Available UI data; what UI's are available and how to get to them for easy navigation and integration
 
-## TODOs:
-
- - Characteristics:
-   - Handle images from URL?
-
-## Configuration
+Further documentation available [here](./docs/README.md).
 
 ## Developing
 
@@ -22,7 +17,8 @@ This service is responsible for serving:
 #### Initial Setup:
 
  1. `python -m venv .venv`
- 2. `pip install -r requirements.txt`
+ 2. `source .venv/bin/activate`
+ 3. `pip install -r requirements.txt`
 
 #### Activate venv:
 
@@ -42,8 +38,21 @@ For Release:
 
 ### Tests
 
+#### Setup
+
+In your virtual env, run: `pip install -r requirements-test.txt`
+
+#### Running
+
+Simply run `pytest` in the project root.
+
 ## Helpful Tips n Tricks
 
 `docker run --rm --network oqm-internal curlimages/curl:8.20.0 -L -v http://oqm-core-characteristics/all | jq`
 
 `time docker run --rm --network oqm-internal curlimages/curl:8.20.0 -L -vvvv -w 'Total: %{time_total}s\n' http://oqm-core-characteristics/all`
+
+## TODOs:
+
+ - Characteristics:
+   - Handle images from URL?

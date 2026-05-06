@@ -4,7 +4,7 @@ EXPOSE 80/tcp
 
 WORKDIR /code
 COPY ./requirements.txt /code/requirements.txt
-COPY ./characteristics.yaml /data/characteristics.yaml
+COPY test/characteristics.yaml /data/characteristics.yaml
 
 RUN useradd -ms /bin/bash appRunner
 RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
