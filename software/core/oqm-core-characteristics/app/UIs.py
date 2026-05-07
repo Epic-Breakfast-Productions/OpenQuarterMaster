@@ -17,6 +17,7 @@ class UiEndpoints:
 
 @dataclass()
 class UiResponse:
+	order: int|None
 	name: str
 	id: str
 	description: str
@@ -37,6 +38,7 @@ class UiCache:
 	
 	def to_response(self) -> UiResponse | None:
 		return UiResponse(
+			order=self.order,
 			name=self.name,
 			id=self.id,
 			description=self.description,
