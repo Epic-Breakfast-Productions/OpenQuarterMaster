@@ -50,6 +50,6 @@ def uis_get():
 	return UiUtils.get_uis_return()
 
 
-@app.get("/uis/{category}/{index}/image")
-def uis_get(category: str, index: int):
-	return UiUtils.get_ui_icon(category, index)
+@app.get("/uis/{category}/{uiId}/icon")
+def uis_get(category: str, uiId: str):
+	return UiUtils.get_ui_icon(category, uiId)

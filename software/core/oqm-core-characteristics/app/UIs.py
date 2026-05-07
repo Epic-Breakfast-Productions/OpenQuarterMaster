@@ -18,6 +18,7 @@ class UiEndpoints:
 @dataclass()
 class UiResponse:
 	name: str
+	id: str
 	description: str
 	baseUri: str
 	icon: bool
@@ -37,6 +38,7 @@ class UiCache:
 	def to_response(self) -> UiResponse | None:
 		return UiResponse(
 			name=self.name,
+			id=self.id,
 			description=self.description,
 			baseUri=self.baseUri,
 			icon=self.icon is not None,
@@ -67,8 +69,16 @@ class UisCache:
 			list(map(lambda c: c.to_response(), self.infra)),
 		)
 	
-	def __getitem__(self, key):
-		return getattr(self, key)
+	def getCategory(self, category: str):
+		if category == "core":
+			return self.core
+		if category == "plugin":
+			return self.plugin
+		if category == "metrics":
+			return self.metrics
+		if category == "infra":
+			return self.infra
+		raise ValueError(category)
 
 
 class UiUtils:
@@ -164,19 +174,20 @@ class UiUtils:
 		return cls.get_uis_cache().to_response()
 	
 	@classmethod
-	def get_ui_icon(cls, category: str, id: str) -> StreamingResponse:
-		if category not in cls.get_uis_cache():
+	def get_ui_icon(cls, category: str, uiId: str) -> StreamingResponse:
+		try:
+			ui = list(
+				filter(
+					lambda
+						x: uiId == x.id,
+					cls.get_uis_cache().getCategory(category)
+				)
+			)
+		except ValueError as e:
 			raise HTTPException(status_code=404, detail="Invalid UI category: " + category)
 		
-		ui = list(
-			filter(
-				lambda
-					x: id == x.id,
-				cls.get_uis_cache()[category]
-			)
-		)
 		if len(ui) == 0:
-			raise HTTPException(status_code=404, detail="Invalid UI ID: " + id)
+			raise HTTPException(status_code=404, detail="Invalid UI ID: " + uiId)
 		ui = ui[0]
 		
 		return ImageUtils.get_image_response(ui.icon)
