@@ -887,6 +887,22 @@ Description: Base Station instance for Open QuarterMaster.
 Licence: GPL-3+
 
 Package: oqm-core-base+station
+Version: 1.17.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.11.0), oqm-infra-keycloak (>= 2.0.0), oqm-infra-traefik (>= 1.0.0), oqm-core-api (>= 4.4.0), oqm-core-characteristics (>= 1.0.1)
+Recommends: oqm-plugin-ext_item_search
+Filename: ./oqm-core-base+station_1.17.0_all.deb
+Size: 5398
+MD5sum: 427fa9abec06e53b74e309c1bc05b30b
+SHA1: 0bc20e8e17f65eb3a7424ab9d339a4dc945298e5
+SHA256: c895589849fc1f7930747a61b99b6d1b8630670c74fbe3d11cafefd1a6c690d5
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-core-base+station
 Version: 1.2.0
 Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
@@ -1295,6 +1311,21 @@ Size: 2990
 MD5sum: 8a83a16d013d70d9a3ad1d42baf773a6
 SHA1: 5be2a2d4884eb8531e5e059a34c190282aadef41
 SHA256: ce517c8164a7b576cc995fbcc3b2f3735027d5e55dd025952599f6df7cada669
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-characteristics
+Description: Characteristics instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-core-characteristics
+Version: 1.0.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.11.0)
+Filename: ./oqm-core-characteristics_1.0.1_all.deb
+Size: 3030
+MD5sum: f5d79e8ec4cf3152608ff3c96fc88110
+SHA1: fc5285e11ad1a0e93e2265db859d08a063e0a030
+SHA256: a7f05413deb0e9d4f4389a1dd3e02aa76bc4d5582a93c4a1a5c6e0d88cb123cc
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-characteristics
 Description: Characteristics instance for Open QuarterMaster.
@@ -1790,6 +1821,21 @@ Size: 18022
 MD5sum: 4557b768cfec57c4f6f87b9b5e6fbdb1
 SHA1: 31eadfe5e893f1cea23f68977ffc749b278f221b
 SHA256: c40096d0ba13f571d25f9bd505651069b7ac9b7ffa3be22f938f32c470fbd1c5
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/deployment/Single%20Host/Infrastructure/keycloak
+Description: Keycloak instance for Open QuarterMaster.
+Developer: EBP
+
+Package: oqm-infra-keycloak
+Version: 2.0.2
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0), oqm-manager-station+captain (>= 2.11.0), oqm-infra-traefik (>= 1.0.0), oqm-infra-postgres (>= 1.1.0), python3 (>= 3.10.0), python3-filelock, python3-docker, python3-watchdog
+Filename: ./oqm-infra-keycloak_2.0.2_all.deb
+Size: 18064
+MD5sum: 634307fa79aa8adc661c82ae9300d0be
+SHA1: 3a1f7d526135c5577b267b24e6130f20ba1505bc
+SHA256: d1b5ea586ffcc2baa161d03e433cf2a6fad70f958cf0b946f7a57c9bca8f771f
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/deployment/Single%20Host/Infrastructure/keycloak
 Description: Keycloak instance for Open QuarterMaster.
@@ -2601,6 +2647,22 @@ Size: 43240
 MD5sum: 894d37755bea35e599e4b10cad1bcb7c
 SHA1: db357d0414adbc17cc419d27a2aba9bc236524bd
 SHA256: 98f4690ec005fa8e5b70e82d8f29a2d042cc3b8785cff804d677d17d5cf1a89e
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/metrics
+Description: Otel-LGTM instance for Open QuarterMaster.
+Licence: null
+
+Package: oqm-metrics-otel+lgtm
+Version: 1.0.1
+Architecture: all
+Maintainer: null
+Depends: oqm-manager-station+captain (>= 2.11.0)
+Recommends: null
+Filename: ./oqm-metrics-otel+lgtm_1.0.1_all.deb
+Size: 43262
+MD5sum: 5e625888f71c3d25849a3c7b4280c4ff
+SHA1: 2dc7be93c13502c3131f76d822445a07a14718a2
+SHA256: 5236b0e493731996ae385c190a93bb983a6559f6d261c02effbf73660e25da6f
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/metrics
 Description: Otel-LGTM instance for Open QuarterMaster.
