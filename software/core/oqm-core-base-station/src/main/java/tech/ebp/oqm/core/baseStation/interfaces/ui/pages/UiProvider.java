@@ -74,12 +74,12 @@ public abstract class UiProvider extends RestInterface {
 		
 //		uniMap.put("characteristics", this.oqmCoreCharacteristicsService.allInfo());
 		
-		if(uniMap.isEmpty()){
-			return Uni.createFrom().item(Response.ok(
-				pageTemplate,
-				MediaType.TEXT_HTML_TYPE
-			).build());
-		}
+//		if(uniMap.isEmpty()){
+//			return Uni.createFrom().item(Response.ok(
+//				pageTemplate,
+//				MediaType.TEXT_HTML_TYPE
+//			).build());
+//		}
 		
 		HashMap<String, Uni> uniMapCopy = new HashMap<>(uniMap);
 		
@@ -127,6 +127,13 @@ public abstract class UiProvider extends RestInterface {
 	}
 	protected Uni<Response> getUni() {
 		return this.getUni(
+			Map.of()
+		);
+	}
+	
+	protected Uni<Response> getUni(TemplateInstance pageTemplate) {
+		return this.getUni(
+			pageTemplate,
 			Map.of()
 		);
 	}
