@@ -43,7 +43,6 @@ quarkus.rest-client."oqm.core.api-oidc".tls-configuration-name=ext.ingress
 
 runningInfo.protocol=https
 runningInfo.hostname={system.hostname}
-runningInfo.depotUri={infra.homepage.externalBaseUri}
 
 # Characteristics config
 oqm.core.characteristics.baseUri={core.characteristics.internalBaseUri}

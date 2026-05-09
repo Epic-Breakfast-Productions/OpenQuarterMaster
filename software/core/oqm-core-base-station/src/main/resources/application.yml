@@ -23,7 +23,6 @@ runningInfo:
   hostnamePort: ${runningInfo.hostname}:${runningInfo.port}
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
   fromEmail: no-reply@${runningInfo.hostname}
-  depotUri: " "
   
 ui:
   defaults:
@@ -221,9 +220,6 @@ smallrye:
                 haveBannerImg: true
                 haveLogoImg: true
                 
-
-  runningInfo:
-    depotUri: "Hello World"
   service:
     runBy:
       name: The Developers
