@@ -18,4 +18,11 @@ public interface OqmCoreCharacteristicsConfig {
 	 */
 	String baseUri();
 	
+	/**
+	 * The category of the consuming service this is. Used for UI display.
+	 */
+	String serviceCategory();
+	
+	/** The id of the consuming service. Used for UI display. */
+	String serviceId();
 }

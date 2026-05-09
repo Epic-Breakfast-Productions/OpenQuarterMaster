@@ -11,6 +11,10 @@ public class CoreCharacteristicsLibHealthCheckTest {
 	
 	@RegisterExtension
 	static final QuarkusUnitTest config = new QuarkusUnitTest()
+												  .withConfiguration("""
+													oqm.core.characteristics.serviceCategory=core
+													oqm.core.characteristics.serviceId=fooService
+													""")
 											  .withEmptyApplication()
 													//TODO:: setting this breaks things.... why?
 //												  .overrideConfigKey(Constants.CONFIG_ROOT_NAME + ".health.enabled", "true")

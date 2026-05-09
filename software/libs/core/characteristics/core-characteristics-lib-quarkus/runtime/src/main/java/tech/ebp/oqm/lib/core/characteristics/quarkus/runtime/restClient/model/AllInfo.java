@@ -12,5 +12,5 @@ import tech.ebp.oqm.lib.core.characteristics.quarkus.runtime.restClient.model.ui
 @NoArgsConstructor
 public class AllInfo {
 	private Characteristics characteristics;
-	private Uis ui;
+	private Uis uis;
 }

@@ -13,6 +13,7 @@ import org.jboss.logging.Logger;
 import tech.ebp.oqm.lib.core.characteristics.quarkus.deployment.config.CoreCharacteristicsLibBuildTimeConfig;
 import tech.ebp.oqm.lib.core.characteristics.quarkus.deployment.testContainers.OqmCoreCharacteristicsWebServiceContainer;
 import tech.ebp.oqm.lib.core.characteristics.quarkus.runtime.Constants;
+import tech.ebp.oqm.lib.core.characteristics.quarkus.runtime.config.OqmCoreCharacteristicsConfig;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -60,7 +61,7 @@ class CoreCharacteristicsLibQuarkusProcessor {
 		log.info("Starting new OQM Core Characteristics dev container");
 		OqmCoreCharacteristicsWebServiceContainer
 			container =
-			new OqmCoreCharacteristicsWebServiceContainer(config.devservices());
+			new OqmCoreCharacteristicsWebServiceContainer(config);
 		
 		container.start();
 		
@@ -69,7 +70,11 @@ class CoreCharacteristicsLibQuarkusProcessor {
 	
 	
 	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
-	public List<DevServicesResultBuildItem> createContainer(LaunchModeBuildItem launchMode, CoreCharacteristicsLibBuildTimeConfig config, CuratedApplicationShutdownBuildItem closeBuildItem) {
+	public List<DevServicesResultBuildItem> createContainer(
+		LaunchModeBuildItem launchMode,
+		CoreCharacteristicsLibBuildTimeConfig config,
+		CuratedApplicationShutdownBuildItem closeBuildItem
+	) {
 		log.info("Setting up OQM Core API related dev services.");
 		//TODO:: handle needing to restart services?
 		List<DevServicesResultBuildItem> output = new ArrayList<>();

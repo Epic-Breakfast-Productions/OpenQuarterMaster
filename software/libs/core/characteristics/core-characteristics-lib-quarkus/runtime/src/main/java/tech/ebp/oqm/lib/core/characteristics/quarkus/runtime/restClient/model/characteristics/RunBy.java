@@ -35,4 +35,8 @@ public class RunBy {
 		return this.hasName() || this.hasEmail() || this.hasPhone() || this.hasWebsite();
 	}
 	
+	public boolean hasContactInfo(){
+		return this.hasEmail() || this.hasPhone();
+	}
+	
 }
