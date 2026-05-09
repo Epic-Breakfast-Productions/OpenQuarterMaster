@@ -51,13 +51,12 @@ serviceFileEscaped="$serviceFile" # "$(systemd-escape "$serviceFile")"
 cp "$srcDir/$serviceFile" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 sed -i "s/\${version}/$(cat "$configFile" | jq -r '.version')/" "$buildDir/$debDir/etc/systemd/system/$serviceFileEscaped"
 
-
 cat <<EOT >> "$buildDir/$debDir/etc/oqm/serviceConfig/core/characteristics/runBy/README.md"
 # Run By Images
 
 The files in this directory are presented to the Characteristics service.
 
-Place images in her to be made available for `runBy` image config.
+Place images in here to be made available for run by image config.
 
 EOT
 

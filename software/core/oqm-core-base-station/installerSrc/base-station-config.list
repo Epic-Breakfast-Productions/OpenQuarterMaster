@@ -45,6 +45,8 @@ runningInfo.protocol=https
 runningInfo.hostname={system.hostname}
 runningInfo.depotUri={infra.homepage.externalBaseUri}
 
+# Characteristics config
+oqm.core.characteristics.baseUri={core.characteristics.internalBaseUri}
 
 {% if metrics is defined %}
 # Metrics Config:
