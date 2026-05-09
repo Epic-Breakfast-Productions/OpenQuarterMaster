@@ -49,7 +49,10 @@ Ingests:
 	{#if navbar == "full"}
 	<div class="container-fluid">
 		<a class="navbar-brand p-0" href="{rootPrefix}/overview">
-			<img src="{rootPrefix}/media/logo.svg" alt="" id="topOqmLogo">
+			{#if characteristics.getCharacteristics().getRunBy().hasLogoImg()}
+				<img src="{rootPrefix}/api/passthrough/characteristics/runBy/logo"  class="topNavImg" alt="Run By Logo"/>
+			{/if}
+			<img src="{rootPrefix}/media/logo.svg" alt="" id="topOqmLogo" class="topNavImg">
 		</a>
 		<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavBar"
 			aria-controls="mainNavBar" aria-expanded="false" aria-label="Toggle navigation">
