@@ -83,7 +83,7 @@ public interface CoreCharacteristicsLibBuildTimeConfig {
 			 *
 			 * @return The version/ tag of the core api container image
 			 */
-			@WithDefault("1.0.0")
+			@WithDefault("1.0.1")
 			String version();
 			
 			/**
