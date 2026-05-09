@@ -19,4 +19,7 @@ export class OqmDbUtils extends PageUtility {
 			this.navDbSelectForm.trigger('reset');
 		}
 	}
+	static {
+		window.OqmDbUtils = this;
+	}
 }
