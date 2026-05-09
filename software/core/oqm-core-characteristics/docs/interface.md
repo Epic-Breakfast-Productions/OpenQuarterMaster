@@ -68,6 +68,7 @@ Format:
 
 ```json
 {
+   "home": "",// homepage of the system
    "core": [
       // UI entries
    ],

@@ -50,6 +50,7 @@ class UiCache:
 
 @dataclass()
 class UisResponse:
+	home: str
 	core: list[UiResponse] = field(default_factory=list)
 	plugin: list[UiResponse] = field(default_factory=list)
 	metrics: list[UiResponse] = field(default_factory=list)
@@ -58,6 +59,7 @@ class UisResponse:
 
 @dataclass()
 class UisCache:
+	home: str
 	core: list[UiCache] = field(default_factory=list)
 	plugin: list[UiCache] = field(default_factory=list)
 	metrics: list[UiCache] = field(default_factory=list)
@@ -65,6 +67,7 @@ class UisCache:
 	
 	def to_response(self) -> UisResponse:
 		return UisResponse(
+			self.home,
 			list(map(lambda c: c.to_response(), self.core)),
 			list(map(lambda c: c.to_response(), self.plugin)),
 			list(map(lambda c: c.to_response(), self.metrics)),
@@ -84,7 +87,7 @@ class UisCache:
 
 
 class UiUtils:
-	ui_dir = os.getenv('UI_DIR', '/data/uis/')
+	ui_dir = os.getenv('CHARACTERISTICS_UI_DIR', '/data/uis/')
 	ui_cache = None
 	
 	@classmethod
@@ -141,7 +144,7 @@ class UiUtils:
 				with open(curUiFileLoc) as curUiFile:
 					uisRawData.append(json.load(curUiFile))
 		
-		output: UisCache = UisCache()
+		output: UisCache = UisCache(os.getenv('UIS_HOME_URL', " "))
 		
 		for rawUi in uisRawData:
 			uiCache = cls.__get_ui(rawUi)
