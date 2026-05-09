@@ -61,7 +61,7 @@ banner:
 
 ## UI's
 
-UIs are defined by files listed in the direcgtory specified by `UIS_DATA_DIR`, or `/data/uis/` by default.
+UIs are defined by files listed in the directory specified by `CHARACTERISTICS_UI_DIR`, or `/data/uis/` by default.
 
 Format of each file:
 
@@ -87,6 +87,10 @@ Format of each file:
 These get interpolated into the format that is returned by the app.
 
 Image paths are relative to the directory specified by the `CHARACTERISTICS_UIS_ICON_DIR` env var.
+
+### Homepage
+
+The service also presents the system's homepage uri. Set this with `UIS_HOME_URL`.
 
 ## Single Node Host
 

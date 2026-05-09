@@ -31,14 +31,14 @@ def characteristics_get():
 	return CharacteristicsUtils.get_characteristics_return()
 
 
-@app.get("/characteristics/logo")
+@app.get("/characteristics/runBy/logo")
 def characteristics_get_logo():
 	return ImageUtils.get_image_response(
 		CharacteristicsUtils.get_characteristics_cache().runBy.logoImg
 	)
 
 
-@app.get("/characteristics/banner")
+@app.get("/characteristics/runBy/banner")
 def characteristics_get_logo():
 	return ImageUtils.get_image_response(
 		CharacteristicsUtils.get_characteristics_cache().runBy.bannerImg

@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.baseStation.interfaces.ui.pages;
 
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
+import io.smallrye.mutiny.Uni;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -32,15 +33,12 @@ public class YouUi extends UiProvider {
 	@Path("you")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Produces(MediaType.TEXT_HTML)
-	public Response overview() {
-		Response.ResponseBuilder responseBuilder = Response.ok(
+	public Uni<Response> overview() {
+		return this.getUni(
 			this.setupPageTemplate(pageTemplate)
 				.data("jwt", this.getUserTokenStr())
-			,
-			MediaType.TEXT_HTML_TYPE
 		);
 		
-		return responseBuilder.build();
 	}
 	
 }

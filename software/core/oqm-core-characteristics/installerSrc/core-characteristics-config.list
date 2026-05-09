@@ -1,7 +1,7 @@
 # Default config for oqm core characteristics server.
 
-CHARACTERISTICS_UIS_ICON_DIR=/app/public/oqm/media
-CHARACTERISTICS_RUNBY_IMG_DIR=/app/public/oqm/runBy
+CHARACTERISTICS_UIS_ICON_DIR=/data/oqm/media
+CHARACTERISTICS_RUNBY_IMG_DIR=/data/runBy
 
 # Basic details
 CHARACTERISTICS_VAL_TITLE={core.characteristics.characteristics.title}
@@ -19,3 +19,6 @@ CHARACTERISTICS_VAL_RUNBY_BANNERIMG={core.characteristics.characteristics.runBy.
 CHARACTERISTICS_VAL_BANNER_TEXT={core.characteristics.characteristics.banner.text}
 CHARACTERISTICS_VAL_BANNER_TEXTCOLOR={core.characteristics.characteristics.banner.textColor}
 CHARACTERISTICS_VAL_BANNER_BACKGROUNDCOLOR={core.characteristics.characteristics.banner.backgroundColor}
+
+# Homepage
+UIS_HOME_URL={infra.homepage.externalBaseUri}

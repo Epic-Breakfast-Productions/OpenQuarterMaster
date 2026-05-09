@@ -43,6 +43,7 @@ class RunByCache:
 	website: str | None
 	logoImg: CachedImage | None
 	bannerImg: CachedImage | None
+	# TODO:: add support info
 	
 	def to_response(self) -> RunByReturn | None:
 		return RunByReturn(
