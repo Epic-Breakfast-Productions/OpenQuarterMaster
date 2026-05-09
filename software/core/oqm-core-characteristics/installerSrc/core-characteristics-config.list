@@ -1,7 +1,7 @@
 # Default config for oqm core characteristics server.
 
-CHARACTERISTICS_UIS_ICON_DIR=/app/public/oqm/media
-CHARACTERISTICS_RUNBY_IMG_DIR=/app/public/oqm/runBy
+CHARACTERISTICS_UIS_ICON_DIR=/data/oqm/media
+CHARACTERISTICS_RUNBY_IMG_DIR=/data/runBy
 
 # Basic details
 CHARACTERISTICS_VAL_TITLE={core.characteristics.characteristics.title}
