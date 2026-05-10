@@ -12,8 +12,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.headers.Header;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
@@ -32,6 +34,8 @@ import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 
 import java.io.IOException;
+
+import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Slf4j
 @Path(EndpointProvider.ROOT_API_ENDPOINT_V1_DB_AWARE + "/media/fileAttachment")
@@ -58,32 +62,21 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Searched.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = SearchResult.class
-			)
-		)
+		description = "Files searched for."
 	)
 	@APIResponse(
 		responseCode = "400",
 		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
+		content = @Content(mediaType = APPLICATION_JSON)
 	)
 	@APIResponse(
 		responseCode = "404",
 		description = "Bad request given, could not find object at given id.",
-		content = @Content(mediaType = "text/plain")
+		content = @Content(mediaType = APPLICATION_JSON)
 	)
-	@APIResponse(
-		responseCode = "410",
-		description = "Object requested has been deleted.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response search(
+	public SearchResult<FileAttachmentGet> search(
 		@BeanParam FileAttachmentSearch searchObject
 	) {
 		return super.search(searchObject);
@@ -95,23 +88,17 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "Object added. Returns the metadata of the created file."
 	)
 	@APIResponse(
 		responseCode = "400",
 		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
+		content = @Content(mediaType = APPLICATION_JSON)
 	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Response add(
+	@Produces(APPLICATION_JSON)
+	public FileAttachmentGet add(
 		@BeanParam FileUploadBody body
 	) throws IOException {
 		return super.add(body);
@@ -147,10 +134,10 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		description = "Object requested has been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public FileAttachmentGet get(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.get(id);
 	}
@@ -188,9 +175,9 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
 	public Integer updateFile(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		@BeanParam FileUploadBody body
 	) throws IOException {
 		return super.updateFile(id, body);
@@ -204,13 +191,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object updated.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = Integer.class
-			)
-		)
+		description = "Object updated."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -228,11 +209,12 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		content = @Content(mediaType = "text/plain")
 	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
 	public FileAttachmentGet updateObj(
 		@PathParam("id")
-		String id,
+		ObjectId id,
+		@Schema(type = SchemaType.OBJECT, implementation = FileAttachment.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
 		return this.getFileService().fileObjToGet(
@@ -277,11 +259,11 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		description = "Object requested has been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public FileMetadata getRevision(
 		@PathParam("id")
-		String id,
+		ObjectId id,
 		@PathParam("rev")
 		String revision
 	) throws IOException {
@@ -296,12 +278,13 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@APIResponse(
 		responseCode = "200",
 		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = MainObject.class
-			)
-		)
+		headers = {
+			@Header(name = "Content-Disposition", description = "Denotes the original filename as the name of the file"),
+			@Header(name = "hash-md5", description = "The MD5 hash of the file"),
+			@Header(name = "hash-sha1", description = "The SHA1 hash of the file"),
+			@Header(name = "hash-sha256", description = "The SHA256 hash of the file"),
+			@Header(name = "upload-datetime", description = "When the file was uploaded")
+		}
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -322,7 +305,8 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getRevisionData(
 		@PathParam("id")
-		String id,
+		ObjectId id,
+		@Parameter(description = "The revision number of the file. Can also use \"latest\" and \"first\"")
 		@PathParam("rev")
 		String revision
 	) throws IOException {
@@ -336,13 +320,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = MainObject.class
-			)
-		)
+		description = "File deleted."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -359,11 +337,11 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		description = "Object requested has been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public FileAttachmentGet remove(
 		@PathParam("id")
-		String id
+		ObjectId id
 	) {
 		return super.remove(id);
 	}
@@ -375,13 +353,7 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			)
-		}
+		description = "Object history searched."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -393,11 +365,11 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 		description = "No history found for object with that id.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
-	public Response getHistoryForObject(
-		@PathParam("id") String id,
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
+		@PathParam("id") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);
@@ -410,17 +382,9 @@ public class FileAttachmentCrud extends MainFileObjectProvider<FileAttachment, F
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					implementation = SearchResult.class
-				)
-			)
-		}
+		description = "History Searched."
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
 	public SearchResult<ObjectHistoryEvent> searchHistory(

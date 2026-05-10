@@ -185,10 +185,6 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		return updated;
 	}
 
-	public T update(String oqmDbIdOrName, ClientSession cs, String id, ObjectNode updateJson, InteractingEntity interactingEntity, HistoryDetail ... details) {
-		return this.update(oqmDbIdOrName, cs, new ObjectId(id), updateJson, interactingEntity, details);
-	}
-
 		/**
 		 * Adds an object to the collection. Adds a created history event and the object's new object id to that object in-place.
 		 *
@@ -290,10 +286,6 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		return this.remove(oqmDbIdOrName, null, objectId, entity);
 	}
 	
-	public T remove(String oqmDbIdOrName, String objectId, InteractingEntity entity) {
-		return this.remove(oqmDbIdOrName, new ObjectId(objectId), entity);
-	}
-	
 	@Override
 	public T remove(String oqmDbIdOrName, ObjectId objectId) {
 		//TODO:: throw better
@@ -350,10 +342,6 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 	
 	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, ObjectId objectId) {
 		return this.getHistoryService().getHistoryFor(oqmDbIdOrName, objectId);
-	}
-	
-	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, String objectId) {
-		return this.getHistoryFor(oqmDbIdOrName, new ObjectId(objectId));
 	}
 	
 	public List<ObjectHistoryEvent> getHistoryFor(String oqmDbIdOrName, T object) {

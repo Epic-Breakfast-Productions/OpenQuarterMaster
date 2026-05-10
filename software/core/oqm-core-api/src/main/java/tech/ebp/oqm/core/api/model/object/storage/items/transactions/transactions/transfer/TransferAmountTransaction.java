@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 
 import javax.measure.Quantity;
@@ -18,6 +19,7 @@ import javax.measure.Quantity;
 @Data
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
+@Schema(title = "TransferAmountTransaction", description = "A transaction to transfer an amount between stored objects.")
 public class TransferAmountTransaction extends TransferTransaction {
 	
 	/**
@@ -56,6 +58,7 @@ public class TransferAmountTransaction extends TransferTransaction {
 	private ObjectId toStored;
 	
 	@Override
+	@Schema(constValue = "TRANSFER_AMOUNT", readOnly = true, required = true, examples = "TRANSFER_AMOUNT")
 	public TransactionType getType() {
 		return TransactionType.TRANSFER_AMOUNT;
 	}

@@ -14,6 +14,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.core.baseStation.interfaces.RestInterface;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.SearchObject;
+import tech.ebp.oqm.lib.core.characteristics.quarkus.runtime.service.OqmCoreCharacteristicsService;
 
 import java.util.*;
 
@@ -27,7 +28,10 @@ public abstract class UiProvider extends RestInterface {
 	
 	@Inject
 	Span span;
-
+	
+	@Inject
+	OqmCoreCharacteristicsService oqmCoreCharacteristicsService;
+	
 	protected String getRootPrefix(){
 		return this.forwardedPrefix.orElse("");
 	}
@@ -63,28 +67,35 @@ public abstract class UiProvider extends RestInterface {
 	}
 	
 	protected Uni<Response> getUni(TemplateInstance pageTemplate, Map<String, Uni> uniMap) {
-		Uni<Object> userInfoUni = this.getOqmCoreApiClient().interactingEntityGetSelf(this.getBearerHeaderStr())
-										.map((ObjectNode userInfoJs)->{
-											return getUserInfo().setId(userInfoJs.get("id").toString().replaceAll("\"", ""));
-										});
-		if(uniMap.isEmpty()){
-			return userInfoUni.map((info)->{
-				return Response.ok(
-					pageTemplate,
-					MediaType.TEXT_HTML_TYPE
-				).build();
-			});
-		}
-		TreeSet<String> keys = new TreeSet<>(uniMap.keySet());
+//		Uni<Object> userInfoUni = this.getOqmCoreApiClient().interactingEntityGetSelf(this.getBearerHeaderStr())
+//										.map((ObjectNode userInfoJs)->{
+//											return getUserInfo().setId(userInfoJs.get("id").toString().replaceAll("\"", ""));
+//										});
+		
+//		uniMap.put("characteristics", this.oqmCoreCharacteristicsService.allInfo());
+		
+//		if(uniMap.isEmpty()){
+//			return Uni.createFrom().item(Response.ok(
+//				pageTemplate,
+//				MediaType.TEXT_HTML_TYPE
+//			).build());
+//		}
+		
+		HashMap<String, Uni> uniMapCopy = new HashMap<>(uniMap);
+		
+		uniMapCopy.put("characteristics", this.oqmCoreCharacteristicsService.allInfo());
+		
+		
+		TreeSet<String> keys = new TreeSet<>(uniMapCopy.keySet());
 		
 		UniJoin.Builder<Object> uniJoinBuilder = Uni.join().builder();
 		
 		
 		for(String key : keys){
-			uniJoinBuilder.add(uniMap.get(key));
+			uniJoinBuilder.add(uniMapCopy.get(key));
 		}
 		// add after others, to ensure we get it done.
-		uniJoinBuilder.add(userInfoUni);
+//		uniJoinBuilder.add(userInfoUni);
 		
 		return uniJoinBuilder.joinAll()
 				   .andCollectFailures()
@@ -116,6 +127,13 @@ public abstract class UiProvider extends RestInterface {
 	}
 	protected Uni<Response> getUni() {
 		return this.getUni(
+			Map.of()
+		);
+	}
+	
+	protected Uni<Response> getUni(TemplateInstance pageTemplate) {
+		return this.getUni(
+			pageTemplate,
 			Map.of()
 		);
 	}

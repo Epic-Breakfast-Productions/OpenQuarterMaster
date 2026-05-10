@@ -29,10 +29,19 @@ export class KeywordAttUtils extends PageUtility {
 	}
 
 	static getAttDisplay(key, val) {
-		let output = $('<span class="badge bg-secondary m-2"><span class="attKey user-select-all"></span> <i class="fas fa-equals"></i> <code class="attVal user-select-all"></code></span>');
+		let output = $('<span class="badge bg-secondary m-2"><span class="attKey user-select-all"></span> = <code class="attVal user-select-all"></code></span>');
 
 		output.find(".attKey").text(key);
-		output.find(".attVal").text(val);
+
+		if(val.length > 50){
+			let abbr = $('<abbr></abbr>');
+			abbr.text(val.slice(0, 47) + '...');
+			abbr.attr("title", val);
+			output.find(".attVal").append(abbr);
+		} else {
+			output.find(".attVal").text(val);
+		}
+
 
 		return output;
 	}

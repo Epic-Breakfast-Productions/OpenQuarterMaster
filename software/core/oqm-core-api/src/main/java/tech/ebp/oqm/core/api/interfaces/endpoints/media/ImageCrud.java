@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
+import org.eclipse.microprofile.openapi.annotations.headers.Header;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -32,7 +33,7 @@ import tech.ebp.oqm.core.api.model.rest.media.file.FileUploadBody;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.ImageSearch;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
-import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
+import tech.ebp.oqm.core.api.service.mongo.file.MongoHistoriedFileService;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.core.api.service.mongo.MongoObjectService;
@@ -73,7 +74,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	
 	@Inject
 	@Getter
-	ImageService fileService;
+	MongoHistoriedFileService<Image, FileUploadBody, ImageSearch, ImageGet> fileService;
 	
 	@Getter
 	Class<Image> objectClass = Image.class;
@@ -94,13 +95,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Searched.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = SearchResult.class
-			)
-		)
+		description = "Searched."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -119,7 +114,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public Response search(
+	public SearchResult<ImageGet> search(
 		@BeanParam ImageSearch searchObject
 	) {
 		return super.search(searchObject);
@@ -131,13 +126,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = MediaType.APPLICATION_JSON,
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "Object added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -147,7 +136,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
-	public Response add(
+	public ImageGet add(
 		@BeanParam FileUploadBody body
 	) throws IOException {
 		return super.add(body);
@@ -160,13 +149,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = FileAttachmentGet.class
-			)
-		)
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -186,7 +169,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public ImageGet get(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.get(id);
 	}
@@ -199,13 +182,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object updated.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = Integer.class
-			)
-		)
+		description = "Object updated."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -226,7 +203,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(MediaType.APPLICATION_JSON)
 	public Integer updateFile(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
 		@BeanParam FileUploadBody body
 	) throws IOException {
 		return super.updateFile(id, body);
@@ -240,13 +217,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object updated.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = Integer.class
-			)
-		)
+		description = "Object updated."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -268,7 +239,8 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@Produces(MediaType.APPLICATION_JSON)
 	public ImageGet updateObj(
 		@PathParam("id")
-		String id,
+		ObjectId id,
+		@Schema(type = SchemaType.OBJECT, implementation = Image.class)
 		ObjectNode updates
 	) {
 		return super.updateObj(id, updates);
@@ -281,13 +253,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = FileMetadata.class
-			)
-		)
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -308,7 +274,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public FileMetadata getRevision(
 		@PathParam("id")
-		String id,
+		ObjectId id,
 		@PathParam("rev")
 		String revision
 	) throws IOException {
@@ -323,12 +289,13 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@APIResponse(
 		responseCode = "200",
 		description = "Object retrieved.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = MainObject.class
-			)
-		)
+		headers = {
+			@Header(name = "Content-Disposition", description = "Denotes the original filename as the name of the file"),
+			@Header(name = "hash-md5", description = "The MD5 hash of the file"),
+			@Header(name = "hash-sha1", description = "The SHA1 hash of the file"),
+			@Header(name = "hash-sha256", description = "The SHA256 hash of the file"),
+			@Header(name = "upload-datetime", description = "When the file was uploaded")
+		}
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -349,7 +316,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getRevisionData(
 		@PathParam("id")
-		String id,
+		ObjectId id,
 		@PathParam("rev")
 		String revision
 	) throws IOException {
@@ -363,13 +330,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(type = SchemaType.ARRAY, implementation = ObjectHistoryEvent.class)
-			)
-		}
+		description = "Object retrieved."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -384,8 +345,8 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	@Override
-	public Response getHistoryForObject(
-		@PathParam("id") String id,
+	public SearchResult<ObjectHistoryEvent> getHistoryForObject(
+		@PathParam("id") ObjectId id,
 		@BeanParam HistorySearch searchObject
 	) {
 		return super.getHistoryForObject(id, searchObject);
@@ -398,15 +359,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					implementation = SearchResult.class
-				)
-			)
-		}
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -418,7 +371,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	}
 	
 	
-	private Response getImageFromObject(MongoObjectService<? extends ImagedMainObject, ?, ?> service, String id) throws IOException {
+	private Response getImageFromObject(MongoObjectService<? extends ImagedMainObject, ?, ?> service, ObjectId id) throws IOException {
 		String objTypeName = service.getClazz().getSimpleName();
 		log.info("Retrieving image for {} of id \"{}\"", objTypeName, id);
 		
@@ -440,7 +393,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 		
 		ObjectId imageId = object.getImageIds().get(0);
 		
-		return this.getRevisionData(imageId.toHexString(), "latest");
+		return this.getRevisionData(imageId, "latest");
 	}
 	
 	@GET
@@ -460,7 +413,7 @@ public class ImageCrud extends MainFileObjectProvider<Image, FileUploadBody, Ima
 	@RolesAllowed(Roles.INVENTORY_VIEW)
 	public Response getImageDataForObject(
 		@PathParam("object") IMAGED_OBJ_TYPE_NAME object,
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) throws IOException {
 		log.info("Retrieving image for {} of id \"{}\"", object, id);
 		

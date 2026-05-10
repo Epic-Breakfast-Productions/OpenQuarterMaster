@@ -1,4 +1,4 @@
-# Open QuarterMaster Base Station Documentation
+# Open QuarterMaster Core API Documentation
 
 [Back](../README.md)
 

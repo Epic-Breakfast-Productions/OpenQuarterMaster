@@ -1,0 +1,36 @@
+{
+	"request": {
+		"urlPathPattern": "/rebrickable/api/v3/lego/sets/",
+		"method": "GET",
+		"headers": {
+			"Authorization": {
+				"not": {
+					"equalTo": "key devKey"
+				}
+			}
+		},
+		"queryParameters": {
+			"search": {
+				"matches": ".*"
+			}
+		}
+	},
+	"response": {
+		"status": 401,
+		"delayDistribution": {
+			"type": "lognormal",
+			"median": 100,
+			"sigma": 0.4
+		},
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"jsonBody": {
+			"detail": "Invalid Token."
+		}
+	}
+}
+
+
+
+

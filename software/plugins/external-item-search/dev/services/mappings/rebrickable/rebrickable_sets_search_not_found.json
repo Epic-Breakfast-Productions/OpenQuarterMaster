@@ -1,0 +1,39 @@
+{
+	"request": {
+		"urlPathPattern": "/rebrickable/api/v3/lego/sets/",
+		"method": "GET",
+		"headers": {
+			"Authorization": {
+				"equalTo": "key devKey"
+			}
+		},
+		"queryParameters": {
+			"search": {
+				"not": {
+					"equalTo": "Saturn V"
+				}
+			}
+		}
+	},
+	"response": {
+		"status": 200,
+		"delayDistribution": {
+			"type": "lognormal",
+			"median": 500,
+			"sigma": 0.4
+		},
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"jsonBody": {
+			"count": 0,
+			"next": null,
+			"previous": null,
+			"results": []
+		}
+	}
+}
+
+
+
+

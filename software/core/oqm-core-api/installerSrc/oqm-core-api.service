@@ -1,25 +1,26 @@
-# Service file for running an instance of the Open QuarterMaster Base Station.
+# Service file for running an instance of the Open QuarterMaster Core API.
 #  Author: Greg Stewart
 #  https://www.freedesktop.org/software/systemd/man/systemd.service.html
 #
-#  OQM Base Station tags: https://hub.docker.com/repository/docker/ebprod/open-qm-base-station/tags
+#  OQM Core API tags: https://hub.docker.com/repository/docker/ebprod/oqm-core-api/tags
 #
 [Unit]
-Description=Open QuarterMaster Base Station server for Open Quartermaster. Version ${version}.
-Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
-After=docker.service
+Description=Open QuarterMaster Core API server for Open Quartermaster. Version ${version}.
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-api
 Wants=network-online.target
 Wants=oqm-infra-kafka_red_panda.service
-Requires=docker.socket
-Requires=oqm-infra-mongodb.service
-After=oqm-infra-mongodb.service
-Requires=oqm-infra-keycloak.service
-After=oqm-infra-keycloak.service
+After=docker.service oqm-infra-mongodb.service oqm-infra-keycloak.service oqm-infra-kafka_red_panda.service
+Requires=docker.socket oqm-infra-mongodb.service oqm-infra-keycloak.service
+
+[Install]
+WantedBy=multi-user.target
+WantedBy=oqm-infra-mongodb.service oqm-infra-keycloak.service
 
 [Service]
 Type=simple
 Restart=always
 TimeoutSec=10m
+SuccessExitStatus=143
 # Setup operating variables
 Environment="CONTAINER_NAME=oqm-core-api"
 Environment="IMAGE_NAME=ebprod/oqm-core-api"
@@ -47,7 +48,7 @@ ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
 
 # Pull image as separate task
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
-# Run Base Station
+# Run Core API
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --network=oqm-internal \
                                         -v /etc/oqm/certs/trustStores:/etc/oqm/certs/trustStores:ro \
@@ -75,6 +76,3 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
 # Remove from docker
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop core api container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove core api container'"
-
-[Install]
-WantedBy=multi-user.target

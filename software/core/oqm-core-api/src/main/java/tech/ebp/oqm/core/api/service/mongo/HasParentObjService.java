@@ -33,10 +33,6 @@ HasParentObjService<T extends MainObject & HasParent, S extends SearchObject<T>,
 		return this.list(oqmDbIdOrName, Filters.eq("parent", parentId), null, null);
 	}
 	
-	public List<T> getChildrenIn(String oqmDbIdOrName, String parentId) {
-		return this.getChildrenIn(oqmDbIdOrName, new ObjectId(parentId));
-	}
-	
 	protected abstract ParentedMainObjectTree<T, N> getNewTree();
 	
 	public ParentedMainObjectTree<T, N> getTree(String oqmDbIdOrName, Collection<ObjectId> onlyInclude) {

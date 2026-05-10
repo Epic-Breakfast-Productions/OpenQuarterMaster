@@ -34,7 +34,6 @@ public class MongoObjectIdModule extends TestableModule<ObjectId> {
 		
 		@Override
 		public ObjectId deserialize(JsonParser p, DeserializationContext ctxt) throws IOException {
-			
 			return new ObjectId(p.getValueAsString());
 		}
 	}

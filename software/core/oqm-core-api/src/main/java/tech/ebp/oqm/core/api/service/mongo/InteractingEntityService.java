@@ -17,6 +17,7 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.rest.search.InteractingEntitySearch;
+import tech.ebp.oqm.core.api.service.serviceState.InstanceMutexService;
 
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
@@ -56,7 +57,7 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 		}
 		//force getting around Arc subclassing out the injected class
 		CoreApiInteractingEntity coreApiInteractingEntity = new CoreApiInteractingEntity();
-		//ensure we have the base station in the db
+		//ensure we have the Core API entity in the db
 		CoreApiInteractingEntity gotten = (CoreApiInteractingEntity) this.get(coreApiInteractingEntity.getId());
 		if (gotten == null) {
 			this.add(coreApiInteractingEntity);
@@ -92,10 +93,6 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	
 	public InteractingEntity get(ObjectId id) {
 		return this.getTypedCollection().find(eq("_id", id)).limit(1).first();
-	}
-	
-	public InteractingEntity get(String id) {
-		return this.get(new ObjectId(id));
 	}
 	
 	public ObjectId add(@Valid InteractingEntity entity) {

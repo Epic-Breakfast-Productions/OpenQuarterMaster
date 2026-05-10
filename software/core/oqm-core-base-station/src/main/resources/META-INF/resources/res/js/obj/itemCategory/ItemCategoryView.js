@@ -41,4 +41,7 @@ export class ItemCategoryView {
 		}
 		return promises;
 	}
-};
+	static {
+		window.ItemCategoryView = this;
+	}
+}

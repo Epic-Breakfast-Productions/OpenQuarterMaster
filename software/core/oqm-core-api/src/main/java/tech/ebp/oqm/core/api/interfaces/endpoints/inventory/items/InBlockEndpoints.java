@@ -56,11 +56,11 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 
 	@Getter
 	@PathParam("itemId")
-	String itemId;
+	ObjectId itemId;
 	
 	@Getter
 	@PathParam("blockId")
-	String blockId;
+	ObjectId blockId;
 
 	private InventoryItem inventoryItem;
 	private StorageBlock storageBlock;
@@ -101,16 +101,7 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Blocks retrieved.",
-		content = {
-			@Content(
-				mediaType = "application/json",
-				schema = @Schema(
-					type = SchemaType.OBJECT,
-					implementation = SearchResult.class
-				)
-			)
-		}
+		description = "Blocks retrieved."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)

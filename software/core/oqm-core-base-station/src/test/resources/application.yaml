@@ -21,8 +21,6 @@ oqm.core.api:
     oqmDatabase:
       refreshFrequencyEvery: "5m"
 
-runningInfo:
-  depotUri: "Hello World"
 service:
   runBy:
     name: The Developers

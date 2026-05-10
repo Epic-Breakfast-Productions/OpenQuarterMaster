@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
@@ -28,6 +29,7 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import java.time.Duration;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +44,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
 @ValidItemUnit
+@Schema(description = "A type of item that is stored. Does not describe the exact items stored, but their type. Exact items stored are described by storeds.")
 public class InventoryItem extends ImagedMainObject implements FileAttachmentContaining {
 	
 	public static final int CUR_SCHEMA_VERSION = 4;
@@ -52,6 +55,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@NotBlank(message = "Name cannot be blank")
+	@Schema(required = true, description = "The name of the item.", examples = {"Soap"})
 	private String name;
 	
 	/**
@@ -59,6 +63,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 */
 	@NonNull
 	@NotNull
+	@Schema(required = true, description = "The type of storage this item uses.")
 	private StorageType storageType;
 	
 	/**
@@ -67,6 +72,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@Schema(required = false, description = "The description of this item.", examples = {""})
 	private String description = "";
 	
 	/**
@@ -92,8 +98,9 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@Schema(required = false, description = "The categories this item belongs to.", examples = {"[]"})
 	private List<@NotNull ObjectId> categories = new ArrayList<>();
-	
+  
 	/**
 	 * The map of where the items are stored.
 	 * <p>
@@ -104,14 +111,16 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+  @Schema(required = false, description = "The storage blocks this item is stored in.", examples = {"[]"})
 	private LinkedHashSet<@NotNull ObjectId> storageBlocks = new LinkedHashSet<>();
-	
+  
 	/**
 	 * Files that have been attached to the item.
 	 */
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@Schema(required = false, description = "Files to attach to the item.", examples = {"[]"})
 	private Set<@NotNull ObjectId> attachedFiles = new LinkedHashSet<>();
 	
 	/**
@@ -146,6 +155,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@Schema(required = false, description = "The state of notifications sent about item stored state (low stock, expiry)")
 	private ItemNotificationStatus notificationStatus = new ItemNotificationStatus();
 	
 	/**
@@ -156,6 +166,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@Schema(required = false, description = "When before a stored item becomes expired to alert a warning about said expiration. Defaults to Zero.")
 	private Duration expiryWarningThreshold = Duration.ZERO;
 	
 	/**
@@ -165,8 +176,9 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * TODO:: validate unit is compatible with main unit
 	 */
 	@lombok.Builder.Default
+	@Schema(required = false, description = "The threshold of low stock for the entire item total. Null for no threshold. Unit must be compatible with item's.")
 	private Quantity<?> lowStockThreshold = null;
-	
+
 	/**
 	 * The unit to associate with this item. Stored items can have different units, but must be compatible with this one.
 	 * <p>
@@ -176,6 +188,7 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@NotNull
 	@ValidUnit
 	@lombok.Builder.Default
+	@Schema(required = true, description = "The unit to use to track these items. Check the compatible units endpoints to see what is available.")
 	public Unit<?> unit = OqmProvidedUnits.UNIT;
 	
 	/**
@@ -186,9 +199,11 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	 * Populated during add/updates/transaction
 	 */
 	@lombok.Builder.Default
+	@Schema(required = false, readOnly = true, description = "Stats about this item's stored instances.")
 	private ItemStoredStats stats = null;
 	
 
+	@Schema(defaultValue = InventoryItem.CUR_SCHEMA_VERSION+"")
 	@Override
 	public int getSchemaVersion() {
 		return CUR_SCHEMA_VERSION;

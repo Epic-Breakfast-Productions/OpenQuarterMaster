@@ -1,14 +1,14 @@
 plugins {
 	id 'java'
 	id 'io.quarkus'
-	id "io.freefair.lombok" version "9.2.0"
+	id "io.freefair.lombok" version "9.5.0"
 	id 'jacoco'
-	id 'org.cyclonedx.bom' version '3.2.2'
-	id("org.spdx.sbom") version "0.10.0"
+	id 'org.cyclonedx.bom' version '3.2.4'
+	id("org.spdx.sbom") version "0.11.0"
 }
 
 group 'com.ebp.openQuarterMaster'
-version '4.4.3'
+version '4.4.7'
 
 repositories {
 	mavenCentral()
@@ -24,7 +24,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-rest-jackson'
 	implementation 'io.quarkus:quarkus-smallrye-openapi'
 	implementation 'io.quarkus:quarkus-smallrye-health'
-//	implementation 'io.quarkus:quarkus-opentelemetry'
+	implementation 'io.quarkus:quarkus-micrometer-opentelemetry'
 	implementation 'io.quarkus:quarkus-hibernate-validator'
 	implementation 'io.quarkus:quarkus-container-image-docker'
 	implementation 'io.quarkus:quarkus-scheduler'
@@ -39,7 +39,7 @@ dependencies {
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
 
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-	implementation "com.fasterxml.jackson.datatype:jackson-datatype-javax-money:2.21.2"
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-javax-money:2.21.3"
 	implementation 'com.fasterxml.jackson.module:jackson-module-blackbird'
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
@@ -73,7 +73,7 @@ dependencies {
 java {
 	java {
 		toolchain {
-			languageVersion.set(JavaLanguageVersion.of(21))
+			languageVersion.set(JavaLanguageVersion.of(25))
 		}
 	}
 }
@@ -96,7 +96,7 @@ test {
 		"--add-opens", "java.base/java.util=ALL-UNNAMED",
 		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
 	)
-	testLogging.showStandardStreams = true
+	testLogging.showStandardStreams = System.getenv("CI") == null
 	finalizedBy jacocoTestReport
 	jacoco {
 		excludeClassLoaders = ["*QuarkusClassLoader"]
@@ -190,3 +190,7 @@ tasks.register('printVersion') {
 	}
 }
 
+// lockAllConfigurations() is deprecated in Gradle 9; use the configurations API instead
+configurations.configureEach {
+    resolutionStrategy.activateDependencyLocking()
+}

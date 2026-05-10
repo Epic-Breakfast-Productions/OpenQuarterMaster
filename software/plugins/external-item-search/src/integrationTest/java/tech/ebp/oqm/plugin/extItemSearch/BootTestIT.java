@@ -1,10 +1,7 @@
 package tech.ebp.oqm.plugin.extItemSearch;
 
-import io.quarkus.test.junit.QuarkusTest;
-import org.junit.jupiter.api.Test;
+import io.quarkus.test.junit.QuarkusIntegrationTest;
 
-import static io.restassured.RestAssured.given;
-
-@QuarkusTest
+@QuarkusIntegrationTest
 class BootTestIT extends BootTest {
 }

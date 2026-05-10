@@ -105,8 +105,8 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			SearchResult<Stored> inBlock = this.search(
 				oqmDbIdOrName,
 				new StoredSearch()
-					.setInventoryItemId(item.getId().toHexString())
-					.setStorageBlockId(newOrChangedObject.getStorageBlock().toHexString())
+					.setInventoryItemId(item.getId())
+					.setStorageBlockId(newOrChangedObject.getStorageBlock())
 			);
 			
 			if (!inBlock.isEmpty()) {
@@ -121,7 +121,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 		
 		if (item.getStorageType() == UNIQUE_SINGLE) {
-			SearchResult<Stored> inItem = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+			SearchResult<Stored> inItem = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId()));
 			if (!inItem.isEmpty()) {
 				if (inItem.getNumResults() != 1) {
 					throw new ValidationException("More than one globally unique stored held");
@@ -177,7 +177,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		SearchResult<Stored> results = super.search(oqmDbIdOrName, cs, searchObject);
 		
 		if (searchObject.getInventoryItemId() != null) {
-			results = new ItemAwareSearchResult<>(this.getInventoryItemService().get(oqmDbIdOrName, cs, new ObjectId(searchObject.getInventoryItemId())), results);
+			results = new ItemAwareSearchResult<>(this.getInventoryItemService().get(oqmDbIdOrName, cs, searchObject.getInventoryItemId()), results);
 		}
 		
 		return results;
@@ -191,8 +191,8 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	
 	public <T extends Stored> SearchResult<T> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
 		StoredSearch search = new StoredSearch()
-								  .setInventoryItemId(itemId == null ? null : itemId.toHexString())
-								  .setStorageBlockId(storageBlockId == null ? null : storageBlockId.toHexString());
+								  .setInventoryItemId(itemId)
+								  .setStorageBlockId(storageBlockId);
 		
 		//noinspection unchecked
 		SearchResult<T> result = (SearchResult<T>) this.search(

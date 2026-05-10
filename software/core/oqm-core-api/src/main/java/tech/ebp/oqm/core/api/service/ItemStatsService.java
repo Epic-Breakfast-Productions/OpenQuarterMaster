@@ -192,7 +192,7 @@ public class ItemStatsService {
 		}
 		
 		if(item.getId() != null) {
-			FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(item.getId().toHexString()));
+			FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(item.getId()));
 			try (
 				MongoCursor<Stored> storedIterator = storedInItem.iterator()
 			) {
@@ -341,7 +341,7 @@ public class ItemStatsService {
 		{
 			FindIterable<Stored> storedInItem = this.getStoredService().listIterator(
 				oqmDbIdOrName, cs, new StoredSearch()
-									   .setInventoryItemId(item.getId().toHexString())
+									   .setInventoryItemId(item.getId())
 									   .setInStorageBlocks(concerning.stream().map(Stored::getStorageBlock).distinct().collect(Collectors.toList()))
 			);
 			try (

@@ -55,13 +55,7 @@ export class Identifiers {
 		Identifiers.clearInput(identifierInputContainerJq);
 		Identifiers.getIdentifiersContainer(identifierInputContainerJq).html("");
 	}
-	static addIdentifier(identifierInputContainerJq) {
-		let newIdentifier = Identifiers.getNewIdentifierValue(identifierInputContainerJq);
-		if(newIdentifier === "") {
-			console.log("Not adding empty identifier.");
-			return;
-		}
-
+	static addIdentifierFromValue(identifierInputContainerJq, newIdentifier){
 		console.log("Adding a new identifier: ", newIdentifier);
 
 		return Rest.call({
@@ -76,6 +70,15 @@ export class Identifiers {
 				Identifiers.clearInput(identifierInputContainerJq);
 			}
 		});
+	}
+	static addIdentifier(identifierInputContainerJq) {
+		let newIdentifier = Identifiers.getNewIdentifierValue(identifierInputContainerJq);
+		if(newIdentifier === "") {
+			console.log("Not adding empty identifier.");
+			return;
+		}
+
+		return Identifiers.addIdentifierFromValue(identifierInputContainerJq, newIdentifier);
 	}
 	static addToGenerate(generateIdButtonJq, generatorData) {
 		let idContainer = Identifiers.getIdentifiersContainer(Identifiers.getInputContainer(generateIdButtonJq));

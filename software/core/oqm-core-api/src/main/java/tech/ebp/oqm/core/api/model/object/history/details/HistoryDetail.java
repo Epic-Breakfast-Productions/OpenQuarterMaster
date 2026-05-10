@@ -7,6 +7,9 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
 
 @Data
 //@AllArgsConstructor
@@ -23,8 +26,14 @@ import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 	@JsonSubTypes.Type(value = NoteHistoryDetail.class, name = "NOTE"),
 	@JsonSubTypes.Type(value = FromSchemaUpgradeDetail.class, name = "FROM_SCHEMA_UPGRADE"),
 })
+@Schema(oneOf = {
+	FieldsAffectedHistoryDetail.class,
+	ItemTransactionDetail.class,
+	NoteHistoryDetail.class,
+	FromSchemaUpgradeDetail.class
+})
 public abstract class HistoryDetail {
-
+	
 	@ToString.Include
 	public abstract HistoryDetailType getType();
 }

@@ -13,7 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.OqmDatabaseService;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.dataHelpers.OqmDatabaseService;
 import tech.ebp.oqm.plugin.alertMessenger.model.UserInfo;
 import tech.ebp.oqm.plugin.alertMessenger.utils.JwtUtils;
 

@@ -4,10 +4,13 @@ import jakarta.ws.rs.PathParam;
 import lombok.Getter;
 import lombok.ToString;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchUtils;
 
 import java.util.List;
+
+import static com.mongodb.client.model.Filters.eq;
 
 @ToString(callSuper = true)
 @Getter
@@ -16,7 +19,8 @@ public class AppliedTransactionSearch extends SearchKeyAttObject<AppliedTransact
 		return new AppliedTransactionSearch();
 	}
 
-	@PathParam("itemId") String inventoryItemId;
+	@PathParam("itemId")
+	ObjectId inventoryItemId;
 
 	//TODO:: More
 	
@@ -24,9 +28,9 @@ public class AppliedTransactionSearch extends SearchKeyAttObject<AppliedTransact
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 
-		if (this.hasValue(this.getInventoryItemId())) {
+		if (hasValue(this.getInventoryItemId())) {
 			filters.add(
-				SearchUtils.getBasicSearchFilter("inventoryItem", this.getInventoryItemId())
+				eq("inventoryItem", this.getInventoryItemId())
 			);
 		}
 		
