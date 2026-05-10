@@ -257,6 +257,15 @@
         "test",
         "userTesting"
       ]
+    },
+    {
+      "login": "axgiri",
+      "name": "Aidyn A.",
+      "avatar_url": "https://avatars.githubusercontent.com/u/146159445?v=4",
+      "profile": "http://cv.axgiri.tech",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
