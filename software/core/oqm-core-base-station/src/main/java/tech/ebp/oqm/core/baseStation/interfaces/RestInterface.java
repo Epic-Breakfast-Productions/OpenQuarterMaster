@@ -161,8 +161,7 @@ public abstract class RestInterface {
 			return false;
 		}
 		try {
-			ArrayNode fresh = this.oqmDatabaseService.getDatabases();
-			this.oqmDatabases = fresh;
+			ArrayNode fresh = this.oqmDatabases;
 			if (fresh != null && this.containsDb(fresh, dbId)) {
 				return true;
 			}
