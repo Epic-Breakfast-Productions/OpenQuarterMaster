@@ -161,9 +161,7 @@ public abstract class RestInterface {
 			return false;
 		}
 		try {
-			ArrayNode fresh = this.oqmCoreApiClient.manageDbList(this.getBearerHeaderStr())
-				.await()
-				.indefinitely();
+			ArrayNode fresh = this.oqmDatabaseService.getDatabases();
 			this.oqmDatabases = fresh;
 			if (fresh != null && this.containsDb(fresh, dbId)) {
 				return true;
