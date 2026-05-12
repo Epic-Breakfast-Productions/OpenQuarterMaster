@@ -70,8 +70,8 @@ To ensure the firmware initializes correctly, you must follow this specific hard
 
 To compile the project, you need to include the following files in your Arduino project folder:
 
-* **`barcode_scanner.ino`**: The main entry point. It initializes the hardware (TFT, Scanner, WiFi) and runs the primary loop.
-* **`functions.ino`**: Contains the core logic for Keycloak JWT authentication, OQM API communication, and the SD card configuration loader.
+* **`oqm_scanner.ino`**: The main entry point. It initializes the hardware (TFT, Scanner, WiFi) and runs the primary loop.  Also contains http functions
+* **`color.h`**: Contains default color definitions.
 * **`scannerUI.ino`**: Handles all graphical rendering for the Sage Green interface, including the "Quick" and "Detail" mode screens.
 
 ---
