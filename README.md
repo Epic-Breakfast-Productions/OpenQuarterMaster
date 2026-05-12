@@ -20,29 +20,74 @@
 
 Open Quartermaster is an open source inventory management system, designed to be simple to use yet powerful and extendable. The last inventory management system you will ever need!
 
-We are very much in development still, so check back often! We are also accepting any and all assistance, so feel free to report issues or feature requests, as well as pull requests! Additionally, feel free to ask questions in the [Discussions](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/discussions) or just hang out with us on our [Discord](https://discord.gg/cpcVh6SyNn)
+We are very much in development still, so check back often! We are also accepting any and all assistance, so feel free to report issues or feature requests, as well as pull requests! Additionally, feel free to ask questions in
+the [Discussions](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/discussions) or just hang out with us on our [Discord](https://discord.gg/cpcVh6SyNn)
+
+<details>
+
+<summary>CI Status</summary>
+
+<table>
+    <thead>
+        <tr>
+            <th>
+                Type
+            </th>
+            <th>
+                Service
+            </th>
+            <th>
+                Status
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>
+                [Core](./software/core)
+            </td>
+            <td>[API](./software/core/oqm-core-api)</td>
+            <td>
+                ![Core API](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/core-api.yml/badge.svg)
+            </td>
+        </tr>
+    </tbody>
+</table>
+
+| Type | Service                             | Status                                                                                                                |
+|------|-------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
+| Core | [API](./software/core/oqm-core-api) | ![Core API](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/core-api.yml/badge.svg) |
+| ^^   | [API](./software/core/oqm-core-api) | ![Core API](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/core-api.yml/badge.svg) |
+
+
+</details>
 
 ## Quick Links
 
- - For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single%20Host)
- - To see all the ways you can deploy OQM for yourself, see [Deployment](deployment/)
- - For information on the overall system, see the [software](software/) directory.
+- For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single%20Host)
+- To see all the ways you can deploy OQM for yourself, see [Deployment](deployment/)
+- For information on the overall system, see the [software](software/) directory.
 
 ## How it works
 
-How we accomplish the goal of being the only inventory management system you could ever need is through our modular design. The main component of Open QuarterMaster is the [Core API](software/core/oqm-core-api). Think of this as the central hub and core functionality of the system. It handles all the generic inventory management tasks; what is stored where, and facts about what is stored. This central component is designed to be, on the whole, generic and accessible. We also have a frontend for the core API called the [Base Station](software/core/oqm-core-base-station), which lets you have direct and easy to navigate access to your inventory.
+How we accomplish the goal of being the only inventory management system you could ever need is through our modular design. The main component of Open QuarterMaster is the [Core API](software/core/oqm-core-api). Think of this as the central
+hub and core functionality of the system. It handles all the generic inventory management tasks; what is stored where, and facts about what is stored. This central component is designed to be, on the whole, generic and accessible. We also
+have a frontend for the core API called the [Base Station](software/core/oqm-core-base-station), which lets you have direct and easy to navigate access to your inventory.
 
-To cover specific use-cases, we have what we call [Plugins](software/plugins). These are components that extend the functionality of the basic inventory management, and fill additional needs with their own capabilities. Examples could include Smart Refrigerator integrations, a system for interacting with physical storage mediums, Point of Sale Systems, Workflow management.. the list is endless. You could even create your own!
+To cover specific use-cases, we have what we call [Plugins](software/plugins). These are components that extend the functionality of the basic inventory management, and fill additional needs with their own capabilities. Examples could
+include Smart Refrigerator integrations, a system for interacting with physical storage mediums, Point of Sale Systems, Workflow management.. the list is endless. You could even create your own!
 
-In the theme of flexibility, the system is designed to be run in many different environments. It is just as home on the cloud as well as something as small as a [Raspberry Pi](https://www.raspberrypi.com/). This is accomplished using containers, segmenting each software component, ensuring flexibility and ease of management.
+In the theme of flexibility, the system is designed to be run in many different environments. It is just as home on the cloud as well as something as small as a [Raspberry Pi](https://www.raspberrypi.com/). This is accomplished using
+containers, segmenting each software component, ensuring flexibility and ease of management.
 
 To get started on your own hardware, please see [Single Host Deployment](deployment/Single%20Host)
 
-For more information on the overall system, see the [software](software/) directory. 
+For more information on the overall system, see the [software](software/) directory.
 
 ## On Privacy
 
-Being an open initiative, we take great care to ensure you are in control of your own data. None of the software we include here phones home at all, with the brief exception of Station Captain, which looks to this Git repository for installations and updates. If you have a simple setup on your own hardware, you can expect your data to stay with you, and not transmitted anywhere by the software we include here.
+Being an open initiative, we take great care to ensure you are in control of your own data. None of the software we include here phones home at all, with the brief exception of Station Captain, which looks to this Git repository for
+installations and updates. If you have a simple setup on your own hardware, you can expect your data to stay with you, and not transmitted anywhere by the software we include here.
 
 ## Contributors ✨
 
