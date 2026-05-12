@@ -2,24 +2,7 @@
 
 ## Supported Versions
 
-Use this section to tell people about which versions of your project are
-currently being supported with security updates.
-
-### Base Station
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 1.0.x   | :white_check_mark: |
-
-### Station Captain
-
-| Version | Supported          |
-| ------- | ------------------ |
-| 2.0.x   | :white_check_mark: |
-
-### Infra
-
-### Libs
+We currently focus on only the latest versions of these projects for security. This is due to the rapid state of development.
 
 ## Reporting a Vulnerability
 

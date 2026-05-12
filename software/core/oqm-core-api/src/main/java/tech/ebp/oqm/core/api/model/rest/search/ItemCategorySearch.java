@@ -23,11 +23,11 @@ public class ItemCategorySearch extends SearchObject<ItemCategory> {
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 		
-		if (this.hasValue(this.itemCategoryName)) {
+		if (hasValue(this.itemCategoryName)) {
 			filters.add(SearchUtils.getBasicSearchFilter("name", this.itemCategoryName));
 		}
 		
-		if(this.hasValue(this.isChildOf)){
+		if(hasValue(this.isChildOf)){
 			filters.add(eq("parent", this.isChildOf));
 		}
 		

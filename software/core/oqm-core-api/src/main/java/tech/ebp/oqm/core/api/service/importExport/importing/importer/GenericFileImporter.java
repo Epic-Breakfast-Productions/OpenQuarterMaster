@@ -8,6 +8,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.interfaces.endpoints.media.FileGet;
 import tech.ebp.oqm.core.api.model.object.FileMainObject;
+import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.media.FileMetadata;
@@ -30,7 +31,7 @@ public class GenericFileImporter<
 	T extends FileMainObject,
 	U extends FileUploadBody,
 	S extends FileSearchObject<T>,
-	G extends FileGet
+	G extends MainObject & FileGet
 	>
 	extends FileImporter<T, U, S, G, MongoHistoriedFileService<T, U, S, G>> {
 	

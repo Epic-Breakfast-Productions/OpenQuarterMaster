@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.MediaType;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -69,6 +70,30 @@ class UnitsEndpointsTest extends RunningServerTest {
 			.get("compatibility/" + UnitUtils.stringFromUnit(unit))
 			.then()
 			.statusCode(200);
+	}
+	
+	@Test
+	public void testGetDeriveTypes() {
+		String deriveTypes = given()
+								 .accept(MediaType.APPLICATION_JSON)
+								 .get("deriveTypes")
+								 .then()
+								 .statusCode(200)
+								 .extract()
+								 .asString();
+		log.info("Derive Types: {}", deriveTypes);
+	}
+	
+	@Test
+	public void testGetDimensions() {
+		String deriveTypes = given()
+								 .accept(MediaType.APPLICATION_JSON)
+								 .get("dimensions")
+								 .then()
+								 .statusCode(200)
+								 .extract()
+								 .asString();
+		log.info("Dimensions: {}", deriveTypes);
 	}
 	
 	@ParameterizedTest

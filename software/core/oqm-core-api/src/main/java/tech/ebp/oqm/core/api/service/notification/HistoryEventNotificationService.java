@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.api.service.notification;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.smallrye.reactive.messaging.annotations.Broadcast;
 import io.smallrye.reactive.messaging.kafka.api.OutgoingKafkaRecordMetadata;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -15,6 +14,7 @@ import org.eclipse.microprofile.reactive.messaging.Emitter;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
 import org.eclipse.microprofile.reactive.messaging.OnOverflow;
+import tech.ebp.oqm.core.api.model.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 
 import java.util.Arrays;
@@ -55,7 +55,6 @@ public class HistoryEventNotificationService {
 	/**
 	 * Don't call this directly, use the other one(s)
 	 */
-	@WithSpan
 	@Incoming(INTERNAL_EVENT_CHANNEL)
 	void sendEventOutgoing(EventNotificationWrapper notificationWrapper) {
 		if (!this.outgoingEnabled()) {

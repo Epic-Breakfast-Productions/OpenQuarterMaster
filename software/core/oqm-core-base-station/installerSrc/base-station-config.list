@@ -43,13 +43,13 @@ quarkus.rest-client."oqm.core.api-oidc".tls-configuration-name=ext.ingress
 
 runningInfo.protocol=https
 runningInfo.hostname={system.hostname}
-runningInfo.depotUri={infra.homepage.externalBaseUri}
 
+# Characteristics config
+oqm.core.characteristics.baseUri={core.characteristics.internalBaseUri}
 
-{% if metrics is defined and metrics.jaeger is defined %}
-# Jaeger Config:
-#quarkus.jaeger.endpoint=http://{infra.jaeger.host}:{infra.jaeger.tracesPort}/api/traces
-#quarkus.opentelemetry.tracer.exporter.otlp.endpoint=http://{infra.jaeger.host}:{infra.jaeger.otelTracesPort}
+{% if metrics is defined %}
+# Metrics Config:
+quarkus.otel.exporter.otlp.endpoint={metrics.otlp-collector.endpoint}
 {% endif %}
 
 #

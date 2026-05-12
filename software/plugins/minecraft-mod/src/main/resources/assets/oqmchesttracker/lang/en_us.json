@@ -1,0 +1,11 @@
+{
+  "item.oqmchesttracker.chest_pda": "Chest PDA",
+
+  "oqmchesttracker.configuration.title": "OQM Chest Tracker Configs",
+  "oqmchesttracker.configuration.section.oqmchesttracker.common.toml": "OQM Chest Tracker Configs",
+  "oqmchesttracker.configuration.section.oqmchesttracker.common.toml.title": "OQM Chest Tracker Configs",
+
+  "oqmchesttracker.configuration.serverIp": "Server IP Address",
+  "oqmchesttracker.configuration.clientId": "Client ID",
+  "oqmchesttracker.configuration.clientSecret": "Client Secret"
+}

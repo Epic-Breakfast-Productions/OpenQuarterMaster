@@ -11,7 +11,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Sorts;
 import com.mongodb.client.result.DeleteResult;
 import com.mongodb.client.result.InsertOneResult;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import lombok.Getter;
@@ -214,7 +213,6 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	 *
 	 * @return The search results for the search given
 	 */
-	@WithSpan
 	public SearchResult<T> search(String oqmDbIdOrName, ClientSession cs, @NonNull S searchObject) {
 		log.info("Searching for {} with: {}", this.clazz.getSimpleName(), searchObject);
 		
@@ -233,9 +231,10 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		
 		return new SearchResult<>(
 			list,
-			this.count(oqmDbIdOrName, filter),
+			(int) this.count(oqmDbIdOrName, filter),
 			!filters.isEmpty(),
-			pagingOptions
+			pagingOptions,
+			searchObject
 		);
 	}
 	
@@ -346,19 +345,6 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	}
 	
 	/**
-	 * Gets an object with a particular id.
-	 * <p>
-	 * Wrapper for {@link #get(String, ObjectId)}, to be able to use String representation of ObjectId.
-	 *
-	 * @param objectId The id of the object to get
-	 *
-	 * @return The object found. Null if not found.
-	 */
-	public T get(String oqmDbIdOrName, String objectId) throws DbNotFoundException, DbDeletedException {
-		return this.get(oqmDbIdOrName, new ObjectId(objectId));
-	}
-	
-	/**
 	 * Updates the object at the id given. Validates the object before updating in the database.
 	 *
 	 * @param id The id of the object to update
@@ -415,18 +401,6 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		}
 		
 		return object;
-	}
-	
-	/**
-	 * Updates the object at the id given. Validates the object before updating in the database.
-	 *
-	 * @param id The id of the object to update
-	 * @param updateJson Generic JSON to describe the update. Meant to be individual fields set to the new values.
-	 *
-	 * @return The updated object.
-	 */
-	public T update(String oqmDbIdOrName, ClientSession cs, String id, ObjectNode updateJson) {
-		return this.update(oqmDbIdOrName, cs, new ObjectId(id), updateJson);
 	}
 	
 	public T update(String oqmDbIdOrName, ClientSession clientSession, @Valid T object, boolean deriveApplied) throws DbNotFoundException {
@@ -566,19 +540,6 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 	
 	public T remove(String oqmDbIdOrName, ObjectId objectId) {
 		return this.remove(oqmDbIdOrName, null, objectId);
-	}
-	
-	/**
-	 * Removes the object with the id given.
-	 * <p>
-	 * Wrapper for {@link #remove(String, ObjectId)}, to be able to use String representation of ObjectId.
-	 *
-	 * @param objectId The id of the object to remove
-	 *
-	 * @return The object that was removed
-	 */
-	public T remove(String oqmDbIdOrName, String objectId) {
-		return this.remove(oqmDbIdOrName, new ObjectId(objectId));
 	}
 	
 	/**

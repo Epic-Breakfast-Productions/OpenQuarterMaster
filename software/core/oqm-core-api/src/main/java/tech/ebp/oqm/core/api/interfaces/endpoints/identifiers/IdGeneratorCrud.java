@@ -1,7 +1,6 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints.identifiers;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
@@ -13,6 +12,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -21,6 +21,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 import tech.ebp.oqm.core.api.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdGenResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdentifierGenerator;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
@@ -49,13 +50,7 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "Object added.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = ObjectId.class
-			)
-		)
+		description = "Object added."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -74,7 +69,7 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	
 	@GET
 	@Operation(
-		summary = "Gets a list of unique id generators, using search parameters."
+		summary = "Gets a list of id generators, using search parameters."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -107,7 +102,6 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@WithSpan
 	public CollectionStats getCollectionStats(
 	) {
 		return super.getCollectionStats();
@@ -145,9 +139,9 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	@Override
+//	@Override
 	public IdentifierGenerator get(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.get(id);
 	}
@@ -160,13 +154,7 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	)
 	@APIResponse(
 		responseCode = "200",
-		description = "UniqueIdentifierGenerator updated.",
-		content = @Content(
-			mediaType = "application/json",
-			schema = @Schema(
-				implementation = IdentifierGenerator.class
-			)
-		)
+		description = "Identifier Generator updated."
 	)
 	@APIResponse(
 		responseCode = "400",
@@ -187,7 +175,8 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public IdentifierGenerator update(
-		@PathParam("id") String id,
+		@PathParam("id") ObjectId id,
+		@Schema(type = SchemaType.OBJECT, implementation = IdentifierGenerator.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
 		return super.update(id, updates);
@@ -218,16 +207,11 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 		description = "Object requested has already been deleted.",
 		content = @Content(mediaType = "text/plain")
 	)
-	@APIResponse(
-		responseCode = "404",
-		description = "No object found to delete.",
-		content = @Content(mediaType = "text/plain")
-	)
 	@RolesAllowed(Roles.INVENTORY_EDIT)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Override
 	public IdentifierGenerator delete(
-		@PathParam("id") String id
+		@PathParam("id") ObjectId id
 	) {
 		return super.delete(id);
 	}
@@ -265,15 +249,14 @@ public class IdGeneratorCrud extends MainObjectProvider<IdentifierGenerator, IdG
 	)
 	@Produces(MediaType.APPLICATION_JSON)
 	@RolesAllowed(Roles.INVENTORY_VIEW)
-	public IdGenResult<?> generateNewId(
-		@PathParam("id") String id,
+	public IdGenResult generateNewId(
+		@PathParam("id") ObjectId id,
 		@QueryParam("num") Optional<Integer> numToGenerate
 	) {
 		return this.getObjectService().getNextNIds(
 			this.getOqmDbIdOrName(),
-			new ObjectId(id),
-			numToGenerate.orElse(1),
-			null
+			id,
+			numToGenerate.orElse(1)
 		);
 	}
 	

@@ -60,7 +60,7 @@ public abstract class MongoObjectServiceTest<T extends MainObject, S extends Mon
 		
 		T itemAdded = service.add(DEFAULT_TEST_DB_NAME, item);
 		
-		T itemGot = service.get(DEFAULT_TEST_DB_NAME, itemAdded.getId().toHexString());
+		T itemGot = service.get(DEFAULT_TEST_DB_NAME, itemAdded.getId());
 		
 		assertNotNull(itemGot);
 		assertEquals(item, itemGot);

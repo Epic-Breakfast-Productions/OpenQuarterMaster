@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.api.testResources;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.wildfly.common.codec.DecodeException;
@@ -62,7 +61,6 @@ public class PasswordService {
 	 *
 	 * @return The hash for the password
 	 */
-	@WithSpan
 	public String createPasswordHash(String password, int iterations) {
 		IteratedSaltedPasswordAlgorithmSpec iteratedAlgorithmSpec = new IteratedSaltedPasswordAlgorithmSpec(
 			iterations,
@@ -103,7 +101,6 @@ public class PasswordService {
 	 *
 	 * @return If the password given matched the hashed password
 	 */
-	@WithSpan
 	public boolean passwordMatchesHash(String encodedPass, String pass) {
 		BCryptPassword original = null;
 		try {

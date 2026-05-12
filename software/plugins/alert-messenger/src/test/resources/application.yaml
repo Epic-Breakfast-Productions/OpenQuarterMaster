@@ -1,10 +1,16 @@
 quarkus:
+  log:
+    category:
+      "io.quarkus.mailer":
+        level: DEBUG
   oqmCoreApi:
     refreshDbCacheFrequency: "5m"
     devservice:
       certPath: dev/devTest-cert-cert.pem
       certKeyPath: dev/devTest-cert-key.pem
   oidc:
+    token-state-manager:
+      encryption-required: false    
     client-id: oqm-app
     credentials:
       secret: "**********"
@@ -21,12 +27,28 @@ quarkus:
       resource-mappings:
         systemCert: /opt/keycloak/certs/devTest-cert-cert.pem
         systemCertKey: /opt/keycloak/certs/devTest-cert-key.pem
+  # Mailer configuration for Gmail SMTP server.
+  mailer:
+    auth-methods: "DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN"
+    from: "oqm.alert.messenger@gmail.com"
+    host: "smtp.gmail.com"
+    port: 587
+    ssl: false
+    start-tls: REQUIRED
+    username: "${SMTP_USERNAME}"
+    password: "${SMTP_PASSWORD}"
+    mock: false
 mp:
   messaging:
     incoming:
       oqm-core-all-events:
         bootstrap:
           servers: ${devservice.kafka.bootstrapServers}
+      alert-messages:
+        connector: smallrye-kafka
+        topic: oqm-core-all-events
+        value:
+          deserializer: org.apache.kafka.common.serialization.StringDeserializer
 kafka:
   bootstrap:
     servers: ${devservice.kafka.bootstrapServers}

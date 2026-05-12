@@ -1,0 +1,181 @@
+{
+	"request": {
+		"urlPathPattern": "/upcitemdb/prod/trial/lookup",
+		"method": "GET",
+		"queryParameters": {
+			"upc": {
+				"equalTo": "017078987621"
+			}
+		}
+	},
+	"response": {
+		"status": 200,
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"delayDistribution": {
+			"type": "lognormal",
+			"median": 5000,
+			"sigma": 0.4
+		},
+		"jsonBody": {
+			"code": "OK",
+			"total": 1,
+			"offset": 0,
+			"items": [
+				{
+					"ean": "0017078987621",
+					"title": "IMAX / Solarmax (DVD + CD)  Sling Shot  Documentary",
+					"description": "Ever 11 years  the sun s poles reverse with unimaginable violence. The peak of the storm is called a solarmax. The hottest film under the sun  Solarmax is a breathtaking exploration into the awesome vastness and mysterious power of our closest star.",
+					"upc": "017078987621",
+					"brand": "Slingshot",
+					"model": "08443793",
+					"color": "Y",
+					"size": "",
+					"dimension": "7.8 X 5.8 X 0.8 inches",
+					"weight": "0.4 Pounds",
+					"category": "Media > DVDs & Videos",
+					"currency": "CAD",
+					"lowest_recorded_price": 0.01,
+					"highest_recorded_price": 32.62,
+					"images": [
+						"https://i5.walmartimages.com/asr/8317b21f-bbce-45f8-b0dc-09c9cf144c2f.e384a8a897b49fa5aea6027ac82a861f.jpeg?odnHeight=450&odnWidth=450&odnBg=ffffff",
+						"http://img.bbystatic.com/BestBuy_US/images/products/1185/11858983_sc.jpg",
+						"https://target.scene7.com/is/image/Target/GUEST_9cd083de-37dd-4897-9e43-910e3cbe5397?wid=1000&hei=1000",
+						"http://dynamic.indigoimages.ca/dvd/017078987621.jpg?width=200&maxheight=200",
+						"https://tshop.r10s.com/486/53e/f00d/b55f/50ae/1c0e/52a8/1119e88196c4544488dc07.jpg?_ex=512x512",
+						"http://www.fye.com/amgcover/dvd/full/t1/88/t188041fs34.jpg",
+						"http://i.sdcd.us/b/500/6/4/9/9/419946.jpg",
+						"http://images.11main.com/s3/11main-images/product/8290004/image/4d44f8e3a19c2b08c8f1b6efb66780e8.jpeg?width=200&height=200",
+						"http://8016235491c6828f9cae-6b0d87410f7cc1525cc32b79408788c4.r96.cf2.rackcdn.com/1979/57905357_1.jpg"
+					],
+					"offers": [
+						{
+							"merchant": "Indigo Books & Music",
+							"domain": "chapters.indigo.ca",
+							"title": "IMAX - SolarMax",
+							"currency": "CAD",
+							"list_price": "",
+							"price": 7.99,
+							"shipping": "Free Shipping",
+							"condition": "New",
+							"availability": "Out of Stock",
+							"link": "https://www.upcitemdb.com/norob/alink/?id=u2w263034313e474&tid=1&seq=1776834168&plt=374c62124fd02b491f36e18003f6ea45",
+							"updated_t": 1425355586
+						},
+						{
+							"merchant": "Rakuten(Buy.com)",
+							"domain": "rakuten.com",
+							"title": "Imax-Solar Max Collectors Editions",
+							"currency": "",
+							"list_price": "",
+							"price": 26.1,
+							"shipping": "",
+							"condition": "New",
+							"availability": "",
+							"link": "https://www.upcitemdb.com/norob/alink/?id=u2o263t22303d454x2&tid=1&seq=1776834168&plt=8c48b19445357ec61c5d14446ba3a4b4",
+							"updated_t": 1554563058
+						},
+						{
+							"merchant": "Best Buy",
+							"domain": "bestbuy.com",
+							"title": "Solarmax (2 Disc) (collector's Edition) (dvd)",
+							"currency": "",
+							"list_price": "",
+							"price": 9.99,
+							"shipping": "",
+							"condition": "New",
+							"availability": "",
+							"link": "https://www.upcitemdb.com/norob/alink/?id=w2w243t223238494&tid=1&seq=1776834168&plt=85d1df534b50cb255dba45976d8dcf8d",
+							"updated_t": 1484176933
+						},
+						{
+							"merchant": "Fye.com",
+							"domain": "fye.com",
+							"title": "Solarmax [2 Discs] (new)",
+							"currency": "",
+							"list_price": "",
+							"price": 3,
+							"shipping": "",
+							"condition": "New",
+							"availability": "",
+							"link": "https://www.upcitemdb.com/norob/alink/?id=w2x2x2y233636494&tid=1&seq=1776834168&plt=f7d97afa8d7518782f89242cd99073e5",
+							"updated_t": 1514927093
+						},
+						{
+							"merchant": "Wal-Mart.com",
+							"domain": "walmart.com",
+							"title": "IMAX / Solarmax (DVD + CD)  Sling Shot  Documentary",
+							"currency": "",
+							"list_price": 13.44,
+							"price": 9.99,
+							"shipping": "Free Shipping",
+							"condition": "New",
+							"availability": "Out of Stock",
+							"link": "https://www.upcitemdb.com/norob/alink/?id=13t2y2x2x20394a4&tid=1&seq=1776834168&plt=59bd8fcaabdad1ac8055a91f6e2a67a6",
+							"updated_t": 1771790346
+						},
+						{
+							"merchant": "DVD Planet",
+							"domain": "dvdplanet.com",
+							"title": "Solar Max - DVD",
+							"currency": "",
+							"list_price": "",
+							"price": 10.22,
+							"shipping": "",
+							"condition": "New",
+							"availability": "",
+							"link": "https://www.upcitemdb.com/norob/alink/?id=13v203u2v2536464&tid=1&seq=1776834168&plt=6275bfa7a265be9b0f848967f484576d",
+							"updated_t": 1450411436
+						},
+						{
+							"merchant": "Target",
+							"domain": "target.com",
+							"title": "IMAX-SOLAR MAX COLLECTORS EDITIONS (DVD)",
+							"currency": "",
+							"list_price": "",
+							"price": 19.89,
+							"shipping": "",
+							"condition": "New",
+							"availability": "",
+							"link": "https://www.upcitemdb.com/norob/alink/?id=23q2x2x24313c4a4&tid=1&seq=1776834168&plt=27ac62da0fd38aaacf190c45c01d6086",
+							"updated_t": 1587271676
+						},
+						{
+							"merchant": "11 Main",
+							"domain": "11Main.com",
+							"title": "SOLARMAX CE (IMAX)",
+							"currency": "",
+							"list_price": "",
+							"price": 22.47,
+							"shipping": "",
+							"condition": "New",
+							"availability": "",
+							"link": "https://www.upcitemdb.com/norob/alink/?id=u2r2x2w23363c4b4y2&tid=1&seq=1776834168&plt=0d535055cd08b6aeed3487195f1a844f",
+							"updated_t": 1437986502
+						},
+						{
+							"merchant": "Pricefalls.com",
+							"domain": "pricefalls.com",
+							"title": "Solar Max DVD",
+							"currency": "",
+							"list_price": "",
+							"price": 12.33,
+							"shipping": "",
+							"condition": "New",
+							"availability": "",
+							"link": "https://www.upcitemdb.com/norob/alink/?id=v2r2x2v2y213a484t2&tid=1&seq=1776834168&plt=9e5ff70dc03c951731a8c6ef1bdc7c6c",
+							"updated_t": 1484934798
+						}
+					],
+					"asin": "B000063K1N",
+					"elid": "173714700508"
+				}
+			]
+		}
+	}
+}
+
+
+
+

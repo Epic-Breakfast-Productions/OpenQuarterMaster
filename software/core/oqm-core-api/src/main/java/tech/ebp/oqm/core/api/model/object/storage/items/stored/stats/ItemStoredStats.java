@@ -10,10 +10,17 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
+import tech.ebp.oqm.core.api.model.object.storage.items.pricing.TotalPricing;
 
 import javax.measure.Unit;
+import javax.money.Monetary;
+import javax.money.MonetaryAmount;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 @AllArgsConstructor
@@ -23,9 +30,21 @@ import java.util.Map;
 @SuperBuilder
 public class ItemStoredStats extends StatsWithTotalContaining {
 	
-	public ItemStoredStats(Unit<?> unit) {
+	public ItemStoredStats(Unit<?> unit, Set<StoredPricing> defaultPrices) {
 		super(unit);
 		this.storageBlockStats = new LinkedHashMap<>();
+		
+		this.setPrices(
+			defaultPrices.stream().map(
+				p -> TotalPricing.builder()
+											   .totalPrice(
+												   Monetary.getDefaultAmountFactory().setCurrency(p.getFlatPrice().getCurrency()).setNumber(0).create()
+											   )
+											   .label(p.getLabel())
+											   .asOfDate(p.getAsOfDate())
+											   .build()
+			).collect(Collectors.toCollection(LinkedHashSet::new))
+		);
 	}
 	
 	@NonNull

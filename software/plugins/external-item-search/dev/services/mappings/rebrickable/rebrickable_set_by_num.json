@@ -1,0 +1,36 @@
+{
+	"request": {
+		"urlPathPattern": "/rebrickable/api/v3/lego/sets/21309-1/",
+		"method": "GET",
+		"headers": {
+			"Authorization": {
+				"equalTo": "key devKey"
+			}
+		}
+	},
+	"response": {
+		"status": 200,
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"delayDistribution": {
+			"type": "lognormal",
+			"median": 5000,
+			"sigma": 0.4
+		},
+		"jsonBody": {
+			"set_num": "21309-1",
+			"name": "NASA Apollo Saturn V",
+			"year": 2017,
+			"theme_id": 576,
+			"num_parts": 1969,
+			"set_img_url": "https://cdn.rebrickable.com/media/sets/21309-1/9948.jpg",
+			"set_url": "https://rebrickable.com/sets/21309-1/nasa-apollo-saturn-v/",
+			"last_modified_dt": "2020-11-03T19:18:05.622167Z"
+		}
+	}
+}
+
+
+
+

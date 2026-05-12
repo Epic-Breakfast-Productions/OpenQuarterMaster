@@ -4,16 +4,16 @@
 	{#let isOnFirstPage = pagingCalculations.get("onFirstPage").asBoolean() isOnLastPage = pagingCalculations.get("onLastPage").asBoolean() currentPage = pagingCalculations.get("curPage").asInt()}
 	<ul class="pagination pagination-sm justify-content-center mb-0">
 		<li class="page-item {#if isOnFirstPage}disabled{/if}">
-			<button type="button" class="btn-link page-link" title="First page" onclick="Search.paginationClick('{searchFormId}', 1);" {#if isOnFirstPage}disabled{/if}>{#icons/icon icon = 'chevron-bar-left' /}</button>
+			<button type="button" class="btn-link page-link" title="First page" onclick="SearchUtils.paginationClick('{searchFormId}', 1);" {#if isOnFirstPage}disabled{/if}>{#icons/icon icon = 'chevron-bar-left' /}</button>
 		</li>
 		<li class="page-item {#if isOnFirstPage}disabled{/if}">
-			<button type="button" class="btn-link page-link" title="Previous page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("previousPage").asLong()});" {#if isOnFirstPage}disabled{/if}>{#icons/left /}</button>
+			<button type="button" class="btn-link page-link" title="Previous page" onclick="SearchUtils.paginationClick('{searchFormId}', {pagingCalculations.get("previousPage").asLong()});" {#if isOnFirstPage}disabled{/if}>{#icons/left /}</button>
 		</li>
 		
 		{#if numPages <= config:['ui.pagination.breakToInput']}
 			{#for page in numPages}
 			<li class="page-item {#if page is currentPage}active{/if}">
-				<button type="button" class="btn-link page-link" title="Page {page}" onclick="Search.paginationClick('{searchFormId}', {page});" {#if currentPage is page}disabled{/if}>{page}</button>
+				<button type="button" class="btn-link page-link" title="Page {page}" onclick="SearchUtils.paginationClick('{searchFormId}', {page});" {#if currentPage is page}disabled{/if}>{page}</button>
 			</li>
 			{/for}
 		{#else}
@@ -22,7 +22,7 @@
 					<span class="input-group-text">Page</span>
 					<input type="number" class="form-control" aria-label="Page Number" value="{currentPage}" style="width: 100px;">
 					<span class="input-group-text" >of {numPages}</span>
-					<button class="btn btn-outline-secondary" type="button" title="Go to Page" onclick="Search.paginationClick('{searchFormId}', $(this).prev().val());">
+					<button class="btn btn-outline-secondary" type="button" title="Go to Page" onclick="SearchUtils.paginationClick('{searchFormId}', $(this).prev().val());">
 						{#icons/icon icon='book-half' /}
 					</button>
 				</div>
@@ -30,10 +30,10 @@
 		{/if}
 		
 		<li class="page-item {#if isOnLastPage}disabled{/if}">
-			<button type="button" class="btn-link page-link" title="Next page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("nextPage").asLong()});" {#if isOnLastPage}disabled{/if}>{#icons/right /}</button>
+			<button type="button" class="btn-link page-link" title="Next page" onclick="SearchUtils.paginationClick('{searchFormId}', {pagingCalculations.get("nextPage").asLong()});" {#if isOnLastPage}disabled{/if}>{#icons/right /}</button>
 		</li>
 		<li class="page-item {#if isOnLastPage}disabled{/if}">
-			<button type="button" class="btn-link page-link" title="Last page" onclick="Search.paginationClick('{searchFormId}', {pagingCalculations.get("lastPage").asLong()});" {#if isOnLastPage}disabled{/if}>{#icons/icon icon = 'chevron-bar-right' /}</button>
+			<button type="button" class="btn-link page-link" title="Last page" onclick="SearchUtils.paginationClick('{searchFormId}', {pagingCalculations.get("lastPage").asLong()});" {#if isOnLastPage}disabled{/if}>{#icons/icon icon = 'chevron-bar-right' /}</button>
 		</li>
 	</ul>
 	{/let}

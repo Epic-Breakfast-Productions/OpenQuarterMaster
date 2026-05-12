@@ -4,7 +4,6 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.Filters;
 import com.mongodb.client.model.Sorts;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.validation.Valid;
@@ -51,7 +50,6 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 		log.info("Done reading in custom units.");
 	}
 	
-	@WithSpan
 	public long getNextOrderValue() {
 		CustomUnitEntry entry = this.listIterator(null, Sorts.descending("order"), null).first();
 		
@@ -61,7 +59,6 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 		return entry.getOrder() + 1L;
 	}
 	
-	@WithSpan
 	public CustomUnitEntry getFromUnit(ClientSession clientSession, Unit unit) {
 		List<CustomUnitEntry> matchList = this.listIterator(
 			clientSession,

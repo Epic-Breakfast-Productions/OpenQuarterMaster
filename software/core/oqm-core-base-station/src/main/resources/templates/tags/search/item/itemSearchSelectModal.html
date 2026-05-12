@@ -6,8 +6,7 @@ Ingests:
 !}
 {#modal id='itemSearchSelect' size='xl' title='Select an Inventory Item'}
 {#titleIcon}{#icons/search}{/icons/search}{/titleIcon}
-{#search/item/itemSearchForm id='itemSearchSelectForm' rootPrefix=rootPrefix}
-{/search/item/itemSearchForm}
+{#search/item/itemSearchForm id='itemSearchSelectForm' rootPrefix=rootPrefix allCategorySearchResults=allCategorySearchResults /}
 <div class="col table-responsive">
   <table class=" table table-bordered table-striped table-hover table-sm" id="itemSearchSelectResults">
 

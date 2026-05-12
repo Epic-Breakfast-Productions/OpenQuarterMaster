@@ -1,9 +1,14 @@
 {#modal id='codeScanner' title='Scan a Barcode'}
-    {#titleIcon}{#icons/barcode /}{/titleIcon}
-    <input type="hidden" id="codeScannerCodeDestId" value="">
-    <div class="row">
-        <div class="col" id="codeScannerRender">
-        
-        </div>
-    </div>
+	{#titleIcon}{#icons/barcode /}{/titleIcon}
+	<input type="hidden" id="codeScannerCodeDestId" value="">
+	<div class="row">
+		<div class="col codeScannerDiv" id="codeScannerRender"></div>
+	</div>
+	<div class="row">
+		<div class="col">
+			<p class="m-0 mt-2">
+				If using an external barcode scanner, close this and simply set your cursor on the barcode text input. Then scan your barcode, it should place the text in the field.
+			</p>
+		</div>
+	</div>
 {/modal}

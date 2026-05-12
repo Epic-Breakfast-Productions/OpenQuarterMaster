@@ -156,10 +156,18 @@ class PackageManagement:
                     output.append(curLine)
         return os.linesep.join(output)
 
-    @staticmethod
-    def getPluginDisplayName(package:str):
+    @classmethod
+    def getPackageDisplayName(cls, package:str):
+        cls.log.debug("Getting display name for package: %s", package)
         # print("Package: " + package)
-        return package.split("-")[2].replace("+", " ")
+        output = package.split("-")
+
+        if len(output) == 3:
+            output = output[2]
+        elif len(output) == 2:
+            output = output[1]
+
+        return output.replace("+", " ")
 
     @staticmethod
     def getPackageInfo(package:str) -> (bool, str):
@@ -176,12 +184,20 @@ class PackageManagement:
             output[name] = value
         return output
 
-    @staticmethod
-    def packageLineToArray(curLine:str) -> (dict):
+    @classmethod
+    def packageLineToArray(cls, curLine:str) -> (dict):
         output = {}
-        # print("cur line: ", curLine)
+        cls.log.debug("Converting package line to array: %s", curLine)
+
         output['package'] = curLine.split("/")[0]
-        output['displayName'] = PackageManagement.getPluginDisplayName(output['package'])
+
+        packageParts = output['package'].split("-")
+        if len(packageParts) == 3:
+            output['group'] = packageParts[1]
+        else:
+            output['group'] = "other"
+
+        output['displayName'] = PackageManagement.getPackageDisplayName(output['package'])
         lineParts = curLine.split(" ")
         # print("lineParts: ", lineParts)
         output['version'] = lineParts[1]
@@ -195,15 +211,34 @@ class PackageManagement:
         return output
 
     @staticmethod
-    def getOqmPackagesList(filter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True):
+    def getOqmPackagesList(packageFilter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True)->map:
         PackageManagement.log.debug("Getting OQM packages.")
-        result = PackageManagement.getOqmPackagesStr(filter, installed, notInstalled)
+        result = PackageManagement.getOqmPackagesStr(packageFilter, installed, notInstalled)
         # print("Package list str: " + result)
         result = result.splitlines()
         result = map(PackageManagement.packageLineToArray,result)
-        # TODO:: debug
-        # print("Package list: ", list(result))
+
+        # PackageManagement.log.debug("Package list: %s", list(result))
+        # PackageManagement.log.debug("Package list: %s", result)
         return result
+
+    @classmethod
+    def getOqmPackagesTree(cls, packageFilter: str = ALL_OQM, installed: bool = True, notInstalled: bool = True):
+        packageList = list(cls.getOqmPackagesList(packageFilter, installed, notInstalled))
+        cls.log.debug("Package list gotten: %s", packageList)
+        output = {
+            "manager": {},
+            "core": {},
+            "plugin": {},
+            "infra": {},
+            "other": {}
+        }
+        for curPackage in packageList:
+            # cls.log.debug("Package: %s", curPackage)
+            curGroup = curPackage['group']
+            output[curGroup][curPackage['package']] = curPackage
+        cls.log.debug("Package tree: %s", output)
+        return output
 
     @staticmethod
     def ensureOnlyPluginsInstalled(pluginList:list) -> (bool, str):

@@ -6,6 +6,7 @@ import io.restassured.http.ContentType;
 import io.restassured.http.Header;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -29,9 +30,9 @@ public abstract class RunningServerTest extends WebServerTest {
 	@TestHTTPResource("/")
 	URL index;
 	
-	@Getter
-	@ConfigProperty(name = "oqm.core.api.baseUri")
-	String coreApiBaseUri;
+	protected String getCoreApiBaseUri() {
+		return ConfigProvider.getConfig().getValue("oqm.core.api.baseUri", String.class);
+	}
 
 	@Getter
 	private final TestUserService testUserService = TestUserService.getInstance();

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.exception.NotEnoughStoredException;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidQuantity;
 import tech.units.indriya.quantity.Quantities;
@@ -24,6 +25,7 @@ import javax.measure.Unit;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
+@Schema(title="AmountStored", description = "Stored object to describe an amount of stored something.")
 public class AmountStored extends Stored {
 	
 	/**
@@ -32,6 +34,7 @@ public class AmountStored extends Stored {
 	@NotNull
 	@NonNull
 	@ValidQuantity
+	@Schema(description = "The amount of something that is tracked in this object. Unit must be compatible with the associated InventoryItem entry.")
 	private Quantity<?> amount;
 
 	/**
@@ -40,6 +43,7 @@ public class AmountStored extends Stored {
 	 * Null for no threshold, Quantity with compatible unit to set the threshold.
 	 */
 	@lombok.Builder.Default
+	@Schema(description = "The amount which below is considered low stock. Null for no threshold.", examples = {"null"})
 	private Quantity<?> lowStockThreshold = null;
 	
 	public AmountStored(Unit<?> unit) {
@@ -77,6 +81,8 @@ public class AmountStored extends Stored {
 		return this;
 	}
 	
+	
+	@Schema(defaultValue = "AMOUNT")
 	@Override
 	public StoredType getType() {
 		return StoredType.AMOUNT;

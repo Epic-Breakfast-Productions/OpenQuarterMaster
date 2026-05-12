@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * Request to create an image in the Base Station service.
+ * Request to create an image in the Core API service.
  */
 @Data
 @NoArgsConstructor

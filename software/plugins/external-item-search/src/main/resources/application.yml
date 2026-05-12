@@ -6,39 +6,15 @@ service:
 productLookup:
   providers:
     barcodelookup-com:
-      displayName: BarcodeLookup.com
-      description: Comprehensive database of products, but a paid service. Can get a 2-week trial API key.
-      cost: Paid
-      acceptsContributions: true
-      homepage: https://www.barcodelookup.com/
       enabled: true
-      url: https://api.barcodelookup.com/
       apiKey: " "
     datakick:
-      displayName: Datakick
-      description: The open product database, free and open database of products. Mostly for home and food goods. Limited size of database, but free and open to contributions.
-      cost: Free
-      acceptsContributions: true
-      homepage: https://gtinsearch.org/
       enabled: true
-      url: https://www.gtinsearch.org
-    upcitemdb:
-      displayName: upcitemdb.com
-      description: A lookup database with good number of records, and a free tier with 100 requests per day.
-      cost: Free tier, Paid
-      acceptsContributions: false
-      homepage: https://www.upcitemdb.com/
-      enabled: true
-      url: https://api.upcitemdb.com
-      apiKey: " "
     rebrickable:
-      displayName: Rebrickable
-      description: A database of LEGO(TM) pieces. Free, but requires you to get your own key.
-      cost: Free
-      acceptsContributions: false
-      homepage: https://rebrickable.com
       enabled: true
-      url: https://rebrickable.com
+      apiKey: " "
+    upcitemdb:
+      enabled: true
       apiKey: " "
 
 quarkus:
@@ -48,26 +24,22 @@ quarkus:
   http:
     port: 80
     ssl-port: 443
-  jib:
-    ports:
-      - 80
-      - 443
   application:
 #    name: ${service.nameShort} - V${service.apiVersion}
   rest-client:
     logging:
       scope: all
-    upc-barcodelookup-com:
-      url: ${productLookup.providers.barcodelookup-com.url}
+    barcodelookup-com:
+      url: https://api.barcodelookup.com/
       scope: jakarta.inject.Singleton
-    upc-datakick:
-      url: ${productLookup.providers.datakick.url}
+    datakick:
+      url: https://www.gtinsearch.org
       scope: jakarta.inject.Singleton
-    upc-upcitemdb:
-      url: ${productLookup.providers.upcitemdb.url}
+    upcitemdb:
+      url: https://api.upcitemdb.com
       scope: jakarta.inject.Singleton
-    lego-rebrickable:
-      url: ${productLookup.providers.rebrickable.url}
+    rebrickable:
+      url: https://rebrickable.com
       scope: jakarta.inject.Singleton
   smallrye-openapi:
     info-title: External Item Search API
@@ -84,22 +56,26 @@ quarkus:
     title: External Item Search v${quarkus.application.version}
     theme: flattop
     footer: With ❤️, EBP
-  health:
-    openapi:
-      included: true
+  otel:
+    metrics:
+      enabled: true
+    traces:
+      enabled: true
+    logs:
+      enabled: true
+  wiremock:
+    devservices:
+      enabled: true
+      reload: true
+      files-mapping: ./dev/services/
+      global-response-templating: true
 
 "%dev":
   productLookup:
     providers:
       rebrickable:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
         apiKey: devKey
-      upcitemdb:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
-      datakick:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
       barcodelookup-com:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
         apiKey: devKey
 
   quarkus:
@@ -108,9 +84,17 @@ quarkus:
       ssl-port: 8443
     log:
       level: DEBUG
-    wiremock:
-      devservices:
-        enabled: true
-        reload: true
-        files-mapping: ../../../../dev/wmMapping
-        global-response-templating: true
+    rest-client:
+      logging:
+        scope: all
+      barcodelookup-com:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
+        scope: jakarta.inject.Singleton
+      datakick:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
+        scope: jakarta.inject.Singleton
+      upcitemdb:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
+        scope: jakarta.inject.Singleton
+      rebrickable:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/

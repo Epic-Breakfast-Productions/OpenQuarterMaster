@@ -1,8 +1,8 @@
 package tech.ebp.oqm.core.api.service.mongo.file;
 
 import com.mongodb.client.ClientSession;
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
@@ -19,14 +19,15 @@ import java.util.Set;
 @ApplicationScoped
 public class FileAttachmentService extends MongoHistoriedFileService<FileAttachment, FileUploadBody, FileAttachmentSearch, FileAttachmentGet> {
 	
+	@Inject
 	StorageBlockService storageBlockService;
+	@Inject
 	InventoryItemService inventoryItemService;
 	
 	public FileAttachmentService() {
 		super(FileAttachment.class, "fileAttachment", false);
 	}
 	
-	@WithSpan
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, FileAttachment newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
@@ -37,7 +38,6 @@ public class FileAttachmentService extends MongoHistoriedFileService<FileAttachm
 		return FileAttachmentGet.fromFileAttachment(obj, this.getRevisions(oqmDbIdOrName, obj.getId()));
 	}
 	
-	@WithSpan
 	@Override
 	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession cs, FileAttachment objectToRemove) {
 		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(oqmDbIdOrName, cs, objectToRemove);

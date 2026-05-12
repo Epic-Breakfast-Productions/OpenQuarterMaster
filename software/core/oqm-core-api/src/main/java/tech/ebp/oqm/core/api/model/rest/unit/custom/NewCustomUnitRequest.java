@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.units.CustomUnitEntry;
 import tech.ebp.oqm.core.api.model.units.UnitCategory;
 
@@ -27,6 +28,10 @@ import javax.measure.Unit;
 	@JsonSubTypes.Type(value = NewDerivedCustomUnitRequest.class, name = "DERIVED")
 })
 @BsonDiscriminator
+@Schema(oneOf = {
+	NewBaseCustomUnitRequest.class,
+	NewDerivedCustomUnitRequest.class
+})
 public abstract class NewCustomUnitRequest {
 	
 	@NonNull

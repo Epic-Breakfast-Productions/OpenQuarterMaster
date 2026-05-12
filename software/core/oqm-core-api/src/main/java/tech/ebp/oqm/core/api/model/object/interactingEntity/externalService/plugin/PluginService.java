@@ -10,6 +10,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.ExternalService;
 
@@ -22,6 +23,7 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
+@Schema(title = "PluginService", description = "A service that self-identifies as a plugin.")
 public class PluginService extends ExternalService {
 	
 	@NonNull
@@ -44,6 +46,7 @@ public class PluginService extends ExternalService {
 	
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Override
+	@Schema(constValue = "SERVICE_PLUGIN", readOnly = true, required = true, examples = "SERVICE_PLUGIN")
 	public InteractingEntityType getType() {
 		return InteractingEntityType.SERVICE_PLUGIN;
 	}

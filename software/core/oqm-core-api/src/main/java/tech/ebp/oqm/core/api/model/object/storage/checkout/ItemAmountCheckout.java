@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import javax.measure.Quantity;
 
@@ -20,6 +21,7 @@ import javax.measure.Quantity;
 @AllArgsConstructor
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
+@Schema(title = "ItemAmountCheckout", description = "A checkout for a specific amount of a stored item.")
 public class ItemAmountCheckout extends ItemCheckout<Quantity> {
 	public static final int CUR_SCHEMA_VERSION = 2;
 
@@ -28,6 +30,7 @@ public class ItemAmountCheckout extends ItemCheckout<Quantity> {
 //	private boolean wholeCheckout = false;
 
 	@Override
+	@Schema(constValue = "AMOUNT", readOnly = true, required = true, examples = "AMOUNT")
 	public CheckoutType getType(){
 		return CheckoutType.AMOUNT;
 	}

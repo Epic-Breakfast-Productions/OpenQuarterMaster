@@ -1,0 +1,12 @@
+[Desktop Entry]
+Name=Storagotchi - OQM
+GenericName=Storagotchi - OQM
+
+Comment=Quick link to open the Open QuarterMaster
+
+Exec=bash -c 'xdg-open $(oqm-config g plugin.storagotchi.externalBaseUri)'
+Icon=/etc/oqm/static/media/plugin/storagotchi/plugin-storagotchi.svg
+Terminal=false
+
+Type=Application
+Categories=Game;Plugin

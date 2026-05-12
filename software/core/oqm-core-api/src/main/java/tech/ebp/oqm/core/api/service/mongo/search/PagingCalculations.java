@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.Iterator;
 
@@ -14,22 +15,45 @@ import java.util.Iterator;
 @AllArgsConstructor(access = AccessLevel.PROTECTED)
 @NoArgsConstructor
 @Setter(AccessLevel.PROTECTED)
+@Schema(description = "Calculations on the search results related to paging.")
 public class PagingCalculations {
-	private boolean onFirstPage;
-	private boolean onLastPage;
-	private long numPages;
-	private long lastPage;
-	private long curPage;
-	private long nextPage;
-	private long previousPage;
-	private long pageResultIndexStart;
-	private long pageResultIndexEnd;
 	
-	protected PagingCalculations(long curPageNum, long numPages, long startIndex, long endIndex) {
+	@Schema(required = true, description = "If this was the first page.", examples = {"false"})
+	private boolean onFirstPage;
+	
+	@Schema(required = true, description = "If this was the last page.", examples = {"false"})
+	private boolean onLastPage;
+	
+	@Schema(required = true, description = "The number of pages in the query.", examples = {"11"})
+	private int numPages;
+	
+	@Schema(required = true, description = "The size of the pages in the query.", examples = {"25"})
+	private int pageSize;
+	
+	@Schema(required = true, description = "The last page number.", examples = {"10"})
+	private int lastPage;
+	
+	@Schema(required = true, description = "The current page number.", examples = {"1"})
+	private int curPage;
+	
+	@Schema(required = true, description = "The next page number", examples = {"false"})
+	private int nextPage;
+	
+	@Schema(required = true, description = "The previous page number.", examples = {"false"})
+	private int previousPage;
+	
+	@Schema(required = true, description = "The start of the page by index in the overall search.", examples = {"false"})
+	private int pageResultIndexStart;
+	
+	@Schema(required = true, description = "The end of the page by index in the overall search.", examples = {"false"})
+	private int pageResultIndexEnd;
+	
+	protected PagingCalculations(int curPageNum, int numPages, int pageSize, int startIndex, int endIndex) {
 		this(
 			curPageNum <= 1,
 			curPageNum == numPages,
 			numPages,
+			pageSize,
 			numPages,
 			curPageNum,
 			(Math.min(curPageNum + 1, numPages)),
@@ -39,12 +63,13 @@ public class PagingCalculations {
 		);
 	}
 	
-	public PagingCalculations(PagingOptions options, long numResults) {
+	public PagingCalculations(PagingOptions options, int numResults) {
 		this(
 			options.getPageNum(),
-			(long) Math.ceil((double) numResults / (double) options.getPageSize()),
+			(int) Math.ceil((double) numResults / (double) options.getPageSize()),
+			options.getPageSize(),
 			options.getSkipVal(),
-			options.getSkipVal() + options.pageSize - 1
+			options.getSkipVal() + options.getPageSize() - 1
 		);
 	}
 	

@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,5 +31,6 @@ public abstract class ImagedMainObject extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@Schema(required = false, description = "Images to associate with this object.", examples = {"[]"})
 	List<@NonNull ObjectId> imageIds = new ArrayList<>();
 }

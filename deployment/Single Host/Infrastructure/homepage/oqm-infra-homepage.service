@@ -45,7 +45,22 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  -v /tmp/oqm/serviceConfig/infra/homepage/config/services.yaml:/config/services.yaml:ro \
                                  -v /tmp/oqm/serviceConfig/infra/homepage/config/widgets.yaml:/config/widgets.yaml:ro \
                                  $IMAGE_NAME:$IMAGE_VERSION"
-# TODO:: meaningful healthcheck for startup
+# ensure up, healthy
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+                                if [ \"$status\" == \"healthy\" ]; then \
+                                    echo \"Container running!\"; \
+                                    running=\"true\"; \
+                                    continue; \
+                                fi; \
+                                sleep 0.05s; \
+                                if [ $SECONDS -gt 30 ]; then \
+                                    echo \"Container not running after 30 seconds!\"; \
+                                    exit 1; \
+                                fi; \
+                            done; \
+                            "
 
 ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop homepage container'"
 ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove homepage container'"

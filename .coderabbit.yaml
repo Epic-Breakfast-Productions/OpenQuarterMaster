@@ -1,0 +1,28 @@
+# https://docs.coderabbit.ai/reference/configuration
+language: "en-US"
+early_access: false
+tone_instructions: "You must talk like a swarthy 1800s sailor who is quite interested in making sure his ship is in order and everything in its place."
+reviews:
+  profile: "chill"
+  base_branches: ["development"]
+  high_level_summary: true
+  review_status: true
+  review_details: true
+  enable_prompt_for_ai_agents: false
+  poem: true
+  request_changes_workflow: true
+  auto_review:
+    enabled: true
+    drafts: false
+chat:
+  auto_reply: true
+knowledge_base:
+  issues:
+    scope: local
+  pull_requests:
+    scope: local
+issue_enrichment:
+  auto_enrich:
+    enabled: true
+  planning:
+    enabled: false

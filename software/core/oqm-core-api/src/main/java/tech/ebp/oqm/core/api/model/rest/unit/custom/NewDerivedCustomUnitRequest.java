@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.units.UnitTools;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidUnit;
 
@@ -20,6 +21,7 @@ import java.math.BigDecimal;
 @SuperBuilder
 @ToString(callSuper = true)
 @EqualsAndHashCode(callSuper = true)
+@Schema(title = "NewDerivedCustomUnitRequest", description = "A request for a new derived unit.")
 public class NewDerivedCustomUnitRequest extends NewCustomUnitRequest {
 	
 	@NotNull
@@ -36,6 +38,7 @@ public class NewDerivedCustomUnitRequest extends NewCustomUnitRequest {
 	private DeriveType deriveType;
 	
 	@Override
+	@Schema(constValue = "DERIVED", readOnly = true, required = true, examples = "DERIVED")
 	public RequestType getRequestType() {
 		return RequestType.DERIVED;
 	}

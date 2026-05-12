@@ -1,11 +1,9 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import io.opentelemetry.instrumentation.annotations.WithSpan;
 import io.quarkus.arc.Arc;
 import io.quarkus.arc.InstanceHandle;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.core.SecurityContext;
@@ -19,6 +17,7 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.rest.search.InteractingEntitySearch;
+import tech.ebp.oqm.core.api.service.serviceState.InstanceMutexService;
 
 import java.util.Optional;
 import java.util.concurrent.locks.ReentrantLock;
@@ -57,8 +56,8 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 			return;
 		}
 		//force getting around Arc subclassing out the injected class
-		CoreApiInteractingEntity coreApiInteractingEntity = new CoreApiInteractingEntity(coreApiInteractingEntityArc.getEmail());
-		//ensure we have the base station in the db
+		CoreApiInteractingEntity coreApiInteractingEntity = new CoreApiInteractingEntity();
+		//ensure we have the Core API entity in the db
 		CoreApiInteractingEntity gotten = (CoreApiInteractingEntity) this.get(coreApiInteractingEntity.getId());
 		if (gotten == null) {
 			this.add(coreApiInteractingEntity);
@@ -96,10 +95,6 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 		return this.getTypedCollection().find(eq("_id", id)).limit(1).first();
 	}
 	
-	public InteractingEntity get(String id) {
-		return this.get(new ObjectId(id));
-	}
-	
 	public ObjectId add(@Valid InteractingEntity entity) {
 		return this.getTypedCollection().insertOne(entity).getInsertedId().asObjectId().getValue();
 	}
@@ -118,7 +113,6 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	 *
 	 * @return The entity that is interacting with the system, guaranteed to be in the database and updated based on request data.
 	 */
-	@WithSpan
 	public InteractingEntity ensureEntity(SecurityContext context, JsonWebToken jwt) {
 		InteractingEntity entity = null;
 		try { //TODO:: test this for performance. Any way around making the whole thing a critical section?
@@ -157,7 +151,6 @@ public class InteractingEntityService extends TopLevelMongoService<InteractingEn
 	 *
 	 * @return The entity that performed the event.
 	 */
-	@WithSpan
 	public InteractingEntity get(ObjectHistoryEvent e) {
 		return this.get(e.getEntity());
 	}

@@ -1,0 +1,7 @@
+{
+	"type": "plugin",
+	"name": "storagotchi",
+	"internalBaseUriConfig": "plugin.storagotchi.internalBaseUri",
+	"preservePath": true,
+	"stripPrefixes": true
+}

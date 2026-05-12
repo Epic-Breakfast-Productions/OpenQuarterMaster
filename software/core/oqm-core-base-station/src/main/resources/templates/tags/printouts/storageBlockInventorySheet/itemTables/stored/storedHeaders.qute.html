@@ -1,0 +1,24 @@
+
+{#if storageType == 'AMOUNT_LIST' || storageType == 'UNIQUE_MULTI'}
+	<th class=" {#if extraCss??}{extraCss}{/if}">
+		Label
+	</th>
+{/if}
+
+{#if storageType == 'BULK' || storageType == 'AMOUNT_LIST'}
+	<th>
+		Amount
+	</th>
+{/if}
+
+{#if options.includeConditionCol}
+	<th>
+		Cond.
+	</th>
+	<th>
+		Cond. Notes
+	</th>
+{/if}
+<th>
+	Exp.?
+</th>

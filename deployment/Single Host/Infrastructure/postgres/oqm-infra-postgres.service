@@ -47,12 +47,17 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --network=oqm-internal \
                                  --env-file $ENV_CONFIG_FILE \
                                  -v $(oqm-config g 'system.dataDir')$DATA_DIR:/var/lib/postgresql/data/ \
+                                 --health-cmd=\"pg_isready\" \
+                                 --health-interval=10s \
+                                 --health-timeout=10s \
+                                 --health-retries=5 \
+                                 --health-start-period=20s \
                                  $IMAGE_NAME:$IMAGE_VERSION"
-# determine is running
+# Ensure is up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \
-                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME 2> /dev/null)\"; \
-                                if [ \"$status\" == \"true\" ]; then \
+                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+                                if [ \"$status\" == \"healthy\" ]; then \
                                     echo \"Container running!\"; \
                                     running=\"true\"; \
                                     continue; \
@@ -64,6 +69,7 @@ ExecStartPost=/bin/bash -c "running=\"false\"; \
                                 fi; \
                             done; \
                             "
+#doublecheck admin creds
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             sleep 10s; \
                             while [ \"$running\" != \"true\" ]; do \

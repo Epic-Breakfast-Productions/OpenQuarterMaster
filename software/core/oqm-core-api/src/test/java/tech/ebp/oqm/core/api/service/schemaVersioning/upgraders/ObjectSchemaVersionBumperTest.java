@@ -11,9 +11,9 @@ import tech.ebp.oqm.core.api.testResources.upgrader.TestVersion3Bumper;
 
 import java.util.TreeSet;
 
-import static org.junit.Assert.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j

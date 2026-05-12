@@ -84,7 +84,7 @@ public class DatabaseManagementService {
 
 		return DbClearResult.builder()
 			.dbName(db.getDbName())
-			.dbId(db.getDbId().toHexString())
+			.dbId(db.getDbId())
 			.collectionClearResults(output)
 			.build();
 	}

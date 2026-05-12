@@ -11,6 +11,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
@@ -64,19 +65,39 @@ import java.util.Map;
 })
 @BsonDiscriminator
 @SuperBuilder(toBuilder = true)
+@Schema(
+	description = "An event that has occurred on an object.",
+	oneOf = {
+		SchemaUpgradeEvent.class,
+		CreateEvent.class,
+		ReCreateEvent.class,
+		UpdateEvent.class,
+		DeleteEvent.class,
+		ItemExpiryWarningEvent.class,
+		ItemExpiredEvent.class,
+		ItemLowStockEvent.class,
+		NewFileVersionEvent.class,
+		ItemListApplyEvent.class,
+		ItemListActionAddEvent.class,
+		ItemListActionUpdateEvent.class,
+		ItemListActionDeleteEvent.class
+	})
 public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
+	
 	public static final int CUR_SCHEMA_VERSION = 2;
 	
 	/**
 	 * The id of the object this history is for
 	 */
 	@NotNull
+	@Schema(description = "The id of the object this history is for.")
 	private ObjectId objectId;
 	
 	/**
 	 * The interacting entity that performed the event. Not required to be anything, as in some niche cases there wouldn't be one (adding user)
 	 */
 	@lombok.Builder.Default
+	@Schema(description = "The id of the entity that performed the event.")
 	private ObjectId entity = null;
 	
 	/**
@@ -85,6 +106,7 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@Schema(description = "When the event occurred.")
 	private ZonedDateTime timestamp = ZonedDateTime.now();
 	
 	/**
@@ -93,13 +115,14 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
+	@Schema(description = "Details about the event.")
 	private Map<String, HistoryDetail> details = new HashMap<>();
 	
 	public abstract EventType getType();
 	
 	public ObjectHistoryEvent(ObjectId objectId, InteractingEntity entity) {
 		this.objectId = objectId;
-		if(entity != null) {
+		if (entity != null) {
 			this.entity = entity.getId();
 		}
 	}
@@ -108,7 +131,7 @@ public abstract class ObjectHistoryEvent extends AttKeywordMainObject {
 		this(object.getId(), entity);
 	}
 	
-	public ObjectHistoryEvent setEntity(ObjectId interactingEntityId){
+	public ObjectHistoryEvent setEntity(ObjectId interactingEntityId) {
 		this.entity = interactingEntityId;
 		return this;
 	}

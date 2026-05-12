@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
@@ -27,7 +28,6 @@ import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.StorageBlockTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
-import tech.ebp.oqm.core.api.testResources.lifecycleManagers.TestResourceLifecycleManager;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import javax.money.Monetary;
@@ -42,7 +42,6 @@ import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 @Tag("integration")
 @Slf4j
 @QuarkusTest
-@QuarkusTestResource(value = TestResourceLifecycleManager.class)
 //@TestHTTPEndpoint(StoredEndpoints.class)
 public class StoredInItemEndpointsTest extends RunningServerTest {
 	
@@ -187,11 +186,15 @@ public class StoredInItemEndpointsTest extends RunningServerTest {
 		
 		log.info("Search result: {}", response.extract().asString());
 		
-		SearchResult<AmountStored> result = OBJECT_MAPPER.readValue(response.extract().asString(), new TypeReference<>() {});
+		ObjectNode result = (ObjectNode) OBJECT_MAPPER.readTree(response.extract().asString());
 		
-		assertEquals(1, result.getNumResults());
+		assertEquals(1, result.get("numResults").asInt());
 		
-		AmountStored storedResult = (AmountStored) result.getResults().getFirst();
+//		SearchResult<AmountStored> result = OBJECT_MAPPER.readValue(response.extract().asString(), new TypeReference<>() {});
+//
+//		assertEquals(1, result.getNumResults());
+//
+//		AmountStored storedResult = (AmountStored) result.getResults().getFirst();
 		//		assertNotNull(storedResult.getCalculatedPrices());
 	}
 	

@@ -7,10 +7,12 @@ Ingests:
 {!{@tech.ebp.oqm.baseStation.rest.search.CategoriesSearch searchObject}!}
 {#include tags/search/searchForm id=id action=(rootPrefix + '/itemCheckout') showKeywords=true showAttributes=true defaultPageSize=config:['ui.itemCheckout.search.defaultPageSize']}
 {#inputs}
-	{#inputs/item/itemSelectInput id=id}
-	{/inputs/item/itemSelectInput}
-	{#inputs/storageBlock/storageBlockSelectInput id=id blockIdName='storageCheckedOutFrom'}
-	{/inputs/storageBlock/storageBlockSelectInput}
+	<div class="mb-3 col col-3">
+		{#inputs/item/itemSelectInput id=id /}
+	</div>
+	<div class="mb-3 col col-3">
+		{#inputs/storageBlock/storageBlockSelectInput id=id blockIdName='storageCheckedOutFrom' includeLabel=true labelPrefix='Checked out from' /}
+	</div>
 	<div class="mb-3 col col-3 form-check">
 		<input class="form-check-input" type="checkbox" id="{id}-stillCheckedOutInput" value="false" name="stillCheckedOut">
 		<label class="form-check-label" for="{id}-stillCheckedOutInput">

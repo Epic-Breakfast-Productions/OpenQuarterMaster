@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# Script to make installers for OQM- Base Station.
+# Script to make installers for OQM- Core API.
 #
 # Intended to be run from the dir this resides
 #

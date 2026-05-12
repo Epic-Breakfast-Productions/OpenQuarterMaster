@@ -13,6 +13,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityType;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidUserRole;
@@ -31,6 +32,7 @@ import java.util.Set;
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
 @BsonDiscriminator
+@Schema(title = "User", description = "An air breathing human user.")
 public class User extends InteractingEntity {
 	
 	@NonNull
@@ -62,6 +64,7 @@ public class User extends InteractingEntity {
 	private Set<@ValidUserRole String> roles = new HashSet<>();
 	
 	@Override
+	@Schema(constValue = "USER", readOnly = true, required = true, examples = "USER")
 	public InteractingEntityType getType() {
 		return InteractingEntityType.USER;
 	}

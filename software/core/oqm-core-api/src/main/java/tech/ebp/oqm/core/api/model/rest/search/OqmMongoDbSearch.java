@@ -20,7 +20,7 @@ public class OqmMongoDbSearch extends SearchKeyAttObject<OqmMongoDatabase> {
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
 		
-		if (this.hasValue(this.getNameOrDisplay())) {
+		if (hasValue(this.getNameOrDisplay())) {
 			filters.add(
 				or(
 					SearchUtils.getBasicSearchFilter("name", this.getNameOrDisplay()),

@@ -1,8 +1,7 @@
-#topOqmLogo{
+.topNavImg{
 	padding-top: 0;
 	padding-bottom: 0;
 	height:42px;
-	width: 103px;
 }
 
 .top-nav {
@@ -130,4 +129,8 @@ Overtype tweaks
 
 .overtype-container {
 	border: 1px solid black !important;
+}
+
+.codeScannerDiv {
+	background-color: rgb(152, 152, 152);
 }

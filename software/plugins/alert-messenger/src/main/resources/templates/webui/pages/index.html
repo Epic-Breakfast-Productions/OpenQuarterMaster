@@ -24,7 +24,82 @@
     </select>
 </form>
 
+<!-- Adding in a form to get user preferences on notifications -->
+<!-- Form for users to update their notification preferences for email and Slack. -->
+<form id="notificationForm">
+
+  <!-- Hidden User ID -->
+  <input type="hidden" name="id" value="{userInfo.getId()}">
+  <br><br>
+  <!-- Email Notifications -->
+  <fieldset>
+    <legend>Would you like to receive email notifications for inventory updates?</legend>
+    <label>
+      <input type="radio" name="emailNotifications" value="yes"> Yes
+    </label>
+    <label>
+      <input type="radio" name="emailNotifications" value="no"> No
+    </label>
+  </fieldset>
+
+  <br><br>
+
+  <!-- Slack Webhook URL -->
+  <div>
+    <label for="slackWebhook">Slack Webhook URL (optional):</label>
+    <br>
+    <input type="url" id="slackWebhook" name="slackWebhook" placeholder="https://hooks.slack.com/services/...">
+    <br>
+    <p>
+      Provide a Slack Webhook URL to receive database notifications in a Slack channel. Leave blank if not using Slack.
+    </p>
+  </div>
+  <br><br>
+  <!-- Submit Button -->
+  <button type="submit">Submit</button>
+</form>
+
 <script src="/res/lib/js-cookie/3.0.5/js.cookie.min.js"></script>
-<script src="/res/js/OqmDb.js"></script>
+<script src="../js/OqmDb.js"></script>
+
+<!-- Handles form submission to send user preferences to the backend using Fetch API. -->
+<script>
+  const form = document.getElementById('notificationForm');
+  const submitButton = form.querySelector('button[type="submit"]');
+
+  // Function to create and append an <h1> message
+  function addMessageToPage(message, color = 'black') {
+      const messageElement = document.createElement('h1');
+      messageElement.textContent = message;
+      messageElement.style.color = color;
+      document.body.appendChild(messageElement); // Append to the end of the body
+  }
+
+  form.addEventListener('submit', async (event) => {
+
+      event.preventDefault(); // Prevent form reset/reload
+
+      const formData = new FormData(event.target);
+
+      try {
+          const response = await fetch('/updatePreferences', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: new URLSearchParams(formData),
+          });
+
+          if (response.ok) {
+              addMessageToPage('Preferences updated successfully!', 'green');
+          } else {
+              addMessageToPage('Failed to update preferences.', 'red');
+          }
+      } catch (error) {
+          console.error('Error submitting form:', error);
+          addMessageToPage('An error occurred. Please try again.', 'red');
+      }
+  });
+</script>
 </body>
 </html>

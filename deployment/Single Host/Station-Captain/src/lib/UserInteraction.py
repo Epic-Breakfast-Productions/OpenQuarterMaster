@@ -15,6 +15,8 @@ from LogManagement import *
 from InputValidators import *
 from CertsUtils import *
 from LogUtils import *
+from SystemInfoUtils import *
+from RegistrationUtils import *
 from SystemCheckUtils import SystemCheckUtils
 
 
@@ -159,7 +161,7 @@ class UserInteraction:
                     ("(3)", "Plugins"),
                     ("(4)", "Snapshots"),
                     ("(5)", "Cleanup, Maintenance, and Updates"),
-                    # ("(6)", "Captain Settings"),
+                    ("(6)", "Registration"),
                 ]
             )
             UserInteraction.clearScreen()
@@ -177,6 +179,8 @@ class UserInteraction:
                 self.snapshotsMenu()
             if choice == "(5)":
                 self.cleanMaintUpdatesMenu()
+            if choice == "(6)":
+                self.checkRegistration()
 
         UserInteraction.log.debug("Done running main menu.")
 
@@ -208,7 +212,7 @@ class UserInteraction:
         self.dialog.infobox("Gathering system information. please wait.")
         textToShow = ""
         try:
-            textToShow += LogManagement.getSystemInfo()
+            textToShow += SystemInfoUtils.getSystemInfo()
         except subprocess.CalledProcessError:
             UserInteraction.log.error("Failed to call necessary commands.")
         UserInteraction.log.debug("Done compiling host info.")
@@ -834,6 +838,11 @@ class UserInteraction:
         #         UserInteraction.log.info("User chose to uninstall OQM.")
         #         # TODO:: uninstall, uncomment this
 
+
+        #
+        # OS updates
+        #
+
         code = self.dialog.yesno(
             "Perform OS/system updates and restart?\n\nHighly recommend doing this if:\n - you have not yet today\n - this is your first time logging into the system\n - you just changed the hostname and haven't restarted yet\n\nThe system tends to install better when things are up to date.\n\nIf you just did this, you can say no.",
             title="Update system? - Setup Wizard"
@@ -846,7 +855,7 @@ class UserInteraction:
             result, message = PackageManagement.updateSystem()
             # TODO:: error check
             os.system('reboot')
-
+            
         self.checkSystem()
 
         code = self.dialog.yesno(
@@ -879,8 +888,9 @@ class UserInteraction:
                 PackageManagement.installCore()
                 self.dialog.msgbox("Core components installed!", title="Setup Wizard")
 
-        # TODO: set simple settings; domain name, run by details, email settings
-
+        #
+        # Snapshots
+        #
         code = self.dialog.yesno(
             "Perform snapshots automatically?\n\nRecommend turning on. This can be managed later in settings.",
             title="Automatic Snapshots? - Setup Wizard"
@@ -891,13 +901,6 @@ class UserInteraction:
         else:
             UserInteraction.log.info("User chose to automatically perform snapshots.")
             SnapshotUtils.enableAutomatic()
-
-        self.dialog.msgbox(
-            "You will now be prompted to perform automatic updates.\n\nRecommend turning on. This can be managed "
-            "later in settings.",
-            title="Setup Wizard"
-        )
-        PackageManagement.promptForAutoUpdates()
 
         code = self.dialog.yesno(
             "Encrypt snapshots?\n\nRecommend turning on if syncing your snapshots or saving them offsite. This can be managed later in settings.",
@@ -914,7 +917,29 @@ class UserInteraction:
                 title="Snapshot encryption enabled! - Setup Wizard"
             )
 
-        # TODO: if not .local, ask to select cert type
+        #
+        # Automatic updates
+        #
+
+        self.dialog.msgbox(
+            "You will now be prompted to perform automatic updates.\n\nRecommend turning on. This can be managed "
+            "later in settings.",
+            title="Setup Wizard"
+        )
+        PackageManagement.promptForAutoUpdates()
+
+        #
+        # Registration
+        #
+        code = self.dialog.yesno(
+            "Would you like to register this instance?",
+            title="Register? - Setup Wizard"
+        )
+        if code != self.dialog.OK:
+            UserInteraction.log.info("User chose not to register.")
+        else:
+            UserInteraction.log.info("User chose to register.")
+            self.registrationWizard()
 
         self.dialog.msgbox(
             "Setup Wizard complete!",
@@ -970,7 +995,7 @@ class UserInteraction:
     def mapPluginSelection(pluginFromPm):
         return (
             pluginFromPm['package'],
-            PackageManagement.getPluginDisplayName(pluginFromPm['package']),
+            PackageManagement.getPackageDisplayName(pluginFromPm['package']),
             pluginFromPm['installed']
         )
 
@@ -1004,7 +1029,7 @@ class UserInteraction:
             toShow += "\tVersion: " + curPackage['version'] + "\n"
             toShow += "\tInstalled?: " + str(curPackage['installed']) + "\n"
             toShow += "\tDescription: " + curPackage['description'] + "\n"
-            toShow += "\n\n\n"
+            toShow += "\n"
         self.dialog.scrollbox(toShow, title="Available Plugins",
                               #    height=UserInteraction.TALL_HEIGHT,
                               # width=UserInteraction.WIDE_WIDTH,
@@ -1012,5 +1037,92 @@ class UserInteraction:
                               # cr_wrap=True
                               )
 
+    def checkRegistration(self):
+        if not RegistrationUtils.isRegistered():
+            self.registrationWizard()
+        else:
+            self.registrationMenu()
+
+    def registrationMenu(self):
+        UserInteraction.log.debug("Running registration menu.")
+
+        while True:
+            code, choice = self.dialog.menu(
+                "Please choose an option:",
+                title="Registration",
+                choices=[
+                    ("(1)", "Registration Wizard"),
+                    # ("(2)", "Host information"),
+                ]
+            )
+            self.clearScreen()
+            UserInteraction.log.debug('Main menu choice: %s, code: %s', choice, code)
+            if code != self.dialog.OK:
+                break
+            if choice == "(1)":
+                self.registrationWizard()
+            # TODO:: more; show status, info
+
+        UserInteraction.log.debug("Done running registration wizard.")
+
+    def registrationWizard(self):
+        UserInteraction.log.debug("Running registration wizard.")
+
+        if RegistrationUtils.isRegistered():
+            self.dialog.msgbox(
+                "Your instance is already registered.\nThank you for registering!",
+                title="Registration"
+            )
+            return
+
+        registered = False
+
+        while not registered:
+            self.dialog.msgbox(
+                """
+                Go to the following link to start your registration:
+                
+                {}
+                
+                Once registered, continue here. You will then enter your registration id and secret.
+                """.format(RegistrationUtils.getRegistrationLink()),
+                title="Registration",
+                width=200,
+                height= 15
+            )
+
+            returnCode, registrationId = self.dialog.inputbox(
+                text="Enter your Registration ID:",
+                title="Registration",
+            )
+            if returnCode != self.dialog.OK:
+                break
+
+            returnCode, registrationSecret = self.dialog.inputbox(
+                text="Enter your Registration Secret:",
+                title="Registration",
+            )
+            if returnCode != self.dialog.OK:
+                break
+
+            self.dialog.infobox(
+                "Setting up registration...!\n\nPlease wait",
+            )
+
+            success, message = RegistrationUtils.registerSys(registrationId, registrationSecret)
+            if success:
+                registered = True
+
+        if registered:
+            self.dialog.msgbox(
+                "Registration successful!\n\nThank you for registering!",
+            )
+        else:
+            self.dialog.msgbox(
+                "Registration cancelled.",
+                title="Registration"
+            )
+
+        UserInteraction.log.debug("Done running registration wizard.")
 
 ui = UserInteraction()
