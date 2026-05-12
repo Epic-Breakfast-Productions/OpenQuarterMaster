@@ -257,6 +257,24 @@
         "test",
         "userTesting"
       ]
+    },
+    {
+      "login": "axgiri",
+      "name": "Aidyn A.",
+      "avatar_url": "https://avatars.githubusercontent.com/u/146159445?v=4",
+      "profile": "http://cv.axgiri.tech",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "SanchitPanchwatikar",
+      "name": "Sanchit Panchwatikar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8617042?v=4",
+      "profile": "https://github.com/SanchitPanchwatikar",
+      "contributions": [
+        "code"
+      ]
     }
   ],
   "contributorsPerLine": 7,
