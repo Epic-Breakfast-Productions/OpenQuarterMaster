@@ -2,10 +2,11 @@
 
 # Open QuarterMaster
 
+**Inventory without a catch, and all the hooks**
+
 <!-- https://shields.io -->
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/m/Epic-Breakfast-Productions/OpenQuarterMaster)
 ![GitHub all releases](https://img.shields.io/github/downloads/Epic-Breakfast-Productions/OpenQuarterMaster/total)
-![Core API](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/core-api.yml/badge.svg)
 [![Code Triage Open Source Helpers](https://www.codetriage.com/epic-breakfast-productions/openquartermaster/badges/users.svg)](https://www.codetriage.com/epic-breakfast-productions/openquartermaster)
 
 [//]: # (![Station Captain]&#40;https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/stationCaptain.yml/badge.svg&#41;)
@@ -16,51 +17,30 @@
 [![All Contributors](https://img.shields.io/badge/all_contributors-21-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
-**Inventory without a catch, and all the hooks**
+<details>
+<summary>🛠 CI Status 🛠</summary>
+
+## [Core](./software/core)
+
+| Service                                               | Status                                                                                                                            |
+|-------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------|
+| [Core API](./software/core/oqm-core-api)              | ![Core API](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/core-api.yml/badge.svg)             |
+| [Base Station](./software/core/oqm-core-base-station) | ![Base Station](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/core-baseStation.yml/badge.svg) |
+
+## [Plugins](./software/plugins)
+
+| Service                                                         | Status                                                                                                                                        |
+|-----------------------------------------------------------------|-----------------------------------------------------------------------------------------------------------------------------------------------|
+| [External Item Search](./software/plugins/external-item-search) | ![External Item Search](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/plugin-extItemSearch.yml/badge.svg) |
+| [Storagotchi](./software/plugins/storagotchi)                   | ![Storagotchi](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/plugin-storagotchi.yml/badge.svg)            |
+
+</details>
+
 
 Open Quartermaster is an open source inventory management system, designed to be simple to use yet powerful and extendable. The last inventory management system you will ever need!
 
 We are very much in development still, so check back often! We are also accepting any and all assistance, so feel free to report issues or feature requests, as well as pull requests! Additionally, feel free to ask questions in
 the [Discussions](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/discussions) or just hang out with us on our [Discord](https://discord.gg/cpcVh6SyNn)
-
-<details>
-
-<summary>CI Status</summary>
-
-<table>
-    <thead>
-        <tr>
-            <th>
-                Type
-            </th>
-            <th>
-                Service
-            </th>
-            <th>
-                Status
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr>
-            <td>
-                [Core](./software/core)
-            </td>
-            <td>[API](./software/core/oqm-core-api)</td>
-            <td>
-                ![Core API](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/core-api.yml/badge.svg)
-            </td>
-        </tr>
-    </tbody>
-</table>
-
-| Type | Service                             | Status                                                                                                                |
-|------|-------------------------------------|-----------------------------------------------------------------------------------------------------------------------|
-| Core | [API](./software/core/oqm-core-api) | ![Core API](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/core-api.yml/badge.svg) |
-| ^^   | [API](./software/core/oqm-core-api) | ![Core API](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/core-api.yml/badge.svg) |
-
-
-</details>
 
 ## Quick Links
 
