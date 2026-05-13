@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ci-core-api-${{ github.ref }}
+  group: ci-core-base-station-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
