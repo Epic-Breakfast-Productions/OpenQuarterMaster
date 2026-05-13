@@ -1,7 +1,9 @@
 {
-    "ssid": "speedscanner",
-    "password": "Admin1$$$",
-    "oqm-address": "10.1.6.27",
-    "oqm-user": "scanner",
-    "oqm-secret": "h5j9inH-cx4LbQKnYmG6wvrvMUi7TEAv"
+{
+    "ssid": "REPLACE_ME",
+    "password": "REPLACE_ME",
+    "oqm-address": "REPLACE_ME",
+    "oqm-user": "REPLACE_ME",
+    "oqm-secret": "REPLACE_ME"
+}
 }
