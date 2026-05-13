@@ -275,6 +275,17 @@
       "contributions": [
         "code"
       ]
+    },
+    {
+      "login": "kyleighpea123",
+      "name": "kyleighpea123",
+      "avatar_url": "https://avatars.githubusercontent.com/u/243836400?v=4",
+      "profile": "https://github.com/kyleighpea123",
+      "contributions": [
+        "code",
+        "design",
+        "research"
+      ]
     }
   ],
   "contributorsPerLine": 7,
