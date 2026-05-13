@@ -286,6 +286,39 @@
         "design",
         "research"
       ]
+    },
+    {
+      "login": "kyleighpea123",
+      "name": "kyleighpea123",
+      "avatar_url": "https://avatars.githubusercontent.com/u/243836400?v=4",
+      "profile": "https://github.com/kyleighpea123",
+      "contributions": [
+        "code",
+        "design",
+        "research"
+      ]
+    },
+    {
+      "login": "elsamlt",
+      "name": "elsamlt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/185091248?v=4",
+      "profile": "https://github.com/elsamlt",
+      "contributions": [
+        "code",
+        "design",
+        "research"
+      ]
+    },
+    {
+      "login": "JakeElston",
+      "name": "Jake Elston",
+      "avatar_url": "https://avatars.githubusercontent.com/u/144830849?v=4",
+      "profile": "https://github.com/JakeElston",
+      "contributions": [
+        "code",
+        "design",
+        "research"
+      ]
     }
   ],
   "contributorsPerLine": 7,
