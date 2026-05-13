@@ -28,7 +28,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-container-image-docker'
 	implementation 'io.quarkus:quarkus-cache'
 	implementation 'io.quarkus:quarkus-arc'
-	implementation 'io.quarkiverse.wiremock:quarkus-wiremock:1.6.1'
+	implementation 'io.quarkiverse.wiremock:quarkus-wiremock:1.6.3'
 	implementation group: 'org.jsoup', name: 'jsoup', version: '1.22.2'
 
 	testImplementation 'io.quarkus:quarkus-junit5'
