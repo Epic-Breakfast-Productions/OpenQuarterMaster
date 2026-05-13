@@ -5,7 +5,7 @@
 
 This service is the default user interface for the Open QuarterMaster system.
 
-It is intended to be a near 1:1 match for functionality to the API, and provide aninterface through which to manage your inventory.
+It is intended to be a near 1:1 match for functionality to the API, and provide an interface through which to manage your inventory.
 
 
 ## Quarkus stuff
