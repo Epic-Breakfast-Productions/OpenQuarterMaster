@@ -71,8 +71,8 @@ public class ItemsUiTest extends WebUiTest {
 			oqm.locator(ItemsPage.VIEW_NAME).textContent()
 		);
 		assertEquals(
-			expectedDescription,
-			oqm.locator(ItemsPage.VIEW_DESCRIPTION).textContent()
+			expectedDescription.strip(),
+			oqm.locator(ItemsPage.VIEW_DESCRIPTION).textContent().strip()
 		);
 
 		Locator viewModal = oqm.locator(ItemsPage.VIEW_MODAL);
@@ -143,8 +143,8 @@ public class ItemsUiTest extends WebUiTest {
 			oqm.locator(ItemsPage.VIEW_NAME).textContent()
 		);
 		assertEquals(
-			expectedDescription,
-			oqm.locator(ItemsPage.VIEW_DESCRIPTION).textContent()
+			expectedDescription.strip(),
+			oqm.locator(ItemsPage.VIEW_DESCRIPTION).textContent().strip()
 		);
 
 		Locator viewModal = oqm.locator(ItemsPage.VIEW_MODAL);

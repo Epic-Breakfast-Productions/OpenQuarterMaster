@@ -1,12 +1,14 @@
-# oqm-core-base-station
+# OQM Base Station
 
-TODOS for database:
+![Base Station](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/core-baseStation.yml/badge.svg)
+![Docker Image Version](https://img.shields.io/docker/v/ebprod/oqm-core-base_station?label=Docker%20Image)
 
- - handle oqm db selected not present
- - make utility to handle case of no databases available to user
+This service is the default user interface for the Open QuarterMaster system.
+
+It is intended to be a near 1:1 match for functionality to the API, and provide an interface through which to manage your inventory.
 
 
-
+## Quarkus stuff
 
 This project uses Quarkus, the Supersonic Subatomic Java Framework.
 
