@@ -82,6 +82,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
     </tr>
     <tr>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/elsamlt"><img src="https://avatars.githubusercontent.com/u/185091248?v=4?s=100" width="100px;" alt="elsamlt"/><br /><sub><b>elsamlt</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=elsamlt" title="Code">💻</a> <a href="#design-elsamlt" title="Design">🎨</a> <a href="#research-elsamlt" title="Research">🔬</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/JakeElston"><img src="https://avatars.githubusercontent.com/u/144830849?v=4?s=100" width="100px;" alt="Jake Elston"/><br /><sub><b>Jake Elston</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=JakeElston" title="Code">💻</a> <a href="#design-JakeElston" title="Design">🎨</a> <a href="#research-JakeElston" title="Research">🔬</a></td>
     </tr>
   </tbody>
 </table>
