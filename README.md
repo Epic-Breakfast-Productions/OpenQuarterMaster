@@ -81,6 +81,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/SanchitPanchwatikar"><img src="https://avatars.githubusercontent.com/u/8617042?v=4?s=100" width="100px;" alt="Sanchit Panchwatikar"/><br /><sub><b>Sanchit Panchwatikar</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=SanchitPanchwatikar" title="Code">💻</a></td>
     </tr>
     <tr>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/elsamlt"><img src="https://avatars.githubusercontent.com/u/185091248?v=4?s=100" width="100px;" alt="elsamlt"/><br /><sub><b>elsamlt</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=elsamlt" title="Code">💻</a> <a href="#design-elsamlt" title="Design">🎨</a> <a href="#research-elsamlt" title="Research">🔬</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JakeElston"><img src="https://avatars.githubusercontent.com/u/144830849?v=4?s=100" width="100px;" alt="Jake Elston"/><br /><sub><b>Jake Elston</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=JakeElston" title="Code">💻</a> <a href="#design-JakeElston" title="Design">🎨</a> <a href="#research-JakeElston" title="Research">🔬</a></td>
     </tr>
   </tbody>
