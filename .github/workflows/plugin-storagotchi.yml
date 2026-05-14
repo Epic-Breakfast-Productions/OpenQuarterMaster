@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: ci-plugin-extItemSearch-${{ github.ref }}
+  group: ci-plugin-storagotchi-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:

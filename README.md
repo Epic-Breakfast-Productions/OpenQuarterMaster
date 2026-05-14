@@ -48,6 +48,9 @@ the [Discussions](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaste
 - To see all the ways you can deploy OQM for yourself, see [Deployment](deployment/)
 - For information on the overall system, see the [software](software/) directory.
 
+> [!TIP]
+> Newcomer? Giving OQM a try? Got suggestions? Feedback? First time contributors (with accepted contibutions) get free stickers from our [shop](https://openquartermaster.com/public/shop)!
+
 ## How it works
 
 How we accomplish the goal of being the only inventory management system you could ever need is through our modular design. The main component of Open QuarterMaster is the [Core API](software/core/oqm-core-api). Think of this as the central
