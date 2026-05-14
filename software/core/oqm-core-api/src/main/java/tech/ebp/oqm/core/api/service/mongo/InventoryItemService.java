@@ -18,6 +18,8 @@ import org.jetbrains.annotations.NotNull;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items.StoredInItemEndpoints;
 import tech.ebp.oqm.core.api.model.collectionStats.InvItemCollectionStats;
+import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
@@ -30,6 +32,7 @@ import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.core.api.service.ItemStatsService;
 import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
+import tech.ebp.oqm.core.api.service.serviceState.InstanceMutexService;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
@@ -81,6 +84,9 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	ItemStatsService itemStatsService;
 	@Inject
 	StoredInItemEndpoints storedInItemEndpoints;
+	
+	@Inject
+	InstanceMutexService instanceMutexService;
 	
 	public InventoryItemService() {
 		super(InventoryItem.class, false);
@@ -273,6 +279,12 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				   .numExpireWarn(this.getNumStoredExpiryWarn(oqmDbIdOrName))
 				   .numLowStock(this.getNumLowStock(oqmDbIdOrName))
 				   .build();
+	}
+	
+	@Override
+	protected void handleAdd(InventoryItem object) {
+		super.handleAdd(object);
+		this.instanceMutexService.register(object);
 	}
 	
 	public List<InventoryItem> getItemsInBlock(String oqmDbIdOrName, ObjectId storageBlockId) {

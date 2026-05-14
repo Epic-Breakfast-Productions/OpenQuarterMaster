@@ -138,6 +138,10 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 		}
 	}
 	
+	public void register(MainObject object) {
+		this.register(InstanceMutexService.getMutexIdFor(object));
+	}
+	
 	/**
 	 * Locks the mutex with the given id.
 	 * <p>

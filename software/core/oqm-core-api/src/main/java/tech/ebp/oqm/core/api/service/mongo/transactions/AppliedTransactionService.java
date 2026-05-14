@@ -26,6 +26,7 @@ import tech.ebp.oqm.core.api.service.mongo.MongoObjectService;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.service.mongo.transactions.appliers.*;
 import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
+import tech.ebp.oqm.core.api.service.serviceState.InstanceMutexService;
 
 import java.util.*;
 
@@ -50,6 +51,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 	
 	@Getter
 	Map<TransactionType, TransactionApplier> appliers = new HashMap<>();
+	
+	@Inject
+	InstanceMutexService instanceMutexService;
 	
 	public AppliedTransactionService() {
 		super(AppliedTransaction.class);
@@ -89,7 +93,10 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 		InteractingEntity interactingEntity,
 		HistoryDetail... details
 	) throws Exception {
-		try (MongoSessionWrapper csw = new MongoSessionWrapper(cs, this)) {
+		try (
+			InstanceMutexService.InstanceMutexResource mutex = this.instanceMutexService.getResource(InstanceMutexService.getMutexIdFor(inventoryItem), Optional.empty());
+			MongoSessionWrapper csw = new MongoSessionWrapper(cs, this)
+		) {
 			return csw.runTransaction(()->{
 				log.info("Applying {} transaction ", itemStoredTransaction.getType());
 				log.debug("Transaction: {}", itemStoredTransaction);
