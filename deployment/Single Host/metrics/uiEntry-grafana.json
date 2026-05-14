@@ -1,5 +1,6 @@
 {
 	"type": "Metrics",
+	"id": "metrics.otel-lgtm-grafana",
 	"order": 0,
 	"name": "Grafana",
 	"description": "The Grafana UI for OQM.",

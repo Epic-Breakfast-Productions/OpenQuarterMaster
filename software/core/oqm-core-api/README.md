@@ -1,5 +1,6 @@
-# open-qm-base-station
+# Open QuarterMaster Core API
 
+![Core API](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/core-api.yml/badge.svg)
 ![Docker Image Version](https://img.shields.io/docker/v/ebprod/oqm-core-api?label=Docker%20Image)
 
 

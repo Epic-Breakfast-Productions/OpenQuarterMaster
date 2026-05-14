@@ -156,8 +156,37 @@ public abstract class RestInterface {
 			});
 	}
 
+	boolean isDbExist(String dbId){
+		if (dbId == null || dbId.isBlank()) {
+			return false;
+		}
+		try {
+			ArrayNode fresh = this.oqmDatabases;
+			if (fresh != null && this.containsDb(fresh, dbId)) {
+				return true;
+			}
+		} catch (Exception e) {
+			log.warn("Failed to verify DB {}", dbId, e);
+			return false;
+		}
+		log.warn("DB {} does not exist", dbId);
+		return false;
+	}
+
+	private boolean containsDb(ArrayNode dbs, String dbId) {
+		for (JsonNode db : dbs) {
+			JsonNode idNode = db.get("id");
+			JsonNode nameNode = db.get("name");
+			if ((idNode != null && dbId.equals(idNode.asText()))
+				|| (nameNode != null && dbId.equals(nameNode.asText()))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public String getSelectedDb() {
-		if (this.oqmDb == null || this.oqmDb.isBlank()) {
+		if (!this.isDbExist(this.oqmDb)) {
 			if(this.oqmDatabases == null || this.oqmDatabases.isEmpty()){
 				throw new IllegalStateException("Cannot have no databases.");
 			}

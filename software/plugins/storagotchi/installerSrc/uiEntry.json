@@ -1,5 +1,6 @@
 {
 	"type": "Plugins",
+	"id": "plugin.storagotchi",
 	"order": 0,
 	"name": "Storagotchi",
 	"description": "An inventory themed digital pet.",
