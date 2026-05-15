@@ -9,8 +9,10 @@ quarkus:
   http:
     port: 8081
   log:
-    level: TRACE
+    level: INFO
     category:
+      "tech.ebp.oqm":
+        level: TRACE
       "com.github.dockerjava.zerodep.shaded.org.apache.hc.client5.http.wire": # Debug wire transfer statements. Far too much spam of hexadecimal
         level: INFO
   mongodb:
