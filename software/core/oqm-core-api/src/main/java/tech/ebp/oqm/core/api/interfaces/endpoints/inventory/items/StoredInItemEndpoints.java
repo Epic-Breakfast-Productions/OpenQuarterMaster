@@ -154,7 +154,13 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 		@Schema(type = SchemaType.OBJECT, implementation = Stored.class, description = "Partial object updates; supply all or some of values to update.")
 		ObjectNode updates
 	) {
-		return this.applyDefaults(super.update(id, updates));
+		log.info("Updating {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
+		
+		Stored updated = this.getObjectService().update(this.getOqmDbIdOrName(), null, id, updates, this.getInteractingEntity());
+		
+		log.info("Updated {} with id {}", updated.getClass().getSimpleName(), id);
+		
+		return this.applyDefaults(updated);
 	}
 	
 	@GET
