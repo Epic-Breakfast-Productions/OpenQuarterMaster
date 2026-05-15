@@ -516,16 +516,6 @@ public interface OqmCoreApiClientService {
 		@PathParam("storedId") String storedId
 	);
 
-	@PUT
-	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}")
-	@Produces(MediaType.APPLICATION_JSON)
-	Uni<ObjectNode> invItemStoredUpdate(
-		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
-		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
-		@PathParam("storedId") String storedId,
-		ObjectNode updateObject
-	);
-
 	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/history")
 	@Produces(MediaType.APPLICATION_JSON)
