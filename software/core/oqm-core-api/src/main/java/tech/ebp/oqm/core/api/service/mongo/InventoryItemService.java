@@ -287,6 +287,19 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		this.instanceMutexService.register(object);
 	}
 	
+	@Override
+	public InventoryItem update(String oqmDbIdOrName, ClientSession cs, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity, HistoryDetail ... details) {
+		try(
+			InstanceMutexService.InstanceMutexResource mutex = this.instanceMutexService.getResource(InstanceMutexService.getMutexIdFor(InventoryItem.class, id), Optional.empty());
+			){
+			return super.update(oqmDbIdOrName, cs, id, updateJson, interactingEntity, details);
+		} catch(IllegalStateException e){
+			throw new DbNotFoundException(InventoryItem.class, id);
+		} catch(InterruptedException e) {
+			throw new RuntimeException("Failed to acquire mutex for item (interrupted wait)" + id.toHexString(), e);
+		}
+	}
+	
 	public List<InventoryItem> getItemsInBlock(String oqmDbIdOrName, ObjectId storageBlockId) {
 		return this.list(
 			oqmDbIdOrName,

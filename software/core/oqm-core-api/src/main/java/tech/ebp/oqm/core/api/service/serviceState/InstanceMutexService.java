@@ -13,6 +13,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.MutexConfig;
 import tech.ebp.oqm.core.api.exception.MutexWaitTimeoutException;
 import tech.ebp.oqm.core.api.model.InstanceMutex;
@@ -62,11 +63,18 @@ import static com.mongodb.client.model.Filters.*;
 @Slf4j
 public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, InstanceMutexSearch, CollectionStats> {
 	
+	public static <T extends MainObject> String getMutexIdFor(Class<?> clazz, ObjectId id) {
+		return clazz.getSimpleName() + "-" + id;
+	}
+	
 	public static <T extends MainObject> String getMutexIdFor(T object) {
+		if(object == null) {
+			throw new IllegalArgumentException("Cannot get mutex id for null object");
+		}
 		if (object.getId() == null) {
 			throw new IllegalArgumentException("Cannot get mutex id for object with null id");
 		}
-		return object.getClass().getSimpleName() + "-" + object.getId();
+		return getMutexIdFor(object.getClass(), object.getId());
 	}
 	
 	
