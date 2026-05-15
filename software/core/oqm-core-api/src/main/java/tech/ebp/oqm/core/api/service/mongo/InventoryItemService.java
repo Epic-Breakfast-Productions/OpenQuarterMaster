@@ -282,15 +282,17 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	}
 	
 	@Override
-	protected void handleAdd(InventoryItem object) {
-		super.handleAdd(object);
-		this.instanceMutexService.register(object);
+	protected void handleAdd(String oqmDbIdOrName, InventoryItem object) {
+		super.handleAdd(oqmDbIdOrName, object);
+		this.instanceMutexService.register(oqmDbIdOrName, object);
 	}
 	
 	@Override
 	public InventoryItem update(String oqmDbIdOrName, ClientSession cs, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity, HistoryDetail ... details) {
 		try(
-			InstanceMutexService.InstanceMutexResource mutex = this.instanceMutexService.getResource(InstanceMutexService.getMutexIdFor(InventoryItem.class, id), Optional.empty());
+			InstanceMutexService.InstanceMutexResource mutex = this.instanceMutexService.getResource(this.instanceMutexService.getMutexIdFor(oqmDbIdOrName, InventoryItem.class,
+					id),
+																																										  Optional.empty());
 			){
 			return super.update(oqmDbIdOrName, cs, id, updateJson, interactingEntity, details);
 		} catch(IllegalStateException e){

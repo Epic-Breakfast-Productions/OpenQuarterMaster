@@ -21,6 +21,7 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.rest.search.InstanceMutexSearch;
 import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
+import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -63,7 +64,7 @@ import static com.mongodb.client.model.Filters.*;
 @Slf4j
 public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, InstanceMutexSearch, CollectionStats> {
 	
-	public static <T extends MainObject> String getMutexIdFor(Class<?> clazz, ObjectId id) {
+	public static String getMutexIdFor(Class<?> clazz, ObjectId id) {
 		return clazz.getSimpleName() + "-" + id;
 	}
 	
@@ -77,6 +78,17 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 		return getMutexIdFor(object.getClass(), object.getId());
 	}
 	
+	public String getMutexIdFor(String oqmDbNameOrId, Class<?> clazz, ObjectId id) {
+		return this.databaseService.getOqmDatabase(oqmDbNameOrId).getDbId().toHexString() + "-" + getMutexIdFor(clazz, id);
+	}
+	
+	
+	public <T extends MainObject> String getMutexIdFor(String oqmDbIdOrName, T object) {
+		return this.getMutexIdFor(oqmDbIdOrName, object.getClass(), object.getId());
+	}
+	
+	@Inject
+	OqmDatabaseService databaseService;
 	
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
@@ -146,8 +158,8 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 		}
 	}
 	
-	public void register(MainObject object) {
-		this.register(InstanceMutexService.getMutexIdFor(object));
+	public void register(String oqmDbIdOrName, MainObject object) {
+		this.register(this.getMutexIdFor(oqmDbIdOrName, object));
 	}
 	
 	/**

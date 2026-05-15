@@ -420,7 +420,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		return this.update(oqmDbIdOrName, null, object, false);
 	}
 	
-	protected void handleAdd(T object){
+	protected void handleAdd(String oqmDbIdOrName, T object){
 		//TODO:: nothing to do for default
 	}
 	
@@ -449,7 +449,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		object.setId(result.getInsertedId().asObjectId().getValue());
 		
 		log.info("Added. Id: {}", object.getId());
-		this.handleAdd(object);
+		this.handleAdd(oqmDbIdOrName, object);
 		return object;
 	}
 	

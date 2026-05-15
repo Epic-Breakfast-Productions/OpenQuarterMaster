@@ -94,7 +94,8 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 		HistoryDetail... details
 	) throws Exception {
 		try (
-			InstanceMutexService.InstanceMutexResource mutex = this.instanceMutexService.getResource(InstanceMutexService.getMutexIdFor(inventoryItem), Optional.empty());
+			InstanceMutexService.InstanceMutexResource mutex = this.instanceMutexService.getResource(this.instanceMutexService.getMutexIdFor(oqmDbIdOrName, inventoryItem),
+				Optional.empty());
 			MongoSessionWrapper csw = new MongoSessionWrapper(cs, this)
 		) {
 			return csw.runTransaction(()->{

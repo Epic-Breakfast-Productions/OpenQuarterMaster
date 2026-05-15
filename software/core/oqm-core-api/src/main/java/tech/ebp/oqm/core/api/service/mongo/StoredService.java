@@ -199,7 +199,9 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		HistoryDetail... details) {
 		
 		try(
-			InstanceMutexService.InstanceMutexResource mutex = this.instanceMutexService.getResource(InstanceMutexService.getMutexIdFor(InventoryItem.class, id), Optional.empty());
+			InstanceMutexService.InstanceMutexResource mutex = this.instanceMutexService.getResource(this.instanceMutexService.getMutexIdFor(oqmDbIdOrName, InventoryItem.class,
+					id),
+				Optional.empty());
 		){
 			return super.update(oqmDbIdOrName, cs, id, updateJson, interactingEntity, details);
 		} catch(InterruptedException e) {
