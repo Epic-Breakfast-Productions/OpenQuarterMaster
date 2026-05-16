@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.service.serviceState;
 
 import com.mongodb.client.model.*;
 import com.mongodb.client.result.UpdateResult;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotBlank;
@@ -244,6 +245,7 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 	 * @throws MutexWaitTimeoutException If the lock is not acquired within the timeout period.
 	 * @throws InterruptedException If the thread is interrupted while waiting for the lock.
 	 */
+	@WithSpan
 	public void awaitLock(@NonNull String mutexId, Optional<String> additionalIdentity) throws MutexWaitTimeoutException, InterruptedException {
 		Duration toWait = this.getMutexConfig().await().timeout();
 		LocalDateTime expires = LocalDateTime.now().plus(toWait);

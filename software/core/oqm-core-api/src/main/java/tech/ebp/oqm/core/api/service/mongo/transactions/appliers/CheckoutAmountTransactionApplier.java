@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo.transactions.appliers;
 
 import com.mongodb.client.ClientSession;
+import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bson.types.ObjectId;
@@ -22,11 +23,8 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 
 @Slf4j
+@ApplicationScoped
 public class CheckoutAmountTransactionApplier extends CheckinOutTransactionApplier<CheckoutAmountTransaction> {
-	
-	public CheckoutAmountTransactionApplier(StoredService storedService, ItemCheckoutService itemCheckoutService) {
-		super(storedService, itemCheckoutService);
-	}
 	
 	@Override
 	public TransactionType getTransactionType() {

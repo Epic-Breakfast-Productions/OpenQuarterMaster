@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo.transactions.appliers;
 
 import com.mongodb.client.ClientSession;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
@@ -16,11 +17,8 @@ import tech.units.indriya.quantity.Quantities;
 import javax.measure.Quantity;
 import java.util.Set;
 
+@ApplicationScoped
 public class TransferAmountTransactionApplier extends TransactionApplier<TransferAmountTransaction> {
-	
-	public TransferAmountTransactionApplier(StoredService storedService) {
-		super(storedService);
-	}
 	
 	@Override
 	public TransactionType getTransactionType() {

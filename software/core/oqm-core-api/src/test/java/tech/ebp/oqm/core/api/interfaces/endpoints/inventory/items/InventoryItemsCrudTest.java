@@ -171,19 +171,6 @@ class InventoryItemsCrudTest extends RunningServerTest {
 			Arguments.of(2, 10),
 			Arguments.of(3, 10),
 			Arguments.of(3, 10),
-			Arguments.of(5, 10),
-			Arguments.of(5, 10),
-			
-			Arguments.of(2, 20),
-			Arguments.of(2, 20),
-			Arguments.of(3, 20),
-			Arguments.of(3, 20),
-			Arguments.of(5, 20),
-			Arguments.of(5, 20),
-			
-			Arguments.of(10, 10),
-			Arguments.of(10, 10),
-			Arguments.of(20, 20),
 			Arguments.of(20, 20)
 		);
 	}

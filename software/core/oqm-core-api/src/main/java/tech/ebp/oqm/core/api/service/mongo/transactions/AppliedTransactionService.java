@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo.transactions;
 
 import com.mongodb.client.ClientSession;
+import io.quarkus.arc.All;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -41,16 +42,14 @@ import static tech.ebp.oqm.core.api.model.object.storage.items.transactions.Tran
 public class AppliedTransactionService extends MongoObjectService<AppliedTransaction, AppliedTransactionSearch, CollectionStats> {
 	
 	@Inject
-	StoredService storedService;
-	
-	@Inject
 	ItemStatsService itemStatsService;
 	
-	@Inject
-	ItemCheckoutService itemCheckoutService;
-	
 	@Getter
-	Map<TransactionType, TransactionApplier> appliers = new HashMap<>();
+	Map<TransactionType, TransactionApplier> applierTypeMap = new HashMap<>();
+	
+	@Inject
+	@All
+	List<TransactionApplier<?>> transactionAppliers;
 	
 	@Inject
 	InstanceMutexService instanceMutexService;
@@ -61,17 +60,9 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 	
 	@PostConstruct
 	void setupAppliers() {
-		appliers.put(ADD_AMOUNT, new AddAmountTransactionApplier(this.storedService));
-		appliers.put(ADD_WHOLE, new AddWholeTransactionApplier(this.storedService));
-		appliers.put(CHECKIN_FULL, new CheckinFullTransactionApplier(this.storedService, this.itemCheckoutService));
-		appliers.put(CHECKIN_PART, new CheckinPartTransactionApplier(this.storedService, this.itemCheckoutService));
-		appliers.put(CHECKOUT_AMOUNT, new CheckoutAmountTransactionApplier(this.storedService, this.itemCheckoutService));
-		appliers.put(CHECKOUT_WHOLE, new CheckoutWholeTransactionApplier(this.storedService, this.itemCheckoutService));
-		appliers.put(SET_AMOUNT, new SetAmountTransactionApplier(this.storedService));
-		appliers.put(SUBTRACT_AMOUNT, new SubtractAmountTransactionApplier(this.storedService));
-		appliers.put(SUBTRACT_WHOLE, new SubtractWholeTransactionApplier(this.storedService));
-		appliers.put(TRANSFER_AMOUNT, new TransferAmountTransactionApplier(this.storedService));
-		appliers.put(TRANSFER_WHOLE, new TransferWholeTransactionApplier(this.storedService));
+		for (TransactionApplier<?> applier : this.transactionAppliers) {
+			this.applierTypeMap.put(applier.getTransactionType(), applier);
+		}
 	}
 	
 	/**
@@ -118,7 +109,7 @@ public class AppliedTransactionService extends MongoObjectService<AppliedTransac
 				
 				
 				//noinspection rawtypes
-				TransactionApplier applier = this.getAppliers().get(itemStoredTransaction.getType());
+				TransactionApplier applier = this.getApplierTypeMap().get(itemStoredTransaction.getType());
 				if (applier == null) {
 					throw new IllegalArgumentException("Invalid or unsupported transaction type given.");
 				}
