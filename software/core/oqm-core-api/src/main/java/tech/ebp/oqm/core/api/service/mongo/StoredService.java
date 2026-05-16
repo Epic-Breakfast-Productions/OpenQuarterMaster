@@ -200,12 +200,10 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		
 		try(
 			InstanceMutexService.InstanceMutexResource mutex = this.instanceMutexService.getResource(this.instanceMutexService.getMutexIdFor(oqmDbIdOrName, InventoryItem.class,
-					id),
+					item.getId()),
 				Optional.empty());
 		){
 			return super.update(oqmDbIdOrName, cs, id, updateJson, interactingEntity, details);
-		} catch(InterruptedException e) {
-			throw new RuntimeException("Failed to get lock for item; interrupted.", e);
 		}
 	}
 	

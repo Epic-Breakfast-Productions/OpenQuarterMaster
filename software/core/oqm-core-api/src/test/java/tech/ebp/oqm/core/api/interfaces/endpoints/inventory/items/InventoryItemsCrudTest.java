@@ -208,6 +208,9 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		}
 		overall.stop();
 		
+		for (Future<Void> future : futures) {
+			future.get();
+		}
 		
 		//TODO:: check results
 		ObjectNode result = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))

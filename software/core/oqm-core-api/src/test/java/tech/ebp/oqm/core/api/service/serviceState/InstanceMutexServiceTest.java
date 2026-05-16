@@ -10,10 +10,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import tech.ebp.oqm.core.api.exception.MutexWaitTimeoutException;
+import tech.ebp.oqm.core.api.exception.mutex.MutexWaitTimeoutException;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;

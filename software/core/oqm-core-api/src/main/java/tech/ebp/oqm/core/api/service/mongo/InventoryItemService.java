@@ -295,10 +295,6 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 																																										  Optional.empty());
 			){
 			return super.update(oqmDbIdOrName, cs, id, updateJson, interactingEntity, details);
-		} catch(IllegalStateException e){
-			throw new DbNotFoundException(InventoryItem.class, id);
-		} catch(InterruptedException e) {
-			throw new RuntimeException("Failed to acquire mutex for item (interrupted wait)" + id.toHexString(), e);
 		}
 	}
 	

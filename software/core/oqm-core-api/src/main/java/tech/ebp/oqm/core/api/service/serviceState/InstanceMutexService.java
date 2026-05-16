@@ -16,7 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.config.MutexConfig;
-import tech.ebp.oqm.core.api.exception.MutexWaitTimeoutException;
+import tech.ebp.oqm.core.api.exception.mutex.MutexNotRegisteredException;
+import tech.ebp.oqm.core.api.exception.mutex.MutexWaitInterruptedException;
+import tech.ebp.oqm.core.api.exception.mutex.MutexWaitTimeoutException;
 import tech.ebp.oqm.core.api.model.InstanceMutex;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
@@ -25,7 +27,6 @@ import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.io.Closeable;
-import java.io.IOException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
@@ -175,7 +176,7 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 	 *
 	 * @return true when reserved, false when not.
 	 */
-	public boolean lock(@NonNull String mutexId, Optional<String> additionalIdentity) {
+	public boolean lock(@NonNull String mutexId, Optional<String> additionalIdentity) throws MutexNotRegisteredException {
 		String identity = this.getIdentity(additionalIdentity);
 		Bson mutexIdEquals = eq("mutexId", mutexId);
 		
@@ -212,7 +213,7 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 			log.trace("Locked mutex: {}", lockedMutex);
 			
 			if (lockedMutex == null) {
-				throw new IllegalStateException("Mutex was not registered before usage: " + mutexId);
+				throw new MutexNotRegisteredException(mutexId);
 			} else if (lockedMutex.getTakenAt() != null && ZonedDateTime.now().isAfter(lockedMutex.getTakenAt().plus(this.getMutexConfig().lockExpireDuration()))) {
 				this.getTypedCollection().findOneAndUpdate(mutexIdEquals, Updates.set("taken", false));
 				log.warn("Unlocked mutex that appeared deadlocked: {}", mutexId);
@@ -243,10 +244,11 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 	 * @param mutexId The id of the mutex to get the lock for
 	 * @param additionalIdentity If an additional identity is required. Only use if need the mutex to offer concurrency within the same instance of the app.
 	 * @throws MutexWaitTimeoutException If the lock is not acquired within the timeout period.
-	 * @throws InterruptedException If the thread is interrupted while waiting for the lock.
+	 * @throws MutexWaitInterruptedException If the thread is interrupted while waiting for the lock.
+	 * @throws MutexNotRegisteredException If the mutex is not registered before usage.
 	 */
 	@WithSpan
-	public void awaitLock(@NonNull String mutexId, Optional<String> additionalIdentity) throws MutexWaitTimeoutException, InterruptedException {
+	public void awaitLock(@NonNull String mutexId, Optional<String> additionalIdentity) throws MutexWaitTimeoutException, MutexWaitInterruptedException, MutexNotRegisteredException {
 		Duration toWait = this.getMutexConfig().await().timeout();
 		LocalDateTime expires = LocalDateTime.now().plus(toWait);
 		long maitTimeMin = this.getMutexConfig().await().loopPauseMin().toMillis();
@@ -264,9 +266,13 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 				return;
 			}
 			
-			Thread.sleep(
-				random.nextLong(maitTimeMin, maitTimeMax)
-			);
+			try {
+				long sleepTime = random.nextLong(maitTimeMin, maitTimeMax);
+				log.trace("Mutex was previously locked. Sleeping for {} ms. ", sleepTime);
+				Thread.sleep(sleepTime);
+			} catch(InterruptedException e) {
+				throw new MutexWaitInterruptedException(e);
+			}
 		} while (LocalDateTime.now().isBefore(expires));
 		throw new MutexWaitTimeoutException();
 	}
@@ -328,7 +334,7 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 	 * @throws MutexWaitTimeoutException If set to start locked and the lock is not acquired within the timeout period.
 	 * @throws InterruptedException If the thread is interrupted while waiting for the lock.
 	 */
-	public InstanceMutexResource getResource(boolean startLocked, String mutexId, Optional<String> additionalId) throws MutexWaitTimeoutException, InterruptedException {
+	public InstanceMutexResource getResource(boolean startLocked, String mutexId, Optional<String> additionalId) throws MutexWaitTimeoutException {
 		InstanceMutexResource resource = InstanceMutexResource.builder()
 											 .mutexService(this)
 											 .mutexId(mutexId)
@@ -349,9 +355,8 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 	 *
 	 * @return The resource to use in a try-with-resources block.
 	 * @throws MutexWaitTimeoutException If the lock is not acquired within the timeout period.
-	 * @throws InterruptedException If the thread is interrupted while waiting for the lock.
 	 */
-	public InstanceMutexResource getResource(String mutexId, Optional<String> additionalId) throws MutexWaitTimeoutException, InterruptedException {
+	public InstanceMutexResource getResource(String mutexId, Optional<String> additionalId) throws MutexWaitTimeoutException {
 		return this.getResource(true, mutexId, additionalId);
 	}
 	
@@ -394,9 +399,8 @@ public class InstanceMutexService extends TopLevelMongoService<InstanceMutex, In
 		 * Wrapper for {@link #InstanceMutexService#awaitLock(String, Optional)}
 		 *
 		 * @throws MutexWaitTimeoutException If the lock is not acquired within the timeout period.
-		 * @throws InterruptedException If the thread is interrupted while waiting for the lock.
 		 */
-		public void awaitLock() throws MutexWaitTimeoutException, InterruptedException {
+		public void awaitLock() throws MutexWaitTimeoutException {
 			this.mutexService.awaitLock(this.getMutexId(), this.getAdditionalIdentity());
 		}
 		
