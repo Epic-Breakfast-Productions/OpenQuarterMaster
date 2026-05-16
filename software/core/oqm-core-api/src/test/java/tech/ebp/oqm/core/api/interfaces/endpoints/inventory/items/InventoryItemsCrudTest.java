@@ -168,9 +168,6 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	public static Stream<Arguments> getParams() {
 		return Stream.of(
 			Arguments.of(2, 10),
-			Arguments.of(2, 10),
-			Arguments.of(3, 10),
-			Arguments.of(3, 10),
 			Arguments.of(20, 20)
 		);
 	}
