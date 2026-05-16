@@ -13,6 +13,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
@@ -446,5 +447,12 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				throw e;
 			}
 		}
+	}
+
+	@Override
+	List<Document> getDbIndexes() {
+		return List.of(
+			new Document("name", 1)
+		);
 	}
 }

@@ -5,6 +5,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
 import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
@@ -190,5 +191,12 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	@Override
 	public int getCurrentSchemaVersion() {
 		return StorageBlock.CUR_SCHEMA_VERSION;
+	}
+
+	@Override
+	List<Document> getDbIndexes() {
+		return List.of(
+			new Document("location", 1)
+		);
 	}
 }

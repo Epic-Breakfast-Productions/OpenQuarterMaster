@@ -25,6 +25,7 @@ import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -172,5 +173,16 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	
 	public void runPostUpgrade(String oqmDbIdOrName, ClientSession cs, CollectionUpgradeResult upgradeResult) {
 		//nothing to do.
-	};
+	}
+
+	List<Document> getDbIndexes() {
+		return List.of();
+	}
+
+	public void initDb(String oqmDbIdOrName) {
+		    List<Document> indexes = this.getDbIndexes();
+		    for(Document index : indexes) {
+		        getDocumentCollection(oqmDbIdOrName).createIndex(index);
+		    }
+		}
 }

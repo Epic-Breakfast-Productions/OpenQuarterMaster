@@ -42,7 +42,10 @@ public class LifecycleBean {
 
 	@Inject
 	ObjectSchemaUpgradeService objectSchemaUpgradeService;
-	
+
+	@Inject
+	MongoInitializationHandler mongoInitializationHandler;
+
 	private ZonedDateTime startDateTime;
 	
 	public static void logConfig(){
@@ -145,6 +148,8 @@ API Version: {}
 			log.info("Schema upgrade result: {}", schemaUpgradeResult.get());
 			//TODO:: rescan inv update stats
 		}
+		// initialize indexes
+		this.mongoInitializationHandler.initDb();
 		log.info("Done with initial startup tasks.");
 	}
 	

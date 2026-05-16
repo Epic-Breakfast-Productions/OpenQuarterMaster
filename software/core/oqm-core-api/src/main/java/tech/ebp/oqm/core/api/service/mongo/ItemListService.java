@@ -4,6 +4,7 @@ import com.mongodb.client.ClientSession;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.Document;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.events.itemList.ItemListActionAddEvent;
@@ -11,6 +12,8 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.itemList.ItemList;
 import tech.ebp.oqm.core.api.model.object.itemList.ItemListAction;
 import tech.ebp.oqm.core.api.model.rest.search.ItemListSearch;
+
+import java.util.List;
 
 @Slf4j
 @ApplicationScoped
@@ -61,5 +64,12 @@ public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemL
 	@Override
 	public int getCurrentSchemaVersion() {
 		return ItemList.CUR_SCHEMA_VERSION;
+	}
+
+	@Override
+	public List<Document> getDbIndexes() {
+		return List.of(
+			new Document("name", 1)
+		);
 	}
 }
