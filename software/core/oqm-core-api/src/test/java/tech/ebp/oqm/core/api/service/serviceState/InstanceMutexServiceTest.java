@@ -10,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.core.api.exception.mutex.MutexNotRegisteredException;
 import tech.ebp.oqm.core.api.exception.mutex.MutexWaitTimeoutException;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
@@ -223,9 +224,9 @@ public class InstanceMutexServiceTest extends RunningServerTest {
 	@Test
 	public void testUseBeforeRegister() {
 		assertEquals(
-			"Mutex was not registered before usage: testUseBeforeRegister",
+			"Mutex with id testUseBeforeRegister was not registered when lock attempt made.",
 			assertThrows(
-				IllegalStateException.class, ()->{
+				MutexNotRegisteredException.class, ()->{
 					this.instanceMutexService.lock("testUseBeforeRegister");
 				}
 			).getMessage()

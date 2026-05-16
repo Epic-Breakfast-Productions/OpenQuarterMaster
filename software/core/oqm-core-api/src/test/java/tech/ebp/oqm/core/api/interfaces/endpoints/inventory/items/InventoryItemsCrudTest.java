@@ -242,26 +242,33 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		public Void call() {
 			log.info("Running test thread {}", this.threadId);
 			
-			ObjectNode updates = OBJECT_MAPPER.createObjectNode();
-			updates.putObject("attributes");
+				
+				ObjectNode updates = OBJECT_MAPPER.createObjectNode();
+				updates.putObject("attributes");
+				
+				for (int i = 1; i <= this.numIterations; i++) {
+					log.info("Thread {} waiting for lock on iteration {}", this.threadId, i);
+					
+					((ObjectNode) updates.get("attributes")).put(this.threadId, i);
+					
+					
+					try {
+					//initial update
+					ValidatableResponse response = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+													   .when()
+													   .body(updates)
+													   .contentType(ContentType.JSON)
+													   .accept(ContentType.JSON)
+													   .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
+													   .put(this.inventoryItemId)
+													   .then()
+													   .statusCode(200);
+					} catch (Throwable e) {
+						log.error("Error in thread {} on iteration {}", this.threadId, i, e);
+						throw new RuntimeException("Error thrown in thread " + this.threadId + " on iteration " + i, e);
+					}
+				}
 			
-			for (int i = 1; i <= this.numIterations; i++) {
-				log.info("Thread {} waiting for lock on iteration {}", this.threadId, i);
-				
-				((ObjectNode) updates.get("attributes")).put(this.threadId, i);
-				
-				//initial update
-				ValidatableResponse response = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-												   .when()
-												   .body(updates)
-												   .contentType(ContentType.JSON)
-												   .accept(ContentType.JSON)
-												   .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
-												   .put(this.inventoryItemId)
-												   .then()
-												   .statusCode(200);
-				
-			}
 			log.info("DONE running test thread {}", this.threadId);
 			return null;
 		}
