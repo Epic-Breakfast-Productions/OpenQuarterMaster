@@ -420,6 +420,10 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		return this.update(oqmDbIdOrName, null, object, false);
 	}
 	
+	protected void handleAdd(String oqmDbIdOrName, T object){
+		//TODO:: nothing to do for default
+	}
+	
 	/**
 	 * Adds an object to the collection. Adds a created history event and the object's new object id to that object in-place.
 	 *
@@ -445,6 +449,7 @@ public abstract class MongoObjectService<T extends MainObject, S extends SearchO
 		object.setId(result.getInsertedId().asObjectId().getValue());
 		
 		log.info("Added. Id: {}", object.getId());
+		this.handleAdd(oqmDbIdOrName, object);
 		return object;
 	}
 	

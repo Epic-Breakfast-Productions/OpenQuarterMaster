@@ -1,5 +1,7 @@
 package tech.ebp.oqm.core.api.model.object;
 
+import com.fasterxml.jackson.annotation.JsonMerge;
+import com.fasterxml.jackson.annotation.OptBoolean;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -39,6 +41,7 @@ public abstract class AttKeywordMainObject
 	 */
 	@NotNull
 	@NonNull
+//	@JsonMerge TODO:: #1261 figure out how to merge these; without, the whole map gets written on merge. With, partial updates are possible, but can't remove entries.
 	@lombok.Builder.Default
 	@Schema(required = false, description = "Attribute key/value (string) pairs to associate with the object.", examples = {"{}", "{\"key\": \"value\"}"})
 	private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();

@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo.transactions.appliers;
 
 import com.mongodb.client.ClientSession;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
@@ -13,11 +14,8 @@ import tech.ebp.oqm.core.api.service.mongo.StoredService;
 
 import java.util.Set;
 
+@ApplicationScoped
 public class AddWholeTransactionApplier extends TransactionApplier<AddWholeTransaction> {
-
-	public AddWholeTransactionApplier(StoredService storedService) {
-		super(storedService);
-	}
 
 	@Override
 	public TransactionType getTransactionType() {

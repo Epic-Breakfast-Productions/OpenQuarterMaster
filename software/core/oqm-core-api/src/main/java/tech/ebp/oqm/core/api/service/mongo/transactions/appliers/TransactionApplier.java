@@ -1,6 +1,8 @@
 package tech.ebp.oqm.core.api.service.mongo.transactions.appliers;
 
 import com.mongodb.client.ClientSession;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.bson.types.ObjectId;
@@ -18,14 +20,15 @@ import java.util.Set;
  * Abstract applier of transactions.
  * @param <T> The type of transaction being applied.
  */
-@AllArgsConstructor
 public abstract class TransactionApplier<T extends ItemStoredTransaction> {
-
+	
+	@Inject
 	@Getter
-	private StoredService storedService;
+	StoredService storedService;
 
 	public abstract TransactionType getTransactionType();
-
+	
+	@WithSpan
 	public abstract void apply(
 		String oqmDbIdOrName,
 		InventoryItem inventoryItem,
