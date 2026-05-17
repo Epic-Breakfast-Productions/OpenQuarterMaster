@@ -1,10 +1,11 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.model.Indexes;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.history.events.itemList.ItemListActionAddEvent;
@@ -67,9 +68,9 @@ public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemL
 	}
 
 	@Override
-	public List<Document> getDbIndexes() {
+	public List<Bson> getDbIndexes() {
 		return List.of(
-			new Document("name", 1)
+			Indexes.ascending("name")
 		);
 	}
 }

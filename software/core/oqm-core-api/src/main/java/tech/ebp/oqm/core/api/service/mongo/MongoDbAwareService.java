@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
@@ -175,14 +176,18 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 		//nothing to do.
 	}
 
-	List<Document> getDbIndexes() {
+	List<Bson> getDbIndexes() {
 		return List.of();
 	}
 
-	public void initDb(String oqmDbIdOrName) {
-		    List<Document> indexes = this.getDbIndexes();
-		    for(Document index : indexes) {
-		        getDocumentCollection(oqmDbIdOrName).createIndex(index);
-		    }
+	public void initDbByIdOrName(String oqmDbIdOrName) {
+		List<Bson> indexes = this.getDbIndexes();
+		for (Bson index : indexes) {
+			getDocumentCollection(oqmDbIdOrName).createIndex(index);
 		}
+	}
+
+	public void initDb(){
+		oqmDatabaseService.getDatabases().forEach(db -> this.initDbByIdOrName(db.getDbName()));
+	}
 }
