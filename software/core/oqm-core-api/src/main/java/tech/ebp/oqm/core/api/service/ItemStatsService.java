@@ -26,6 +26,9 @@ import tech.ebp.oqm.core.api.model.object.storage.items.pricing.TotalPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredState;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.BasicStatsContaining;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.StatsWithTotalContaining;
@@ -138,7 +141,9 @@ public class ItemStatsService {
 	}
 	
 	private void addToStats(InventoryItem item, ItemStoredStats itemStoredStats, Stored stored) {
-		StoredInBlockStats storedInBlockStats = itemStoredStats.getStorageBlockStats().get(stored.getStorageBlock());
+		StoredInBlockStats storedInBlockStats = itemStoredStats.getStorageBlockStats().get(
+			((StoredInBlock)stored.getState()).getStorageBlock()
+		);
 		
 		this.addToStats(item, storedInBlockStats, stored);
 		this.addToStats(item, (StatsWithTotalContaining) itemStoredStats, stored);
@@ -345,7 +350,11 @@ public class ItemStatsService {
 			FindIterable<Stored> storedInItem = this.getStoredService().listIterator(
 				oqmDbIdOrName, cs, new StoredSearch()
 									   .setInventoryItemId(item.getId())
-									   .setInStorageBlocks(concerning.stream().map(Stored::getStorageBlock).distinct().collect(Collectors.toList()))
+									   .setInStorageBlocks(
+										   concerning.stream()
+											   .filter(s->s.isState(StoredStateType.STORED))
+											   .map(s->((StoredInBlock)(s.getState())).getStorageBlock()).distinct().collect(Collectors.toList())
+									   )
 			);
 			try (
 				MongoCursor<Stored> storedIterator = storedInItem.iterator();
@@ -365,11 +374,12 @@ public class ItemStatsService {
 					);
 					if (result.isPresent()) {
 						StoredExpiryLowStockProcessResult curResult = result.get();
+						ObjectId block = ((StoredInBlock)curStored.getState()).getStorageBlock();
 						
-						if (!results.getResults().containsKey(curStored.getStorageBlock())) {
-							results.getResults().put(curStored.getStorageBlock(), new ArrayList<>());
+						if (!results.getResults().containsKey(block)) {
+							results.getResults().put(block, new ArrayList<>());
 						}
-						results.getResults().get(curStored.getStorageBlock()).add(curResult);
+						results.getResults().get(block).add(curResult);
 					}
 				}
 			}
