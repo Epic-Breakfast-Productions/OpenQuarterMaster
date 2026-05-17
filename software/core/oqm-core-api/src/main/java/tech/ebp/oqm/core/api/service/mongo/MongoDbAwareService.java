@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.IndexOptions;
 import jakarta.inject.Inject;
 import jakarta.validation.*;
 import lombok.Getter;
@@ -181,9 +182,10 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	}
 
 	public void initDbByIdOrName(String oqmDbIdOrName) {
+		IndexOptions options = new IndexOptions().unique(true).background(true);
 		List<Bson> indexes = this.getDbIndexes();
 		for (Bson index : indexes) {
-			getDocumentCollection(oqmDbIdOrName).createIndex(index);
+			getDocumentCollection(oqmDbIdOrName).createIndex(index, options);
 		}
 	}
 
