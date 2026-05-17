@@ -9,6 +9,7 @@ import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
+import tech.ebp.oqm.core.api.service.mongo.MongoService;
 import tech.ebp.oqm.core.api.service.serviceState.InstanceMutexService;
 import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
@@ -28,7 +29,7 @@ public class MongoDbInit {
 
     @Inject
     @Any
-    Instance<MongoDbAwareService<?, ?, ?>> mongoServices;
+    Instance<MongoService<?, ?, ?>> mongoServices;
 
     /**
      * This was introduced in version 4.4.8 ~ May 15, 2026
@@ -63,7 +64,7 @@ public class MongoDbInit {
     }
 
     void initDb() {
-        for(MongoDbAwareService<?, ?, ?> service : this.mongoServices){
+        for(MongoService<?, ?, ?> service : this.mongoServices){
             service.initDb();
         }
     }

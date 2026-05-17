@@ -177,7 +177,8 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 		//nothing to do.
 	}
 
-	List<Bson> getDbIndexes() {
+	@Override
+	public List<Bson> getDbIndexes() {
 		return List.of();
 	}
 

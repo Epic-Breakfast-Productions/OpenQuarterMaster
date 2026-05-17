@@ -14,10 +14,13 @@ import jakarta.validation.ValidatorFactory;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.conversions.Bson;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
+
+import java.util.List;
 
 /**
  * This is the main mongo class. It specifies top level, commonly shared utilities.
@@ -104,4 +107,8 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	}
 	
 	public abstract int getCurrentSchemaVersion();
+
+	public abstract List<Bson> getDbIndexes();
+
+	public abstract void initDb();
 }

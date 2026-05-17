@@ -5,7 +5,6 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
-import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Indexes;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -452,7 +451,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	}
 
 	@Override
-	List<Bson> getDbIndexes() {
+	public List<Bson> getDbIndexes() {
 		return List.of(
 			Indexes.ascending("name")
 		);

@@ -194,7 +194,7 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	}
 
 	@Override
-	List<Bson> getDbIndexes() {
+	public List<Bson> getDbIndexes() {
 		return List.of(
 			Indexes.ascending("name")
 		);

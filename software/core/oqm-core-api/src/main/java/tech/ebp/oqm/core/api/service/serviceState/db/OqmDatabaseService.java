@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.service.serviceState.db;
 
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.model.Filters;
+import com.mongodb.client.model.Indexes;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.validation.Valid;
@@ -11,6 +12,7 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -185,5 +187,12 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 	@Override
 	public int getCurrentSchemaVersion() {
 		return OqmMongoDatabase.CUR_SCHEMA_VERSION;
+	}
+
+	@Override
+	public List<Bson> getDbIndexes() {
+		return List.of(
+			Indexes.ascending("name")
+		);
 	}
 }
