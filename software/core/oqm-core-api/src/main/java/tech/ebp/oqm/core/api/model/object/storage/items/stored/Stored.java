@@ -29,6 +29,8 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.StoredNotificationStatus;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredState;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.model.validation.annotations.UniqueLabeledCollection;
@@ -247,10 +249,16 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	private ObjectId item;
 	
 	/**
-	 * The {@link StorageBlock} this stored is stored in.
+	 * The state describing how this item is stored. Example, stored in a storage block, or installed in another item.
 	 */
-	@Schema(required = true, description = "The storage block where this item is stored.")
-	private ObjectId storageBlock;
+	@NonNull
+	@NotNull
+	@Schema(description = "The state describing how this item is stored. Example, stored in a storage block, or installed in another item.")
+	private StoredState state;
+	
+	public boolean isState(StoredStateType type) {
+		return this.getState().getType().equals(type);
+	}
 	
 	/**
 	 * The general ids that apply to this stored, but not to all stored (as specified in the associated item)
