@@ -59,7 +59,6 @@ public class MongoDbInit {
         @Observes
         StartupEvent ev
     ) {
-        this.ensureItemMutexesExist();
         this.initDb();
     }
 
@@ -67,5 +66,6 @@ public class MongoDbInit {
         for(MongoService<?, ?, ?> service : this.mongoServices){
             service.initDb();
         }
+        this.ensureItemMutexesExist();
     }
 }
