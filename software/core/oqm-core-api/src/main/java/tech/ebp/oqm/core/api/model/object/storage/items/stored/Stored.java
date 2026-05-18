@@ -251,8 +251,6 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	/**
 	 * The state describing how this item is stored. Example, stored in a storage block, or installed in another item.
 	 */
-	@NonNull
-	@NotNull
 	@Schema(description = "The state describing how this item is stored. Example, stored in a storage block, or installed in another item.")
 	private StoredState state;
 	

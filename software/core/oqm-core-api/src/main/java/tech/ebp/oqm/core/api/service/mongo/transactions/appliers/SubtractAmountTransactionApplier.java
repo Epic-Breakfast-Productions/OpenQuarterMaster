@@ -8,6 +8,8 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubAmountTransaction;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
@@ -61,11 +63,15 @@ public class SubtractAmountTransactionApplier extends TransactionApplier<SubAmou
 		if (!inventoryItem.getId().equals(stored.getItem())) {
 			throw new IllegalArgumentException("Stored is not associated with the item.");
 		}
+		
+		if(!stored.isState(StoredStateType.STORED)){
+			throw new IllegalArgumentException("Cannot subtract stored that is not stored in a block.");
+		}
 
 		if (transaction.getFromStored() != null && !stored.getId().equals(transaction.getFromStored())) {
 			throw new IllegalArgumentException("Stored id in transaction not the id of stored found.");
 		}
-		if (transaction.getFromBlock() != null && !stored.getStorageBlock().equals(transaction.getFromBlock())) {
+		if (transaction.getFromBlock() != null && !((StoredInBlock)stored.getState()).getStorageBlock().equals(transaction.getFromBlock())) {
 			throw new IllegalArgumentException("Stored retrieved not in specified block.");
 		}
 		if(

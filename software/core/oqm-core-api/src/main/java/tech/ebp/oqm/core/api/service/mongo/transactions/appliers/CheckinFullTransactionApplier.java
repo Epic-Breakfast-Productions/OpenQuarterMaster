@@ -11,6 +11,8 @@ import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemWholeCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinFullTransaction;
 import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
@@ -22,12 +24,12 @@ import java.util.Set;
 
 @ApplicationScoped
 public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<CheckinFullTransaction> {
-
+	
 	@Override
 	public TransactionType getTransactionType() {
 		return TransactionType.CHECKIN_FULL;
 	}
-
+	
 	@Override
 	public void apply(
 		String oqmDbIdOrName,
@@ -40,14 +42,14 @@ public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<
 		ClientSession cs
 	) {
 		ItemCheckout<?> checkout = this.getItemCheckoutService().get(oqmDbIdOrName, cs, transaction.getCheckoutId());
-
+		
 		if (!inventoryItem.getId().equals(checkout.getItem())) {
 			throw new IllegalArgumentException("Checkout is not associated with the item.");
 		}
 		switch (checkout.getType()) {
 			case AMOUNT -> {
 				ItemAmountCheckout iac = (ItemAmountCheckout) checkout;
-
+				
 				AmountStored amountStored;
 				if (transaction.getToStored() != null) {
 					amountStored = (AmountStored) this.getStoredService().get(oqmDbIdOrName, cs, transaction.getToStored());
@@ -55,27 +57,33 @@ public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<
 					switch (inventoryItem.getStorageType()) {
 						case BULK -> {
 							try {
-								amountStored = this.getStoredService().getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transaction.getToBlock(), AmountStored.class);
-							} catch (DbNotFoundException e) {
+								amountStored =
+									this.getStoredService().getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transaction.getToBlock(), AmountStored.class);
+							} catch(DbNotFoundException e) {
 								amountStored = AmountStored.builder()
-									.item(inventoryItem.getId())
-									.storageBlock(transaction.getToBlock())
-									.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
-									.build();
+												   .item(inventoryItem.getId())
+												   .state(StoredInBlock.builder().storageBlock(transaction.getToBlock()).build())
+												   .amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+												   .build();
 								this.getStoredService().add(oqmDbIdOrName, cs, amountStored, interactingEntity);
 							}
 						}
 						case AMOUNT_LIST -> {
 							if (transaction.getToStored() == null) {
 								amountStored = AmountStored.builder()
-									.item(inventoryItem.getId())
-									.storageBlock(transaction.getToBlock())
-									.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
-									.build();
+												   .item(inventoryItem.getId())
+												   .state(StoredInBlock.builder().storageBlock(transaction.getToBlock()).build())
+												   .amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+												   .build();
 								this.getStoredService().add(oqmDbIdOrName, cs, amountStored, interactingEntity);
 							} else {
 								amountStored = (AmountStored) this.getStoredService().get(oqmDbIdOrName, cs, transaction.getToStored());
-								if (!amountStored.getStorageBlock().equals(transaction.getToBlock())) {
+								
+								if(!amountStored.isState(StoredStateType.STORED)){
+									throw new IllegalArgumentException("Cannot check into stored that is not stored.");
+								}
+								
+								if (!((StoredInBlock)amountStored.getState()).getStorageBlock().equals(transaction.getToBlock())) {
 									throw new IllegalArgumentException("To Stored given does not exist in block.");
 								}
 							}
@@ -85,11 +93,15 @@ public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<
 				} else {
 					throw new IllegalArgumentException("Must specify a stored or block to checkin into.");
 				}
-
+				
+				if(!amountStored.isState(StoredStateType.STORED)){
+					throw new IllegalArgumentException("Cannot check into stored that is not stored.");
+				}
+				
 				if (!inventoryItem.getId().equals(amountStored.getItem())) {
 					throw new IllegalArgumentException("Stored is not associated with the item.");
 				}
-
+				
 				amountStored.add(iac.getCheckedOut());
 				this.getStoredService().update(oqmDbIdOrName, cs, amountStored, interactingEntity, historyDetails);
 				affectedStored.add(amountStored);
@@ -99,7 +111,12 @@ public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<
 				if (!inventoryItem.getId().equals(checkedOut.getItem())) {
 					throw new IllegalArgumentException("Stored is not associated with the item.");
 				}
-				checkedOut.setStorageBlock(transaction.getToBlock());
+				
+				if(!checkedOut.isState(StoredStateType.STORED)){
+					throw new IllegalArgumentException("Cannot check in stored that is not stored in a block. This should bot happen, is bug.");
+				}
+				
+				((StoredInBlock)checkedOut.getState()).setStorageBlock(transaction.getToBlock());
 				this.getStoredService().add(oqmDbIdOrName, cs, checkedOut, interactingEntity, historyDetails);
 				affectedStored.add(checkedOut);
 			}
@@ -107,7 +124,7 @@ public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<
 				throw new IllegalArgumentException("Invalid checkout type.");
 			}
 		}
-
+		
 		checkout.setCheckInDetails(transaction.getDetails());
 		checkout.setCheckInTransaction(appliedTransactionId);
 		checkout.setCheckedInByEntity(interactingEntity.getId());

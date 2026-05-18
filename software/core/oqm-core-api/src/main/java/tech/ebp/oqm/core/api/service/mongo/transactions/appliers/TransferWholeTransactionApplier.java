@@ -7,6 +7,8 @@ import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferWholeTransaction;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
@@ -32,11 +34,14 @@ public class TransferWholeTransactionApplier extends TransactionApplier<Transfer
 		HistoryDetail[] historyDetails,
 		ClientSession cs
 	) {
-		
 		Stored toTransfer;
 		switch (inventoryItem.getStorageType()) {
 			case BULK, UNIQUE_SINGLE -> {
 				toTransfer = this.getStoredService().getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transaction.getFromBlock(), Stored.class);
+				
+				if(!toTransfer.isState(StoredStateType.STORED)){
+					throw new IllegalArgumentException("Cannot transfer whole stored that not stored.");
+				}
 				
 				if(transaction.getStoredToTransfer() != null && !toTransfer.getId().equals(transaction.getStoredToTransfer())) {
 					throw new IllegalArgumentException("Stored item from block does not match stored specified.");
@@ -45,7 +50,11 @@ public class TransferWholeTransactionApplier extends TransactionApplier<Transfer
 			case AMOUNT_LIST, UNIQUE_MULTI -> {
 				toTransfer = this.getStoredService().get(oqmDbIdOrName, cs, transaction.getStoredToTransfer());
 				
-				if(transaction.getFromBlock() != null && !toTransfer.getStorageBlock().equals(transaction.getFromBlock())) {
+				if(!toTransfer.isState(StoredStateType.STORED)){
+					throw new IllegalArgumentException("Cannot transfer whole stored that not stored.");
+				}
+				
+				if(transaction.getFromBlock() != null && !((StoredInBlock)toTransfer.getState()).getStorageBlock().equals(transaction.getFromBlock())) {
 					throw new IllegalArgumentException("Stored item specified does not match stored from storage block.");
 				}
 			}
@@ -56,8 +65,12 @@ public class TransferWholeTransactionApplier extends TransactionApplier<Transfer
 		if (!inventoryItem.getId().equals(toTransfer.getItem())) {
 			throw new IllegalArgumentException("Stored is not associated with the item.");
 		}
-
-		toTransfer.setStorageBlock(transaction.getToBlock());
+		
+		if(!toTransfer.isState(StoredStateType.STORED)){
+			throw new IllegalArgumentException("Cannot transfer whole stored that not stored.");
+		}
+		
+		toTransfer.setState(StoredInBlock.builder().storageBlock(transaction.getToBlock()).build());
 
 		affectedStored.add(toTransfer);
 		this.getStoredService().update(oqmDbIdOrName, cs, toTransfer, interactingEntity, historyDetails);

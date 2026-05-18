@@ -18,6 +18,7 @@ import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.*;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.ItemAwareSearchResult;
@@ -87,9 +88,40 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			throw new ValidationException("Item " + newOrChangedObject.getItem().toHexString() + " does not exist.", e);
 		}
 		
-		if (!item.getStorageBlocks().contains(newOrChangedObject.getStorageBlock())) {
-			throw new ValidationException("Storage block " + newOrChangedObject.getStorageBlock().toHexString() + " not used to hold this item (" + item.getId() + ").");
+		if(newOrChangedObject.getState() == null) {
+			throw new ValidationException("Stored item must have a stored state.");
 		}
+		
+		switch (newOrChangedObject.getState().getType()){
+			case STORED:
+				ObjectId inBlock = ((StoredInBlock)(newOrChangedObject.getState())).getStorageBlock();
+				if (!item.getStorageBlocks().contains(inBlock)) {
+					throw new ValidationException("Storage block " + inBlock.toHexString() + " not used to hold this item (" + item.getId() + ").");
+				}
+				
+				if (item.getStorageType() == BULK) {
+					SearchResult<Stored> inBlockSearch = this.search(
+						oqmDbIdOrName,
+						new StoredSearch()
+							.setInventoryItemId(item.getId())
+							.setStorageBlockId(inBlock)
+					);
+					
+					if (!inBlockSearch.isEmpty()) {
+						if (inBlockSearch.getNumResults() != 1) {
+							throw new ValidationException("More than one stored held for item of type " + item.getStorageType());
+						}
+						Stored stored = inBlockSearch.getResults().get(0);
+						if (newObject || !stored.getId().equals(newOrChangedObject.getId())) {
+							throw new ValidationException("Cannot add more than one stored held for type " + item.getStorageType());
+						}
+					}
+				}
+				
+				
+				break;
+		}
+		
 		
 		if (item.getStorageType().storedType != newOrChangedObject.getType()) {
 			throw new ValidationException("Stored given of type " + newOrChangedObject.getType() + " cannot be held in item of storage type" + item.getStorageType());
@@ -104,25 +136,6 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		if (item.getStorageType().storedType == StoredType.AMOUNT && ((AmountStored) newOrChangedObject).getLowStockThreshold() != null) {
 			if (!item.getUnit().isCompatible(((AmountStored) newOrChangedObject).getLowStockThreshold().getUnit())) {
 				throw new ValidationException("Unit of low stock threshold must be compatible with item's unit.");
-			}
-		}
-		
-		if (item.getStorageType() == BULK || item.getStorageType() == UNIQUE_SINGLE) {
-			SearchResult<Stored> inBlock = this.search(
-				oqmDbIdOrName,
-				new StoredSearch()
-					.setInventoryItemId(item.getId())
-					.setStorageBlockId(newOrChangedObject.getStorageBlock())
-			);
-			
-			if (!inBlock.isEmpty()) {
-				if (inBlock.getNumResults() != 1) {
-					throw new ValidationException("More than one stored held for item of type " + item.getStorageType());
-				}
-				Stored stored = inBlock.getResults().get(0);
-				if (newObject || !stored.getId().equals(newOrChangedObject.getId())) {
-					throw new ValidationException("Cannot add more than one stored held for type " + item.getStorageType());
-				}
 			}
 		}
 		

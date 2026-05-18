@@ -16,6 +16,7 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.CheckInDetails;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredState;
 
 import java.time.ZonedDateTime;
 

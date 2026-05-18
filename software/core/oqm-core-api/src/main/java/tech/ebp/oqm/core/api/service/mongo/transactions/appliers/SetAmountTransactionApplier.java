@@ -8,6 +8,8 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.set.SetAmountTransaction;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
@@ -18,12 +20,12 @@ import java.util.Set;
 
 @ApplicationScoped
 public class SetAmountTransactionApplier extends TransactionApplier<SetAmountTransaction> {
-
+	
 	@Override
 	public TransactionType getTransactionType() {
 		return TransactionType.SET_AMOUNT;
 	}
-
+	
 	@Override
 	public void apply(
 		String oqmDbIdOrName,
@@ -41,12 +43,12 @@ public class SetAmountTransactionApplier extends TransactionApplier<SetAmountTra
 				if (transaction.getBlock() != null) {
 					try {
 						stored = this.getStoredService().getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transaction.getBlock(), AmountStored.class);
-					} catch (DbNotFoundException e) {
+					} catch(DbNotFoundException e) {
 						stored = AmountStored.builder()
-							.item(inventoryItem.getId())
-							.storageBlock(transaction.getBlock())
-							.amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
-							.build();
+									 .item(inventoryItem.getId())
+									 .state(StoredInBlock.builder().storageBlock(transaction.getBlock()).build())
+									 .amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+									 .build();
 						this.getStoredService().add(oqmDbIdOrName, cs, stored, interactingEntity);
 					}
 					if (transaction.getStored() != null) {
@@ -65,7 +67,12 @@ public class SetAmountTransactionApplier extends TransactionApplier<SetAmountTra
 					throw new IllegalArgumentException("Must specify a stored to set the amount of.");
 				} else {
 					stored = (AmountStored) this.getStoredService().get(oqmDbIdOrName, cs, transaction.getStored());
-					if (transaction.getBlock() != null && !stored.getStorageBlock().equals(transaction.getBlock())) {
+					
+					if(!stored.isState(StoredStateType.STORED)){
+						throw new IllegalArgumentException("Cannot subtract stored that is not stored in a block.");
+					}
+					
+					if (transaction.getBlock() != null && !((StoredInBlock)stored.getState()).getStorageBlock().equals(transaction.getBlock())) {
 						throw new IllegalArgumentException("To Stored given does not exist in block.");
 					}
 				}
@@ -74,13 +81,13 @@ public class SetAmountTransactionApplier extends TransactionApplier<SetAmountTra
 				throw new IllegalArgumentException("Cannot add an amount to a unique item.");
 			}
 		}
-
+		
 		if (!inventoryItem.getId().equals(stored.getItem())) {
 			throw new IllegalArgumentException("Stored is not associated with the item.");
 		}
-
+		
 		stored.setAmount(transaction.getAmount());
-
+		
 		affectedStored.add(stored);
 		this.getStoredService().update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
 	}

@@ -8,6 +8,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferAmountTransaction;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
@@ -47,7 +48,7 @@ public class TransferAmountTransactionApplier extends TransactionApplier<Transfe
 				} catch(DbNotFoundException e) {
 					toStored = AmountStored.builder()
 								   .item(inventoryItem.getId())
-								   .storageBlock(transaction.getToBlock())
+								   .state(StoredInBlock.builder().storageBlock(transaction.getToBlock()).build())
 								   .amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
 								   .build();
 					this.getStoredService().add(oqmDbIdOrName, cs, toStored, interactingEntity, historyDetails);
@@ -58,7 +59,7 @@ public class TransferAmountTransactionApplier extends TransactionApplier<Transfe
 				if (transaction.getToStored() == null) {
 					toStored = AmountStored.builder()
 								   .item(inventoryItem.getId())
-								   .storageBlock(transaction.getToBlock())
+								   .state(StoredInBlock.builder().storageBlock(transaction.getToBlock()).build())
 								   .amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
 								   .build();
 					this.getStoredService().add(oqmDbIdOrName, cs, toStored, interactingEntity);

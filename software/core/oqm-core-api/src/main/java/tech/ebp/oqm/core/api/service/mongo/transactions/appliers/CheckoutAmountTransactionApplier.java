@@ -12,6 +12,8 @@ import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinPartTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutAmountTransaction;
@@ -66,7 +68,12 @@ public class CheckoutAmountTransactionApplier extends CheckinOutTransactionAppli
 		if (!inventoryItem.getId().equals(stored.getItem())) {
 			throw new IllegalArgumentException("Stored is not associated with the item.");
 		}
-		if (transaction.getFromBlock() != null && !stored.getStorageBlock().equals(transaction.getFromBlock())) {
+		
+		if(!stored.isState(StoredStateType.STORED)){
+			throw new IllegalArgumentException("Cannot subtract stored that is not stored in a block.");
+		}
+		
+		if (transaction.getFromBlock() != null && !((StoredInBlock)stored.getState()).getStorageBlock().equals(transaction.getFromBlock())) {
 			throw new IllegalArgumentException("From Storage block given mismatched stored's block.");
 		}
 		
@@ -91,7 +98,7 @@ public class CheckoutAmountTransactionApplier extends CheckinOutTransactionAppli
 															.item(inventoryItem.getId())
 															.checkoutDetails(transaction.getCheckoutDetails())
 															.fromStored(stored.getId())
-															.fromBlock(stored.getStorageBlock())
+															.fromBlock(((StoredInBlock)stored.getState()).getStorageBlock())
 															.checkedOut(amount)
 															.checkOutTransaction(appliedTransactionId);
 		
