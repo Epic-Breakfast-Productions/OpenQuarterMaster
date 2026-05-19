@@ -4,12 +4,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.IndexOptions;
 import jakarta.inject.Inject;
 import jakarta.validation.*;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.Document;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
@@ -25,6 +27,7 @@ import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -172,5 +175,18 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	
 	public void runPostUpgrade(String oqmDbIdOrName, ClientSession cs, CollectionUpgradeResult upgradeResult) {
 		//nothing to do.
-	};
+	}
+
+	@Override
+	public List<Bson> getDbIndexes() {
+		return List.of();
+	}
+
+	public void initDbByIdOrName(String oqmDbIdOrName) {
+		setupIndexes(getDocumentCollection(oqmDbIdOrName), this.getDbIndexes());
+	}
+
+	public void initDb(){
+		oqmDatabaseService.getDatabases().forEach(db -> this.initDbByIdOrName(db.getDbName()));
+	}
 }
