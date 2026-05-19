@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects;
 
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
@@ -17,6 +18,10 @@ import java.util.List;
 @Setter
 @SuperBuilder(toBuilder = true)
 public class StoredSearch extends SearchKeyAttObject {
+	
+	@QueryParam("storedState")
+	@DefaultValue("STORED")
+	String storedState;
 	
 	@QueryParam("itemId") String inventoryItemIdFromQuery;
 	@QueryParam("blockId") String storageBlockIdFromQuery;
