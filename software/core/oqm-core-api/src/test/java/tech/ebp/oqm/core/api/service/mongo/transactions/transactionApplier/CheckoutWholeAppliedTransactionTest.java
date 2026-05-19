@@ -21,6 +21,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutAmountTransaction;
@@ -53,7 +54,7 @@ public class CheckoutWholeAppliedTransactionTest extends AppliedTransactionServi
 		
 		AmountStored initialStored = AmountStored.builder()
 										 .item(item.getId())
-										 .storageBlock(blockId)
+										 .state(StoredInBlock.builder().storageBlock(blockId).build())
 										 .amount(Quantities.getQuantity(6, item.getUnit()))
 										 .build();
 		ObjectId initialStoredId = this.storedService.add(
@@ -109,7 +110,7 @@ public class CheckoutWholeAppliedTransactionTest extends AppliedTransactionServi
 		
 		AmountStored initialStored = AmountStored.builder()
 										 .item(item.getId())
-										 .storageBlock(blockId)
+										 .state(StoredInBlock.builder().storageBlock(blockId).build())
 										 .amount(Quantities.getQuantity(6, item.getUnit()))
 										 .build();
 		ObjectId initialStoredId = this.storedService.add(
@@ -165,7 +166,7 @@ public class CheckoutWholeAppliedTransactionTest extends AppliedTransactionServi
 		
 		UniqueStored initialStored = UniqueStored.builder()
 										 .item(item.getId())
-										 .storageBlock(blockId)
+										 .state(StoredInBlock.builder().storageBlock(blockId).build())
 										 .build();
 		ObjectId initialStoredId = this.storedService.add(
 			DEFAULT_TEST_DB_NAME,
@@ -220,7 +221,7 @@ public class CheckoutWholeAppliedTransactionTest extends AppliedTransactionServi
 		
 		UniqueStored initialStored = UniqueStored.builder()
 										 .item(item.getId())
-										 .storageBlock(blockId)
+										 .state(StoredInBlock.builder().storageBlock(blockId).build())
 										 .build();
 		ObjectId initialStoredId = this.storedService.add(
 			DEFAULT_TEST_DB_NAME,

@@ -18,6 +18,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddAmountTransaction;
@@ -52,7 +53,7 @@ public class AddWholeAppliedTransactionTest extends AppliedTransactionServiceTes
 															AmountStored.builder()
 																.item(item.getId())
 																.amount(Quantities.getQuantity(5, item.getUnit()))
-																.storageBlock(item.getStorageBlocks().getFirst())
+																.state(StoredInBlock.builder().storageBlock(item.getStorageBlocks().getFirst()).build())
 																.build()
 														)
 														.toBlock(item.getStorageBlocks().getFirst())
@@ -95,7 +96,7 @@ public class AddWholeAppliedTransactionTest extends AppliedTransactionServiceTes
 														.toAdd(
 															UniqueStored.builder()
 																.item(item.getId())
-																.storageBlock(item.getStorageBlocks().getFirst())
+																.state(StoredInBlock.builder().storageBlock(item.getStorageBlocks().getFirst()).build())
 																.build()
 														)
 														.toBlock(item.getStorageBlocks().getFirst())
@@ -137,7 +138,7 @@ public class AddWholeAppliedTransactionTest extends AppliedTransactionServiceTes
 														.toAdd(
 															UniqueStored.builder()
 																.item(item.getId())
-																.storageBlock(item.getStorageBlocks().getFirst())
+																.state(StoredInBlock.builder().storageBlock(item.getStorageBlocks().getFirst()).build())
 																.build()
 														)
 														.toBlock(item.getStorageBlocks().getFirst())
@@ -180,7 +181,7 @@ public class AddWholeAppliedTransactionTest extends AppliedTransactionServiceTes
 															AmountStored.builder()
 																.item(item.getId())
 																.amount(Quantities.getQuantity(5, item.getUnit()))
-																.storageBlock(item.getStorageBlocks().getFirst())
+																.state(StoredInBlock.builder().storageBlock(item.getStorageBlocks().getFirst()).build())
 																.build()
 														)
 														.toBlock(item.getStorageBlocks().getFirst())
@@ -201,7 +202,7 @@ public class AddWholeAppliedTransactionTest extends AppliedTransactionServiceTes
 														.toAdd(
 															UniqueStored.builder()
 																.item(item.getId())
-																.storageBlock(item.getStorageBlocks().getFirst())
+																.state(StoredInBlock.builder().storageBlock(item.getStorageBlocks().getFirst()).build())
 																.build()
 														)
 														.toBlock(item.getStorageBlocks().getFirst())
@@ -210,7 +211,7 @@ public class AddWholeAppliedTransactionTest extends AppliedTransactionServiceTes
 		this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
 		
 		ValidationException e = assertThrows(ValidationException.class, ()->this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
-		assertEquals("Cannot add more than one stored held for type UNIQUE_SINGLE", e.getMessage());
+		assertEquals("Cannot store more than one globally unique stored item.", e.getMessage());
 	}
 	
 	@Test
@@ -222,7 +223,7 @@ public class AddWholeAppliedTransactionTest extends AppliedTransactionServiceTes
 														.toAdd(
 															UniqueStored.builder()
 																.item(item.getId())
-																.storageBlock(new ObjectId())
+																.state(StoredInBlock.builder().storageBlock(ObjectId.get()).build())
 																.build()
 														)
 														.toBlock(item.getStorageBlocks().getFirst())
@@ -237,7 +238,7 @@ public class AddWholeAppliedTransactionTest extends AppliedTransactionServiceTes
 														 .toAdd(
 															 UniqueStored.builder()
 																 .item(item.getId())
-																 .storageBlock(item.getStorageBlocks().getFirst())
+																 .state(StoredInBlock.builder().storageBlock(item.getStorageBlocks().getFirst()).build())
 																 .build()
 														 )
 														 .toBlock(new ObjectId())
@@ -256,7 +257,7 @@ public class AddWholeAppliedTransactionTest extends AppliedTransactionServiceTes
 														.toAdd(
 															UniqueStored.builder()
 																.item(item.getId())
-																.storageBlock(new ObjectId())
+																.state(StoredInBlock.builder().storageBlock(ObjectId.get()).build())
 																.build()
 														)
 														.toBlock(item.getStorageBlocks().getFirst())
@@ -277,7 +278,7 @@ public class AddWholeAppliedTransactionTest extends AppliedTransactionServiceTes
 														.toAdd(
 															UniqueStored.builder()
 																.item(new ObjectId())
-																.storageBlock(item.getStorageBlocks().getFirst())
+																.state(StoredInBlock.builder().storageBlock(item.getStorageBlocks().getFirst()).build())
 																.build()
 														)
 														.toBlock(item.getStorageBlocks().getFirst())

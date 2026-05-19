@@ -23,6 +23,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinFullTransaction;
@@ -57,7 +58,7 @@ public class CheckinWholeAppliedTransactionTest extends AppliedTransactionServic
 		
 		AmountStored initialStored = AmountStored.builder()
 										 .item(item.getId())
-										 .storageBlock(blockId)
+										 .state(StoredInBlock.builder().storageBlock(blockId).build())
 										 .amount(Quantities.getQuantity(5, item.getUnit()))
 										 .build();
 		this.storedService.add(DEFAULT_TEST_DB_NAME, initialStored, entity);
@@ -130,7 +131,7 @@ public class CheckinWholeAppliedTransactionTest extends AppliedTransactionServic
 		
 		UniqueStored initialStored = UniqueStored.builder()
 										 .item(item.getId())
-										 .storageBlock(blockId)
+										 .state(StoredInBlock.builder().storageBlock(blockId).build())
 										 .build();
 		this.storedService.add(DEFAULT_TEST_DB_NAME, initialStored, entity);
 		
@@ -201,7 +202,7 @@ public class CheckinWholeAppliedTransactionTest extends AppliedTransactionServic
 		
 		UniqueStored initialStored = UniqueStored.builder()
 										 .item(item.getId())
-										 .storageBlock(blockId)
+										 .state(StoredInBlock.builder().storageBlock(blockId).build())
 										 .build();
 		this.storedService.add(DEFAULT_TEST_DB_NAME, initialStored, entity);
 		
