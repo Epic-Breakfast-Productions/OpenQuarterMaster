@@ -79,32 +79,34 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 			filters.add(eq("item", this.getInventoryItemIdFromQuery()));
 		}
 		
-		if(hasValue(this.getStorageBlockIdFromPath())){
-			filters.add(eq("state.storageBlock", this.getStorageBlockIdFromPath()));
-		} else if(hasValue(this.getStorageBlockIdFromQuery())){
-			filters.add(eq("state.storageBlock", this.getStorageBlockIdFromQuery()));
-		}
-		
 		//TODO:: redo these
 //		if (this.hasValue(this.getItemBarcode())) {
 //			filters.add(
 //				eq("barcode", this.getItemBarcode())
 //			);
 //		}
-		if(hasValue(this.getInStorageBlocks())){
-			if(this.getInStorageBlocks().size() == 1){
-				filters.add(
-					eq("state.storageBlock", this.getInStorageBlocks().getFirst())
-				);
-			} else {
-				filters.add(or(
-					this.getInStorageBlocks().stream().map((ObjectId storageBlockId) -> {
-//					return exists("storageBlocks." + storageBlockId.toHexString());
-						return eq("state.storageBlock", storageBlockId);
-					}).toList()
-				));
+		if(this.getStoredState() == StoredStateType.STORED){
+			if(hasValue(this.getStorageBlockIdFromPath())){
+				filters.add(eq("state.storageBlock", this.getStorageBlockIdFromPath()));
+			} else if(hasValue(this.getStorageBlockIdFromQuery())){
+				filters.add(eq("state.storageBlock", this.getStorageBlockIdFromQuery()));
+			}
+			if(hasValue(this.getInStorageBlocks())){
+				if(this.getInStorageBlocks().size() == 1){
+					filters.add(
+						eq("state.storageBlock", this.getInStorageBlocks().getFirst())
+					);
+				} else {
+					filters.add(or(
+						this.getInStorageBlocks().stream().map((ObjectId storageBlockId) -> {
+							//					return exists("storageBlocks." + storageBlockId.toHexString());
+							return eq("state.storageBlock", storageBlockId);
+						}).toList()
+					));
+				}
 			}
 		}
+		
 		if(hasValue(this.getHasExpiryDate())){
 			filters.add(
 				ne("expires", null)

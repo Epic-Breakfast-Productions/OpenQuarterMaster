@@ -69,7 +69,7 @@ import java.util.stream.Collectors;
 @Schema(oneOf = {AmountStored.class, UniqueStored.class})
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
 	
-	public static final int CUR_SCHEMA_VERSION = 4;
+	public static final int CUR_SCHEMA_VERSION = 5;
 	
 	private static final Pattern LABEL_PARTS_PATTERN = Pattern.compile("\\{[^}]*}");
 	private static final String LABEL_PLACEHOLDER_PART_DELIM = ";";
