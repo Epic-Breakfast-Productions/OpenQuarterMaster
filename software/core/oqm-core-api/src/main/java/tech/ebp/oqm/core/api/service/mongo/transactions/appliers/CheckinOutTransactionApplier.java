@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo.transactions.appliers;
 
 import com.mongodb.client.ClientSession;
+import jakarta.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
@@ -20,11 +21,7 @@ import java.util.Set;
  */
 public abstract class CheckinOutTransactionApplier<T extends ItemStoredTransaction> extends TransactionApplier<T> {
 
+	@Inject
 	@Getter
-	private ItemCheckoutService itemCheckoutService;
-
-	public CheckinOutTransactionApplier(StoredService storedService, ItemCheckoutService itemCheckoutService) {
-		super(storedService);
-		this.itemCheckoutService = itemCheckoutService;
-	}
+	ItemCheckoutService itemCheckoutService;
 }

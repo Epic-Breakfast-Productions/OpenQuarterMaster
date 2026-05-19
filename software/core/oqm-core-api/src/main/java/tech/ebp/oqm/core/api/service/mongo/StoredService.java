@@ -14,6 +14,8 @@ import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.*;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
@@ -21,6 +23,7 @@ import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.ItemAwareSearchResult;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
+import tech.ebp.oqm.core.api.service.serviceState.InstanceMutexService;
 
 import java.util.*;
 
@@ -55,6 +58,9 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
+	
+	@Inject
+	InstanceMutexService instanceMutexService;
 	
 	@Override
 	public Set<String> getDisallowedUpdateFields() {
@@ -157,7 +163,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	
 	@Override
 	public boolean needsDerivedUpdatesAfterUpdate(@NotNull Stored stored, ObjectNode updates) {
-		
+		//TODO
 		return false;
 	}
 	
@@ -188,6 +194,19 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
 				   .build();
 	}
+	
+	public Stored update(String oqmDbIdOrName, ClientSession cs, InventoryItem item, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity,
+		HistoryDetail... details) {
+		
+		try(
+			InstanceMutexService.InstanceMutexResource mutex = this.instanceMutexService.getResource(this.instanceMutexService.getMutexIdFor(oqmDbIdOrName, InventoryItem.class,
+					item.getId()),
+				Optional.empty());
+		){
+			return super.update(oqmDbIdOrName, cs, id, updateJson, interactingEntity, details);
+		}
+	}
+	
 	
 	public <T extends Stored> SearchResult<T> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
 		StoredSearch search = new StoredSearch()

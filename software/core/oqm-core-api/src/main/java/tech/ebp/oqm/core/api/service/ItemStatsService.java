@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.api.service;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCursor;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
@@ -182,6 +183,7 @@ public class ItemStatsService {
 	
 	//</editor-fold>
 	
+	@WithSpan
 	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, InventoryItem item) {
 		log.info("Getting stats for item: {}", item.getId());
 		
@@ -322,6 +324,7 @@ public class ItemStatsService {
 	 *
 	 * @return
 	 */
+	@WithSpan
 	public ItemPostTransactionProcessResults postTransactionProcess(
 		String oqmDbIdOrName,
 		ClientSession cs,

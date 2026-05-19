@@ -131,42 +131,6 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 		return this.applyDefaults(super.get(id));
 	}
 	
-	@PUT
-	@Path("{storedItemId}")
-	@Operation(
-		summary = "Updates a particular stored item. If applicable, amounts are disregarded. Use the transact endpoint to modify amounts, or add/remove stored items",
-		description = "Partial update to a object. Do not need to supply all fields, just the one(s) you wish to update."
-	)
-	@APIResponse(
-		responseCode = "200",
-		description = "Object updated."
-	)
-	@APIResponse(
-		responseCode = "400",
-		description = "Bad request given. Data given could not pass validation.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@APIResponse(
-		responseCode = "404",
-		description = "Bad request given, could not find object at given id.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@APIResponse(
-		responseCode = "410",
-		description = "Object requested has been deleted.",
-		content = @Content(mediaType = "text/plain")
-	)
-	@RolesAllowed(Roles.INVENTORY_EDIT)
-	@Produces(MediaType.APPLICATION_JSON)
-	public Stored update(
-		@PathParam("storedItemId")
-		ObjectId id,
-		@Schema(type = SchemaType.OBJECT, implementation = Stored.class, description = "Partial object updates; supply all or some of values to update.")
-		ObjectNode updates
-	) {
-		return this.applyDefaults(super.update(id, updates));
-	}
-	
 	@GET
 	@Path("{storedItemId}/history")
 	@Operation(

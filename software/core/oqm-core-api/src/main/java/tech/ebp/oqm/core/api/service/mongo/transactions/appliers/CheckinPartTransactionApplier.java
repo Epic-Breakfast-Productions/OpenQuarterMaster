@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo.transactions.appliers;
 
 import com.mongodb.client.ClientSession;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
@@ -14,16 +15,13 @@ import tech.ebp.oqm.core.api.service.mongo.StoredService;
 
 import java.util.Set;
 
+@ApplicationScoped
 public class CheckinPartTransactionApplier extends CheckinOutTransactionApplier<CheckinPartTransaction> {
-
-
-	public CheckinPartTransactionApplier(StoredService storedService, ItemCheckoutService itemCheckoutService) {
-		super(storedService, itemCheckoutService);
-	}
+	
 
 	@Override
 	public TransactionType getTransactionType() {
-		return TransactionType.CHECKIN_FULL;
+		return TransactionType.CHECKIN_PART;
 	}
 
 	@Override
