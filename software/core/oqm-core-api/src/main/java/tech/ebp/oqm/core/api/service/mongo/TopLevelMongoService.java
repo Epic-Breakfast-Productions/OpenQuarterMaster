@@ -212,11 +212,6 @@ public abstract class TopLevelMongoService<T extends MainObject, S extends Searc
 
 	@Override
 	public void initDb() {
-		//add indexes as unique?
-		IndexOptions options = new IndexOptions().background(true);
-		List<Bson> indexes = this.getDbIndexes();
-		for (Bson index : indexes) {
-			this.getDocumentCollection().createIndex(index, options);
-		}
+		setupIndexes(getDocumentCollection(), this.getDbIndexes());
 	}
 }

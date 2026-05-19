@@ -183,11 +183,7 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	}
 
 	public void initDbByIdOrName(String oqmDbIdOrName) {
-		IndexOptions options = new IndexOptions().unique(true).background(true);
-		List<Bson> indexes = this.getDbIndexes();
-		for (Bson index : indexes) {
-			getDocumentCollection(oqmDbIdOrName).createIndex(index, options);
-		}
+		setupIndexes(getDocumentCollection(oqmDbIdOrName), this.getDbIndexes());
 	}
 
 	public void initDb(){

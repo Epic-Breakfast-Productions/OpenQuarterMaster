@@ -7,6 +7,8 @@ import com.mongodb.TransactionOptions;
 import com.mongodb.WriteConcern;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoClient;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.model.IndexOptions;
 import jakarta.inject.Inject;
 import jakarta.validation.Validation;
 import jakarta.validation.Validator;
@@ -111,4 +113,11 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 	public abstract List<Bson> getDbIndexes();
 
 	public abstract void initDb();
+
+	protected static void setupIndexes(MongoCollection<?> collection, List<Bson> indexes) {
+		IndexOptions options = new IndexOptions().background(true);
+		for (Bson index : indexes) {
+			collection.createIndex(index, options);
+		}
+	}
 }
