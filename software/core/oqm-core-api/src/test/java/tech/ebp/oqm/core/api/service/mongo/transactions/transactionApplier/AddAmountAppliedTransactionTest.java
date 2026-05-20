@@ -16,6 +16,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddAmountTransaction;
@@ -99,7 +100,7 @@ public class AddAmountAppliedTransactionTest extends AppliedTransactionServiceTe
 		
 		AmountStored originalStored = AmountStored.builder()
 										  .item(item.getId())
-										  .storageBlock(item.getStorageBlocks().getFirst())
+										  .state(StoredInBlock.builder().storageBlock(item.getStorageBlocks().getFirst()).build())
 										  .amount(Quantities.getQuantity(5, item.getUnit()))
 										  .build();
 		this.storedService.add(DEFAULT_TEST_DB_NAME, originalStored, entity);
@@ -184,7 +185,7 @@ public class AddAmountAppliedTransactionTest extends AppliedTransactionServiceTe
 		
 		AmountStored originalStored = AmountStored.builder()
 										  .item(item.getId())
-										  .storageBlock(item.getStorageBlocks().getFirst())
+										  .state(StoredInBlock.builder().storageBlock(item.getStorageBlocks().getFirst()).build())
 										  .amount(Quantities.getQuantity(5, item.getUnit()))
 										  .build();
 		this.storedService.add(DEFAULT_TEST_DB_NAME, originalStored, entity);
@@ -320,7 +321,7 @@ public class AddAmountAppliedTransactionTest extends AppliedTransactionServiceTe
 		
 		AmountStored originalStored = AmountStored.builder()
 										  .item(item.getId())
-										  .storageBlock(origBlock)
+										  .state(StoredInBlock.builder().storageBlock(origBlock).build())
 										  .amount(Quantities.getQuantity(5, item.getUnit()))
 										  .build();
 		this.storedService.add(DEFAULT_TEST_DB_NAME, originalStored, entity);

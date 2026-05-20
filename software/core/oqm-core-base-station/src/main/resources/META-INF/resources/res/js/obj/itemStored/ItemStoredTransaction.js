@@ -1190,7 +1190,7 @@ export class ItemStoredTransaction extends PageUtility {
 					item.storageBlocks.forEach(function (blockId) {
 						let newBlockOption = $('<option></option>');
 						newBlockOption.val(blockId);
-						if (stored && stored.storageBlock === blockId) {
+						if (stored && stored.state.storageBlock === blockId) {
 							newBlockOption.attr("selected", true);
 						}
 						promises.push(Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
@@ -1795,7 +1795,7 @@ export class ItemStoredTransaction extends PageUtility {
 						function (storedInItem) {
 							ItemStoredTransaction.Transfer.fromBlockSelect.find("option").each(function (i, option) {
 								let optionJq = $(option);
-								if (optionJq.val() !== storedInItem.storageBlock) {
+								if (optionJq.val() !== storedInItem.state.storageBlock) {
 									optionJq.prop("disabled", true);
 									optionJq.prop("selected", false);
 								}

@@ -8,6 +8,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.CalculatedPricing;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
 import tech.ebp.oqm.core.api.model.testUtils.BasicTest;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 
@@ -49,7 +50,7 @@ public class StoredTest extends BasicTest {
 		AmountStored fullAmountStored = AmountStored.builder()
 											.id(ObjectId.get())
 											.item(ObjectId.get())
-											.storageBlock(ObjectId.get())
+											.state(StoredInBlock.builder().storageBlock(ObjectId.get()).build())
 											.amount(UnitUtils.Quantities.UNIT_ONE)
 											.identifiers(identifiers)
 											.calculatedPrices(pricingSet)
@@ -60,7 +61,7 @@ public class StoredTest extends BasicTest {
 		UniqueStored fullUniqueStored = UniqueStored.builder()
 											.id(ObjectId.get())
 											.item(ObjectId.get())
-											.storageBlock(ObjectId.get())
+											.state(StoredInBlock.builder().storageBlock(ObjectId.get()).build())
 											.identifiers(identifiers)
 											.build();
 		

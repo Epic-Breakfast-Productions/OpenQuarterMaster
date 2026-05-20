@@ -61,7 +61,7 @@ public class ItemCheckoutUi extends UiProvider {
 			Map.of(
 				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), new ItemCategorySearch()),
 				"searchResults", this.coreApiClient.itemCheckoutSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search)
-					.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "fromBlock", this.getBearerHeaderStr()))
+					.call(results -> searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr(), "fromBlock"))
 					.call(results -> searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
 					.call(results -> searchResultTweak.addCreatedByInteractingEntityRefToCheckoutSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr()))
 					.call(results -> searchResultTweak.addInteractingEntityRefToCheckoutSearchResult(results, this.getBearerHeaderStr()))

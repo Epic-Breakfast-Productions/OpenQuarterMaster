@@ -103,10 +103,12 @@ public class OverviewUi extends UiProvider {
 				"storageCollectionStats", this.coreApiClient.storageBlockCollectionStats(this.getBearerHeaderStr(), this.getSelectedDb()),
 				"parentBlocks", this.coreApiClient.storageBlockSearch(this.getBearerHeaderStr(), this.getSelectedDb(), treeBlockSearch),
 				"expiredResults", this.coreApiClient.invItemStoredSearch(this.getBearerHeaderStr(), this.getSelectedDb(), expiredSearch)
-									  .call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "storageBlock", this.getBearerHeaderStr()))
+									  .call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr(), "state",
+										  "storageBlock"))
 									  .call(results->searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr())),
 				"expiryWarnResults", this.coreApiClient.invItemStoredSearch(this.getBearerHeaderStr(), this.getSelectedDb(), expiringSearch)
-										 .call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "storageBlock", this.getBearerHeaderStr()))
+										 .call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr(), "state",
+											 "storageBlock"))
 										 .call(results->searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr())),
 				"lowStockResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), lowStockSearch),
 				"currency", this.coreApiClient.getCurrency(this.getBearerHeaderStr()),

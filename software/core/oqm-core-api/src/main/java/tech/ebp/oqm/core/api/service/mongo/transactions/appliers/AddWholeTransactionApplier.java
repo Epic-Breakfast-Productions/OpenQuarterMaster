@@ -8,6 +8,8 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddWholeTransaction;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
@@ -39,8 +41,10 @@ public class AddWholeTransactionApplier extends TransactionApplier<AddWholeTrans
 			stored.setItem(inventoryItem.getId());
 		}
 		
-		if(stored.getStorageBlock() == null) {
-			stored.setStorageBlock(transaction.getToBlock());
+		if(stored.getState() == null) {
+			stored.setState(StoredInBlock.builder().storageBlock(transaction.getToBlock()).build());
+		} else if(!stored.isState(StoredStateType.STORED)) {
+			throw new IllegalArgumentException("Cannot add whole stored that is not stored in a block.");
 		}
 
 		if (!inventoryItem.getId().equals(stored.getItem())) {
@@ -51,7 +55,7 @@ public class AddWholeTransactionApplier extends TransactionApplier<AddWholeTrans
 			throw new IllegalArgumentException("Cannot add whole item to a bulk storage typed item.");
 		}
 
-		if (!transaction.getToBlock().equals(stored.getStorageBlock())) {
+		if (!transaction.getToBlock().equals(((StoredInBlock)stored.getState()).getStorageBlock())) {
 			throw new IllegalArgumentException("To Block given does not match block marked in stored.");
 		}
 

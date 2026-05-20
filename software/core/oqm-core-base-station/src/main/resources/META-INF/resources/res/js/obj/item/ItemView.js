@@ -464,7 +464,7 @@ export class ItemView extends PageUtility {
 									promises.push(Getters.StorageBlock.getStorageBlockLabel(curBlock, function (labelText) {
 										let newLink = Links.getStorageViewLink(curBlock, labelText);
 
-										if (curBlock === stored.storageBlock) {
+										if (curBlock === stored.state.storageBlock) {
 											storageLabel.find(".uniqueItemStoredInLabel").append(newLink);
 										} else {
 											storageLabel.find(".uniqueItemStoredAlsoInLabel").append(newLink);

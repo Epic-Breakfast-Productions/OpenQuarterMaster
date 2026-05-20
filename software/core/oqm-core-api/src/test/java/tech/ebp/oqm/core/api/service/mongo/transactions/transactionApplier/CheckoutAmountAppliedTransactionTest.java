@@ -21,6 +21,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinFullTransaction;
@@ -56,7 +57,7 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 			DEFAULT_TEST_DB_NAME,
 			AmountStored.builder()
 				.item(item.getId())
-				.storageBlock(blockId)
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
@@ -118,7 +119,7 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 			DEFAULT_TEST_DB_NAME,
 			AmountStored.builder()
 				.item(item.getId())
-				.storageBlock(blockId)
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
@@ -180,7 +181,7 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 			DEFAULT_TEST_DB_NAME,
 			AmountStored.builder()
 				.item(item.getId())
-				.storageBlock(blockId)
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
@@ -242,7 +243,7 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 			DEFAULT_TEST_DB_NAME,
 			AmountStored.builder()
 				.item(item.getId())
-				.storageBlock(blockId)
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
@@ -272,7 +273,7 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 			DEFAULT_TEST_DB_NAME,
 			AmountStored.builder()
 				.item(item.getId())
-				.storageBlock(blockId)
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
@@ -302,7 +303,7 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 			DEFAULT_TEST_DB_NAME,
 			AmountStored.builder()
 				.item(item.getId())
-				.storageBlock(blockId)
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
@@ -333,7 +334,7 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 			DEFAULT_TEST_DB_NAME,
 			AmountStored.builder()
 				.item(item.getId())
-				.storageBlock(blockId)
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
@@ -365,7 +366,7 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 			DEFAULT_TEST_DB_NAME,
 			AmountStored.builder()
 				.item(item.getId())
-				.storageBlock(blockId)
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
@@ -397,7 +398,7 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 			DEFAULT_TEST_DB_NAME,
 			AmountStored.builder()
 				.item(item.getId())
-				.storageBlock(blockId)
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
 				.amount(Quantities.getQuantity(6, item.getUnit()))
 				.build(),
 			entity
@@ -429,7 +430,7 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 			DEFAULT_TEST_DB_NAME,
 			UniqueStored.builder()
 				.item(item.getId())
-				.storageBlock(blockId)
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
 				.build(),
 			entity
 		).getId();
@@ -460,7 +461,7 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 			DEFAULT_TEST_DB_NAME,
 			UniqueStored.builder()
 				.item(item.getId())
-				.storageBlock(blockId)
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
 				.build(),
 			entity
 		).getId();

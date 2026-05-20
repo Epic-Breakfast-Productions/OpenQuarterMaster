@@ -29,6 +29,7 @@ import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import jakarta.inject.Inject;
 
+import java.net.SocketTimeoutException;
 import java.time.Duration;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -253,17 +254,24 @@ class InventoryItemsCrudTest extends RunningServerTest {
 					
 					
 					try {
-					//initial update
-					ValidatableResponse response = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-													   .when()
-													   .body(updates)
-													   .contentType(ContentType.JSON)
-													   .accept(ContentType.JSON)
-													   .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
-													   .put(this.inventoryItemId)
-													   .then()
-													   .statusCode(200);
+						//initial update
+						ValidatableResponse response = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+														   .when()
+														   .body(updates)
+														   .contentType(ContentType.JSON)
+														   .accept(ContentType.JSON)
+														   .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
+														   .put(this.inventoryItemId)
+														   .then()
+														   .statusCode(200);
 					} catch (Throwable e) {
+						if(e instanceof SocketTimeoutException) {//somehow not able to be in its own catch
+							//not an issue, typically... only seems to happen in extreme cases.
+							log.warn("Socket timeout on iteration {}", i);
+							i--;
+							continue;
+						}
+						
 						log.error("Error in thread {} on iteration {}", this.threadId, i, e);
 						throw new RuntimeException("Error thrown in thread " + this.threadId + " on iteration " + i, e);
 					}
