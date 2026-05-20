@@ -27,7 +27,7 @@ public class TestUser {
 
 	public String getUsername(){
 		if(username == null){
-			return this.firstname + "." + this.lastname;
+			return (this.firstname + "." + this.lastname).replace("'", "");
 		}
 		return this.username;
 	}
