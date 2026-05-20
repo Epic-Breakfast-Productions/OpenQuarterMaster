@@ -18,14 +18,16 @@ import tech.units.indriya.quantity.Quantities;
 import javax.measure.Quantity;
 import java.util.Set;
 
+import static tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType.STORED;
+
 @ApplicationScoped
 public class TransferAmountTransactionApplier extends TransactionApplier<TransferAmountTransaction> {
-	
+
 	@Override
 	public TransactionType getTransactionType() {
 		return TransactionType.TRANSFER_AMOUNT;
 	}
-	
+
 	@Override
 	public void apply(
 		String oqmDbIdOrName,
@@ -39,7 +41,7 @@ public class TransferAmountTransactionApplier extends TransactionApplier<Transfe
 	) {
 		AmountStored fromStored;
 		AmountStored toStored;
-		
+
 		switch (inventoryItem.getStorageType()) {
 			case BULK -> {
 				fromStored = this.getStoredService().getSingleStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), transaction.getFromBlock(), AmountStored.class);
@@ -71,15 +73,15 @@ public class TransferAmountTransactionApplier extends TransactionApplier<Transfe
 				throw new IllegalArgumentException("Cannot subtract an amount from a unique item.");
 			}
 		}
-		
-		
+
+
 		if (!inventoryItem.getId().equals(toStored.getItem())) {
 			throw new IllegalArgumentException("To Stored is not associated with the item.");
 		}
 		if (!inventoryItem.getId().equals(fromStored.getItem())) {
 			throw new IllegalArgumentException("From Stored is not associated with the item.");
 		}
-		
+
 		if (transaction.getFromStored() != null && !transaction.getFromStored().equals(fromStored.getId())) {
 			throw new IllegalArgumentException("From Stored retrieved not in specified block.");
 		}
@@ -95,20 +97,28 @@ public class TransferAmountTransactionApplier extends TransactionApplier<Transfe
 		if (transaction.getAmount() != null && transaction.isAll()) {
 			throw new IllegalArgumentException("Either amount or all is required, but not both.");
 		}
-		
+
+		if(!fromStored.isState(STORED)) {
+			throw new IllegalArgumentException("Cannot transfer from non-stored item.");
+		}
+		if(!toStored.isState(STORED)) {
+			throw new IllegalArgumentException("Cannot transfer to non-stored item.");
+		}
+
 		Quantity toTransfer = (
 			transaction.isAll() ?
 				fromStored.getAmount() :
 				transaction.getAmount()
 		);
-		
+
+
 		if(toTransfer.getValue().equals(0)){
 			throw new IllegalArgumentException("Amount to transfer must be greater than zero.");
 		}
-		
+
 		fromStored.subtract(toTransfer);
 		toStored.add(toTransfer);
-		
+
 		affectedStored.add(toStored);
 		affectedStored.add(fromStored);
 		this.getStoredService().update(oqmDbIdOrName, cs, fromStored, interactingEntity, historyDetails);
