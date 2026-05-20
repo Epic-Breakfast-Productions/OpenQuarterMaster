@@ -20,13 +20,14 @@ import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@Schema(title = "StoredInBlock", description = "The state to specify this stored is actually stored in a storage block.")
 public class StoredInBlock extends StoredState {
-	
+
 	@Override
 	public StoredStateType getType() {
 		return StoredStateType.STORED;
 	}
-	
+
 	/**
 	 * The {@link StorageBlock} this stored is stored in.
 	 */

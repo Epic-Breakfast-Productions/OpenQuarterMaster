@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
 
 @Data
 @SuperBuilder(toBuilder = true)
@@ -21,10 +19,10 @@ import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
 	@JsonSubTypes.Type(value = StoredInBlock.class, name = "STORED")
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
-@Schema(oneOf = {AmountStored.class, UniqueStored.class})
+@Schema(oneOf = {StoredInBlock.class})
 @BsonDiscriminator
 @NoArgsConstructor
 public abstract class StoredState {
-	
+
 	public abstract StoredStateType getType();
 }
