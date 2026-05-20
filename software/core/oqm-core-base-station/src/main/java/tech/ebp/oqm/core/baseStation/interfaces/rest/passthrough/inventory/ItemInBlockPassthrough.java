@@ -76,7 +76,7 @@ public class ItemInBlockPassthrough extends PassthroughProvider {
 			this.processSearchResults(
 				this.getOqmCoreApiClient()
 					.invItemStoredInBlockSearch(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), this.getBlockId(), storedSearch)
-					.call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), "storageBlock", this.getBearerHeaderStr()))
+					.call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr(), "state", "storageBlock"))
 					.call(results->searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
 				,
 				this.searchResultTemplate
