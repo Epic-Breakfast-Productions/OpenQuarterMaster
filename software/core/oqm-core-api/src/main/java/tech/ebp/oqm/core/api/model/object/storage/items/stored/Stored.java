@@ -68,16 +68,16 @@ import java.util.stream.Collectors;
 @BsonDiscriminator
 @Schema(oneOf = {AmountStored.class, UniqueStored.class})
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
-	
+
 	public static final int CUR_SCHEMA_VERSION = 5;
-	
+
 	private static final Pattern LABEL_PARTS_PATTERN = Pattern.compile("\\{[^}]*}");
 	private static final String LABEL_PLACEHOLDER_PART_DELIM = ";";
 	private static final String LABEL_PLACEHOLDER_ARG_DELIM = LABEL_PLACEHOLDER_PART_DELIM;
 	private static final String LABEL_ERROR = "#E#";
 	private static final DateTimeFormatter LABEL_DT_DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-	
-	
+
+
 	/**
 	 *
 	 * Supported format variables:
@@ -122,32 +122,32 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		if (format == null || format.isBlank()) {
 			throw new IllegalArgumentException("Format cannot be null, blank, or empty.");
 		}
-		
+
 		if (!format.equals(format.trim())) {
 			throw new IllegalArgumentException("Format cannot contain leading or trailing whitespace.");
 		}
-		
+
 		StringBuilder sb = new StringBuilder();
 		AtomicInteger numPlaceholders = new AtomicInteger();
 		AtomicInteger curStart = new AtomicInteger();
 		AtomicInteger lastEnd = new AtomicInteger();
-		
+
 		LABEL_PARTS_PATTERN.matcher(format).results()
 			.forEach((MatchResult result)->{
 				numPlaceholders.getAndIncrement();
 				sb.append(format, curStart.get(), result.start());
 				curStart.set(result.end());
 				lastEnd.set(result.end());
-				
+
 				String placeholder = result.group();
 				//				log.debug("placeholder: {}", placeholder);
-				
+
 				String[] parts = placeholder.replace("{", "").replace("}", "").split(LABEL_PLACEHOLDER_PART_DELIM, 2);
 				String placeholderType = parts[0].toLowerCase();
 				String[] args = parts.length > 1 ? parts[1].split(LABEL_PLACEHOLDER_ARG_DELIM) : new String[0];
-				
+
 				//				log.debug("placeholderType: {}, args: {}", placeholderType, args);
-				
+
 				switch (placeholderType) {
 					case "id":
 						sb.append(stored.getId());
@@ -159,12 +159,12 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 						} else {
 							amount = UnitUtils.Quantities.UNIT_ONE;
 						}
-						
+
 						sb.append(amount.toString());
 						break;
 					case "cnd":
 						Integer condition = stored.getCondition();
-						
+
 						sb.append(
 							condition == null ?
 								"-" :
@@ -174,11 +174,11 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 						break;
 					case "exp":
 						DateTimeFormatter formatter = LABEL_DT_DEFAULT_FORMATTER;
-						
+
 						if (args.length > 0) {
 							formatter = DateTimeFormatter.ofPattern(args[0]);
 						}
-						
+
 						sb.append(
 							stored.getExpires() == null?
 								'-' :
@@ -190,7 +190,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 						if (args.length != 1) {
 							throw new IllegalArgumentException("Must specify exactly one argument for 'ident', and 'price'.");
 						}
-						
+
 						String label = args[0];
 						Optional<Labeled> foundLabel = Labeled.findLabeledInSet(
 							label,
@@ -200,10 +200,10 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 								default -> new ArrayList<Identifier>(0);
 							}
 						);
-						
+
 						if (foundLabel.isPresent()) {
 							Labeled cur = foundLabel.get();
-							
+
 							if (cur instanceof Identifier) {
 								sb.append(((Identifier) cur).getValue());
 							} else if (cur instanceof CalculatedPricing) {
@@ -217,29 +217,29 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 						if (args.length != 1) {
 							throw new IllegalArgumentException("Must specify exactly one argument for 'att'.");
 						}
-						
+
 						sb.append(stored.getAttributes().getOrDefault(args[0], LABEL_ERROR));
-						
+
 						break;
 					default:
 						throw new IllegalArgumentException("Unknown placeholder type: '" + placeholderType + "'");
 				}
 			});
-		
+
 		if (numPlaceholders.intValue() == 0) {
 			throw new IllegalArgumentException("No placeholders found in format.");
 		}
-		
+
 		sb.append(format, lastEnd.get(), format.length());
-		
+
 		String newIdentifier = sb.toString();
-		
+
 		return newIdentifier;
 	}
-	
+
 	@Schema(required = true, description = "The type of stored object.")
 	public abstract StoredType getType();
-	
+
 	/**
 	 * The {@link InventoryItem} this stored is associated with.
 	 */
@@ -247,17 +247,17 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@Schema(description = "The item that this stored is associated with.")
 	private ObjectId item;
-	
+
 	/**
 	 * The state describing how this item is stored. Example, stored in a storage block, or installed in another item.
 	 */
 	@Schema(description = "The state describing how this item is stored. Example, stored in a storage block, or installed in another item.")
 	private StoredState state;
-	
+
 	public boolean isState(StoredStateType type) {
-		return this.getState().getType().equals(type);
+		return this.getState() != null && this.getState().getType().equals(type);
 	}
-	
+
 	/**
 	 * The general ids that apply to this stored, but not to all stored (as specified in the associated item)
 	 */
@@ -266,14 +266,14 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@lombok.Builder.Default
 	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull Identifier> identifiers = new LinkedHashSet<>();
-	
+
 	/**
 	 * When the item(s) held expire. Null if it does not expire.
 	 */
 	@lombok.Builder.Default
 	@Schema(required = false, description = "When the item(s) held expire. Null if it does not expire.", examples = {"null", "2022-03-10T12:15:50"})
 	private ZonedDateTime expires = null;
-	
+
 	/**
 	 * Prices for this stored item.
 	 */
@@ -282,12 +282,12 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@lombok.Builder.Default
 	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull StoredPricing> prices = new LinkedHashSet<>();
-	
+
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PRIVATE)
 	@lombok.Builder.Default
 	private LinkedHashSet<@NotNull CalculatedPricing> calculatedPrices = null;
-	
+
 	protected boolean calculatePrices(InventoryItem item) {
 		LinkedHashSet<CalculatedPricing> storedPrices = this.getPrices().stream()
 															.map((p)->p.calculatePrice(this)).collect(Collectors.toCollection(LinkedHashSet::new));
@@ -302,13 +302,13 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 				storedPrices.add(itemPrice.calculatePrice(this).setFromDefault(true));
 			}
 		}
-		
+
 		boolean output = this.getCalculatedPrices() == null || !this.getCalculatedPrices().equals(storedPrices);
 		this.setCalculatedPrices(storedPrices);
-		
+
 		return output;
 	}
-	
+
 	/**
 	 * Statuses about this stored object.
 	 */
@@ -317,7 +317,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@lombok.Builder.Default
 	@Schema(required = false, description = "State of the notifications sent about this item stored.")
 	private StoredNotificationStatus notificationStatus = new StoredNotificationStatus();
-	
+
 	/**
 	 * The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.
 	 */
@@ -326,7 +326,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@lombok.Builder.Default
 	@Schema(required = false, description = "The condition of the stored object. 100 = mint, 0 = completely deteriorated. Null if N/A.", examples = {"null", "100"})
 	private Integer condition = null;
-	
+
 	/**
 	 * Notes on the condition on the thing(s) stored.
 	 */
@@ -343,10 +343,10 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@NotNull
 	@lombok.Builder.Default
 	List<@NotNull ObjectId> imageIds = new ArrayList<>();
-	
+
 	@lombok.Builder.Default
 	private Set<@NotNull ObjectId> attachedFiles = new HashSet<>();
-	
+
 	/**
 	 * The format to use for the label.
 	 * <p>
@@ -357,7 +357,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@lombok.Builder.Default
 	@ValidStoredLabelFormat
 	private String labelFormat = null;
-	
+
 	/**
 	 * Label format to use if there is not one specified in this stored, or one in the item.
 	 *
@@ -365,13 +365,13 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 */
 	@JsonIgnore
 	protected abstract String getDefaultLabelFormat();
-	
+
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PRIVATE)
 	@lombok.Builder.Default
 	@Schema(required = false, description = "A generated label text.")
 	private String labelText = null;
-	
+
 	private void processLabel(InventoryItem item) {
 		String labelFormat = this.getLabelFormat();
 		if (labelFormat == null) {
@@ -380,10 +380,10 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		if (labelFormat == null) {
 			labelFormat = this.getDefaultLabelFormat();
 		}
-		
+
 		this.labelText = parseLabel(this, labelFormat);
 	}
-	
+
 	public void applyDefaultsFromItem(InventoryItem item) {
 		if (!this.getItem().equals(item.getId())) {
 			throw new IllegalArgumentException("Item ID's do not match");
@@ -391,7 +391,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		this.calculatePrices(item);
 		this.processLabel(item);
 	}
-	
+
 	@Override
 	public int getSchemaVersion() {
 		return CUR_SCHEMA_VERSION;

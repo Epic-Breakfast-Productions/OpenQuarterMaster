@@ -20,12 +20,12 @@ import java.util.Set;
 
 @ApplicationScoped
 public class SetAmountTransactionApplier extends TransactionApplier<SetAmountTransaction> {
-	
+
 	@Override
 	public TransactionType getTransactionType() {
 		return TransactionType.SET_AMOUNT;
 	}
-	
+
 	@Override
 	public void apply(
 		String oqmDbIdOrName,
@@ -67,11 +67,11 @@ public class SetAmountTransactionApplier extends TransactionApplier<SetAmountTra
 					throw new IllegalArgumentException("Must specify a stored to set the amount of.");
 				} else {
 					stored = (AmountStored) this.getStoredService().get(oqmDbIdOrName, cs, transaction.getStored());
-					
+
 					if(!stored.isState(StoredStateType.STORED)){
-						throw new IllegalArgumentException("Cannot subtract stored that is not stored in a block.");
+						throw new IllegalArgumentException("Cannot set amount of stored that is not stored in a block.");
 					}
-					
+
 					if (transaction.getBlock() != null && !((StoredInBlock)stored.getState()).getStorageBlock().equals(transaction.getBlock())) {
 						throw new IllegalArgumentException("To Stored given does not exist in block.");
 					}
@@ -81,13 +81,13 @@ public class SetAmountTransactionApplier extends TransactionApplier<SetAmountTra
 				throw new IllegalArgumentException("Cannot add an amount to a unique item.");
 			}
 		}
-		
+
 		if (!inventoryItem.getId().equals(stored.getItem())) {
 			throw new IllegalArgumentException("Stored is not associated with the item.");
 		}
-		
+
 		stored.setAmount(transaction.getAmount());
-		
+
 		affectedStored.add(stored);
 		this.getStoredService().update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
 	}

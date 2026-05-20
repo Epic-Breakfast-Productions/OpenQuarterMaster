@@ -24,12 +24,12 @@ import java.util.Set;
 
 @ApplicationScoped
 public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<CheckinFullTransaction> {
-	
+
 	@Override
 	public TransactionType getTransactionType() {
 		return TransactionType.CHECKIN_FULL;
 	}
-	
+
 	@Override
 	public void apply(
 		String oqmDbIdOrName,
@@ -42,14 +42,14 @@ public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<
 		ClientSession cs
 	) {
 		ItemCheckout<?> checkout = this.getItemCheckoutService().get(oqmDbIdOrName, cs, transaction.getCheckoutId());
-		
+
 		if (!inventoryItem.getId().equals(checkout.getItem())) {
 			throw new IllegalArgumentException("Checkout is not associated with the item.");
 		}
 		switch (checkout.getType()) {
 			case AMOUNT -> {
 				ItemAmountCheckout iac = (ItemAmountCheckout) checkout;
-				
+
 				AmountStored amountStored;
 				if (transaction.getToStored() != null) {
 					amountStored = (AmountStored) this.getStoredService().get(oqmDbIdOrName, cs, transaction.getToStored());
@@ -69,54 +69,49 @@ public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<
 							}
 						}
 						case AMOUNT_LIST -> {
-							if (transaction.getToStored() == null) {
-								amountStored = AmountStored.builder()
-												   .item(inventoryItem.getId())
-												   .state(StoredInBlock.builder().storageBlock(transaction.getToBlock()).build())
-												   .amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
-												   .build();
-								this.getStoredService().add(oqmDbIdOrName, cs, amountStored, interactingEntity);
-							} else {
-								amountStored = (AmountStored) this.getStoredService().get(oqmDbIdOrName, cs, transaction.getToStored());
-								
-								if(!amountStored.isState(StoredStateType.STORED)){
-									throw new IllegalArgumentException("Cannot check into stored that is not stored.");
-								}
-								
-								if (!((StoredInBlock)amountStored.getState()).getStorageBlock().equals(transaction.getToBlock())) {
-									throw new IllegalArgumentException("To Stored given does not exist in block.");
-								}
-							}
+							amountStored = AmountStored.builder()
+											   .item(inventoryItem.getId())
+											   .state(StoredInBlock.builder().storageBlock(transaction.getToBlock()).build())
+											   .amount(Quantities.getQuantity(0, inventoryItem.getUnit()))
+											   .build();
+							this.getStoredService().add(oqmDbIdOrName, cs, amountStored, interactingEntity);
 						}
 						default -> throw new IllegalArgumentException("Cannot add amount to unique item.");
 					}
 				} else {
 					throw new IllegalArgumentException("Must specify a stored or block to checkin into.");
 				}
-				
+
 				if(!amountStored.isState(StoredStateType.STORED)){
 					throw new IllegalArgumentException("Cannot check into stored that is not stored.");
 				}
-				
+
 				if (!inventoryItem.getId().equals(amountStored.getItem())) {
 					throw new IllegalArgumentException("Stored is not associated with the item.");
 				}
-				
+
 				amountStored.add(iac.getCheckedOut());
 				this.getStoredService().update(oqmDbIdOrName, cs, amountStored, interactingEntity, historyDetails);
 				affectedStored.add(amountStored);
 			}
 			case WHOLE -> {
 				Stored checkedOut = ((ItemWholeCheckout) checkout).getCheckedOut();
+
 				if (!inventoryItem.getId().equals(checkedOut.getItem())) {
 					throw new IllegalArgumentException("Stored is not associated with the item.");
 				}
-				
+
 				if(!checkedOut.isState(StoredStateType.STORED)){
 					throw new IllegalArgumentException("Cannot check in stored that is not stored in a block. This should bot happen, is bug.");
 				}
-				
-				((StoredInBlock)checkedOut.getState()).setStorageBlock(transaction.getToBlock());
+
+				ObjectId toBlock = transaction.getToBlock();
+
+				if(toBlock == null){
+					toBlock = ((StoredInBlock)checkedOut.getState()).getStorageBlock();
+				}
+
+				((StoredInBlock)checkedOut.getState()).setStorageBlock(toBlock);
 				this.getStoredService().add(oqmDbIdOrName, cs, checkedOut, interactingEntity, historyDetails);
 				affectedStored.add(checkedOut);
 			}
@@ -124,7 +119,7 @@ public class CheckinFullTransactionApplier extends CheckinOutTransactionApplier<
 				throw new IllegalArgumentException("Invalid checkout type.");
 			}
 		}
-		
+
 		checkout.setCheckInDetails(transaction.getDetails());
 		checkout.setCheckInTransaction(appliedTransactionId);
 		checkout.setCheckedInByEntity(interactingEntity.getId());
