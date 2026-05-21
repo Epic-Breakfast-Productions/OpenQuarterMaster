@@ -24,12 +24,12 @@ import java.util.Set;
  */
 @ApplicationScoped
 public class AddAmountTransactionApplier extends TransactionApplier<AddAmountTransaction> {
-	
+
 	@Override
 	public TransactionType getTransactionType() {
 		return TransactionType.ADD_AMOUNT;
 	}
-	
+
 	@Override
 	public void apply(
 		String oqmDbIdOrName,
@@ -68,6 +68,10 @@ public class AddAmountTransactionApplier extends TransactionApplier<AddAmountTra
 			}
 			case AMOUNT_LIST -> {
 				if (transaction.getToStored() == null) {
+					if(transaction.getToBlock() == null){
+						throw new IllegalArgumentException("Must specify a block or stored to add to.");
+					}
+
 					stored = AmountStored.builder()
 								 .item(inventoryItem.getId())
 								 .state(StoredInBlock.builder().storageBlock(transaction.getToBlock()).build())
@@ -76,11 +80,11 @@ public class AddAmountTransactionApplier extends TransactionApplier<AddAmountTra
 					this.getStoredService().add(oqmDbIdOrName, cs, stored, interactingEntity);
 				} else {
 					stored = (AmountStored) this.getStoredService().get(oqmDbIdOrName, cs, transaction.getToStored());
-					
+
 					if(!stored.isState(StoredStateType.STORED)){
 						throw new IllegalArgumentException("Cannot add to stored that is not stored in a block.");
 					}
-					
+
 					if (
 						transaction.getToBlock() != null &&
 						!((StoredInBlock)(stored.getState())).getStorageBlock().equals(transaction.getToBlock())
@@ -93,17 +97,17 @@ public class AddAmountTransactionApplier extends TransactionApplier<AddAmountTra
 				throw new IllegalArgumentException("Cannot add an amount to a unique item.");
 			}
 		}
-		
+
 		if (!inventoryItem.getId().equals(stored.getItem())) {
 			throw new IllegalArgumentException("Stored is not associated with the item.");
 		}
-		
+
 		if(!stored.isState(StoredStateType.STORED)){
 			throw new IllegalArgumentException("Cannot add to stored that is not stored in a block.");
 		}
-		
+
 		stored.add(transaction.getAmount());
-		
+
 		affectedStored.add(stored);
 		this.getStoredService().update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
 	}

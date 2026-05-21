@@ -27,12 +27,12 @@ import java.util.Set;
 @Slf4j
 @ApplicationScoped
 public class CheckoutAmountTransactionApplier extends CheckinOutTransactionApplier<CheckoutAmountTransaction> {
-	
+
 	@Override
 	public TransactionType getTransactionType() {
 		return TransactionType.CHECKOUT_AMOUNT;
 	}
-	
+
 	@Override
 	public void apply(
 		String oqmDbIdOrName,
@@ -45,7 +45,7 @@ public class CheckoutAmountTransactionApplier extends CheckinOutTransactionAppli
 		ClientSession cs
 	) {
 		AmountStored stored;
-		
+
 		switch (inventoryItem.getStorageType()) {
 			case BULK -> {
 				if (transaction.getFromBlock() != null) {
@@ -64,35 +64,35 @@ public class CheckoutAmountTransactionApplier extends CheckinOutTransactionAppli
 			}
 			default -> throw new IllegalArgumentException("Cannot checkout an amount from a unique type.");
 		}
-		
+
 		if (!inventoryItem.getId().equals(stored.getItem())) {
 			throw new IllegalArgumentException("Stored is not associated with the item.");
 		}
-		
+
 		if(!stored.isState(StoredStateType.STORED)){
-			throw new IllegalArgumentException("Cannot subtract stored that is not stored in a block.");
+			throw new IllegalArgumentException("Cannot checkout from stored that is not stored in a block.");
 		}
-		
+
 		if (transaction.getFromBlock() != null && !((StoredInBlock)stored.getState()).getStorageBlock().equals(transaction.getFromBlock())) {
 			throw new IllegalArgumentException("From Storage block given mismatched stored's block.");
 		}
-		
+
 		if (transaction.getAmount() == null && !transaction.isAll()) {
 			throw new IllegalArgumentException("Must specify amount to checkout or specify checking out all in stored.");
 		}
 		if (transaction.getAmount() != null && transaction.isAll()) {
 			throw new IllegalArgumentException("Must specify only one of amount to checkout or checking out all in stored.");
 		}
-		
+
 		Quantity amount = null;
-		
+
 		if (transaction.getAmount() != null) {
 			amount = transaction.getAmount();
 		}
 		if (transaction.isAll()) {
 			amount = stored.getAmount();
 		}
-		
+
 		ItemCheckout.ItemCheckoutBuilder<?, ?, ?> checkoutBuilder = ItemAmountCheckout.builder()
 															.checkedOutByEntity(interactingEntity.getId())
 															.item(inventoryItem.getId())
@@ -101,7 +101,7 @@ public class CheckoutAmountTransactionApplier extends CheckinOutTransactionAppli
 															.fromBlock(((StoredInBlock)stored.getState()).getStorageBlock())
 															.checkedOut(amount)
 															.checkOutTransaction(appliedTransactionId);
-		
+
 		stored.subtract(amount);
 		affectedStored.add(stored);
 		this.getStoredService().update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
