@@ -4,6 +4,7 @@ import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.Sorts;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
@@ -202,5 +203,15 @@ public abstract class TopLevelMongoService<T extends MainObject, S extends Searc
 	
 	public void runPostUpgrade(ClientSession cs, CollectionUpgradeResult upgradeResult) {
 		//nothing to do.
-	};
+	}
+
+	@Override
+	public List<Bson> getDbIndexes() {
+		return List.of();
+	}
+
+	@Override
+	public void initDb() {
+		setupIndexes(getDocumentCollection(), this.getDbIndexes());
+	}
 }
