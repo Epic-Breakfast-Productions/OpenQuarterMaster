@@ -1,6 +1,7 @@
 import logging
 
 from fastapi import FastAPI
+from starlette.responses import HTMLResponse
 
 from .ServiceErrs import ServiceErrs
 from .Characteristics import CharacteristicsUtils
@@ -56,7 +57,7 @@ def uis_get(category: str, uiId: str):
 	return UiUtils.get_ui_icon(category, uiId)
 
 
-@app.get("/serviceErr/errPage.html")
+@app.get("/serviceErr/errPage.html", response_class=HTMLResponse)
 def uis_get():
 	return ServiceErrs.get_service_err_return()
 
