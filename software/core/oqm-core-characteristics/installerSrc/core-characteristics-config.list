@@ -20,5 +20,9 @@ CHARACTERISTICS_VAL_BANNER_TEXT={core.characteristics.characteristics.banner.tex
 CHARACTERISTICS_VAL_BANNER_TEXTCOLOR={core.characteristics.characteristics.banner.textColor}
 CHARACTERISTICS_VAL_BANNER_BACKGROUNDCOLOR={core.characteristics.characteristics.banner.backgroundColor}
 
+# Error page
+CHARACTERISTICS_SERVICE_ERR_PAGE_ENABLED=true
+
 # Homepage
 UIS_HOME_URL={infra.homepage.externalBaseUri}
+
