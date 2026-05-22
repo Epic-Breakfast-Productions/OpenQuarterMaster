@@ -7,6 +7,7 @@ import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectSchemaUpgr
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.stored.bumpers.StoredItemBumper2;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.stored.bumpers.StoredItemBumper3;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.stored.bumpers.StoredItemBumper4;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.stored.bumpers.StoredItemBumper5;
 
 import java.util.TreeSet;
 
@@ -18,7 +19,8 @@ public class StoredSchemaUpgrader extends ObjectSchemaUpgrader<Stored> {
 			Stored.class,
 			new StoredItemBumper2(),
 			new StoredItemBumper3(),
-			new StoredItemBumper4()
+			new StoredItemBumper4(),
+			new StoredItemBumper5()
 		);
 	}
 }

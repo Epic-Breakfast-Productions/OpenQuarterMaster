@@ -28,7 +28,15 @@ public class SearchResultTweak {
 	@Getter
 	OqmCoreApiClientService oqmCoreApiClient;
 	
-	public Uni<ObjectNode> addStorageBlockLabelToSearchResult(ObjectNode searchResults, String oqmDb, String key, String apiToken) {
+	private JsonNode nodeFromKeys(JsonNode node, boolean includeLast, String... keys){
+		JsonNode curNode = node;
+		for(int i = 0; i < (includeLast ? keys.length : keys.length - 1); i++){
+			curNode = curNode.get(keys[i]);
+		}
+		return curNode;
+	}
+	
+	public Uni<ObjectNode> addStorageBlockLabelToSearchResult(ObjectNode searchResults, String oqmDb, String apiToken, String... keys) {
 		if (searchResults.get("empty").asBoolean()) {
 			return Uni.createFrom().item(searchResults);
 		}
@@ -37,7 +45,7 @@ public class SearchResultTweak {
 		for (JsonNode curResult : searchResults.get("results")) {
 			//TODO:: this is probably bad for performance
 			resultIdMap.merge(
-				curResult.get(key).asText(),
+				this.nodeFromKeys(curResult, true, keys).asText(),
 				List.of((ObjectNode) curResult),
 				(objectNodes, collection)->Stream.concat(objectNodes.stream(), collection.stream()).toList()
 			);
@@ -53,11 +61,11 @@ public class SearchResultTweak {
 		return uniJoinBuilder.joinAll()
 				   .andCollectFailures()
 				   .map((List<ObjectNode> resultList)->{
-					   String newFieldName = key + "-labelText";
+					   String newFieldName = keys[keys.length - 1] + "-labelText";
 					   for (ObjectNode curStorageBlock : resultList) {
 						   String curLabelText = curStorageBlock.get("labelText").asText();
 						   for (ObjectNode curResult : resultIdMap.get(curStorageBlock.get("id").asText())) {
-							   curResult.put(newFieldName, curLabelText);
+							   ((ObjectNode)this.nodeFromKeys(curResult, false, keys)).put(newFieldName, curLabelText);
 						   }
 					   }
 					   return searchResults;

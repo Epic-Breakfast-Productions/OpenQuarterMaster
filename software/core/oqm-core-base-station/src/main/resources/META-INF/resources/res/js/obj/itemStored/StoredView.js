@@ -37,25 +37,25 @@ export class StoredView {
 		valueJq.text(value);
 		return StoredView.getBlockViewCell(name, valueJq);
 	}
-	static getStorageBlockTrackedIdentifierView(stored) {
+	static getTrackedIdentifierView(stored) {
 		if (stored.type.includes("UNIQUE")) {
 			return StoredView.getSimpleBlockViewCell("Identifier", stored.identifier);
 		}
 		return "";
 	}
-	static getStorageBlockAmountHeldView(stored, showCurrently = false) {
+	static getAmountHeldView(stored, showCurrently = false) {
 		if (stored.type.includes("AMOUNT")) {
 			return StoredView.getSimpleBlockViewCell((showCurrently ? "Currently " : "") + "Stored:", stored.amount.value + stored.amount.unit.symbol, "storedViewAmount");
 		}
 		return "";
 	}
-	static getStorageBlockIdentifyingDetailsView(stored) {
+	static getIdentifyingDetailsView(stored) {
 		if (stored.type.includes("TRACKED") && stored.identifyingDetails) {
 			return StoredView.getSimpleBlockViewCell("Identifying Details", stored.identifyingDetails);
 		}
 		return "";
 	}
-	static getStorageBlockConditionView(stored) {
+	static getConditionView(stored) {
 		if (stored.condition || stored.conditionNotes) {
 			let conditionJqs = [];
 
@@ -78,7 +78,7 @@ export class StoredView {
 		}
 		return "";
 	}
-	static getStorageBlockExpiresView(stored) {
+	static getExpiresView(stored) {
 		if (stored.expires) {
 			return StoredView.getSimpleBlockViewCell("Expires", stored.expires);
 		}
@@ -230,22 +230,22 @@ export class StoredView {
 
 		if (includeBlockLink) {
 			newContentButtons.append(
-				StoredView.getStoredBlockLink(stored.storageBlock, true)
+				StoredView.getStoredBlockLink(stored.state.storageBlock, true)
 			);
 		}
 
 		if (includeIdentifier) {//TODO:: likely remove, after label rework #1003
 			newContent.append(
-				StoredView.getStorageBlockTrackedIdentifierView(stored)
+				StoredView.getTrackedIdentifierView(stored)
 			);
 		}
 
 		newContentInfo.append(
 			StoredView.getStoredImages(stored),
-			StoredView.getStorageBlockAmountHeldView(stored, showCurrentlyStored),
-			StoredView.getStorageBlockIdentifyingDetailsView(stored),
-			StoredView.getStorageBlockConditionView(stored),
-			StoredView.getStorageBlockExpiresView(stored),
+			StoredView.getAmountHeldView(stored, showCurrentlyStored),
+			StoredView.getIdentifyingDetailsView(stored),
+			StoredView.getConditionView(stored),
+			StoredView.getExpiresView(stored),
 			StoredView.getStoredKeywords(stored),
 			StoredView.getStoredAtts(stored),
 			StoredView.getStoredIdentifiers(stored),

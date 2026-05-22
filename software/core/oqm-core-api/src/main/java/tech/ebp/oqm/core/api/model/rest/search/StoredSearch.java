@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.model.rest.search;
 
 import com.mongodb.client.model.Filters;
+import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
@@ -10,6 +11,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchUtils;
 
 import java.util.ArrayList;
@@ -21,6 +23,10 @@ import static com.mongodb.client.model.Filters.*;
 @Getter
 @Setter
 public class StoredSearch extends SearchKeyAttObject<Stored> {
+	
+	@QueryParam("storedState")
+	@DefaultValue("STORED")
+	StoredStateType storedState = StoredStateType.STORED;
 
 	@PathParam("itemId") ObjectId inventoryItemIdFromPath;
 	@QueryParam("itemId") ObjectId inventoryItemIdFromQuery;
@@ -64,17 +70,13 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 	@Override
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
+		
+		filters.add(eq("state.type", this.getStoredState()));
 
 		if(hasValue(this.getInventoryItemIdFromPath())){
 			filters.add(eq("item", this.getInventoryItemIdFromPath()));
 		} else if(hasValue(this.getInventoryItemIdFromQuery())){
 			filters.add(eq("item", this.getInventoryItemIdFromQuery()));
-		}
-		
-		if(hasValue(this.getStorageBlockIdFromPath())){
-			filters.add(eq("storageBlock", this.getStorageBlockIdFromPath()));
-		} else if(hasValue(this.getStorageBlockIdFromQuery())){
-			filters.add(eq("storageBlock", this.getStorageBlockIdFromQuery()));
 		}
 		
 		//TODO:: redo these
@@ -83,20 +85,28 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 //				eq("barcode", this.getItemBarcode())
 //			);
 //		}
-		if(hasValue(this.getInStorageBlocks())){
-			if(this.getInStorageBlocks().size() == 1){
-				filters.add(
-					eq("storageBlock", this.getInStorageBlocks().getFirst())
-				);
-			} else {
-				filters.add(or(
-					this.getInStorageBlocks().stream().map((ObjectId storageBlockId) -> {
-//					return exists("storageBlocks." + storageBlockId.toHexString());
-						return eq("storageBlock", storageBlockId);
-					}).toList()
-				));
+		if(this.getStoredState() == StoredStateType.STORED){
+			if(hasValue(this.getStorageBlockIdFromPath())){
+				filters.add(eq("state.storageBlock", this.getStorageBlockIdFromPath()));
+			} else if(hasValue(this.getStorageBlockIdFromQuery())){
+				filters.add(eq("state.storageBlock", this.getStorageBlockIdFromQuery()));
+			}
+			if(hasValue(this.getInStorageBlocks())){
+				if(this.getInStorageBlocks().size() == 1){
+					filters.add(
+						eq("state.storageBlock", this.getInStorageBlocks().getFirst())
+					);
+				} else {
+					filters.add(or(
+						this.getInStorageBlocks().stream().map((ObjectId storageBlockId) -> {
+							//					return exists("storageBlocks." + storageBlockId.toHexString());
+							return eq("state.storageBlock", storageBlockId);
+						}).toList()
+					));
+				}
 			}
 		}
+		
 		if(hasValue(this.getHasExpiryDate())){
 			filters.add(
 				ne("expires", null)

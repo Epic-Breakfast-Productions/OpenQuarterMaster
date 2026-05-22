@@ -42,7 +42,7 @@ public class LifecycleBean {
 
 	@Inject
 	ObjectSchemaUpgradeService objectSchemaUpgradeService;
-	
+
 	private ZonedDateTime startDateTime;
 	
 	public static void logConfig(){

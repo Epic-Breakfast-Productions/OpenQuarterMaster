@@ -9,6 +9,8 @@ import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredState;
 
 /**
  * The details used to describe a checked out item
@@ -24,7 +26,7 @@ public class ItemWholeCheckout extends ItemCheckout<Stored> {
 	public static final int CUR_SCHEMA_VERSION = 2;
 	
 	public ObjectId getFromBlock() {
-		return this.getCheckedOut().getStorageBlock();
+		return ((StoredInBlock)(this.getCheckedOut().getState())).getStorageBlock();
 	}
 
 	@Override

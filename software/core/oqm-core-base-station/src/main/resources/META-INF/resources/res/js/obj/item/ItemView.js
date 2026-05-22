@@ -453,21 +453,25 @@ export class ItemView extends PageUtility {
 							Getters.StoredItem.getSingleStoredForItem(itemId, async function (stored) {
 								let promises = [];
 								let storageLabel = $(`
-									<h3>
-										Stored in: <span class="uniqueItemStoredInLabel"></span>
-									</h3>
-									<p class="uniqueItemStoredAlsoInContainer">
-										Also found in: <span class="uniqueItemStoredAlsoInLabel"></span>
-									</p>`);
+									<div>
+										<h3>
+											Stored in: <span class="uniqueItemStoredInLabel"></span>
+										</h3>
+										<p class="uniqueItemStoredAlsoInContainer">
+											Also found in: <span class="uniqueItemStoredAlsoInLabel"></span>
+										</p>
+									</div>
+									`);
+								let alsoInLabel = storageLabel.find(".uniqueItemStoredAlsoInLabel");
 
 								itemData.storageBlocks.forEach(function (curBlock) {
 									promises.push(Getters.StorageBlock.getStorageBlockLabel(curBlock, function (labelText) {
 										let newLink = Links.getStorageViewLink(curBlock, labelText);
 
-										if (curBlock === stored.storageBlock) {
+										if (curBlock === stored.state.storageBlock) {
 											storageLabel.find(".uniqueItemStoredInLabel").append(newLink);
 										} else {
-											storageLabel.find(".uniqueItemStoredAlsoInLabel").append(newLink);
+											alsoInLabel.append(newLink);
 										}
 									}));
 								});
@@ -482,9 +486,8 @@ export class ItemView extends PageUtility {
 										})
 								);
 								await Promise.all(promises);
-								if (storageLabel.find(".uniqueItemStoredAlsoInLabel").children().length === 0) {
-									// storageLabel.find(".uniqueItemStoredAlsoInContainer").remove();//for some reason this doesn't work ("find" doesn't work)
-									storageLabel.get(1).remove()
+								if (alsoInLabel.children().length === 0) {
+									storageLabel.find(".uniqueItemStoredAlsoInContainer").hide();
 								}
 								ItemView.storedSingleContainer.show();
 							})
@@ -583,24 +586,6 @@ export class ItemView extends PageUtility {
 				Carousel.processImagedObjectImages(itemData, ItemView.itemViewCarousel);
 
 				console.log("Setting up view of stored.");
-
-				// let numStorageBlocks = itemData.stats.numStored;// Object.keys(itemData.storageBlocks).length;
-				//TODO:: show storage blocks associated
-				// if (numStorageBlocks === 0) {
-				// 	console.log("None stored.");
-				// 	ItemView.storedNonePresentContainer.show();
-				// 	//TODO:: if storage blocks present, prompt to edit item to add block(s)
-				// 	//TODO:: prompt to add stored item
-				// } else {
-				// 	//TODO:: display right; bulk vs multi vs single display
-				// 	console.log(numStorageBlocks + " stored.");
-				// 	ItemView.itemViewStoredNum.text(numStorageBlocks);
-				// 	ItemView.itemViewStored.show();
-				//
-				// 	ItemView.allStoredSearchFormItemInputName.val(itemData.name);
-				// 	ItemView.allStoredSearchFormItemInputId.val(itemId);
-				// 	ItemView.allStoredSearchForm.submit();
-				// }
 
 				ItemView.checkoutSearchFormItemNameInput.val(itemData.name);
 				ItemView.checkoutSearchFormItemIdInput.val(itemId);
