@@ -58,6 +58,6 @@ def uis_get(category: str, uiId: str):
 
 
 @app.get("/serviceErr/errPage.html", response_class=HTMLResponse)
-def uis_get():
+def service_err_page():
 	return ServiceErrs.get_service_err_return()
 

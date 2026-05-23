@@ -1,15 +1,15 @@
-import json
 import os
-from dataclasses import dataclass, field
 
 from fastapi import \
 	HTTPException
-from starlette.responses import StreamingResponse
+from jinja2 import Template
 
-from .Shared import CachedImage, ImageUtils
+from .UIs import UiUtils
 
 
 class ServiceErrs:
+	errorPageContent = None
+
 	@classmethod
 	def get_service_err_return(cls) -> str:
 		enabled = os.getenv('CHARACTERISTICS_SERVICE_ERR_PAGE_ENABLED', "false") == "true"
@@ -17,25 +17,40 @@ class ServiceErrs:
 		if not enabled:
 			raise HTTPException(status_code=404, detail="Service error page is disabled.")
 
-		# TODO:: add homepage link
-		# TODO:: add contact info, if provided
-		return """<!DOCTYPE html>
+		if not cls.errorPageContent:
+			# TODO:: add contact info, if provided
+			cls.errorPageContent = Template("""<!DOCTYPE html>
 		<html>
 		<head>
 			<title>Service Error</title>
 		</head>
+		<style>
+		body, button, a {
+		font-family: 'Courier New', monospace;
+		}
+		</style>
 		<body>
 			<h1>Service Error</h1>
 			<p>The service failed to load. It might be down. If the issue persists, please contact the administrators of this instance.</p>
+			<p>
+				<a href="{{ homeLink }}">Return to Homepage</a>
+			</p>
+
 			<br>
-			<button onClick="window.location.reload();">Refresh Page</button>
+			<button onClick="window.location.reload();">&#8634; Retry</button>
 			<br />
 			<br />
 
-			<input type="checkbox" id="countdown" name="countdownToRefresh" value="Bike" checked>
+			<input type="checkbox" id="countdown" name="countdownToRefresh" checked>
 			<label for="countdown">
-				Countdown to automatically refresh after <span id="countdownIndicator"></span> seconds
+				Countdown to automatically &#8634; retry after <span id="countdownIndicator"></span> seconds
 			</label>
+
+			<br />
+			<br />
+			<hr />
+			&copy; 2026 <a href="https://epic-breakfast-productions.tech/">Epic Breakfast Productions</a>
+
 			<script>
 				console.log("Service error page loaded. Starting countdown.");
 				const countdownCheck = document.querySelector('#countdown');
@@ -58,11 +73,14 @@ class ServiceErrs:
 						countdownCheck.disabled = true;
 						window.location.reload();
 					} else {
-						countdownElement.textContent = countdownTime/1000;
+						countdownElement.textContent = Math.ceil(countdownTime/1000);
 					}
 				}, interval);
 			</script>
 		</body>
 		</html>
-		"""
+		""").render(
+				homeLink=UiUtils.get_uis_cache().home
+			)
 
+		return cls.errorPageContent
