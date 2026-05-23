@@ -58,6 +58,7 @@ http:
       service: infra-homepage
       rule: "PathPrefix(`/`)"
       middlewares:
+        - error-page
         {%- if defaultPath %}
         - redirectToDefault
         {%- endif %}
