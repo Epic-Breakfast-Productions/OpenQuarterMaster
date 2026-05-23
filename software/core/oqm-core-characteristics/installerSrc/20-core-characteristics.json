@@ -20,7 +20,8 @@
 					"textColor": " ",
 					"backgroundColor": " "
 				}
-			}
+			},
+			"errorPage": "/serviceErr/errPage.html"
 		}
 	}
 }
