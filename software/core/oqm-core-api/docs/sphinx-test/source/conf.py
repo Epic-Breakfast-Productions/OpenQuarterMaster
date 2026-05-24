@@ -16,7 +16,7 @@ author = 'Greg Stewart, EBP'
 
 extensions = []
 
-templates_path = ['source/_templates']
+templates_path = ['_templates']
 exclude_patterns = []
 
 numbered_sections = True
@@ -27,3 +27,18 @@ numbered_sections = True
 
 html_theme = 'alabaster'
 html_static_path = ['_static']
+html_theme_options = {
+	"logo": "logo.svg",
+	"logo_name": True,
+	# 'show_related': True,
+
+	'github_user': 'Epic-Breakfast-Productions',
+	'github_repo': 'OpenQuarterMaster',
+	'github_banner': True,
+	"github_button": False,
+	"show_relbars": True
+	# 'github_count': True,
+	# 'extra_nav_links': {
+	# 	'Index': 'genindex.html',
+	# }
+}

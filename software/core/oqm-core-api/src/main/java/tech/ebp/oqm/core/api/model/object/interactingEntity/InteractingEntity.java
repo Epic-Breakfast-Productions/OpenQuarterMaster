@@ -17,7 +17,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.GeneralService;
-import tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.plugin.PluginService;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.service.JwtUtils;
 
@@ -35,7 +34,6 @@ import java.util.Set;
 )
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = User.class, name = "USER"),
-	@JsonSubTypes.Type(value = PluginService.class, name = "SERVICE_PLUGIN"),
 	@JsonSubTypes.Type(value = GeneralService.class, name = "SERVICE_GENERAL"),
 	@JsonSubTypes.Type(value = CoreApiInteractingEntity.class, name = "CORE_API"),
 })
@@ -46,38 +44,38 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
-@Schema(oneOf = {User.class, PluginService.class, GeneralService.class, CoreApiInteractingEntity.class})
+@Schema(oneOf = {User.class, GeneralService.class, CoreApiInteractingEntity.class})
 public abstract class InteractingEntity extends AttKeywordMainObject {
-	
+
 	public static final int CUR_SCHEMA_VERSION = 2;
-	
+
 	@Schema(description = "The id of the entity from the auth provider. This is used to link the user as kept track of here to the auth provider.")
 	private String idFromAuthProvider;
-	
+
 	private String authProvider;
-	
+
 	public abstract String getName();
-	
+
 	public abstract String getEmail();
-	
+
 	public abstract InteractingEntityType getType();
-	
+
 	public abstract Set<String> getRoles();
-	
+
 	public abstract boolean updateFrom(JsonWebToken jwt);
-	
+
 	public static InteractingEntity createEntity(JsonWebToken jwt) {
 		InteractingEntity newEntity;
-		
+
 		//TODO:: support services better. Probably should setup keycloak to set some of these values.
 		if (((String) jwt.getClaim(Claims.upn)).startsWith("service-account-")) {
 			GeneralService newService = new GeneralService();
-			
+
 			newService.setName(jwt.getClaim(Claims.upn));
 			newService.setDescription("Service account from OIDC provider.");
 			newService.setDeveloperEmail("foo@bar.com");
 			newService.setDeveloperName("Developers");
-			
+
 			newEntity = newService;
 		} else {
 			User newUser = new User();
@@ -89,19 +87,19 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 		}
 		newEntity.setAuthProvider(jwt.getIssuer());
 		newEntity.setIdFromAuthProvider(jwt.getSubject());
-		
+
 		log.debug("New entity: {}", newEntity);
 		return newEntity;
 	}
-	
+
 	public static InteractingEntity createEntity(SecurityContext context) {
 		User newUser = new User();
 		newUser.setName(context.getUserPrincipal().getName());
-		
+
 		log.debug("New entity: {}", newUser);
 		return newUser;
 	}
-	
+
 	@Override
 	public int getSchemaVersion() {
 		return CUR_SCHEMA_VERSION;
