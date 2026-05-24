@@ -7,6 +7,8 @@
 OQM Core API
 #######################################
 
+`Back to Overall Docs <https://docs.openquartermaster.com>`_
+
 This project is the server providing the core functionality of Open QuarterMaster.
 
 .. toctree::

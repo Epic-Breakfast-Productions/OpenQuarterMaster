@@ -7,7 +7,7 @@ This document is intended to outline the why and how of our decisions regarding 
 Operational / Architecture Decisions
 ====================================
 
-This section talks to how we arrived at the decisions surrounding how we have guild the service, and
+This section talks to how we arrived at the decisions surrounding how we have built the service, and
 why we chose the tools we did.
 
 Quarkus
