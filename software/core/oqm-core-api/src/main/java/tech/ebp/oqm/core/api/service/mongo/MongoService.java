@@ -120,6 +120,14 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 
     public abstract void initDb();
 
+    /**
+     * Sets up indexes for the given MongoDB collection.
+     * Creates any missing indexes and drops indexes that are no longer expected.
+     * The default {@code _id_} index is never dropped.
+     *
+     * @param collection the MongoDB collection to manage indexes on
+     * @param indexes    the list of indexes that should exist on the collection
+     */
     protected static void setupIndexes(MongoCollection<?> collection, List<Bson> indexes) {
         IndexOptions options = new IndexOptions().background(true);
         Map<BsonDocument, String> existingIndexes = getExistingIndexes(collection);
@@ -141,6 +149,26 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
         }
     }
 
+    /**
+     * Returns a map of existing indexes on the given collection.
+     * Input Index:
+     * <pre>
+     * {@code
+     * Indexes.ascending("name")
+     * }
+     * </pre>
+     *
+     * Would produce:
+     * <pre>
+     * {@code
+     *   Key: {"name": 1}
+     *   Value: "name_1"
+     * }
+     * </pre>
+     *
+     * @param collection the MongoDB collection to read indexes from
+     * @return map of index key document to index name
+     */
     private static Map<BsonDocument, String> getExistingIndexes(MongoCollection<?> collection) {
         MongoIterable<Document> existingDocument = collection.listIndexes();
         Map<BsonDocument, String> existingIndexes = new HashMap<>();
