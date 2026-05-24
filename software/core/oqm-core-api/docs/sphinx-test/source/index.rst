@@ -14,6 +14,7 @@ This project is the server providing the core functionality of Open QuarterMaste
    :caption: Contents:
 
    running/index
+   usage/index
    features/index
    design_decisions
 
