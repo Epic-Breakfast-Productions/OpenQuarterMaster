@@ -8,7 +8,7 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'OQM Core API'
-copyright = '2026, <a href="">EBP</a>'
+copyright = '2026, <a href="https://epic-breakfast-productions.tech/">EBP</a>'
 author = 'Greg Stewart, EBP'
 
 # -- General configuration ---------------------------------------------------
@@ -41,4 +41,12 @@ html_theme_options = {
 	# 'extra_nav_links': {
 	# 	'Index': 'genindex.html',
 	# }
+}
+html_sidebars = {
+	'**': [
+		'about.html',
+		'localtoc.html',
+		'navigation.html',
+		'searchbox.html',
+	]
 }

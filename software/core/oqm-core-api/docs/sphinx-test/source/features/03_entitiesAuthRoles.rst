@@ -6,8 +6,10 @@ Entities, Auth, and Roles
    .. glossary::
       Auth
          The process of authenticating users and verifying credentials and permissions.
+
       Interacting Entity
          Any entity (user, service, plugin, etc) that is interacting with the system.
+
       JWT
          A `Json Web Token (JWT) <https://www.jwt.io/introduction>`_ is a method for conveying information securely between entities, often
          used to convey authorization after authentication with an external provider.

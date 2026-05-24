@@ -3,8 +3,9 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
+#######################################
 OQM Core API
-========================================
+#######################################
 
 This project is the server providing the core functionality of Open QuarterMaster.
 
@@ -14,6 +15,7 @@ This project is the server providing the core functionality of Open QuarterMaste
 
    running/index
    features/index
+   design_decisions
 
 
 Overview

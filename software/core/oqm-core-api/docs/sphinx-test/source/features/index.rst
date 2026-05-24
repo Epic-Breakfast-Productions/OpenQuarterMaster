@@ -1,7 +1,7 @@
 Requirements
 ============
 
-
+This is a comprehensive set of requirements to describe high level capabilities and features of the Core API service.
 
 .. toctree::
    :numbered:
