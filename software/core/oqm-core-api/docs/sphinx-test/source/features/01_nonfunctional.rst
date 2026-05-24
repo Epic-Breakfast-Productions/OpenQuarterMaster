@@ -16,3 +16,8 @@ Metrics
 -------
 
 The service supports passing on metrics to an external `OpenTelemetry <https://opentelemetry.io/>`_ sync.
+
+Deployment
+----------
+
+The service is deployed using Containers. This is the only method for deployment we support.

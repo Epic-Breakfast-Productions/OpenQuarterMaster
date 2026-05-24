@@ -9,3 +9,4 @@ This section is concerned with how to run, configure, and otherwise manage your 
    :caption: Requirement Groups:
 
    01_prerequisites
+   02_basic_quickstart
