@@ -25,7 +25,6 @@ import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.rest.search.SearchObject;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -122,7 +121,9 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 
     /**
      * Sets up indexes for the given MongoDB collection.
-     * Creates any missing indexes and drops indexes that are no longer expected.
+     * All expected indexes are (re)created on each call, and if an index already exists, it is dropped
+     * and recreated to ensure its options are always up to date.
+     * Indexes no longer present in the expected list are dropped.
      * The default {@code _id_} index is never dropped.
      *
      * @param collection the MongoDB collection to manage indexes on
@@ -136,21 +137,21 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
         for (Bson index : indexes) {
             BsonDocument expectedKey = index.toBsonDocument(BsonDocument.class, collection.getCodecRegistry());
             expectedKeys.add(expectedKey);
-            if (!existingIndexes.containsKey(expectedKey)) {
-                collection.createIndex(index, options);
+            if (existingIndexes.containsKey(expectedKey)) {
+                collection.dropIndex(existingIndexes.get(expectedKey));
             }
+            collection.createIndex(index, options);
         }
 
         for (Map.Entry<BsonDocument, String> existing : existingIndexes.entrySet()) {
-            String existingName = existing.getValue();
-            if (!"_id_".equals(existingName) && !expectedKeys.contains(existing.getKey())) {
-                collection.dropIndex(existingName);
+            if (!expectedKeys.contains(existing.getKey())) {
+                collection.dropIndex(existing.getValue());
             }
         }
     }
 
     /**
-     * Returns a map of existing indexes on the given collection.
+     * Returns a map of existing indexes on the given collection ignoring the default <b>_id_</b> index.
      * Input Index:
      * <pre>
      * {@code
@@ -179,7 +180,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
             }
             BsonDocument key = keyDoc.toBsonDocument(BsonDocument.class, collection.getCodecRegistry());
             String name = doc.getString("name");
-            if (name != null) {
+            if (name != null && !name.equals("_id_")) {
                 existingIndexes.put(key, name);
             }
         }
