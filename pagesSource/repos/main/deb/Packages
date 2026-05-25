@@ -950,6 +950,22 @@ Description: Base Station instance for Open QuarterMaster.
 Licence: GPL-3+
 
 Package: oqm-core-base+station
+Version: 1.18.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.11.0), oqm-infra-keycloak (>= 2.0.0), oqm-infra-traefik (>= 1.0.0), oqm-core-api (>= 5.0.0), oqm-core-characteristics (>= 1.0.1)
+Recommends: oqm-plugin-ext_item_search
+Filename: ./oqm-core-base+station_1.18.1_all.deb
+Size: 5404
+MD5sum: 79d1f2705ce468ba0ee7cbca4fa073aa
+SHA1: 7c0484fc2b8ba2587409922477cdbf11f209ae44
+SHA256: 65e983409cac73e08942f7eb5cffa888f525784e2365e152e71c6f0ed8e3a545
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-core-base+station
 Version: 1.2.0
 Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
@@ -1403,6 +1419,21 @@ Size: 3096
 MD5sum: 3d7b48ecb5a80e0bc0e8c2d057067f53
 SHA1: 92f3eddeec0791c52043e2e38bb87fc6ed49dbf3
 SHA256: 235b8e1c688fa56ede3cf64081fe464168eb0ac18e256ebfad8f2c7267103f0b
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-characteristics
+Description: Characteristics instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-core-characteristics
+Version: 1.1.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.11.0), oqm-infra-homepage
+Filename: ./oqm-core-characteristics_1.1.1_all.deb
+Size: 3104
+MD5sum: 0ff89612dc9f1c7e2dee359882b875e3
+SHA1: e762dbddd4130f2f1bf2b835d31c0300c44a9b20
+SHA256: a4f3e5a44e74201b02ee343eb073c87e034cceb6178f298a8ed7b15e154fd1a6
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-characteristics
 Description: Characteristics instance for Open QuarterMaster.
