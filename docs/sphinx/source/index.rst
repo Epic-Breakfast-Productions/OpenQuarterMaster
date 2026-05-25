@@ -13,7 +13,7 @@ Open QuarterMaster Documentation
 
 Welcome to the Open QuarterMaster docs! This site is a comprehensive look at everything Open QuarterMaster!
 
-Open Quartermaster is an open source inventory management system, designed to be simple to use yet powerful and extendable. The last inventory management system you will ever need!
+Open QuarterMaster is an open source inventory management system, designed to be simple to use yet powerful and extendable. The last inventory management system you will ever need!
 
 Quick Links
 -----------
