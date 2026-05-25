@@ -94,7 +94,7 @@ class UiUtils:
 	@classmethod
 	def __get_ui_endpoints(cls, uiRaw) -> UiEndpoints:
 		return UiEndpoints(
-			uiRaw["monitorEndpoint"],
+			uiRaw["monitorEndpoint"] if "monitorEndpoint" in uiRaw else None,
 			uiRaw["item"] if "item" in uiRaw else None,
 		)
 
@@ -137,6 +137,8 @@ class UiUtils:
 	def get_uis_cache(cls) -> UisCache:
 		if cls.ui_cache is not None and not cls.ui_cache_force_refresh:
 			return cls.ui_cache
+
+		cls.ui_cache_force_refresh = False
 
 		directory = os.getenv('UIS_DATA_DIR', "/data/uis/")
 
