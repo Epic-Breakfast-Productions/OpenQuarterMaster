@@ -5,6 +5,6 @@ Open Quartermaster is designed to be flexible to different forms of deployment. 
 
 \+ = Coming Soon
 
-* +Single Node Host - The preferred way to deploy OQM on a single host. Full featured and production ready.
-* +Kubernetes Operator - The preferred way to deploy OQM on a Kubernetes cluster.
-* +Compose File - A barebones deployment of OQM, running with just core services. Use for tinkering, exploration, and development.
+* `Single Node Host <https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/deployment/Single%20Host>`_ - The preferred way to deploy OQM on a single host. Full featured and production ready.
+* \+ `Kubernetes Operator <https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/deployment/Kubernetes>`_ - The preferred way to deploy OQM on a Kubernetes cluster.
+* `Compose File <https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/deployment/Compose>`_ - A barebones deployment of OQM, running with just core services. Use for tinkering, exploration, and development.

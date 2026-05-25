@@ -19,6 +19,7 @@ Quick Links
 -----------
 
 * `OQM Website <https://openquartermaster.com>`_
+* `OQM Github <https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster>`_
 
 .. toctree::
    :maxdepth: 2
