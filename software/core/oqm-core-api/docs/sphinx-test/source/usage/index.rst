@@ -1,7 +1,7 @@
 Usage / User Guide
 #####################
 
-This section is concerned with how actually use the service.
+This section is concerned with how to actually use the service.
 
 
 .. toctree::

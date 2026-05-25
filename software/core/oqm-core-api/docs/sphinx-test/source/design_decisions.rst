@@ -37,5 +37,5 @@ Optionality
 Functional / Design Decisions (major)
 =====================================
 
-This section goes over why we implemented certain high level functionalities they way we did.
+This section goes over why we implemented certain high level functionalities the way we did.
 We won't go too deep into every tiny design choice, but will talk to higher level design patterns.
