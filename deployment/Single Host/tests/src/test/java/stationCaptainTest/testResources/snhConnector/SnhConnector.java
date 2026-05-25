@@ -39,7 +39,7 @@ import java.util.List;
 	@JsonSubTypes.Type(value = ExistingSnhSetupConfig.class, name = "EXISTING"),
 })
 public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeable {
-	
+
 	protected C getSetupConfig() {
 		try {
 			//noinspection unchecked
@@ -49,20 +49,20 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 			throw new RuntimeException("FAILED to cast config as appropriate.", e);
 		}
 	}
-	
+
 	public void init(boolean install) {
 		this.setupForInstall();
 		if (install) {
 			this.installOqm(true);
 		}
 	}
-	
+
 	public abstract SnhType getType();
-	
+
 	public abstract CommandResult runCommand(String... command);
-	
+
 	public abstract void copyToHost(String destination, InputStream input);
-	
+
 	public void copyToHost(String remoteFile, File source) {
 		try(
 			FileInputStream is = new FileInputStream(source);
@@ -72,20 +72,20 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public void copyToHost(String destinationDir, Collection<File> localFiles) {
 		log.info("Copying files to host into {}: {}", destinationDir, (Object) localFiles);
 		for (File curFile : localFiles) {
 			this.copyToHost(destinationDir + curFile.getName(), curFile);
 		}
 	}
-	
+
 	public void copyToHost(String destinationDir, File... localFiles) {
 		this.copyToHost(destinationDir, localFiles);
 	}
-	
+
 	public abstract void copyFromHost(String remoteFile, OutputStream destination);
-	
+
 	public void copyFromHost(String remoteFile, File destination) {
 		try(
 			FileOutputStream os = new FileOutputStream(destination);
@@ -95,14 +95,14 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 			throw new RuntimeException(e);
 		}
 	}
-	
-	
+
+
 	public void setupForInstall() {
 		switch (this.getSetupConfig().getInstallTypeConfig().getType()){
 			case REPO -> {
 				log.info("Setting up host for repo install.");
 				RepoInstallTypeConfig config = (RepoInstallTypeConfig) this.getSetupConfig().getInstallTypeConfig();
-				
+
 				String setupUrl = "https://deployment.openquartermaster.com/repos/"+config.getRepoBranch()+"/"+config.getInstallerType().name()+"/setup-repo.sh";
 				log.debug("Setup script url: {}", setupUrl);
 				CommandResult result = this.runCommand("wget", "-q", "-O", "/tmp/repoSetup.sh", setupUrl);
@@ -123,8 +123,9 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 					log.info("Building installers.");
 					CommandResult.from(new ProcessBuilder("../Station-Captain/makeInstallers.sh")).assertSuccess("Build Station Captain Installers");
 					CommandResult.from(new ProcessBuilder("../Infrastructure/makeInstallers.sh")).assertSuccess("Build Infrastructure Installers");
-					CommandResult.from(new ProcessBuilder("../../../software/core/oqm-core-api/makeInstallers.sh")).assertSuccess("Build Base Station Installers");
+					CommandResult.from(new ProcessBuilder("../../../software/core/oqm-core-api/makeInstallers.sh")).assertSuccess("Build Core API Installers");
 					CommandResult.from(new ProcessBuilder("../../../software/core/oqm-core-base-station/makeInstallers.sh")).assertSuccess("Build Base Station Installers");
+					CommandResult.from(new ProcessBuilder("../../../software/core/oqm-core-characteristics/makeInstallers.sh")).assertSuccess("Build Characteristics Installers");
 					CommandResult.from(new ProcessBuilder("../../../software/plugins/external-item-search/makeInstallers.sh")).assertSuccess("Build External Item Search Installers");
 					log.info("Done building installers.");
 				} catch(IOException | InterruptedException e) {
@@ -134,23 +135,24 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 				installers.addAll(List.of(new File("../Station-Captain/bin/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				installers.addAll(List.of(new File("../Infrastructure/build/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				installers.addAll(List.of(new File("../../../software/core/oqm-core-api/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
+				installers.addAll(List.of(new File("../../../software/core/oqm-core-characteristics/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				installers.addAll(List.of(new File("../../../software/core/oqm-core-base-station/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				installers.addAll(List.of(new File("../../../software/plugins/external-item-search/build/installers/").listFiles((FileFilter) new WildcardFileFilter("oqm-*."+ this.getSetupConfig().getInstallTypeConfig().getInstallerType().name()))));
 				log.info("Installers to add to host: {}", installers);
-				
+
 				this.runCommand("mkdir", "-p", "/tmp/oqm-installers/").assertSuccess("List uploaded installers.");
 				this.runCommand("rm", "-rf", "/tmp/oqm-installers/*").assertSuccess("Remove previously uploaded installers.");
 				this.runCommand("chmod", "777", "/tmp/oqm-installers").assertSuccess("Adjust permissions of installer upload dir.");
 				log.info("Prepared destination directory.");
 				this.copyToHost("/tmp/oqm-installers/", installers);
 				log.info("Copied all files to host.");
-				
+
 				CommandResult result = this.runCommand("ls", "/tmp/oqm-installers/").assertSuccess("List uploaded installers.");
 				log.info("Installers on remote box: {}", result.getStdOut());
 			}
 		}
 	}
-	
+
 	public CommandResult installOqm(boolean verify) {
 		CommandResult output = null;
 		switch (this.getSetupConfig().getInstallTypeConfig().getInstallerType()) {
@@ -176,7 +178,7 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 		}
 		return output;
 	}
-	
+
 	public void uninstallOqm(){
 		log.info("Uninstalling OQM");
 		switch (this.getSetupConfig().getInstallTypeConfig().getInstallerType()){
@@ -194,12 +196,12 @@ public abstract class SnhConnector<C extends SnhSetupConfig> implements Closeabl
 		}
 		this .runCommand("rm", "-rf", "/etc/oqm", "/tmp/oqm", "/data/oqm").assertSuccess("Remove OQM directories");
 	}
-	
-	
+
+
 	@Override
 	public void close() throws IOException {
 	}
-	
+
 	public static SnhConnector<?> fromConfig() throws IOException {
 		switch (ConfigReader.getTestRunConfig().getSetupConfig().getType()){
 			case EXISTING -> {
