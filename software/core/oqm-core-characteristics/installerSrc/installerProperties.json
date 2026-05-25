@@ -7,7 +7,7 @@
 	"description": "Characteristics instance for Open QuarterMaster.",
 	"homepage": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-characteristics",
 	"dependencies": {
-		"deb": "curl, jq, docker.io, oqm-manager-station+captain (>= 2.11.0)",
+		"deb": "curl, jq, docker.io, oqm-manager-station+captain (>= 2.11.0), oqm-infra-homepage",
 		"debRec": ""
 	},
 	"copyright": {

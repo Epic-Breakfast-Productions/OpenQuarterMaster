@@ -89,6 +89,7 @@ class UisCache:
 class UiUtils:
 	ui_dir = os.getenv('CHARACTERISTICS_UI_DIR', '/data/uis/')
 	ui_cache = None
+	ui_cache_force_refresh = False
 
 	@classmethod
 	def __get_ui_endpoints(cls, uiRaw) -> UiEndpoints:
@@ -99,12 +100,16 @@ class UiUtils:
 
 	@classmethod
 	def __get_ui(cls, uiRaw) -> UiCache:
+
+		if "url" not in uiRaw:
+			cls.ui_cache_force_refresh = True
+
 		return UiCache(
 			uiRaw["order"] if "order" in uiRaw else 999,
 			uiRaw["id"] if "id" in uiRaw else None,
 			uiRaw["name"],
 			uiRaw["description"],
-			uiRaw["url"],
+			uiRaw["url"] if "url" in uiRaw else "",
 			ImageUtils.get_image(
 				uiRaw["icon"],
 				os.getenv('CHARACTERISTICS_UIS_ICON_DIR', "/")
@@ -130,7 +135,7 @@ class UiUtils:
 
 	@classmethod
 	def get_uis_cache(cls) -> UisCache:
-		if cls.ui_cache is not None:
+		if cls.ui_cache is not None and not cls.ui_cache_force_refresh:
 			return cls.ui_cache
 
 		directory = os.getenv('UIS_DATA_DIR', "/data/uis/")
