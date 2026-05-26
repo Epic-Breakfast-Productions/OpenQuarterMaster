@@ -14,6 +14,7 @@ import tech.ebp.oqm.plugin.imageSearch.model.search.SearchResults;
 import tech.ebp.oqm.plugin.imageSearch.service.ImageSearchService;
 
 import java.io.IOException;
+import java.util.TreeMap;
 
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
@@ -27,7 +28,7 @@ public class ImageSearchEndpoint {
 	@POST
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	@Produces(APPLICATION_JSON)
-	public SearchResults search(
+	public TreeMap<Double, String> search(
 		@BeanParam ImageSearch query
 	) throws IOException {
 		return this.imageSearchService.search(query);

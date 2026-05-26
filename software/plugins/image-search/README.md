@@ -3,7 +3,7 @@
 
  - store image vectors in mongodb
  - pull image data from OQM
- - present an endopoint to upload an image, search for matches
+ - present an endpoint to upload an image, search for matches
 
 
 
@@ -11,7 +11,23 @@
 
 ## TODOS
 
- - [ ] Replace `imageData.json` with mongodb 
+ - [ ] Return actual search results, not image IDs Colten
+ - [ ] Scope each search to specific database Greg
+ - [ ] Process image changes as they happen, not just when DB is initialized Colten/Greg
+ - [ ] Redesign TreeMap (possibly different structure) to not store extra objects Colten
+ - [ ] Testing...
+ - [ ] Integration into deployment methodology Greg
+ - [ ] Memory leaks (Mat objects)
+ - [ ] OpenCV library optimization (System.loadLibrary())
+ - [ ] Verify and ensure concurrent calls work in ImageSearchService
+ - [ ] Logging in ImageSearchService
+ - [ ] Check if new Java TF
+
+## LATER TODO
+
+- [ ] UI?
+- [ ] potential batch-processing / multi-threading (optional)
+- 
 
 
 

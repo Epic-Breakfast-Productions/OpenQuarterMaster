@@ -4,11 +4,13 @@ package tech.ebp.oqm.plugin.imageSearch.model.search;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.core.MediaType;
+import lombok.Builder;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.jboss.resteasy.reactive.PartType;
 
 import java.io.InputStream;
 
+@Builder
 public class ImageSearch {
 	
 	@Parameter(description = "The file content to upload")

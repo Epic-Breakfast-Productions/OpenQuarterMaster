@@ -25,6 +25,7 @@ import java.util.*;
 
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.plugin.imageSearch.interfaces.ImageSearchEndpoint;
+import tech.ebp.oqm.plugin.imageSearch.model.resnet.ImageVector;
 import tech.ebp.oqm.plugin.imageSearch.model.search.ImageSearch;
 import tech.ebp.oqm.plugin.imageSearch.model.search.SearchResults;
 import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
@@ -40,13 +41,6 @@ public class ImageSearchService {
 	public static final Size modelImageSize = new Size(500, 500);
 	//likely move to instance
 	public static final SavedModelBundle model;
-	
-	//to remove
-	public static String imageFolderPath = "./dev/testImages";
-	public static File imageFolder = new File(imageFolderPath);
-	public static ImageData queryData;
-	public static int numSimilar;
-	public static HashMap<String, ImageData> jsonMap;
 
 	static {
 		log.info("Loading OpenCV");
@@ -72,43 +66,24 @@ public class ImageSearchService {
 
 
 
-	public SearchResults search(ImageSearch query) throws IOException {
-		log.info("Searching for query: " + query);
+	public TreeMap<Double, String> search(ImageSearch query) throws IOException {
+		log.info("Searching for query: " + query.fileName);
 		
-		File queryImage = new File("./dev/testImages/" + query);
-		
-		if (!queryImage.exists() || !queryImage.isFile()) {
-			log.warn("Query Image does not exist: {}", queryImage.getAbsolutePath());
-			return null;
-		}
-		
-		
-		//queryImage = new File(query);
-		queryData = null; //TODO
-		
-		TreeMap<Double, String> tree = getSimilarities(queryData);
+		InputStream userImage = query.file;
+
+		TreeMap<Double, String> tree = getSimilarities(userImage);
 		int tmpIter = 0;
 		for (Map.Entry<Double, String> entry : tree.entrySet()) {
 			log.info("Filename: {}, Score: {}", entry.getValue(), entry.getKey());
 			tmpIter++;
-			if (tmpIter > numSimilar) {
+			if (tmpIter > query.maxResults) {
 				break;
 			}
 		}
 		
-//		return tree;
-		return null;
+		return tree;
 	}
 
-	//Creates an ImageData object for provided image file
-	//including the image path, filename, and the image features obtained from tensorflow
-	
-	//get rid of ImageData class, just push float[] to mongo
-	
-	//Runs input image through TensorFlow model
-	//Returns float array of image feature data
-	
-	
 	/**
 	 * Method for generating a feature vector from image data.
 	 * <p>
@@ -139,9 +114,11 @@ public class ImageSearchService {
 	public static float[] generateImageFeatureVector(InputStream imageStream) throws IOException {
 		return generateImageFeatureVector(imageStream.readAllBytes());
 	}
-	
-	//Converts image file to matrix, resize, normalize values,
-	//convert to tensor type to prepare image for tensorflow model
+
+	/**
+	Converts image file to matrix, resize, normalize values,
+	convert to tensor type to prepare image for tensorflow model
+	 */
 	public static Tensor preprocessImage(byte[] imageBytes) {
 		MatOfByte matOfBytes= new MatOfByte(imageBytes);
 		Mat mat = Imgcodecs.imdecode(matOfBytes, Imgcodecs.IMREAD_UNCHANGED);
@@ -170,28 +147,32 @@ public class ImageSearchService {
 		}
 		return TFloat32.tensorOf(StdArrays.ndCopyOf(newImageData));
 	}
-	
-	//Takes in the ImageData object prepared from the query image
-	//Runs the cosineSimilarity function on the query feature vector against
-	//every image present in the previously generated jsonData
-	//Returns a reverse sorted TreeMap containing the similarity score and image filename
-	//TODO: Change JSONMap to ResnetDB
-	private static TreeMap<Double, String> getSimilarities(ImageData queryObject) {
-		log.info("Getting similarities for query.");
-		float[] queryFeatures = queryData.getImageFeatureVector();
+
+	/**
+	Takes in the ImageData object prepared from the query image
+	Runs the cosineSimilarity function on the query feature vector against
+	every image present in the previously generated jsonData
+	Returns a reverse sorted TreeMap containing the similarity score and image filename
+	*/
+	 private TreeMap<Double, String> getSimilarities(InputStream queryImage) throws IOException {
+		log.info("Getting similarities for query");
+		float[] queryFeatures = generateImageFeatureVector(queryImage);
 		TreeMap<Double, String> similarityMap = new TreeMap<>(Collections.reverseOrder());
-		for (ImageData curData : jsonMap.values()) {
-			float[] curFeatures = curData.getImageFeatureVector();
-			double simScore = cosineSimilarity(queryFeatures, curFeatures);
-			similarityMap.put(simScore, curData.getFilename());
-		}
+
+        for (Iterator<ImageVector> it = resnetVectorService.getAllVectors(); it.hasNext(); ) {
+            ImageVector curData = it.next();
+            double simScore = cosineSimilarity(queryFeatures, curData.getVector());
+            similarityMap.put(simScore, curData.getImageId());
+        }
 		log.debug("Done getting similarities for query.");
 		return similarityMap;
 	}
-	
-	//Converts the two feature vector arrays to Mat, performs cosine similarity
-	//Returns a similarity score between 0 and 1
-	private static double cosineSimilarity(float[] img1, float[] img2) {
+
+	/**
+	Converts the two feature vector arrays to Mat, performs cosine similarity
+	Returns a similarity score between 0 and 1
+	*/
+	 private static double cosineSimilarity(float[] img1, float[] img2) {
 		Mat img1Mat = convertFloatArrtoMat(img1);
 		Mat img2Mat = convertFloatArrtoMat(img2);
 		double dotProd = img1Mat.dot(img2Mat);
@@ -202,10 +183,12 @@ public class ImageSearchService {
 		}
 		return 0.0;
 	}
-	
-	//Converts the float[] type image feature vectors to type Mat from the OpenCV
-	//library, easier and more efficient math
-	private static Mat convertFloatArrtoMat(float[] arr) {
+
+	/**
+	Converts the float[] type image feature vectors to type Mat from the OpenCV
+	library, easier and more efficient math
+	*/
+	 private static Mat convertFloatArrtoMat(float[] arr) {
 		Mat newMat = new Mat(1, arr.length, CvType.CV_32F);
 		newMat.put(0, 0, arr);
 		return newMat;

@@ -12,4 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class SearchResult {
 	private String item;
+	private String image;
+
 }
