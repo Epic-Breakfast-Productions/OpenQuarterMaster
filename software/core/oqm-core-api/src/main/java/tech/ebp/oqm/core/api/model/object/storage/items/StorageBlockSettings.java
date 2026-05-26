@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import tech.ebp.oqm.core.api.model.object.storage.items.notification.StorageBlockNotificationStatus;
 
 import javax.measure.Quantity;
 
@@ -22,6 +23,11 @@ public class StorageBlockSettings {
 	private ObjectId storageBlock;
 
 	/**
+	 * Notes about how the items are stored in the storage block, if relevant
+	 */
+	private String notes;
+
+	/**
 	 * The threshold of low stock for the entire object.
 	 * <p>
 	 * Null for no threshold, Quantity with compatible unit to set the threshold.
@@ -30,4 +36,9 @@ public class StorageBlockSettings {
 	@lombok.Builder.Default
 	@Schema(required = false, description = "The threshold of low stock for the associated storage block. Null for no threshold. Unit must be compatible with item's.")
 	private Quantity<?> lowStockThreshold = null;
+
+	@NonNull
+	@NotNull
+	@Builder.Default
+	private StorageBlockNotificationStatus notificationStatus = new StorageBlockNotificationStatus();
 }
