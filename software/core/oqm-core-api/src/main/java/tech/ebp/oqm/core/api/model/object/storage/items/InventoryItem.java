@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.bson.codecs.pojo.annotations.BsonIgnore;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
@@ -205,9 +206,16 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@Schema(required = false, readOnly = true, description = "Stats about this item's stored instances.")
 	private ItemStoredStats stats = null;
 
+	@BsonIgnore
 	@JsonIgnore
 	public Stream<ObjectId> getStorageBlockIds() {
 		return this.storageBlocks.stream().map(StorageBlockSettings::getStorageBlock);
+	}
+
+	@BsonIgnore
+	@JsonIgnore
+	public boolean usesStorageBlock(ObjectId storageBlockId) {
+		return this.getStorageBlockIds().anyMatch(curId -> curId.equals(storageBlockId));
 	}
 
 	@Schema(defaultValue = InventoryItem.CUR_SCHEMA_VERSION+"")

@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageBlockSettings;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.testResources.data.StorageBlockTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.testClasses.MongoHistoriedServiceTest;
@@ -25,12 +26,12 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 @Slf4j
 @QuarkusTest
 class StorageBlockServiceTest extends MongoHistoriedServiceTest<StorageBlock, StorageBlockService> {
-	
+
 	StorageBlockService storageBlockService;
 	InventoryItemService inventoryItemService;
-	
+
 	StorageBlockTestObjectCreator storageBlockTestObjectCreator;
-	
+
 	@Inject
 	StorageBlockServiceTest(
 		StorageBlockService storageBlockService,
@@ -39,59 +40,59 @@ class StorageBlockServiceTest extends MongoHistoriedServiceTest<StorageBlock, St
 	) {
 		this.storageBlockService = storageBlockService;
 		this.storageBlockTestObjectCreator = storageBlockTestObjectCreator;
-		
+
 		this.inventoryItemService = inventoryItemService;
 	}
-	
+
 	@Override
 	protected StorageBlock getTestObject() {
 		return storageBlockTestObjectCreator.getTestObject();
 	}
-	
+
 	@Test
 	public void injectTest() {
 		assertNotNull(storageBlockService);
 	}
-	
+
 	@Test
 	public void listTest() {
 		this.defaultListTest(this.storageBlockService);
 	}
-	
+
 	@Test
 	public void countTest() {
 		this.defaultCountTest(this.storageBlockService);
 	}
-	
+
 	@Test
 	public void addTest() {
 		this.defaultAddTest(this.storageBlockService);
 	}
-	
+
 	//TODO:: Test update
-	
+
 	@Test
 	public void getObjectIdTest() {
 		this.defaultGetObjectIdTest(this.storageBlockService);
 	}
-	
+
 	@Test
 	public void getStringTest() {
 		this.defaultGetStringTest(this.storageBlockService);
 	}
-	
+
 	@Test
 	public void removeAllTest() {
 		this.defaultRemoveAllTest(this.storageBlockService);
 	}
-	
+
 	@Disabled("Not yet implemented")
 	@Test
 	public void testDeleteWithRelational(){
 		User testUser = this.getTestUserService().getTestUser();
 		StorageBlock storageBlock = this.getTestObject();
 		Map<String, Set<ObjectId>> expectedRefs = new HashMap<>();
-		
+
 		this.storageBlockService.add(DEFAULT_TEST_DB_NAME, storageBlock, testUser);
 		{//setup referencing data
 			//parent
@@ -99,23 +100,23 @@ class StorageBlockServiceTest extends MongoHistoriedServiceTest<StorageBlock, St
 			subBlock.setParent(storageBlock.getId());
 			ObjectId subBlockId = this.storageBlockService.add(DEFAULT_TEST_DB_NAME, subBlock, testUser).getId();
 			expectedRefs.put(this.storageBlockService.getClazz().getSimpleName(), new TreeSet<>(List.of(subBlockId)));
-			
+
 			//Inventory item, basic
 			this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, InventoryItem.builder().name(FAKER.name().name()).storageType(StorageType.BULK).build(), testUser);
 
 			InventoryItem sai = InventoryItem.builder().name(FAKER.name().name()).storageType(StorageType.BULK).storageBlocks(
-				new LinkedHashSet<>(List.of(storageBlock.getId()))
+				new ArrayList<>(List.of(StorageBlockSettings.builder().storageBlock(storageBlock.getId()).build()))
 			).build();
 
 			ObjectId itemId = this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, sai, testUser).getId();
 			expectedRefs.put(this.inventoryItemService.getClazz().getSimpleName(), new TreeSet<>(List.of(itemId)));
 		}
-		
+
 		DbDeleteRelationalException exception = assertThrows(
 			DbDeleteRelationalException.class,
 			()->this.storageBlockService.remove(DEFAULT_TEST_DB_NAME, storageBlock.getId(), testUser)
 		);
-		
+
 		log.info("Referenced objects: {}", exception.getObjectsReferencing());
 		assertEquals(expectedRefs, exception.getObjectsReferencing());
 	}

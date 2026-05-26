@@ -3,7 +3,7 @@ package tech.ebp.oqm.core.api.model.validation.annotations;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import tech.ebp.oqm.core.api.model.validation.validators.UniqueLabeledCollectionValidator;
-import tech.ebp.oqm.core.api.model.validation.validators.UnitValidator;
+import tech.ebp.oqm.core.api.model.validation.validators.UniqueStorageBlockSettingsCollectionValidator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -21,11 +21,11 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Target({FIELD, METHOD, PARAMETER})
 @Retention(RUNTIME)
-@Constraint(validatedBy = UniqueLabeledCollectionValidator.class)
+@Constraint(validatedBy = UniqueStorageBlockSettingsCollectionValidator.class)
 @Documented
-public @interface UniqueLabeledCollection {
+public @interface UniqueStorageBlockSettingsCollection {
 
-	String message() default "Multiple labeled items were found with the same label.";
+	String message() default "Duplicative storage block settings were found.";
 
 	Class<?>[] groups() default {};
 

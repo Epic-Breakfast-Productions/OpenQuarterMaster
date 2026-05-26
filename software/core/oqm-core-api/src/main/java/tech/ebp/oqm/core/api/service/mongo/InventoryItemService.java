@@ -191,7 +191,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			if(//storage blocks
 				updates.has("storageBlocks") &&
 				!item.getStorageBlocks().equals(
-					this.getObjectMapper().treeToValue(updates.get("storageBlocks"), new TypeReference<List<ObjectId>>(){})
+					this.getObjectMapper().treeToValue(updates.get("storageBlocks"), new TypeReference<List<StorageBlockSettings>>(){})
 				)
 			){
 				log.debug("Storage Blocks changed for item {}. Recalculating stats.", item.getId());

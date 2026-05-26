@@ -39,30 +39,30 @@ import static tech.ebp.oqm.core.api.model.object.storage.items.StorageType.*;
 @Slf4j
 @ApplicationScoped
 public class StoredService extends MongoHistoriedObjectService<Stored, StoredSearch, CollectionStats> {
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	CoreApiInteractingEntity coreApiInteractingEntity;
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	InventoryItemService inventoryItemService;
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	IdentifierGenerationService identifierGenerationService;
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	ItemCheckoutService itemCheckoutService;
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
-	
+
 	@Inject
 	InstanceMutexService instanceMutexService;
-	
+
 	@Override
 	public Set<String> getDisallowedUpdateFields() {
 		Set<String> output = new HashSet<>(super.getDisallowedUpdateFields());
@@ -72,33 +72,33 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		output.add("type");
 		return output;
 	}
-	
+
 	public StoredService() {
 		super(Stored.class, false);
 	}
-	
+
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, Stored newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
-		
+
 		InventoryItem item;
 		try {
 			item = this.inventoryItemService.get(oqmDbIdOrName, newOrChangedObject.getItem());
 		} catch(DbNotFoundException e) {
 			throw new ValidationException("Item " + newOrChangedObject.getItem().toHexString() + " does not exist.", e);
 		}
-		
+
 		if(newOrChangedObject.getState() == null) {
 			throw new ValidationException("Stored item must have a stored state.");
 		}
-		
+
 		switch (newOrChangedObject.getState().getType()){
 			case STORED:
 				ObjectId inBlock = ((StoredInBlock)(newOrChangedObject.getState())).getStorageBlock();
-				if (!item.getStorageBlocks().contains(inBlock)) {
+				if (!item.usesStorageBlock(inBlock)) {
 					throw new ValidationException("Storage block " + inBlock.toHexString() + " not used to hold this item (" + item.getId() + ").");
 				}
-				
+
 				if (item.getStorageType() == BULK) {
 					SearchResult<Stored> inBlockSearch = this.search(
 						oqmDbIdOrName,
@@ -106,7 +106,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 							.setInventoryItemId(item.getId())
 							.setStorageBlockId(inBlock)
 					);
-					
+
 					if (!inBlockSearch.isEmpty()) {
 						if (inBlockSearch.getNumResults() != 1) {
 							throw new ValidationException("More than one stored held for item of type " + item.getStorageType());
@@ -117,42 +117,42 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 						}
 					}
 				}
-				
-				
+
+
 				break;
 		}
-		
-		
+
+
 		if (item.getStorageType().storedType != newOrChangedObject.getType()) {
 			throw new ValidationException("Stored given of type " + newOrChangedObject.getType() + " cannot be held in item of storage type" + item.getStorageType());
 		}
-		
+
 		if (item.getStorageType().storedType == StoredType.AMOUNT) {
 			if (!item.getUnit().isCompatible(((AmountStored) newOrChangedObject).getAmount().getUnit())) {
 				throw new ValidationException("Unit of amount must be compatible with item's unit.");
 			}
 		}
-		
+
 		if (item.getStorageType().storedType == StoredType.AMOUNT && ((AmountStored) newOrChangedObject).getLowStockThreshold() != null) {
 			if (!item.getUnit().isCompatible(((AmountStored) newOrChangedObject).getLowStockThreshold().getUnit())) {
 				throw new ValidationException("Unit of low stock threshold must be compatible with item's unit.");
 			}
 		}
-		
+
 		if (item.getStorageType() == UNIQUE_SINGLE) {
 			SearchResult<Stored> inItem = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId()));
 			if (!inItem.isEmpty()) {
 				if (inItem.getNumResults() != 1) {
 					throw new ValidationException("More than one globally unique stored held");
 				}
-				
+
 				Stored stored = inItem.getResults().get(0);
 				if (newObject || !stored.getId().equals(newOrChangedObject.getId())) {
 					throw new ValidationException("Cannot store more than one globally unique stored item.");
 				}
 			}
 		}
-		
+
 //		for (UniqueId curUniqueId : newOrChangedObject.getUniqueIds()) {
 //			if (curUniqueId.getType() == UniqueIdType.TO_GENERATE) {
 //				continue;
@@ -172,45 +172,45 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 //			}
 //		}
 	}
-	
-	
+
+
 	@Override
 	public boolean needsDerivedUpdatesAfterUpdate(@NotNull Stored stored, ObjectNode updates) {
 		//TODO
 		return false;
 	}
-	
+
 	@Override
 	public void massageIncomingData(String oqmDbIdOrName, ClientSession session, @NonNull Stored stored, boolean recalculateDerived) {
 		super.massageIncomingData(oqmDbIdOrName, session, stored, recalculateDerived);
-		
+
 		if(recalculateDerived) {
 			//TODO:: potentially trigger refresh of item stats #929. Doublecheck to make sure not doubling up stats calculation on transaction
 		}
-		
+
 		stored.setIdentifiers(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, stored.getIdentifiers()));
 	}
-	
+
 	@Override
 	public SearchResult<Stored> search(String oqmDbIdOrName, ClientSession cs, @NonNull StoredSearch searchObject) {
 		SearchResult<Stored> results = super.search(oqmDbIdOrName, cs, searchObject);
-		
+
 		if (searchObject.getInventoryItemId() != null) {
 			results = new ItemAwareSearchResult<>(this.getInventoryItemService().get(oqmDbIdOrName, cs, searchObject.getInventoryItemId()), results);
 		}
-		
+
 		return results;
 	}
-	
+
 	@Override
 	public CollectionStats getStats(String oqmDbIdOrName) {
 		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
 				   .build();
 	}
-	
+
 	public Stored update(String oqmDbIdOrName, ClientSession cs, InventoryItem item, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity,
 		HistoryDetail... details) {
-		
+
 		try(
 			InstanceMutexService.InstanceMutexResource mutex = this.instanceMutexService.getResource(this.instanceMutexService.getMutexIdFor(oqmDbIdOrName, InventoryItem.class,
 					item.getId()),
@@ -219,34 +219,34 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 			return super.update(oqmDbIdOrName, cs, id, updateJson, interactingEntity, details);
 		}
 	}
-	
-	
+
+
 	public <T extends Stored> SearchResult<T> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
 		StoredSearch search = new StoredSearch()
 								  .setInventoryItemId(itemId)
 								  .setStorageBlockId(storageBlockId);
-		
+
 		//noinspection unchecked
 		SearchResult<T> result = (SearchResult<T>) this.search(
 			oqmDbIdOrName,
 			cs,
 			search
 		);
-		
+
 		if (result.isEmpty()) {
 			throw new DbNotFoundException("No stored currently stored in this block (" + storageBlockId + ") under this item (" + itemId + ").", this.clazz);
 		}
-		
+
 		return result;
 	}
-	
+
 	public SearchResult<Stored> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId) {
 		return this.getStoredForItemBlock(oqmDbIdOrName, cs, itemId, storageBlockId, Stored.class);
 	}
-	
+
 	public <T extends Stored> T getSingleStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
 		SearchResult<T> result = this.getStoredForItemBlock(oqmDbIdOrName, cs, itemId, storageBlockId, type);
-		
+
 		if (result.getNumResults() != 1) {
 			throw new IllegalStateException("Expected single stored in this block ("
 											+ storageBlockId
@@ -256,16 +256,16 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 											+ result.getNumResults()
 											+ ".");
 		}
-		
+
 		return result.getResults().getFirst();
 	}
-	
-	
-	
+
+
+
 	@Override
 	public int getCurrentSchemaVersion() {
 		return Stored.CUR_SCHEMA_VERSION;
 	}
-	
+
 	//TODO:: get referencing....
 }
