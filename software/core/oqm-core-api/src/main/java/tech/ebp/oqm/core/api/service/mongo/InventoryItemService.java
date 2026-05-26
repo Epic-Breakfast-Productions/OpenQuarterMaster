@@ -26,6 +26,7 @@ import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageBlockSettings;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
@@ -52,48 +53,48 @@ import static com.mongodb.client.model.Filters.*;
 @Slf4j
 @ApplicationScoped
 public class InventoryItemService extends MongoHistoriedObjectService<InventoryItem, InventoryItemSearch, InvItemCollectionStats> {
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	CoreApiInteractingEntity coreApiInteractingEntity;
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	ItemCheckoutService itemCheckoutService;
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	StorageBlockService storageBlockService;
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	ItemCategoryService itemCategoryService;
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	StoredService storedService;
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	IdentifierGenerationService identifierGenerationService;
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	HistoryEventNotificationService hens;
-	
+
 	@Getter(AccessLevel.PRIVATE)
 	@Inject
 	ItemStatsService itemStatsService;
 	@Inject
 	StoredInItemEndpoints storedInItemEndpoints;
-	
+
 	@Inject
 	InstanceMutexService instanceMutexService;
-	
+
 	public InventoryItemService() {
 		super(InventoryItem.class, false);
 	}
-	
+
 	//TODO:: this better
 	@Override
 	public Set<String> getDisallowedUpdateFields() {
@@ -102,11 +103,11 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		output.add("stats");
 		return output;
 	}
-	
+
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, InventoryItem newOrChangedObject, ClientSession clientSession) throws ValidationException {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
-		
+
 		for (ObjectId curCategoryId : newOrChangedObject.getCategories()) {
 			try {
 				this.getItemCategoryService().get(oqmDbIdOrName, curCategoryId);
@@ -114,15 +115,15 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				throw new ValidationException("Item category " + curCategoryId.toHexString() + " does not exist.", e);
 			}
 		}
-		
-		for (ObjectId curObjectId : newOrChangedObject.getStorageBlocks()) {
+
+		for (StorageBlockSettings curBlockSettings : newOrChangedObject.getStorageBlocks()) {
 			try {
-				this.getStorageBlockService().get(oqmDbIdOrName, curObjectId);
+				this.getStorageBlockService().get(oqmDbIdOrName, curBlockSettings.getStorageBlock());
 			} catch(DbNotFoundException e) {
-				throw new ValidationException("Storage block " + curObjectId.toHexString() + " does not exist.", e);
+				throw new ValidationException("Storage block " + curBlockSettings.getStorageBlock().toHexString() + " does not exist.", e);
 			}
 		}
-		
+
 		List<InventoryItem> nameResults = this.list(oqmDbIdOrName, eq("name", newOrChangedObject.getName()), null, null);
 		if (!nameResults.isEmpty()) {
 			if (newObject) {
@@ -135,7 +136,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				}
 			}
 		}
-		
+
 		//TODO:: contemplate uniqueness of id's?
 //		for (Identifier curUniqueId : newOrChangedObject.getIdentifiers()) {
 //			if (curUniqueId.getType() == IdentifierType.TO_GENERATE) {
@@ -155,11 +156,11 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 //				}
 //			}
 //		}
-		
+
 		if (!newObject) {
 			//TODO:: in try?
 			InventoryItem existing = this.get(oqmDbIdOrName, newOrChangedObject.getId());
-			
+
 			if (!existing.getUnit().isCompatible(newOrChangedObject.getUnit())) {
 				throw new ValidationException("New unit not compatible with current unit.");
 			}
@@ -173,7 +174,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			}
 		}
 	}
-	
+
 	@Override
 	public boolean needsDerivedUpdatesAfterUpdate(@NotNull InventoryItem item, ObjectNode updates) {
 		try {
@@ -186,7 +187,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				log.debug("Unit changed for item {}. Recalculating stats.", item.getId());
 				return true;
 			}
-			
+
 			if(//storage blocks
 				updates.has("storageBlocks") &&
 				!item.getStorageBlocks().equals(
@@ -196,7 +197,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				log.debug("Storage Blocks changed for item {}. Recalculating stats.", item.getId());
 				return true;
 			}
-			
+
 			if (updates.has("expiryWarningThreshold")) {
 				if (item.getExpiryWarningThreshold() == null) {
 					if (!updates.get("expiryWarningThreshold").isNull()) {
@@ -208,7 +209,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 						log.debug("Expiry warning threshold changed for item {}. Recalculating stats.", item.getId());
 						return true;
 					}
-					
+
 					if (
 						!item.getExpiryWarningThreshold().equals(
 							Duration.of(updates.get("expiryWarningThreshold").asLong(), ChronoUnit.SECONDS)
@@ -219,7 +220,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 					}
 				}
 			}
-			
+
 			if (updates.has("lowStockThreshold")) {
 				if (item.getLowStockThreshold() == null) {
 					if (!updates.get("lowStockThreshold").isNull()) {
@@ -231,7 +232,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 						log.debug("Low Stock threshold changed for item {}. Recalculating stats.", item.getId());
 						return true;
 					}
-					
+
 					if (
 						!item.getLowStockThreshold().equals(
 							this.getObjectMapper().treeToValue(updates.get("lowStockThreshold"), Quantity.class)
@@ -242,7 +243,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 					}
 				}
 			}
-			
+
 			if(
 				updates.has("defaultPrices") &&
 				!item.getDefaultPrices().equals(
@@ -255,25 +256,25 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException("Failed to process update node. This likely shouldn't happen here.", e);
 		}
-		
-		
+
+
 		return super.needsDerivedUpdatesAfterUpdate(item, updates);
 	}
-	
+
 	@Override
 	public void massageIncomingData(String oqmDbIdOrName, ClientSession session, @NonNull InventoryItem item, boolean recalculateDerived) {
 		super.massageIncomingData(oqmDbIdOrName, session, item, recalculateDerived);
-		
+
 		if (recalculateDerived) {
 			log.debug("Calculating item stats after add/update.");
 			item.setStats(this.getItemStatsService().getItemStats(oqmDbIdOrName, session, item));
 		} else {
 			log.debug("Did not calculate item stats after add/update");
 		}
-		
+
 		item.setIdentifiers(this.getIdentifierGenerationService().replaceIdPlaceholders(oqmDbIdOrName, item.getIdentifiers()));
 	}
-	
+
 	@Override
 	public InvItemCollectionStats getStats(String oqmDbIdOrName) {
 		return super.addBaseStats(oqmDbIdOrName, InvItemCollectionStats.builder())
@@ -282,13 +283,13 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				   .numLowStock(this.getNumLowStock(oqmDbIdOrName))
 				   .build();
 	}
-	
+
 	@Override
 	protected void handleAdd(String oqmDbIdOrName, InventoryItem object) {
 		super.handleAdd(oqmDbIdOrName, object);
 		this.instanceMutexService.register(oqmDbIdOrName, object);
 	}
-	
+
 	@Override
 	public InventoryItem update(String oqmDbIdOrName, ClientSession cs, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity, HistoryDetail ... details) {
 		try(
@@ -299,7 +300,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			return super.update(oqmDbIdOrName, cs, id, updateJson, interactingEntity, details);
 		}
 	}
-	
+
 	public List<InventoryItem> getItemsInBlock(String oqmDbIdOrName, ObjectId storageBlockId) {
 		return this.list(
 			oqmDbIdOrName,
@@ -308,19 +309,19 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			null
 		);
 	}
-	
+
 	public long getNumStoredExpired(String oqmDbIdOrName) {
 		return this.getSumOfIntField(oqmDbIdOrName, "numExpired");
 	}
-	
+
 	public long getNumStoredExpiryWarn(String oqmDbIdOrName) {
 		return this.getSumOfIntField(oqmDbIdOrName, "numExpiryWarn");
 	}
-	
+
 	public long getNumLowStock(String oqmDbIdOrName) {
 		return this.getSumOfIntField(oqmDbIdOrName, "numLowStock");
 	}
-	
+
 //	public List<InventoryItem> getItemsWithIdentifier(String oqmDbIdOrName, ClientSession clientSession, Identifier id) {
 //		Bson filter;
 //
@@ -352,7 +353,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 //
 //		return list;
 //	}
-	
+
 	public Set<ObjectId> getItemsReferencing(String oqmDbIdOrName, ClientSession clientSession, Image image) {
 		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
 		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
@@ -364,27 +365,27 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 			null,
 			null
 		).map(InventoryItem::getId).into(list);
-		
+
 		return list;
 	}
-	
+
 	public Set<ObjectId> getItemsReferencing(String oqmDbIdOrName, ClientSession clientSession, StorageBlock storageBlock) {
 		Set<ObjectId> list = new TreeSet<>();
-		
+
 		//TODO:: figure out how find with query
 		this.listIterator(oqmDbIdOrName, clientSession).forEach((InventoryItem item)->{
 			if (item.getStorageBlocks().contains(storageBlock.getId())) {
 				list.add(item.getId());
 			}
 		});
-		
+
 		return list;
 	}
-	
+
 	public Set<ObjectId> getItemsReferencing(String oqmDbIdOrName, ClientSession clientSession, ItemCategory itemCategory) {
 		// { "imageIds": {$elemMatch: {$eq:ObjectId('6335f3c338a79a4377aea064')}} }
 		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
-		
+
 		Set<ObjectId> list = new TreeSet<>();
 		this.listIterator(
 			oqmDbIdOrName,
@@ -395,7 +396,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		).map(InventoryItem::getId).into(list);
 		return list;
 	}
-	
+
 	public Set<ObjectId> getItemsReferencing(String oqmDbIdOrName, ClientSession clientSession, FileAttachment fileAttachment) {
 		// https://stackoverflow.com/questions/76178393/how-to-recreate-bson-query-with-elemmatch
 		Set<ObjectId> list = new TreeSet<>();
@@ -408,28 +409,28 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		).map(InventoryItem::getId).into(list);
 		return list;
 	}
-	
+
 	@Override
 	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession cs, InventoryItem item) {
 		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(oqmDbIdOrName, cs, item);
-		
+
 		Set<ObjectId> refs = this.itemCheckoutService.getItemCheckoutsReferencing(oqmDbIdOrName, cs, item);
 		if (!refs.isEmpty()) {
 			objsWithRefs.put(this.itemCheckoutService.getClazz().getSimpleName(), refs);
 		}
-		
+
 		return objsWithRefs;
 	}
-	
+
 	@Override
 	public int getCurrentSchemaVersion() {
 		return InventoryItem.CUR_SCHEMA_VERSION;
 	}
-	
+
 	@Override
 	public void runPostUpgrade(String oqmDbIdOrName, ClientSession cs, CollectionUpgradeResult upgradeResult) {
 		super.runPostUpgrade(oqmDbIdOrName, cs, upgradeResult);
-		
+
 		//		log.info("client session: {}", cs);
 		//		log.info("is ack: {}", this.getMongoClient().getWriteConcern().isAcknowledged());
 		////		this.getDocumentCollection(oqmDbIdOrName).getWriteConcern()
@@ -437,7 +438,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 		//		this.getDocumentCollection(oqmDbIdOrName).find(cs).forEach((Document doc)->{
 		//			log.info("Inv Item: {}", doc.toJson());
 		//		});
-		
+
 		FindIterable<InventoryItem> it = this.listIterator(oqmDbIdOrName, cs);
 		for (InventoryItem item : it) {
 			try {

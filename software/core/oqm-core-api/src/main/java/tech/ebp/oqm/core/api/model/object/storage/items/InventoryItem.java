@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.model.object.storage.items;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -34,6 +35,7 @@ import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Stream;
 
 /**
  * Describes a type of inventory item.
@@ -48,7 +50,7 @@ import java.util.Set;
 @Schema(description = "A type of item that is stored. Does not describe the exact items stored, but their type. Exact items stored are described by storeds.")
 public class InventoryItem extends ImagedMainObject implements FileAttachmentContaining {
 
-	public static final int CUR_SCHEMA_VERSION = 4;
+	public static final int CUR_SCHEMA_VERSION = 5;
 
 	/**
 	 * The name of this inventory item
@@ -203,6 +205,10 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@Schema(required = false, readOnly = true, description = "Stats about this item's stored instances.")
 	private ItemStoredStats stats = null;
 
+	@JsonIgnore
+	public Stream<ObjectId> getStorageBlockIds() {
+		return this.storageBlocks.stream().map(StorageBlockSettings::getStorageBlock);
+	}
 
 	@Schema(defaultValue = InventoryItem.CUR_SCHEMA_VERSION+"")
 	@Override

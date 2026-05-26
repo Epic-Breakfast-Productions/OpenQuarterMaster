@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.model.object.storage.items;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -31,11 +32,15 @@ public class StorageBlockSettings {
 	 * The threshold of low stock for the entire object.
 	 * <p>
 	 * Null for no threshold, Quantity with compatible unit to set the threshold.
-	 * TODO:: validate unit is compatible with main unit
 	 */
 	@lombok.Builder.Default
 	@Schema(required = false, description = "The threshold of low stock for the associated storage block. Null for no threshold. Unit must be compatible with item's.")
 	private Quantity<?> lowStockThreshold = null;
+
+	@JsonIgnore
+	public boolean hasLowStockThreshold() {
+		return this.lowStockThreshold != null;
+	}
 
 	@NonNull
 	@NotNull
