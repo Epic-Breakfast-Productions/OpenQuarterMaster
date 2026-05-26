@@ -1,0 +1,33 @@
+package tech.ebp.oqm.core.api.model.object.storage.items;
+
+import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.NonNull;
+import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.media.Schema;
+
+import javax.measure.Quantity;
+
+@Data
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+public class StorageBlockSettings {
+
+	@NonNull
+	@NotNull
+	private ObjectId storageBlock;
+
+	/**
+	 * The threshold of low stock for the entire object.
+	 * <p>
+	 * Null for no threshold, Quantity with compatible unit to set the threshold.
+	 * TODO:: validate unit is compatible with main unit
+	 */
+	@lombok.Builder.Default
+	@Schema(required = false, description = "The threshold of low stock for the associated storage block. Null for no threshold. Unit must be compatible with item's.")
+	private Quantity<?> lowStockThreshold = null;
+}
