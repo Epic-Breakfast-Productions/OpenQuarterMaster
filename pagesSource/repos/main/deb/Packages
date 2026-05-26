@@ -1393,6 +1393,21 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Characteristics instance for Open QuarterMaster.
 Licence: GPL-3+
 
+Package: oqm-core-characteristics
+Version: 1.1.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.11.0)
+Filename: ./oqm-core-characteristics_1.1.0_all.deb
+Size: 3096
+MD5sum: 3d7b48ecb5a80e0bc0e8c2d057067f53
+SHA1: 92f3eddeec0791c52043e2e38bb87fc6ed49dbf3
+SHA256: 235b8e1c688fa56ede3cf64081fe464168eb0ac18e256ebfad8f2c7267103f0b
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-characteristics
+Description: Characteristics instance for Open QuarterMaster.
+Licence: GPL-3+
+
 Package: oqm-core-depot
 Version: 1.0.0
 Architecture: all
@@ -2243,6 +2258,21 @@ Size: 6200
 MD5sum: d727fb0c85baf292608a7d790f55f2f0
 SHA1: 72873f6a37a0048606ecd1e2599f04c83ea96829
 SHA256: e36aab6217ee563d0de0b5c04be7d5f770884053bff4b6c364dafcebb8b9d37d
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/traefik
+Description: Traefik Reverse Proxy instance for Open QuarterMaster.
+Developer: EBP
+
+Package: oqm-infra-traefik
+Version: 1.1.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: docker.io, oqm-manager-station+captain (>= 2.2.0), oqm-manager-station+captain (>= 2.9.2), oqm-core-characteristics (>= 1.1.0), oqm-infra-homepage, python3-docker, python3-watchdog
+Filename: ./oqm-infra-traefik_1.1.0_all.deb
+Size: 6348
+MD5sum: 0a807f1a17a4d24620af0a2fa0448b0a
+SHA1: 054f998af11989f14bc620d6aaf64952859c864e
+SHA256: c52f41c5452ce388d5005b76a3d7b59cc971836c20e9cd61b4d6dfff52d2b905
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Infrastructure/traefik
 Description: Traefik Reverse Proxy instance for Open QuarterMaster.
