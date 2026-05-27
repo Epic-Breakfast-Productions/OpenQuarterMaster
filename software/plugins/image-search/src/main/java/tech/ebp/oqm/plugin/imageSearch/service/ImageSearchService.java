@@ -48,7 +48,8 @@ public class ImageSearchService {
 		log.info("OpenCV loaded");
 		log.info("Loading ResNet Model: {}", dir);
 		log.debug("Passing in: {}", dir.getFile());
-		model = SavedModelBundle.load(dir.getFile().substring(1)); //Don't commit
+		model = SavedModelBundle.load(dir.getFile());
+		//model = SavedModelBundle.load(dir.getFile().substring(1)); //Don't commit
 	}
 
 
@@ -71,7 +72,7 @@ public class ImageSearchService {
 		
 		InputStream userImage = query.file;
 
-		TreeMap<Double, String> tree = getSimilarities(userImage);
+		TreeMap<Double, String> tree = getSimilarities(query.oqmDbIdOrName, userImage);
 		int tmpIter = 0;
 		for (Map.Entry<Double, String> entry : tree.entrySet()) {
 			log.info("Filename: {}, Score: {}", entry.getValue(), entry.getKey());
@@ -154,17 +155,22 @@ public class ImageSearchService {
 	every image present in the previously generated jsonData
 	Returns a reverse sorted TreeMap containing the similarity score and image filename
 	*/
-	 private TreeMap<Double, String> getSimilarities(InputStream queryImage) throws IOException {
+	 private TreeMap<Double, String> getSimilarities(String oqmDbIdOrName, InputStream queryImage) throws IOException {
 		log.info("Getting similarities for query");
 		float[] queryFeatures = generateImageFeatureVector(queryImage);
 		TreeMap<Double, String> similarityMap = new TreeMap<>(Collections.reverseOrder());
 
-        for (Iterator<ImageVector> it = resnetVectorService.getAllVectors(); it.hasNext(); ) {
+		long numComparisons = 0;
+        for (Iterator<ImageVector> it = resnetVectorService.getAllVectors(oqmDbIdOrName); it.hasNext();) {
             ImageVector curData = it.next();
+			numComparisons++;
+			log.trace("Processing image comparison with image: {}", curData.getImageId());
             double simScore = cosineSimilarity(queryFeatures, curData.getVector());
             similarityMap.put(simScore, curData.getImageId());
+			log.trace("Done processing image comparison with image: {}", curData.getImageId());
         }
-		log.debug("Done getting similarities for query.");
+		
+		log.info("Done getting similarities for query. Comparisons: {}", numComparisons);
 		return similarityMap;
 	}
 

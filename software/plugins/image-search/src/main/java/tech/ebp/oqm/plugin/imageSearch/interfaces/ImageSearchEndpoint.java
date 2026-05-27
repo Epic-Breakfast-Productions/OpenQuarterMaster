@@ -19,7 +19,7 @@ import java.util.TreeMap;
 import static jakarta.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @RequestScoped
-@Path("/imageSearch")
+@Path("/api/v1/{oqmDbIdOrName}/imageSearch")
 public class ImageSearchEndpoint {
 	
 	@Inject

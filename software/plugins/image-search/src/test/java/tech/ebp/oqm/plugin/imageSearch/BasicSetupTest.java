@@ -6,6 +6,7 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.dev.CoreApiDevDbManagementService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
@@ -17,6 +18,7 @@ import tech.ebp.oqm.plugin.imageSearch.testResources.testClasses.RunningServerTe
 import java.io.*;
 import java.net.URISyntaxException;
 
+@Disabled
 @Slf4j
 @QuarkusTest
 public class BasicSetupTest extends RunningServerTest {

@@ -3,6 +3,7 @@ package tech.ebp.oqm.plugin.imageSearch.model.search;
 
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.FormParam;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.MediaType;
 import lombok.Builder;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
@@ -12,6 +13,10 @@ import java.io.InputStream;
 
 @Builder
 public class ImageSearch {
+	
+	@Parameter(description = "The database we are concerning ourselves with.")
+	@PathParam("oqmDbIdOrName")
+	public String oqmDbIdOrName;
 	
 	@Parameter(description = "The file content to upload")
 	@FormParam("file")

@@ -40,7 +40,15 @@ class ImageSearchServiceTest extends RunningServerTest {
         log.info("Finished initDb");
 
         try (Stream<Path> stream = Files.list(Paths.get(TEST_IMG_DIR)); InputStream is = Files.newInputStream(stream.findFirst().get());) {
-            TreeMap<Double, String> results = this.imageSearchService.search(ImageSearch.builder().file(is).fileName("foo.png").maxResults(10).threshold(0.75).build());
+            TreeMap<Double, String> results = this.imageSearchService.search(
+                ImageSearch.builder()
+                    .oqmDbIdOrName(TEST_DB)
+                    .file(is)
+                    .fileName("foo.png")
+                    .maxResults(10)
+                    .threshold(0.75)
+                    .build()
+            );
             log.info("Found results: {}", results);
         }
     }
