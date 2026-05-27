@@ -1,5 +1,7 @@
 package tech.ebp.oqm.plugin.imageSearch.service;
 
+import io.micrometer.core.instrument.MeterRegistry;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 
 import java.io.InputStream;
@@ -33,7 +35,7 @@ import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
 @Slf4j
 @ApplicationScoped
 public class ImageSearchService {
-	
+
 	private static final String RESNET_V2_MODEL_PATH = "models/resnetV2";
 	public static final String inputTensorName = "serving_default_inputs";
 	public static final String outputTensorName = "StatefulPartitionedCall";
@@ -55,24 +57,23 @@ public class ImageSearchService {
 
 	@RestClient
 	OqmCoreApiClientService coreApiClient;
-	
+
 	@Inject
 	ResnetVectorService resnetVectorService;
-	
+
+	@Inject
+	MeterRegistry registry;
+
 	/**
 	 *
 	 * @param query
 	 * @return
 	 */
-
-
-
+	@WithSpan
 	public TreeMap<Double, String> search(ImageSearch query) throws IOException {
-		log.info("Searching for query: " + query.fileName);
-		
-		InputStream userImage = query.file;
+		log.info("Searching for query: {}", query.fileName);
 
-		TreeMap<Double, String> tree = getSimilarities(query.oqmDbIdOrName, userImage);
+		TreeMap<Double, String> tree = this.getSimilarities(query.oqmDbIdOrName, query.file);
 		int tmpIter = 0;
 		for (Map.Entry<Double, String> entry : tree.entrySet()) {
 			log.info("Filename: {}, Score: {}", entry.getValue(), entry.getKey());
@@ -81,7 +82,7 @@ public class ImageSearchService {
 				break;
 			}
 		}
-		
+
 		return tree;
 	}
 
@@ -94,8 +95,8 @@ public class ImageSearchService {
 	 *
 	 * @return The processes image feature vector
 	 */
-	public static float[] generateImageFeatureVector(byte[] imageBytes) {
-		
+	@WithSpan
+	public float[] generateImageFeatureVector(byte[] imageBytes) {
 		//TODO:: need to release all `Mat` objects
 		// Release temporary buffer.
 		try (
@@ -111,9 +112,9 @@ public class ImageSearchService {
 				return null;
 		}
 	}
-	
-	public static float[] generateImageFeatureVector(InputStream imageStream) throws IOException {
-		return generateImageFeatureVector(imageStream.readAllBytes());
+
+	public float[] generateImageFeatureVector(InputStream imageStream) throws IOException {
+		return this.generateImageFeatureVector(imageStream.readAllBytes());
 	}
 
 	/**
@@ -135,7 +136,7 @@ public class ImageSearchService {
 		mat.get(0, 0, imageData);
 		int heightVal = (int) modelImageSize.height;
 		int widthVal = (int) modelImageSize.width;
-		
+
 		int oldIter = 0;
 		float[][][][] newImageData = new float[1][heightVal][widthVal][3];
 		for (int i = 0; i < heightVal; i++) {
@@ -155,9 +156,10 @@ public class ImageSearchService {
 	every image present in the previously generated jsonData
 	Returns a reverse sorted TreeMap containing the similarity score and image filename
 	*/
-	 private TreeMap<Double, String> getSimilarities(String oqmDbIdOrName, InputStream queryImage) throws IOException {
+	@WithSpan
+	public TreeMap<Double, String> getSimilarities(String oqmDbIdOrName, InputStream queryImage) throws IOException {
 		log.info("Getting similarities for query");
-		float[] queryFeatures = generateImageFeatureVector(queryImage);
+		float[] queryFeatures = this.generateImageFeatureVector(queryImage);
 		TreeMap<Double, String> similarityMap = new TreeMap<>(Collections.reverseOrder());
 
 		long numComparisons = 0;
@@ -169,7 +171,7 @@ public class ImageSearchService {
             similarityMap.put(simScore, curData.getImageId());
 			log.trace("Done processing image comparison with image: {}", curData.getImageId());
         }
-		
+
 		log.info("Done getting similarities for query. Comparisons: {}", numComparisons);
 		return similarityMap;
 	}
@@ -178,7 +180,7 @@ public class ImageSearchService {
 	Converts the two feature vector arrays to Mat, performs cosine similarity
 	Returns a similarity score between 0 and 1
 	*/
-	 private static double cosineSimilarity(float[] img1, float[] img2) {
+	private static double cosineSimilarity(float[] img1, float[] img2) {
 		Mat img1Mat = convertFloatArrtoMat(img1);
 		Mat img2Mat = convertFloatArrtoMat(img2);
 		double dotProd = img1Mat.dot(img2Mat);
@@ -194,7 +196,7 @@ public class ImageSearchService {
 	Converts the float[] type image feature vectors to type Mat from the OpenCV
 	library, easier and more efficient math
 	*/
-	 private static Mat convertFloatArrtoMat(float[] arr) {
+	private static Mat convertFloatArrtoMat(float[] arr) {
 		Mat newMat = new Mat(1, arr.length, CvType.CV_32F);
 		newMat.put(0, 0, arr);
 		return newMat;

@@ -7,6 +7,7 @@ import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
@@ -31,40 +32,40 @@ import static com.mongodb.client.model.Filters.and;
 @Slf4j
 @ApplicationScoped
 public class ResnetVectorService {
-	
+
 	@Inject
 	@Getter(AccessLevel.PROTECTED)
 	MongoClient mongoClient;
-	
+
 	@Getter
 	@ConfigProperty(name = "quarkus.mongodb.database")
 	String database;
-	
+
 	@RestClient
 	OqmCoreApiClientService oqmCoreApiClientService;
-	
+
 	@Inject
 	KcClientAuthService serviceAccountService;
-	
+
 	@Inject
 	ImageSearchService imageSearchService;
-	
-	
+
+
 	protected MongoDatabase getMongoDatabase() {
 		return this.getMongoClient().getDatabase(this.getDatabase());
 	}
-	
+
 	public MongoCollection<ImageVector> getTypedCollection() {
 		return this.getMongoDatabase().getCollection("resnet-image-vectors", ImageVector.class);
 	}
-	
+
 	public long getNumVectors(String database) {
 		return this.getTypedCollection().countDocuments(Filters.eq("oqmDb", database));
 	}
-	
+
 	public Iterator<ImageVector> getAllVectors(String database) {
 		return this.getTypedCollection().find(Filters.eq("oqmDb", database)).iterator();
-		
+
 		//example
 		//		and(
 		//			Filters.eq("imageId", id),
@@ -75,10 +76,10 @@ public class ResnetVectorService {
 	public Iterator<ImageVector> getAllVectors(){
 		return this.getTypedCollection().find().iterator();
 	}
-	
+
 	private void processImage(String database, String imageId, int imageRevision) {
 		log.info("Processing image revision: {}, revision: {}", imageId, imageRevision);
-		
+
 		//TODO:: check if already processed, skip if exists Done
 		//think this is good
 		MongoCollection<ImageVector> collection = this.getTypedCollection();
@@ -92,71 +93,72 @@ public class ResnetVectorService {
 		) {
 			return;
 		}
-		
+
 		try (
 			InputStream is = this.oqmCoreApiClientService.imageGetRevisionData(this.serviceAccountService.getAuthString(), database, imageId, imageRevision + "")
 								 .await()
 								 .indefinitely()
 		) {
 			ImageVector.ImageVectorBuilder builder = ImageVector.builder();
-			
+
 			builder.oqmDb(database);
 			builder.imageId(imageId);
 			builder.imageRevision(imageRevision);
-			builder.vector(ImageSearchService.generateImageFeatureVector(is));
-			
+			builder.vector(this.imageSearchService.generateImageFeatureVector(is));
+
 			this.getTypedCollection().insertOne(builder.build());
 		} catch(IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	private void processImage(String oqmDatabase, ObjectNode imageMetadata) {
 		String imageId = imageMetadata.get("id").asText();
 		int numRevisions = imageMetadata.get("numRevisions").asInt();
-		
+
 		log.info("Processing image: {}, # revisions: {}", imageId, numRevisions);
-		
+
 		for (int i = 1; i <= numRevisions; i++) {
 			this.processImage(oqmDatabase, imageId, i);
 		}
 	}
-	
+
 	//Iterates db, operate on each image in turn
+	@WithSpan
 	public void initVectors() {
 		log.info("Processing images in all databases.");
 		ImageSearch imageSearch = ImageSearch.builder()
 									  .pageNum(1)
 									  .pageSize(100)
 									  .build();
-		
+
 		ArrayNode dbList = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
 		for (JsonNode db : dbList) {
-			
+
 			String curOqmDb = db.get("name").asText(); //circle back to
 			ObjectNode results;
-			
+
 			log.info("Processing images database: {}", curOqmDb);
-			
+
 			try {
 				do {
 					results = this.oqmCoreApiClientService.imageSearch(this.serviceAccountService.getAuthString(), curOqmDb, imageSearch).await().indefinitely();
 
 					log.debug("Retrieved new page of results");
-					
+
 					for (JsonNode curImageResult : results.get("results")) {
 						this.processImage(curOqmDb, (ObjectNode) curImageResult);
 					}
-					
+
 					imageSearch.setPageNum(imageSearch.getPageNum() + 1);
 				} while (!results.get("pagingCalculations").get("onLastPage").asBoolean());
-				
+
 			} catch(Exception e) {
 				log.error("Error processing images database: {}", curOqmDb, e);
 				throw new RuntimeException(e);
 			}
 		}
-		
+
 		// TODO:: remove vectors not in oqm core db
 		Iterator<ImageVector> allVec = this.getAllVectors();
 		while (allVec.hasNext()) {

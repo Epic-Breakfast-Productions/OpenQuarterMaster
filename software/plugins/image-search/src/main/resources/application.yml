@@ -14,6 +14,8 @@ quarkus:
     level: "INFO"
   mongodb:
     database: "oqm-image-search"
+    tracing:
+      enabled: true
   keycloak:
     devservices:
       port: 9328
@@ -23,6 +25,13 @@ quarkus:
     devservices:
       enabled: true
       port: 9192
+  otel:
+    metrics:
+      enabled: true
+    traces:
+      enabled: true
+    logs:
+      enabled: true
 
 "%dev":
   quarkus:
