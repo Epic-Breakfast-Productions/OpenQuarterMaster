@@ -8,7 +8,7 @@
 	<parent>
 		<groupId>tech.epic-breakfast-productions.openquartermaster.lib.core</groupId>
 		<artifactId>core-api-lib-quarkus-parent</artifactId>
-		<version>4.4.4-SNAPSHOT</version>
+		<version>5.0.0</version>
 	</parent>
 	<artifactId>core-api-lib-quarkus-deployment</artifactId>
 	<name>Core Api Lib Quarkus - Deployment</name>
@@ -42,7 +42,7 @@
 			<artifactId>core-api-lib-quarkus</artifactId>
 			<version>${project.version}</version>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>io.quarkus</groupId>
 			<artifactId>quarkus-junit5-internal</artifactId>

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Script to make installers for Station Master.
+# Script to make installers for Station Captain.
 #
 # Intended to be run from the dir this resides
 #

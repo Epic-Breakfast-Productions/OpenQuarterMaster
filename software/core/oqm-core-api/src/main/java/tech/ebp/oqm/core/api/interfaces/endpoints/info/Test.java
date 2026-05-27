@@ -27,7 +27,7 @@ public class Test extends EndpointProvider {
 	@GET
 	@Path("illegalArgException")
 	@Operation(
-		summary = "The currency the base station is set to operate with."
+		summary = "The currency the core api is set to operate with."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -42,7 +42,7 @@ public class Test extends EndpointProvider {
 	@GET
 	@Path("illegalStateException")
 	@Operation(
-		summary = "The currency the base station is set to operate with."
+		summary = "The currency the core api is set to operate with."
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -64,7 +64,7 @@ public class Test extends EndpointProvider {
 	@POST
 	@Path("validationException")
 	@Operation(
-		summary = "The currency the base station is set to operate with."
+		summary = "The currency the core api is set to operate with."
 	)
 	@APIResponse(
 		responseCode = "200",

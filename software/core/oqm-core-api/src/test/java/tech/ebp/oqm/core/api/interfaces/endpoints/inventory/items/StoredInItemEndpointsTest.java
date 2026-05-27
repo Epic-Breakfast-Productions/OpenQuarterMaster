@@ -11,6 +11,7 @@ import io.restassured.http.ContentType;
 import io.restassured.response.ValidatableResponse;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
@@ -19,6 +20,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.unit.PricePerUnit;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
@@ -135,7 +137,7 @@ public class StoredInItemEndpointsTest extends RunningServerTest {
 		AmountStored stored = AmountStored.builder()
 								  .amount(UnitUtils.Quantities.UNIT_ONE)
 								  .item(item.getId())
-								  .storageBlock(block.getId())
+								  .state(StoredInBlock.builder().storageBlock(block.getId()).build())
 								  .prices(new LinkedHashSet<>() {{
 									  add(StoredPricing.builder()
 											  .label("fromStoredFlat")
@@ -258,7 +260,7 @@ public class StoredInItemEndpointsTest extends RunningServerTest {
 		AmountStored stored = AmountStored.builder()
 								  .amount(UnitUtils.Quantities.UNIT_ONE)
 								  .item(item.getId())
-								  .storageBlock(block.getId())
+								  .state(StoredInBlock.builder().storageBlock(block.getId()).build())
 								  .prices(new LinkedHashSet<>() {{
 									  add(StoredPricing.builder()
 											  .label("fromStoredFlat")

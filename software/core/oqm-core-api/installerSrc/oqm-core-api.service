@@ -48,7 +48,7 @@ ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
 
 # Pull image as separate task
 ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
-# Run Base Station
+# Run Core API
 ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --network=oqm-internal \
                                         -v /etc/oqm/certs/trustStores:/etc/oqm/certs/trustStores:ro \

@@ -37,8 +37,10 @@ class CoreApiLibQuarkusProcessor {
 	private static final Logger log = Logger.getLogger(CoreApiLibQuarkusProcessor.class);
 	
 	private static final String FEATURE = "core-api-lib-quarkus";
-	private static final String MONGODB_DEVSERVICE_HOSTNAME = "oqm-core-api-devservice-mongodb-server";
-	private static final String KAFKA_DEVSERVICE_HOSTNAME = "localhost";
+	private static final String MONGODB_DEVSERVICE_HOSTNAME = "localhost";
+	private static final String HOST = "localhost";
+	private static final String KEYCLOAK_DEVSERVICE_HOSTNAME = HOST;
+	private static final String KAFKA_DEVSERVICE_HOSTNAME = HOST;
 	
 	private static volatile boolean firstSetup = true;
 	
@@ -70,7 +72,7 @@ class CoreApiLibQuarkusProcessor {
 		MongoDBContainer mongoDBContainer = new MongoDBContainer(mongoImageName);
 		mongoDBContainer.addExposedPorts();
 		mongoDBContainer.withNetwork(Network.SHARED);
-		mongoDBContainer.withNetworkAliases(MONGODB_DEVSERVICE_HOSTNAME);
+//		mongoDBContainer.withNetworkAliases(MONGODB_DEVSERVICE_HOSTNAME);
 		mongoDBContainer.start();
 		
 		return mongoDBContainer;
@@ -85,13 +87,15 @@ class CoreApiLibQuarkusProcessor {
 		OqmCoreApiWebServiceContainer
 			container =
 			new OqmCoreApiWebServiceContainer(config.devservices(), mongoConnectionInfo, kafkaConnectionInfo)
-				.withAccessToHost(true)
-				.withNetwork(Network.SHARED);
+			//				.withAccessToHost(true)
+			//				.withNetwork(Network.SHARED)
+			;
 		
 		container.withEnv(
 			"smallrye.jwt.verify.key.location",
 			String.format(
-				"http://host.testcontainers.internal:%s/realms/%s/protocol/openid-connect/certs",
+				"http://%s:%s/realms/%s/protocol/openid-connect/certs",
+				KEYCLOAK_DEVSERVICE_HOSTNAME,
 				config.devservices().keycloak().port(),
 				config.devservices().keycloak().realm()
 			)
@@ -111,16 +115,29 @@ class CoreApiLibQuarkusProcessor {
 		Map<String, String> mongoConnectionInfo = new HashMap<>();
 		Map<String, String> kafkaConnectionInfo = new HashMap<>();
 		{//mongodb
-			mongoConnectionInfo.put("quarkus.mongodb.connection-string", "mongodb://" + MONGODB_DEVSERVICE_HOSTNAME + ":27017");
 			
 			DevServicesResultBuildItem.RunningDevService mongoDevService = DEVSERVICES.get("mongodb");
 			
 			if (mongoDevService == null) {
 				MongoDBContainer mongoDBContainer = newMongoDbContainer();
-				mongoDevService = new DevServicesResultBuildItem.RunningDevService(FEATURE, mongoDBContainer.getContainerId(), mongoDBContainer::close, Map.of());
+				mongoDevService = new DevServicesResultBuildItem.RunningDevService(
+					FEATURE,
+					mongoDBContainer.getContainerId(),
+					mongoDBContainer::close,
+					Map.of(
+						"port",
+						String.valueOf(mongoDBContainer.getMappedPort(27017))
+					)
+				);
+				
 				
 				DEVSERVICES.put("mongodb", mongoDevService);
 			}
+			
+			mongoConnectionInfo.put(
+				"quarkus.mongodb.connection-string",
+				"mongodb://" + MONGODB_DEVSERVICE_HOSTNAME + ":" + mongoDevService.getConfig().get("port")
+			);
 			
 			output.add(mongoDevService.toBuildItem());
 		}

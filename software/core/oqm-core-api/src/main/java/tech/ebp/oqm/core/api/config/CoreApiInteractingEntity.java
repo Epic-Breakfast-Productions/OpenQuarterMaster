@@ -23,7 +23,7 @@ import java.util.Set;
 public class CoreApiInteractingEntity extends InteractingEntity {
 	
 	/**
-	 * Don't change this. We use this very specific ObjectId to identify the Base Station's specific entry in the db.
+	 * Don't change this. We use this very specific ObjectId to identify the Core API's specific entry in the db.
 	 */
 	public static final ObjectId BS_ID = new ObjectId("00000000AAAAAAAAAAFFFFFF");
 

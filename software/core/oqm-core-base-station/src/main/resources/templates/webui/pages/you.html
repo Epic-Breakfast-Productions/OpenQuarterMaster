@@ -10,25 +10,25 @@
 	</div>
 </div>
 <dl class="row">
-  <dt class="col-sm-3 col-md-2">Username:</dt>
-  <dd class="col-sm-9 col-md-10 user-select-all">{userInfo.getUsername()}</dd>
-  
+  {!<dt class="col-sm-3 col-md-2">Username:</dt>!}
+  {!<dd class="col-sm-9 col-md-10 user-select-all">{userInfo.getUsername()}</dd>!}
+
   <dt class="col-sm-3 col-md-2">Name:</dt>
   <dd class="col-sm-9 col-md-10 user-select-all">{userInfo.getName()}</dd>
-  
+
   <dt class="col-sm-3 col-md-2">Email:</dt>
   <dd class="col-sm-9 col-md-10 user-select-all">{userInfo.getEmail()}</dd>
-  
+
   <dt class="col-sm-3 col-md-2">Roles:</dt>
   <dd class="col-sm-9 col-md-10">
         {#for curRole in userInfo.getRoles()}
             <span class="user-select-all badge bg-secondary">{curRole}</span>
         {/for}
   </dd>
-  
+
   <dt class="col-sm-3 col-md-2">OQM Id:</dt>
   <dd class="col-sm-9 col-md-10 user-select-all"><span id="userOqmId">{userInfo.getId()}</span>{#copyTextButton /}</dd>
-  
+
   {!{#if !user.getExternIds().isEmpty()}!}
   {!<dt class="col-sm-3 col-md-2">External Ids:</dt>!}
   {!<dd class="col-sm-9 col-md-10">!}
@@ -40,7 +40,7 @@
     {!</dl>!}
   {!</dd>!}
   {!{/if}!}
-	
+
   {!{#if !userInfo.getAttributes().isEmpty()}!}
   {!<dt class="col-sm-3 col-md-2">Attributes:</dt>!}
   {!<dd class="col-sm-9 col-md-10">!}
@@ -92,9 +92,9 @@
     <script type="module">
 		import { HistorySearchUtils } from '{rootPrefix}/res/js/HistorySearchUtils.js';
 		import { TextCopyUtils } from '{rootPrefix}/res/js/TextCopyUtils.js';
-		
+
 		HistorySearchUtils.init();
-		
+
 		// $("#userHistoryForm").submit();
     </script>
 {/pageScript}

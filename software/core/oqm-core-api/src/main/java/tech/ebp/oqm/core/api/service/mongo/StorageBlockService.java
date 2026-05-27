@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 import com.mongodb.client.ClientSession;
+import com.mongodb.client.model.Indexes;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -190,5 +191,12 @@ public class StorageBlockService extends HasParentObjService<StorageBlock, Stora
 	@Override
 	public int getCurrentSchemaVersion() {
 		return StorageBlock.CUR_SCHEMA_VERSION;
+	}
+
+	@Override
+	public List<Bson> getDbIndexes() {
+		return List.of(
+			Indexes.ascending("name")
+		);
 	}
 }

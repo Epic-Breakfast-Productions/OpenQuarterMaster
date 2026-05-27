@@ -51,7 +51,7 @@
 
     {#if showType}<td>{cdi:EnumFormattingService.formatEnum(result.get("type").asText())}</td>{/if}
     {#if showItem}<td>{result.get("item-name").asText()}</td>{/if}{!TODO:: link this !}
-    {#if showStorage}<td>{result.get("storageBlock-labelText").asText()}</td>{/if}{!TODO:: link !}
+    {#if showStorage}<td>{result.get("state").get("storageBlock-labelText").asText()}</td>{/if}{!TODO:: link !}
     {#if showAmount}
 		<td>
 			{#if cdi:ItemStoredResultsQuteFunctions.storedIsAmount(result)}
@@ -91,19 +91,18 @@
         {#icons/edit}{/icons/edit}
       </button>
       {#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false storedId=id itemId=itemId checkinButton=false /}
-      
+
     {#else if actionType == 'select'}
     <td class="d-grid gap-2">
       <button type="button" class="btn btn-sm btn-success" title="Select {labelText}"
               data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
-              onclick="ItemStoredSearchSelect.selectStoredItem('{labelText}', '{result.get("storageBlock").asText()}', '{id}', '{inputIdPrepend}');">
+              onclick="ItemStoredSearchSelect.selectStoredItem('{labelText}', '{result.get("state").get("storageBlock").asText()}', '{id}', '{inputIdPrepend}');">
         {#icons/select}{/icons/select} Select
       </button>
 	{#else if actionType == 'view'}
 	  <td class="d-grid gap-2">
-		  <a href="{rootPrefix}/items?viewStored={id}" class="btn btn-sm btn-info" title="View Stored">{#icons/view}{/icons/view}</a>
+		  <a href="{rootPrefix}/items?viewStored={id}" class="btn btn-sm btn-info" title="View Stored">{#icons/view /}</a>
       {/if}
-		  
     </td>
   </tr>
   	{/let}

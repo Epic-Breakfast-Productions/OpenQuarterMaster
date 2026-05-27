@@ -9,13 +9,13 @@ Description=Open QuarterMaster Base Station server for Open Quartermaster. Versi
 Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
 Wants=network-online.target
 Requires=docker.socket
-After=docker.service oqm-core-api.service oqm-infra-keycloak.service oqm-infra-keycloak-client_watch.service
-Requires=oqm-core-api.service oqm-infra-keycloak.service
-BindsTo=oqm-core-api.service oqm-infra-keycloak.service
+After=docker.service oqm-core-api.service oqm-infra-keycloak.service oqm-infra-keycloak-client_watch.service oqm-core-characteristics.service
+Requires=oqm-core-api.service oqm-infra-keycloak.service oqm-core-characteristics.service
+BindsTo=oqm-core-api.service oqm-infra-keycloak.service oqm-core-characteristics.service
 
 [Install]
 WantedBy=multi-user.target
-WantedBy=oqm-core-api.service oqm-infra-keycloak.service
+WantedBy=oqm-core-api.service oqm-infra-keycloak.service oqm-core-characteristics.service
 
 [Service]
 Type=simple

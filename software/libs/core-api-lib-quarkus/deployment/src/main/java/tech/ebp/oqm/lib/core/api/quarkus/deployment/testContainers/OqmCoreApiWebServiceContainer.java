@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.api.quarkus.deployment.testContainers;
 
+import com.github.dockerjava.api.model.HostConfig;
 import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
@@ -35,12 +36,18 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 	@Override
 	protected void configure() {
 		//configure network
-		withNetwork(Network.SHARED);
-		Testcontainers.exposeHostPorts(this.devserviceConfig.keycloak().port());
-		addFixedExposedPort(devserviceConfig.port(), 80);
+		withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
+			new HostConfig().withNetworkMode("host")
+		));
+//		Testcontainers.exposeHostPorts(this.devserviceConfig.keycloak().port());
+//		Testcontainers.exposeHostPorts(this.devserviceConfig.kafka().port());
+		
+//		addFixedExposedPort(devserviceConfig.port(), 80);
+		
 		//configure env
 		this.withEnv(mongoConnectionInfo);
 		this.withEnv(kafkaConnectionInfo);
+		this.withEnv("QUARKUS_HTTP_PORT", String.valueOf(this.devserviceConfig.port()));
 		
 		// Tell the dev service how to know the container is ready. All 3 is likely overkill, but eh
 		this.waitingFor(Wait.forHealthcheck());

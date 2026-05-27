@@ -1,4 +1,4 @@
-= OQM Base Station Features
+= OQM Core API Features
 :toc:
 :toclevels: 5
 :sectnumlevels:5

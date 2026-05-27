@@ -18,6 +18,9 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import java.text.MessageFormat;
 import java.util.Optional;
 
+/**
+ * A Simple splash page to show, and direct to swagger.
+ */
 @SuppressWarnings("LombokGetterMayBeUsed")
 @Blocking
 @Slf4j

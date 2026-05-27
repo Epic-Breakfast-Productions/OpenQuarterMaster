@@ -1,0 +1,27 @@
+{
+	"core": {
+		"characteristics": {
+			"internalHost": "oqm-core-characteristics",
+			"internalHttpPort": 80,
+			"internalBaseUri": "http://#{core.characteristics.internalHost}:#{core.characteristics.internalHttpPort}",
+			"characteristics": {
+				"title": " ",
+				"motd": " ",
+				"runBy": {
+					"name": " ",
+					"email": " ",
+					"phone": " ",
+					"website": " ",
+					"logoImg": " ",
+					"bannerImg": " "
+				},
+				"banner": {
+					"text": " ",
+					"textColor": " ",
+					"backgroundColor": " "
+				}
+			},
+			"errorPage": "/serviceErr/errPage.html"
+		}
+	}
+}

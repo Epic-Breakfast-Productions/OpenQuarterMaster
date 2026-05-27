@@ -55,7 +55,7 @@
 {/pageContent}
 {#modals}
     {#objView/itemViewModal rootPrefix=rootPrefix /}
-	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults rootPrefix=rootPrefix /}
+	{#itemAddEditModal allUnitMap=allUnitMap allCategorySearchResults=allCategorySearchResults rootPrefix=rootPrefix extSearchMethods=extSearchMethods /}
 	{#modal id='addItemFromFile' size='xl' title='Add item(s) from file' submitForm='addItemFromFileForm' submitDismiss=false}
 		{#titleIcon}{#icons/addFile}{/icons/addFile}{/titleIcon}
 		<div class="row">

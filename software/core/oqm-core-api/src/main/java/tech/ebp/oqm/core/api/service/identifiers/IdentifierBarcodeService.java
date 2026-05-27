@@ -30,10 +30,16 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 /**
- * Service to generate barcode images.
- *
- * TODO:: move to own service?
- * TODO:: add better labels to images https://github.com/jfree/jfreesvg
+ * Service for generating barcode images as SVG data.
+ * <p>
+ * Supports multiple barcode formats including UPC-A, UPC-E, EAN-8, EAN-13, ISBN-10,
+ * ISBN-13, GTIN-14, and generic codes. Barcodes are rendered as SVG strings suitable
+ * for embedding in HTML or saving as image files.
+ * </p>
+ * <p>
+ * Each barcode can include an optional label for human-readable identification.
+ * When no custom label is provided, the identifier type name is used automatically.
+ * </p>
  */
 @Slf4j
 @ApplicationScoped
@@ -67,6 +73,17 @@ public class IdentifierBarcodeService {
 		return os.toString();
 	}
 	
+	/**
+	 * Renders a barcode symbol to SVG format with optional label.
+	 * <p>
+	 * If a label is provided, it is added below the barcode with appropriate
+	 * formatting including underline styling.
+	 * </p>
+	 *
+	 * @param code the barcode symbol to render
+	 * @param label optional label text to display below the barcode
+	 * @return SVG string representation of the barcode
+	 */
 	public static String processBarcodeData(Symbol code, String label){
 		String output = toImageData(code);
 		
@@ -144,6 +161,14 @@ public class IdentifierBarcodeService {
 		return output;
 	}
 	
+	/**
+	 * Generates a barcode SVG for the specified identifier type and data.
+	 *
+	 * @param type the barcode type/format to generate
+	 * @param data the identifier data to encode
+	 * @param label optional label text to display below the barcode
+	 * @return SVG string representation of the barcode
+	 */
 	public String getBarcodeData(IdentifierType type, String data, String label){
 		String dataIn = data;
 		int hQuietZone = 10;
@@ -226,6 +251,13 @@ public class IdentifierBarcodeService {
 		);
 	}
 	
+	/**
+	 * Generates a barcode SVG for the given identifier object.
+	 * Uses the identifier's type, value, and label properties.
+	 *
+	 * @param identifier the identifier to generate a barcode for
+	 * @return SVG string representation of the barcode
+	 */
 	public String getBarcodeData(Identifier identifier){
 		return this.getBarcodeData(identifier.getType(), identifier.getValue(), identifier.getLabel());
 	}

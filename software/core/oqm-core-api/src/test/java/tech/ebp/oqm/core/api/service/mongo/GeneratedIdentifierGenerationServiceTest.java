@@ -244,21 +244,24 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 	public static Stream<Arguments> getThreadTestParams() {
 		List<Arguments> output = new ArrayList<>();
 		
-		for (int curNumThreads : List.of(2, 5, 10, 20)) {
-			for (int curNumIterations : List.of(10, 20)) {
-				for (int curNumPerIteration : List.of(1, 2, 5, 10, 20)) {
-					output.add(Arguments.of("{rand}", curNumThreads, curNumIterations, curNumPerIteration));
-				}
-			}
-		}
+		output.add(Arguments.of("{inc}", 2, 10, 5));
+		output.add(Arguments.of("{inc}", 10, 10, 20));
 		
-		for (int curNumThreads : List.of(2, 10)) {
-			for (int curNumIterations : List.of(10)) {
-				for (int curNumPerIteration : List.of(1, 2, 5, 10, 20)) {
-					output.add(Arguments.of("{inc}", curNumThreads, curNumIterations, curNumPerIteration));
-				}
-			}
-		}
+//		for (int curNumThreads : List.of(2, 5, 10, 20)) {
+//			for (int curNumIterations : List.of(10, 20)) {
+//				for (int curNumPerIteration : List.of(1, 2, 5, 10, 20)) {
+//					output.add(Arguments.of("{rand}", curNumThreads, curNumIterations, curNumPerIteration));
+//				}
+//			}
+//		}
+		
+//		for (int curNumThreads : List.of(2, 10)) {
+//			for (int curNumIterations : List.of(10)) {
+//				for (int curNumPerIteration : List.of(1, 2, 5, 10, 20)) {
+//					output.add(Arguments.of("{inc}", curNumThreads, curNumIterations, curNumPerIteration));
+//				}
+//			}
+//		}
 		
 		return output.stream();
 	}

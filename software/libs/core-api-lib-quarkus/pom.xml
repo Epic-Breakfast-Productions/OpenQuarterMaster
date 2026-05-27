@@ -7,12 +7,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>tech.epic-breakfast-productions.openquartermaster.lib.core</groupId>
 	<artifactId>core-api-lib-quarkus-parent</artifactId>
-	<version>4.4.4-SNAPSHOT</version>
+	<version>5.0.0</version>
 	<packaging>pom</packaging>
 	<name>Core Api Lib Quarkus - Parent</name>
 	<description>The parent pom package for the Core API Library for Quarkus.</description>
 	<url>https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/software/libs/core-api-lib-quarkus</url>
-	
+
 	<scm>
 		<connection>scm:git:git://github.com/Epic-Breakfast-Productions/OpenQuarterMaster.git</connection>
 		<developerConnection>scm:git:ssh://github.com/Epic-Breakfast-Productions/OpenQuarterMaster.git</developerConnection>
@@ -33,7 +33,7 @@
 			<organizationUrl>https://epic-breakfast-productions.tech</organizationUrl>
 		</developer>
 	</developers>
-	
+
 	<modules>
 		<module>deployment</module>
 		<module>runtime</module>
@@ -41,10 +41,10 @@
 	<properties>
 		<compiler-plugin.version>3.14.0</compiler-plugin.version>
 		<failsafe-plugin.version>${surefire-plugin.version}</failsafe-plugin.version>
-		<maven.compiler.release>21</maven.compiler.release>
+		<maven.compiler.release>25</maven.compiler.release>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-		<quarkus.version>3.34.2</quarkus.version>
+		<quarkus.version>3.34.6</quarkus.version>
 		<surefire-plugin.version>3.0.0</surefire-plugin.version>
 	</properties>
 	<dependencyManagement>
@@ -145,8 +145,8 @@
 					<artifactId>maven-compiler-plugin</artifactId>
 					<version>${compiler-plugin.version}</version>
 					<configuration>
-						<source>21</source>
-						<target>21</target>
+						<source>25</source>
+						<target>25</target>
 						<compilerArgs>
 							<arg>-parameters</arg>
 						</compilerArgs>

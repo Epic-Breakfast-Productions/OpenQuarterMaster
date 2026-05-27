@@ -40,6 +40,10 @@ def updateTraefikConfig():
           "hostname": mainCM.getConfigVal("system.hostname"),
           "alternateSans": mainCM.getConfigVal("cert.additionalExternalSANs")
         },
+		"errorPageService": {
+			"internalBaseUri": mainCM.getConfigVal("core.characteristics.internalBaseUri"),
+			"query": mainCM.getConfigVal("core.characteristics.errorPage")
+		},
         "defaultPath": False,
         "services": [],
         "certs": {

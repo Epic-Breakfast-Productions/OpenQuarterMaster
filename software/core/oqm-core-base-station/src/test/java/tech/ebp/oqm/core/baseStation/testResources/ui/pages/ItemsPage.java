@@ -15,7 +15,7 @@ public class ItemsPage {
 	public static final String ADD_EDIT_FORM = "#addEditItemForm";
 	public static final String ADD_EDIT_FORM_SUBMIT_BUTTON = "#addEditItemFormSubmitButton";
 	public static final String ADDEDIT_FORM_INPUT_NAME = "#addEditItemNameInput";
-	public static final String ADDEDIT_FORM_INPUT_DESCRIPTION = "#addEditItemDescriptionInput";
+	public static final String ADDEDIT_FORM_INPUT_DESCRIPTION = "#addEditItemDescriptionInput .overtype-wrapper textarea.overtype-input";
 	public static final String ADDEDIT_FORM_INPUT_TYPE = "#addEditItemStorageTypeInput";
 	public static final String ADDEDIT_FORM_STORAGE_CONTAINER = "#addEditItemAssociatedStorageInputContainer";
 	public static final String ADDEDIT_FORM_ADD_STORAGE_BUTTON = "#addEditItemAssociatedStorageAddButton";

@@ -29,6 +29,12 @@ tls:
 http:
   # https://doc.traefik.io/traefik/routing/services/
   services:
+    # Error page, special
+    err-page-service:
+      loadBalancer:
+        servers:
+          - url: {{ errorPageService.internalBaseUri }}
+    # Actual services
     {%- for service in services %}
     {{service.serviceName}}:
       loadBalancer:
@@ -52,6 +58,7 @@ http:
       service: infra-homepage
       rule: "PathPrefix(`/`)"
       middlewares:
+        - error-page
         {%- if defaultPath %}
         - redirectToDefault
         {%- endif %}
@@ -60,11 +67,18 @@ http:
       rule: "PathPrefix(`{{ service.proxyPath }}`)"
       service: {{service.serviceName}}
       middlewares:
+        - error-page
         {%- if service.stripPrefixes %}
         - strip-oqm-prefixes
         {%- endif %}
     {%- endfor %}
   middlewares:
+    error-page:
+      errors:
+        status:
+          - "502"
+        service: err-page-service
+        query: {{ errorPageService.query }}
     redirectToDefault:
       redirectRegex:
         regex: "/$"

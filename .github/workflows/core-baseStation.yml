@@ -1,47 +1,22 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI - Core - Base Station
 
-# Controls when the workflow will run
 on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  push:
-    branches: [ "**" ]
-    paths:
-      - "software/core/oqm-core-base-station/**"
-      - ".github/workflows/core-baseStation.yml"
-      - ".github/workflows/wf-gradleBuild.yaml"
-      - ".github/workflows/wf-gradleUnitTest.yaml"
-      - ".github/workflows/wf-gradleQuarkusIntTest.yaml"
   pull_request:
-    branches: [ "**" ]
     paths:
       - "software/core/oqm-core-base-station/**"
       - ".github/workflows/core-baseStation.yml"
-      - ".github/workflows/wf-gradleBuild.yaml"
-      - ".github/workflows/wf-gradleUnitTest.yaml"
-      - ".github/workflows/wf-gradleQuarkusIntTest.yaml"
   workflow_call:
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
-defaults:
-  run:
-    working-directory: "software/core/oqm-core-base-station"
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+
+concurrency:
+  group: ci-core-base-station-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
-  build:
-    uses: ./.github/workflows/wf-gradleBuild.yaml
+  CI-Pipeline:
+    uses: Epic-Breakfast-Productions/ebp-ci/.github/workflows/quarkus-ci-pipeline.yml@main
     with:
       path: "software/core/oqm-core-base-station"
-  unitTest:
-    uses: ./.github/workflows/wf-gradleUnitTest.yaml
-    with:
-      path: "software/core/oqm-core-base-station"
-  intTest:
-    uses: ./.github/workflows/wf-gradleQuarkusIntTest.yaml
-    strategy:
-      matrix:
-        containerBased: [ false ] # TODO:: enable true
-    with:
-      path: "software/core/oqm-core-base-station"
-      containerBased: ${{ matrix.containerBased }}
+      java-version: "25"
+      run-int-tests: true
+      container-based-int-tests: false

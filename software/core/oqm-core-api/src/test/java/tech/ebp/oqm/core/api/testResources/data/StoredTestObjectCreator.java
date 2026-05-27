@@ -10,6 +10,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
 import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
@@ -34,7 +35,7 @@ public class StoredTestObjectCreator extends TestObjectCreator<Stored> {
 		};
 		builder
 			.item(this.item.getId())
-			.storageBlock(this.storageBlock);
+			.state(StoredInBlock.builder().storageBlock(this.storageBlock).build());
 
 		return builder.build();
 	}

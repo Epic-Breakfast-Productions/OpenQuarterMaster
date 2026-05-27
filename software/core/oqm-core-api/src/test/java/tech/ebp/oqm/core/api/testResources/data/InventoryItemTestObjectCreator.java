@@ -15,10 +15,12 @@ import java.util.LinkedHashSet;
 @ApplicationScoped
 public class InventoryItemTestObjectCreator extends TestObjectCreator<InventoryItem> {
 	
+	private static int COUNTER = 0;
+	
 	@Override
 	public InventoryItem getTestObject() {
 		InventoryItem item = new InventoryItem()
-			.setName(faker.commerce().productName())
+			.setName(faker.commerce().productName() + "-" + COUNTER++)
 			.setDescription(faker.lorem().sentence())
 			.setUnit(OqmProvidedUnits.UNIT)
 								 .setDefaultPrices(new LinkedHashSet<>(){{

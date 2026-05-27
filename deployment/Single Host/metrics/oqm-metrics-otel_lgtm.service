@@ -1,0 +1,71 @@
+# Service file for running an instance of Otel-LGTM.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  Otel-lgtm tags: https://hub.docker.com/r/grafana/otel-lgtm/tags
+#
+
+[Unit]
+Description=Otel-LGTM server for Open Quartermaster. Version ${version}.
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/metrics
+After=docker.service
+Wants=network-online.target docker.socket
+Requires=docker.socket
+
+[Service]
+Type=simple
+Restart=always
+TimeoutStartSec=600
+Environment="CONTAINER_NAME=oqm-metrics-otel-lgtm"
+Environment="IMAGE_NAME=docker.io/grafana/otel-lgtm"
+Environment="IMAGE_VERSION=0.24.1"
+Environment="DATA_DIR=/metrics/lgtm"
+Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/metrics/otel-lgtm/main-config.list"
+Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/metrics/otel-lgtm/main-config.list"
+Environment="USER_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/metrics/otel-lgtm/user-config.list"
+Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/metrics/otel-lgtm/user-config.list"
+
+ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop otel-lgtm container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove otel-lgtm container'"
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
+ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR/grafana"
+ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR/prometheus"
+ExecStartPre=/bin/bash -c "mkdir -p $(oqm-config g 'system.dataDir')$DATA_DIR/loki"
+# Config file
+ExecStartPre=/bin/bash -c "mkdir -p /tmp/oqm/serviceConfig/metrics/otel-lgtm/"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config t $USER_CONFIG_FILE_TEMPLATE > $USER_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $USER_CONFIG_FILE"
+
+# Start service
+ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
+                                        --network=oqm-internal \
+                                        -v $(oqm-config g system.dataDir)${DATA_DIR}/grafana:/data/grafana \
+                                        -v $(oqm-config g system.dataDir)${DATA_DIR}/prometheus:/data/prometheus \
+                                        -v $(oqm-config g system.dataDir)${DATA_DIR}/loki:/data/loki \
+                                        --env-file /tmp/oqm/serviceConfig/metrics/otel-lgtm/main-config.list \
+                                        --env-file /tmp/oqm/serviceConfig/metrics/otel-lgtm/user-config.list \
+                                        $IMAGE_NAME:$IMAGE_VERSION"
+# Ensure is up, healthy
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                status=\"$(docker container inspect $CONTAINER_NAME -f {{.State.Health.Status}} 2> /dev/null)\"; \
+                                if [ \"$status\" == \"healthy\" ]; then \
+                                    echo \"Container running!\"; \
+                                    running=\"true\"; \
+                                    continue; \
+                                fi; \
+                                sleep 0.05s; \
+                                if [ $SECONDS -gt 240 ]; then \
+                                    echo \"Container not running after 240 seconds!\"; \
+                                    exit 1; \
+                                fi; \
+                            done; \
+                            "
+ExecStop=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo 'Could not stop otel-lgtm container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove otel-lgtm container'"
+
+[Install]
+WantedBy=multi-user.target

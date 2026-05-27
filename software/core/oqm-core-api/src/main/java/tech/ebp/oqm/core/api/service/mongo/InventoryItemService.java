@@ -5,6 +5,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.FindIterable;
+import com.mongodb.client.model.Indexes;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -13,11 +14,14 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items.StoredInItemEndpoints;
 import tech.ebp.oqm.core.api.model.collectionStats.InvItemCollectionStats;
+import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.media.Image;
 import tech.ebp.oqm.core.api.model.object.media.file.FileAttachment;
 import tech.ebp.oqm.core.api.model.object.storage.ItemCategory;
@@ -30,6 +34,7 @@ import tech.ebp.oqm.core.api.model.rest.search.InventoryItemSearch;
 import tech.ebp.oqm.core.api.service.ItemStatsService;
 import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
+import tech.ebp.oqm.core.api.service.serviceState.InstanceMutexService;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
@@ -81,6 +86,9 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 	ItemStatsService itemStatsService;
 	@Inject
 	StoredInItemEndpoints storedInItemEndpoints;
+	
+	@Inject
+	InstanceMutexService instanceMutexService;
 	
 	public InventoryItemService() {
 		super(InventoryItem.class, false);
@@ -275,6 +283,23 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				   .build();
 	}
 	
+	@Override
+	protected void handleAdd(String oqmDbIdOrName, InventoryItem object) {
+		super.handleAdd(oqmDbIdOrName, object);
+		this.instanceMutexService.register(oqmDbIdOrName, object);
+	}
+	
+	@Override
+	public InventoryItem update(String oqmDbIdOrName, ClientSession cs, ObjectId id, ObjectNode updateJson, InteractingEntity interactingEntity, HistoryDetail ... details) {
+		try(
+			InstanceMutexService.InstanceMutexResource mutex = this.instanceMutexService.getResource(this.instanceMutexService.getMutexIdFor(oqmDbIdOrName, InventoryItem.class,
+					id),
+																																										  Optional.empty());
+			){
+			return super.update(oqmDbIdOrName, cs, id, updateJson, interactingEntity, details);
+		}
+	}
+	
 	public List<InventoryItem> getItemsInBlock(String oqmDbIdOrName, ObjectId storageBlockId) {
 		return this.list(
 			oqmDbIdOrName,
@@ -423,5 +448,12 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 				throw e;
 			}
 		}
+	}
+
+	@Override
+	public List<Bson> getDbIndexes() {
+		return List.of(
+			Indexes.ascending("name")
+		);
 	}
 }

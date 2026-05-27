@@ -39,75 +39,75 @@ import java.time.ZonedDateTime;
 @BsonDiscriminator
 @Schema(oneOf = {ItemAmountCheckout.class, ItemWholeCheckout.class})
 public abstract class ItemCheckout<T> extends AttKeywordMainObject {
-	
+
 	public static final int CUR_SCHEMA_VERSION = 2;
-	
+
 	@ToString.Include
 	public abstract CheckoutType getType();
-	
+
 	@ToString.Include
 	public abstract ObjectId getFromBlock();
-	
+
 	/**
 	 * When these item(s) were checked out
 	 */
 	@lombok.Builder.Default
 	private ZonedDateTime checkoutDate = ZonedDateTime.now();
-	
+
 	/**
 	 * The id of the checked out item
 	 */
 	@NonNull
 	@NotNull
 	private ObjectId item;
-	
+
 	/**
 	 * The transaction that created this checkout.
 	 */
 	@NonNull
 	@NotNull
 	private ObjectId checkOutTransaction;
-	
+
 	/**
 	 * The exact item being checked out
 	 */
 	@NonNull
 	@NotNull
 	private T checkedOut;
-	
+
 	/**
 	 * Which OQM entity did the checking out
 	 */
 	@NonNull
 	@NotNull
 	private ObjectId checkedOutByEntity;
-	
+
 	/**
 	 * Which OQM entity did the checking in
 	 */
 	private ObjectId checkedInByEntity;
-	
+
 	@NotNull
 	@NonNull
 	private CheckoutDetails checkoutDetails;
-	
+
 	/**
 	 * The details of checking back in this checkout.
 	 */
 	@lombok.Builder.Default
 	private CheckInDetails checkInDetails = null;
-	
+
 	/**
 	 * The transaction that checked in this.
 	 */
 	@lombok.Builder.Default
 	private ObjectId checkInTransaction = null;
-	
+
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isStillCheckedOut() {
 		return this.checkInDetails == null;
 	}
-	
+
 	@Override
 	public int getSchemaVersion() {
 		return CUR_SCHEMA_VERSION;

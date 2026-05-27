@@ -1,0 +1,13 @@
+{#if cdi:OqmCoreCharacteristicsService.haveUisInCategory(uis, category)}
+	<div class="dropdown-divider"></div>
+	<h6 class="dropdown-header">{categoryName}</h6>
+	
+	{#for curUi in cdi:OqmCoreCharacteristicsService.getUisInCategory(uis, category)}
+		<a class="dropdown-item" href="{curUi.getBaseUri()}">
+			{#if curUi.isIcon()}
+				<img src="{rootPrefix}/api/passthrough/characteristics/uis/{category}/{curUi.getId()}/icon" style="max-height:1.5em;" alt="{curUi.getName()} Icon"/>
+			{/if}
+			{curUi.getName()}
+		</a>
+	{/for}
+{/if}
