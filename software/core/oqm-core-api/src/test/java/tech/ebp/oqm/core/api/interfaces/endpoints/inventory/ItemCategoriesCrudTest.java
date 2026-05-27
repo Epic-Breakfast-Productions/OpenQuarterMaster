@@ -39,4 +39,17 @@ class ItemCategoriesCrudTest extends RunningServerTest {
             .then().statusCode(200)
             .extract().response().asString();
     }
+
+    @Test
+    void createInvalidTest() throws JsonProcessingException {
+        User testUser = this.getTestUserService().getTestUser();
+
+        setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+            .body(objectMapper.writeValueAsString(new ItemCategory().setName("").setDescription("")))
+            .contentType(ContentType.JSON)
+            .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
+            .post()
+            .then().statusCode(400)
+            .extract().response().asString();
+    }
 }
