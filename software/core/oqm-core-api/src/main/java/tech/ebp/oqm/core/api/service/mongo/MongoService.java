@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.MongoCommandException;
 import com.mongodb.ReadConcern;
 import com.mongodb.ReadPreference;
 import com.mongodb.TransactionOptions;
@@ -138,9 +139,16 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
             BsonDocument expectedKey = index.toBsonDocument(BsonDocument.class, collection.getCodecRegistry());
             expectedKeys.add(expectedKey);
             if (existingIndexes.containsKey(expectedKey)) {
-                collection.dropIndex(existingIndexes.get(expectedKey));
+                try {
+                    collection.createIndex(index, options);
+                } catch (MongoCommandException e) {
+                    log.warn("failed to create index with key {}, dropping and recreating index", expectedKey, e);
+                    collection.dropIndex(existingIndexes.get(expectedKey));
+                    collection.createIndex(index, options);
+                }
+            } else {
+                collection.createIndex(index, options);
             }
-            collection.createIndex(index, options);
         }
 
         for (Map.Entry<BsonDocument, String> existing : existingIndexes.entrySet()) {
