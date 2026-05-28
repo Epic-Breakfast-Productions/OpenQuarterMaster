@@ -49,7 +49,7 @@ Ingests:
 	<div class="container-fluid">
 		<a class="navbar-brand p-0" href="{rootPrefix}/overview">
 			{#if characteristics.getCharacteristics().getRunBy().hasLogoImg()}
-				<img src="{rootPrefix}/api/passthrough/characteristics/runBy/logo"  class="topNavImg" alt="Run By Logo"/>
+				<img src="{rootPrefix}/api/passthrough/characteristics/runBy/logo" class="topNavImg" alt="Run By Logo"/>
 			{/if}
 			<img src="{rootPrefix}/media/logo.svg" alt="" id="topOqmLogo" class="topNavImg">
 		</a>
@@ -188,15 +188,15 @@ Ingests:
 					</a>
 					<div class="dropdown-menu">
 						{#let uis=characteristics.getUis()}
-							<a class="dropdown-item" href="{characteristics.getUis().getHome()}">
-								{#icons/icon icon='box-arrow-in-up-left' /}
-								Home
-							</a>
+						<a class="dropdown-item" href="{characteristics.getUis().getHome()}">
+							{#icons/icon icon='box-arrow-in-up-left' /}
+							Home
+						</a>
 
-							{#page/serviceDropdownCategory rootPrefix=rootPrefix uis=uis category='core' categoryName='Core' /}
-							{#page/serviceDropdownCategory rootPrefix=rootPrefix uis=uis category='plugin' categoryName='Plugins' /}
-							{#page/serviceDropdownCategory rootPrefix=rootPrefix uis=uis category='infra' categoryName='Infra' /}
-							{#page/serviceDropdownCategory rootPrefix=rootPrefix uis=uis category='metrics' categoryName='Metrics' /}
+						{#page/serviceDropdownCategory rootPrefix=rootPrefix uis=uis category='core' categoryName='Core' /}
+						{#page/serviceDropdownCategory rootPrefix=rootPrefix uis=uis category='plugin' categoryName='Plugins' /}
+						{#page/serviceDropdownCategory rootPrefix=rootPrefix uis=uis category='infra' categoryName='Infra' /}
+						{#page/serviceDropdownCategory rootPrefix=rootPrefix uis=uis category='metrics' categoryName='Metrics' /}
 
 						{/let}
 					</div>
@@ -204,36 +204,59 @@ Ingests:
 				<li class="nav-item dropstart">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 						{#icons/user /}
-						<span id="userNameDisplay" data-userid="{userInfo.getId()}">{userInfo.getName()}</span>
+						<span id="userNameDisplay" data-userid="{userInfo.getId()}" data-name="{userInfo.getName()}" data-name="{userInfo.getUsername()}">{userInfo.getInitials()}</span>
 					</a>
-					<div class="dropdown-menu">
-						<a class="dropdown-item" href="{rootPrefix}/you" id="youLink">
-							{#icons/you /} You
-						</a>
-						<a class="dropdown-item" href="{config:['service.auth.userSettingsUrl']}" id="youEditLink" target="_blank">
-							{#icons/edit /} Account Settings
-						</a>
+					<ul class="dropdown-menu">
+						<li>
+							<h6 class="dropdown-header">
+								{userInfo.getName()} <br />
+								{userInfo.getUsername()} <br />
+								{userInfo.getEmail()}
+							</h6>
+						</li>
+						<li>
+							<a class="dropdown-item" href="{rootPrefix}/you" id="youLink">
+								{#icons/you /} You
+							</a>
+						</li>
+						<li>
+							<a class="dropdown-item" href="{config:['service.auth.userSettingsUrl']}" id="youEditLink" target="_blank">
+								{#icons/edit /} Account Settings
+							</a>
+						</li>
 						{#if userInfo.getRoles().contains('userAdmin') || userInfo.getRoles().contains('inventoryAdmin')}
-						<div class="dropdown-divider"></div>
+						<li>
+							<div class="dropdown-divider"></div>
+						</li>
 						{/if}
 						{#if userInfo.getRoles().contains('userAdmin')}
-						<a class="dropdown-item" href="{rootPrefix}/userAdmin" id="userAdminLink">
-							{#icons/userAdmin /} User Administration
-						</a>
+						<li>
+							<a class="dropdown-item" href="{rootPrefix}/userAdmin" id="userAdminLink">
+								{#icons/userAdmin /} User Administration
+							</a>
+						</li>
 						{/if}
 						{#if userInfo.getRoles().contains('inventoryAdmin')}
-						<a class="dropdown-item" href="{rootPrefix}/inventoryAdmin" id="inventoryAdminLink">
-							{#icons/inventoryAdmin /} Inventory Admin
-						</a>
+						<li>
+							<a class="dropdown-item" href="{rootPrefix}/inventoryAdmin" id="inventoryAdminLink">
+								{#icons/inventoryAdmin /} Inventory Admin
+							</a>
+						</li>
 						{/if}
-						<button class="btn-link dropdown-item" id="copyJwtButton" data-token="{userToken}" onclick="navigator.clipboard.writeText(this.dataset.token);">
-							{#icons/copy /} Copy Token
-						</button>
-						<div class="dropdown-divider"></div>
-						<a class="dropdown-item" href="{rootPrefix}{config:['quarkus.oidc.logout.path']}" id="logoutButton">
-							{#icons/icon icon='door-closed' /} Logout
-						</a>
-					</div>
+						<li>
+							<button class="btn-link dropdown-item" id="copyJwtButton" data-token="{userToken}" onclick="navigator.clipboard.writeText(this.dataset.token);">
+								{#icons/copy /} Copy Token
+							</button>
+						</li>
+						<li>
+							<div class="dropdown-divider"></div>
+						</li>
+						<li>
+							<a class="dropdown-item" href="{rootPrefix}{config:['quarkus.oidc.logout.path']}" id="logoutButton">
+								{#icons/icon icon='door-closed' /} Logout
+							</a>
+						</li>
+					</ul>
 				</li>
 			</ul>
 		</div>
