@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.inventoryItem.b
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.upgrade.SingleUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeCreatedObjectsResults;
@@ -16,6 +17,7 @@ import java.time.Duration;
 
 import static tech.ebp.oqm.core.api.model.object.ObjectUtils.OBJECT_MAPPER;
 
+@Slf4j
 public class InvItemBumper5 extends ObjectSchemaVersionBumper<InventoryItem> {
 
 	public InvItemBumper5() {
@@ -30,10 +32,12 @@ public class InvItemBumper5 extends ObjectSchemaVersionBumper<InventoryItem> {
 														.upgradedObject(oldObj)
 														.createdObjects(createdObjectsResults);
 
+		UpgradingUtils.normalizeObjectIdList((ArrayNode) oldObj.get("storageBlocks"));
 		ArrayNode oldBlockList = (ArrayNode) oldObj.get("storageBlocks");
 		ArrayNode newBlockList = oldObj.putArray("storageBlocks");
 
 		for(JsonNode curBlock : oldBlockList){
+			log.info("DEBUG:: Adding new settings for storage block: {}", curBlock);
 			ObjectNode newSettings = newBlockList.addObject();
 			newSettings.set("storageBlock", curBlock);
 		}

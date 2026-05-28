@@ -24,31 +24,28 @@ import java.util.TreeMap;
 @Singleton
 @Slf4j
 public class LifecycleBean {
-	
+
 	@ConfigProperty(name="service.version")
 	String serviceVersion;
-	
+
 	@ConfigProperty(name="service.apiVersion")
 	String apiVersion;
-	
+
 	@Inject
 	CustomUnitService customUnitService;
-	
+
 	@Inject
 	TempFileService tempFileService;
-	
+
 	@Inject
 	OqmDatabaseService dbService;
 
-	@Inject
-	ObjectSchemaUpgradeService objectSchemaUpgradeService;
-
 	private ZonedDateTime startDateTime;
-	
+
 	public static void logConfig(){
 		if (log.isDebugEnabled()) {
 			TreeMap<String, String> configMap = new TreeMap<>();
-			
+
 			for(String curProp : ConfigProvider.getConfig().getPropertyNames()){
 				String value;
 				try {
@@ -58,10 +55,10 @@ public class LifecycleBean {
 				}
 				configMap.put(curProp, value);
 			}
-			
+
 			StringBuilder sb = new StringBuilder();
 			for (String curProp : configMap.keySet()) {
-				
+
 				sb.append('\t');
 				sb.append(curProp);
 				sb.append('=');
@@ -71,11 +68,11 @@ public class LifecycleBean {
 			log.debug("Configuration: \n{}", sb);
 		}
 	}
-	
+
 	private void startLogAnnounce(){
 		this.startDateTime = ZonedDateTime.now();
 		log.info("Open QuarterMaster Core API Server starting.");
-		
+
 		if(log.isInfoEnabled()) {
 			// Image: https://www.text-image.com/convert/ascii.html
 			// Text: https://manytools.org/hacker-tools/ascii-banner/ (Colossal font)
@@ -119,12 +116,12 @@ API Version: {}
 				this.apiVersion
 			);
 		}
-		
+
 		logConfig();
 
 		log.info("Starting in directory: {}", Paths.get("").toAbsolutePath());
 	}
-	
+
 	void onStart(
 		@Observes
 		StartupEvent ev
@@ -137,17 +134,8 @@ API Version: {}
 		//ensures we can write to temp dir
 		this.tempFileService.getTempDir("test", "dir");
 		// Upgrade the db schema
-		//TODO:: create flag service to check if things initted right. Setup filter to check this flag to reject requests until setup done.
-		Optional<TotalUpgradeResult> schemaUpgradeResult = this.objectSchemaUpgradeService.updateSchema();
-		if(schemaUpgradeResult.isEmpty()){
-			log.warn("Did not upgrade schema at start.");
-		} else {
-			log.info("Schema upgrade result: {}", schemaUpgradeResult.get());
-			//TODO:: rescan inv update stats
-		}
-		log.info("Done with initial startup tasks.");
 	}
-	
+
 	void onStop(
 		@Observes
 		ShutdownEvent ev

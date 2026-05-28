@@ -42,11 +42,11 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	@Getter
 	@Inject
 	StoredService objectService;
-	
+
 	@Getter
 	@Inject
 	InventoryItemService inventoryItemService;
-	
+
 	@Getter
 	@Inject
 	StorageBlockService storageBlockService;
@@ -57,43 +57,43 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	@Getter
 	@PathParam("itemId")
 	ObjectId itemId;
-	
+
 	@Getter
 	@PathParam("blockId")
 	ObjectId blockId;
 
 	private InventoryItem inventoryItem;
 	private StorageBlock storageBlock;
-	
+
 	private StorageBlock getStorageBlock() {
 		if (this.storageBlock == null) {
 			this.storageBlock = this.storageBlockService.get(this.getOqmDbIdOrName(), this.blockId);
-			
+
 		}
 		return this.storageBlock;
 	}
-	
+
 	private InventoryItem getInventoryItem() {
 		if (this.inventoryItem == null) {
 			this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
-			
-			if(!this.inventoryItem.getStorageBlocks().contains(this.getStorageBlock().getId())){
+
+			if(!this.inventoryItem.getStorageBlockIds().toList().contains(this.getStorageBlock().getId())){
 				throw new NotFoundException("Storage block given not found in the given item");
 			}
 		}
 		return this.inventoryItem;
 	}
-	
+
 	private Stored applyDefaults(Stored stored){
 		stored.applyDefaultsFromItem(this.getInventoryItem());
 		return stored;
 	}
-	
+
 	private SearchResult<Stored> applyDefaults(SearchResult<Stored> searchResult){
 		searchResult.getResults().forEach(this::applyDefaults);
 		return searchResult;
 	}
-	
+
 	@GET
 	@Path("stored")
 	@Operation(
