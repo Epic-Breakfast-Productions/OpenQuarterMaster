@@ -234,7 +234,8 @@ export class ItemStoredTransaction extends PageUtility {
 				ItemStoredTransaction.Add.itemNameInput.val(item.name);
 				ItemStoredTransaction.Add.itemDisplayName.text(item.name);
 
-				item.storageBlocks.forEach(function (blockId) {
+				item.storageBlocks.forEach(function (blockSettings) {
+					let blockId = blockSettings.storageBlock;
 					let blockOp = $("<option></option>");
 					blockOp.val(blockId);
 					blockOp.text(blockId);
@@ -491,7 +492,8 @@ export class ItemStoredTransaction extends PageUtility {
 			}
 
 			//Setup Storage blocks in select
-			item.storageBlocks.forEach(function (blockId) {
+			item.storageBlocks.forEach(function (blockSettings) {
+				let blockId = blockSettings.storageBlock;
 				let newBlockOption = $('<option></option>');
 				newBlockOption.val(blockId);
 				Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
@@ -528,7 +530,7 @@ export class ItemStoredTransaction extends PageUtility {
 
 			let originalOption = ItemStoredTransaction.Checkin.toSelectInput.find("option[value='original']");
 			let blockOriginal = function () {
-				if (item.storageBlocks.includes(checkout.fromBlock)) {
+				if (item.storageBlocks.some(blockSetting => blockSetting.storageBlock === checkout.fromBlock)) {
 					originalOption.prop("disabled", false);
 					Getters.StorageBlock.getStorageBlockLabel(checkout.fromBlock, function (blockLabel) {
 						ItemStoredTransaction.Checkin.toOrigDesc.html(
@@ -888,7 +890,8 @@ export class ItemStoredTransaction extends PageUtility {
 			if (fromBlock) {
 				console.debug("Showing from block");
 				ItemStoredTransaction.Checkout.fromBlockContainer.show();
-				item.storageBlocks.forEach(function (blockId) {
+				item.storageBlocks.forEach(function (blockSettings) {
+					let blockId = blockSettings.storageBlock;
 					let newBlockOption = $('<option></option>');
 					newBlockOption.val(blockId);
 					promises.push(Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
@@ -1187,7 +1190,8 @@ export class ItemStoredTransaction extends PageUtility {
 				function () {
 					ItemStoredTransaction.Set.setTypeInput.val("block");
 					ItemStoredTransaction.Set.blockContainer.show();
-					item.storageBlocks.forEach(function (blockId) {
+					item.storageBlocks.forEach(function (blockSettings) {
+						let blockId = blockSettings.storageBlock;
 						let newBlockOption = $('<option></option>');
 						newBlockOption.val(blockId);
 						if (stored && stored.state.storageBlock === blockId) {
@@ -1432,7 +1436,8 @@ export class ItemStoredTransaction extends PageUtility {
 			if (fromBlock) {
 				console.debug("Showing from block");
 				ItemStoredTransaction.Subtract.fromBlockContainer.show();
-				item.storageBlocks.forEach(function (blockId) {
+				item.storageBlocks.forEach(function (blockSettings) {
+					let blockId = blockSettings.storageBlock;
 					let newBlockOption = $('<option></option>');
 					newBlockOption.val(blockId);
 					promises.push(Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
@@ -1744,7 +1749,8 @@ export class ItemStoredTransaction extends PageUtility {
 			if (fromBlock) {
 				console.debug("Showing from block");
 				ItemStoredTransaction.Transfer.fromBlockContainer.show();
-				item.storageBlocks.forEach(function (blockId) {
+				item.storageBlocks.forEach(function (blockSettings) {
+					let blockId = blockSettings.storageBlock;
 					let newBlockOption = $('<option></option>');
 					newBlockOption.val(blockId);
 					promises.push(Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
@@ -1770,7 +1776,8 @@ export class ItemStoredTransaction extends PageUtility {
 			if (toBlock) {
 				console.debug("Showing to block");
 				ItemStoredTransaction.Transfer.toBlockContainer.show();
-				item.storageBlocks.forEach(function (blockId) {
+				item.storageBlocks.forEach(function (blockSettings) {
+					let blockId = blockSettings.storageBlock;
 					let newBlockOption = $('<option></option>');
 					newBlockOption.val(blockId);
 					promises.push(Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {

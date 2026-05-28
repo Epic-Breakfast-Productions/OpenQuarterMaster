@@ -205,7 +205,8 @@ export class ItemAddEdit extends PageUtility {
 						break;
 				}
 
-				data.storageBlocks.forEach(curStorageBlockId => {
+				data.storageBlocks.forEach(curStorageBlockSettings => {
+					let curStorageBlockId = curStorageBlockSettings.storageBlock;
 					Getters.StorageBlock.getStorageBlockLabel(curStorageBlockId, function (label) {
 						//TODO:: determine if we are allowed to remove (if has stored items in it or not)
 						ItemAddEdit.storageInput.addStorage(label, curStorageBlockId);
@@ -282,8 +283,11 @@ export class ItemAddEdit extends PageUtility {
 		static selectedStorageList() {
 			return ItemAddEdit.associatedStorageInputContainer.find("input[name='storageBlocks[]']")
 				.map(function () {
-					return $(this).val();
-				}).get();
+					return {
+						"storageBlock": $(this).val()
+					}
+				})
+				.get();
 		}
 	}
 	static getUnit(force = false){

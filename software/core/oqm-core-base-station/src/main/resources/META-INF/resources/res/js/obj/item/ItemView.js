@@ -378,7 +378,8 @@ export class ItemView extends PageUtility {
 						);
 
 
-						itemData.storageBlocks.forEach(function (blockId) {
+						itemData.storageBlocks.forEach(function (blockSettings) {
+							let blockId = blockSettings.storageBlock;
 							console.debug("Displaying block: ", blockId);
 
 							if (itemData.stats.storageBlockStats[blockId].numStored) {
@@ -413,7 +414,8 @@ export class ItemView extends PageUtility {
 					StorageTypeUtils.runForType(
 						itemData,
 						function () {
-							itemData.storageBlocks.forEach(function (blockId) {
+							itemData.storageBlocks.forEach(function (blockSettings) {
+								let blockId = blockSettings.storageBlock;
 								console.debug("Displaying block: ", blockId);
 
 								if (itemData.stats.storageBlockStats[blockId].hasStored) {
@@ -464,7 +466,8 @@ export class ItemView extends PageUtility {
 									`);
 								let alsoInLabel = storageLabel.find(".uniqueItemStoredAlsoInLabel");
 
-								itemData.storageBlocks.forEach(function (curBlock) {
+								itemData.storageBlocks.forEach(function (blockSettings) {
+									let curBlock = blockSettings.storageBlock;
 									promises.push(Getters.StorageBlock.getStorageBlockLabel(curBlock, function (labelText) {
 										let newLink = Links.getStorageViewLink(curBlock, labelText);
 
@@ -498,7 +501,8 @@ export class ItemView extends PageUtility {
 					ItemView.storedNonePresentContainer.show();
 
 					if (itemData.storageBlocks.length) {
-						itemData.storageBlocks.forEach(function (curBlock) {
+						itemData.storageBlocks.forEach(function (blockSettings) {
+							let curBlock = blockSettings.storageBlock;
 							Getters.StorageBlock.getStorageBlockLabel(curBlock, function (labelText) {
 								let newLink = Links.getStorageViewLink(curBlock, labelText);
 								ItemView.storedNonePresentBlocksList.append(newLink);
@@ -648,4 +652,4 @@ export class ItemView extends PageUtility {
 			}
 		});
 	}
-};
+}
