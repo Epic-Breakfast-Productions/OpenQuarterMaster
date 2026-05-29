@@ -241,6 +241,70 @@ export class ItemAddEdit extends PageUtility {
 	}
 
 	static storageInput = class {
+
+		static updateStorageInputAdvancedVisibility(storageInput) {
+			console.log("Updating storage input advanced inputs visibility.");
+			let advancedToggle = storageInput.find(".form-check-input");
+			let advancedDiv = storageInput.find(".advancedInputs");
+			if (advancedToggle.is(":checked")) {
+				advancedDiv.show();
+			} else {
+				advancedDiv.hide();
+			}
+		}
+
+		static newStorageInput(blockId, blockName, settings) {
+			let newBlock = $(`
+				<div class="col-lg-6 blockSelection" data-block-id="">
+					<input type="hidden" name="storageBlocks[]" />
+					<div class="card">
+						<div class="card-body">
+							<p class="card-text blockInputName"></p>
+						</div>
+						<div class="card-header card-footer" style="display: flex; justify-content: space-between;">
+							<div>
+								<button class="btn btn-sm btn-outline-danger" type="button" onclick="ItemAddEdit.storageInput.removeStorage(this);">${Icons.remove}</button>
+							</div>
+							<div class="form-check form-switch form-check-reverse">
+								<input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault" onchange="ItemAddEdit.storageInput.updateStorageInputAdvancedVisibility($(this).closest('.blockSelection'));">
+								<label class="form-check-label" for="switchCheckDefault">Advanced</label>
+							</div>
+						</div>
+						<div class="card-body advancedInputs">
+							<p class="mb-1">
+								Low Stock Threshold:
+							</p>
+							<div class="input-group mt-0 mb-3">
+								<input type="number" class="form-control storedSettingLowStockThresholdValue"  placeholder="Value" min="0.00" step="any">
+								<select class="form-select storedSettingLowStockThresholdUnit unitInput">
+								</select>
+							</div>
+
+							<p class="mb-1">
+								Notes:
+							</p>
+							<div class="storedSettingNotesInput" data-ot-placeholder="Notes"></div>
+						</div>
+					</div>
+				</div>
+				`);
+
+			let notesField = MarkdownUtils.Editor.initInput(newBlock.find(".storedSettingNotesInput"))[0];
+
+			//TODO:: unit inputs
+
+
+			newBlock.attr("data-block-id", blockId);
+			newBlock.find('input[name="storageBlocks[]"]').val(blockId);
+			newBlock.find(".blockInputName").text(blockName);
+
+			//TODO:: add advanced input values
+
+			ItemAddEdit.storageInput.updateStorageInputAdvancedVisibility(newBlock);
+
+			return newBlock;
+		}
+
 		static addStorage(blockName, blockId) {
 			Main.processStart();
 			let found = false;
@@ -254,22 +318,9 @@ export class ItemAddEdit extends PageUtility {
 				return;
 			}
 
-			let newBlock = $('<div class="col-3 blockSelection" data-block-id="">' +
-				'  <input type="hidden" name="storageBlocks[]" />' +
-				'  <div class="card">' +
-				'    <div class="card-body">' +
-				'      <p class="card-text blockInputName"></p>' +
-				'    </div>' +
-				'    <div class="card-footer text-body-secondary">' +
-				'      <button class="btn btn-sm btn-outline-danger" type="button" onclick="ItemAddEdit.storageInput.removeStorage(this);">' + Icons.remove + '</button>' +
-				'    </div>' +
-				'  </div>' +
-				'</div>');
-			newBlock.attr("data-block-id", blockId);
-			newBlock.find('input[name="storageBlocks[]"]').val(blockId);
-			newBlock.find(".blockInputName").text(blockName);
-
-			ItemAddEdit.associatedStorageInputContainer.append(newBlock);
+			ItemAddEdit.associatedStorageInputContainer.append(
+				ItemAddEdit.storageInput.newStorageInput(blockId, blockName)
+			);
 			Main.processStop();
 		}
 		static removeStorage(removeButtonClicked) {//or input card?
