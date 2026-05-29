@@ -131,6 +131,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
      * @param indexes    the list of indexes that should exist on the collection
      */
     protected static void setupIndexes(MongoCollection<?> collection, List<Bson> indexes) {
+        log.info("setting up indexes for collection {}", collection.getNamespace());
         IndexOptions options = new IndexOptions().background(true);
         Map<BsonDocument, String> existingIndexes = getExistingIndexes(collection);
         Set<BsonDocument> expectedKeys = new HashSet<>();
@@ -138,6 +139,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
         for (Bson index : indexes) {
             BsonDocument expectedKey = index.toBsonDocument(BsonDocument.class, collection.getCodecRegistry());
             expectedKeys.add(expectedKey);
+            log.info("ensuring index with key {}", expectedKey);
             if (existingIndexes.containsKey(expectedKey)) {
                 try {
                     collection.createIndex(index, options);
@@ -153,6 +155,7 @@ public abstract class MongoService<T extends MainObject, S extends SearchObject<
 
         for (Map.Entry<BsonDocument, String> existing : existingIndexes.entrySet()) {
             if (!expectedKeys.contains(existing.getKey())) {
+                log.info("dropping index with key {}", existing.getKey());
                 collection.dropIndex(existing.getValue());
             }
         }
