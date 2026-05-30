@@ -15,6 +15,8 @@ import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import static io.restassured.RestAssured.given;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 
@@ -31,19 +33,26 @@ class ItemCategoriesCrudTest extends RunningServerTest {
     void createTest() throws JsonProcessingException {
         User testUser = this.getTestUserService().getTestUser();
 
-        setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+        ItemCategory result = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
             .body(objectMapper.writeValueAsString(new ItemCategory().setName("Test Category").setDescription("A category created during testing.")))
             .contentType(ContentType.JSON)
             .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
             .post()
             .then().statusCode(200)
-            .extract().response().asString();
+            .extract().response().as(ItemCategory.class);
+        
+        assertNotNull(result);
+        assertNotNull(result.getId());
+        assertEquals("Test Category", result.getName());
+        assertEquals("A category created during testing.", result.getDescription());
+        
+        //TODO:: GET new object
     }
-
+    
     @Test
     void createInvalidTest() throws JsonProcessingException {
         User testUser = this.getTestUserService().getTestUser();
-
+        
         setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
             .body(objectMapper.writeValueAsString(new ItemCategory().setName("").setDescription("")))
             .contentType(ContentType.JSON)
