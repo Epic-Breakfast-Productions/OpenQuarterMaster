@@ -307,6 +307,12 @@ export class ItemAddEdit extends PageUtility {
 
 			//TODO:: add advanced input values
 
+			if(settings){
+				if(settings.note){
+
+				}
+			}
+
 
 			ItemAddEdit.storageInput.updateStorageInputAdvancedVisibility(newBlock);
 
@@ -346,7 +352,7 @@ export class ItemAddEdit extends PageUtility {
 			return ItemAddEdit.associatedStorageInputContainer.find(".blockSelection");
 		}
 		static selectedStorageList() {
-			return ItemAddEdit.storageInput.getStorageBlockIds()
+			return ItemAddEdit.storageInput.getStorageBlockIds()//TODO:: update to do advanced fields
 				.map(function () {
 					return {
 						"storageBlock": $(this).val()
