@@ -241,6 +241,7 @@ export class ItemAddEdit extends PageUtility {
 	}
 
 	static storageInput = class {
+		static storageBlockInputCount = 0;
 
 		static updateStorageInputAdvancedVisibility(storageInput) {
 			console.log("Updating storage input advanced inputs visibility.");
@@ -252,8 +253,12 @@ export class ItemAddEdit extends PageUtility {
 				advancedDiv.hide();
 			}
 		}
+		static lowStockSettingUnitInput(blockInput){
+			return blockInput.find(".storedSettingLowStockThresholdUnit");
+		}
 
 		static newStorageInput(blockId, blockName, settings) {
+			let inputNum = ItemAddEdit.storageInput.storageBlockInputCount++;
 			let newBlock = $(`
 				<div class="col-lg-6 blockSelection" data-block-id="">
 					<input type="hidden" name="storageBlocks[]" />
@@ -266,8 +271,8 @@ export class ItemAddEdit extends PageUtility {
 								<button class="btn btn-sm btn-outline-danger" type="button" onclick="ItemAddEdit.storageInput.removeStorage(this);">${Icons.remove}</button>
 							</div>
 							<div class="form-check form-switch form-check-reverse">
-								<input class="form-check-input" type="checkbox" role="switch" id="switchCheckDefault" onchange="ItemAddEdit.storageInput.updateStorageInputAdvancedVisibility($(this).closest('.blockSelection'));">
-								<label class="form-check-label" for="switchCheckDefault">Advanced</label>
+								<input class="form-check-input" type="checkbox" role="switch" id="storedSettingAdvancedToggle-${inputNum}" onchange="ItemAddEdit.storageInput.updateStorageInputAdvancedVisibility($(this).closest('.blockSelection'));">
+								<label class="form-check-label" for="storedSettingAdvancedToggle-${inputNum}">Advanced</label>
 							</div>
 						</div>
 						<div class="card-body advancedInputs">
@@ -291,14 +296,17 @@ export class ItemAddEdit extends PageUtility {
 
 			let notesField = MarkdownUtils.Editor.initInput(newBlock.find(".storedSettingNotesInput"))[0];
 
-			//TODO:: unit inputs
-
+			UnitUtils.getCompatibleUnitOptions(ItemAddEdit.getUnit())
+				.then(function (options) {
+					ItemAddEdit.storageInput.lowStockSettingUnitInput(newBlock).html(options);
+				});
 
 			newBlock.attr("data-block-id", blockId);
 			newBlock.find('input[name="storageBlocks[]"]').val(blockId);
 			newBlock.find(".blockInputName").text(blockName);
 
 			//TODO:: add advanced input values
+
 
 			ItemAddEdit.storageInput.updateStorageInputAdvancedVisibility(newBlock);
 
@@ -331,8 +339,14 @@ export class ItemAddEdit extends PageUtility {
 				console.log("User canceled removing the associated storage.");
 			}
 		}
+		static getStorageBlockIds(){
+			return ItemAddEdit.associatedStorageInputContainer.find("input[name='storageBlocks[]']");
+		}
+		static getStorageBlockInputs(){
+			return ItemAddEdit.associatedStorageInputContainer.find(".blockSelection");
+		}
 		static selectedStorageList() {
-			return ItemAddEdit.associatedStorageInputContainer.find("input[name='storageBlocks[]']")
+			return ItemAddEdit.storageInput.getStorageBlockIds()
 				.map(function () {
 					return {
 						"storageBlock": $(this).val()
@@ -352,17 +366,27 @@ export class ItemAddEdit extends PageUtility {
 		console.log("Item Unit Changed to ", itemUnit);
 
 		let lowStockUnitPromise = ItemAddEdit.updateLowStockUnits(itemUnit, force);
+		let storageBlocksSettingsLowStockUnitsPromise = ItemAddEdit.storageBlockSettingsLowStockUnits(itemUnit, force);
 		let pricingUnitPromise = Pricing.setUnit(
 			ItemAddEdit.addEditItemPricingInput,
 			itemUnit
 		);
 
-		await Promise.all([lowStockUnitPromise, pricingUnitPromise]);
+		await Promise.all([lowStockUnitPromise, storageBlocksSettingsLowStockUnitsPromise, pricingUnitPromise]);
 	}
 	static updateLowStockUnits(itemUnit, force = false) {
 		return UnitUtils.getCompatibleUnitOptions(itemUnit)
 			.then(function (options) {
 				ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.html(options);
+			});
+	}
+	static storageBlockSettingsLowStockUnits(itemUnit, force = false) {
+		return UnitUtils.getCompatibleUnitOptions(itemUnit)
+			.then(function (options) {
+				ItemAddEdit.storageInput.getStorageBlockInputs().each(function (i, blockInput) {
+					let opsCopy = options.clone();
+					ItemAddEdit.storageInput.lowStockSettingUnitInput($(blockInput)).html(opsCopy);
+				});
 			});
 	}
 	static {
