@@ -209,7 +209,7 @@ export class ItemAddEdit extends PageUtility {
 					let curStorageBlockId = curStorageBlockSettings.storageBlock;
 					Getters.StorageBlock.getStorageBlockLabel(curStorageBlockId, function (label) {
 						//TODO:: determine if we are allowed to remove (if has stored items in it or not)
-						ItemAddEdit.storageInput.addStorage(label, curStorageBlockId);
+						ItemAddEdit.storageInput.addStorage(label, curStorageBlockId, curStorageBlockSettings);
 					});
 				});
 
@@ -253,15 +253,36 @@ export class ItemAddEdit extends PageUtility {
 				advancedDiv.hide();
 			}
 		}
-		static lowStockSettingUnitInput(blockInput){
-			return blockInput.find(".storedSettingLowStockThresholdUnit");
+		static Getters = class {
+			static blockIdInput(blockInput){
+				return blockInput.find("input[name='storageBlock']");
+			}
+			static getStorageBlockIds(){
+				return ItemAddEdit.associatedStorageInputContainer.find("input[name='storageBlock']");
+			}
+			static getStorageBlockInputs(){
+				return ItemAddEdit.associatedStorageInputContainer.find(".blockSelection");
+			}
+			static lowStockSettingUnitInput(blockInput){
+				return blockInput.find(".storedSettingLowStockThresholdUnit");
+			}
+			static lowStockSettingValueInput(blockInput){
+				return blockInput.find(".storedSettingLowStockThresholdValue");
+			}
+			static notesSettingInput(blockInput){
+				return blockInput.find(".storedSettingNotesInput");
+			}
+			static notesSettingField(blockInput){
+				return blockInput.data("notesField");
+			}
 		}
+
 
 		static newStorageInput(blockId, blockName, settings) {
 			let inputNum = ItemAddEdit.storageInput.storageBlockInputCount++;
 			let newBlock = $(`
-				<div class="col-lg-6 blockSelection" data-block-id="">
-					<input type="hidden" name="storageBlocks[]" />
+				<div class="col-lg-6 mb-2 blockSelection" data-block-id="">
+					<input type="hidden" name="storageBlock" />
 					<div class="card">
 						<div class="card-body">
 							<p class="card-text blockInputName"></p>
@@ -294,35 +315,39 @@ export class ItemAddEdit extends PageUtility {
 				</div>
 				`);
 
-			let notesField = MarkdownUtils.Editor.initInput(newBlock.find(".storedSettingNotesInput"))[0];
+			let notesField = MarkdownUtils.Editor.initInput(ItemAddEdit.storageInput.Getters.notesSettingInput(newBlock))[0];
+			newBlock.data("notesField", notesField);
 
 			UnitUtils.getCompatibleUnitOptions(ItemAddEdit.getUnit())
 				.then(function (options) {
-					ItemAddEdit.storageInput.lowStockSettingUnitInput(newBlock).html(options);
+					ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(newBlock).html(options);
 				});
 
 			newBlock.attr("data-block-id", blockId);
-			newBlock.find('input[name="storageBlocks[]"]').val(blockId);
+			ItemAddEdit.storageInput.Getters.blockIdInput(newBlock).val(blockId);
 			newBlock.find(".blockInputName").text(blockName);
+			//TODO:: image
 
-			//TODO:: add advanced input values
 
 			if(settings){
-				if(settings.note){
-
+				if(settings.notes){
+					ItemAddEdit.storageInput.Getters.notesSettingField(newBlock).setValue(settings.notes);
+				}
+				if(settings.lowStockThreshold){
+					ItemAddEdit.storageInput.Getters.lowStockSettingValueInput(newBlock).val(settings.lowStockThreshold.value)
+					ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(newBlock).val(settings.lowStockThreshold.unit.string)
 				}
 			}
-
 
 			ItemAddEdit.storageInput.updateStorageInputAdvancedVisibility(newBlock);
 
 			return newBlock;
 		}
 
-		static addStorage(blockName, blockId) {
+		static addStorage(blockName, blockId, storageSettings = null) {
 			Main.processStart();
 			let found = false;
-			ItemAddEdit.associatedStorageInputContainer.find('input[name="storageBlocks[]"]').each(function () {
+			ItemAddEdit.storageInput.Getters.getStorageBlockIds().each(function () {
 				if ($(this).val() === blockId) {
 					found = true;
 				}
@@ -333,7 +358,7 @@ export class ItemAddEdit extends PageUtility {
 			}
 
 			ItemAddEdit.associatedStorageInputContainer.append(
-				ItemAddEdit.storageInput.newStorageInput(blockId, blockName)
+				ItemAddEdit.storageInput.newStorageInput(blockId, blockName, storageSettings)
 			);
 			Main.processStop();
 		}
@@ -345,17 +370,17 @@ export class ItemAddEdit extends PageUtility {
 				console.log("User canceled removing the associated storage.");
 			}
 		}
-		static getStorageBlockIds(){
-			return ItemAddEdit.associatedStorageInputContainer.find("input[name='storageBlocks[]']");
-		}
-		static getStorageBlockInputs(){
-			return ItemAddEdit.associatedStorageInputContainer.find(".blockSelection");
-		}
 		static selectedStorageList() {
-			return ItemAddEdit.storageInput.getStorageBlockIds()//TODO:: update to do advanced fields
+			return ItemAddEdit.storageInput.Getters.getStorageBlockInputs()//TODO:: update to do advanced fields
 				.map(function () {
+					let input = $(this);
 					return {
-						"storageBlock": $(this).val()
+						"storageBlock": ItemAddEdit.storageInput.Getters.blockIdInput(input).val(),
+						"notes": ItemAddEdit.storageInput.Getters.notesSettingField(input).getValue(),
+						"lowStockThreshold": (ItemAddEdit.storageInput.Getters.lowStockSettingValueInput(input).val() ? UnitUtils.getQuantityObj(
+							ItemAddEdit.storageInput.Getters.lowStockSettingValueInput(input).val(),
+							ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(input).val()
+						) : null)
 					}
 				})
 				.get();
@@ -389,9 +414,9 @@ export class ItemAddEdit extends PageUtility {
 	static storageBlockSettingsLowStockUnits(itemUnit, force = false) {
 		return UnitUtils.getCompatibleUnitOptions(itemUnit)
 			.then(function (options) {
-				ItemAddEdit.storageInput.getStorageBlockInputs().each(function (i, blockInput) {
+				ItemAddEdit.storageInput.Getters.getStorageBlockInputs().each(function (i, blockInput) {
 					let opsCopy = options.clone();
-					ItemAddEdit.storageInput.lowStockSettingUnitInput($(blockInput)).html(opsCopy);
+					ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput($(blockInput)).html(opsCopy);
 				});
 			});
 	}
