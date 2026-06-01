@@ -62,6 +62,6 @@ public class ItemStoredStats extends StatsWithTotalContaining {
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isAnyLowStock() {
-		return this.lowStock || this.getNumLowStock() != 0 || this.isHasLowStockInBlock();
+		return this.lowStock || this.isHasLowStockStored() || this.isHasLowStockInBlock();
 	}
 }

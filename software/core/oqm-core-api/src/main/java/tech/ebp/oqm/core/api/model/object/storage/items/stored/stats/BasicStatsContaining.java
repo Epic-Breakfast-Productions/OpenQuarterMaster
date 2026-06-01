@@ -19,19 +19,26 @@ import java.util.Set;
 @NoArgsConstructor
 @SuperBuilder
 public class BasicStatsContaining {
-	
+
 	@lombok.Builder.Default
 	private long numStored = 0;
-	
+
+	/**
+	 * TODO:: rename to numStoredLowStock
+	 */
 	@lombok.Builder.Default
 	private long numLowStock = 0;
-	
+
 	@lombok.Builder.Default
 	private long numExpiryWarn = 0;
-	
+
 	@lombok.Builder.Default
 	private long numExpired = 0;
-	
+
 	@lombok.Builder.Default
 	private LinkedHashSet<@NotNull TotalPricing> prices = new LinkedHashSet<>();
+
+	public boolean isHasLowStockStored() {
+		return this.numLowStock > 0;
+	}
 }
