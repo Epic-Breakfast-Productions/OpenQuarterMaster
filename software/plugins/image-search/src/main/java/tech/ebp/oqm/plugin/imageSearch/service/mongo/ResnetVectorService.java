@@ -77,7 +77,7 @@ public class ResnetVectorService {
 		return this.getTypedCollection().find().iterator();
 	}
 
-	private void processImage(String database, String imageId, int imageRevision) {
+	public void processImage(String database, String imageId, int imageRevision) {
 		log.info("Processing image revision: {}, revision: {}", imageId, imageRevision);
 
 		//TODO:: check if already processed, skip if exists Done

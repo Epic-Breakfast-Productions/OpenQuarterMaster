@@ -10,11 +10,30 @@ import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
+
+/**
+ *
+ *
+ * {
+ *     results: {
+ *         <score>: { // MAX of scores in images
+ *             item: <item>
+ *             images: {
+ *                <score>: <imageId>
+ *             }
+ *         }
+ *     }
+ * }
+ *
+ *
+ *
+ *
+ */
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class SearchResults {
-	
+
 	TreeMap<Double, SearchResult> results;
 }
