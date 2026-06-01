@@ -474,7 +474,7 @@ export class ItemAddEdit extends PageUtility {
 			KeywordAttEdit.addKeywordAttData(addEditData, ItemAddEdit.addEditKeywordDiv, ItemAddEdit.addEditAttDiv);
 			ImageSearchSelect.addImagesToData(addEditData, ItemAddEdit.addEditItemImagesSelected);
 
-			console.log("Data being submitted: " + JSON.stringify(addEditData));
+			console.log("Data being submitted: ", addEditData);
 			let verb = "";
 			let result = false;
 			if (ItemAddEdit.addEditItemFormMode.val() === "add") {
@@ -486,7 +486,7 @@ export class ItemAddEdit extends PageUtility {
 					data: addEditData,
 					async: false,
 					done: function (data) {
-						console.log("Response from create request: " + JSON.stringify(data));
+						console.log("Response from create request: ", data);
 						result = true;
 					},
 					failMessagesDiv: ItemAddEdit.addEditItemFormMessages
@@ -502,7 +502,7 @@ export class ItemAddEdit extends PageUtility {
 					data: addEditData,
 					async: false,
 					done: function (data) {
-						console.log("Response from create request: " + JSON.stringify(data));
+						console.log("Response from create request: ", data);
 						result = true;
 					},
 					failMessagesDiv: ItemAddEdit.addEditItemFormMessages

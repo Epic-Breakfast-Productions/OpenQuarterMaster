@@ -225,6 +225,7 @@ export class ItemView extends PageUtility {
 
 			//TODO:: image
 			//TODO:: stats
+			//TODO:: flag(s)
 
 			collapseButton.empty();
 			collapseButton.append($(Icons.storageBlock).addClass("me-2"));
@@ -269,6 +270,7 @@ export class ItemView extends PageUtility {
 	}
 
 	static getMultiStoredInBlockView (itemData, blockId) {
+		let blockSettings = itemData.storageBlocks.find(function (blockSettings) {return blockSettings.storageBlock === blockId;});
 		let output = $('<div></div>');
 
 		let dataRow = $('<div class="d-flex mb-5"></div>');
@@ -284,7 +286,7 @@ export class ItemView extends PageUtility {
 								.text(
 									UnitUtils.quantityToDisplayStr(itemData.stats.storageBlockStats[blockId].total)
 								)
-						)
+						)//TODO:: add low stock threshold view
 				)
 		);
 		if(itemData.stats.storageBlockStats[blockId].prices.length){
@@ -316,8 +318,58 @@ export class ItemView extends PageUtility {
 
 			dataRow.append(pricesAccord);
 		}
+		if(blockSettings.notes){
+			dataRow.append(
+				$('<div class="card"></div>')
+					.append(
+						$('<div class="card-body"></div>')
+							.append($('<h5 class="card-title">Notes:</h5>'))
+							.append(MarkdownUtils.Parsing.parseMarkdown(blockSettings.notes))
+					)
+			);
+		}
 
 		output.append(ItemView.getStoredInBlockSearch(itemData.id, blockId));
+		return output;
+	}
+
+	static getItemFlags(itemData) {
+		let output = $('<span></span>');
+
+		if(itemData.stats.anyLowStock) {
+			let lowStockBadge = $('<span class="badge rounded-pill text-bg-danger" title="Low Stock"></span>');
+
+			if (itemData.stats.lowStock) {
+				lowStockBadge.append(
+					$(Icons.item)
+				);
+			}
+			if (itemData.stats.hasLowStockInBlock) {
+				lowStockBadge.append(
+					$(Icons.storageBlock)
+				);
+			}
+			if (itemData.stats.numLowStock) {
+				lowStockBadge.append(
+					$(Icons.stored)
+				);
+			}
+
+			lowStockBadge.append($(Icons.lowStock));
+			output.append(lowStockBadge);
+		}
+
+		if(itemData.stats.numExpiryWarn) {
+			output.append(
+				$('<span class="badge rounded-pill text-bg-warning" title="Expiring Soon">'+Icons.expiring+'</span>')
+			);
+		}
+		if(itemData.stats.numExpired) {
+			output.append(
+				$('<span class="badge rounded-pill text-bg-danger" title="Expired">'+Icons.expired+'</span>')
+			);
+		}
+
 		return output;
 	}
 
@@ -376,7 +428,6 @@ export class ItemView extends PageUtility {
 							},
 							1000
 						);
-
 
 						itemData.storageBlocks.forEach(function (blockSettings) {
 							let blockId = blockSettings.storageBlock;
@@ -538,9 +589,11 @@ export class ItemView extends PageUtility {
 					ItemView.linksContainer.show();
 				}
 
+				ItemView.itemViewModalLabel.text(itemData.name);
+				ItemView.itemViewModalLabel.append(ItemView.getItemFlags(itemData));
+
 				KeywordAttUtils.processKeywordDisplay(ItemView.viewKeywordsSection, itemData.keywords);
 				KeywordAttUtils.processAttDisplay(ItemView.viewAttsSection, itemData.attributes);
-				ItemView.itemViewModalLabel.text(itemData.name);
 				ItemView.itemViewStorageType.text(StorageTypeUtils.typeToDisplay(itemData.storageType));
 				ItemView.itemViewTotal.text(itemData.stats.total.value + "" + itemData.stats.total.unit.symbol);
 				ItemView.itemViewTotalVal.text(itemData.valueOfStored);//TODO

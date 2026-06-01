@@ -74,21 +74,7 @@
 		{result.get("stats").get("numStored").asInt()}
 	</td>
 	<td>
-		{#if result.get("stats").get("anyLowStock").asBoolean()}
-		<span class="badge rounded-pill text-bg-danger" title="Low Stock">
-			{#icons/lowStock /}
-		</span>
-		{/if}
-		{#if result.get("stats").get("numExpiryWarn").asInt() > 0}
-		<span class="badge rounded-pill text-bg-warning" title="Expiring Soon">
-			{#icons/expiring /}
-		</span>
-		{/if}
-		{#if result.get("stats").get("numExpired").asInt() > 0}
-		<span class="badge rounded-pill text-bg-danger" title="Expired">
-			{#icons/expired /}
-		</span>
-		{/if}
+		{#object/inventoryItems/flags item=result /}
 	</td>
 	{#if actionType == 'full'}
 	<td class="d-flex flex-row">
@@ -114,7 +100,7 @@
 			<a href="{rootPrefix}/items?view={id}" class="btn btn-sm btn-info me-1" title="View {name}">{#icons/view /} View</a>
 			{!{#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false itemId=id checkinButton=false /}!}
 	{/if}
-	
+
 	</td>
 </tr>
 {/let}
