@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.stored.stats;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,6 +39,7 @@ public class BasicStatsContaining {
 	@lombok.Builder.Default
 	private LinkedHashSet<@NotNull TotalPricing> prices = new LinkedHashSet<>();
 
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isHasLowStockStored() {
 		return this.numLowStock > 0;
 	}
