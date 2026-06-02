@@ -216,6 +216,7 @@ public class ItemStatsService {
 			}
 		}
 		log.info("Finished getting stats for item: {}", item.getId());
+		//TODO::: process low stock
 
 		return output;
 	}

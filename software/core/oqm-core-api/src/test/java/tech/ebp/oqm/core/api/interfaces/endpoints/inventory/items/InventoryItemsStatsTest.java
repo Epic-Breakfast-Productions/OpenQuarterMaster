@@ -421,8 +421,47 @@ class InventoryItemsStatsTest extends RunningServerTest {
 		assertFalse(blockStats.isHasStored());
 	}
 
+	@Test
+	public void testItemStatsItemUpdateBlockSettingsNoStored() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser();
+
+		StorageBlock block = this.newBlock(testUser);
+		InventoryItem item = this.newItem(testUser, block);
+
+		{
+			ObjectNode updates = OBJECT_MAPPER.createObjectNode();
+			ArrayNode blockUpdates = OBJECT_MAPPER.valueToTree(item.getStorageBlocks());
+
+//			((ObjectNode)blockUpdates.get(0)).put("notes", "fooBar");
+
+			updates.set("storageBlocks", blockUpdates);
+
+			item = OBJECT_MAPPER.readValue(
+				setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+					.contentType(ContentType.JSON)
+					.body(updates.toString())
+					.put(
+						"/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item/" + item.getId()
+					)
+					.then().statusCode(200)
+					.extract().body().asString(),
+				InventoryItem.class
+			);
+		}
+
+		ItemStoredStats itemStats = item.getStats();
+
+		assertEquals(0, itemStats.getNumStored());
+		assertEquals(Quantities.getQuantity(0, OqmProvidedUnits.UNIT), itemStats.getTotal());
+		assertTrue(itemStats.getStorageBlockStats().containsKey(block.getId()));
+
+		StoredInBlockStats blockStats = itemStats.getStorageBlockStats().get(block.getId());
+		assertFalse(blockStats.isHasStored());
+	}
+
 	//TODO:: test no stored, update expiry threshold, set
 	//TODO:: test no stored, update expiry threshold, unset
+
 	//TODO:: test no stored, update low stock threshold, set
 	//TODO:: test no stored, update low stock threshold, unset
 	//TODO:: test no stored, update low stock threshold, default pricing

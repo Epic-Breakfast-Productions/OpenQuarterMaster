@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.model.object.storage.items;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -48,4 +49,9 @@ public class StorageBlockSettings {
 	@NotNull
 	@Builder.Default
 	private StorageBlockNotificationStatus notificationStatus = new StorageBlockNotificationStatus();
+
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	public boolean isHasSettings() {
+		return this.hasLowStockThreshold() || (this.notes != null && !this.notes.isBlank());
+	}
 }
