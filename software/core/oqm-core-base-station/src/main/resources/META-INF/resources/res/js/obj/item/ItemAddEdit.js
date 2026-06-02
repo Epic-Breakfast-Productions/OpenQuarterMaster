@@ -292,7 +292,7 @@ export class ItemAddEdit extends PageUtility {
 								<button class="btn btn-sm btn-outline-danger" type="button" onclick="ItemAddEdit.storageInput.removeStorage(this);">${Icons.remove}</button>
 							</div>
 							<div class="form-check form-switch form-check-reverse">
-								<input class="form-check-input" type="checkbox" role="switch" id="storedSettingAdvancedToggle-${inputNum}" onchange="ItemAddEdit.storageInput.updateStorageInputAdvancedVisibility($(this).closest('.blockSelection'));">
+								<input class="form-check-input storageBlockInputAdvancedSettingsToggle" type="checkbox" role="switch" id="storedSettingAdvancedToggle-${inputNum}" onchange="ItemAddEdit.storageInput.updateStorageInputAdvancedVisibility($(this).closest('.blockSelection'));">
 								<label class="form-check-label" for="storedSettingAdvancedToggle-${inputNum}">Advanced</label>
 							</div>
 						</div>
@@ -330,6 +330,9 @@ export class ItemAddEdit extends PageUtility {
 
 
 			if(settings){
+				if(settings.hasSettings){
+					newBlock.find(".storageBlockInputAdvancedSettingsToggle").prop("checked", true);
+				}
 				if(settings.notes){
 					ItemAddEdit.storageInput.Getters.notesSettingField(newBlock).setValue(settings.notes);
 				}

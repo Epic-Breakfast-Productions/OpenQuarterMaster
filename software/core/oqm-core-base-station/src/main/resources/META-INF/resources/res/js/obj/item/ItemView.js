@@ -224,8 +224,12 @@ export class ItemView extends PageUtility {
 			labelText.text(blockLabel);
 
 			//TODO:: image
-			//TODO:: stats
-			//TODO:: flag(s)
+
+			$("<span></span>")
+				.text(" / " + item.stats.storageBlockStats[blockId].total.value + "" + item.stats.storageBlockStats[blockId].total.unit.symbol)
+				.appendTo(labelText);
+
+			ItemView.getBlockFlags(item, blockId).appendTo(labelText);
 
 			collapseButton.empty();
 			collapseButton.append($(Icons.storageBlock).addClass("me-2"));
@@ -286,7 +290,17 @@ export class ItemView extends PageUtility {
 								.text(
 									UnitUtils.quantityToDisplayStr(itemData.stats.storageBlockStats[blockId].total)
 								)
-						)//TODO:: add low stock threshold view
+						)
+						.append(
+							blockSettings.lowStockThreshold ?
+								$('<div class="text-muted"></div>')
+									.append($(`<p class="d-inline">Low Stock Threshold:</p>`))
+									.append(
+										$(`<p class="d-inline blockTotalLowStockThreshold"></p>`)
+											.text(blockSettings.lowStockThreshold.value + "" + blockSettings.lowStockThreshold.unit.symbol)
+									)
+								: ""
+						)
 				)
 		);
 		if(itemData.stats.storageBlockStats[blockId].prices.length){
@@ -331,6 +345,46 @@ export class ItemView extends PageUtility {
 
 		output.append(ItemView.getStoredInBlockSearch(itemData.id, blockId));
 		return output;
+	}
+
+
+	static getBlockFlags(itemData, blockId) {
+		let blockSettings = itemData.storageBlocks.find(function (blockSettings) {return blockSettings.storageBlock === blockId;});
+		let blockStats = itemData.stats.storageBlockStats[blockId];
+
+		let output = $('<span></span>');
+
+		if(blockStats.anyLowStock) {
+			let lowStockBadge = $('<span class="badge rounded-pill text-bg-danger" title="Low Stock"></span>');
+
+			if (blockStats.lowStock) {
+				lowStockBadge.append(
+					$(Icons.storageBlock)
+				);
+			}
+			if (blockStats.hasLowStockStored) {
+				lowStockBadge.append(
+					$(Icons.stored)
+				);
+			}
+
+			lowStockBadge.append($(Icons.lowStock));
+			output.append(lowStockBadge);
+		}
+
+		if(blockStats.numExpiryWarn) {
+			output.append(
+				$('<span class="badge rounded-pill text-bg-warning" title="Expiring Soon">'+Icons.expiring+'</span>')
+			);
+		}
+		if(blockStats.numExpired) {
+			output.append(
+				$('<span class="badge rounded-pill text-bg-danger" title="Expired">'+Icons.expired+'</span>')
+			);
+		}
+
+		return output;
+
 	}
 
 	static getItemFlags(itemData) {
