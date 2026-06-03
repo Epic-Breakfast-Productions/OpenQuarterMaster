@@ -374,7 +374,7 @@ public class InventoryItemService extends MongoHistoriedObjectService<InventoryI
 
 		//TODO:: figure out how find with query
 		this.listIterator(oqmDbIdOrName, clientSession).forEach((InventoryItem item)->{
-			if (item.getStorageBlocks().contains(storageBlock.getId())) {
+			if (item.usesStorageBlock(storageBlock.getId())) {
 				list.add(item.getId());
 			}
 		});

@@ -127,13 +127,6 @@ API Version: {}
 		StartupEvent ev
 	) {
 		this.startLogAnnounce();
-		//ensures the db service bean is initialized, and the extension has had time to init
-		this.dbService.collectionStats();
-		//ensures the unit service bean is initialized, and the extension had existing custom units read in
-		this.customUnitService.collectionStats();
-		//ensures we can write to temp dir
-		this.tempFileService.getTempDir("test", "dir");
-		// Upgrade the db schema
 	}
 
 	void onStop(

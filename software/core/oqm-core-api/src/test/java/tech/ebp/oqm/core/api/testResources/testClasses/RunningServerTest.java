@@ -80,8 +80,8 @@ public abstract class RunningServerTest extends WebServerTest {
 	protected void setNeedDbReset(boolean needDbReset){
 		this.needDbReset = needDbReset;
 	}
-	protected void setNeedKafkaReset(boolean needDbReset){
-		this.needDbReset = needDbReset;
+	protected void setNeedKafkaReset(boolean needKafkaReset){
+		this.needKafkaReset = needKafkaReset;
 	}
 
 	protected void setNeedResets(boolean needReset){

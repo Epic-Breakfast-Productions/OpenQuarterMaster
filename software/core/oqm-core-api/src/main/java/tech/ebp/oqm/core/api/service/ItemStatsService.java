@@ -426,7 +426,7 @@ public class ItemStatsService {
 			if (UnitUtils.atOrUnderThreshold(blockSettings.getLowStockThreshold(), blockStats.getTotal())) {
 				blockStats.setLowStock(true);
 
-				if (!oldBlockStats.isLowStock()) {
+				if (oldBlockStats == null || !oldBlockStats.isLowStock()) {
 					changed = true;
 				}
 
@@ -438,7 +438,7 @@ public class ItemStatsService {
 				blockSettings.getNotificationStatus().setLowStock(false);
 				blockStats.setLowStock(false);
 
-				if (oldBlockStats.isLowStock()) {
+				if (oldBlockStats == null || oldBlockStats.isLowStock()) {
 					changed = true;
 				}
 			}

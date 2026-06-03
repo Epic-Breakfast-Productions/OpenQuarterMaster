@@ -22,16 +22,21 @@ public class UniqueStorageBlockSettingsCollectionValidator extends Validator<Uni
 		if (collection == null) {
 			return true;
 		} else {
-			Set<ObjectId> elements = new HashSet<>();
+			if(collection.stream().anyMatch(sbs -> sbs.getStorageBlock() == null)){
+				errs.add("Storage block settings cannot have a null storage block");
+			} else {
 
-			List<String> duplicateStorageBlocks = collection.stream()
-											   .map(StorageBlockSettings::getStorageBlock)
-											   .filter(n->!elements.add(n))
-											   .map(ObjectId::toString)
-											   .toList();
+				Set<ObjectId> elements = new HashSet<>();
 
-			if (!duplicateStorageBlocks.isEmpty()) {
-				errs.add("Multiple storage block settings found with the same storage block: " + String.join(", ", duplicateStorageBlocks));
+				List<String> duplicateStorageBlocks = collection.stream()
+														  .map(StorageBlockSettings::getStorageBlock)
+														  .filter(n->!elements.add(n))
+														  .map(ObjectId::toString)
+														  .toList();
+
+				if (!duplicateStorageBlocks.isEmpty()) {
+					errs.add("Multiple storage block settings found with the same storage block: " + String.join(", ", duplicateStorageBlocks));
+				}
 			}
 		}
 
