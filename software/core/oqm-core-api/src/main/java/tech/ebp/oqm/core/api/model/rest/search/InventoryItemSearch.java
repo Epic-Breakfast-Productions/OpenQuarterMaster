@@ -24,7 +24,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("name")
 	@Parameter(description = "The name of the item to search for.")
 	String name;
-	
+
 	@QueryParam("storageTypes") List<StorageType> storageTypes;
 	@QueryParam("itemCategories") List<ObjectId> categories;
 	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
@@ -36,13 +36,13 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 	@QueryParam("hasLowStock") Boolean hasLowStock;
 	@QueryParam("hasNoLowStock") Boolean hasNoLowStock;
 	@QueryParam("identifier") List<String> identifiers;
-	
+
 	//TODO:: object specific fields, add to bson filter list
-	
+
 	@Override
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
-		
+
 		if (hasValue(this.getName())) {
 			filters.add(
 				SearchUtils.getBasicSearchFilter("name", this.getName())
@@ -71,7 +71,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 		if(hasValue(this.getInStorageBlocks())){
 			filters.add(or(
 				this.getInStorageBlocks().stream().map((ObjectId storageBlockId) -> {
-					return in("storageBlocks", storageBlockId);
+					return eq("storageBlocks.storageBlock", storageBlockId);
 				}).toList()
 			));
 		}
@@ -120,7 +120,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 		if(hasValue(this.getHasNoLowStock())){
 			if(this.getHasNoLowStock()){
 				filters.add(
-					eq("stats.anyLowStock", true)
+					eq("stats.anyLowStock", false)
 				);
 			}
 		}
@@ -133,7 +133,7 @@ public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
 			}
 			filters.add(Filters.or(typeFilterList));
 		}
-		
+
 		return filters;
 	}
 }

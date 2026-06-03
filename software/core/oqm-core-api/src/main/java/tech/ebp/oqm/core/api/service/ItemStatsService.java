@@ -16,6 +16,7 @@ import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageBlockSettings;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemExpiryLowStockItemProcessResults;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.ItemPostTransactionProcessResults;
 import tech.ebp.oqm.core.api.model.object.storage.items.notification.processing.StoredExpiryLowStockProcessResult;
@@ -62,51 +63,51 @@ import java.util.stream.Collectors;
 @Slf4j
 @ApplicationScoped
 public class ItemStatsService {
-	
+
 	@Inject
 	@Getter(AccessLevel.PRIVATE)
 	CoreApiInteractingEntity coreApiInteractingEntity;
-	
+
 	@Getter
 	@Inject
 	InventoryItemService inventoryItemService;
-	
+
 	@Getter
 	@Inject
 	StoredService storedService;
-	
+
 	//<editor-fold desc="Add To Stats Methods">
 	private void addToStats(InventoryItem item, BasicStatsContaining statsToAddTo, Stored stored) {
 		statsToAddTo.setNumStored(statsToAddTo.getNumStored() + 1L);
-		
+
 		if (stored.getType() == StoredType.AMOUNT) {
 			AmountStored amtStored = (AmountStored) stored;
 			if (amtStored.getLowStockThreshold() != null && stored.getNotificationStatus().isLowStock()) {
 				statsToAddTo.setNumLowStock(statsToAddTo.getNumLowStock() + 1L);
 			}
 		}
-		
+
 		if (stored.getNotificationStatus().isExpiredWarning()) {
 			statsToAddTo.setNumExpiryWarn(statsToAddTo.getNumExpiryWarn() + 1L);
 		}
-		
+
 		if (stored.getNotificationStatus().isExpired()) {
 			statsToAddTo.setNumExpired(statsToAddTo.getNumExpired() + 1L);
 		}
-		
+
 		/*
 		 * Prices
 		 */
 		stored.applyDefaultsFromItem(item);//TODO:: this might want to happen earlier
 		//add each to stats
-		for(CalculatedPricing calcedPricing : stored.getCalculatedPrices()){
+		for (CalculatedPricing calcedPricing : stored.getCalculatedPrices()) {
 			Optional<TotalPricing> existingPricing = statsToAddTo.getPrices().stream()
-				.filter((price)->{
-					return price.getLabel().equals(calcedPricing.getLabel());
-				})
-				.findFirst();
-			
-			if(existingPricing.isEmpty()){
+														 .filter((price)->{
+															 return price.getLabel().equals(calcedPricing.getLabel());
+														 })
+														 .findFirst();
+
+			if (existingPricing.isEmpty()) {
 				statsToAddTo.getPrices().add(
 					TotalPricing.builder()
 						.label(calcedPricing.getLabel())
@@ -118,10 +119,10 @@ public class ItemStatsService {
 			}
 		}
 	}
-	
+
 	private void addToStats(InventoryItem item, StatsWithTotalContaining statsToAddTo, Stored stored) {
 		this.addToStats(item, (BasicStatsContaining) statsToAddTo, stored);
-		
+
 		Quantity toAdd = switch (stored.getType()) {
 			case AMOUNT -> {
 				AmountStored amountStored = (AmountStored) stored;
@@ -129,83 +130,83 @@ public class ItemStatsService {
 			}
 			case UNIQUE -> UnitUtils.Quantities.UNIT_ONE;
 		};
-		
+
 		statsToAddTo.setTotal(
 			statsToAddTo.getTotal().add(toAdd)
 		);
 	}
-	
+
 	private void addToStats(InventoryItem item, StoredInBlockStats storedInBlockStats, Stored stored) {
 		storedInBlockStats.setHasStored(true);
 		this.addToStats(item, (StatsWithTotalContaining) storedInBlockStats, stored);
 	}
-	
+
 	private void addToStats(InventoryItem item, ItemStoredStats itemStoredStats, Stored stored) {
 		StoredInBlockStats storedInBlockStats = itemStoredStats.getStorageBlockStats().get(
-			((StoredInBlock)stored.getState()).getStorageBlock()
+			((StoredInBlock) stored.getState()).getStorageBlock()
 		);
-		
+
 		this.addToStats(item, storedInBlockStats, stored);
 		this.addToStats(item, (StatsWithTotalContaining) itemStoredStats, stored);
 	}
-	
+
 	//TODO:: wtf is this
-//	private void addToStats(String oqmDbIdOrName, ClientSession cs, StoredStats storedStats, Stored stored) {
-//
-//		if (!storedStats.getItemStats().containsKey(stored.getId())) {
-//			storedStats.getItemStats().put(
-//				stored.getId(), new ItemStoredStats(
-//					this.inventoryItemService.get(oqmDbIdOrName, cs, stored.getItem()).getUnit()
-//				)
-//			);
-//		}
-//		ItemStoredStats itemStoredStats = storedStats.getItemStats().get(stored.getItem());
-//
-//		this.addToStats((BasicStatsContaining) storedStats, stored);
-//		this.addToStats(itemStoredStats, stored);
-//	}
-//	public StoredStats getStoredStats(String oqmDbIdOrName, ClientSession cs, StoredSearch search) {
-//		FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, search);
-//		StoredStats output = new StoredStats();
-//
-//		try (
-//			MongoCursor<Stored> storedIterator = storedInItem.iterator()
-//		) {
-//			while (storedIterator.hasNext()) {
-//				Stored curStored = storedIterator.next();
-//
-//				this.addToStats(
-//					oqmDbIdOrName,
-//					cs,
-//					output,
-//					curStored
-//				);
-//			}
-//		}
-//
-//		return output;
-//	}
-	
+	//	private void addToStats(String oqmDbIdOrName, ClientSession cs, StoredStats storedStats, Stored stored) {
+	//
+	//		if (!storedStats.getItemStats().containsKey(stored.getId())) {
+	//			storedStats.getItemStats().put(
+	//				stored.getId(), new ItemStoredStats(
+	//					this.inventoryItemService.get(oqmDbIdOrName, cs, stored.getItem()).getUnit()
+	//				)
+	//			);
+	//		}
+	//		ItemStoredStats itemStoredStats = storedStats.getItemStats().get(stored.getItem());
+	//
+	//		this.addToStats((BasicStatsContaining) storedStats, stored);
+	//		this.addToStats(itemStoredStats, stored);
+	//	}
+	//	public StoredStats getStoredStats(String oqmDbIdOrName, ClientSession cs, StoredSearch search) {
+	//		FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, search);
+	//		StoredStats output = new StoredStats();
+	//
+	//		try (
+	//			MongoCursor<Stored> storedIterator = storedInItem.iterator()
+	//		) {
+	//			while (storedIterator.hasNext()) {
+	//				Stored curStored = storedIterator.next();
+	//
+	//				this.addToStats(
+	//					oqmDbIdOrName,
+	//					cs,
+	//					output,
+	//					curStored
+	//				);
+	//			}
+	//		}
+	//
+	//		return output;
+	//	}
+
 	//</editor-fold>
-	
+
 	@WithSpan
 	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, InventoryItem item) {
 		log.info("Getting stats for item: {}", item.getId());
-		
+
 		ItemStoredStats output = new ItemStoredStats(item.getUnit(), item.getDefaultPrices());
-		
-		for (ObjectId storageBlock : item.getStorageBlocks()) {
+
+		for (ObjectId storageBlock : item.getStorageBlockIds().toList()) {
 			output.getStorageBlockStats().put(storageBlock, new StoredInBlockStats(output.getTotal().getUnit()));
 		}
-		
-		if(item.getId() != null) {
+
+		if (item.getId() != null) {
 			FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(item.getId()));
 			try (
 				MongoCursor<Stored> storedIterator = storedInItem.iterator()
 			) {
 				while (storedIterator.hasNext()) {
 					Stored curStored = storedIterator.next();
-					
+
 					this.addToStats(
 						item,
 						output,
@@ -215,18 +216,19 @@ public class ItemStatsService {
 			}
 		}
 		log.info("Finished getting stats for item: {}", item.getId());
-		
+		//TODO::: process low stock
+
 		return output;
 	}
-	
+
 	public ItemStoredStats getItemStats(String oqmDbIdOrName, ClientSession cs, ObjectId itemId) {
 		InventoryItem item = this.inventoryItemService.get(oqmDbIdOrName, cs, itemId);
 		return this.getItemStats(oqmDbIdOrName, cs, item);
 	}
-	
+
 	/**
 	 * Processes a stored item to determine if expired/expiring or low stock.
-	 *
+	 * <p>
 	 * If flags changed, updates stored object in database, with history details passed.
 	 *
 	 * @param oqmDbIdOrName
@@ -237,6 +239,7 @@ public class ItemStatsService {
 	 * @param checkExpired
 	 * @param entity
 	 * @param historyDetails
+	 *
 	 * @return Empty if nothing changed. Result if any state changed.
 	 */
 	private Optional<StoredExpiryLowStockProcessResult> getStoredExpiryLowStockProcessResult(
@@ -251,10 +254,10 @@ public class ItemStatsService {
 	) {
 		StoredExpiryLowStockProcessResult curResult = StoredExpiryLowStockProcessResult.builder().storedId(stored.getId()).build();
 		boolean changed = false;
-		
+
 		if (checkLowStock && stored.getType() == StoredType.AMOUNT) {
 			AmountStored amountStored = (AmountStored) stored;
-			
+
 			if (UnitUtils.atOrUnderThreshold(amountStored.getLowStockThreshold(), amountStored.getAmount())) {
 				curResult.setLowStock(true);
 				if (!amountStored.getNotificationStatus().isLowStock()) {
@@ -269,7 +272,7 @@ public class ItemStatsService {
 				}
 			}
 		}
-		
+
 		if (checkExpired && stored.getExpires() != null) {
 			ZonedDateTime now = ZonedDateTime.now();
 			if (
@@ -286,7 +289,7 @@ public class ItemStatsService {
 				}
 			} else if (
 					   !expiryWarningThreshold.equals(Duration.ZERO) &&
-					   now.isAfter(stored.getExpires().minus(expiryWarningThreshold))
+				       now.isAfter(stored.getExpires().minus(expiryWarningThreshold))
 			) {
 				curResult.setExpired(false);
 				curResult.setExpiryWarn(true);
@@ -296,27 +299,27 @@ public class ItemStatsService {
 					changed = true;
 				}
 			} else {
-				if(stored.getNotificationStatus().isExpiredWarning()){
+				if (stored.getNotificationStatus().isExpiredWarning()) {
 					stored.getNotificationStatus().setExpiredWarning(false);
 					changed = true;
 				}
-				if(stored.getNotificationStatus().isExpired()){
+				if (stored.getNotificationStatus().isExpired()) {
 					stored.getNotificationStatus().setExpired(false);
 					changed = true;
 				}
 			}
 		}
-		
+
 		if (changed) {
 			this.getStoredService().update(oqmDbIdOrName, cs, stored, entity, true, historyDetails);
 			return Optional.of(curResult);
 		}
 		return Optional.empty();
 	}
-	
+
 	/**
 	 * Performs the necessary processing to recalculate stats about an item after an item has a transaction applied.
-	 *
+	 * <p>
 	 * If stats changed, updated inventory item.
 	 *
 	 * @param oqmDbIdOrName
@@ -340,10 +343,10 @@ public class ItemStatsService {
 		HistoryDetail... historyDetails
 	) {
 		//TODO:: apply mutex here?
-		
+
 		Set<ObjectId> concerningIds = concerning.stream().map(Stored::getId).collect(Collectors.toSet());
 		//TODO:: separate thread to get these stats
-		
+
 		//process expiry and low stock for affected stored
 		ItemExpiryLowStockItemProcessResults results = new ItemExpiryLowStockItemProcessResults().setItem(item.getId());
 		{
@@ -353,7 +356,7 @@ public class ItemStatsService {
 									   .setInStorageBlocks(
 										   concerning.stream()
 											   .filter(s->s.isState(StoredStateType.STORED))
-											   .map(s->((StoredInBlock)(s.getState())).getStorageBlock()).distinct().collect(Collectors.toList())
+											   .map(s->((StoredInBlock) (s.getState())).getStorageBlock()).distinct().collect(Collectors.toList())
 									   )
 			);
 			try (
@@ -361,7 +364,7 @@ public class ItemStatsService {
 			) {
 				while (storedIterator.hasNext()) {
 					Stored curStored = storedIterator.next();
-					
+
 					Optional<StoredExpiryLowStockProcessResult> result = this.getStoredExpiryLowStockProcessResult(
 						oqmDbIdOrName,
 						cs,
@@ -374,8 +377,8 @@ public class ItemStatsService {
 					);
 					if (result.isPresent()) {
 						StoredExpiryLowStockProcessResult curResult = result.get();
-						ObjectId block = ((StoredInBlock)curStored.getState()).getStorageBlock();
-						
+						ObjectId block = ((StoredInBlock) curStored.getState()).getStorageBlock();
+
 						if (!results.getResults().containsKey(block)) {
 							results.getResults().put(block, new ArrayList<>());
 						}
@@ -384,13 +387,13 @@ public class ItemStatsService {
 				}
 			}
 		}
-		
+
 		ItemStoredStats oldStats = item.getStats();
 		ItemStoredStats storedStats = this.getItemStats(oqmDbIdOrName, cs, item.getId());
 		item.setStats(storedStats);
-		
+
 		boolean changed = false;
-		
+
 		if (!storedStats.equals(oldStats)) {
 			changed = true;
 		}
@@ -398,31 +401,54 @@ public class ItemStatsService {
 			if (UnitUtils.atOrUnderThreshold(item.getLowStockThreshold(), storedStats.getTotal())) {
 				results.setLowStock(true);
 				storedStats.setLowStock(true);
-				
+
 				if (!oldStats.isLowStock()) {
 					changed = true;
 				}
-				
-				if(!item.getNotificationStatus().isLowStock()) {
+
+				if (!item.getNotificationStatus().isLowStock()) {
 					item.getNotificationStatus().setLowStock(true);
 					//TODO:: handle notification
 				}
 			} else {
 				item.getNotificationStatus().setLowStock(false);
 				storedStats.setLowStock(false);
-				item.getNotificationStatus().setLowStock(false);
-				
+
 				if (oldStats.isLowStock()) {
 					changed = true;
 				}
 			}
 		}
-		
+		for (StorageBlockSettings blockSettings : item.getStorageBlocks().stream().filter(StorageBlockSettings::hasLowStockThreshold).toList()) {
+			StoredInBlockStats blockStats = storedStats.getStorageBlockStats().get(blockSettings.getStorageBlock());
+			StoredInBlockStats oldBlockStats = oldStats.getStorageBlockStats().get(blockSettings.getStorageBlock());
+
+			if (UnitUtils.atOrUnderThreshold(blockSettings.getLowStockThreshold(), blockStats.getTotal())) {
+				blockStats.setLowStock(true);
+
+				if (oldBlockStats == null || !oldBlockStats.isLowStock()) {
+					changed = true;
+				}
+
+				if (!blockSettings.getNotificationStatus().isLowStock()) {
+					blockSettings.getNotificationStatus().setLowStock(true);
+					//TODO:: handle notification
+				}
+			} else {
+				blockSettings.getNotificationStatus().setLowStock(false);
+				blockStats.setLowStock(false);
+
+				if (oldBlockStats == null || oldBlockStats.isLowStock()) {
+					changed = true;
+				}
+			}
+		}
+
 		List<StoredExpiryLowStockProcessResult> inBlockResults = results.getResults().values().stream().flatMap(List::stream).toList();
 		if (!inBlockResults.isEmpty()) {
 			changed = true;
 		}
-		
+
 		if (changed) {
 			this.getInventoryItemService().update(oqmDbIdOrName, cs, item, entity, true, historyDetails);
 			results.getEvents(transactionId).parallelStream().forEach(event->{
@@ -432,18 +458,20 @@ public class ItemStatsService {
 					this.getStoredService().addHistoryFor(oqmDbIdOrName, cs, event.getObjectId(), this.getCoreApiInteractingEntity(), event);
 				}
 			});
-			
+
 		}
-		
+
 		return ItemPostTransactionProcessResults.builder()
 				   .expiryLowStockResults(results)
 				   .stats(storedStats)
 				   .build();
 	}
-	
+
 	/**
 	 * Scans the entire given database for expired items.
+	 *
 	 * @param oqmDbIdOrName The id or name of the database to scan.
+	 *
 	 * @return The number of new
 	 */
 	public long scanForExpired(String oqmDbIdOrName) {
@@ -461,14 +489,14 @@ public class ItemStatsService {
 				long output = 0L;
 				while (storedIterator.hasNext()) {
 					Stored curStored = storedIterator.next();
-					
+
 					if (!itemExpiryWarningThresholds.containsKey(curStored.getItem())) {
 						itemExpiryWarningThresholds.put(
 							curStored.getItem(),
 							this.inventoryItemService.get(oqmDbIdOrName, curStored.getItem()).getExpiryWarningThreshold()
 						);
 					}
-					
+
 					Optional<StoredExpiryLowStockProcessResult> result = this.getStoredExpiryLowStockProcessResult(
 						oqmDbIdOrName,
 						csw.getClientSession(),
@@ -480,7 +508,7 @@ public class ItemStatsService {
 					);
 					if (result.isPresent()) {
 						StoredExpiryLowStockProcessResult curResult = result.get();
-						
+
 						for (
 							ObjectHistoryEvent curEvent :
 							curResult.getEvents(null, null)//Shouldn't hit the code that uses these parameters
@@ -495,5 +523,5 @@ public class ItemStatsService {
 			}
 		}
 	}
-	
+
 }

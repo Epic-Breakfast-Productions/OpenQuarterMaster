@@ -48,21 +48,21 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 @QuarkusTest
 @QuarkusTestResource(value = KafkaCompanionResource.class, restrictToAnnotatedClass = true)
 public class CheckinWholeAppliedTransactionTest extends AppliedTransactionServiceTest {
-	
-	
+
+
 	@Test
 	public void applyCheckinFullWholeSuccessBulk() throws Exception {
 		InteractingEntity entity = this.getTestUserService().getTestUser();
 		InventoryItem item = setupItem(StorageType.BULK, entity);
-		ObjectId blockId = item.getStorageBlocks().getFirst();
-		
+		ObjectId blockId = item.getStorageBlocks().getFirst().getStorageBlock();
+
 		AmountStored initialStored = AmountStored.builder()
 										 .item(item.getId())
 										 .state(StoredInBlock.builder().storageBlock(blockId).build())
 										 .amount(Quantities.getQuantity(5, item.getUnit()))
 										 .build();
 		this.storedService.add(DEFAULT_TEST_DB_NAME, initialStored, entity);
-		
+
 		ObjectId checkoutTransactionId = this.appliedTransactionService.apply(
 			DEFAULT_TEST_DB_NAME, null, item,
 			CheckoutWholeTransaction.builder()
@@ -75,7 +75,7 @@ public class CheckinWholeAppliedTransactionTest extends AppliedTransactionServic
 			checkoutId =
 			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId)).getResults().getFirst().getId();
 		//		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
-		
+
 		ReturnFullCheckinDetails
 			details =
 			ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).checkedInBy(CheckedInByOqmEntity.builder().entity(entity.getId()).build()).build();
@@ -84,57 +84,57 @@ public class CheckinWholeAppliedTransactionTest extends AppliedTransactionServic
 														.toBlock(blockId)
 														.details(details)
 														.build();
-		
+
 		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		
+
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
 		assertEquals(1, appliedTransaction.getAffectedStored().size());
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
-		
+
 		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
-		
-		
+
+
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
-		
+
 		AmountStored stored = (AmountStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().stream().findFirst().get());
 		assertEquals(storedFromSearch, stored);
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), stored.getAmount());
-		
+
 		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(stored.getId()));
 		assertFalse(storedHistory.isEmpty());
 		ReCreateEvent event = (ReCreateEvent) storedHistory.getResults().getFirst();
 		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
 		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
-		
-		
+
+
 		SearchResult<ItemCheckout>
 			checkoutSearch =
 			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
-		
+
 		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckInTransaction());
 		assertEquals(details, resultingCheckout.getCheckInDetails());
 	}
-	
+
 	@Test
 	public void applyCheckinFullWholeSuccessUniqueMulti() throws Exception {
 		InteractingEntity entity = this.getTestUserService().getTestUser();
 		InventoryItem item = setupItem(StorageType.UNIQUE_MULTI, entity);
-		ObjectId blockId = item.getStorageBlocks().getFirst();
-		
+		ObjectId blockId = item.getStorageBlocks().getFirst().getStorageBlock();
+
 		UniqueStored initialStored = UniqueStored.builder()
 										 .item(item.getId())
 										 .state(StoredInBlock.builder().storageBlock(blockId).build())
 										 .build();
 		this.storedService.add(DEFAULT_TEST_DB_NAME, initialStored, entity);
-		
+
 		ObjectId checkoutTransactionId = this.appliedTransactionService.apply(
 			DEFAULT_TEST_DB_NAME, null, item,
 			CheckoutWholeTransaction.builder()
@@ -147,7 +147,7 @@ public class CheckinWholeAppliedTransactionTest extends AppliedTransactionServic
 			checkoutId =
 			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId)).getResults().getFirst().getId();
 		//		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
-		
+
 		ReturnFullCheckinDetails
 			details =
 			ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).checkedInBy(CheckedInByOqmEntity.builder().entity(entity.getId()).build()).build();
@@ -156,56 +156,56 @@ public class CheckinWholeAppliedTransactionTest extends AppliedTransactionServic
 														.toBlock(blockId)
 														.details(details)
 														.build();
-		
+
 		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		
+
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
 		assertEquals(1, appliedTransaction.getAffectedStored().size());
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
-		
+
 		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
 		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
-		
-		
+
+
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		UniqueStored storedFromSearch = (UniqueStored) storedSearchResult.getResults().getFirst();
-		
+
 		UniqueStored stored = (UniqueStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().stream().findFirst().get());
 		assertEquals(storedFromSearch, stored);
-		
+
 		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(stored.getId()));
 		assertFalse(storedHistory.isEmpty());
 		ReCreateEvent event = (ReCreateEvent) storedHistory.getResults().getFirst();
 		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
 		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
-		
-		
+
+
 		SearchResult<ItemCheckout>
 			checkoutSearch =
 			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
-		
+
 		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckInTransaction());
 		assertEquals(details, resultingCheckout.getCheckInDetails());
 	}
-	
+
 	@Test
 	public void applyCheckinFullWholeSuccessUniqueSingle() throws Exception {
 		InteractingEntity entity = this.getTestUserService().getTestUser();
 		InventoryItem item = setupItem(StorageType.UNIQUE_SINGLE, entity);
-		ObjectId blockId = item.getStorageBlocks().getFirst();
-		
+		ObjectId blockId = item.getStorageBlocks().getFirst().getStorageBlock();
+
 		UniqueStored initialStored = UniqueStored.builder()
 										 .item(item.getId())
 										 .state(StoredInBlock.builder().storageBlock(blockId).build())
 										 .build();
 		this.storedService.add(DEFAULT_TEST_DB_NAME, initialStored, entity);
-		
+
 		ObjectId checkoutTransactionId = this.appliedTransactionService.apply(
 			DEFAULT_TEST_DB_NAME, null, item,
 			CheckoutWholeTransaction.builder()
@@ -218,7 +218,7 @@ public class CheckinWholeAppliedTransactionTest extends AppliedTransactionServic
 			checkoutId =
 			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setCheckOutTransaction(checkoutTransactionId)).getResults().getFirst().getId();
 		//		AppliedTransaction checkoutTransactionId = this.appliedTransactionService.get(DEFAULT_TEST_DB_NAME, appliedTransactionId);
-		
+
 		ReturnFullCheckinDetails
 			details =
 			ReturnFullCheckinDetails.builder().notes(FAKER.lorem().paragraph()).checkedInBy(CheckedInByOqmEntity.builder().entity(entity.getId()).build()).build();
@@ -227,45 +227,45 @@ public class CheckinWholeAppliedTransactionTest extends AppliedTransactionServic
 														.toBlock(blockId)
 														.details(details)
 														.build();
-		
+
 		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
-		
+
 		assertEquals(entity.getId(), appliedTransaction.getEntity());
 		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
 		assertEquals(1, appliedTransaction.getAffectedStored().size());
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
-		
+
 		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
 		assertEquals(Quantities.getQuantity(1, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 		//TODO:: storage block stats
-		
-		
+
+
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
 		assertEquals(storedSearchResult.getNumResults(), 1);
 		UniqueStored storedFromSearch = (UniqueStored) storedSearchResult.getResults().getFirst();
-		
+
 		UniqueStored stored = (UniqueStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().stream().findFirst().get());
 		assertEquals(storedFromSearch, stored);
-		
+
 		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(stored.getId()));
 		assertFalse(storedHistory.isEmpty());
 		ReCreateEvent event = (ReCreateEvent) storedHistory.getResults().getFirst();
 		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
 		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
-		
-		
+
+
 		SearchResult<ItemCheckout>
 			checkoutSearch =
 			this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setStillCheckedOut(false).setItemCheckedOut(item.getId()));
 		assertEquals(checkoutSearch.getNumResults(), 1);
 		ItemWholeCheckout resultingCheckout = (ItemWholeCheckout) checkoutSearch.getResults().getFirst();
-		
+
 		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckInTransaction());
 		assertEquals(details, resultingCheckout.getCheckInDetails());
 	}
-	
-	
+
+
 	//TODO:: fail - amount list - amount - to stored (not existing)
 	//TODO:: Fail - amount - No 'to' given
 	//TODO:: Fail - amount - 'to block' given for list

@@ -3,7 +3,7 @@ package tech.ebp.oqm.core.api.model.validation.annotations;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 import tech.ebp.oqm.core.api.model.validation.validators.UniqueLabeledCollectionValidator;
-import tech.ebp.oqm.core.api.model.validation.validators.UnitValidator;
+import tech.ebp.oqm.core.api.model.validation.validators.UniqueStorageBlockSettingsCollectionValidator;
 
 import java.lang.annotation.Documented;
 import java.lang.annotation.Retention;
@@ -15,17 +15,15 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Custom annotation to check the validity of units.
- * <p>
- * https://docs.jboss.org/hibernate/validator/5.0/reference/en-US/html/validator-customconstraints.html#validator-customconstraints-validator
+ * Custom annotation to check that storage block settings are unique to what storage blocks they associate.
  */
 @Target({FIELD, METHOD, PARAMETER})
 @Retention(RUNTIME)
-@Constraint(validatedBy = UniqueLabeledCollectionValidator.class)
+@Constraint(validatedBy = UniqueStorageBlockSettingsCollectionValidator.class)
 @Documented
-public @interface UniqueLabeledCollection {
+public @interface UniqueStorageBlockSettingsCollection {
 
-	String message() default "Multiple labeled items were found with the same label.";
+	String message() default "Duplicative storage block settings were found.";
 
 	Class<?>[] groups() default {};
 

@@ -2,7 +2,7 @@
     {#titleIcon}{#icons/item /}{/titleIcon}
     {#footerButtons}
     	<span id="itemViewTransactButtonContainer"></span>
-    	
+
     	<button type="button" class="btn btn-warning" id="itemViewEditButton" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal">
 			{#icons/edit /} Edit Item
 		</button>
@@ -50,13 +50,10 @@
                     <h5 class="card-title d-inline">Total Held:</h5>
                     <p id="itemViewTotal" class="d-inline">
                     </p>
-                </div>
-            </div>
-            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewTotalLowStockThresholdContainer">
-                <div class="card-body">
-                    <h5 class="card-title d-inline">Total Low Stock Threshold:</h5>
-                    <p id="itemViewTotalLowStockThreshold" class="d-inline">
-                    </p>
+                    <div id="itemViewTotalLowStockThresholdContainer" class="text-muted">
+						<p class="d-inline">Low Stock Threshold:</p>
+						<p id="itemViewTotalLowStockThreshold" class="d-inline"></p>
+					</div>
                 </div>
             </div>
             <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewExpiryWarnThresholdContainer">
@@ -296,7 +293,7 @@
                     </div>
                 </div>
             </div>
-            
+
             {!<h4></h4><!-- TODO:: search form, set to this specific item. -->!}
             {!<table class="table table-sm table-bordered table-hover" id="itemViewCheckedOutResultsContainer">!}
             {!</table>!}
