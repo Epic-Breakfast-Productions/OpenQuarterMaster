@@ -2,7 +2,6 @@ package tech.ebp.oqm.core.api.service.schemaVersioning;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mongodb.TransactionOptions;
 import com.mongodb.client.ClientSession;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
@@ -21,6 +20,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.exception.ClassUpgraderNotFoundException;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
+import tech.ebp.oqm.core.api.health.StatusProviderService;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.Versionable;
 import tech.ebp.oqm.core.api.model.object.history.details.FromSchemaUpgradeDetail;
@@ -33,7 +33,15 @@ import tech.ebp.oqm.core.api.model.object.upgrade.OqmDbUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeCreatedObjectsResults;
 import tech.ebp.oqm.core.api.model.object.upgrade.UpgradeOverallCreatedObjectsResults;
-import tech.ebp.oqm.core.api.service.mongo.*;
+import tech.ebp.oqm.core.api.service.mongo.InteractingEntityService;
+import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
+import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
+import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
+import tech.ebp.oqm.core.api.service.mongo.MongoHistoriedObjectService;
+import tech.ebp.oqm.core.api.service.mongo.MongoHistoryService;
+import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
+import tech.ebp.oqm.core.api.service.mongo.StoredService;
+import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
 import tech.ebp.oqm.core.api.service.mongo.transactions.AppliedTransactionService;
 import tech.ebp.oqm.core.api.service.mongo.utils.MongoSessionWrapper;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectSchemaUpgrader;
@@ -49,7 +57,13 @@ import tech.ebp.oqm.core.api.service.serviceState.db.OqmMongoDatabase;
 
 import java.time.Duration;
 import java.time.temporal.ChronoUnit;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -58,12 +72,11 @@ import java.util.stream.Stream;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.lt;
-import static com.mongodb.client.model.Filters.type;
 
 @ApplicationScoped
 @Slf4j
-public class ObjectSchemaUpgradeService {
-	
+public class ObjectSchemaUpgradeService extends StatusProviderService {
+
 	/** Map of upgraders to provide easy access to which upgraders for which object class. */
 	private Map<Class<? extends MainObject>, ObjectSchemaUpgrader<?>> upgraderMap;
 	/** The main oqm database service. */
@@ -75,13 +88,13 @@ public class ObjectSchemaUpgradeService {
 	/** Data structure for easy grouping of services that can/ should have their schema updated at the same time, and those groups in order. */
 	private List<List<MongoDbAwareService<? extends MainObject, ?, ?>>> dbAwareUpgradeGroups;
 	private TotalUpgradeResult startupUpgradeResult = null;
-	
+
 	@Getter(AccessLevel.PRIVATE)
 	CoreApiInteractingEntity coreApiInteractingEntity;
-	
+
 	@ConfigProperty(name = "quarkus.uuid")
 	String instanceUuid;
-	
+
 	@Inject
 	public ObjectSchemaUpgradeService(
 		CoreApiInteractingEntity coreApiInteractingEntity,
@@ -95,17 +108,19 @@ public class ObjectSchemaUpgradeService {
 		ItemCheckoutService itemCheckoutService,
 		AppliedTransactionService appliedTransactionService
 	) {
+        super("Object Schema Upgrade Service");
+        this.statusMessage = "Object Schema Upgrade Service not started";
 		this.coreApiInteractingEntity = coreApiInteractingEntity;
 		this.instanceUuid = instanceUuid;
 		this.oqmDatabaseService = oqmDatabaseService;
-		
+
 		this.topLevelServices = new LinkedHashMap<>();
 		Stream.of(
 			interactingEntityService
 		).forEachOrdered((service)->{
 			this.topLevelServices.put(service.getClazz(), service);
 		});
-		
+
 		//This insertion order here is the order of which these are each processed.
 		this.dbAwareUpgradeGroups = List.of(
 			List.of(
@@ -134,7 +149,7 @@ public class ObjectSchemaUpgradeService {
 										 return map1;
 									 }
 								 );
-		
+
 		this.upgraderMap = Stream.of(
 			new HistoryEventSchemaUpgrader(),
 			new InteractingEntitySchemaUpgrader(),
@@ -155,27 +170,27 @@ public class ObjectSchemaUpgradeService {
 			}
 		);
 	}
-	
+
 	public Optional<TotalUpgradeResult> getStartupUpgradeResult() {
 		return Optional.ofNullable(this.startupUpgradeResult);
 	}
-	
+
 	public boolean upgradeRan() {
 		return this.startupUpgradeResult != null;
 	}
-	
-	
+
+
 	public <C extends Versionable> ObjectSchemaUpgrader<C> getUpgrader(@NonNull Class<C> clazz) throws ClassUpgraderNotFoundException {
 		if (!this.upgraderMap.containsKey(clazz)) {
 			throw new ClassUpgraderNotFoundException(clazz);
 		}
 		return (ObjectSchemaUpgrader<C>) this.upgraderMap.get(clazz);
 	}
-	
+
 	private void clearUpgraderMap() {
 		this.upgraderMap = null;
 	}
-	
+
 	private <T extends MainObject> void processCreatedObjects(
 		ClientSession cs,
 		String oqmDbId,
@@ -185,25 +200,25 @@ public class ObjectSchemaUpgradeService {
 	) {
 		MongoDbAwareService<T, ?, ?> service = (MongoDbAwareService<T, ?, ?>) this.oqmDbServices.get(newObjClass);
 		ObjectSchemaUpgrader<T> upgrader = (ObjectSchemaUpgrader<T>) this.upgraderMap.get(newObjClass);
-		
+
 		if (service == null) {
 			throw new IllegalStateException("Service for class not found: " + newObjClass.getName());
 		}
 		if (upgrader == null) {
 			throw new IllegalStateException("Upgrader for class not found: " + newObjClass.getName());
 		}
-		
+
 		List<T> createdObjs = newObjects.stream()
 								  .map((no)->upgrader.upgrade(no).getUpgradedObject())
 								  .filter(Optional::isPresent)
 								  .map(Optional::get)
 								  .toList();
-		
+
 		createdObjs.stream()
 			.forEach((curCreated)->{
 					ObjectId newId = service.getTypedCollection(oqmDbId)
 										 .insertOne(cs, curCreated).getInsertedId().asObjectId().getValue();
-					
+
 					if (service instanceof MongoHistoriedObjectService) {
 						((MongoHistoriedObjectService<T, ?, ?>) service).getHistoryService()
 							.addHistoryFor(
@@ -220,7 +235,7 @@ public class ObjectSchemaUpgradeService {
 				}
 			);
 	}
-	
+
 	private void processCreatedObjects(
 		String upgradeId,
 		ClientSession cs,
@@ -247,7 +262,7 @@ public class ObjectSchemaUpgradeService {
 				);
 			});
 	}
-	
+
 	/**
 	 * Handles the actual upgrading of schema data in a collection. Iterates over all elements in collection, upgrading each (if necessary).
 	 *
@@ -273,15 +288,15 @@ public class ObjectSchemaUpgradeService {
 		ObjectSchemaUpgrader<T> objectVersionBumper = this.getUpgrader(objectClass);
 		outputBuilder.collectionClass(objectClass);
 		outputBuilder.collectionName(documentCollection.getNamespace().getCollectionName());
-		
+
 		UpgradeOverallCreatedObjectsResults createdObjectResults = new UpgradeOverallCreatedObjectsResults();
 		outputBuilder.createdObjects(createdObjectResults);
-		
+
 		StopWatch sw = StopWatch.createStarted();
 		long numUpdated = 0;
 		long numNotUpgraded = 0;
 		long numDeleted = 0;
-		
+
 		if (objectVersionBumper.upgradesAvailable()) {
 			try (
 				MongoCursor<Document> it = documentCollection
@@ -301,7 +316,7 @@ public class ObjectSchemaUpgradeService {
 																	upgradedObject.map(Versionable::getSchemaVersion).orElse(-1)
 																)
 																.build();
-					
+
 					if (result.isDelObj()) {
 						log.info("Deleting object with id {} in collection {}", doc.getObjectId("_id"), documentCollection.getNamespace().getCollectionName());
 						typedCollection.deleteOne(cs, eq("_id", result.getObjectId()));
@@ -310,8 +325,8 @@ public class ObjectSchemaUpgradeService {
 						numNotUpgraded++;
 					} else {
 						numUpdated++;
-						
-						
+
+
 						log.info("Updating object db entry with id {} in collection {}", doc.getObjectId("_id"), documentCollection.getNamespace().getCollectionName());
 						T previous = typedCollection.findOneAndReplace(
 							cs,
@@ -324,7 +339,7 @@ public class ObjectSchemaUpgradeService {
 						if (previous == null) {
 							throw new RuntimeException("Previous object was not upgraded...");
 						}
-						
+
 						//TODO:: support top level collections to do these things
 						if (oqmDbId != null) {
 							//add upgrade event, if applicable
@@ -341,7 +356,7 @@ public class ObjectSchemaUpgradeService {
 							}
 						}
 					}
-					
+
 					//TODO:: support top level collections to do these things
 					if (oqmDbId != null) {
 						if (result.hasUpgradedCreatedObjects()) {
@@ -362,16 +377,16 @@ public class ObjectSchemaUpgradeService {
 				throw new RuntimeException(e);
 			}
 		}
-		
+
 		sw.stop();
 		outputBuilder.timeTaken(Duration.of(sw.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS))
 			.numObjectsUpgraded(numUpdated)
 			.numObjectsNotUpgraded(numNotUpgraded)
 			.numObjectsDeleted(numDeleted);
-		
+
 		return outputBuilder.build();
 	}
-	
+
 	/**
 	 * Handles upgrading a particular collection. Wrapper for the other method, getting specific details from the mongo service.
 	 *
@@ -402,7 +417,7 @@ public class ObjectSchemaUpgradeService {
 				outputBuilder
 			);
 		});
-		
+
 		Optional<CompletableFuture<CollectionUpgradeResult>> histCollOp = Optional.empty();
 		if (historiedService) {
 			log.info("Service is historied, processing history events.");
@@ -422,20 +437,20 @@ public class ObjectSchemaUpgradeService {
 				})
 			);
 		}
-		
+
 		collectionFuture.get();
-		
+
 		if (histCollOp.isPresent()) {
 			((HistoriedCollectionUpgradeResult.HistoriedCollectionUpgradeResultBuilder<?, ?>) outputBuilder).historyCollectionUpgradeResult(histCollOp.get().get());
 		}
-		
+
 		log.info("DONE Updating schema of oqm database service {} in ", service.getClass());
 		return outputBuilder.build();
 	}
-	
+
 	private <T extends MainObject> CollectionUpgradeResult upgradeOqmCollection(String upgradeId, ClientSession dbCs, TopLevelMongoService<T, ?, ?> service) {
 		log.info("Updating schema of top level oqm database service {}", service.getClass());
-		
+
 		CollectionUpgradeResult result = this.upgradeOqmCollection(
 			upgradeId,
 			dbCs,
@@ -446,11 +461,11 @@ public class ObjectSchemaUpgradeService {
 			service.getClazz(),
 			CollectionUpgradeResult.builder()
 		);
-		
+
 		log.info("DONE Updating schema of oqm database service {} in ", service.getClass());
 		return result;
 	}
-	
+
 	/**
 	 * This method upgrades a particular oqm db to the latest schema.
 	 * <p>
@@ -466,7 +481,7 @@ public class ObjectSchemaUpgradeService {
 													   .dbName(oqmDb.getName());
 		List<CollectionUpgradeResult> upgradeResults = new ArrayList<>();
 		outputBuilder.collectionUpgradeResults(upgradeResults);
-		
+
 		StopWatch dbUpgradeTime = StopWatch.createStarted();
 		ClientSession cs = null;
 		try {
@@ -499,15 +514,15 @@ public class ObjectSchemaUpgradeService {
 				cs.close();
 			}
 		}
-		
+
 		dbUpgradeTime.stop();
 		outputBuilder.timeTaken(Duration.of(dbUpgradeTime.getTime(TimeUnit.MILLISECONDS), ChronoUnit.MILLIS));
-		
+
 		log.info("Done updating oqm database: {}", oqmDb);
-		
+
 		return outputBuilder.build();
 	}
-	
+
 	/**
 	 * This method is responsible for upgrading all the collections/ databases handled by the core api.
 	 * <p>
@@ -524,8 +539,8 @@ public class ObjectSchemaUpgradeService {
 		}
 		final String upgradeId = UUID.randomUUID().toString();
 		log.info("Upgrading the schema held in the Database. Id: {}", upgradeId);
-		
-		
+
+
 		AtomicReference<TotalUpgradeResult> result = new AtomicReference<>();
 		try (MongoSessionWrapper csw = new MongoSessionWrapper(this.oqmDatabaseService)) {
 			csw.runTransaction(true, (ClientSession cs)->{
@@ -536,17 +551,17 @@ public class ObjectSchemaUpgradeService {
 				{//top level migration
 					log.info("Upgrading top level collections.");
 					List<CollectionUpgradeResult> topLevelResults = new ArrayList<>();
-					
+
 					//TODO:: session wrapper for all things not just one then the other
 					for (TopLevelMongoService<?, ?, ?> curTopLevelService : this.topLevelServices.values()) {
 						topLevelResults.add(this.upgradeOqmCollection(upgradeId, cs, curTopLevelService));
 					}
-					
-					
+
+
 					totalResultBuilder.topLevelUpgradeResults(topLevelResults);
 					log.info("DONE upgrading top level results.");
 				}
-				
+
 				List<CompletableFuture<OqmDbUpgradeResult>> resultMap = new ArrayList<>();
 				for (OqmMongoDatabase curDb : this.oqmDatabaseService.listIterator()) {
 					resultMap.add(CompletableFuture.supplyAsync(()->{
@@ -563,18 +578,18 @@ public class ObjectSchemaUpgradeService {
 							}
 						})
 						.toList());
-				
+
 				cs.commitTransaction();
-				
+
 				totalTime.stop();
 				totalResultBuilder.timeTaken(totalTime.getDuration());
 				result.set(totalResultBuilder.build());
-				
+
 				log.info("DONE upgrading the schema held in the Database.");
 				log.info("Running post upgrade tasks.");
-				
+
 				cs.startTransaction();
-				
+
 				TotalUpgradeResult innerResult = result.get();
 				if (innerResult.wasUpgraded()) {
 					innerResult.getTopLevelUpgradeResults().stream()
@@ -593,27 +608,27 @@ public class ObjectSchemaUpgradeService {
 									log.info("Running post upgrade tasks for collection: {} / {}", curResult.getCollectionName(), curResult.getCollectionClass());
 									MongoDbAwareService<?, ?, ?> service = this.oqmDbServices.get(curResult.getCollectionClass());
 									service.runPostUpgrade(curDbResult.getDbName(), cs, curResult);
-									
+
 									if (service instanceof MongoHistoriedObjectService) {
 										((MongoHistoriedObjectService) service).getHistoryService().runPostUpgrade(curDbResult.getDbName(), cs, curResult);
 									}
 								});
 						});
-					
+
 				} else {
 					log.info("No object upgraded, no reason to run post upgrade tasks.");
 				}
-				
+
 				log.info("DONE running post-upgrade tasks.");
 			});
 		}
-		
+
 		this.startupUpgradeResult = result.get();
-		
+
 		log.info("DONE running post-upgrade tasks.");
 		return this.getStartupUpgradeResult();
 	}
-	
+
 	public Optional<TotalUpgradeResult> updateSchema() {
 		return this.updateSchema(false);
 	}

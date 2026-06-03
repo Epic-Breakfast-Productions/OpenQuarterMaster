@@ -131,9 +131,23 @@ API Version: {}
 	) {
 		this.startLogAnnounce();
 		//ensures the db service bean is initialized, and the extension has had time to init
-		this.dbService.collectionStats();
+		this.dbService.markStarted("Initializing database service");
+		try {
+			this.dbService.collectionStats();
+			this.dbService.markCompleted("Database service initialized");
+		} catch (RuntimeException e) {
+			this.dbService.markFailed("Database service init failed: " + e.getMessage());
+			throw e;
+		}
 		//ensures the unit service bean is initialized, and the extension had existing custom units read in
-		this.customUnitService.collectionStats();
+		this.customUnitService.markStarted("Initializing custom unit service");
+		try {
+			this.customUnitService.collectionStats();
+			this.customUnitService.markCompleted("Custom unit service initialized");
+		} catch (RuntimeException e) {
+			this.customUnitService.markFailed("Custom unit service init failed: " + e.getMessage());
+			throw e;
+		}
 		//ensures we can write to temp dir
 		this.tempFileService.getTempDir("test", "dir");
 		// Upgrade the db schema

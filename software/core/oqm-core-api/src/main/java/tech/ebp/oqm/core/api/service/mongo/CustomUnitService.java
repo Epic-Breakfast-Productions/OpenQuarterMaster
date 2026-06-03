@@ -21,13 +21,16 @@ import javax.measure.Unit;
 import java.util.ArrayList;
 import java.util.List;
 
+import tech.ebp.oqm.core.api.health.StatusProvider;
+import tech.ebp.oqm.core.api.health.StatusProviderService;
+
 /**
  * Service to handle custom units, available to all OQM databases.
  */
 @Slf4j
 @ApplicationScoped
-public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, CustomUnitSearch, CollectionStats> {
-	
+public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, CustomUnitSearch, CollectionStats> implements StatusProvider {
+
 	CustomUnitService() {
 		super(CustomUnitEntry.class);
 	}
@@ -115,5 +118,37 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
 	@Override
 	public int getCurrentSchemaVersion() {
 		return CustomUnitEntry.CUR_SCHEMA_VERSION;
+	}
+
+	private final StatusProviderService statusProvider = new StatusProviderService("Custom Unit Service") {};
+
+	@Override
+	public String getName() {
+		return this.statusProvider.getName();
+	}
+
+	@Override
+	public boolean isReady() {
+		return this.statusProvider.isReady();
+	}
+
+	@Override
+	public String getStatusMessage() {
+		return this.statusProvider.getStatusMessage();
+	}
+
+	@Override
+	public void markStarted(String message) {
+		this.statusProvider.markStarted(message);
+	}
+
+	@Override
+	public void markCompleted(String message) {
+		this.statusProvider.markCompleted(message);
+	}
+
+	@Override
+	public void markFailed(String message) {
+		this.statusProvider.markFailed(message);
 	}
 }

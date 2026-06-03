@@ -19,6 +19,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.rest.search.OqmMongoDbSearch;
 import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
+import tech.ebp.oqm.core.api.health.StatusProvider;
+import tech.ebp.oqm.core.api.health.StatusProviderService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +35,7 @@ import java.util.Optional;
  */
 @Slf4j
 @ApplicationScoped
-public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, OqmMongoDbSearch, CollectionStats> {
+public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, OqmMongoDbSearch, CollectionStats> implements StatusProvider {
 
 	@Getter
 	@Setter(AccessLevel.PRIVATE)
@@ -187,6 +189,38 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 	@Override
 	public int getCurrentSchemaVersion() {
 		return OqmMongoDatabase.CUR_SCHEMA_VERSION;
+	}
+
+	private final StatusProviderService statusProvider = new StatusProviderService("Database Service") {};
+
+	@Override
+	public String getName() {
+		return this.statusProvider.getName();
+	}
+
+	@Override
+	public boolean isReady() {
+		return this.statusProvider.isReady();
+	}
+
+	@Override
+	public String getStatusMessage() {
+		return this.statusProvider.getStatusMessage();
+	}
+
+	@Override
+	public void markStarted(String message) {
+		this.statusProvider.markStarted(message);
+	}
+
+	@Override
+	public void markCompleted(String message) {
+		this.statusProvider.markCompleted(message);
+	}
+
+	@Override
+	public void markFailed(String message) {
+		this.statusProvider.markFailed(message);
 	}
 
 	@Override
