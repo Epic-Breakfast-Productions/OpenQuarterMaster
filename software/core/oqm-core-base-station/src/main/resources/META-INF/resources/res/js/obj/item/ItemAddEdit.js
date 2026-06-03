@@ -321,6 +321,9 @@ export class ItemAddEdit extends PageUtility {
 			UnitUtils.getCompatibleUnitOptions(ItemAddEdit.getUnit())
 				.then(function (options) {
 					ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(newBlock).html(options);
+					if(settings.lowStockThreshold){
+						ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(newBlock).val(settings.lowStockThreshold.unit.string)
+					}
 				});
 
 			newBlock.attr("data-block-id", blockId);
@@ -338,7 +341,6 @@ export class ItemAddEdit extends PageUtility {
 				}
 				if(settings.lowStockThreshold){
 					ItemAddEdit.storageInput.Getters.lowStockSettingValueInput(newBlock).val(settings.lowStockThreshold.value)
-					ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(newBlock).val(settings.lowStockThreshold.unit.string)
 				}
 			}
 
