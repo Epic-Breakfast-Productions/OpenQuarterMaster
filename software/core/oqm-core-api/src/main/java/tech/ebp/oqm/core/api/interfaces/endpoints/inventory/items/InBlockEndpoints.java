@@ -77,7 +77,7 @@ public class InBlockEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 		if (this.inventoryItem == null) {
 			this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
 
-			if(!this.inventoryItem.getStorageBlockIds().toList().contains(this.getStorageBlock().getId())){
+			if(!this.inventoryItem.usesStorageBlock(this.getStorageBlock().getId())){
 				throw new NotFoundException("Storage block given not found in the given item");
 			}
 		}

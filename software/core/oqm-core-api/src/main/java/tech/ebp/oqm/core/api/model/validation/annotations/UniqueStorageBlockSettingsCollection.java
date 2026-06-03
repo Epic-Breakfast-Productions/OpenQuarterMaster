@@ -15,9 +15,7 @@ import static java.lang.annotation.ElementType.PARAMETER;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Custom annotation to check the validity of units.
- * <p>
- * https://docs.jboss.org/hibernate/validator/5.0/reference/en-US/html/validator-customconstraints.html#validator-customconstraints-validator
+ * Custom annotation to check that storage block settings are unique to what storage blocks they associate.
  */
 @Target({FIELD, METHOD, PARAMETER})
 @Retention(RUNTIME)
