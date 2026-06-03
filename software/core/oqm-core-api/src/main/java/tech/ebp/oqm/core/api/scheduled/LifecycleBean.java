@@ -12,7 +12,6 @@ import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
 import tech.ebp.oqm.core.api.service.schemaVersioning.ObjectSchemaUpgradeService;
-import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.nio.file.Paths;
 import java.time.Duration;
@@ -24,62 +23,59 @@ import java.util.TreeMap;
 @Singleton
 @Slf4j
 public class LifecycleBean {
-	
-	@ConfigProperty(name="service.version")
-	String serviceVersion;
-	
-	@ConfigProperty(name="service.apiVersion")
-	String apiVersion;
-	
-	@Inject
-	CustomUnitService customUnitService;
-	
-	@Inject
-	TempFileService tempFileService;
-	
-	@Inject
-	OqmDatabaseService dbService;
 
-	@Inject
-	ObjectSchemaUpgradeService objectSchemaUpgradeService;
+    @ConfigProperty(name="service.version")
+    String serviceVersion;
 
-	private ZonedDateTime startDateTime;
-	
-	public static void logConfig(){
-		if (log.isDebugEnabled()) {
-			TreeMap<String, String> configMap = new TreeMap<>();
-			
-			for(String curProp : ConfigProvider.getConfig().getPropertyNames()){
-				String value;
-				try {
-					value = ConfigProvider.getConfig().getValue(curProp, String.class);
-				} catch(NoSuchElementException e) {
-					value = "";
-				}
-				configMap.put(curProp, value);
-			}
-			
-			StringBuilder sb = new StringBuilder();
-			for (String curProp : configMap.keySet()) {
-				
-				sb.append('\t');
-				sb.append(curProp);
-				sb.append('=');
-				sb.append(configMap.get(curProp));
-				sb.append(System.lineSeparator());
-			}
-			log.debug("Configuration: \n{}", sb);
-		}
-	}
-	
-	private void startLogAnnounce(){
-		this.startDateTime = ZonedDateTime.now();
-		log.info("Open QuarterMaster Core API Server starting.");
-		
-		if(log.isInfoEnabled()) {
-			// Image: https://www.text-image.com/convert/ascii.html
-			// Text: https://manytools.org/hacker-tools/ascii-banner/ (Colossal font)
-			log.info("""
+    @ConfigProperty(name="service.apiVersion")
+    String apiVersion;
+
+    @Inject
+    CustomUnitService customUnitService;
+
+    @Inject
+    TempFileService tempFileService;
+
+    @Inject
+    ObjectSchemaUpgradeService objectSchemaUpgradeService;
+
+    private ZonedDateTime startDateTime;
+
+    public static void logConfig(){
+        if (log.isDebugEnabled()) {
+            TreeMap<String, String> configMap = new TreeMap<>();
+
+            for(String curProp : ConfigProvider.getConfig().getPropertyNames()){
+                String value;
+                try {
+                    value = ConfigProvider.getConfig().getValue(curProp, String.class);
+                } catch(NoSuchElementException e) {
+                    value = "";
+                }
+                configMap.put(curProp, value);
+            }
+
+            StringBuilder sb = new StringBuilder();
+            for (String curProp : configMap.keySet()) {
+
+                sb.append('\t');
+                sb.append(curProp);
+                sb.append('=');
+                sb.append(configMap.get(curProp));
+                sb.append(System.lineSeparator());
+            }
+            log.debug("Configuration: \n{}", sb);
+        }
+    }
+
+    private void startLogAnnounce(){
+        this.startDateTime = ZonedDateTime.now();
+        log.info("Open QuarterMaster Core API Server starting.");
+
+        if(log.isInfoEnabled()) {
+            // Image: https://www.text-image.com/convert/ascii.html
+            // Text: https://manytools.org/hacker-tools/ascii-banner/ (Colossal font)
+            log.info("""
 
 
             &&&&
@@ -115,59 +111,50 @@ Version:     {}
 API Version: {}
 
 """,
-				this.serviceVersion,
-				this.apiVersion
-			);
-		}
-		
-		logConfig();
+                this.serviceVersion,
+                this.apiVersion
+            );
+        }
 
-		log.info("Starting in directory: {}", Paths.get("").toAbsolutePath());
-	}
-	
-	void onStart(
-		@Observes
-		StartupEvent ev
-	) {
-		this.startLogAnnounce();
-		//ensures the db service bean is initialized, and the extension has had time to init
-		this.dbService.markStarted("Initializing database service");
-		try {
-			this.dbService.collectionStats();
-			this.dbService.markCompleted("Database service initialized");
-		} catch (RuntimeException e) {
-			this.dbService.markFailed("Database service init failed: " + e.getMessage());
-			throw e;
-		}
-		//ensures the unit service bean is initialized, and the extension had existing custom units read in
-		this.customUnitService.markStarted("Initializing custom unit service");
-		try {
-			this.customUnitService.collectionStats();
-			this.customUnitService.markCompleted("Custom unit service initialized");
-		} catch (RuntimeException e) {
-			this.customUnitService.markFailed("Custom unit service init failed: " + e.getMessage());
-			throw e;
-		}
-		//ensures we can write to temp dir
-		this.tempFileService.getTempDir("test", "dir");
-		// Upgrade the db schema
-		//TODO:: create flag service to check if things initted right. Setup filter to check this flag to reject requests until setup done.
-		Optional<TotalUpgradeResult> schemaUpgradeResult = this.objectSchemaUpgradeService.updateSchema();
-		if(schemaUpgradeResult.isEmpty()){
-			log.warn("Did not upgrade schema at start.");
-		} else {
-			log.info("Schema upgrade result: {}", schemaUpgradeResult.get());
-			//TODO:: rescan inv update stats
-		}
-		log.info("Done with initial startup tasks.");
-	}
-	
-	void onStop(
-		@Observes
-		ShutdownEvent ev
-	) {
-		log.info("The server is stopping.");
-		Duration runtime = Duration.between(this.startDateTime, ZonedDateTime.now());
-		log.info("Server ran for {}", runtime);
-	}
+        logConfig();
+
+        log.info("Starting in directory: {}", Paths.get("").toAbsolutePath());
+    }
+
+    void onStart(
+        @Observes
+        StartupEvent ev
+    ) {
+        this.startLogAnnounce();
+        //ensures the unit service bean is initialized, and the extension had existing custom units read in
+        this.customUnitService.getReadinessStatus().markUp("Initializing custom unit service");
+        try {
+            this.customUnitService.collectionStats();
+            this.customUnitService.getReadinessStatus().markCompleted("Custom unit service initialized");
+        } catch (RuntimeException e) {
+            this.customUnitService.getReadinessStatus().markDown("Custom unit service init failed: " + e.getMessage());
+            throw e;
+        }
+        //ensures we can write to temp dir
+        this.tempFileService.getTempDir("test", "dir");
+        // Upgrade the db schema
+        //TODO:: create flag service to check if things initted right. Setup filter to check this flag to reject requests until setup done.
+        Optional<TotalUpgradeResult> schemaUpgradeResult = this.objectSchemaUpgradeService.updateSchema();
+        if(schemaUpgradeResult.isEmpty()){
+            log.warn("Did not upgrade schema at start.");
+        } else {
+            log.info("Schema upgrade result: {}", schemaUpgradeResult.get());
+            //TODO:: rescan inv update stats
+        }
+        log.info("Done with initial startup tasks.");
+    }
+
+    void onStop(
+        @Observes
+        ShutdownEvent ev
+    ) {
+        log.info("The server is stopping.");
+        Duration runtime = Duration.between(this.startDateTime, ZonedDateTime.now());
+        log.info("Server ran for {}", runtime);
+    }
 }

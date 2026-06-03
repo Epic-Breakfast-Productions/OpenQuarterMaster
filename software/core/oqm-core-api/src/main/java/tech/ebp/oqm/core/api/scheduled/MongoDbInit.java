@@ -8,7 +8,6 @@ import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
-import tech.ebp.oqm.core.api.service.mongo.MongoDbAwareService;
 import tech.ebp.oqm.core.api.service.mongo.MongoService;
 import tech.ebp.oqm.core.api.service.serviceState.InstanceMutexService;
 import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
@@ -44,9 +43,7 @@ public class MongoDbInit {
         for (DbCacheEntry curDb : this.oqmDatabaseService.getDatabases()) {
             log.info("Ensuring inventory item mutexes exist for database: {}", curDb.getDbName());
             this.inventoryItemService.iterator(curDb.getDbId().toHexString()).forEachRemaining((item) -> {
-                this.instanceMutexService.register(
-                    this.instanceMutexService.getMutexIdFor(curDb.getDbId().toHexString(), item)
-                );
+                this.instanceMutexService.register(this.instanceMutexService.getMutexIdFor(curDb.getDbId().toHexString(), item));
             });
             log.info("DONE Ensuring inventory item mutexes exist for database: {}", curDb.getDbName());
         }
@@ -55,10 +52,16 @@ public class MongoDbInit {
     }
 
 
-    void onStart(
-        @Observes
-        StartupEvent ev
-    ) {
+    void onStart(@Observes StartupEvent ev) {
+        //ensures the db service bean is initialized, and the extension has had time to init
+        this.oqmDatabaseService.getReadinessStatus().markUp("Initializing database service");
+        try {
+            this.oqmDatabaseService.collectionStats();
+            this.oqmDatabaseService.getReadinessStatus().markCompleted("Database service initialized");
+        } catch (RuntimeException e) {
+            this.oqmDatabaseService.getReadinessStatus().markDown("Database service init failed: " + e.getMessage());
+            throw e;
+        }
         this.initDb();
     }
 

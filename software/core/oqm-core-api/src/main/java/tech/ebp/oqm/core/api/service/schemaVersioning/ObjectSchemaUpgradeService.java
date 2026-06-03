@@ -7,6 +7,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.ReturnDocument;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
@@ -20,7 +21,8 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.exception.ClassUpgraderNotFoundException;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
-import tech.ebp.oqm.core.api.health.StatusProviderService;
+import tech.ebp.oqm.core.api.health.HasReadinessCheck;
+import tech.ebp.oqm.core.api.health.HealthStatus;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.Versionable;
 import tech.ebp.oqm.core.api.model.object.history.details.FromSchemaUpgradeDetail;
@@ -75,7 +77,7 @@ import static com.mongodb.client.model.Filters.lt;
 
 @ApplicationScoped
 @Slf4j
-public class ObjectSchemaUpgradeService extends StatusProviderService {
+public class ObjectSchemaUpgradeService implements HasReadinessCheck {
 
 	/** Map of upgraders to provide easy access to which upgraders for which object class. */
 	private Map<Class<? extends MainObject>, ObjectSchemaUpgrader<?>> upgraderMap;
@@ -95,6 +97,9 @@ public class ObjectSchemaUpgradeService extends StatusProviderService {
 	@ConfigProperty(name = "quarkus.uuid")
 	String instanceUuid;
 
+    @Getter
+    private final HealthStatus readinessStatus = new HealthStatus("Object Schema Upgrade Service");
+
 	@Inject
 	public ObjectSchemaUpgradeService(
 		CoreApiInteractingEntity coreApiInteractingEntity,
@@ -108,8 +113,6 @@ public class ObjectSchemaUpgradeService extends StatusProviderService {
 		ItemCheckoutService itemCheckoutService,
 		AppliedTransactionService appliedTransactionService
 	) {
-        super("Object Schema Upgrade Service");
-        this.statusMessage = "Object Schema Upgrade Service not started";
 		this.coreApiInteractingEntity = coreApiInteractingEntity;
 		this.instanceUuid = instanceUuid;
 		this.oqmDatabaseService = oqmDatabaseService;
@@ -539,6 +542,7 @@ public class ObjectSchemaUpgradeService extends StatusProviderService {
 		}
 		final String upgradeId = UUID.randomUUID().toString();
 		log.info("Upgrading the schema held in the Database. Id: {}", upgradeId);
+        readinessStatus.markUp("Running schema upgrade with id: " + upgradeId);
 
 
 		AtomicReference<TotalUpgradeResult> result = new AtomicReference<>();
@@ -621,9 +625,14 @@ public class ObjectSchemaUpgradeService extends StatusProviderService {
 
 				log.info("DONE running post-upgrade tasks.");
 			});
-		}
+		} catch(Exception e) {
+            readinessStatus.markDown("Schema upgrade failed with id: " + upgradeId + ". Error: " + e.getMessage());
+            log.error("Failed to upgrade schema with id: " + upgradeId, e);
+            throw new UpgradeFailedException("Failed to upgrade schema with id: " + upgradeId, e);
+        }
 
 		this.startupUpgradeResult = result.get();
+        readinessStatus.markCompleted("Schema upgrade completed with id: " + upgradeId);
 
 		log.info("DONE running post-upgrade tasks.");
 		return this.getStartupUpgradeResult();

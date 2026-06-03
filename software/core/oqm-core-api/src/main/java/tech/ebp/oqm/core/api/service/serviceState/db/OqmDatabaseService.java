@@ -13,14 +13,13 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.core.api.health.HasReadinessCheck;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.rest.search.OqmMongoDbSearch;
 import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
-import tech.ebp.oqm.core.api.health.StatusProvider;
-import tech.ebp.oqm.core.api.health.StatusProviderService;
+import tech.ebp.oqm.core.api.health.HealthStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -35,7 +34,7 @@ import java.util.Optional;
  */
 @Slf4j
 @ApplicationScoped
-public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, OqmMongoDbSearch, CollectionStats> implements StatusProvider {
+public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, OqmMongoDbSearch, CollectionStats> implements HasReadinessCheck {
 
 	@Getter
 	@Setter(AccessLevel.PRIVATE)
@@ -48,6 +47,9 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 	@ConfigProperty(name = "quarkus.mongodb.database")
 	String databasePrefix;
 
+    @Getter
+    private final HealthStatus readinessStatus = new HealthStatus("Database Service");
+
 	/**
 	 * The actual mongo collection.
 	 */
@@ -59,7 +61,7 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 
 	@PostConstruct
 	public void setup() {
-
+        readinessStatus.markUp("Setting up database service");
 		if (this.getTypedCollection().countDocuments() == 0) {
 			// create a default database in case none exist
 			log.info("At startup, no oqm databases existed.");
@@ -78,6 +80,7 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 			}
 		}
 		this.refreshCache();
+        readinessStatus.markCompleted("Databases loaded: " + getDatabases().size());
 	}
 
 	/**
@@ -189,38 +192,6 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 	@Override
 	public int getCurrentSchemaVersion() {
 		return OqmMongoDatabase.CUR_SCHEMA_VERSION;
-	}
-
-	private final StatusProviderService statusProvider = new StatusProviderService("Database Service") {};
-
-	@Override
-	public String getName() {
-		return this.statusProvider.getName();
-	}
-
-	@Override
-	public boolean isReady() {
-		return this.statusProvider.isReady();
-	}
-
-	@Override
-	public String getStatusMessage() {
-		return this.statusProvider.getStatusMessage();
-	}
-
-	@Override
-	public void markStarted(String message) {
-		this.statusProvider.markStarted(message);
-	}
-
-	@Override
-	public void markCompleted(String message) {
-		this.statusProvider.markCompleted(message);
-	}
-
-	@Override
-	public void markFailed(String message) {
-		this.statusProvider.markFailed(message);
 	}
 
 	@Override

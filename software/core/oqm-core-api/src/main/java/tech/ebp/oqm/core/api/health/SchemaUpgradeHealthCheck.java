@@ -10,7 +10,7 @@ import tech.ebp.oqm.core.api.service.schemaVersioning.ObjectSchemaUpgradeService
 public class SchemaUpgradeHealthCheck implements HealthCheck {
 
 	@Inject
-	ObjectSchemaUpgradeService objectSchemaUpgradeService;
+    ObjectSchemaUpgradeService objectSchemaUpgradeService;
 
 	@Override
 	public HealthCheckResponse call() {
