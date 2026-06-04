@@ -9,11 +9,14 @@ export class Icons extends PageUtility {
 	static itemCheckout = '';
 	static itemCheckouts = '{#icons/itemCheckouts /}';
 	static edit = '{#icons/edit /}';
+	static expiring = '{#icons/expiring /}';
+	static expired = '{#icons/expired /}';
 	static info = '{#icons/info /}';
 	static link = '{#icons/link /}';
 	static locked = '{#icons/locked /}'
 	static item = '{#icons/item /}';
 	static items = '{#icons/items /}';
+	static lowStock = '{#icons/lowStock /}';
 	static pricing = '{#icons/pricing /}';
 	static stored = '{#icons/stored /}';
 	static newTab = '{#icons/newTab /}';
@@ -38,7 +41,7 @@ export class Icons extends PageUtility {
 	static user = '{#icons/user /}';
 	static extService = '{#icons/extService /}';
 	static coreApi = '{#icons/coreApi /}';
-		
+
 	static iconWithSub(icon, subIcon){
 		return icon + '<sup>' + subIcon + '</sup>';
 	}

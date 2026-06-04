@@ -1,6 +1,6 @@
 {
 	"packageName": "oqm-core-characteristics",
-	"version": "1.1.1-SNAPSHOT",
+	"version": "1.1.1",
 	"maintainer": {
 		"name": "EBP <greg@epic-breakfast-productions.tech>"
 	},

@@ -70,7 +70,7 @@ For more information on the overall system, see the [software](software/) direct
 ## On Privacy
 
 Being an open initiative, we take great care to ensure you are in control of your own data. None of the software we include here phones home at all, with the brief exception of Station Captain, which looks to this Git repository for
-installations and updates. If you have a simple setup on your own hardware, you can expect your data to stay with you, and not transmitted anywhere by the software we include here.
+installations and updates. If you have a simple setup on your own hardware, you can expect your data to stay with you, and not transmitted anywhere by the software we include here. The sole exception is when you voluntarily and very optionally [register your instance](https://openquartermaster.com/public/instance-registration)
 
 ## Contributors ✨
 

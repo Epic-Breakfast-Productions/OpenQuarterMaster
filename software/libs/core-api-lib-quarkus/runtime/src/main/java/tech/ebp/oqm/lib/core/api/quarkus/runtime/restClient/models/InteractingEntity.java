@@ -16,9 +16,15 @@ public class InteractingEntity {
 	private String idFromAuthProvider;
 	private String authProvider;
 	private String name;
+	private String username;
 	private String email;
 	private String type;
 	private Set<String> roles;
 	private List<String> keywords;
 	private Map<String, String> attributes;
+
+	public String getInitials() {
+		String[] nameParts = this.name.split(" ", 2);
+		return "" + nameParts[0].charAt(0) + nameParts[1].charAt(0);
+	}
 }

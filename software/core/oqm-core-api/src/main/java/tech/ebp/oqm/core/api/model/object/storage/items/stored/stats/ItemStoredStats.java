@@ -29,11 +29,11 @@ import java.util.stream.Collectors;
 @ToString(callSuper = true)
 @SuperBuilder
 public class ItemStoredStats extends StatsWithTotalContaining {
-	
+
 	public ItemStoredStats(Unit<?> unit, Set<StoredPricing> defaultPrices) {
 		super(unit);
 		this.storageBlockStats = new LinkedHashMap<>();
-		
+
 		this.setPrices(
 			defaultPrices.stream().map(
 				p -> TotalPricing.builder()
@@ -46,17 +46,22 @@ public class ItemStoredStats extends StatsWithTotalContaining {
 			).collect(Collectors.toCollection(LinkedHashSet::new))
 		);
 	}
-	
+
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
 	private Map<ObjectId, StoredInBlockStats> storageBlockStats = new LinkedHashMap<>();
-	
+
 	@lombok.Builder.Default
 	private boolean lowStock = false;
-	
+
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	public boolean isHasLowStockInBlock() {
+		return this.storageBlockStats.values().stream().anyMatch(StoredInBlockStats::isLowStock);
+	}
+
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isAnyLowStock() {
-		return this.lowStock || this.getNumLowStock() != 0;
+		return this.lowStock || this.isHasLowStockStored() || this.isHasLowStockInBlock();
 	}
 }

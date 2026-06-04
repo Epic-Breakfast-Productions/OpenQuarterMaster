@@ -5,6 +5,7 @@ import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.ObjectSchemaUpgr
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.inventoryItem.bumpers.InvItemBumper2;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.inventoryItem.bumpers.InvItemBumper3;
 import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.inventoryItem.bumpers.InvItemBumper4;
+import tech.ebp.oqm.core.api.service.schemaVersioning.upgraders.inventoryItem.bumpers.InvItemBumper5;
 
 import java.util.TreeSet;
 
@@ -18,7 +19,8 @@ public class InventoryItemSchemaUpgrader extends ObjectSchemaUpgrader<InventoryI
 			InventoryItem.class,
 			new InvItemBumper2(),
 			new InvItemBumper3(),
-			new InvItemBumper4()
+			new InvItemBumper4(),
+			new InvItemBumper5()
 		);
 	}
 }
