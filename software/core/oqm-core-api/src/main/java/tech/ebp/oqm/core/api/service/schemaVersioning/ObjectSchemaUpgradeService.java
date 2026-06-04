@@ -7,7 +7,6 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoCursor;
 import com.mongodb.client.model.FindOneAndReplaceOptions;
 import com.mongodb.client.model.ReturnDocument;
-import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
@@ -21,7 +20,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.exception.ClassUpgraderNotFoundException;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
-import tech.ebp.oqm.core.api.health.HasReadinessCheck;
+import tech.ebp.oqm.core.api.health.utils.HasReadinessCheck;
 import tech.ebp.oqm.core.api.health.HealthStatus;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.Versionable;
@@ -542,7 +541,6 @@ public class ObjectSchemaUpgradeService implements HasReadinessCheck {
 		}
 		final String upgradeId = UUID.randomUUID().toString();
 		log.info("Upgrading the schema held in the Database. Id: {}", upgradeId);
-        readinessStatus.markUp("Running schema upgrade with id: " + upgradeId);
 
 
 		AtomicReference<TotalUpgradeResult> result = new AtomicReference<>();
@@ -632,7 +630,7 @@ public class ObjectSchemaUpgradeService implements HasReadinessCheck {
         }
 
 		this.startupUpgradeResult = result.get();
-        readinessStatus.markCompleted("Schema upgrade completed with id: " + upgradeId);
+        readinessStatus.markUp("Schema upgrade completed with id: " + upgradeId);
 
 		log.info("DONE running post-upgrade tasks.");
 		return this.getStartupUpgradeResult();

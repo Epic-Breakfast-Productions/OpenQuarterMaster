@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import tech.ebp.oqm.core.api.health.HasReadinessCheck;
+import tech.ebp.oqm.core.api.health.utils.HasReadinessCheck;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.rest.search.OqmMongoDbSearch;
 import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
@@ -61,7 +61,6 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 
 	@PostConstruct
 	public void setup() {
-        readinessStatus.markUp("Setting up database service");
 		if (this.getTypedCollection().countDocuments() == 0) {
 			// create a default database in case none exist
 			log.info("At startup, no oqm databases existed.");
@@ -80,7 +79,7 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 			}
 		}
 		this.refreshCache();
-        readinessStatus.markCompleted("Databases loaded: " + getDatabases().size());
+        readinessStatus.markUp("Databases loaded: " + getDatabases().size());
 	}
 
 	/**

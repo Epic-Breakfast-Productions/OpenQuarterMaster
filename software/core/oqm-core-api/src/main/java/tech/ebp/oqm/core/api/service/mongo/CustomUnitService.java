@@ -12,7 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonDocument;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
-import tech.ebp.oqm.core.api.health.HasReadinessCheck;
+import tech.ebp.oqm.core.api.health.utils.HasReadinessCheck;
 import tech.ebp.oqm.core.api.health.HealthStatus;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.rest.search.CustomUnitSearch;
@@ -41,7 +41,6 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
     @PostConstruct
     void readInUnits() {
         log.info("Reading existing custom units from database...");
-        readinessStatus.markUp("Reading in custom units from database");
         try (
             MongoCursor<CustomUnitEntry> it = this.listIterator(null, Sorts.ascending("order"), null)
                 .batchSize(1)
@@ -58,7 +57,7 @@ public class CustomUnitService extends TopLevelMongoService<CustomUnitEntry, Cus
             throw e;
         }
         log.info("Done reading in custom units.");
-        readinessStatus.markCompleted("Custom units read in and registered");
+        readinessStatus.markUp("Custom units read in and registered");
     }
 
     public long getNextOrderValue() {

@@ -13,10 +13,6 @@ public class HealthStatus {
     }
 
     public void markUp(String message) {
-        statusMessage = message;
-    }
-
-    public void markCompleted(String message) {
         up = true;
         statusMessage = message;
     }

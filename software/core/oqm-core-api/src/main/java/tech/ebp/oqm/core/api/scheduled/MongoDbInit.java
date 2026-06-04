@@ -6,6 +6,7 @@ import jakarta.enterprise.inject.Any;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
@@ -14,12 +15,14 @@ import tech.ebp.oqm.core.api.service.schemaVersioning.ObjectSchemaUpgradeService
 import tech.ebp.oqm.core.api.service.serviceState.InstanceMutexService;
 import tech.ebp.oqm.core.api.service.serviceState.db.DbCacheEntry;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
+import tech.ebp.oqm.core.api.health.HealthStatus;
+import tech.ebp.oqm.core.api.health.utils.HasReadinessCheck;
 
 import java.util.Optional;
 
 @Singleton
 @Slf4j
-public class MongoDbInit {
+public class MongoDbInit implements HasReadinessCheck {
 
     @Inject
     InventoryItemService inventoryItemService;
@@ -79,23 +82,29 @@ public class MongoDbInit {
 	}
 
 
+    @Getter
+    private final HealthStatus readinessStatus = new HealthStatus("Mongo DB Init");
+
     void onStart(@Observes StartupEvent ev) {
-        //ensures the db service bean is initialized, and the extension has had time to init
-        this.oqmDatabaseService.getReadinessStatus().markUp("Initializing database service");
+        readinessStatus.markDown("Startup initialization in progress");
         try {
-            this.oqmDatabaseService.collectionStats();
-            this.oqmDatabaseService.getReadinessStatus().markCompleted("Database service initialized");
+            //ensures the db service bean is initialized, and the extension has had time to init
+            try {
+                this.oqmDatabaseService.collectionStats();
+                this.oqmDatabaseService.getReadinessStatus().markUp("Database service initialized");
+            } catch (RuntimeException e) {
+                this.oqmDatabaseService.getReadinessStatus().markDown("Database service init failed: " + e.getMessage());
+                throw e;
+            }
+            this.upgradeDbs();
+            this.initDbs();
+            this.ensureItemMutexesExist();
+
+            readinessStatus.markUp("Initial db initialization tasks finished");
+            log.info("FINISHED initial db initialization tasks.");
         } catch (RuntimeException e) {
-            this.oqmDatabaseService.getReadinessStatus().markDown("Database service init failed: " + e.getMessage());
+            readinessStatus.markDown("Initial db initialization failed: " + e.getMessage());
             throw e;
         }
-        this.initDb();
-    }
-
-		this.upgradeDbs();
-		this.initDbs();
-		this.ensureItemMutexesExist();
-
-		log.info("FINISHED initial db initialization tasks.");
     }
 }
