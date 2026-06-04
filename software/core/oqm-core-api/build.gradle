@@ -39,7 +39,7 @@ dependencies {
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
 
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-	implementation "com.fasterxml.jackson.datatype:jackson-datatype-javax-money:2.21.3"
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-javax-money:2.22.0"
 	implementation 'com.fasterxml.jackson.module:jackson-module-blackbird'
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
