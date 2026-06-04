@@ -32,6 +32,7 @@ import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.Return
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.checkedInBy.CheckedInByOqmEntity;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkoutFor.CheckoutForOqmEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageBlockSettings;
 import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
@@ -80,32 +81,32 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 @QuarkusTest
 @QuarkusTestResource(value = KafkaCompanionResource.class, restrictToAnnotatedClass = true)
 abstract class AppliedTransactionServiceTest extends MongoObjectServiceTest<AppliedTransaction, AppliedTransactionService> implements KafkaTest {
-	
+
 	@Inject
 	AppliedTransactionService appliedTransactionService;
-	
+
 	@Inject
 	StorageBlockService storageBlockService;
-	
+
 	@Inject
 	StorageBlockTestObjectCreator storageBlockTestObjectCreator;
-	
+
 	@Inject
 	InventoryItemService inventoryItemService;
-	
+
 	@Inject
 	InventoryItemTestObjectCreator itemTestObjectCreator;
-	
+
 	@Inject
 	StoredService storedService;
-	
+
 	@Inject
 	ItemCheckoutService checkoutService;
-	
+
 	@Getter
 	@InjectKafkaCompanion
 	KafkaCompanion kafkaCompanion;
-	
+
 	//TODO:: these default tests
 	@Override
 	protected AppliedTransaction getTestObject() {
@@ -146,17 +147,17 @@ abstract class AppliedTransactionServiceTest extends MongoObjectServiceTest<Appl
 	//	public void removeAllTest() {
 	//		this.defaultRemoveAllTest(this.appliedTransactionService);
 	//	}
-	
-	
+
+
 	protected InventoryItem setupItem(StorageType storageType, InteractingEntity entity) {
 		StorageBlock storageBlock = storageBlockTestObjectCreator.getTestObject();
 		this.storageBlockService.add(DEFAULT_TEST_DB_NAME, storageBlock, entity);
 		InventoryItem item = this.itemTestObjectCreator.getTestObject().setStorageType(storageType);
-		item.getStorageBlocks().add(storageBlock.getId());
+		item.getStorageBlocks().add(StorageBlockSettings.builder().storageBlock(storageBlock.getId()).build());
 		this.inventoryItemService.add(DEFAULT_TEST_DB_NAME, item, entity);
 		return item;
 	}
-	
+
 	protected void clearQueues() {
 		this.kafkaCompanion
 			.topics()
@@ -164,7 +165,7 @@ abstract class AppliedTransactionServiceTest extends MongoObjectServiceTest<Appl
 		//			.clear(HistoryEventNotificationService.ALL_EVENT_TOPIC)
 		;
 	}
-	
+
 	//TODO:: this with all following tests
 	protected List<EventNotificationWrapper> assertMessages(
 		EventType... expectedEvents
@@ -195,17 +196,17 @@ abstract class AppliedTransactionServiceTest extends MongoObjectServiceTest<Appl
 		//				awaiting = false;
 		//			}
 		//		}while(awaiting);
-		
-		
+
+
 		try {
-			
+
 			ConsumerTask<String, String> messagesFromAll = this.kafkaCompanion.consumeStrings().fromTopics(
 				HistoryEventNotificationService.ALL_EVENT_TOPIC
 				, expectedEvents.length
 			);
 			messagesFromAll.awaitCompletion();
 			assertEquals(expectedEvents.length, messagesFromAll.count());
-			
+
 			List<EventNotificationWrapper> eventWrappers = messagesFromAll.stream()
 															   .map(record->{
 																   try {
@@ -216,30 +217,30 @@ abstract class AppliedTransactionServiceTest extends MongoObjectServiceTest<Appl
 															   })
 															   .collect(Collectors.toList());
 			log.info("Found messages for transaction: {}", eventWrappers);
-			
+
 			assertEquals(expectedEvents.length, eventWrappers.size());
-			
+
 			for (int i = 0; i < expectedEvents.length; i++) {
 				EventNotificationWrapper curWrapper = eventWrappers.get(i);
 				EventType expectedType = expectedEvents[i];
-				
+
 				assertEquals(expectedType, curWrapper.getEvent().getType(), "Unexpected type of transaction at index " + i);
 			}
-			
+
 			return eventWrappers;
 		} catch(UnknownTopicOrPartitionException e) {
 			log.warn("Failed to clear queues", e);
 			throw e;
 		}
 	}
-	
+
 	//<editor-fold desc="Apply- Checkin Part">
 	//TODO:: When we have this implemented
 	//</editor-fold>
 	//<editor-fold desc="Apply- Checkin Loss">
 	//TODO:: When we have this implemented
 	//</editor-fold>
-	
+
 	//<editor-fold desc="Post transaction processing">
 	//TODO:: fix these, inconsistent and flaky
 	//	@Test
@@ -285,8 +286,8 @@ abstract class AppliedTransactionServiceTest extends MongoObjectServiceTest<Appl
 	//		List<EventNotificationWrapper> messages = this.assertMessages(EventType.UPDATE, EventType.UPDATE, EventType.UPDATE, EventType.ITEM_LOW_STOCK);
 	//		//TODO:: assert events, notification state
 	//	}
-	
-	
+
+
 	//TODO:: low stock (stored)
 	//TODO:: low stock (item)
 	//TODO:: expiry warn alert

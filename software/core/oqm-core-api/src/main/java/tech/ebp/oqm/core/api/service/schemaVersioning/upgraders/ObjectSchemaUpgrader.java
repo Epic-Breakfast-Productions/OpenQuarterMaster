@@ -29,12 +29,12 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Slf4j
 public abstract class ObjectSchemaUpgrader<T extends Versionable> {
-	
+
 	/**
 	 * Have our own here to be more lenient on unknown properties
 	 */
 	private static final ObjectMapper MAPPER = new ObjectMapper();
-	
+
 	static {
 		ObjectUtils.setupObjectMapper(MAPPER);
 		MAPPER.disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
@@ -94,7 +94,7 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 
 		return bumpers.iterator();
 	}
-	
+
 	/**
 	 * Performs minor tweaks to the resulting upgraded object json.
 	 *
@@ -107,7 +107,7 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 		}
 		return oldObj;
 	}
-	
+
 	private ObjectId getObjectId(ObjectNode oldObj){
 		if(oldObj.has("id")) {
 			return new ObjectId(oldObj.get("id").asText());
@@ -122,14 +122,14 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 
 	public ObjectUpgradeResult<T> upgrade(ObjectNode oldObj){
 		int curVersion = oldObj.get("schemaVersion").asInt(1);
-		ObjectUpgradeResult.ObjectUpgradeResultBuilder<T> resultBuilder = ObjectUpgradeResult.builder();
+		ObjectUpgradeResult.ObjectUpgradeResultBuilder<T> resultBuilder = (ObjectUpgradeResult.ObjectUpgradeResultBuilder<T>) ObjectUpgradeResult.builder();
 		resultBuilder.objectId(this.getObjectId(oldObj));
 		resultBuilder.oldVersion(curVersion);
 		UpgradeCreatedObjectsResults upgradeCreatedObjects = new UpgradeCreatedObjectsResults();
 		resultBuilder.upgradeCreatedObjects(upgradeCreatedObjects);
 
 		ObjectNode upgradedJson = oldObj.deepCopy();
-		
+
 		log.debug("Initial object (version {}): {}", curVersion, upgradedJson);
 
 		//Iterate and process upgrades for each necessary bump
@@ -142,10 +142,10 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 			//Process bump
 			SingleUpgradeResult upgradeResult = curBumper.bumpObject(upgradedJson);
 			upgradedJson = upgradeResult.getUpgradedObject();
-			
+
 			//Process created objects during the bump
 			upgradeCreatedObjects.addAll(upgradeResult.getCreatedObjects());
-			
+
 			if(upgradeResult.isDelObj()){
 				log.debug("Object was deleted during upgrade to schema version {}", curBumper.getBumperTo());
 				delObj = true;
@@ -153,11 +153,11 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 				break;
 			}
 		}
-		
+
 		this.adjustUpgradedObj(upgradedJson);
-		
+
 		log.debug("Upgraded object: {}", upgradedJson);
-		
+
 		if(delObj){
 			resultBuilder.upgradedObject(Optional.empty());
 		} else {
@@ -173,7 +173,7 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 			resultBuilder.upgradedObject(Optional.of(upgradedObj));
 		}
 		sw.stop();
-		
+
 		resultBuilder.timeTaken(sw.getDuration());
 
 		return resultBuilder.build();
@@ -186,13 +186,13 @@ public abstract class ObjectSchemaUpgrader<T extends Versionable> {
 					.build()
 			)
 		);
-		
+
 		if(oldObj.has("_id")) {
 			oldObj.put("id", oldObj.get("_id").get("$oid").asText());
 			oldObj.remove("_id");
 		}
 		oldObj.remove("storedType_mongo");
-		
+
 		return this.upgrade(oldObj);
 	}
 

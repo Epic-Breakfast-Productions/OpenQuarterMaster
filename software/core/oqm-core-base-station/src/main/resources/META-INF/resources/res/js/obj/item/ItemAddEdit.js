@@ -205,10 +205,11 @@ export class ItemAddEdit extends PageUtility {
 						break;
 				}
 
-				data.storageBlocks.forEach(curStorageBlockId => {
+				data.storageBlocks.forEach(curStorageBlockSettings => {
+					let curStorageBlockId = curStorageBlockSettings.storageBlock;
 					Getters.StorageBlock.getStorageBlockLabel(curStorageBlockId, function (label) {
 						//TODO:: determine if we are allowed to remove (if has stored items in it or not)
-						ItemAddEdit.storageInput.addStorage(label, curStorageBlockId);
+						ItemAddEdit.storageInput.addStorage(label, curStorageBlockId, curStorageBlockSettings);
 					});
 				});
 
@@ -240,10 +241,118 @@ export class ItemAddEdit extends PageUtility {
 	}
 
 	static storageInput = class {
-		static addStorage(blockName, blockId) {
+		static storageBlockInputCount = 0;
+
+		static updateStorageInputAdvancedVisibility(storageInput) {
+			console.log("Updating storage input advanced inputs visibility.");
+			let advancedToggle = storageInput.find(".form-check-input");
+			let advancedDiv = storageInput.find(".advancedInputs");
+			if (advancedToggle.is(":checked")) {
+				advancedDiv.show();
+			} else {
+				advancedDiv.hide();
+			}
+		}
+		static Getters = class {
+			static blockIdInput(blockInput){
+				return blockInput.find("input[name='storageBlock']");
+			}
+			static getStorageBlockIds(){
+				return ItemAddEdit.associatedStorageInputContainer.find("input[name='storageBlock']");
+			}
+			static getStorageBlockInputs(){
+				return ItemAddEdit.associatedStorageInputContainer.find(".blockSelection");
+			}
+			static lowStockSettingUnitInput(blockInput){
+				return blockInput.find(".storedSettingLowStockThresholdUnit");
+			}
+			static lowStockSettingValueInput(blockInput){
+				return blockInput.find(".storedSettingLowStockThresholdValue");
+			}
+			static notesSettingInput(blockInput){
+				return blockInput.find(".storedSettingNotesInput");
+			}
+			static notesSettingField(blockInput){
+				return blockInput.data("notesField");
+			}
+		}
+
+
+		static newStorageInput(blockId, blockName, settings) {
+			let inputNum = ItemAddEdit.storageInput.storageBlockInputCount++;
+			let newBlock = $(`
+				<div class="col-lg-6 mb-2 blockSelection" data-block-id="">
+					<input type="hidden" name="storageBlock" />
+					<div class="card">
+						<div class="card-body">
+							<p class="card-text blockInputName"></p>
+						</div>
+						<div class="card-header card-footer" style="display: flex; justify-content: space-between;">
+							<div>
+								<button class="btn btn-sm btn-outline-danger" type="button" onclick="ItemAddEdit.storageInput.removeStorage(this);">${Icons.remove}</button>
+							</div>
+							<div class="form-check form-switch form-check-reverse">
+								<input class="form-check-input storageBlockInputAdvancedSettingsToggle" type="checkbox" role="switch" id="storedSettingAdvancedToggle-${inputNum}" onchange="ItemAddEdit.storageInput.updateStorageInputAdvancedVisibility($(this).closest('.blockSelection'));">
+								<label class="form-check-label" for="storedSettingAdvancedToggle-${inputNum}">Advanced</label>
+							</div>
+						</div>
+						<div class="card-body advancedInputs">
+							<p class="mb-1">
+								Low Stock Threshold:
+							</p>
+							<div class="input-group mt-0 mb-3">
+								<input type="number" class="form-control storedSettingLowStockThresholdValue"  placeholder="Value" min="0.00" step="any">
+								<select class="form-select storedSettingLowStockThresholdUnit unitInput">
+								</select>
+							</div>
+
+							<p class="mb-1">
+								Notes:
+							</p>
+							<div class="storedSettingNotesInput" data-ot-placeholder="Notes"></div>
+						</div>
+					</div>
+				</div>
+				`);
+
+			let notesField = MarkdownUtils.Editor.initInput(ItemAddEdit.storageInput.Getters.notesSettingInput(newBlock))[0];
+			newBlock.data("notesField", notesField);
+
+			UnitUtils.getCompatibleUnitOptions(ItemAddEdit.getUnit())
+				.then(function (options) {
+					ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(newBlock).html(options);
+					if(settings.lowStockThreshold){
+						ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(newBlock).val(settings.lowStockThreshold.unit.string)
+					}
+				});
+
+			newBlock.attr("data-block-id", blockId);
+			ItemAddEdit.storageInput.Getters.blockIdInput(newBlock).val(blockId);
+			newBlock.find(".blockInputName").text(blockName);
+			//TODO:: image
+
+
+			if(settings){
+				if(settings.hasSettings){
+					newBlock.find(".storageBlockInputAdvancedSettingsToggle").prop("checked", true);
+				}
+				if(settings.notes){
+					ItemAddEdit.storageInput.Getters.notesSettingField(newBlock).setValue(settings.notes);
+				}
+				if(settings.lowStockThreshold){
+					ItemAddEdit.storageInput.Getters.lowStockSettingValueInput(newBlock).val(settings.lowStockThreshold.value)
+				}
+			}
+
+			ItemAddEdit.storageInput.updateStorageInputAdvancedVisibility(newBlock);
+
+			return newBlock;
+		}
+
+		static addStorage(blockName, blockId, storageSettings = null) {
 			Main.processStart();
 			let found = false;
-			ItemAddEdit.associatedStorageInputContainer.find('input[name="storageBlocks[]"]').each(function () {
+			ItemAddEdit.storageInput.Getters.getStorageBlockIds().each(function () {
 				if ($(this).val() === blockId) {
 					found = true;
 				}
@@ -253,22 +362,9 @@ export class ItemAddEdit extends PageUtility {
 				return;
 			}
 
-			let newBlock = $('<div class="col-3 blockSelection" data-block-id="">' +
-				'  <input type="hidden" name="storageBlocks[]" />' +
-				'  <div class="card">' +
-				'    <div class="card-body">' +
-				'      <p class="card-text blockInputName"></p>' +
-				'    </div>' +
-				'    <div class="card-footer text-body-secondary">' +
-				'      <button class="btn btn-sm btn-outline-danger" type="button" onclick="ItemAddEdit.storageInput.removeStorage(this);">' + Icons.remove + '</button>' +
-				'    </div>' +
-				'  </div>' +
-				'</div>');
-			newBlock.attr("data-block-id", blockId);
-			newBlock.find('input[name="storageBlocks[]"]').val(blockId);
-			newBlock.find(".blockInputName").text(blockName);
-
-			ItemAddEdit.associatedStorageInputContainer.append(newBlock);
+			ItemAddEdit.associatedStorageInputContainer.append(
+				ItemAddEdit.storageInput.newStorageInput(blockId, blockName, storageSettings)
+			);
 			Main.processStop();
 		}
 		static removeStorage(removeButtonClicked) {//or input card?
@@ -280,10 +376,19 @@ export class ItemAddEdit extends PageUtility {
 			}
 		}
 		static selectedStorageList() {
-			return ItemAddEdit.associatedStorageInputContainer.find("input[name='storageBlocks[]']")
+			return ItemAddEdit.storageInput.Getters.getStorageBlockInputs()//TODO:: update to do advanced fields
 				.map(function () {
-					return $(this).val();
-				}).get();
+					let input = $(this);
+					return {
+						"storageBlock": ItemAddEdit.storageInput.Getters.blockIdInput(input).val(),
+						"notes": ItemAddEdit.storageInput.Getters.notesSettingField(input).getValue(),
+						"lowStockThreshold": (ItemAddEdit.storageInput.Getters.lowStockSettingValueInput(input).val() ? UnitUtils.getQuantityObj(
+							ItemAddEdit.storageInput.Getters.lowStockSettingValueInput(input).val(),
+							ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(input).val()
+						) : null)
+					}
+				})
+				.get();
 		}
 	}
 	static getUnit(force = false){
@@ -297,17 +402,27 @@ export class ItemAddEdit extends PageUtility {
 		console.log("Item Unit Changed to ", itemUnit);
 
 		let lowStockUnitPromise = ItemAddEdit.updateLowStockUnits(itemUnit, force);
+		let storageBlocksSettingsLowStockUnitsPromise = ItemAddEdit.storageBlockSettingsLowStockUnits(itemUnit, force);
 		let pricingUnitPromise = Pricing.setUnit(
 			ItemAddEdit.addEditItemPricingInput,
 			itemUnit
 		);
 
-		await Promise.all([lowStockUnitPromise, pricingUnitPromise]);
+		await Promise.all([lowStockUnitPromise, storageBlocksSettingsLowStockUnitsPromise, pricingUnitPromise]);
 	}
 	static updateLowStockUnits(itemUnit, force = false) {
 		return UnitUtils.getCompatibleUnitOptions(itemUnit)
 			.then(function (options) {
 				ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.html(options);
+			});
+	}
+	static storageBlockSettingsLowStockUnits(itemUnit, force = false) {
+		return UnitUtils.getCompatibleUnitOptions(itemUnit)
+			.then(function (options) {
+				ItemAddEdit.storageInput.Getters.getStorageBlockInputs().each(function (i, blockInput) {
+					let opsCopy = options.clone();
+					ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput($(blockInput)).html(opsCopy);
+				});
 			});
 	}
 	static {
@@ -364,7 +479,7 @@ export class ItemAddEdit extends PageUtility {
 			KeywordAttEdit.addKeywordAttData(addEditData, ItemAddEdit.addEditKeywordDiv, ItemAddEdit.addEditAttDiv);
 			ImageSearchSelect.addImagesToData(addEditData, ItemAddEdit.addEditItemImagesSelected);
 
-			console.log("Data being submitted: " + JSON.stringify(addEditData));
+			console.log("Data being submitted: ", addEditData);
 			let verb = "";
 			let result = false;
 			if (ItemAddEdit.addEditItemFormMode.val() === "add") {
@@ -376,7 +491,7 @@ export class ItemAddEdit extends PageUtility {
 					data: addEditData,
 					async: false,
 					done: function (data) {
-						console.log("Response from create request: " + JSON.stringify(data));
+						console.log("Response from create request: ", data);
 						result = true;
 					},
 					failMessagesDiv: ItemAddEdit.addEditItemFormMessages
@@ -392,7 +507,7 @@ export class ItemAddEdit extends PageUtility {
 					data: addEditData,
 					async: false,
 					done: function (data) {
-						console.log("Response from create request: " + JSON.stringify(data));
+						console.log("Response from create request: ", data);
 						result = true;
 					},
 					failMessagesDiv: ItemAddEdit.addEditItemFormMessages

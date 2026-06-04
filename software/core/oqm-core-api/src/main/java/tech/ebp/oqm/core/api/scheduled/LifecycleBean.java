@@ -24,58 +24,58 @@ import java.util.TreeMap;
 @Slf4j
 public class LifecycleBean {
 
-    @ConfigProperty(name="service.version")
-    String serviceVersion;
+	@ConfigProperty(name="service.version")
+	String serviceVersion;
 
-    @ConfigProperty(name="service.apiVersion")
-    String apiVersion;
+	@ConfigProperty(name="service.apiVersion")
+	String apiVersion;
 
-    @Inject
-    CustomUnitService customUnitService;
+	@Inject
+	CustomUnitService customUnitService;
 
-    @Inject
-    TempFileService tempFileService;
+	@Inject
+	TempFileService tempFileService;
 
-    @Inject
-    ObjectSchemaUpgradeService objectSchemaUpgradeService;
+	@Inject
+	OqmDatabaseService dbService;
 
-    private ZonedDateTime startDateTime;
+	private ZonedDateTime startDateTime;
 
-    public static void logConfig(){
-        if (log.isDebugEnabled()) {
-            TreeMap<String, String> configMap = new TreeMap<>();
+	public static void logConfig(){
+		if (log.isDebugEnabled()) {
+			TreeMap<String, String> configMap = new TreeMap<>();
 
-            for(String curProp : ConfigProvider.getConfig().getPropertyNames()){
-                String value;
-                try {
-                    value = ConfigProvider.getConfig().getValue(curProp, String.class);
-                } catch(NoSuchElementException e) {
-                    value = "";
-                }
-                configMap.put(curProp, value);
-            }
+			for(String curProp : ConfigProvider.getConfig().getPropertyNames()){
+				String value;
+				try {
+					value = ConfigProvider.getConfig().getValue(curProp, String.class);
+				} catch(NoSuchElementException e) {
+					value = "";
+				}
+				configMap.put(curProp, value);
+			}
 
-            StringBuilder sb = new StringBuilder();
-            for (String curProp : configMap.keySet()) {
+			StringBuilder sb = new StringBuilder();
+			for (String curProp : configMap.keySet()) {
 
-                sb.append('\t');
-                sb.append(curProp);
-                sb.append('=');
-                sb.append(configMap.get(curProp));
-                sb.append(System.lineSeparator());
-            }
-            log.debug("Configuration: \n{}", sb);
-        }
-    }
+				sb.append('\t');
+				sb.append(curProp);
+				sb.append('=');
+				sb.append(configMap.get(curProp));
+				sb.append(System.lineSeparator());
+			}
+			log.debug("Configuration: \n{}", sb);
+		}
+	}
 
-    private void startLogAnnounce(){
-        this.startDateTime = ZonedDateTime.now();
-        log.info("Open QuarterMaster Core API Server starting.");
+	private void startLogAnnounce(){
+		this.startDateTime = ZonedDateTime.now();
+		log.info("Open QuarterMaster Core API Server starting.");
 
-        if(log.isInfoEnabled()) {
-            // Image: https://www.text-image.com/convert/ascii.html
-            // Text: https://manytools.org/hacker-tools/ascii-banner/ (Colossal font)
-            log.info("""
+		if(log.isInfoEnabled()) {
+			// Image: https://www.text-image.com/convert/ascii.html
+			// Text: https://manytools.org/hacker-tools/ascii-banner/ (Colossal font)
+			log.info("""
 
 
             &&&&
@@ -111,50 +111,29 @@ Version:     {}
 API Version: {}
 
 """,
-                this.serviceVersion,
-                this.apiVersion
-            );
-        }
+				this.serviceVersion,
+				this.apiVersion
+			);
+		}
 
-        logConfig();
+		logConfig();
 
-        log.info("Starting in directory: {}", Paths.get("").toAbsolutePath());
-    }
+		log.info("Starting in directory: {}", Paths.get("").toAbsolutePath());
+	}
 
-    void onStart(
-        @Observes
-        StartupEvent ev
-    ) {
-        this.startLogAnnounce();
-        //ensures the unit service bean is initialized, and the extension had existing custom units read in
-        this.customUnitService.getReadinessStatus().markUp("Initializing custom unit service");
-        try {
-            this.customUnitService.collectionStats();
-            this.customUnitService.getReadinessStatus().markCompleted("Custom unit service initialized");
-        } catch (RuntimeException e) {
-            this.customUnitService.getReadinessStatus().markDown("Custom unit service init failed: " + e.getMessage());
-            throw e;
-        }
-        //ensures we can write to temp dir
-        this.tempFileService.getTempDir("test", "dir");
-        // Upgrade the db schema
-        //TODO:: create flag service to check if things initted right. Setup filter to check this flag to reject requests until setup done.
-        Optional<TotalUpgradeResult> schemaUpgradeResult = this.objectSchemaUpgradeService.updateSchema();
-        if(schemaUpgradeResult.isEmpty()){
-            log.warn("Did not upgrade schema at start.");
-        } else {
-            log.info("Schema upgrade result: {}", schemaUpgradeResult.get());
-            //TODO:: rescan inv update stats
-        }
-        log.info("Done with initial startup tasks.");
-    }
+	void onStart(
+		@Observes
+		StartupEvent ev
+	) {
+		this.startLogAnnounce();
+	}
 
-    void onStop(
-        @Observes
-        ShutdownEvent ev
-    ) {
-        log.info("The server is stopping.");
-        Duration runtime = Duration.between(this.startDateTime, ZonedDateTime.now());
-        log.info("Server ran for {}", runtime);
-    }
+	void onStop(
+		@Observes
+		ShutdownEvent ev
+	) {
+		log.info("The server is stopping.");
+		Duration runtime = Duration.between(this.startDateTime, ZonedDateTime.now());
+		log.info("Server ran for {}", runtime);
+	}
 }

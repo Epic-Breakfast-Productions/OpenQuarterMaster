@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.model.validation.validators;
 
 import jakarta.validation.ConstraintValidatorContext;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageBlockSettings;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidItemUnit;
@@ -12,11 +13,11 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ItemUnitValidator extends Validator<ValidItemUnit, InventoryItem> {
-	
+
 	@Override
 	public boolean isValid(InventoryItem item, ConstraintValidatorContext constraintValidatorContext) {
 		List<String> errs = new ArrayList<>();
-		
+
 		Unit<?> unit = item.getUnit();
 		switch (item.getStorageType().storedType){
 			case AMOUNT -> {
@@ -31,7 +32,16 @@ public class ItemUnitValidator extends Validator<ValidItemUnit, InventoryItem> {
 				}
 			}
 		}
-		
+
+		item.getStorageBlocks()
+			.stream()
+			.filter(StorageBlockSettings::hasLowStockThreshold)
+			.forEach(block -> {
+				if(!UnitUtils.UNIT_LIST.contains(unit)){
+					errs.add("Invalid unit for storage block "+block.getStorageBlock()+": " + unit.toString() + " not applicable for item storage. Must use unit in the unit list.");
+				}
+			});
+
 		return this.processValidationResults(errs, constraintValidatorContext);
 	}
 }
