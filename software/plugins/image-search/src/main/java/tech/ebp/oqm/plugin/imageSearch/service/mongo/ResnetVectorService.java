@@ -78,10 +78,9 @@ public class ResnetVectorService {
 	}
 
 	public void processImage(String database, String imageId, int imageRevision) {
-		log.info("Processing image revision: {}, revision: {}", imageId, imageRevision);
+		log.info("Processing image {}, revision: {}", imageId, imageRevision);
 
-		//TODO:: check if already processed, skip if exists Done
-		//think this is good
+		//check if already processed, skip if exists
 		MongoCollection<ImageVector> collection = this.getTypedCollection();
 		if (
 			collection.find(
@@ -91,6 +90,7 @@ public class ResnetVectorService {
 				)
 			).first() != null
 		) {
+			log.info("Image {} already processed, skipping.", imageId);
 			return;
 		}
 
@@ -122,6 +122,14 @@ public class ResnetVectorService {
 			this.processImage(oqmDatabase, imageId, i);
 		}
 	}
+
+	public void processImage(String oqmDatabase, String imageId) {
+		this.processImage(
+			oqmDatabase,
+			this.oqmCoreApiClientService.imageGet(this.serviceAccountService.getAuthString(), oqmDatabase, imageId).await().indefinitely()
+		);
+	}
+
 
 	//Iterates db, operate on each image in turn
 	@WithSpan
@@ -178,6 +186,10 @@ public class ResnetVectorService {
 
 		}
 
+	}
+
+	public void deleteImage(String database, String imageId) {
+		this.getTypedCollection().deleteMany(Filters.and(Filters.eq("imageId", imageId), Filters.eq("oqmDb", database)));
 	}
 
 	public void deleteAll(){
