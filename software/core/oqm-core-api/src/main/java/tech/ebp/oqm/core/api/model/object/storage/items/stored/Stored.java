@@ -62,14 +62,15 @@ import java.util.stream.Collectors;
 )
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = AmountStored.class, name = "AMOUNT"),
-	@JsonSubTypes.Type(value = UniqueStored.class, name = "UNIQUE")
+	@JsonSubTypes.Type(value = UniquePlainStored.class, name = "UNIQUE"),
+	@JsonSubTypes.Type(value = UniqueWithAmountStored.class, name = "UNIQUE_WITH_AMOUNT")
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
 @BsonDiscriminator
-@Schema(oneOf = {AmountStored.class, UniqueStored.class})
+@Schema(oneOf = {AmountStored.class, UniquePlainStored.class, UniqueWithAmountStored.class})
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
 
-	public static final int CUR_SCHEMA_VERSION = 5;
+	public static final int CUR_SCHEMA_VERSION = 6;
 
 	private static final Pattern LABEL_PARTS_PATTERN = Pattern.compile("\\{[^}]*}");
 	private static final String LABEL_PLACEHOLDER_PART_DELIM = ";";
@@ -180,9 +181,9 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 						}
 
 						sb.append(
-							stored.getExpires() == null?
+							stored.getExpires() == null ?
 								'-' :
-							stored.getExpires().format(formatter)
+								stored.getExpires().format(formatter)
 						);
 						break;
 					case "ident":

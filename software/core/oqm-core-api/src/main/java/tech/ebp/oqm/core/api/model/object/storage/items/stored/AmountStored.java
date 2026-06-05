@@ -26,8 +26,8 @@ import javax.measure.Unit;
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
 @Schema(title="AmountStored", description = "Stored object to describe an amount of stored something.")
-public class AmountStored extends Stored {
-	
+public class AmountStored extends Stored implements AmountContaining {
+
 	/**
 	 * The amount of the thing stored.
 	 */
@@ -45,25 +45,25 @@ public class AmountStored extends Stored {
 	@lombok.Builder.Default
 	@Schema(description = "The amount which below is considered low stock. Null for no threshold.", examples = {"null"})
 	private Quantity<?> lowStockThreshold = null;
-	
+
 	public AmountStored(Unit<?> unit) {
 		this(Quantities.getQuantity(0, unit), null);
 	}
-	
+
 	public AmountStored(Number amount, Unit<?> unit) {
 		this(Quantities.getQuantity(amount, unit), null);
 	}
-	
+
 	public AmountStored setAmount(Number amount, Unit<?> unit) {
 		return this.setAmount(Quantities.getQuantity(amount, unit));
 	}
-	
+
 	@SuppressWarnings({"rawtypes", "unchecked"})
 	public AmountStored add(Quantity amount) {
 		this.setAmount(this.getAmount().add(amount));
 		return this;
 	}
-	
+
 	/**
 	 *
 	 * @param amount
@@ -73,21 +73,21 @@ public class AmountStored extends Stored {
 	public AmountStored subtract(Quantity amount) throws NotEnoughStoredException {
 		@SuppressWarnings({"rawtypes", "unchecked"})
 		Quantity result = this.getAmount().subtract(amount);
-		
+
 		if (result.getValue().doubleValue() < 0.0) {
 			throw new NotEnoughStoredException("Resulting amount less than zero. (subtracting "+amount+" from "+this.getAmount()+" resulting in "+result+")");
 		}
 		this.setAmount(result);
 		return this;
 	}
-	
-	
+
+
 	@Schema(defaultValue = "AMOUNT")
 	@Override
 	public StoredType getType() {
 		return StoredType.AMOUNT;
 	}
-	
+
 	@Override
 	public String getDefaultLabelFormat() {
 		return "{amt}";

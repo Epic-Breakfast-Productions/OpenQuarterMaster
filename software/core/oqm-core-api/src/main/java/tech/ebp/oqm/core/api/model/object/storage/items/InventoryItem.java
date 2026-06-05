@@ -21,7 +21,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.notification.ItemNotific
 import tech.ebp.oqm.core.api.model.object.storage.items.pricing.StoredPricing;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
-import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.model.validation.annotations.UniqueLabeledCollection;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidItemUnit;
@@ -32,7 +31,6 @@ import javax.measure.Quantity;
 import javax.measure.Unit;
 import java.time.Duration;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;

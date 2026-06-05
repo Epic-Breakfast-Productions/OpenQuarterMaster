@@ -10,10 +10,12 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @ToString(callSuper = true)
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
-public abstract class UniqueStored extends Stored {
+@Schema(title="UniquePlainStored", description = "Stored object to describe a single unique item.")
+public class UniquePlainStored extends UniqueStored {
 
+	@Schema(defaultValue = "UNIQUE")
 	@Override
-	public String getDefaultLabelFormat() {
-		return "{id}";
+	public StoredType getType() {
+		return StoredType.UNIQUE;
 	}
 }
