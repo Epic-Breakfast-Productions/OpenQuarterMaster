@@ -10,3 +10,6 @@ This section is concerned with how to run, configure, and otherwise manage your 
 
    01_prerequisites
    02_basic_quickstart
+   03_configuration
+   04_mongo
+   05_jwt

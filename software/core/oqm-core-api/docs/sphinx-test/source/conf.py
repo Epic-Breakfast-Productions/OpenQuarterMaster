@@ -36,11 +36,14 @@ html_theme_options = {
 	'github_repo': 'OpenQuarterMaster',
 	'github_banner': True,
 	"github_button": False,
-	"show_relbars": True
+	"show_relbars": True,
 	# 'github_count': True,
 	# 'extra_nav_links': {
 	# 	'Index': 'genindex.html',
 	# }
+
+	'body_max_width': 'none',
+	'page_width': '90%',
 }
 html_sidebars = {
 	'**': [
