@@ -21,7 +21,7 @@ import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.exception.ClassUpgraderNotFoundException;
 import tech.ebp.oqm.core.api.exception.UpgradeFailedException;
 import tech.ebp.oqm.core.api.health.utils.HasReadinessCheck;
-import tech.ebp.oqm.core.api.health.HealthStatus;
+import tech.ebp.oqm.core.api.health.utils.HealthStatus;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.Versionable;
 import tech.ebp.oqm.core.api.model.object.history.details.FromSchemaUpgradeDetail;

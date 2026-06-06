@@ -4,8 +4,9 @@ import io.quarkus.runtime.Startup;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
-import tech.ebp.oqm.core.api.health.GenericHealthCheck;
+import tech.ebp.oqm.core.api.health.utils.GenericHealthCheck;
 import tech.ebp.oqm.core.api.health.utils.HasStartupCheck;
+import tech.ebp.oqm.core.api.health.utils.HealthStatus;
 
 @Startup
 @ApplicationScoped
@@ -13,6 +14,11 @@ public class StartupHealthCheck extends GenericHealthCheck<HasStartupCheck> {
 
     @Inject
     StartupHealthCheck(Instance<HasStartupCheck> providers) {
-        super("Service Health - Startup", providers, HasStartupCheck::getStartupStatus);
+        super("Service Health - Startup", providers);
+    }
+
+    @Override
+    protected HealthStatus getStatus(HasStartupCheck provider) {
+        return provider.getStartupStatus();
     }
 }

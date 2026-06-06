@@ -13,7 +13,7 @@ import org.bson.BsonDocument;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.health.utils.HasReadinessCheck;
-import tech.ebp.oqm.core.api.health.HealthStatus;
+import tech.ebp.oqm.core.api.health.utils.HealthStatus;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.rest.search.CustomUnitSearch;
 import tech.ebp.oqm.core.api.model.rest.unit.custom.NewCustomUnitRequest;

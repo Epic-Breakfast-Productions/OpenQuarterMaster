@@ -4,8 +4,9 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.health.Liveness;
-import tech.ebp.oqm.core.api.health.GenericHealthCheck;
+import tech.ebp.oqm.core.api.health.utils.GenericHealthCheck;
 import tech.ebp.oqm.core.api.health.utils.HasLivenessCheck;
+import tech.ebp.oqm.core.api.health.utils.HealthStatus;
 
 @Liveness
 @ApplicationScoped
@@ -13,6 +14,11 @@ public class LivenessHealthCheck extends GenericHealthCheck<HasLivenessCheck> {
 
     @Inject
     LivenessHealthCheck(Instance<HasLivenessCheck> providers) {
-        super("Service Health - Liveness", providers, HasLivenessCheck::getLivenessStatus);
+        super("Service Health - Liveness", providers);
+    }
+
+    @Override
+    protected HealthStatus getStatus(HasLivenessCheck provider) {
+        return provider.getLivenessStatus();
     }
 }

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.health;
+package tech.ebp.oqm.core.api.health.utils;
 
 import lombok.Getter;
 

@@ -19,7 +19,7 @@ import tech.ebp.oqm.core.api.health.utils.HasReadinessCheck;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.rest.search.OqmMongoDbSearch;
 import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
-import tech.ebp.oqm.core.api.health.HealthStatus;
+import tech.ebp.oqm.core.api.health.utils.HealthStatus;
 
 import java.util.ArrayList;
 import java.util.List;

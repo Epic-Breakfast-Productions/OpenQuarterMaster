@@ -1,7 +1,5 @@
 package tech.ebp.oqm.core.api.health.utils;
 
-import tech.ebp.oqm.core.api.health.HealthStatus;
-
-public interface HasStartupCheck {
+public interface HasStartupCheck extends HasHealthCheck {
     HealthStatus getStartupStatus();
 }
