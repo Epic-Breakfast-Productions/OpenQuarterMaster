@@ -17,6 +17,10 @@ public class ReadinessHealthCheck extends GenericHealthCheck<HasReadinessCheck> 
         super("Service Health - Readiness", providers);
     }
 
+    public ReadinessHealthCheck() {
+        super("Service Health - Readiness", null);
+    }
+
     @Override
     protected HealthStatus getStatus(HasReadinessCheck provider) {
         return provider.getReadinessStatus();

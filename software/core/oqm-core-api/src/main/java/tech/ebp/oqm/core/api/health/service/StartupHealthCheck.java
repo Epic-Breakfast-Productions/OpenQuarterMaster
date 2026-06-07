@@ -17,6 +17,10 @@ public class StartupHealthCheck extends GenericHealthCheck<HasStartupCheck> {
         super("Service Health - Startup", providers);
     }
 
+    public StartupHealthCheck() {
+        super("Service Health - Startup", null);
+    }
+
     @Override
     protected HealthStatus getStatus(HasStartupCheck provider) {
         return provider.getStartupStatus();

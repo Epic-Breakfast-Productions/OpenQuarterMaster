@@ -17,6 +17,10 @@ public class LivenessHealthCheck extends GenericHealthCheck<HasLivenessCheck> {
         super("Service Health - Liveness", providers);
     }
 
+    public LivenessHealthCheck() {
+        super("Service Health - Liveness", null);
+    }
+
     @Override
     protected HealthStatus getStatus(HasLivenessCheck provider) {
         return provider.getLivenessStatus();
