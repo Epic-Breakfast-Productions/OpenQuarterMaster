@@ -13,7 +13,7 @@
 
  - [ ] Return actual search results, not image IDs Colten
  - [x] Scope each search to specific database Greg
- - [ ] Process image changes as they happen, not just when DB is initialized Colten/Greg
+ - [x] Process image changes as they happen, not just when DB is initialized Colten/Greg
  - [ ] Redesign TreeMap (possibly different structure) to not store extra objects Colten
  - [ ] Testing...
  - [ ] Integration into deployment methodology Greg
