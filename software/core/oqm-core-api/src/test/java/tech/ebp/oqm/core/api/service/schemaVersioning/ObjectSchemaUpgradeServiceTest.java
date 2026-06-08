@@ -21,7 +21,6 @@ import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.service.mongo.InteractingEntityService;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.ItemCheckoutService;
-import tech.ebp.oqm.core.api.service.mongo.MongoService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
@@ -67,7 +66,7 @@ public class ObjectSchemaUpgradeServiceTest extends RunningServerTest {
 	CoreApiInteractingEntity coreApiInteractingEntity;
 	
 	@Inject
-	ObjectSchemaUpgradeService objectSchemaUpgradeService;
+    ObjectSchemaUpgradeService objectSchemaUpgradeService;
 	
 	public static Stream<Arguments> tests() throws IOException {
 		List<Arguments> tests = new ArrayList<>();

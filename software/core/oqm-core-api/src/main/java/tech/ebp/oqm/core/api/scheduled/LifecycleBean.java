@@ -8,10 +8,8 @@ import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import tech.ebp.oqm.core.api.model.object.upgrade.TotalUpgradeResult;
 import tech.ebp.oqm.core.api.service.TempFileService;
 import tech.ebp.oqm.core.api.service.mongo.CustomUnitService;
-import tech.ebp.oqm.core.api.service.schemaVersioning.ObjectSchemaUpgradeService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 
 import java.nio.file.Paths;
@@ -38,7 +36,7 @@ public class LifecycleBean {
 	TempFileService tempFileService;
 
 	@Inject
-	OqmDatabaseService dbService;
+    OqmDatabaseService dbService;
 
 	private ZonedDateTime startDateTime;
 
