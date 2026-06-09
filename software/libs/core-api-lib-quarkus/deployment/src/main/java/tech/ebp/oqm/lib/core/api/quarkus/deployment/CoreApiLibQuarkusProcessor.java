@@ -115,10 +115,11 @@ class CoreApiLibQuarkusProcessor {
 	public List<DevServicesResultBuildItem> createContainer(LaunchModeBuildItem launchMode, CoreApiLibBuildTimeConfig config, CuratedApplicationShutdownBuildItem closeBuildItem) {
 		log.info("Setting up OQM Core API related dev services.");
 
-		Testcontainers.exposeHostPorts(
-			config.devservices().keycloak().port(),
-			config.devservices().kafka().port()
-		);
+		//TODO:: #1287 these lines are related to not host netowrking
+//		Testcontainers.exposeHostPorts(
+//			config.devservices().keycloak().port(),
+//			config.devservices().kafka().port()
+//		);
 
 		//TODO:: handle needing to restart services?
 		List<DevServicesResultBuildItem> output = new ArrayList<>();
@@ -135,9 +136,9 @@ class CoreApiLibQuarkusProcessor {
 
 				Map<String, String> props = Map.of(
 					"host",
-					mongoDBContainer.getNetworkAliases().get(0),
+					"localhost", //mongoDBContainer.getNetworkAliases().get(0), //TODO:: #1287
 					"port",
-					"27017" //String.valueOf(mongoDBContainer.getMappedPort(27017))
+					String.valueOf(mongoDBContainer.getMappedPort(27017))//TODO:: #1287
 				);
 
 				log.info("MongoDB dev service properties: {}" + props);
