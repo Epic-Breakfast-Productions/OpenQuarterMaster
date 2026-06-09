@@ -39,7 +39,7 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 		//configure network
 		ConfigureUtil.configureSharedNetwork(this, "oqm-core-api");
 //		this.addExposedPort(80);
-		this.addFixedExposedPort(8123, 80);
+		this.addFixedExposedPort(devserviceConfig.port(), 80);
 		this.withAccessToHost(true);
 
 //		withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
