@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.model.messaging;
 
 import lombok.*;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.core.api.model.object.history.EventType;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 
 @Data
@@ -12,4 +13,12 @@ public class EventNotificationWrapper {
 	private ObjectId database;
 	private String objectName;
 	private ObjectHistoryEvent event;
+
+	public EventType getEventType() {
+		return this.getEvent().getType();
+	}
+
+	public ObjectId getObjectId() {
+		return this.getEvent().getObjectId();
+	}
 }
