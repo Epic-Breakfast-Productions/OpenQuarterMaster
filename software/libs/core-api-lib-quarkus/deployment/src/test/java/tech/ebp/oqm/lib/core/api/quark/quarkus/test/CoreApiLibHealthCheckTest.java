@@ -9,7 +9,7 @@ import org.junit.jupiter.api.extension.RegisterExtension;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.Constants;
 
 public class CoreApiLibHealthCheckTest {
-	
+
 	@RegisterExtension
 	static final QuarkusUnitTest config = new QuarkusUnitTest()
 											  .withEmptyApplication()
@@ -19,14 +19,16 @@ public class CoreApiLibHealthCheckTest {
 //											  .withConfigurationResource("application-default-datasource.properties")
 //											  .overrideConfigKey("quarkus.datasource.health.enabled", "true")
 		;
-	
+
 	@Test
-	public void testDataSourceHealthCheckExclusion() {
+	public void testDataSourceHealthCheckExclusion() throws InterruptedException {
 		ValidatableResponse response = RestAssured.when().get("/q/health")
 			.then();
-		
+
 		System.out.println(response.extract().body().asPrettyString());
-		
+
+//		Thread.sleep(60_000);
+
 		response.statusCode(200)
 			.body("status", CoreMatchers.equalTo("UP"));
 	}
