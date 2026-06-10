@@ -24,13 +24,6 @@ service:
       displayName: "Default"
       description: "The default database, automatically created if there are no other databases at startup."
 
-externalService:
-  secretSizeMin: 50
-  secretSizeMax: 100
-  serviceTokenExpires: 86400 # 1 day
-  extServices:
-    # Service entries here
-  
 quarkus:
   application:
     name: ${service.nameShort} - ${service.version} / ${service.apiVersion}
@@ -61,7 +54,7 @@ quarkus:
       enabled: true
     logs:
       enabled: true
-  
+
   # https://quarkus.io/guides/openapi-swaggerui
   smallrye-openapi:
     info-title: Open QuarterMaster Core API
@@ -75,7 +68,7 @@ quarkus:
     info-license-url: ${service.gitLink}/blob/main/LICENSE
     security-scheme: jwt
     security-scheme-name: JwtAuth
-    
+
   swagger-ui:
     always-include: true
     title: ${quarkus.smallrye-openapi.info-title} v${service.apiVersion}
@@ -108,7 +101,7 @@ mp:
           - "tech.ebp.oqm.core.api.interfaces.endpoints.inventory.ItemListCrud"
         packages:
           - "tech.ebp.oqm.core.api.interfaces.ui"
-        
+
     extensions:
       smallrye:
         remove-unused-schemas:
@@ -160,17 +153,17 @@ smallrye:
 "%intTest":
   service:
     tempDir: "/tmp/oqmIntTest/baseStation"
-  
+
   #messaging:
   #  connector: smallrye-amqp
-  
+
   quarkus:
     http:
       port: 8081
     log:
       level: DEBUG
       category:
-    
+
     mongodb:
       database: openQuarterMasterIntTest
       write-concern:
@@ -182,7 +175,7 @@ smallrye:
     reactive-messaging:
       health:
         enabled: true
-  
+
   mp:
     jwt:
       verify:

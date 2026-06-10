@@ -12,7 +12,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserInfo {
-	
+
 	private String id;
 	private String authId;
 	private String name;

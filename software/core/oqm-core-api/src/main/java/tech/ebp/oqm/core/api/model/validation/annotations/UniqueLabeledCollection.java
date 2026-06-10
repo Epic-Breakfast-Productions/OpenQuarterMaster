@@ -24,10 +24,10 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Constraint(validatedBy = UniqueLabeledCollectionValidator.class)
 @Documented
 public @interface UniqueLabeledCollection {
-	
-	String message() default "Unit was not one of allowed units.";
-	
+
+	String message() default "Multiple labeled items were found with the same label.";
+
 	Class<?>[] groups() default {};
-	
+
 	Class<? extends Payload>[] payload() default {};
 }

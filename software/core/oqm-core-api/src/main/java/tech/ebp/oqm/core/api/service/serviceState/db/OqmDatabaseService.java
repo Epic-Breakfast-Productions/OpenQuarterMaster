@@ -13,12 +13,13 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.conversions.Bson;
-import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import tech.ebp.oqm.core.api.health.utils.HasReadinessCheck;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.rest.search.OqmMongoDbSearch;
 import tech.ebp.oqm.core.api.service.mongo.TopLevelMongoService;
+import tech.ebp.oqm.core.api.health.utils.HealthStatus;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,7 +34,7 @@ import java.util.Optional;
  */
 @Slf4j
 @ApplicationScoped
-public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, OqmMongoDbSearch, CollectionStats> {
+public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, OqmMongoDbSearch, CollectionStats> implements HasReadinessCheck {
 
 	@Getter
 	@Setter(AccessLevel.PRIVATE)
@@ -46,6 +47,9 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 	@ConfigProperty(name = "quarkus.mongodb.database")
 	String databasePrefix;
 
+    @Getter
+    private final HealthStatus readinessStatus = new HealthStatus("Database Service");
+
 	/**
 	 * The actual mongo collection.
 	 */
@@ -57,7 +61,6 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 
 	@PostConstruct
 	public void setup() {
-
 		if (this.getTypedCollection().countDocuments() == 0) {
 			// create a default database in case none exist
 			log.info("At startup, no oqm databases existed.");
@@ -76,6 +79,7 @@ public class OqmDatabaseService extends TopLevelMongoService<OqmMongoDatabase, O
 			}
 		}
 		this.refreshCache();
+        readinessStatus.markUp("Databases loaded: " + getDatabases().size());
 	}
 
 	/**

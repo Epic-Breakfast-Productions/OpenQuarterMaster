@@ -10,11 +10,13 @@ import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
 import io.quarkus.deployment.dev.devservices.DevServicesConfig;
+import io.quarkus.devservices.common.ConfigureUtil;
 import io.quarkus.devui.spi.JsonRPCProvidersBuildItem;
 import io.quarkus.devui.spi.page.CardPageBuildItem;
 import io.quarkus.devui.spi.page.Page;
 import io.quarkus.smallrye.health.deployment.spi.HealthBuildItem;
 import org.jboss.logging.Logger;
+import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.utility.DockerImageName;
@@ -33,25 +35,25 @@ import java.util.Map;
  * Processes runtime features like configs, health checks, and devservices
  */
 class CoreApiLibQuarkusProcessor {
-	
+
 	private static final Logger log = Logger.getLogger(CoreApiLibQuarkusProcessor.class);
-	
+
 	private static final String FEATURE = "core-api-lib-quarkus";
-	private static final String MONGODB_DEVSERVICE_HOSTNAME = "localhost";
-	private static final String HOST = "localhost";
-	private static final String KEYCLOAK_DEVSERVICE_HOSTNAME = HOST;
-	private static final String KAFKA_DEVSERVICE_HOSTNAME = HOST;
-	
+	private static final String MONGODB_DEVSERVICE_HOSTNAME = "oqm-core-api-mongodb";
+	private static final String HOST = "host.testcontainers.internal";
+	private static final String KEYCLOAK_DEVSERVICE_HOSTNAME = "localhost"; //TODO: #1287 should not use this in non-host netowrking
+	private static final String KAFKA_DEVSERVICE_HOSTNAME = "localhost"; //TODO: #1287 should not use this in non-host netowrking
+
 	private static volatile boolean firstSetup = true;
-	
+
 	private static volatile Map<String, DevServicesResultBuildItem.RunningDevService> DEVSERVICES = new HashMap<>();
-	
-	
+
+
 	@BuildStep
 	FeatureBuildItem feature() {
 		return new FeatureBuildItem(FEATURE);
 	}
-	
+
 	@BuildStep
 	List<RunTimeConfigurationDefaultBuildItem> addRestConfiguration() {
 		return List.of(
@@ -59,25 +61,27 @@ class CoreApiLibQuarkusProcessor {
 			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client.\"" + Constants.CORE_API_CLIENT_OIDC_NAME + "\".url", "${quarkus.oidc.auth-server-url:}")
 		);
 	}
-	
+
 	@BuildStep
 	HealthBuildItem addHealthCheck(CoreApiLibBuildTimeConfig buildTimeConfig) {
 		return new HealthBuildItem("tech.ebp.oqm.lib.core.api.quarkus.runtime.health.CoreApiHealthCheck", buildTimeConfig.health().enabled());
 	}
-	
+
 	private MongoDBContainer newMongoDbContainer() {
 		log.info("Starting new MongoDB dev container");
 		DockerImageName mongoImageName = DockerImageName.parse("mongo:7");
-		
+
 		MongoDBContainer mongoDBContainer = new MongoDBContainer(mongoImageName);
 		mongoDBContainer.addExposedPorts();
-		mongoDBContainer.withNetwork(Network.SHARED);
-//		mongoDBContainer.withNetworkAliases(MONGODB_DEVSERVICE_HOSTNAME);
+
+		ConfigureUtil.configureSharedNetwork(mongoDBContainer, "oqm-core-api-mongodb");
+
+		mongoDBContainer.withNetworkAliases(MONGODB_DEVSERVICE_HOSTNAME);
 		mongoDBContainer.start();
-		
+
 		return mongoDBContainer;
 	}
-	
+
 	private OqmCoreApiWebServiceContainer newCoreApiContainer(
 		CoreApiLibBuildTimeConfig config,
 		Map<String, String> mongoConnectionInfo,
@@ -90,7 +94,7 @@ class CoreApiLibQuarkusProcessor {
 			//				.withAccessToHost(true)
 			//				.withNetwork(Network.SHARED)
 			;
-		
+
 		container.withEnv(
 			"smallrye.jwt.verify.key.location",
 			String.format(
@@ -100,45 +104,60 @@ class CoreApiLibQuarkusProcessor {
 				config.devservices().keycloak().realm()
 			)
 		);
-		
+
 		container.start();
-		
+
 		return container;
 	}
-	
-	
+
+
 	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
 	public List<DevServicesResultBuildItem> createContainer(LaunchModeBuildItem launchMode, CoreApiLibBuildTimeConfig config, CuratedApplicationShutdownBuildItem closeBuildItem) {
 		log.info("Setting up OQM Core API related dev services.");
+
+		//TODO:: #1287 these lines are related to not host netowrking
+//		Testcontainers.exposeHostPorts(
+//			config.devservices().keycloak().port(),
+//			config.devservices().kafka().port()
+//		);
+
 		//TODO:: handle needing to restart services?
 		List<DevServicesResultBuildItem> output = new ArrayList<>();
 		Map<String, String> mongoConnectionInfo = new HashMap<>();
 		Map<String, String> kafkaConnectionInfo = new HashMap<>();
 		{//mongodb
-			
+
 			DevServicesResultBuildItem.RunningDevService mongoDevService = DEVSERVICES.get("mongodb");
-			
+
 			if (mongoDevService == null) {
 				MongoDBContainer mongoDBContainer = newMongoDbContainer();
+
+				log.info("MongoDB dev service network aliases: " + mongoDBContainer.getNetworkAliases());
+
+				Map<String, String> props = Map.of(
+					"host",
+					"localhost", //mongoDBContainer.getNetworkAliases().get(0), //TODO:: #1287
+					"port",
+					String.valueOf(mongoDBContainer.getMappedPort(27017))//TODO:: #1287
+				);
+
+				log.info("MongoDB dev service properties: {}" + props);
+
 				mongoDevService = new DevServicesResultBuildItem.RunningDevService(
 					FEATURE,
 					mongoDBContainer.getContainerId(),
 					mongoDBContainer::close,
-					Map.of(
-						"port",
-						String.valueOf(mongoDBContainer.getMappedPort(27017))
-					)
+					props
 				);
-				
-				
+
 				DEVSERVICES.put("mongodb", mongoDevService);
 			}
-			
+
 			mongoConnectionInfo.put(
 				"quarkus.mongodb.connection-string",
-				"mongodb://" + MONGODB_DEVSERVICE_HOSTNAME + ":" + mongoDevService.getConfig().get("port")
+				"mongodb://" + mongoDevService.getConfig().get("host") + ":" + mongoDevService.getConfig().get("port")
 			);
-			
+
 			output.add(mongoDevService.toBuildItem());
 		}
 		if (config.devservices().kafka().enabled()) {//connect to existent
@@ -155,21 +174,23 @@ class CoreApiLibQuarkusProcessor {
 		}
 		{//Core API
 			DevServicesResultBuildItem.RunningDevService coreApiDevService = DEVSERVICES.get("coreApi");
-			
+
 			if (coreApiDevService == null) {
 				OqmCoreApiWebServiceContainer container = this.newCoreApiContainer(config, mongoConnectionInfo, kafkaConnectionInfo);
-				
+
 				Map<String, String> props = new HashMap<>();
 				props.put(Constants.CONFIG_ROOT_NAME + ".baseUri", "http://" + container.getHost() + ":" + container.getPort());
 				props.put("quarkus.rest-client.\"" + Constants.CORE_API_CLIENT_NAME + "\".url", "${" + Constants.CONFIG_ROOT_NAME + ".baseUri}");
-				
+
+				log.info("Core API devservice properties: " + props);
+
 				coreApiDevService = new DevServicesResultBuildItem.RunningDevService(FEATURE, container.getContainerId(), container::close, props);
 				DEVSERVICES.put("coreApi", coreApiDevService);
 			}
-			
+
 			output.add(coreApiDevService.toBuildItem());
 		}
-		
+
 		if (firstSetup) {
 			firstSetup = false;
 			closeBuildItem.addCloseTask(
@@ -184,28 +205,28 @@ class CoreApiLibQuarkusProcessor {
 							log.error("Failed to close devservice: " + curDevservice.toString(), e);
 						}
 					}
-					
+
 					firstSetup = true;
 				}, true
 			);
 		}
-		
+
 		return output;
 	}
-	
+
 	@BuildStep(onlyIf = IsLocalDevelopment.class)
 	void setupDevUiCard(BuildProducer<CardPageBuildItem> cardsProducer, CoreApiLibBuildTimeConfig config) {
-		
+
 		CardPageBuildItem cardPageBuildItem = new CardPageBuildItem();
 		cardPageBuildItem.setLogo("oqm-icon.svg", "oqm-icon.svg");
-		
+
 		//show oqm core api ui
 		cardPageBuildItem.addPage(
 			Page.externalPageBuilder("OQM Core API UI")
 				.url("http://localhost:" + config.devservices().port())
 				.doNotEmbed()//needed as embedded fails due to CORS
 		);
-		
+
 		//page for managing core api data
 		cardPageBuildItem.addPage(
 			Page.webComponentPageBuilder()
@@ -213,10 +234,10 @@ class CoreApiLibQuarkusProcessor {
 				.icon("font-awesome-solid:database")
 				.componentLink("qwc-oqm-core-api-lib-db-management.js")
 		);
-		
+
 		cardsProducer.produce(cardPageBuildItem);
 	}
-	
+
 	@BuildStep(onlyIf = IsLocalDevelopment.class)
 	JsonRPCProvidersBuildItem createJsonRPCService() {
 		return new JsonRPCProvidersBuildItem(tech.ebp.oqm.lib.core.api.quarkus.runtime.dev.CoreApiDevDbManagementService.class);
