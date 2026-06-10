@@ -37,27 +37,22 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 	@Override
 	protected void configure() {
 		//configure network
-		ConfigureUtil.configureSharedNetwork(this, "oqm-core-api");
-//		this.addExposedPort(80);
-		this.addFixedExposedPort(devserviceConfig.port(), 80);
-		this.withAccessToHost(true);
 
-//		withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
-//			new HostConfig().withNetworkMode("host")
-//		));
+		//TODO:: #1287 these lines are related to not host netowrking
+//		ConfigureUtil.configureSharedNetwork(this, "oqm-core-api");
+//		this.addFixedExposedPort(devserviceConfig.port(), 80);
+//		this.withAccessToHost(true);
 
-//		Testcontainers.exposeHostPorts(this.devserviceConfig.keycloak().port());
-//		Testcontainers.exposeHostPorts(this.devserviceConfig.kafka().port());
-
-//		addFixedExposedPort(devserviceConfig.port(), 80);
-
-
+		//TODO:: #1287 don't do this
+		withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
+			new HostConfig().withNetworkMode("host")
+		));
+		this.withEnv("QUARKUS_HTTP_PORT", String.valueOf(this.devserviceConfig.port()));
 
 
 		//configure env
 		this.withEnv(mongoConnectionInfo);
 		this.withEnv(kafkaConnectionInfo);
-//		this.withEnv("QUARKUS_HTTP_PORT", String.valueOf(this.devserviceConfig.port()));
 
 		// Tell the dev service how to know the container is ready. All 3 is likely overkill, but eh
 		this.waitingFor(Wait.forHealthcheck());
