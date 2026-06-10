@@ -41,8 +41,8 @@ class CoreApiLibQuarkusProcessor {
 	private static final String FEATURE = "core-api-lib-quarkus";
 	private static final String MONGODB_DEVSERVICE_HOSTNAME = "oqm-core-api-mongodb";
 	private static final String HOST = "host.testcontainers.internal";
-	private static final String KEYCLOAK_DEVSERVICE_HOSTNAME = HOST;
-	private static final String KAFKA_DEVSERVICE_HOSTNAME = HOST;
+	private static final String KEYCLOAK_DEVSERVICE_HOSTNAME = "localhost"; //TODO: #1287 should not use this in non-host netowrking
+	private static final String KAFKA_DEVSERVICE_HOSTNAME = "localhost"; //TODO: #1287 should not use this in non-host netowrking
 
 	private static volatile boolean firstSetup = true;
 
