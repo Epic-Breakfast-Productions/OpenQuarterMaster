@@ -1,16 +1,19 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging;
 
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 
 import java.util.Collection;
 
 /**
  * Filter utilities for history events.
  */
-public class HistoryEventFilter {
+@NoArgsConstructor(access = AccessLevel.PRIVATE)
+public final class HistoryEventFilter {
 
 	/**
 	 * A filter method accepting a history event and filter options.
@@ -20,6 +23,7 @@ public class HistoryEventFilter {
 	 */
 	public static boolean filter(
 		EventNotificationWrapper event,
+		@NonNull
 		FilterOptions filterOptions
 	){
 		if(filterOptions.getDatabaseId() != null){
@@ -67,5 +71,4 @@ public class HistoryEventFilter {
 		private Collection<String> objectName;
 		private Collection<String> eventType;
 	}
-
 }
