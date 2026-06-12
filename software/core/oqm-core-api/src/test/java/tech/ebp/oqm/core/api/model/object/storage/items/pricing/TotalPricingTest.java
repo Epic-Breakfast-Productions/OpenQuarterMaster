@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 public class TotalPricingTest extends ObjectSerializationTest<TotalPricing> {
-	
+
 	protected TotalPricingTest() {
 		super(TotalPricing.class);
 	}
-	
+
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
 			Arguments.of(
@@ -24,12 +24,18 @@ public class TotalPricingTest extends ObjectSerializationTest<TotalPricing> {
 					.label(FAKER.name().name())
 					.totalPrice(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create())
 					.build()
+			),
+			Arguments.of(
+				TotalPricing.builder()
+					.label(FAKER.name().name())
+					.totalPrice(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1000).create())
+					.build()
 			)
 		);
 	}
-	
-	@Test
-	public void testAddPrice(){
-		//TODO
-	}
+
+//	@Test
+//	public void testAddPrice(){
+//		//TODO
+//	}
 }

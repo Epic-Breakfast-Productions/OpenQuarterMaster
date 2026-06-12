@@ -12,11 +12,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Slf4j
 public class StoredPricingTest extends ObjectSerializationTest<StoredPricing> {
-	
+
 	protected StoredPricingTest() {
 		super(StoredPricing.class);
 	}
-	
+
 	public static Stream<Arguments> getObjects() {
 		return Stream.of(
 			Arguments.of(
@@ -24,10 +24,16 @@ public class StoredPricingTest extends ObjectSerializationTest<StoredPricing> {
 					.label(FAKER.name().name())
 					.flatPrice(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create())
 					.build()
+			),
+			Arguments.of(
+				StoredPricing.builder()
+					.label(FAKER.name().name())
+					.flatPrice(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1000).create())
+					.build()
 			)
 		);
 	}
-	
+
 	@Test
 	public void testCalculateJustFlat(){
 		String label = FAKER.name().name();
