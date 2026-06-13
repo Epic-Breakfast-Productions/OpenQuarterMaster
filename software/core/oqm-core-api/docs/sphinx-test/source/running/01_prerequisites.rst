@@ -39,4 +39,4 @@ You can have the core api pass on metrics, traces, logs to an OpenTelemetry endp
 SSL Cert
 ^^^^^^^^
 
-You can optionally configure a SSL cert to enable HTTPS. You will have to have this provided.
+You can optionally configure a SSL cert to enable HTTPS. You will have to provide this.

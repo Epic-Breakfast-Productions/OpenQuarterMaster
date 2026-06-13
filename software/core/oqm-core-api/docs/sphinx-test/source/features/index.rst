@@ -16,5 +16,7 @@ This means that things like specific data models, implementation details, and si
    01_nonfunctional
    02_database
    03_entitiesAuthRoles
-   04_messaging
-   05_filesImages
+   04_interfaces
+   05_general_object
+   06_filesImages
+
