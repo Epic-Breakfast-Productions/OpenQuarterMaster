@@ -37,3 +37,11 @@ nb-configuration.xml
 
 # Plugin directory
 /.quarkus/cli/plugins/
+
+# Quarkus CLI
+.quarkus/
+
+# Eclipse (anywhere in project)
+**/.settings/
+**/.project
+.classpath
