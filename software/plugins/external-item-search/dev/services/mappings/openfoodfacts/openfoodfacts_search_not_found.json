@@ -1,0 +1,28 @@
+{
+	"request": {
+		"urlPathPattern": "/openfoodfacts/api/v2/search",
+		"method": "GET",
+		"queryParameters": {
+			"categories_tags_en": {
+				"equalTo": "beshbarmak"
+			},
+			"page_size": {
+				"equalTo": "1"
+			}
+		}
+	},
+	"response": {
+		"status": 200,
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"jsonBody": {
+			"count": 0,
+			"page": 1,
+			"page_count": 0,
+			"page_size": 1,
+			"products": [],
+			"skip": 0
+		}
+	}
+}
