@@ -12,14 +12,20 @@ import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ResultType;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.ItemSearchService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.barcodeLookup.BarcodeLookupService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.dataKick.DatakickService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.openfoodfacts.OpenFoodFactsService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.rebrickable.RebrickableService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.upcItemDb.UpcItemDbService;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
-import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @ApplicationScoped
 @Slf4j
@@ -43,12 +49,14 @@ public class ExtItemLookupService {
 		DatakickService datakickService,
 		RebrickableService rebrickableService,
 		BarcodeLookupService barcodeLookupService,
-		UpcItemDbService upcItemDbService
+		UpcItemDbService upcItemDbService,
+        OpenFoodFactsService openFoodFactsService
 	) {
 		this.searchServices.add(datakickService);
 		this.searchServices.add(rebrickableService);
 		this.searchServices.add(barcodeLookupService);
 		this.searchServices.add(upcItemDbService);
+        this.searchServices.add(openFoodFactsService);
 	}
 	
 	public Set<ItemSearchService> getSearchServices() {

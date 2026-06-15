@@ -46,6 +46,9 @@ quarkus:
     openfoodfacts:
       url: https://world.openfoodfacts.net
       scope: jakarta.inject.Singleton
+    openfoodfacts-search:
+      url: https://search.openfoodfacts.net
+      scope: jakarta.inject.Singleton
   smallrye-openapi:
     info-title: External Item Search API
     info-version: ${quarkus.application.version}
@@ -104,4 +107,6 @@ quarkus:
       rebrickable:
         url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
       openfoodfacts:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+      openfoodfacts-search:
         url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/

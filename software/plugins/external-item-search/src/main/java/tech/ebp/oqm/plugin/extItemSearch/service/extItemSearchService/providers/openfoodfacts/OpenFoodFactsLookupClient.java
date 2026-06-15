@@ -10,7 +10,6 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-@Path("/api")
 @RegisterRestClient(configKey = "openfoodfacts")
 public interface OpenFoodFactsLookupClient {
     //TODO: add filelds to limit the response size in service
@@ -18,16 +17,16 @@ public interface OpenFoodFactsLookupClient {
     //TODO: add User-Agent header
     @WithSpan
     @GET
-    @Path("/v3/product/{barcode}")
+    @Path("/api/v3/product/{barcode}")
     @CacheResult(cacheName = "openfoodfacts-product")
     Uni<ObjectNode> getProduct(@PathParam("barcode") String barcode);
 
     @WithSpan
     @GET
-    @Path("/v2/search")
+    @Path("/search")
     @CacheResult(cacheName = "openfoodfacts-search")
     Uni<ObjectNode> search(
-        @QueryParam("categories_tags_en") String category,
+        @QueryParam("q") String query,
         @QueryParam("page_size") int pageSize
     );
 }

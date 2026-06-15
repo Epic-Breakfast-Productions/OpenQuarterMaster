@@ -85,7 +85,7 @@ public class RebrickableService extends ItemSearchService {
 	public LookupResult partJsonToResult(LookupSource source, LookupMethod method, ObjectNode results) {
 		log.info("Search result: {}", results);
 		ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
-		
+
 		List<String> images = new ArrayList<>();
 		Map<String, String> links = new HashMap<>();
 		Map<String, String> identifiers = new HashMap<>();
@@ -243,17 +243,17 @@ public class RebrickableService extends ItemSearchService {
 			case REBRICKABLE ->
 				switch (method) {
 					case PART_NUM -> this.rebrickableLookupClient.partFromNum(this.getApiKey(), term)
-										 .map(result->this.partJsonToResult(source, method, result))
+										 .map(result->this.partJsonToResult(source, method, result)) // return a single result
 										 .onFailure().recoverWithItem(e->this.handleError(source, method, e))
 										 .toMulti();
 					
 					case SET_NUM -> this.rebrickableLookupClient.setFromNum(this.getApiKey(), term)
-										.map(result->this.partJsonToResult(source, method, result))
+										.map(result->this.partJsonToResult(source, method, result)) // return a single result
 										.onFailure().recoverWithItem(e->this.handleError(source, method, e))
 										.toMulti();
 					case TEXT -> Multi.createBy().merging().streams(
 						this.rebrickableLookupClient.partsSearch(this.getApiKey(), term)
-							.map(result->this.partSearchJsonToResults(source, method, result))
+							.map(result->this.partSearchJsonToResults(source, method, result)) //FIXME: return a collection of results
 							.onFailure().recoverWithItem(e->this.handleErrorRetCollection(source, method, e))
 							.onItem().transformToMulti(collection-> Multi.createFrom().iterable(collection)),
 						this.rebrickableLookupClient.setsSearch(this.getApiKey(), term)

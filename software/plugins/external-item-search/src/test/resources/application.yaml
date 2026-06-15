@@ -11,6 +11,10 @@ productLookup:
     barcodelookup-com:
       url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
       apiKey: devKey
+    openfoodfacts:
+      url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+    openfoodfacts-search:
+      url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
 
 quarkus:
   http:
