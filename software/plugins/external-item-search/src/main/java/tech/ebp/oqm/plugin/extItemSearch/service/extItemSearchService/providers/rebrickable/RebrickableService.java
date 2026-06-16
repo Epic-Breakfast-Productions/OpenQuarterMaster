@@ -243,17 +243,17 @@ public class RebrickableService extends ItemSearchService {
 			case REBRICKABLE ->
 				switch (method) {
 					case PART_NUM -> this.rebrickableLookupClient.partFromNum(this.getApiKey(), term)
-										 .map(result->this.partJsonToResult(source, method, result)) // return a single result
+										 .map(result->this.partJsonToResult(source, method, result))
 										 .onFailure().recoverWithItem(e->this.handleError(source, method, e))
 										 .toMulti();
 					
 					case SET_NUM -> this.rebrickableLookupClient.setFromNum(this.getApiKey(), term)
-										.map(result->this.partJsonToResult(source, method, result)) // return a single result
+										.map(result->this.partJsonToResult(source, method, result))
 										.onFailure().recoverWithItem(e->this.handleError(source, method, e))
 										.toMulti();
 					case TEXT -> Multi.createBy().merging().streams(
 						this.rebrickableLookupClient.partsSearch(this.getApiKey(), term)
-							.map(result->this.partSearchJsonToResults(source, method, result)) //FIXME: return a collection of results
+							.map(result->this.partSearchJsonToResults(source, method, result))
 							.onFailure().recoverWithItem(e->this.handleErrorRetCollection(source, method, e))
 							.onItem().transformToMulti(collection-> Multi.createFrom().iterable(collection)),
 						this.rebrickableLookupClient.setsSearch(this.getApiKey(), term)

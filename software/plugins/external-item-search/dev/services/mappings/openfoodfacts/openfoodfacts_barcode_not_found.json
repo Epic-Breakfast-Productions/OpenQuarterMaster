@@ -1,12 +1,17 @@
 {
   "request": {
-    "urlPathPattern": "/openfoodfacts/api/v3/product/304692002975000",
+    "urlPathPattern": "/openfoodfacts/api/v3/product/?!3046920029759(?=/|$))$.json",
     "method": "GET"
   },
   "response": {
     "status": 404,
     "headers": {
       "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 5000,
+      "sigma": 0.4
     },
     "jsonBody": {
       "code": "304692002975000",

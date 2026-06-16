@@ -4,23 +4,29 @@
     "method": "GET",
     "queryParameters": {
       "q": {
-        "equalTo": "beshbarmak"
+        "matches": "^(?!beshbarmak$).+"
       },
       "page_size": {
-        "equalTo": "1"
+        "matches": ".*"
       }
     }
   },
   "response": {
+    "transformers": ["response-template"],
     "status": 200,
     "headers": {
       "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 5000,
+      "sigma": 0.4
     },
     "jsonBody": {
       "count": 0,
       "page": 1,
       "page_count": 0,
-      "page_size": 1,
+      "page_size": "{{request.query.page_size}}",
       "hits": [],
       "skip": 0
     }

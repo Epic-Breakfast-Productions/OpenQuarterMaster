@@ -33,24 +33,26 @@ public class OpenFoodFactsService extends ItemSearchService {
 
     private final OpenFoodFactsLookupClient openFoodFactsLookupClient;
     private final OpenFoodFactsSearchClient openFoodFactsSearchClient;
-    private final int RESPONSE_SIZE = 1; // move it to application.yml?
+    private final int responseSize;
 
     public OpenFoodFactsService(
         @RestClient OpenFoodFactsLookupClient openFoodFactsLookupClient,
         @RestClient OpenFoodFactsSearchClient openFoodFactsSearchClient,
-        @ConfigProperty(name = "productLookup.providers.openfoodfacts.enabled", defaultValue = "false") boolean enabled) {
+        @ConfigProperty(name = "productLookup.providers.openfoodfacts.enabled", defaultValue = "true") boolean enabled,
+        @ConfigProperty(name = "productLookup.providers.openfoodfacts.responseSize", defaultValue = "10") int responseSize) {
         super(
             enabled,
             LookupService.OPENFOODFACTS,
             ExtItemLookupProviderInfo.
                 builder()
-                .displayName("openfoodfacts")
+                .displayName("Open Food Facts")
                 .description("Open database of food products")
                 .cost("free")
                 .acceptsContributions(true)
                 .homepage(URI.create("https://openfoodfacts.github.io")));
         this.openFoodFactsLookupClient = openFoodFactsLookupClient;
         this.openFoodFactsSearchClient = openFoodFactsSearchClient;
+        this.responseSize = responseSize;
     }
 
     @Override
@@ -77,7 +79,7 @@ public class OpenFoodFactsService extends ItemSearchService {
                         .map(result -> this.partJsonToResult(source, lookupMethod, result))
                         .onFailure().recoverWithItem(e -> this.handleError(source, lookupMethod, e))
                         .toMulti();
-                    case TEXT -> this.openFoodFactsSearchClient.search(RESPONSE_SIZE, term)
+                    case TEXT -> this.openFoodFactsSearchClient.search(responseSize, term)
                         .map(result -> this.searchJsonToResults(source, lookupMethod, result))
                         .onFailure().recoverWithItem(e -> this.handleErrorRetCollection(source, lookupMethod, e))
                         .onItem().transformToMulti(collection -> Multi.createFrom().iterable(collection));

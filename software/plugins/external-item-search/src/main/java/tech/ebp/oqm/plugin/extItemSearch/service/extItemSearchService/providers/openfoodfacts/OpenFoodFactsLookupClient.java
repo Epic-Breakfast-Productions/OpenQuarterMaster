@@ -7,26 +7,15 @@ import io.smallrye.mutiny.Uni;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
-import jakarta.ws.rs.QueryParam;
+import org.eclipse.microprofile.rest.client.annotation.RegisterClientHeaders;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @RegisterRestClient(configKey = "openfoodfacts")
+@RegisterClientHeaders(OpenFoodFactsUserAgentHeadersFactory.class)
 public interface OpenFoodFactsLookupClient {
-    //TODO: add filelds to limit the response size in service
-    //https://openfoodfacts.github.io/documentation/docs/Product-Opener/v2/search/get-search/#limiting-results
-    //TODO: add User-Agent header
     @WithSpan
     @GET
     @Path("/api/v3/product/{barcode}")
     @CacheResult(cacheName = "openfoodfacts-product")
     Uni<ObjectNode> getProduct(@PathParam("barcode") String barcode);
-
-    @WithSpan
-    @GET
-    @Path("/search")
-    @CacheResult(cacheName = "openfoodfacts-search")
-    Uni<ObjectNode> search(
-        @QueryParam("q") String query,
-        @QueryParam("page_size") int pageSize
-    );
 }

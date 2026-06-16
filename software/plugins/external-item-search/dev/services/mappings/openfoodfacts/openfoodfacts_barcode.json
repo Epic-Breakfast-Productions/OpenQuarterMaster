@@ -8,6 +8,11 @@
     "headers": {
       "Content-Type": "application/json"
     },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 5000,
+      "sigma": 0.4
+    },
     "jsonBody": {
       "code": "3046920029759",
       "errors": [],
