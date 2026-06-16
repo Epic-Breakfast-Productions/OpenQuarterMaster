@@ -3,6 +3,10 @@
 This directory contains the json schemas that outline how communication with Modular Storage System (MSS) modules
 operates.
 
+to add:
+
+ - locking
+
 ## How it works
 
 Generally speaking, the actual MSS Modules are rather 'dumb'. They only provide basic information on the storage space
