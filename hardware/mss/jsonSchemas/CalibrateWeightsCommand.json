@@ -2,7 +2,7 @@
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
 	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/CalibrateWeightsCommand.json",
 	"title": "Calibrates Weights Command",
-	"description": "Resets the weights recorded by the module. Intended to re-zero the values, and get an accurate reading.",
+	"description": "Commands the unit to recalibrate its weights.",
 	"type": "object",
 	"allOf": [
 		{
@@ -19,17 +19,7 @@
 			"description": "The array of storage blocks to be calibrated. Leave empty or omit for all blocks.",
 			"type": "array",
 			"items": {
-				"type": "object",
-				"properties": {
-					"blockNum": {
-						"description": "The block these settings are for",
-						"type": "integer",
-						"minimum": 1
-					}
-				},
-				"required": [
-					"blockNum"
-				]
+				"type": "integer"
 			}
 		}
 	},
