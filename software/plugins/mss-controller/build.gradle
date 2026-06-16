@@ -1,0 +1,51 @@
+plugins {
+	id 'java'
+	id 'io.quarkus'
+	id "io.freefair.lombok" version "9.5.0"
+}
+
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+dependencies {
+	implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+	implementation 'io.quarkus:quarkus-rest'
+	implementation 'io.quarkus:quarkus-container-image-docker'
+	implementation 'io.quarkus:quarkus-rest-client'
+	implementation 'io.quarkus:quarkus-qute'
+	implementation 'io.quarkiverse.docker:quarkus-docker-client:0.0.5'
+	implementation 'io.quarkus:quarkus-config-yaml'
+	implementation 'io.quarkus:quarkus-smallrye-health'
+	implementation 'io.quarkus:quarkus-rest-client-jackson'
+	implementation 'io.quarkus:quarkus-hibernate-validator'
+	implementation 'io.quarkus:quarkus-rest-qute'
+	implementation 'io.quarkus:quarkus-smallrye-openapi'
+	implementation 'io.quarkus:quarkus-rest-jackson'
+	implementation 'io.quarkus:quarkus-oidc'
+	implementation 'io.quarkus:quarkus-rest-csrf'
+	implementation 'io.quarkus:quarkus-arc'
+	testImplementation 'io.quarkus:quarkus-junit'
+	testImplementation 'io.rest-assured:rest-assured'
+
+	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-characteristics-lib-quarkus:1.1.1-SNAPSHOT'
+	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:6.0.0'
+}
+
+group = 'tech.ebp.oqm.plugin'
+version = '1.0.0-SNAPSHOT'
+
+java {
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
+}
+
+compileJava {
+	options.encoding = 'UTF-8'
+	options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+	options.encoding = 'UTF-8'
+}
