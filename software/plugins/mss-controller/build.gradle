@@ -31,6 +31,8 @@ dependencies {
 
 	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-characteristics-lib-quarkus:1.1.1-SNAPSHOT'
 	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:6.0.0'
+
+	implementation 'com.fazecast:jSerialComm:2.11.4'
 }
 
 group = 'tech.ebp.oqm.plugin'

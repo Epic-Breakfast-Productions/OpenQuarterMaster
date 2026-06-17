@@ -4,6 +4,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
+import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.CommandType;
 
@@ -12,6 +13,7 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.CommandType;
 @NoArgsConstructor
 @Data
 @ToString(callSuper = true)
+@SuperBuilder
 public class GetModuleInfoCommand extends Command {
 
 	@Override

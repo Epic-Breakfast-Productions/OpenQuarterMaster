@@ -1,6 +1,3 @@
-greeting:
-    message: "hello"
-
 
 oqm:
     core:
@@ -23,6 +20,10 @@ quarkus:
                 logout:
                     paths: ${quarkus.oidc.logout.path}
                     policy: authenticated
+    rest-client:
+        mss-module-rest-client:
+            url: " " # this is provided by and used on a per-module basis
+            scope: jakarta.inject.Singleton
     oidc:
         application-type: hybrid
         token-state-manager:
