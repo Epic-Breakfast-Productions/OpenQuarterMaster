@@ -5,6 +5,7 @@ import io.smallrye.config.WithDefault;
 import io.smallrye.config.WithName;
 
 import java.nio.file.Path;
+import java.time.Duration;
 import java.util.Optional;
 import java.util.Set;
 
@@ -28,6 +29,17 @@ public interface ModuleConfig {
 		@WithName("modules")
 		Set<SerialModuleConfig> modules();
 
+		Timings timings();
+
+		interface Timings {
+			@WithName("rwTimeout")
+			@WithDefault("0.5s")
+			Duration rwTimeout();
+
+			@WithDefault("0.1s")
+			Duration commSpacing();
+		}
+
 		interface SerialModuleConfig {
 			@WithName("portPath")
 			String portPath();
@@ -35,6 +47,7 @@ public interface ModuleConfig {
 			@WithName("baudRate")
 			Optional<Integer> baudRate();
 		}
+
 		interface ScanConfig {
 			@WithDefault("true")
 			boolean enabled();

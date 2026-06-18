@@ -19,6 +19,8 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.Comma
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
 
 import java.time.ZonedDateTime;
+import java.util.ArrayDeque;
+import java.util.Queue;
 
 @Slf4j
 public abstract class MssConnector {
@@ -28,6 +30,9 @@ public abstract class MssConnector {
 	@Getter
 	private final ModuleInfo moduleInfo;
 
+	@Getter
+	private final Queue<ObjectNode> incomingMessages = new ArrayDeque<>();
+
 	@NonNull
 	@NotNull
 	@Getter
@@ -35,7 +40,12 @@ public abstract class MssConnector {
 	private ZonedDateTime lastComm;
 
 	protected MssConnector(ObjectMapper objectMapper) throws ModuleSetupFailedException {
-		CommandResponse response = this.sendCommand(GetModuleInfoCommand.builder().build());
+		CommandResponse response = null;
+		try {
+			response = this.sendCommand(GetModuleInfoCommand.builder().build());
+		} catch(Exception e) {
+			throw new ModuleSetupFailedException("Failed to get module info during init.", e);
+		}
 
 		if(!CommandResponseType.OK.equals(response.getStatus())){
 			log.error("Could not get module info: {}", response);
@@ -51,9 +61,9 @@ public abstract class MssConnector {
 		}
 	}
 
-	protected abstract CommandResponse sendCommandImpl(Command command);
+	protected abstract CommandResponse sendCommandImpl(Command command) throws Exception;
 
-	public CommandResponse sendCommand(@Valid Command command){
+	public CommandResponse sendCommand(@Valid Command command) throws Exception {
 		log.info("Sending command: {}", command);
 		CommandResponse response = this.sendCommandImpl(command);
 		log.info("Command response: {}", response);
