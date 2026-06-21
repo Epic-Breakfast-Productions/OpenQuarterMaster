@@ -29,7 +29,7 @@
 			"type": "boolean"
 		},
 		"storageBlocks": {
-			"description": "The array of storage blocks managed by this module.",
+			"description": "The array of storage blocks to be highlighted.",
 			"type": "array",
 			"items": {
 				"type": "object",

@@ -1,5 +1,5 @@
-Running the Server
-===========================
+Running the Server / Admin Guide
+================================
 
 This section is concerned with how to run, configure, and otherwise manage your OQM Core API instance.
 

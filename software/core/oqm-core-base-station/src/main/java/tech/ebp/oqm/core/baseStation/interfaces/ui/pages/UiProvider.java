@@ -84,7 +84,7 @@ public abstract class UiProvider extends RestInterface {
 		HashMap<String, Uni> uniMapCopy = new HashMap<>(uniMap);
 
 		uniMapCopy.put("userInfo", this.getOqmCoreApiClient().interactingEntityGetSelf(this.getBearerHeaderStr()));
-		uniMapCopy.put("characteristics", this.oqmCoreCharacteristicsService.allInfo());
+		uniMapCopy.put("characteristics", this.oqmCoreCharacteristicsService.isEnabled() ? this.oqmCoreCharacteristicsService.allInfo() : Uni.createFrom().nullItem());
 
 
 		TreeSet<String> keys = new TreeSet<>(uniMapCopy.keySet());
