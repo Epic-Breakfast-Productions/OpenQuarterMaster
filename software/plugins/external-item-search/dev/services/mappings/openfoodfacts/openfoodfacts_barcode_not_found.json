@@ -1,6 +1,6 @@
 {
   "request": {
-    "urlPathPattern": "/openfoodfacts/api/v3/product/?!3046920029759(?=/|$))$.json",
+    "urlPathPattern": "/openfoodfacts/api/v3/product/(?!3046920029759(?=/|$))([^/]+).json$",
     "method": "GET"
   },
   "response": {

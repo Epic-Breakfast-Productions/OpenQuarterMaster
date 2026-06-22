@@ -43,7 +43,7 @@ quarkus:
     rebrickable:
       url: https://rebrickable.com
       scope: jakarta.inject.Singleton
-    openfoodfacts:
+    openfoodfacts-barcode:
       url: https://world.openfoodfacts.net
       scope: jakarta.inject.Singleton
     openfoodfacts-search:
@@ -106,7 +106,7 @@ quarkus:
         scope: jakarta.inject.Singleton
       rebrickable:
         url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
-      openfoodfacts:
+      openfoodfacts-barcode:
         url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
       openfoodfacts-search:
         url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/

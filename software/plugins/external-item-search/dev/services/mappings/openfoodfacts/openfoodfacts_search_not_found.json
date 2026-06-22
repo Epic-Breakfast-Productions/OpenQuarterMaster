@@ -4,7 +4,9 @@
     "method": "GET",
     "queryParameters": {
       "q": {
-        "matches": "^(?!beshbarmak$).+"
+        "not": {
+          "equalTo": "beshbarmak"
+        }
       },
       "page_size": {
         "matches": ".*"

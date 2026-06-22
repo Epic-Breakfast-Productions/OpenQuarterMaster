@@ -12,7 +12,7 @@ public class OpenFoodFactsUserAgentHeadersFactory implements ClientHeadersFactor
     private final String userAgent;
 
     public OpenFoodFactsUserAgentHeadersFactory(
-        @ConfigProperty(name = "service.gitLink")
+        @ConfigProperty(name = "quarkus.application.name")
         String appName,
         @ConfigProperty(name = "service.version")
         String appVersion,
