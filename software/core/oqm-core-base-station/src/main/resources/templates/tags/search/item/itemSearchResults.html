@@ -23,10 +23,10 @@
 	<th scope="col" class="searchResultImageCol">Image</th>
 	<th scope="col">Name</th>
 	<th scope="col">Storage Type</th>
-	<th scope="col">Total</th>
 	<th scope="col">{#icons/categories /} Categories</th>
-	<th scope="col" class="text-center" style="width: 50px;"># {#icons/storageBlocks /}</th>
+	<th scope="col">Total</th>
 	<th scope="col" class="text-center" style="width: 50px;"># {#icons/stored /}</th>
+	<th scope="col" class="text-center" style="width: 50px;"># {#icons/storageBlocks /}</th>
 	<th scope="col" class="text-center" style="width: 114px;">{#icons/flags /} Flags</th>
 	<th scope="col" style="width: 175px;">Actions</th>
 </tr>
@@ -57,21 +57,21 @@
 			<img src="{rootPrefix}/api/passthrough/media/image/for/item/{id}" class="searchResultImage">
 		{/if}
 	</td>
-	<td class="itemResultsName">{name}</td>
+	<td class="itemResultsName user-select-all">{name}</td>
 	<td>{cdi:EnumFormattingService.formatEnum(result.get("storageType").asText())}</td>
+	<td class="">
+		{#for curCat in result.get("categories-objs")}
+		{#objView/itemCatBadge rootPrefix=rootPrefix category=curCat /}
+		{/for}
+	</td>
 	<td>
 		{#amountDisplay amount = result.get("stats").get("total")}{/amountDisplay}
 	</td>
-	<td class="">
-		{#for curCat in result.get("categories-objs")}
-			{#objView/itemCatBadge rootPrefix=rootPrefix category=curCat /}
-		{/for}
+	<td class="text-center">
+		{result.get("stats").get("numStored").asInt()}
 	</td>
 	<td class="text-center">
 		{result.get("storageBlocks").size()}
-	</td>
-	<td class="text-center">
-		{result.get("stats").get("numStored").asInt()}
 	</td>
 	<td>
 		{#object/inventoryItems/flags item=result /}

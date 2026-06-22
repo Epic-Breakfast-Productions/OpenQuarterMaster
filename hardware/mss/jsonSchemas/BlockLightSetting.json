@@ -16,7 +16,7 @@
             "pattern": "^#([a-fA-F0-9]{6}|[a-fA-F0-9]{3})$"
         },
         "brightness": {
-            "description": "The brightness setting of this light. Ignored if disabled in capabilities. Exclude to keep current setting if used in setting command."
+            "description": "The brightness setting of this light. Ignored if disabled in capabilities. Exclude to keep current setting if used in setting command.",
             "type": "integer",
             "minimum": 0,
             "maximum": 255

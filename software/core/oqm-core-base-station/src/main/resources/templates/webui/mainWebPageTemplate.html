@@ -48,8 +48,10 @@ Ingests:
 	{#if navbar == "full"}
 	<div class="container-fluid">
 		<a class="navbar-brand p-0" href="{rootPrefix}/overview">
-			{#if characteristics.getCharacteristics().getRunBy().hasLogoImg()}
-				<img src="{rootPrefix}/api/passthrough/characteristics/runBy/logo" class="topNavImg" alt="Run By Logo"/>
+			{#if cdi:OqmCoreCharacteristicsService.isEnabled()}
+				{#if characteristics.getCharacteristics().getRunBy().hasLogoImg()}
+					<img src="{rootPrefix}/api/passthrough/characteristics/runBy/logo" class="topNavImg" alt="Run By Logo"/>
+				{/if}
 			{/if}
 			<img src="{rootPrefix}/media/logo.svg" alt="" id="topOqmLogo" class="topNavImg">
 		</a>
@@ -181,6 +183,7 @@ Ingests:
 				</div>
 			</form>
 			<ul class="navbar-nav mb-auto">
+				{#if cdi:OqmCoreCharacteristicsService.isEnabled()}
 				<li class="nav-item dropstart">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 						{#icons/icon icon='collection' /}
@@ -201,6 +204,8 @@ Ingests:
 						{/let}
 					</div>
 				</li>
+				{/if}
+
 				<li class="nav-item dropstart">
 					<a class="nav-link dropdown-toggle" data-bs-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
 						{#icons/user /}
@@ -387,63 +392,65 @@ Ingests:
 				</div>
 			</small>
 		</div>
-		{#let characterValues=characteristics.getCharacteristics()}
-			<div id="serverInfo" class="col-sm-4 text-center">
-				{#if characterValues.hasTitle()}
-					<span class="h5">{characterValues.getTitle()}</span><br/>
-				{/if}
-				{#if characterValues.getRunBy().hasBannerImg()}
-					<img src="{rootPrefix}/api/passthrough/characteristics/runBy/banner" style="max-width: 100%; max-height: 4em;">
-					<br />
-				{/if}
-				{#if characterValues.hasRunBy()}
-					{#let runBy=characterValues.getRunBy()}
+		{#if cdi:OqmCoreCharacteristicsService.isEnabled()}
+			{#let characterValues=characteristics.getCharacteristics()}
+				<div id="serverInfo" class="col-sm-4 text-center">
+					{#if characterValues.hasTitle()}
+						<span class="h5">{characterValues.getTitle()}</span><br/>
+					{/if}
+					{#if characterValues.getRunBy().hasBannerImg()}
+						<img src="{rootPrefix}/api/passthrough/characteristics/runBy/banner" style="max-width: 100%; max-height: 4em;">
+						<br />
+					{/if}
+					{#if characterValues.hasRunBy()}
+						{#let runBy=characterValues.getRunBy()}
 
-						{#if runBy.hasValues()}
-							<span class="h6">Run by:</span>
-							{#if runBy.hasName()}
-								<i>{runBy.getName()}</i>
-							{/if}
-							{#if runBy.hasLogoImg()}
-								<img src="{rootPrefix}/api/passthrough/characteristics/runBy/logo" style="max-height:1.2em;" alt="Run By Logo"/>
-							{/if}
-							<br/>
-
-							{#if runBy.hasWebsite()}
-								<a href="{runBy.getWebsite()}">
-									{#icons/icon icon='globe' /}
-									{runBy.getWebsite()}
-								</a>
+							{#if runBy.hasValues()}
+								<span class="h6">Run by:</span>
+								{#if runBy.hasName()}
+									<i>{runBy.getName()}</i>
+								{/if}
+								{#if runBy.hasLogoImg()}
+									<img src="{rootPrefix}/api/passthrough/characteristics/runBy/logo" style="max-height:1.2em;" alt="Run By Logo"/>
+								{/if}
 								<br/>
-							{/if}
 
-							{#if runBy.hasContactInfo()}
-								<span class="h6">Contact Info:</span><br/>
-
-								{#if runBy.hasEmail()}
-									<a href="mailto:{runBy.getEmail()}">
-										{#icons/icon icon='envelope' /}
-										{runBy.getEmail()}
+								{#if runBy.hasWebsite()}
+									<a href="{runBy.getWebsite()}">
+										{#icons/icon icon='globe' /}
+										{runBy.getWebsite()}
 									</a>
+									<br/>
 								{/if}
-								{#if runBy.hasPhone()}
-									<a href="tel:{runBy.getPhone()}">
-										{#icons/icon icon='telephone' /}
-										{runBy.getPhone()}
-									</a>
+
+								{#if runBy.hasContactInfo()}
+									<span class="h6">Contact Info:</span><br/>
+
+									{#if runBy.hasEmail()}
+										<a href="mailto:{runBy.getEmail()}">
+											{#icons/icon icon='envelope' /}
+											{runBy.getEmail()}
+										</a>
+									{/if}
+									{#if runBy.hasPhone()}
+										<a href="tel:{runBy.getPhone()}">
+											{#icons/icon icon='telephone' /}
+											{runBy.getPhone()}
+										</a>
+									{/if}
 								{/if}
 							{/if}
-						{/if}
-					{/let}
-				{/if}
-			</div>
-			<div class="col-sm-4">
-				{#if characterValues.hasMotd()}
-					{!TODO:: markdown render!}
-					{characterValues.getMotd()}
-				{/if}
-			</div>
-		{/let}
+						{/let}
+					{/if}
+				</div>
+				<div class="col-sm-4">
+					{#if characterValues.hasMotd()}
+						{!TODO:: markdown render!}
+						{characterValues.getMotd()}
+					{/if}
+				</div>
+			{/let}
+		{/if}
 	</div>
 </footer>
 

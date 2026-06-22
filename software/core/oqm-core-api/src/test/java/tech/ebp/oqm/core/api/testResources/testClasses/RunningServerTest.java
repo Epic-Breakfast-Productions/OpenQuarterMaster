@@ -47,13 +47,15 @@ public abstract class RunningServerTest extends WebServerTest {
 		if(this instanceof KafkaTest){
 			((KafkaTest)this).clearKafkaQueues(log);
 		}
+
+		log.info("\n\n======================================================\nBeginning test {}\n======================================================\n", testInfo.getDisplayName());
 	}
 
 	@AfterEach
 	public void afterEach(
 		TestInfo testInfo
 	) {
-		log.info("Running after method for test {}", testInfo.getDisplayName());
+		log.info("\n\n======================================================\nRunning after method for test {}\n======================================================\n", testInfo.getDisplayName());
 
 		if(this.needDbReset){
 			if(ConfigProvider.getConfig().getOptionalValue("quarkus.mongodb.connection-string", String.class).isEmpty()){

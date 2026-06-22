@@ -3,13 +3,12 @@ package tech.ebp.oqm.core.api.service.mongo.utils;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.codecs.Codec;
-import org.bson.codecs.MapCodecProvider;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.BigIntCodec;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.ColorCodec;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.DurationCodec;
-import tech.ebp.oqm.core.api.service.mongo.utils.codecs.MoneraryAmountCodec;
+import tech.ebp.oqm.core.api.service.mongo.utils.codecs.MonetaryAmountCodec;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.QuantityCodec;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.URICodec;
 import tech.ebp.oqm.core.api.service.mongo.utils.codecs.UUIDCodec;
@@ -20,7 +19,7 @@ import java.util.List;
 
 @ApplicationScoped
 public class CustomCodecProvider implements CodecProvider {
-	
+
 	@SuppressWarnings("deprecation")
 	List<Codec<?>> codecs = List.of(
 		new UUIDCodec(),
@@ -31,10 +30,10 @@ public class CustomCodecProvider implements CodecProvider {
 		new ZonedDateTimeCodec(),
 		new DurationCodec(),
 		new BigIntCodec(),
-		new MoneraryAmountCodec()
+		new MonetaryAmountCodec()
 //		new MapCodec()//deprecated
 	);
-	
+
 	@Override
 	public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
 		//noinspection rawtypes
@@ -46,6 +45,6 @@ public class CustomCodecProvider implements CodecProvider {
 		}
 		return null;
 	}
-	
-	
+
+
 }
