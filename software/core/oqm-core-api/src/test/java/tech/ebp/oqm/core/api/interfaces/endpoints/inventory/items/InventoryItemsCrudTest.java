@@ -59,21 +59,23 @@ import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 @QuarkusTest
 @TestHTTPEndpoint(InventoryItemsCrud.class)
 class InventoryItemsCrudTest extends RunningServerTest {
-	
+
 	@Inject
 	InventoryItemTestObjectCreator testObjectCreator;
-	
+
 	@Inject
 	ObjectMapper objectMapper;
-	
+
 	@Inject
 	InventoryItemService inventoryItemService;
-	
-	
+
+
+
+
 	@Test
 	public void testItemSearchId() throws JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
-		
+
 		String json = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 						  .body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
 						  .contentType(ContentType.JSON)
@@ -81,9 +83,9 @@ class InventoryItemsCrudTest extends RunningServerTest {
 						  .post()
 						  .then().statusCode(200)
 						  .extract().body().asString();
-		
+
 		String id = OBJECT_MAPPER.readValue(json, InventoryItem.class).getId().toHexString();
-		
+
 		String resultStr = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 							   .body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
 							   .contentType(ContentType.JSON)
@@ -92,11 +94,11 @@ class InventoryItemsCrudTest extends RunningServerTest {
 							   .get()
 							   .then().statusCode(200)
 							   .extract().body().asString();
-		
+
 		ObjectNode resultNode = (ObjectNode) OBJECT_MAPPER.readTree(resultStr);
-		
+
 		assertEquals(1, resultNode.get("numResults").asInt());
-		
+
 		resultStr = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 						.body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
 						.contentType(ContentType.JSON)
@@ -105,16 +107,16 @@ class InventoryItemsCrudTest extends RunningServerTest {
 						.get()
 						.then().statusCode(200)
 						.extract().body().asString();
-		
+
 		resultNode = (ObjectNode) OBJECT_MAPPER.readTree(resultStr);
-		
+
 		assertEquals(0, resultNode.get("numResults").asInt());
 	}
-	
+
 	@Test
 	public void testItemUpdatesUnit() throws JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
-		
+
 		String json = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 						  .body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
 						  .contentType(ContentType.JSON)
@@ -122,15 +124,15 @@ class InventoryItemsCrudTest extends RunningServerTest {
 						  .post()
 						  .then().statusCode(200)
 						  .extract().body().asString();
-		
+
 		log.info("Initial item: {}", json);
-		
+
 		String id = OBJECT_MAPPER.readValue(json, InventoryItem.class).getId().toHexString();
-		
+
 		ObjectNode updates = OBJECT_MAPPER.createObjectNode();
 		updates.putObject("unit")
 			.put("string", "mol");
-		
+
 		//initial update
 		ValidatableResponse response = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 										   .when()
@@ -141,14 +143,14 @@ class InventoryItemsCrudTest extends RunningServerTest {
 										   .put(id)
 										   .then()
 										   .statusCode(200);
-		
+
 		ObjectNode result = response.extract().as(ObjectNode.class);
-		
+
 		log.info("Update Result: {}", result);
-		
+
 		assertEquals("mol", result.get("unit").get("string").asText());
 		assertEquals("mol", result.get("stats").get("total").get("unit").get("string").asText());
-		
+
 		//get again
 		response = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 					   .when()
@@ -157,22 +159,22 @@ class InventoryItemsCrudTest extends RunningServerTest {
 					   .get(id)
 					   .then()
 					   .statusCode(200);
-		
+
 		result = response.extract().as(ObjectNode.class);
-		
+
 		log.info("Get Result: {}", result);
-		
+
 		assertEquals("mol", result.get("unit").get("string").asText());
 		assertEquals("mol", result.get("stats").get("total").get("unit").get("string").asText());
 	}
-	
+
 	public static Stream<Arguments> getParams() {
 		return Stream.of(
 			Arguments.of(2, 10),
 			Arguments.of(20, 20)
 		);
 	}
-	
+
 	@ParameterizedTest
 	@MethodSource("getParams")
 	public void basicThreadTest(int numThreads, int numIterations) throws InterruptedException, ExecutionException, JsonProcessingException {
@@ -184,23 +186,23 @@ class InventoryItemsCrudTest extends RunningServerTest {
 						  .post()
 						  .then().statusCode(200)
 						  .extract().body().asString();
-		
+
 		log.info("Initial item: {}", json);
-		
+
 		String id = OBJECT_MAPPER.readValue(json, InventoryItem.class).getId().toHexString();
 		List<Future<Void>> futures = new ArrayList<>(numThreads);
 		ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor();
-		
-		
+
+
 		BasicItemUpdateTestThread.BasicItemUpdateTestThreadBuilder threadBuilder = BasicItemUpdateTestThread.builder()
 																					   .testUser(testUser)
 																					   .inventoryItemId(id)
 																					   .numIterations(numIterations);
-		
+
 		StopWatch overall = StopWatch.createStarted();
 		for (int i = 1; i <= numThreads; i++) {
 			threadBuilder.threadId("testThread-" + i);
-			
+
 			futures.add(executor.submit(threadBuilder.build()));
 		}
 		executor.shutdown();
@@ -208,11 +210,11 @@ class InventoryItemsCrudTest extends RunningServerTest {
 			log.info("Still waiting on threads...");
 		}
 		overall.stop();
-		
+
 		for (Future<Void> future : futures) {
 			future.get();
 		}
-		
+
 		//TODO:: check results
 		ObjectNode result = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 								.when()
@@ -223,36 +225,36 @@ class InventoryItemsCrudTest extends RunningServerTest {
 								.statusCode(200)
 								.extract().as(ObjectNode.class);
 		log.info("Got Result: {}", result);
-		
+
 	}
-	
-	
+
+
 	@Builder
 	@Slf4j
 	@AllArgsConstructor
 	static class BasicItemUpdateTestThread implements Callable<Void> {
-		
+
 		private String threadId;
 		private String inventoryItemId;
 		private User testUser;
-		
+
 		private int numIterations;
-		
+
 		@SneakyThrows
 		@Override
 		public Void call() {
 			log.info("Running test thread {}", this.threadId);
-			
-				
+
+
 				ObjectNode updates = OBJECT_MAPPER.createObjectNode();
 				updates.putObject("attributes");
-				
+
 				for (int i = 1; i <= this.numIterations; i++) {
 					log.info("Thread {} waiting for lock on iteration {}", this.threadId, i);
-					
+
 					((ObjectNode) updates.get("attributes")).put(this.threadId, i);
-					
-					
+
+
 					try {
 						//initial update
 						ValidatableResponse response = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
@@ -271,15 +273,15 @@ class InventoryItemsCrudTest extends RunningServerTest {
 							i--;
 							continue;
 						}
-						
+
 						log.error("Error in thread {} on iteration {}", this.threadId, i, e);
 						throw new RuntimeException("Error thrown in thread " + this.threadId + " on iteration " + i, e);
 					}
 				}
-			
+
 			log.info("DONE running test thread {}", this.threadId);
 			return null;
 		}
 	}
-	
+
 }

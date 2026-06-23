@@ -7,12 +7,12 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>tech.epic-breakfast-productions.openquartermaster.lib.core</groupId>
 	<artifactId>core-characteristics-lib-quarkus-parent</artifactId>
-	<version>1.0.1</version>
+	<version>1.1.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Core Characteristics Lib Quarkus - Parent</name>
 	<description>The parent pom package for the Core Characteristics Library for Quarkus.</description>
 	<url>https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/software/libs/core/characteristics/core-characteristics-lib-quarkus</url>
-	
+
 	<scm>
 		<connection>scm:git:git://github.com/Epic-Breakfast-Productions/OpenQuarterMaster.git</connection>
 		<developerConnection>scm:git:ssh://github.com/Epic-Breakfast-Productions/OpenQuarterMaster.git</developerConnection>
@@ -33,7 +33,7 @@
 			<organizationUrl>https://epic-breakfast-productions.tech</organizationUrl>
 		</developer>
 	</developers>
-	
+
 	<modules>
 		<module>deployment</module>
 		<module>runtime</module>

@@ -38,12 +38,17 @@
                 "blockLightBrightness": {
                     "description": "If this module supports brightness on its lights. Ignored if 'blockLights' is set to false.",
                     "type": "boolean"
+                },
+                "blockWeightReporting": {
+                    "description": "If this module supports reporting block weight for automatic inventory changes.",
+                    "type": "boolean"
                 }
             },
             "required": [
                 "blockLights",
                 "blockLightColor",
-                "blockLightBrightness"
+                "blockLightBrightness",
+                "blockWeightReporting"
             ]
         }
     },

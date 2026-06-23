@@ -12,9 +12,12 @@
         },
         "lightSettings": {
             "$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockLightSetting.json"
+        },
+        "weightReport": {
+            "$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockWeightReport.json"
         }
     },
     "required": [
-        "blockNumber"
+        "blockNum"
     ]
 }
