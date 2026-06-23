@@ -85,7 +85,7 @@ public class RebrickableService extends ItemSearchService {
 	public LookupResult partJsonToResult(LookupSource source, LookupMethod method, ObjectNode results) {
 		log.info("Search result: {}", results);
 		ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
-		
+
 		List<String> images = new ArrayList<>();
 		Map<String, String> links = new HashMap<>();
 		Map<String, String> identifiers = new HashMap<>();
