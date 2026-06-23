@@ -68,6 +68,12 @@ public class InvItemBumper5 extends ObjectSchemaVersionBumper<InventoryItem> {
 			UpgradingUtils.monetaryAmountMongoToJackson((ArrayNode) curBlockStat.get("prices"));
 		}
 
+		for(JsonNode curIdentifier : oldObj.get("identifiers")){
+			if(curIdentifier.has("generatedFrom")){
+				UpgradingUtils.normalizeObjectId((ObjectNode) curIdentifier, "generatedFrom");
+			}
+		}
+
 		return resultBuilder.build();
 	}
 }
