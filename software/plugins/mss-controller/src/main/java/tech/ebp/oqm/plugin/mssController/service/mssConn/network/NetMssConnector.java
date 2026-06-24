@@ -45,7 +45,7 @@ public class NetMssConnector extends MssConnector {
 	}
 
 	@Override
-	protected CommandResponse sendCommandImpl(@Valid Command command) {
+	protected CommandResponse sendCommandImpl(Command command) {
 		return this.getRestClient().sendCommand(
 			this.getUrl(),
 			this.getAuthorization(),

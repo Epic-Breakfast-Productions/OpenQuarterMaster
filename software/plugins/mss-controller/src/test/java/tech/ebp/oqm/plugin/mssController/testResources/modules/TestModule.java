@@ -1,6 +1,7 @@
 package tech.ebp.oqm.plugin.mssController.testResources.modules;
 
 import lombok.AllArgsConstructor;
+import lombok.Getter;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponseType;
@@ -15,8 +16,9 @@ import java.util.List;
 import java.util.UUID;
 
 @AllArgsConstructor
-public class TestModule {
+public class TestModule implements AutoCloseable {
 
+	@Getter
 	private final ModuleInfo moduleInfo;
 	private final List<BlockState> blocks;
 	private final TestModuleInterface testModuleInterface;
@@ -55,4 +57,8 @@ public class TestModule {
 			.build();
 	}
 
+	@Override
+	public void close() throws Exception {
+		this.testModuleInterface.close();
+	}
 }
