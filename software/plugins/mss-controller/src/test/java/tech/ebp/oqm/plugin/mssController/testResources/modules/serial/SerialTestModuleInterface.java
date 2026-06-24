@@ -33,6 +33,7 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 		return matcher.group();
 	}
 
+	@Getter
 	private final ObjectMapper objectMapper;
 	private final Process process;
 	private final InputStream inputStream;
@@ -118,21 +119,6 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 		return Optional.of(command);
 	}
 
-	public void sendCommand(Object object) {
-		byte[] buff = new byte[0];
-		try {
-			if(object instanceof String){
-				buff = ((String) object).getBytes();
-			}else {
-				buff = this.objectMapper.writeValueAsBytes(object);
-			}
-		} catch(JsonProcessingException e) {
-			throw new RuntimeException("Somehow failed to write json of command.", e);
-		}
-		log.debug("Writing command to serial port: {}", new String(buff));
-		this.mssModuleSerialPort.writeBytes(buff, buff.length);
-	}
-
 	@SneakyThrows
 	public void close() {
 		log.info("Closing out test serial port.");
@@ -146,4 +132,22 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 		log.info("Exited socat with code {}", this.process.exitValue());
 	}
 
+	@Override
+	public void send(String message) {
+		log.debug("Writing command to serial port: {}", message);
+		byte[] buff = message.getBytes();
+		this.mssModuleSerialPort.writeBytes(buff, buff.length);
+	}
+
+	@Override
+	public Optional<String> receive() {
+		log.info("Processing port data for test hardware {}", this.mssModuleSerialPort.getSystemPortPath());
+
+		String curLine = this.readLine();
+
+		if(curLine.isBlank()){
+			return Optional.empty();
+		}
+		return Optional.of(curLine);
+	}
 }
