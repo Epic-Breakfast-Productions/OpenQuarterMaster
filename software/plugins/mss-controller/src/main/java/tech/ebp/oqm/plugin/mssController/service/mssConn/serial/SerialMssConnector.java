@@ -56,7 +56,7 @@ public class SerialMssConnector extends MssConnector implements AutoCloseable {
 	}
 
 	@Override
-	protected CommandResponse sendCommandImpl(@Valid Command command) throws SerialPortClosedException, JsonProcessingException {
+	protected CommandResponse sendCommandImpl(Command command) throws SerialPortClosedException, JsonProcessingException {
 		try (
 			SerialPortWrapper.CommAction r = this.port.startComm()
 		) {
