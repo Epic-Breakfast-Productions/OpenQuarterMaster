@@ -14,6 +14,8 @@ import tech.ebp.oqm.core.api.service.mongo.search.PagingOptions;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchUtils;
 import tech.ebp.oqm.core.api.service.mongo.search.SortType;
 
+import java.time.ZonedDateTime;
+import java.time.temporal.Temporal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -25,42 +27,46 @@ import static com.mongodb.client.model.Filters.or;
 @Getter
 @Setter
 public class SearchObject<T extends MainObject> {
-	
+
 	protected static boolean hasValue(String val){
 		return val != null && !val.isBlank();
 	}
-	
+
 	protected static boolean hasValue(Boolean val){
 		return val != null;
 	}
-	
+
 	protected static boolean hasValue(ObjectId val){
 		return val != null;
 	}
-	
+
+	protected static boolean hasValue(Temporal val){
+		return val != null;
+	}
+
 	protected static boolean hasValue(Enum<?> val){
 		return val != null;
 	}
-	
+
 	protected static boolean hasValue(Collection<?> val){
 		return val != null && !val.isEmpty();
 	}
-	
-	
+
+
 	//paging
 	@Parameter(description = "The number of results to return per page.")
 	@QueryParam("pageSize") Integer pageSize;
-	
+
 	@Parameter(description = "The page number to return.")
 	@QueryParam("pageNum") Integer pageNum;
 	//sorting
-	
+
 	@Parameter(description = "The field to sort by.")
 	@QueryParam("sortBy") String sortField;
-	
+
 	@Parameter(description = "How to sort the results.")
 	@QueryParam("sortType") SortType sortType;
-  
+
 	//id search
 	/**
 	 * IDs of specific objects to search for.
@@ -77,11 +83,11 @@ public class SearchObject<T extends MainObject> {
 	public PagingOptions getPagingOptions(){
 		return PagingOptions.from(this);
 	}
- 
+
 	@JsonIgnore
 	public List<Bson> getSearchFilters(){
 		List<Bson> filters = new ArrayList<>();
-		
+
 		if (hasValue(this.objectIds)) {
 			List<Bson> idFilters = new ArrayList<>();
 			for(ObjectId curId : this.objectIds) {
