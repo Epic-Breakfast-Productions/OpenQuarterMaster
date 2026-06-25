@@ -17,6 +17,9 @@ import java.util.List;
 @ApplicationScoped
 public class MssConnectionService {
 
+	@Getter
+	private boolean setUp = false;
+
 	@Inject
 	ObjectMapper objectMapper;
 
@@ -30,9 +33,7 @@ public class MssConnectionService {
 	private List<ModuleSetupFailedException> moduleSetupFailedExceptions = new ArrayList<>();
 
 
-
-	@PostConstruct
-	public void setUp(){
+	public void initializeMssConnections(){
 		log.info("Setting up MSS connection service.");
 
 		log.info("Serial modules from config: {}", this.moduleConfig.serial().modules());
@@ -54,7 +55,12 @@ public class MssConnectionService {
 
 		}
 
-		//TODO:: this
+		//TODO:: serial scanning
+
+		//TODO:: net modules
+		//TODO:: net scanning
+
+		this.setUp = true;
 	}
 
 

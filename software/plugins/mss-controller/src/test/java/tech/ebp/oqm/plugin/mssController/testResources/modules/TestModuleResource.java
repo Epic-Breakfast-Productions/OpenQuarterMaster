@@ -61,14 +61,13 @@ public class TestModuleResource implements QuarkusTestResourceLifecycleManager {
 		}
 
 
-
-
 		log.info("Done starting TestModuleResource: {} / {}", this.modules, configMap);
 		return configMap;
 	}
 
 	@Override
 	public void stop() {
+		log.info("Stopping TestModuleResource.");
 		for(TestModule module : this.modules) {
 			try{
 				module.close();
@@ -76,5 +75,7 @@ public class TestModuleResource implements QuarkusTestResourceLifecycleManager {
 				log.error("Failed to close module {}", module.getModuleInfo().getSerialId(), e);
 			}
 		}
+		log.info("Done stopping TestModuleResource.");
 	}
+
 }

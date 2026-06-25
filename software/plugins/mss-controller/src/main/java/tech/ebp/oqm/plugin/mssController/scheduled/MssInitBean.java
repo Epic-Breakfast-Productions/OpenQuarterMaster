@@ -1,6 +1,6 @@
 package tech.ebp.oqm.plugin.mssController.scheduled;
 
-import io.quarkus.runtime.ShutdownEvent;
+import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
@@ -15,10 +15,10 @@ public class MssInitBean {
 	MssConnectionService mssConnectionService;
 
 
-	void onStop(
+	void onStartUp(
 		@Observes
-		ShutdownEvent ev
+		StartupEvent ev
 	) {
-		this.mssConnectionService.getConnectors();
+		this.mssConnectionService.initializeMssConnections();
 	}
 }

@@ -40,12 +40,14 @@ public abstract class MssConnector {
 	private ZonedDateTime lastComm;
 
 	protected MssConnector(ObjectMapper objectMapper, Object moduleConfig) throws ModuleSetupFailedException {
+		log.info("Initializing new MSS module connector.");
 		CommandResponse response = null;
 		try {
 			response = this.sendCommand(GetModuleInfoCommand.builder().build());
 		} catch(Exception e) {
 			throw new ModuleSetupFailedException(moduleConfig, "Failed to get module info during init.", e);
 		}
+		log.info("Received response from module during init: {}.", response);
 
 		if(!CommandResponseType.OK.equals(response.getStatus())){
 			log.error("Could not get module info: {}", response);
