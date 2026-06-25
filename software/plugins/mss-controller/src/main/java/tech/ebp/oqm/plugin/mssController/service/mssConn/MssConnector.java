@@ -39,17 +39,17 @@ public abstract class MssConnector {
 	@Setter(AccessLevel.PROTECTED)
 	private ZonedDateTime lastComm;
 
-	protected MssConnector(ObjectMapper objectMapper) throws ModuleSetupFailedException {
+	protected MssConnector(ObjectMapper objectMapper, Object moduleConfig) throws ModuleSetupFailedException {
 		CommandResponse response = null;
 		try {
 			response = this.sendCommand(GetModuleInfoCommand.builder().build());
 		} catch(Exception e) {
-			throw new ModuleSetupFailedException("Failed to get module info during init.", e);
+			throw new ModuleSetupFailedException(moduleConfig, "Failed to get module info during init.", e);
 		}
 
 		if(!CommandResponseType.OK.equals(response.getStatus())){
 			log.error("Could not get module info: {}", response);
-			throw new ModuleSetupFailedException("Could not get module info.");
+			throw new ModuleSetupFailedException(moduleConfig, "Could not get module info.");
 		}
 
 		ObjectNode responseData = response.getResponse();
@@ -57,7 +57,7 @@ public abstract class MssConnector {
 		try {
 			this.moduleInfo = objectMapper.treeToValue(responseData, ModuleInfo.class);
 		} catch(JsonProcessingException e) {
-			throw new ModuleSetupFailedException("Failed to parse module info from command response.", e);
+			throw new ModuleSetupFailedException(moduleConfig, "Failed to parse module info from command response.", e);
 		}
 	}
 

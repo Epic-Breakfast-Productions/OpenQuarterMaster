@@ -2,22 +2,19 @@ package tech.ebp.oqm.plugin.mssController.model.exception;
 
 public class SerialPortSetupFailedException extends ModuleSetupFailedException {
 
-	public SerialPortSetupFailedException() {
+	public SerialPortSetupFailedException(Object moduleConfig) {
+		super(moduleConfig);
 	}
 
-	public SerialPortSetupFailedException(String message) {
-		super(message);
+	public SerialPortSetupFailedException(Object moduleConfig, String message) {
+		super(moduleConfig, message);
 	}
 
-	public SerialPortSetupFailedException(String message, Throwable cause) {
-		super(message, cause);
+	public SerialPortSetupFailedException(Object moduleConfig, String message, Throwable cause) {
+		super(moduleConfig, message, cause);
 	}
 
-	public SerialPortSetupFailedException(Throwable cause) {
-		super(cause);
-	}
-
-	public SerialPortSetupFailedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
+	public SerialPortSetupFailedException(Object moduleConfig, Throwable cause) {
+		super(moduleConfig, cause);
 	}
 }

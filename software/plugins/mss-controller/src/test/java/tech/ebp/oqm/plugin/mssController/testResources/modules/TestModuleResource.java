@@ -24,7 +24,6 @@ public class TestModuleResource implements QuarkusTestResourceLifecycleManager {
 	private List<TestModule> modules;
 
 
-
 	@Override
 	public void init(Map<String, String> initArgs) {
 		this.numSerialModules = Integer.parseInt(initArgs.getOrDefault(NUM_SERIAL_MODULE_RES_NAME, "0"));
@@ -36,6 +35,7 @@ public class TestModuleResource implements QuarkusTestResourceLifecycleManager {
 		log.info("Starting TestModuleResource.");
 		this.modules = new ArrayList<>(this.numSerialModules + this.numNetModules);
 
+		Map<String, String> configMap = new HashMap<>();
 		ObjectMapper objectMapper = new ObjectMapper();
 
 		for(int i = 0; i < this.numSerialModules; i++) {
@@ -52,10 +52,15 @@ public class TestModuleResource implements QuarkusTestResourceLifecycleManager {
 				serialInterface
 			);
 			this.modules.add(newModule);
+
+			configMap.put(
+				"moduleConfig.serial.modules[" + i + "].portPath",
+				serialInterface.getMssConnectionPortLocation()
+			);
+
 		}
 
 
-		Map<String, String> configMap = new HashMap<>();
 
 
 		log.info("Done starting TestModuleResource: {} / {}", this.modules, configMap);

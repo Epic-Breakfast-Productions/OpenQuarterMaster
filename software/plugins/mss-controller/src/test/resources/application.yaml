@@ -2,7 +2,7 @@ quarkus:
     log:
         level: INFO
         category:
-            "tech.ebp.oqm.plugin.mss_controller":
+            "tech.ebp.oqm.plugin.mssController":
                 level: DEBUG
     #    opentelemetry:
     #      enabled: true
