@@ -37,7 +37,7 @@ public class NetMssConnector extends MssConnector {
 						.getBytes(StandardCharsets.UTF_8)
 				);
 
-		super(mapper);
+		super(mapper, netModuleConfig);
 
 		if (!this.getModuleInfo().getSerialId().equals(netModuleConfig.serialId())) {
 			throw new ModuleSetupFailedException("Serial id of module config does not match module info.");

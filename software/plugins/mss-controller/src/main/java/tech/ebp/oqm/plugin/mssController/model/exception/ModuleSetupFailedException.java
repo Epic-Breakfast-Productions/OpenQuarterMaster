@@ -1,23 +1,30 @@
 package tech.ebp.oqm.plugin.mssController.model.exception;
 
+import lombok.Getter;
+import tech.ebp.oqm.plugin.mssController.config.ModuleConfig;
+
 public class ModuleSetupFailedException extends Exception {
 
-	public ModuleSetupFailedException() {
+	@Getter
+	private final Object moduleConfig;
+
+	public ModuleSetupFailedException(Object moduleConfig) {
+		this.moduleConfig = moduleConfig;
 	}
 
-	public ModuleSetupFailedException(String message) {
+	public ModuleSetupFailedException(Object moduleConfig, String message) {
+		this.moduleConfig = moduleConfig;
 		super(message);
 	}
 
-	public ModuleSetupFailedException(String message, Throwable cause) {
+	public ModuleSetupFailedException(Object moduleConfig, String message, Throwable cause) {
+		this.moduleConfig = moduleConfig;
 		super(message, cause);
 	}
 
-	public ModuleSetupFailedException(Throwable cause) {
+	public ModuleSetupFailedException(Object moduleConfig, Throwable cause) {
+		this.moduleConfig = moduleConfig;
 		super(cause);
 	}
 
-	public ModuleSetupFailedException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-		super(message, cause, enableSuppression, writableStackTrace);
-	}
 }

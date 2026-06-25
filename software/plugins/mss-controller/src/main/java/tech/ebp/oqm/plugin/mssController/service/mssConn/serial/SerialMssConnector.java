@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.config.ModuleConfig;
 import tech.ebp.oqm.plugin.mssController.model.exception.ModuleSetupFailedException;
+import tech.ebp.oqm.plugin.mssController.model.exception.MssCommandTimeoutException;
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortClosedException;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
@@ -49,14 +50,15 @@ public class SerialMssConnector extends MssConnector implements AutoCloseable {
 			moduleConfig.baudRate(),
 			timings.commSpacing(),
 			timings.rwTimeout(),
-			timings.rwTimeout()
+			timings.rwTimeout(),
+			timings.commandResponseTimeout()
 		);
 
-		super(mapper);
+		super(mapper, moduleConfig);
 	}
 
 	@Override
-	protected CommandResponse sendCommandImpl(Command command) throws SerialPortClosedException, JsonProcessingException {
+	protected CommandResponse sendCommandImpl(Command command) throws SerialPortClosedException, JsonProcessingException, MssCommandTimeoutException {
 		try (
 			SerialPortWrapper.CommAction r = this.port.startComm()
 		) {

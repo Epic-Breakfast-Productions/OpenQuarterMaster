@@ -10,6 +10,7 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import tech.ebp.oqm.plugin.mssController.model.exception.MssCommandTimeoutException;
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialModuleLockRequiredException;
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortClosedException;
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortSetupFailedException;
@@ -27,6 +28,7 @@ public class SerialPortWrapper implements AutoCloseable {
 	private final ReentrantLock lock = new ReentrantLock();
 	private final ObjectMapper objectMapper;
 	private final Duration commSpacing;
+	private final Duration commandResponseTimeout;
 	private final SerialPort port;
 	private ZonedDateTime lastComm = null;
 
@@ -37,10 +39,13 @@ public class SerialPortWrapper implements AutoCloseable {
 		Optional<Integer> baudRate,
 		Duration commSpacing,
 		Duration readTimeout,
-		Duration writeTimeout
+		Duration writeTimeout,
+		Duration commandResponseTimeout
 	) throws SerialPortSetupFailedException {
+		log.info("Setting up connection to MSS serial port: {}", portPath);
 		this.objectMapper = objectMapper;
 		this.commSpacing = commSpacing;
+		this.commandResponseTimeout = commandResponseTimeout;
 
 		SerialPort newPort = SerialPort.getCommPort(portPath);
 
@@ -61,7 +66,7 @@ public class SerialPortWrapper implements AutoCloseable {
 		});
 
 		if (!newPort.openPort((int) commSpacing.toMillis())) {
-			throw new SerialPortSetupFailedException();
+			throw new SerialPortSetupFailedException(portPath);
 		}
 
 		newPort.setComPortTimeouts(
@@ -69,6 +74,8 @@ public class SerialPortWrapper implements AutoCloseable {
 			(int) readTimeout.toMillis(),
 			(int) writeTimeout.toMillis()
 		);
+
+		log.info("Connection to MSS serial port setup: {}", portPath);
 
 		this.port = newPort;
 	}
@@ -226,8 +233,9 @@ public class SerialPortWrapper implements AutoCloseable {
 		}
 	}
 
-	public ObjectNode waitForMessage() throws JsonProcessingException {
+	public ObjectNode waitForMessage() throws JsonProcessingException, MssCommandTimeoutException {
 		this.assertLockAcquired();
+		ZonedDateTime timeoutTime = ZonedDateTime.now().plus(this.getCommandResponseTimeout());
 		while (!this.messageAvailable()) {
 			try {
 				Thread.sleep(100);
@@ -236,6 +244,10 @@ public class SerialPortWrapper implements AutoCloseable {
 				throw new RuntimeException("Interrupted while waiting for message.", e);
 			}
 			//TODO:: timeout
+			if(ZonedDateTime.now().isAfter(timeoutTime)) {
+				log.error("Timed out waiting for message.");
+				throw new MssCommandTimeoutException();
+			}
 		}
 		return this.readJson();
 	}

@@ -38,6 +38,9 @@ public interface ModuleConfig {
 
 			@WithDefault("0.1s")
 			Duration commSpacing();
+
+			@WithDefault("5s")
+			Duration commandResponseTimeout();
 		}
 
 		interface SerialModuleConfig {
@@ -49,7 +52,7 @@ public interface ModuleConfig {
 		}
 
 		interface ScanConfig {
-			@WithDefault("true")
+			@WithDefault("false")
 			boolean enabled();
 
 			@WithName("scanDir")
