@@ -29,19 +29,23 @@ public class ZonedDateTimeCodec implements Codec<ZonedDateTime> {
 		ZonedDateTime output = null;
 
 		try {
-			bsonReader.readStartDocument();
-			while (bsonReader.readBsonType() != BsonType.END_OF_DOCUMENT) {
-				String fieldName = bsonReader.readName();
-				if (fieldName.equals(ORIGINAL_FIELD_NAME)) {
-					String dtStr = bsonReader.readString();
-					output = ObjectUtils.OBJECT_MAPPER.readValue(dtStr, this.getEncoderClass());
-				} else if (fieldName.equals(UTC_FIELD_NAME)) {
-					bsonReader.readString();//needed to clear object
-				} else if(fieldName.equals(MONGO_INSTANT_FIELD_NAME)) {
-					bsonReader.readDateTime();//needed to clear object
+			if(bsonReader.getCurrentBsonType() == BsonType.STRING) {
+				output = ObjectUtils.OBJECT_MAPPER.readValue(bsonReader.readString(), this.getEncoderClass());
+			} else {
+				bsonReader.readStartDocument();
+				while (bsonReader.readBsonType() != BsonType.END_OF_DOCUMENT) {
+					String fieldName = bsonReader.readName();
+					if (fieldName.equals(ORIGINAL_FIELD_NAME)) {
+						String dtStr = bsonReader.readString();
+						output = ObjectUtils.OBJECT_MAPPER.readValue(dtStr, this.getEncoderClass());
+					} else if (fieldName.equals(UTC_FIELD_NAME)) {
+						bsonReader.readString();//needed to clear object
+					} else if (fieldName.equals(MONGO_INSTANT_FIELD_NAME)) {
+						bsonReader.readDateTime();//needed to clear object
+					}
 				}
+				bsonReader.readEndDocument();
 			}
-			bsonReader.readEndDocument();
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException("Failed to decode ZonedDateTime field.", e);
 		}
