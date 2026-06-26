@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -37,6 +38,7 @@ public class SerialMssConnector extends MssConnector implements AutoCloseable {
 
 
 	public SerialMssConnector(
+		Validator validator,
 		ObjectMapper mapper,
 		ModuleConfig.SerialConfig.SerialModuleConfig moduleConfig,
 		ModuleConfig.SerialConfig.Timings timings
@@ -54,7 +56,7 @@ public class SerialMssConnector extends MssConnector implements AutoCloseable {
 			timings.commandResponseTimeout()
 		);
 
-		super(mapper, moduleConfig);
+		super(validator, mapper, moduleConfig);
 	}
 
 	@Override

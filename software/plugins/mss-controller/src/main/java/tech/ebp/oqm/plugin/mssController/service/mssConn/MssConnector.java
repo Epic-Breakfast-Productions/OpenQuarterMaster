@@ -4,7 +4,10 @@ package tech.ebp.oqm.plugin.mssController.service.mssConn;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import jakarta.inject.Inject;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import jakarta.validation.constraints.NotNull;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -21,6 +24,8 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
 import java.time.ZonedDateTime;
 import java.util.ArrayDeque;
 import java.util.Queue;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Slf4j
 public abstract class MssConnector {
@@ -39,7 +44,7 @@ public abstract class MssConnector {
 	@Setter(AccessLevel.PROTECTED)
 	private ZonedDateTime lastComm;
 
-	protected MssConnector(ObjectMapper objectMapper, Object moduleConfig) throws ModuleSetupFailedException {
+	protected MssConnector(Validator validator, ObjectMapper objectMapper, Object moduleConfig) throws ModuleSetupFailedException {
 		log.info("Initializing new MSS module connector.");
 		CommandResponse response = null;
 		try {
@@ -61,6 +66,17 @@ public abstract class MssConnector {
 		} catch(JsonProcessingException e) {
 			throw new ModuleSetupFailedException(moduleConfig, "Failed to parse module info from command response.", e);
 		}
+
+		Set<ConstraintViolation<ModuleInfo>> violations = validator.validate(this.moduleInfo);
+		if(!violations.isEmpty()) {
+			throw new ModuleSetupFailedException(
+				moduleConfig,
+				"Failed to validate module info. Violations: " +
+				violations.stream().map(ConstraintViolation::getMessage).collect(Collectors.joining(", "))
+				);
+		}
+
+		log.info("Module initialized. Module info: {}", this.moduleInfo);
 	}
 
 	protected abstract CommandResponse sendCommandImpl(Command command) throws Exception;

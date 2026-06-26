@@ -2,6 +2,7 @@ package tech.ebp.oqm.plugin.mssController.service.mssConn.network;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ public class NetMssConnector extends MssConnector {
 	private final String authorization;
 
 	public NetMssConnector(
+		Validator validator,
 		ObjectMapper mapper,
 		ModuleConfig.NetConfig.NetModuleConfig netModuleConfig,
 		MssModuleRestClient restClient
@@ -37,7 +39,7 @@ public class NetMssConnector extends MssConnector {
 						.getBytes(StandardCharsets.UTF_8)
 				);
 
-		super(mapper, netModuleConfig);
+		super(validator, mapper, netModuleConfig);
 
 		if (!this.getModuleInfo().getSerialId().equals(netModuleConfig.serialId())) {
 			throw new ModuleSetupFailedException("Serial id of module config does not match module info.");

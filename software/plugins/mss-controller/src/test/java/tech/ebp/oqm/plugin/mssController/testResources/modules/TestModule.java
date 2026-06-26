@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleInfoCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponseType;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.Capabilities;
@@ -23,17 +24,19 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import static tech.ebp.oqm.plugin.mssController.model.utils.JacksonUtils.OBJECT_MAPPER;
+
 @Slf4j
 @AllArgsConstructor
 public class TestModule implements AutoCloseable {
+
 	private static final long SLEEP_TIME = 100;
-	private final static ObjectMapper objectMapper = new ObjectMapper();
 
 	private static final String errFormatResponse;
 
 	static {
 		try {
-			errFormatResponse = objectMapper.writeValueAsString(CommandResponse.builder().status(CommandResponseType.ERROR).build());
+			errFormatResponse = OBJECT_MAPPER.writeValueAsString(CommandResponse.builder().status(CommandResponseType.ERROR).build());
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
@@ -46,7 +49,6 @@ public class TestModule implements AutoCloseable {
 	private final TestModuleInterface testModuleInterface;
 
 	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
-
 
 
 	public TestModule(
@@ -77,38 +79,58 @@ public class TestModule implements AutoCloseable {
 		this.scheduler.scheduleAtFixedRate(this::iterate, 0, SLEEP_TIME, TimeUnit.MILLISECONDS);
 	}
 
-	protected CommandResponse handleCommand(Command commandResponse) {
-		//TODO:: actually process
+	protected CommandResponse handleModuleInfoCommand(GetModuleInfoCommand data) {
+		log.info("Received GetModuleInfoCommand. Handling.");
 
-		return CommandResponse.builder()
-				   .status(CommandResponseType.OK)
-				   .build();
+		CommandResponse output = CommandResponse.builder()
+									 .status(CommandResponseType.OK)
+									 .response(OBJECT_MAPPER.valueToTree(this.getModuleInfo()))
+									 .build();
+
+		log.info("Returning GetModuleInfoCommand response: {}", output);
+		return output;
+	}
+
+	protected CommandResponse handleCommand(Command command) {
+		log.info("Received command {}", command);
+		try {
+			return switch (command) {
+				case GetModuleInfoCommand c -> this.handleModuleInfoCommand(c);
+				default -> throw new IllegalStateException("Unexpected value: " + command);
+			};
+		} catch(Throwable e) {
+			log.error("Error handling GetModuleInfoCommand", e);
+			throw new RuntimeException("Failed to handle GetModuleInfoCommand.", e);
+		}
 	}
 
 	protected String handleData(String data) {
 		Command command;
-		try{
-			command = objectMapper.readValue(data, Command.class);
-		} catch (JsonProcessingException e) {
+		try {
+			command = OBJECT_MAPPER.readValue(data, Command.class);
+		} catch(JsonProcessingException e) {
 			log.error("Error parsing command", e);
 			return errFormatResponse;
 		}
 
 		try {
-			return objectMapper.writeValueAsString(this.handleCommand(command));
+			return OBJECT_MAPPER.writeValueAsString(this.handleCommand(command));
 		} catch(JsonProcessingException e) {
+			log.error("Error writing response from handling data.", e);
 			throw new RuntimeException("Failed to write response to string.", e);
 		}
 	}
 
-	protected void iterate(){
+	protected void iterate() {
 		log.debug("Running TestModuleThread for module {}", this.getModuleInfo().getSerialId());
 
 		Optional<String> received = this.testModuleInterface.receive();
 
-		if(received.isPresent()){
+		if (received.isPresent()) {
 			log.info("Received data to test module {}: {}", this.getModuleInfo().getSerialId(), received.get());
-			this.handleData(received.get());
+			String response = this.handleData(received.get());
+			log.info("Received response from handleData: {}", response);
+			this.testModuleInterface.send(response);
 		}
 	}
 

@@ -76,21 +76,21 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 
 		this.mssModuleSerialPort = SerialPort.getCommPort(this.mssModulePortLocation);
 
-		mssModuleSerialPort.addDataListener(
-			new SerialPortDataListener() {
-				@Override
-				public int getListeningEvents() {
-					return SerialPort.LISTENING_EVENT_DATA_AVAILABLE | SerialPort.LISTENING_EVENT_DATA_RECEIVED | SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
-				}
-
-				@Override
-				public void serialEvent(SerialPortEvent serialPortEvent) {
-					log.info("Serial event: {}", serialPortEvent.getEventType());
-					if (serialPortEvent.getEventType() == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-						log.info("Data available on port!");
-					}
-				}
-			});
+//		mssModuleSerialPort.addDataListener(
+//			new SerialPortDataListener() {
+//				@Override
+//				public int getListeningEvents() {
+//					return SerialPort.LISTENING_EVENT_DATA_AVAILABLE | SerialPort.LISTENING_EVENT_DATA_RECEIVED | SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
+//				}
+//
+//				@Override
+//				public void serialEvent(SerialPortEvent serialPortEvent) {
+//					log.info("Serial event: {}", serialPortEvent.getEventType());
+//					if (serialPortEvent.getEventType() == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
+//						log.info("Data available on port!");
+//					}
+//				}
+//			});
 
 		this.mssModuleSerialPort.openPort();
 

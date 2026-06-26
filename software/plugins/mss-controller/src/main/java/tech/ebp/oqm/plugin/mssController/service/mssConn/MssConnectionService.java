@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Validator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.config.ModuleConfig;
@@ -26,6 +27,9 @@ public class MssConnectionService {
 	@Inject
 	ModuleConfig moduleConfig;
 
+	@Inject
+	Validator validator;
+
 	@Getter
 	private List<MssConnector> connectors = new ArrayList<>();
 
@@ -42,6 +46,7 @@ public class MssConnectionService {
 
 			try {
 				SerialMssConnector connector = new SerialMssConnector(
+					validator,
 					this.objectMapper,
 					module,
 					moduleConfig.serial().timings()
