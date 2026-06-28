@@ -1,11 +1,14 @@
 package tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects;
 
 import jakarta.ws.rs.PathParam;
+import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+
+import java.time.ZonedDateTime;
 
 /**
  * Search for applied transactions.
@@ -18,4 +21,10 @@ import lombok.experimental.SuperBuilder;
 public class AppliedTransactionSearch extends SearchKeyAttObject {
 
 	@PathParam("itemId") String inventoryItemId;
+
+	@QueryParam("startDateTime")
+	ZonedDateTime startDateTime;
+
+	@QueryParam("startDateTime")
+	ZonedDateTime endDateTime;
 }

@@ -4,6 +4,7 @@ import jakarta.ws.rs.QueryParam;
 import lombok.*;
 import lombok.experimental.SuperBuilder;
 
+import java.time.ZonedDateTime;
 import java.util.List;
 
 @ToString(callSuper = true)
@@ -12,15 +13,18 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class HistorySearch extends SearchObject {
-	
+
 	@Setter
 	@QueryParam("objectId")
 	private String objectId;
-	
+
 	@QueryParam("eventType")
 	private List<String> eventTypes;
-	
-	//TODO:: object specific fields, add to bson filter list
-	//TODO:: Get hist in time range, etc
-	
+
+	@QueryParam("startDateTime")
+	private ZonedDateTime startDateTime;
+
+	@QueryParam("startDateTime")
+	private ZonedDateTime endDateTime;
+
 }
