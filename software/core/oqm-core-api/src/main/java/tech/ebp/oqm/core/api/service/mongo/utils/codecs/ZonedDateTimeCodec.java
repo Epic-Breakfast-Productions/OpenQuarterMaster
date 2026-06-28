@@ -17,9 +17,25 @@ import java.time.ZonedDateTime;
 
 /**
  * Codec for {@link ZonedDateTime} objects.
+ * <p>
+ * Stores the data in the following format:
+ *
+ * <pre>
+ *     {
+ *         "zdt": "-- original zoned datetime in original timezone --",
+ *         "utc": "-- original zoned datetime, but converted to UTC --",
+ *         "mi": ISODateTime()//Mongo-native instant of UTC datetime
+ *     }
+ * </pre>
+ * <p>
+ * Decoding reads the original zoned datetime string from the previous iteration of this codec into a ZonedDateTime object.
+ * <p>
+ * Supports reading out of the database the original zoned datetime string from the previous iteration of this codec.
+ *
  */
 @Singleton
 public class ZonedDateTimeCodec implements Codec<ZonedDateTime> {
+
 	public static final String ORIGINAL_FIELD_NAME = "zdt";
 	public static final String UTC_FIELD_NAME = "utc";
 	public static final String MONGO_INSTANT_FIELD_NAME = "mi";
@@ -29,7 +45,7 @@ public class ZonedDateTimeCodec implements Codec<ZonedDateTime> {
 		ZonedDateTime output = null;
 
 		try {
-			if(bsonReader.getCurrentBsonType() == BsonType.STRING) {
+			if (bsonReader.getCurrentBsonType() == BsonType.STRING) {
 				output = ObjectUtils.OBJECT_MAPPER.readValue(bsonReader.readString(), this.getEncoderClass());
 			} else {
 				bsonReader.readStartDocument();
