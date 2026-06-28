@@ -14,6 +14,7 @@ import {ItemStoredSearchSelect} from "./ItemStoredSearchSelect.js";
 import {FileAttachmentSearchSelect} from "../media/fileAttachment/FileAttachmentSearchSelect.js";
 import {ItemCheckoutView} from "../itemCheckout/ItemCheckoutView.js";
 import {PageUtility} from "../../utilClasses/PageUtility.js";
+import {TimeUtils} from "../../TimeUtils.js";
 
 export class ItemStoredTransaction extends PageUtility {
 
@@ -1053,7 +1054,7 @@ export class ItemStoredTransaction extends PageUtility {
 			let transaction = {
 				checkoutDetails: {
 					checkedOutFor: {},
-					dueBack: ItemStoredTransaction.Checkout.dueBackInput.val(),
+					dueBack: TimeUtils.getTsFromInput(ItemStoredTransaction.Checkout.dueBackInput),
 					reason: ItemStoredTransaction.Checkout.reasonInput.val(),
 					notes: ItemStoredTransaction.Checkout.detailsInput.val()
 				}
