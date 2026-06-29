@@ -1,6 +1,5 @@
 package tech.ebp.oqm.core.api.service.mongo.utils.codecs;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.BsonReader;
@@ -9,25 +8,22 @@ import org.bson.BsonWriter;
 import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
-import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 
-import javax.measure.Quantity;
 import javax.money.Monetary;
 import javax.money.MonetaryAmount;
 import javax.money.MonetaryAmountFactory;
-import javax.money.NumberValue;
 import java.text.NumberFormat;
 import java.text.ParseException;
 
 @Slf4j
 @Singleton
-public class MoneraryAmountCodec implements Codec<MonetaryAmount> {
-	private static NumberFormat NUMBER_FORMATTER = NumberFormat.getInstance();
-	
+public class MonetaryAmountCodec implements Codec<MonetaryAmount> {
+	private static final NumberFormat NUMBER_FORMATTER = NumberFormat.getInstance();
+
 	@Override
 	public MonetaryAmount decode(BsonReader bsonReader, DecoderContext decoderContext) {
 		MonetaryAmountFactory<?> amountFactory = Monetary.getDefaultAmountFactory();
-		
+
 		bsonReader.readStartDocument();
 		while (bsonReader.readBsonType() != BsonType.END_OF_DOCUMENT) {
 			String fieldName = bsonReader.readName();
@@ -45,12 +41,12 @@ public class MoneraryAmountCodec implements Codec<MonetaryAmount> {
 			}
 		}
 		bsonReader.readEndDocument();
-		
+
 		MonetaryAmount amount = amountFactory.create();
-		
+
 		return amount;
 	}
-	
+
 	@Override
 	public void encode(BsonWriter bsonWriter, MonetaryAmount amount, EncoderContext encoderContext) {
 		bsonWriter.writeStartDocument();
@@ -59,7 +55,7 @@ public class MoneraryAmountCodec implements Codec<MonetaryAmount> {
 		bsonWriter.writeString("currency", amount.getCurrency().getCurrencyCode());
 		bsonWriter.writeEndDocument();
 	}
-	
+
 	@Override
 	public Class<MonetaryAmount> getEncoderClass() {
 		return MonetaryAmount.class;

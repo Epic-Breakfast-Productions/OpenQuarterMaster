@@ -48,6 +48,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         -v /etc/oqm/serviceConfig/plugin/external-item-search/files:/etc/oqm/serviceConfig/plugin/external-item-search/files:ro \
                                         --env-file $MAIN_CONFIG_FILE \
                                         --env-file $USER_CONFIG_FILE \
+                                        --memory 2G \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \

@@ -14,9 +14,9 @@ import java.util.LinkedHashSet;
 
 @ApplicationScoped
 public class InventoryItemTestObjectCreator extends TestObjectCreator<InventoryItem> {
-	
+
 	private static int COUNTER = 0;
-	
+
 	@Override
 	public InventoryItem getTestObject() {
 		InventoryItem item = new InventoryItem()
@@ -27,12 +27,12 @@ public class InventoryItemTestObjectCreator extends TestObjectCreator<InventoryI
 									 add(
 										 StoredPricing.builder()
 											 .label("testPrice")
-											 .flatPrice(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create())
+											 .flatPrice(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1000).create())
 											 .build()
 									 );
 								 }})
 			.setStorageType(StorageType.BULK);
-		
+
 		return item;
 	}
 }

@@ -42,7 +42,7 @@ Core API Specific Configuration
    * - .. code-block:: none
 
           service.tempDir
-     - The directory to be used for temporary file creation and storage. Used for
+     - The directory to be used for temporary file creation and storage. Used for file uploads, and export bundle creation.
      -  .. code-block:: none
 
            /tmp
@@ -186,6 +186,8 @@ JWT Configuration
 For JWT configuration, we leverage the settings as presented by Quarkus. For convenience, we have the most important configuration below, but
 further options can be found on the `Quarkus JWT Configuration <https://quarkus.io/guides/security-jwt#configuration-reference>`_ documentation.
 
+Please see :doc:`05_jwt` for more information on how MongoDB is leveraged and used by the Core API.
+
 .. list-table::
    :header-rows: 1
 
@@ -212,7 +214,7 @@ further options can be found on the `Quarkus JWT Configuration <https://quarkus.
      - None, must supply this value.
 
 Metrics/OpenTelemetry Configuration
-=====================
+====================================
 
 For OpenTelemetry configuration, we leverage the settings as presented by Quarkus. For convenience, we have the most important configuration below, but
 further options can be found on the `Quarkus OpenTelemetry Configuration <https://quarkus.io/guides/opentelemetry#configuration-reference>`_ documentation.

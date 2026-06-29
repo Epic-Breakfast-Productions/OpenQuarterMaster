@@ -12,6 +12,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.messaging.EventNotificationWrapper;
+import tech.ebp.oqm.core.api.model.object.history.EventType;
+import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
+import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
 import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 import tech.ebp.oqm.core.api.testResources.data.TestMainObject;
@@ -23,10 +26,13 @@ import tech.ebp.oqm.core.api.model.object.history.events.CreateEvent;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 
 import jakarta.inject.Inject;
+
+import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
 @Slf4j
@@ -35,39 +41,41 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 class MongoHistoriedObjectServiceTest extends RunningServerTest implements KafkaTest {
 
 	@Inject
-	OqmDatabaseService oqmDatabaseService;
-	
-	@Inject
 	TestMongoHistoriedService testMongoService;
-	
-	@Inject
-	InteractingEntityService interactingEntityService;
-	
+
 	@Getter
 	@InjectKafkaCompanion
 	KafkaCompanion kafkaCompanion;
-	
+
 	@Test
 	public void testEmptyHistory(){
 		assertEquals(0, testMongoService.getHistoryService().count(DEFAULT_TEST_DB_NAME));
 	}
-	
+
 	@Test
 	public void testAdd() throws JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
-		
+
+		ZonedDateTime beforeTs = ZonedDateTime.now();
+
 		TestMainObject newObject = this.testMongoService.add(
 			DEFAULT_TEST_DB_NAME,
 			new TestMainObject(FAKER.lorem().paragraph()),
 			testUser
 		);
-		
+		ZonedDateTime afterTs = ZonedDateTime.now();
+
 		assertEquals(1, this.testMongoService.getHistoryService().count(DEFAULT_TEST_DB_NAME));
 		List<ObjectHistoryEvent> events = this.testMongoService.getHistoryFor(DEFAULT_TEST_DB_NAME, newObject);
 		assertEquals(1, events.size());
-		
-		CreateEvent createEvent = (CreateEvent) events.get(0);
-		
+
+		CreateEvent createEvent = (CreateEvent) events.getFirst();
+
+		log.info("Create event: {}", createEvent);
+
+		assertTrue(beforeTs.isBefore(createEvent.getTimestamp()));
+		assertTrue(afterTs.isAfter(createEvent.getTimestamp()));
+
 		assertEquals(newObject.getId(), createEvent.getObjectId());
 		assertNotNull(createEvent.getEntity());
 		assertEquals(testUser.getId(), createEvent.getEntity());
@@ -80,9 +88,9 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest implements Kafka
 		createFromAll.awaitCompletion();
 		assertEquals(1, createFromAll.count());
 		EventNotificationWrapper createEventFromMessage = ObjectUtils.OBJECT_MAPPER.readValue(createFromAll.getFirstRecord().value(), EventNotificationWrapper.class);
-		
+
 		log.info("Received event from Kafka: {}", createEventFromMessage);
-		
+
 		assertEquals("TestMainObject", createEventFromMessage.getObjectName());
 		assertEquals(createEvent, createEventFromMessage.getEvent());
 
@@ -98,5 +106,147 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest implements Kafka
 
 		//TODO:: cover last type?
 	}
+
+	@Test
+	public void testHistorySearchAfter(){
+		User testUser = this.getTestUserService().getTestUser();
+
+		ZonedDateTime beforeCreate = ZonedDateTime.now();
+		TestMainObject testObject = this.testMongoService.add(
+			DEFAULT_TEST_DB_NAME,
+			new TestMainObject(FAKER.lorem().paragraph()),
+			testUser
+		);
+
+		ZonedDateTime afterCreate = ZonedDateTime.now();
+
+		this.testMongoService.update(
+			DEFAULT_TEST_DB_NAME,
+			testObject,
+			testUser
+		);
+
+		ZonedDateTime afterUpdate = ZonedDateTime.now();
+
+		this.testMongoService.remove(
+			DEFAULT_TEST_DB_NAME,
+			testObject.getId(),
+			testUser
+		);
+
+		ZonedDateTime afterDelete = ZonedDateTime.now();
+
+		HistorySearch search = new HistorySearch();
+		search.setObjectId(testObject.getId());
+		search.setStartDateTime(afterCreate);
+
+
+		SearchResult<ObjectHistoryEvent> events = this.testMongoService.searchHistory(
+			DEFAULT_TEST_DB_NAME,
+			search,
+			false
+		);
+
+		assertEquals(2, events.getNumResultsForEntireQuery());
+
+		assertEquals(events.getResults().get(0).getType(), EventType.DELETE);
+		assertEquals(events.getResults().get(1).getType(), EventType.UPDATE);
+	}
+
+	@Test
+	public void testHistorySearchBefore(){
+		User testUser = this.getTestUserService().getTestUser();
+
+		ZonedDateTime beforeCreate = ZonedDateTime.now();
+		TestMainObject testObject = this.testMongoService.add(
+			DEFAULT_TEST_DB_NAME,
+			new TestMainObject(FAKER.lorem().paragraph()),
+			testUser
+		);
+
+		ZonedDateTime afterCreate = ZonedDateTime.now();
+
+		this.testMongoService.update(
+			DEFAULT_TEST_DB_NAME,
+			testObject,
+			testUser
+		);
+
+		ZonedDateTime afterUpdate = ZonedDateTime.now();
+
+		this.testMongoService.remove(
+			DEFAULT_TEST_DB_NAME,
+			testObject.getId(),
+			testUser
+		);
+
+		ZonedDateTime afterDelete = ZonedDateTime.now();
+
+		HistorySearch search = new HistorySearch();
+		search.setObjectId(testObject.getId());
+		search.setEndDateTime(afterUpdate);
+
+
+		SearchResult<ObjectHistoryEvent> events = this.testMongoService.searchHistory(
+			DEFAULT_TEST_DB_NAME,
+			search,
+			false
+		);
+
+		assertEquals(2, events.getNumResultsForEntireQuery());
+
+		assertEquals(events.getResults().get(0).getType(), EventType.UPDATE);
+		assertEquals(events.getResults().get(1).getType(), EventType.CREATE);
+	}
+
+	@Test
+	public void testHistorySearchBeforeAndAfter(){
+		User testUser = this.getTestUserService().getTestUser();
+
+		ZonedDateTime beforeCreate = ZonedDateTime.now();
+		TestMainObject testObject = this.testMongoService.add(
+			DEFAULT_TEST_DB_NAME,
+			new TestMainObject(FAKER.lorem().paragraph()),
+			testUser
+		);
+
+		ZonedDateTime afterCreate = ZonedDateTime.now();
+
+		this.testMongoService.update(
+			DEFAULT_TEST_DB_NAME,
+			testObject,
+			testUser
+		);
+
+		ZonedDateTime afterUpdate = ZonedDateTime.now();
+
+		this.testMongoService.remove(
+			DEFAULT_TEST_DB_NAME,
+			testObject.getId(),
+			testUser
+		);
+
+		ZonedDateTime afterDelete = ZonedDateTime.now();
+
+		HistorySearch search = new HistorySearch();
+		search.setObjectId(testObject.getId());
+		search.setStartDateTime(afterCreate);
+		search.setEndDateTime(afterUpdate);
+
+
+		SearchResult<ObjectHistoryEvent> events = this.testMongoService.searchHistory(
+			DEFAULT_TEST_DB_NAME,
+			search,
+			false
+		);
+
+		assertEquals(1, events.getNumResultsForEntireQuery());
+
+		assertEquals(events.getResults().get(0).getType(), EventType.UPDATE);
+	}
+
+
+
+
 	//TODO:: test rest
 }

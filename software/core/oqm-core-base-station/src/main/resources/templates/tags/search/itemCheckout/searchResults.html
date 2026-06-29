@@ -98,7 +98,7 @@
 	{#if actionType == 'full'}
 	<td>
 		<button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemCheckoutViewModal" onclick="ItemCheckoutView.setupView('{id}');">
-			{#icons/view}{/icons/view}
+			{#icons/view /}
 		</button>
 		{#if result.get("stillCheckedOut").asBoolean()}
 		<button type="button" class="btn btn-sm btn-warning" title="Checkin" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionCheckinModal" onclick="ItemStoredTransaction.Checkin.setupForm('{id}', this);">
@@ -119,7 +119,9 @@
 	</td>
 	{#else if actionType == 'viewCheckin'}
 	<td>
-		{#links/itemCheckoutButton id = result.get("id").asText() /}
+		<a href="{rootPrefix}/itemCheckout?view={id}" class="btn btn-sm btn-info" title="View">
+			{#icons/view /}
+		</a>
 		{#if result.get("stillCheckedOut").asBoolean()}
 		<button type="button" class="btn btn-sm btn-warning" title="Checkin" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionCheckinModal" onclick="ItemStoredTransaction.Checkin.setupForm('{id}', this);">
 			{#icons/transactionCheckin /}

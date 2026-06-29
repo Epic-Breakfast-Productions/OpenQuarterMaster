@@ -16,6 +16,8 @@ productLookup:
     upcitemdb:
       enabled: true
       apiKey: " "
+    openfoodfacts:
+      enabled: true
 
 quarkus:
   container-image:
@@ -40,6 +42,12 @@ quarkus:
       scope: jakarta.inject.Singleton
     rebrickable:
       url: https://rebrickable.com
+      scope: jakarta.inject.Singleton
+    openfoodfacts-barcode:
+      url: https://world.openfoodfacts.net
+      scope: jakarta.inject.Singleton
+    openfoodfacts-search:
+      url: https://search.openfoodfacts.net
       scope: jakarta.inject.Singleton
   smallrye-openapi:
     info-title: External Item Search API
@@ -98,3 +106,7 @@ quarkus:
         scope: jakarta.inject.Singleton
       rebrickable:
         url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
+      openfoodfacts-barcode:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+      openfoodfacts-search:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/

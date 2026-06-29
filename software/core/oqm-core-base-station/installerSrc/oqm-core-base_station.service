@@ -56,6 +56,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/base-station-config.list \
                                         --env-file /tmp/oqm/serviceConfig/core/base+station/user-config.list \
                                         --add-host $(oqm-config g system.hostname):host-gateway \
+                                        --memory 2G \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \
