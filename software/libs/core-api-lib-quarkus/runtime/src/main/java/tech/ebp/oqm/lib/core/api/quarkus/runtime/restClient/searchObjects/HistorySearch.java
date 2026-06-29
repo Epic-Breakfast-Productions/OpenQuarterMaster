@@ -24,7 +24,7 @@ public class HistorySearch extends SearchObject {
 	@QueryParam("startDateTime")
 	private ZonedDateTime startDateTime;
 
-	@QueryParam("startDateTime")
+	@QueryParam("endDateTime")
 	private ZonedDateTime endDateTime;
 
 }
