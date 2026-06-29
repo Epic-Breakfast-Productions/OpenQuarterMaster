@@ -35,7 +35,7 @@ public class AppliedTransactionSearch extends SearchKeyAttObject<AppliedTransact
 	private ZonedDateTime startDateTime;
 
 	@Parameter(description = "The date range to search for.")
-	@QueryParam("startDateTime")
+	@QueryParam("endDateTime")
 	private ZonedDateTime endDateTime;
 
 

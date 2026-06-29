@@ -41,7 +41,7 @@ public class HistorySearch extends SearchObject<ObjectHistoryEvent> {
 	private ZonedDateTime startDateTime;
 
 	@Parameter(description = "The date range to search for.")
-	@QueryParam("startDateTime")
+	@QueryParam("endDateTime")
 	private ZonedDateTime endDateTime;
 
 
