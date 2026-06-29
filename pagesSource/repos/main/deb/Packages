@@ -583,6 +583,21 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Core API instance for Open QuarterMaster.
 Licence: GPL-3+
 
+Package: oqm-core-api
+Version: 6.1.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.10.0), oqm-infra-keycloak (>= 1.2.3), oqm-infra-mongodb (>= 1.1.0), oqm-infra-traefik (>= 1.0.0)
+Filename: ./oqm-core-api_6.1.0_all.deb
+Size: 5052
+MD5sum: 06e92997364d6953cea33ad68977c718
+SHA1: e7def4fc5c0d66ba56d1e782b3577cee93d057aa
+SHA256: 977efe1499dc3de37685cfa5b478d6ba72bdb22d21d328e86240c1f8f965fc27
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-api
+Description: Core API instance for Open QuarterMaster.
+Licence: GPL-3+
+
 Package: oqm-core-base+station
 Version: 1.0.40
 Architecture: all
@@ -1022,6 +1037,22 @@ Size: 5410
 MD5sum: 502089ce994572394b11bfdc4ac254d5
 SHA1: 171db9ffb5c41e91fbc2a9f92e958499485b32b8
 SHA256: 1b9fdeaf9b67de02343470f34fc1ad5abc4e14ed3f3456f741e189026fb2e28b
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-core-base+station
+Version: 1.19.2
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.11.0), oqm-infra-keycloak (>= 2.0.0), oqm-infra-traefik (>= 1.0.0), oqm-core-api (>= 6.0.0), oqm-core-characteristics (>= 1.0.1)
+Recommends: oqm-plugin-ext_item_search
+Filename: ./oqm-core-base+station_1.19.2_all.deb
+Size: 5414
+MD5sum: 3f294e766bab8c91416b2b8db0358afd
+SHA1: a7f4cf244fad8ab0305e9c7edbd5520db7628929
+SHA256: 6a4a82bc7d3b2744959f5bd1415d9cb1a8c09899e085456b7bdc47570bf0e373
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
 Description: Base Station instance for Open QuarterMaster.
