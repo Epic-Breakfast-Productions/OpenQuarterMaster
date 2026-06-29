@@ -13,13 +13,16 @@ import org.eclipse.microprofile.rest.client.ext.ClientHeadersFactory;
 import java.util.Base64;
 import java.util.Optional;
 
+/**
+ * Header factory for OIDC client auth.
+ */
 @Slf4j
 @ApplicationScoped
 public class OidcClientAuthHeaderFactory implements ClientHeadersFactory {
 
 	boolean enabled = true;
 	String authStr;
-	
+
 	@Inject
 	public OidcClientAuthHeaderFactory(
 		@ConfigProperty(name = "quarkus.oidc.client-id")
@@ -37,7 +40,7 @@ public class OidcClientAuthHeaderFactory implements ClientHeadersFactory {
 		this.authStr = "Basic: " + Base64.getEncoder().encodeToString((clientId.get()+":"+clientSecret.get()).getBytes());
 		log.debug("Auth string for keycloak: {}", this.authStr);
 	}
-	
+
 	@Override
 	public MultivaluedMap<String, String> update(MultivaluedMap<String, String> incomingHeaders, MultivaluedMap<String, String> clientOutgoingHeaders) {
 		if(!this.enabled){

@@ -1,5 +1,6 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints.info;
 
+import io.quarkus.arc.profile.IfBuildProfile;
 import jakarta.annotation.security.PermitAll;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.validation.Valid;
@@ -22,8 +23,9 @@ import tech.ebp.oqm.core.api.interfaces.endpoints.EndpointProvider;
 @Path(EndpointProvider.ROOT_API_ENDPOINT_V1 + "/test")
 @Tags({@Tag(name = "Test")})
 @RequestScoped
+@IfBuildProfile("dev")
 public class Test extends EndpointProvider {
-	
+
 	@GET
 	@Path("illegalArgException")
 	@Operation(
@@ -38,7 +40,7 @@ public class Test extends EndpointProvider {
 	public Response illegalArgException() {
 		throw new IllegalArgumentException("bad");
 	}
-	
+
 	@GET
 	@Path("illegalStateException")
 	@Operation(
@@ -53,14 +55,14 @@ public class Test extends EndpointProvider {
 	public Response illegalStateException() {
 		throw new IllegalStateException("bad");
 	}
-	
+
 	@NoArgsConstructor
 	public static class TestClass {
-		
+
 		@NotBlank
 		public String field;
 	}
-	
+
 	@POST
 	@Path("validationException")
 	@Operation(
@@ -77,5 +79,5 @@ public class Test extends EndpointProvider {
 	) {
 		return Response.ok().build();
 	}
-	
+
 }

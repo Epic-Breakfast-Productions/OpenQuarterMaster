@@ -29,15 +29,6 @@ public class LifecycleBean {
 	@ConfigProperty(name="service.apiVersion")
 	String apiVersion;
 
-	@Inject
-	CustomUnitService customUnitService;
-
-	@Inject
-	TempFileService tempFileService;
-
-	@Inject
-    OqmDatabaseService dbService;
-
 	private ZonedDateTime startDateTime;
 
 	public static void logConfig(){
