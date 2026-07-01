@@ -7,7 +7,6 @@ import io.smallrye.config.WithDefault;
 import org.testcontainers.utility.DockerImageName;
 import tech.ebp.oqm.lib.core.characteristics.quarkus.runtime.Constants;
 
-import java.nio.file.Path;
 import java.util.Optional;
 
 /**

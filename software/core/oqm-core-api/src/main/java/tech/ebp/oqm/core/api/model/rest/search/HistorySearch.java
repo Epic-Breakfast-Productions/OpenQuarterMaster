@@ -9,33 +9,52 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import tech.ebp.oqm.core.api.model.object.history.EventType;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.core.api.service.mongo.utils.codecs.ZonedDateTimeCodec;
 
+import java.time.ZoneOffset;
+import java.time.ZonedDateTime;
 import java.util.List;
+import java.util.TimeZone;
 
 import static com.mongodb.client.model.Filters.eq;
+import static com.mongodb.client.model.Filters.gte;
+import static com.mongodb.client.model.Filters.lte;
 import static com.mongodb.client.model.Filters.or;
 
 @ToString(callSuper = true)
+@Setter
 @Getter
 public class HistorySearch extends SearchObject<ObjectHistoryEvent> {
-	
+
 	@Parameter(description = "The ObjectId of the object to search history for.")
 	@Setter
 	@QueryParam("objectId")
 	private ObjectId objectId;
-	
+
 	@Parameter(description = "The event types to search for.")
 	@QueryParam("eventType")
 	private List<EventType> eventTypes;
-	
+
+
+	@Parameter(description = "The date range to search for.")
+	@QueryParam("startDateTime")
+	private ZonedDateTime startDateTime;
+
+	@Parameter(description = "The date range to search for.")
+	@QueryParam("endDateTime")
+	private ZonedDateTime endDateTime;
+
+
+
+
 	//TODO:: object specific fields, add to bson filter list
 	//TODO:: Get hist in time range, etc
-	
-	
+
+
 	@Override
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
-		
+
 		if(this.getObjectId() != null) {
 			filters.add(
 				eq(
@@ -44,7 +63,7 @@ public class HistorySearch extends SearchObject<ObjectHistoryEvent> {
 				)
 			);
 		}
-		
+
 		if (this.getEventTypes() != null && !this.getEventTypes().isEmpty()) {
 			filters.add(
 				or(
@@ -54,7 +73,19 @@ public class HistorySearch extends SearchObject<ObjectHistoryEvent> {
 				)
 			);
 		}
-		
+
+		if(hasValue(this.getStartDateTime())){
+			filters.add(
+				gte("timestamp." + ZonedDateTimeCodec.MONGO_INSTANT_FIELD_NAME, this.getStartDateTime().withZoneSameInstant(ZoneOffset.UTC).toInstant())
+			);
+		}
+		if(hasValue(this.getEndDateTime())){
+			filters.add(
+				lte("timestamp." + ZonedDateTimeCodec.MONGO_INSTANT_FIELD_NAME, this.getEndDateTime().withZoneSameInstant(ZoneOffset.UTC).toInstant())
+			);
+		}
+
+
 		return filters;
 	}
 }
