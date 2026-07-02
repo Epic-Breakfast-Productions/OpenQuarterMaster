@@ -9,9 +9,14 @@
             "description": "The version of the Communication spec (outlined by these json schemas) this module adheres to. Can be anything, as long as it is unique.",
             "type":"string"
         },
+        "firmwareVersion" : {
+            "description": "The version of the firmware running on the hardware.",
+            "type":"string"
+        },
         "serialId": {
             "description": "The unique identifier for a module. Must be unique to all modules. Must be consistent between module restarts.",
-            "type": "string"
+            "type": "string",
+            "pattern": "^[a-zA-Z0-9_.-]+$"
         },
         "manufactureDate": {
             "description": "When this module was manufactured. Must to adhere to ISO standard format yyyy-mm-dd",
@@ -21,10 +26,10 @@
         "numBlocks": {
             "description": "The number of storage blocks this module has.",
             "type": "integer",
-            "minimum": 0
+            "minimum": 1
         },
         "capabilities": {
-            "description": "What this module is capable of.",
+            "description": "What this module is capable of. If any field is omitted, it is considered false.",
             "type": "object",
             "properties": {
                 "blockLights": {
@@ -45,10 +50,6 @@
                 }
             },
             "required": [
-                "blockLights",
-                "blockLightColor",
-                "blockLightBrightness",
-                "blockWeightReporting"
             ]
         }
     },

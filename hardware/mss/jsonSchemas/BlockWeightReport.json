@@ -11,7 +11,7 @@
         },
         "weightValue": {
             "description": "The value of the weight that was measured.",
-            "type": "float",
+            "type": "number",
             "minimum": 0
         },
         "weightUnit": {
@@ -20,6 +20,7 @@
         }
     },
     "required": [
-        "powerState"
+        "weightValue",
+        "weightUnit"
     ]
 }
