@@ -8,11 +8,13 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleInfoCommand;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleStateCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponseType;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.Capabilities;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.BlockState;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.ModuleState;
 
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -36,7 +38,7 @@ public class TestModule implements AutoCloseable {
 
 	static {
 		try {
-			errFormatResponse = OBJECT_MAPPER.writeValueAsString(CommandResponse.builder().status(CommandResponseType.ERROR).build());
+			errFormatResponse = OBJECT_MAPPER.writeValueAsString(CommandResponse.builder().status(CommandResponseType.R_ERROR.ERROR).build());
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
@@ -45,7 +47,7 @@ public class TestModule implements AutoCloseable {
 
 	@Getter
 	private final ModuleInfo moduleInfo;
-	private final List<BlockState> blocks;
+	private final List<TestBlockState> blocks;
 	private final TestModuleInterface testModuleInterface;
 
 	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -69,8 +71,10 @@ public class TestModule implements AutoCloseable {
 		this.blocks = new ArrayList<>() {{
 			for (int i = 1; i <= numBlocks; i++) {
 				this.add(
-					BlockState.builder()
+					TestBlockState.builder()
 						.blockNum(i)
+						.lightSettings(capabilities.isBlockLights() ? TestBlockState.TestLightSettings.builder().build() : null)
+						.weight(capabilities.isBlockWeightReporting() ? TestBlockState.TestWeight.builder().build() : null)
 						.build()
 				);
 			}
@@ -91,16 +95,37 @@ public class TestModule implements AutoCloseable {
 		return output;
 	}
 
+	protected CommandResponse handleGetModuleStateCommand(GetModuleStateCommand data) {
+		log.info("Received GetModuleStateCommand. Handling.");
+
+		CommandResponse output = CommandResponse.builder()
+									 .status(CommandResponseType.OK)
+									 .response(OBJECT_MAPPER.valueToTree(
+										 ModuleState.builder()
+											 .storageBlocks(
+												 this.blocks.stream()
+													 .map(TestBlockState::toBlockState)
+													 .toList()
+											 )
+											 .build()
+									 ))
+									 .build();
+
+		log.info("Returning GetModuleStateCommand response: {}", output);
+		return output;
+	}
+
 	protected CommandResponse handleCommand(Command command) {
 		log.info("Received command {}", command);
 		try {
 			return switch (command) {
 				case GetModuleInfoCommand c -> this.handleModuleInfoCommand(c);
+				case GetModuleStateCommand c -> this.handleGetModuleStateCommand(c);
 				default -> throw new IllegalStateException("Unexpected value: " + command);
 			};
 		} catch(Throwable e) {
-			log.error("Error handling GetModuleInfoCommand", e);
-			throw new RuntimeException("Failed to handle GetModuleInfoCommand.", e);
+			log.error("Error handling command: ", e);
+			throw new RuntimeException("Failed to handle command.", e);
 		}
 	}
 
@@ -139,5 +164,6 @@ public class TestModule implements AutoCloseable {
 		this.scheduler.shutdown();
 		this.testModuleInterface.close();
 	}
+
 
 }
