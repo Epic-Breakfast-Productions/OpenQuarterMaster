@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleInfoCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleStateCommand;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.highlight.HighlightBlockSetting;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.highlight.HighlightBlocksCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponseType;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.Capabilities;
@@ -16,8 +18,10 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.BlockState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.ModuleState;
 
+import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -49,6 +53,8 @@ public class TestModule implements AutoCloseable {
 	private final ModuleInfo moduleInfo;
 	private final List<TestBlockState> blocks;
 	private final TestModuleInterface testModuleInterface;
+
+	private ZonedDateTime resetLightsAt = null;
 
 	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
@@ -115,12 +121,54 @@ public class TestModule implements AutoCloseable {
 		return output;
 	}
 
+	protected void resetLights() {
+		this.blocks.forEach(TestBlockState::resetLights);
+	}
+
+	protected TestBlockState getBlock(int blockNum) {
+		return this.blocks.stream().filter(b->b.getBlockNum() == blockNum).findFirst().orElseThrow();
+	}
+
+	protected CommandResponse handleHighlightBlocksCommand(HighlightBlocksCommand cmd) {
+		log.info("Received HighlightBlocksCommand. Handling.");
+
+		if (!cmd.isCarry()) {
+			this.resetLights();
+		}
+
+		for (HighlightBlockSetting s : cmd.getStorageBlocks()) {
+			TestBlockState ts;
+			try {
+				ts = this.getBlock(s.getStorageBlock());
+			} catch(Throwable e) {
+				log.error("Error getting block: ", e);
+				return CommandResponse.builder()
+						   .status(CommandResponseType.R_ERROR)
+						   .build();
+			}
+
+			ts.getLightSettings().setPowerState(s.getLightPowerState().stateEquivalent);
+			ts.getLightSettings().setColor(s.getLightColor());
+			ts.getLightSettings().setBrightness(s.getBrightness());
+			ts.getLightSettings().setTurnedOnAt(ZonedDateTime.now());
+		}
+
+		if (cmd.getDuration() != 0) {
+			this.resetLightsAt = ZonedDateTime.now().plus(Duration.of(cmd.getDuration(), ChronoUnit.SECONDS));
+		}
+
+		return CommandResponse.builder()
+				   .status(CommandResponseType.OK)
+				   .build();
+	}
+
 	protected CommandResponse handleCommand(Command command) {
 		log.info("Received command {}", command);
 		try {
 			return switch (command) {
 				case GetModuleInfoCommand c -> this.handleModuleInfoCommand(c);
 				case GetModuleStateCommand c -> this.handleGetModuleStateCommand(c);
+				case HighlightBlocksCommand c -> this.handleHighlightBlocksCommand(c);
 				default -> throw new IllegalStateException("Unexpected value: " + command);
 			};
 		} catch(Throwable e) {
@@ -146,8 +194,18 @@ public class TestModule implements AutoCloseable {
 		}
 	}
 
+	protected void runTimedTasks() {
+		if (this.resetLightsAt != null && this.resetLightsAt.isBefore(ZonedDateTime.now())) {
+			log.info("Resetting lights.");
+			this.resetLights();
+			this.resetLightsAt = null;
+		}
+	}
+
 	protected void iterate() {
 		log.debug("Running TestModuleThread for module {}", this.getModuleInfo().getSerialId());
+
+		this.runTimedTasks();
 
 		Optional<String> received = this.testModuleInterface.receive();
 

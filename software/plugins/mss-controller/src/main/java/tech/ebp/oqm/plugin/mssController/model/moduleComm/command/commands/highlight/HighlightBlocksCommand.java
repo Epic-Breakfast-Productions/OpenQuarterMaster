@@ -7,6 +7,8 @@ import lombok.ToString;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.CommandType;
 
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
 //@AllArgsConstructor
 @NoArgsConstructor
@@ -23,5 +25,5 @@ public class HighlightBlocksCommand extends Command {
 	private boolean carry;
 	private boolean beep;
 
-
+	private List<HighlightBlockSetting> storageBlocks;
 }

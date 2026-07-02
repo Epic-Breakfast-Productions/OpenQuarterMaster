@@ -48,6 +48,12 @@ public class TestBlockState {
 					   .brightness(this.brightness)
 					   .build();
 		}
+
+		public void reset(){
+			this.turnedOnAt = null;
+			this.powerState = BlockLightPowerState.OFF;
+		}
+
 	}
 
 	@Data
@@ -64,5 +70,9 @@ public class TestBlockState {
 					   .weightStr(this.weightValue + this.weightUnit)
 					   .build();
 		}
+	}
+
+	public void resetLights(){
+		this.lightSettings.reset();
 	}
 }
