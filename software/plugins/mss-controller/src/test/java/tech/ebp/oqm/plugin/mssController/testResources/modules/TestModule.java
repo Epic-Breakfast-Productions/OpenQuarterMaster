@@ -17,7 +17,9 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.Capabilitie
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.BlockState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.ModuleState;
+import tech.ebp.oqm.plugin.mssController.service.media.ModuleStateImageService;
 
+import java.awt.image.BufferedImage;
 import java.time.Duration;
 import java.time.LocalDate;
 import java.time.ZonedDateTime;
@@ -101,19 +103,23 @@ public class TestModule implements AutoCloseable {
 		return output;
 	}
 
+	protected ModuleState getModuleState() {
+		return ModuleState.builder()
+				   .storageBlocks(
+					   this.blocks.stream()
+						   .map(TestBlockState::toBlockState)
+						   .toList()
+				   )
+				   .build();
+	}
+
 	protected CommandResponse handleGetModuleStateCommand(GetModuleStateCommand data) {
 		log.info("Received GetModuleStateCommand. Handling.");
 
 		CommandResponse output = CommandResponse.builder()
 									 .status(CommandResponseType.OK)
 									 .response(OBJECT_MAPPER.valueToTree(
-										 ModuleState.builder()
-											 .storageBlocks(
-												 this.blocks.stream()
-													 .map(TestBlockState::toBlockState)
-													 .toList()
-											 )
-											 .build()
+										 this.getModuleState()
 									 ))
 									 .build();
 
@@ -223,5 +229,11 @@ public class TestModule implements AutoCloseable {
 		this.testModuleInterface.close();
 	}
 
+	public String generateStateImage() {
+		return ModuleStateImageService.generateStateImage(
+			this.getModuleInfo(),
+			this.getModuleState()
+		);
+	}
 
 }

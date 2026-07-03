@@ -26,14 +26,17 @@ dependencies {
 	implementation 'io.quarkus:quarkus-oidc'
 	implementation 'io.quarkus:quarkus-rest-csrf'
 	implementation 'io.quarkus:quarkus-arc'
-	testImplementation 'io.quarkus:quarkus-junit'
-	testImplementation 'io.rest-assured:rest-assured'
 
 	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-characteristics-lib-quarkus:1.1.1-SNAPSHOT'
 	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:6.0.0'
 
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
+
 	implementation 'com.fazecast:jSerialComm:2.11.4'
+	implementation 'org.jfree:org.jfree.svg:5.0.7'
+
+	testImplementation 'io.quarkus:quarkus-junit'
+	testImplementation 'io.rest-assured:rest-assured'
 }
 
 group = 'tech.ebp.oqm.plugin'
