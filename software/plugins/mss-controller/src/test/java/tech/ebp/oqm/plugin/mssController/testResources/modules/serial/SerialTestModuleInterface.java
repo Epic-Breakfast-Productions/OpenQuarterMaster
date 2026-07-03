@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
+import tech.ebp.oqm.plugin.mssController.testResources.modules.TestModule;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.TestModuleInterface;
 
 import java.io.FilterInputStream;
@@ -36,21 +37,25 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 		return matcher.group();
 	}
 
-	@Getter
-	private final ObjectMapper objectMapper;
-	private final Process process;
-	private final InputStream inputStream;
-	private final OutputStream outputStream;
-	private final InputStream errStream;
+	private Process process;
+	private InputStream inputStream;
+	private OutputStream outputStream;
+	private InputStream errStream;
 
-	private final String mssModulePortLocation;
+	private String mssModulePortLocation;
 	@Getter
-	private final String mssConnectionPortLocation;
+	private String mssConnectionPortLocation;
 
 	private SerialPort mssModuleSerialPort;
 
 	public SerialTestModuleInterface(ObjectMapper objectMapper) throws IOException {
-		this.objectMapper = objectMapper;
+		super(objectMapper);
+	}
+
+	@Override
+	public void init(TestModule module) throws IOException {
+		this.setModule(module);
+
 		ProcessBuilder pb = new ProcessBuilder(NEW_SERIAL_COMMAND);
 		log.info("Starting new Socat process.");
 		//		pb.inheritIO(); //debugging
@@ -76,21 +81,21 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 
 		this.mssModuleSerialPort = SerialPort.getCommPort(this.mssModulePortLocation);
 
-//		mssModuleSerialPort.addDataListener(
-//			new SerialPortDataListener() {
-//				@Override
-//				public int getListeningEvents() {
-//					return SerialPort.LISTENING_EVENT_DATA_AVAILABLE | SerialPort.LISTENING_EVENT_DATA_RECEIVED | SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
-//				}
-//
-//				@Override
-//				public void serialEvent(SerialPortEvent serialPortEvent) {
-//					log.info("Serial event: {}", serialPortEvent.getEventType());
-//					if (serialPortEvent.getEventType() == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-//						log.info("Data available on port!");
-//					}
-//				}
-//			});
+		//		mssModuleSerialPort.addDataListener(
+		//			new SerialPortDataListener() {
+		//				@Override
+		//				public int getListeningEvents() {
+		//					return SerialPort.LISTENING_EVENT_DATA_AVAILABLE | SerialPort.LISTENING_EVENT_DATA_RECEIVED | SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
+		//				}
+		//
+		//				@Override
+		//				public void serialEvent(SerialPortEvent serialPortEvent) {
+		//					log.info("Serial event: {}", serialPortEvent.getEventType());
+		//					if (serialPortEvent.getEventType() == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
+		//						log.info("Data available on port!");
+		//					}
+		//				}
+		//			});
 
 		this.mssModuleSerialPort.openPort();
 

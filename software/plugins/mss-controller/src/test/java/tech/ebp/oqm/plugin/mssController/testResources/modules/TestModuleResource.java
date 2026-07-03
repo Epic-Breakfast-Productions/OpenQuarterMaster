@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static tech.ebp.oqm.plugin.mssController.model.utils.JacksonUtils.OBJECT_MAPPER;
+
 @Slf4j
 public class TestModuleResource implements QuarkusTestResourceLifecycleManager {
 	public static final String NUM_SERIAL_MODULE_RES_NAME = "serialModules";
@@ -36,21 +38,25 @@ public class TestModuleResource implements QuarkusTestResourceLifecycleManager {
 		this.modules = new ArrayList<>(this.numSerialModules + this.numNetModules);
 
 		Map<String, String> configMap = new HashMap<>();
-		ObjectMapper objectMapper = new ObjectMapper();
 
 		for(int i = 0; i < this.numSerialModules; i++) {
 			SerialTestModuleInterface serialInterface;
 			try {
-				serialInterface = new SerialTestModuleInterface(objectMapper);
+				serialInterface = new SerialTestModuleInterface(OBJECT_MAPPER);
 			} catch(IOException e) {
 				throw new RuntimeException("Failed to setup serial module interface: " + e.getMessage(), e);
 			}
 
-			TestModule newModule = new TestModule(
-				64,
-				Capabilities.builder().blockLights(true).blockLightBrightness(true).blockLightColor(true).build(),
-				serialInterface
-			);
+			TestModule newModule = null;
+			try {
+				newModule = new TestModule(
+					64,
+					Capabilities.builder().blockLights(true).blockLightBrightness(true).blockLightColor(true).build(),
+					serialInterface
+				);
+			} catch(Exception e) {
+				throw new RuntimeException("Failed to setup and initialize module.", e);
+			}
 			this.modules.add(newModule);
 
 			configMap.put(

@@ -65,7 +65,7 @@ public class TestModule implements AutoCloseable {
 		int numBlocks,
 		Capabilities capabilities,
 		TestModuleInterface testModuleInterface
-	) {
+	) throws Exception {
 		this.moduleInfo = new ModuleInfo(
 			"1.0.0",
 			"1.0.0",
@@ -87,6 +87,8 @@ public class TestModule implements AutoCloseable {
 				);
 			}
 		}};
+
+		this.testModuleInterface.init(this);
 
 		this.scheduler.scheduleAtFixedRate(this::iterate, 0, SLEEP_TIME, TimeUnit.MILLISECONDS);
 	}
