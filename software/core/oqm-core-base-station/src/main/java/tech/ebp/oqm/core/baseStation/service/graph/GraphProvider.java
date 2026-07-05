@@ -1,5 +1,10 @@
 package tech.ebp.oqm.core.baseStation.service.graph;
 
+import tech.ebp.oqm.core.baseStation.model.graph.Transactions;
+
+import java.io.IOException;
+import java.util.List;
+
 public interface GraphProvider {
-    byte[] getGraph(String database, String itemId, String startDate, String endDate);
+    byte[] getGraph(List<Transactions> transactions) throws IOException;
 }
