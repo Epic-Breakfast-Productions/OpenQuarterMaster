@@ -19,12 +19,12 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.Applie
 @RolesAllowed(Roles.INVENTORY_VIEW)
 @RequestScoped
 @Path(ApiProvider.API_ROOT + "/v1")
-public class RestSend extends ApiProvider {
+public class TransactionChartInterface {
 
-    private final RenderTransactionsChart service;
+    private final GraphProvider provider;
 
-    public RestSend(RenderTransactionsChart service) {
-        this.service = service;
+    public TransactionChartInterface(GraphProvider provider) {
+        this.provider = provider;
     }
 
     // @GET
@@ -35,17 +35,17 @@ public class RestSend extends ApiProvider {
     // }
 
     @GET
-    @Path("/db/{dbIdOrName}/inventory/item/{itemId}/stored/transaction")
+    @Path("/graph/transactions/{dbIdOrName}/{itemId}")
     @Produces("image/svg+xml")
     @Operation(summary = "Returns transaction history as an SVG chart.")
     @APIResponse(responseCode = "200", description = "SVG chart generated.")
-    public Response getTransactionCount(@PathParam("dbIdOrName") String dbIdOrName, @PathParam("itemId") String itemId) {
-        ObjectNode transactionSearch = this.getOqmCoreApiClient()
-            .invItemStoredTransactionSearch(this.getBearerHeaderStr(), dbIdOrName, itemId, new AppliedTransactionSearch())
-            .await()
-            .indefinitely();
-
-        return Response.ok(service.transactions(transactionSearch))
+    public Response getTransactionCount(
+        @PathParam("dbIdOrName") String dbIdOrName,
+        @PathParam("itemId") String itemId
+        //TODO: timestamps
+        //if null, get tranactions for the last 30/90 days
+        ) {
+        return Response.ok(provider.getGraph(dbIdOrName, itemId, null, null))
             .type("image/svg+xml")
             .header("Content-Disposition", "inline; filename=transactions.svg")
             .build();

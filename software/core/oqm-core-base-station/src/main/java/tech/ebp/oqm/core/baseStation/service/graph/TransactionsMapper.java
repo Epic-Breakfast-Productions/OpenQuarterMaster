@@ -10,7 +10,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mapper {
+public class TransactionsMapper {
+
+    private TransactionsMapper(){}
 
     public static List<Transactions> mapTransactionsToArray(JsonNode jsonResponse) {
         jsonResponse = jsonResponse.get("results");
