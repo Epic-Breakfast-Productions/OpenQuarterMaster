@@ -1,6 +1,5 @@
-package tech.ebp.oqm.plugin.mssController.testResources.modules.serial;
+package tech.ebp.oqm.plugin.mssController.testResources.modules.modInterfaces.serial;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
@@ -8,11 +7,9 @@ import com.fazecast.jSerialComm.SerialPortEvent;
 import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
-import tech.ebp.oqm.plugin.mssController.testResources.modules.TestModule;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.TestModuleInterface;
+import tech.ebp.oqm.plugin.mssController.testResources.modules.engine.TestModuleEngine;
 
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -48,14 +45,12 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 
 	private SerialPort mssModuleSerialPort;
 
-	public SerialTestModuleInterface(ObjectMapper objectMapper) throws IOException {
-		super(objectMapper);
+	public SerialTestModuleInterface(ObjectMapper objectMapper, TestModuleEngine engine) throws IOException {
+		super(objectMapper, engine);
 	}
 
 	@Override
-	public void init(TestModule module) throws IOException {
-		this.setModule(module);
-
+	public void init() throws IOException {
 		ProcessBuilder pb = new ProcessBuilder(NEW_SERIAL_COMMAND);
 		log.info("Starting new Socat process.");
 		//		pb.inheritIO(); //debugging
@@ -81,25 +76,37 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 
 		this.mssModuleSerialPort = SerialPort.getCommPort(this.mssModulePortLocation);
 
-		//		mssModuleSerialPort.addDataListener(
-		//			new SerialPortDataListener() {
-		//				@Override
-		//				public int getListeningEvents() {
-		//					return SerialPort.LISTENING_EVENT_DATA_AVAILABLE | SerialPort.LISTENING_EVENT_DATA_RECEIVED | SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
-		//				}
-		//
-		//				@Override
-		//				public void serialEvent(SerialPortEvent serialPortEvent) {
-		//					log.info("Serial event: {}", serialPortEvent.getEventType());
-		//					if (serialPortEvent.getEventType() == SerialPort.LISTENING_EVENT_DATA_AVAILABLE) {
-		//						log.info("Data available on port!");
-		//					}
-		//				}
-		//			});
+		this.mssModuleSerialPort.addDataListener(
+			new SerialPortDataListener() {
+				@Override
+				public int getListeningEvents() {
+					return SerialPort.LISTENING_EVENT_DATA_AVAILABLE | SerialPort.LISTENING_EVENT_DATA_RECEIVED | SerialPort.LISTENING_EVENT_DATA_AVAILABLE;
+				}
+
+				@Override
+				public void serialEvent(SerialPortEvent serialPortEvent) {
+					log.info("Serial event: {}", serialPortEvent.getEventType());
+					if (serialPortEvent.getEventType() == SerialPort.LISTENING_EVENT_DATA_RECEIVED) {
+						handleDataReceived(serialPortEvent);
+					}
+				}
+			});
 
 		this.mssModuleSerialPort.openPort();
 
 		log.info("Got ports: {} (for hw impl) and {} (to connect to)", this.mssModulePortLocation, this.mssConnectionPortLocation);
+	}
+
+	private void handleDataReceived(SerialPortEvent serialPortEvent) {
+		log.info("Data available on port!");
+
+		String data = new String(serialPortEvent.getReceivedData());
+
+		String response = this.getEngine().handleData(data);
+
+		if (response != null && !response.isEmpty()) {
+			this.mssModuleSerialPort.writeBytes(response.getBytes(), response.length());
+		}
 	}
 
 	private String readLine() {

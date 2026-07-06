@@ -1,10 +1,10 @@
 package tech.ebp.oqm.plugin.mssController.testResources.modules;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.Capabilities;
-import tech.ebp.oqm.plugin.mssController.testResources.modules.serial.SerialTestModuleInterface;
+import tech.ebp.oqm.plugin.mssController.testResources.modules.engine.TestModuleEngine;
+import tech.ebp.oqm.plugin.mssController.testResources.modules.modInterfaces.serial.SerialTestModuleInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -37,21 +37,26 @@ public class TestModuleResource implements QuarkusTestResourceLifecycleManager {
 		log.info("Starting TestModuleResource.");
 		this.modules = new ArrayList<>(this.numSerialModules + this.numNetModules);
 
+		TestModuleEngine.TestModuleEngineBuilder testModuleEngineBuilder = TestModuleEngine.builder();
+		testModuleEngineBuilder.numBlocks(64);
+		testModuleEngineBuilder.capabilities(Capabilities.builder().blockLights(true).blockLightBrightness(true).blockLightColor(true).build());
+
 		Map<String, String> configMap = new HashMap<>();
 
 		for(int i = 0; i < this.numSerialModules; i++) {
+			TestModuleEngine engine = testModuleEngineBuilder.build();
+
 			SerialTestModuleInterface serialInterface;
 			try {
-				serialInterface = new SerialTestModuleInterface(OBJECT_MAPPER);
+				serialInterface = new SerialTestModuleInterface(OBJECT_MAPPER, engine);
 			} catch(IOException e) {
 				throw new RuntimeException("Failed to setup serial module interface: " + e.getMessage(), e);
 			}
 
-			TestModule newModule = null;
+			TestModule newModule;
 			try {
 				newModule = new TestModule(
-					64,
-					Capabilities.builder().blockLights(true).blockLightBrightness(true).blockLightColor(true).build(),
+					engine,
 					serialInterface
 				);
 			} catch(Exception e) {

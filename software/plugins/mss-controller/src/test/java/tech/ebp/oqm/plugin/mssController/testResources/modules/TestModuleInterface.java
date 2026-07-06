@@ -3,32 +3,32 @@ package tech.ebp.oqm.plugin.mssController.testResources.modules;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AccessLevel;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.Setter;
+import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
+import tech.ebp.oqm.plugin.mssController.testResources.modules.engine.TestModuleEngine;
 
-import java.io.IOException;
 import java.util.Optional;
 
+@SuperBuilder
 public abstract class TestModuleInterface implements AutoCloseable {
 
 	@Getter(AccessLevel.PROTECTED)
-	@Setter(AccessLevel.PROTECTED)
-	private TestModule module;
+	private final TestModuleEngine engine;
 
 	@Getter(AccessLevel.PROTECTED)
 	private final ObjectMapper objectMapper;
 
-	public TestModuleInterface(ObjectMapper objectMapper) {
+
+	public TestModuleInterface(ObjectMapper objectMapper, TestModuleEngine engine) {
 		this.objectMapper = objectMapper;
+		this.engine = engine;
 	}
 
 	/**
 	 * Initializes and sets up the module interface.
-	 * @param module
 	 */
-	public abstract void init(TestModule module) throws Exception;
+	public abstract void init() throws Exception;
 
 	public abstract void send(String message);
 
