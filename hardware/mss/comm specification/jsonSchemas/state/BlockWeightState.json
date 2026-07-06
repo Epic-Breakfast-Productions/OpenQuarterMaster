@@ -1,8 +1,8 @@
 {
     "$schema": "https://json-schema.org/draft/2020-12/schema",
-    "$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockWeightReport.json",
-    "title": "Block Weight Report",
-    "description": "A report of the current weight of what is stored in the block.",
+    "$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockWeightState.json",
+    "title": "Block Weight State",
+    "description": "The state of the current weight of what is stored in the block.",
     "type": "object",
     "properties": {
         "weightStr": {

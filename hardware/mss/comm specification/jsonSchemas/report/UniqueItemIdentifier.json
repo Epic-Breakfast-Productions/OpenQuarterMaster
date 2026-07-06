@@ -1,0 +1,25 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockWeightState.json",
+	"title": "Unique Item Identifier",
+	"description": "A description of what fields are given to help identify an item to perform actions on.",
+	"type": "object",
+	"properties": {
+		"itemId": {
+			"description": "The item this identifies. The actual direct ID of the item type.",
+			"type": "string"
+		},
+		"itemIdentifier": {
+			"description": "The item this identifies. The identifier sub-field that can be used to get the specific item type.",
+			"type": "string"
+		},
+		"storedItemId": {
+			"description": "The identifier of the stored item.",
+			"type": "string"
+		}
+	},
+	"required": [
+		"identifier",
+		"operation"
+	]
+}

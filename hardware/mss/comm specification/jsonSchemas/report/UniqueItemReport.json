@@ -1,0 +1,21 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/GetModuleInfoCommand.json",
+	"title": "Unique Item Report",
+	"description": "Command to get a module's info.",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/ItemReport.json"
+		}
+	],
+	"properties": {
+		"storedIdentifier": {
+			"description": "The identifier of the exact stored item.",
+			"type": "string"
+		}
+	},
+	"required": [
+		"amount"
+	]
+}
