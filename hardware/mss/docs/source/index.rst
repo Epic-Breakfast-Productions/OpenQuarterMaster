@@ -3,7 +3,7 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-OQM MSS Hardware documentation
+OQM MSS Hardware Documentation
 ==============================
 
 .. image::
@@ -17,6 +17,12 @@ OQM MSS Hardware documentation
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
+
+   Build & Usage Guide <guide/index>
+   Hardware <hardware/index>
+   Firmware <firmware/index>
+   Communication Spec <spec/index>
+
 
 .. mermaid::
 
