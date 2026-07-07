@@ -6,9 +6,12 @@
 OQM MSS Hardware documentation
 ==============================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+.. image::
+	/_static/module_lit.png
+	:align: center
+
+.. jsonschema:: ./_static/jsonSchemas/ModuleInfo.json
+	:lift_description: true
 
 
 .. toctree::
