@@ -14,6 +14,7 @@ author = 'Greg Stewart'
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
 
 extensions = [
+	'sphinx_toolbox.collapse', # https://sphinx-toolbox.readthedocs.io/en/stable/extensions/collapse.html
 	'sphinxcontrib.mermaid', # https://github.com/mgaitan/sphinxcontrib-mermaid
 	'sphinx-jsonschema' # https://sphinx-jsonschema.readthedocs.io/en/latest/directive.html
 ]

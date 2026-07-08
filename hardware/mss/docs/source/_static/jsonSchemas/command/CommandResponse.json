@@ -6,9 +6,9 @@
     "type": "object",
     "properties": {
         "status": {
-            "description": "The status of the command. 'OK' or 'R_ERROR' (request error) or 'ERROR'",
+            "description": "The status of the command. 'OK' or 'R_ERROR' (request error) or 'ERROR' or 'UNSUPPORTED'",
             "type": "string",
-            "enum": [ "OK", "R_ERR", "ERR" ]
+            "enum": [ "OK", "R_ERR", "ERR", "UNSUPPORTED" ]
         },
         "detail": {
             "description": "If applicable, details behind the response.",

@@ -1,3 +1,4 @@
 sphinx
+sphinx-toolbox
 sphinxcontrib-mermaid
 sphinx-jsonschema
