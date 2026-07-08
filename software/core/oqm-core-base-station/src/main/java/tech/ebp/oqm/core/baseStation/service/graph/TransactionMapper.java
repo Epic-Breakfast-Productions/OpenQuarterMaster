@@ -18,12 +18,9 @@ public class TransactionMapper {
     private TransactionMapper(){}
 
     static List<Transactions> mapTransactionsToArray(JsonNode jsonResponse) {
-        log.info("Mapping transactions to array: " + jsonResponse);
         if(jsonResponse.get("results") == null || jsonResponse.get("results").isEmpty()) {
-            log.info("No transactions found in the response. fell into first if condition");
             return new ArrayList<>();
         }
-        log.info("Transactions found in the response");
         jsonResponse = jsonResponse.get("results");
         List<Transactions> transactionsList = new ArrayList<>();
         for (JsonNode transaction : jsonResponse) {
