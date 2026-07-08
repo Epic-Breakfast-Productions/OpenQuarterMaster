@@ -12,7 +12,8 @@ import tech.ebp.oqm.core.baseStation.service.graph.GraphProvider;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @ApplicationScoped
@@ -38,13 +39,12 @@ public class XChartGraphService implements GraphProvider {
         chart.getStyler().setLegendVisible(true);
         chart.getStyler().setDatePattern("dd-MM-yyyy HH:mm");
 
-        List<Instant> xData = transactionsList.stream()
-            .map(Transactions::timestamp)
-            .toList();
-
-        List<Integer> yData = transactionsList.stream()
-            .map(Transactions::value)
-            .toList();
+        List<Date> xData = new ArrayList<>();
+        List<Double> yData = new ArrayList<>();
+        for (Transactions transaction : transactionsList) {
+            xData.add(Date.from(transaction.timestamp()));
+            yData.add(transaction.value());
+        }
 
         XYSeries series = chart.addSeries("Transaction", xData, yData);
         series.setMarker(SeriesMarkers.CIRCLE);

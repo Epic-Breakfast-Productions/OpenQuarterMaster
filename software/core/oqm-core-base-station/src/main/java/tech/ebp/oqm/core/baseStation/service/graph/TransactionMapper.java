@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.baseStation.service.graph;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.core.baseStation.model.graph.TimeRange;
 import tech.ebp.oqm.core.baseStation.model.graph.Transactions;
 
@@ -11,14 +12,18 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Slf4j
 public class TransactionMapper {
 
     private TransactionMapper(){}
 
     static List<Transactions> mapTransactionsToArray(JsonNode jsonResponse) {
-        if(jsonResponse.get("results") == null){
+        log.info("Mapping transactions to array: " + jsonResponse);
+        if(jsonResponse.get("results") == null || jsonResponse.get("results").isEmpty()) {
+            log.info("No transactions found in the response. fell into first if condition");
             return new ArrayList<>();
         }
+        log.info("Transactions found in the response");
         jsonResponse = jsonResponse.get("results");
         List<Transactions> transactionsList = new ArrayList<>();
         for (JsonNode transaction : jsonResponse) {

@@ -21,14 +21,15 @@ public class GraphicsService extends ApiProvider {
     }
 
     public byte[] createGraph(GraphRequest graphRequest) throws IOException {
-        TimeRange timeRange = TransactionMapper.normalizeTimeRange(graphRequest.startDateTime(), graphRequest.endDateTime());
-        ObjectNode jsonResponse = this.getTransactions(graphRequest.dbIdOrName(), graphRequest.itemId(), timeRange);
+        TimeRange timeRange = TransactionMapper.normalizeTimeRange(graphRequest.getStartDateTime(), graphRequest.getEndDateTime());
+        ObjectNode jsonResponse = this.getTransactions(graphRequest.getDbIdOrName(), graphRequest.getItemId(), timeRange);
         List<Transactions> transactionsList = TransactionMapper.mapTransactionsToArray(jsonResponse);
         return graphProvider.getGraph(transactionsList);
     }
 
     private ObjectNode getTransactions(String dbIdOrName, String itemId, TimeRange timeRange) {
         AppliedTransactionSearch search = new AppliedTransactionSearch();
+        search.setInventoryItemId(itemId);
         search.setStartDateTime(timeRange.start());
         search.setEndDateTime(timeRange.end());
 
