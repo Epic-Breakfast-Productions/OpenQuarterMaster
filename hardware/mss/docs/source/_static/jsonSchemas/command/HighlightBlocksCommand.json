@@ -1,12 +1,12 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/HighlightBlocksCommand.json",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/HighlightBlocksCommand.json",
 	"title": "Highlight Blocks Command",
 	"description": "Command to highlight a set of blocks to the user. Can be called repeatedly, supplying new blocks to show at one time with multiple calls. If Bulk ops are turned off, recommended a small number of items in blocks array with any one call.",
 	"type": "object",
 	"allOf": [
 		{
-			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/Command.json"
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/Command.json"
 		}
 	],
 	"properties": {

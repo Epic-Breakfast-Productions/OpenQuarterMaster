@@ -16,7 +16,8 @@ author = 'Greg Stewart'
 extensions = [
 	'sphinx_toolbox.collapse', # https://sphinx-toolbox.readthedocs.io/en/stable/extensions/collapse.html
 	'sphinxcontrib.mermaid', # https://github.com/mgaitan/sphinxcontrib-mermaid
-	'sphinx-jsonschema' # https://sphinx-jsonschema.readthedocs.io/en/latest/directive.html
+	'sphinx-jsonschema', # https://sphinx-jsonschema.readthedocs.io/en/latest/directive.html
+	"sphinx_design" # https://sphinx-design.readthedocs.io/en/latest/get_started.html
 ]
 
 templates_path = ['_templates']

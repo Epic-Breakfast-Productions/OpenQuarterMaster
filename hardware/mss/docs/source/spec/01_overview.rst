@@ -50,6 +50,15 @@ and the storage units.
 
 Typically, this would be an ESP32/Arduino style microcontroller, and a modified set of storage drawers(to add lights, etc).
 
+Data Organization
+-----------------
+
+Block numbers
+______________
+
+Within a module, the individual blocks are identified by their number. This number is a count up to the number of blocks
+supplied. For example, a module with 64 blocks would have block numbers starting from ``1`` to ``64``.
+
 
 General Goals
 =============
