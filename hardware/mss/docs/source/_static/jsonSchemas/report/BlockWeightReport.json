@@ -1,17 +1,17 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockWeightReport.json",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/report/BlockWeightReport.json",
 	"title": "Block Weight Report",
 	"description": "A report of the current weight of what is stored in the block.",
 	"type": "object",
 	"allOf": [
 		{
-			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockWeightState.json"
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/state/BlockWeightState.json"
 		}
 	],
 	"properties": {
 		"blockNum": {
-			"description": "A Human readable string of the weight that was measured.",
+			"description": "The block number this report is for.",
 			"type": "integer"
 		}
 	},

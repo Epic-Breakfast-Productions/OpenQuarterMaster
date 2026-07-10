@@ -1,0 +1,28 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/NotifyUserCommand.json",
+	"title": "Notify User Command",
+	"description": "Commands the module to pause or unpause report sending.",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/Command.json"
+		}
+	],
+	"properties": {
+		"command": {
+			"description": "The command.",
+			"type": "string",
+			"const": "NOTIFY_USER"
+		},
+		"notification": {
+			"description": "Which thing to notify the user about.",
+			"type": "string",
+			"enum": ["INV_UPDATE_FAILED", "LOCK_FAILED"]
+		}
+	},
+	"required": [
+		"command",
+		"notification"
+	]
+}

@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockWeightState.json",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/report/UniqueItemIdentifier.json",
 	"title": "Unique Item Identifier",
 	"description": "A description of what fields are given to help identify an item to perform actions on.",
 	"type": "object",

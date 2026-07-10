@@ -11,6 +11,5 @@ protocol. It is defined openly and generically here in order to help drive adopt
 	:caption: Topics:
 
 	Overview <01_overview>
-	02_data
 	03_flow
 	04_transmission

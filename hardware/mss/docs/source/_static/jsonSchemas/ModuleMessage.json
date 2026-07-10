@@ -1,0 +1,16 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/ModuleMessage.json",
+	"title": "Module Message Base Class",
+	"description": "Describes the 'base class' of a message that is sent to the controller from the module.",
+	"type": "object",
+	"properties": {
+		"msgType": {
+			"description": "The type of message being sent from the module to the controller.",
+			"type": "string"
+		}
+	},
+	"required": [
+		"command"
+	]
+}

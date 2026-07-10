@@ -1,12 +1,12 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/ClearHighlightCommand.json",
-	"title": "Resets highlights; stops all highlighting from happening.",
-	"description": "Command to highlight a set of blocks to the user. ",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/ClearHighlightCommand.json",
+	"title": "Clear Highlight Command",
+	"description": "Command to clear highlights. Sets all non-'off' lights to 'off'.",
 	"type": "object",
 	"allOf": [
 		{
-			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/Command.json"
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/Command.json"
 		}
 	],
 	"properties": {

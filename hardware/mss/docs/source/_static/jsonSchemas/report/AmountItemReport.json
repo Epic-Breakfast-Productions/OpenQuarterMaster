@@ -1,12 +1,12 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/GetModuleInfoCommand.json",
-	"title": "Get Info Command",
-	"description": "Command to get a module's info.",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/report/AmountItemReport.json",
+	"title": "AmountItemReport",
+	"description": "A report of a change in inventory.",
 	"type": "object",
 	"allOf": [
 		{
-			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/ItemReport.json"
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/report/ItemReport.json"
 		}
 	],
 	"properties": {

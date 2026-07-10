@@ -21,7 +21,7 @@
 			"minimum": -1
 		},
 		"carry": {
-			"description": "If this request is a continuation of a previous call. Defaults to 'false'",
+			"description": "If this request is a continuation of a previous call. If `false`, resets currently highlighted blocks. Defaults to 'false'",
 			"type": "boolean"
 		},
 		"beep": {

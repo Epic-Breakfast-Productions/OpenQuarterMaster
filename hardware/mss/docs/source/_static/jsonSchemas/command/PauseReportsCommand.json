@@ -1,0 +1,28 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/PauseReportsCommand.json",
+	"title": "Pause Reports Command",
+	"description": "Commands the module to pause or unpause report sending.",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/Command.json"
+		}
+	],
+	"properties": {
+		"command": {
+			"description": "The command.",
+			"type": "string",
+			"const": "PAUSE_REPORTS"
+		},
+		"action": {
+			"description": "If to pause or unpause report sending by the module.",
+			"type": "string",
+			"enum": ["PAUSE", "UNPAUSE"]
+		}
+	},
+	"required": [
+		"command",
+		"action"
+	]
+}
