@@ -1,13 +1,16 @@
 package tech.ebp.oqm.plugin.mssController.testResources.modules;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.Capabilities;
+import tech.ebp.oqm.plugin.mssController.service.media.ModuleStateImageService;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.engine.TestModuleEngine;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.modInterfaces.serial.SerialTestModuleInterface;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,11 +22,13 @@ public class TestModuleResource implements QuarkusTestResourceLifecycleManager {
 	public static final String NUM_SERIAL_MODULE_RES_NAME = "serialModules";
 	public static final String NUM_NET_MODULE_RES_NAME = "netModules";
 
+	@Getter
+	private static List<TestModule> modules;
 
 	private int numSerialModules = 0;
 	private int numNetModules = 0;
 
-	private List<TestModule> modules;
+
 
 
 	@Override
@@ -35,7 +40,7 @@ public class TestModuleResource implements QuarkusTestResourceLifecycleManager {
 	@Override
 	public Map<String, String> start() {
 		log.info("Starting TestModuleResource.");
-		this.modules = new ArrayList<>(this.numSerialModules + this.numNetModules);
+		modules = new ArrayList<>(this.numSerialModules + this.numNetModules);
 
 		TestModuleEngine.TestModuleEngineBuilder testModuleEngineBuilder = TestModuleEngine.builder();
 		testModuleEngineBuilder.numBlocks(64);
@@ -79,14 +84,27 @@ public class TestModuleResource implements QuarkusTestResourceLifecycleManager {
 	@Override
 	public void stop() {
 		log.info("Stopping TestModuleResource.");
-		for(TestModule module : this.modules) {
+		for(TestModule module : modules) {
 			try{
 				module.close();
 			} catch(Exception e) {
 				log.error("Failed to close module {}", module.getModuleInfo().getSerialId(), e);
 			}
 		}
+		modules = null;
 		log.info("Done stopping TestModuleResource.");
 	}
 
+	public static List<TestModule> getTestModules(){
+		if(modules == null) {
+			return Collections.emptyList();
+		}
+		return modules;
+	}
+
+	public static void resetModuleState(){
+		for(TestModule module : getTestModules()) {
+			module.resetModuleState();
+		}
+	}
 }

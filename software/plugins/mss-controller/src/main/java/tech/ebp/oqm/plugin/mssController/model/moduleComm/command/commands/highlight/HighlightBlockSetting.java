@@ -3,6 +3,7 @@ package tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.high
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -18,15 +19,14 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.CommandType;
 public class HighlightBlockSetting {
 
 	@NotNull
-	@NonNull
-	private int storageBlock;
+	@Min(1)
+	private int blockNum;
 
-	private HighlightBlockPowerSetting lightPowerState;
+	private HighlightBlockPowerSetting lightPowerState = HighlightBlockPowerSetting.ON;
+
 	private String lightColor;
 
 	@Min(0)
 	@Max(255)
 	private int brightness;
-
-
 }

@@ -19,5 +19,6 @@ public class BlockState {
 	private int blockNum;
 
 	private BlockLightSetting lightSettings;
-	private BlockWeightReport weightReport;
+	private BlockWeightState weightState;
+	private boolean locked;
 }

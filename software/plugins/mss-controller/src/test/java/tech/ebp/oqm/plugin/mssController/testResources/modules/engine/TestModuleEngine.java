@@ -15,7 +15,6 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.Capabilitie
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.ModuleState;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.TestBlockState;
-import tech.ebp.oqm.plugin.mssController.testResources.modules.TestModuleInterface;
 
 import java.time.Duration;
 import java.time.LocalDate;
@@ -30,11 +29,11 @@ import static tech.ebp.oqm.plugin.mssController.model.utils.JacksonUtils.OBJECT_
 @Slf4j
 public class TestModuleEngine {
 
-	private static final String errFormatResponse;
+	private static final String ERR_FORMAT_RESPONSE;
 
 	static {
 		try {
-			errFormatResponse = OBJECT_MAPPER.writeValueAsString(CommandResponse.builder().status(CommandResponseType.R_ERROR.ERROR).build());
+			ERR_FORMAT_RESPONSE = OBJECT_MAPPER.writeValueAsString(CommandResponse.builder().status(CommandResponseType.R_ERROR).build());
 		} catch(JsonProcessingException e) {
 			throw new RuntimeException(e);
 		}
@@ -42,23 +41,13 @@ public class TestModuleEngine {
 
 	@Getter
 	private final ModuleInfo moduleInfo;
-	private final List<TestBlockState> blocks;
+	private List<TestBlockState> blocks;
 	private ZonedDateTime resetLightsAt = null;
 
 	public TestModuleEngine(ModuleInfo moduleInfo) {
 		this.moduleInfo = moduleInfo;
 
-		this.blocks = new ArrayList<>(getModuleInfo().getNumBlocks()) {{
-			for (int i = 1; i <= getModuleInfo().getNumBlocks(); i++) {
-				this.add(
-					TestBlockState.builder()
-						.blockNum(i)
-						.lightSettings(getModuleInfo().getCapabilities().isBlockLights() ? TestBlockState.TestLightSettings.builder().build() : null)
-						.weight(getModuleInfo().getCapabilities().isBlockWeightReporting() ? TestBlockState.TestWeight.builder().build() : null)
-						.build()
-				);
-			}
-		}};
+		this.resetModuleState();
 	}
 
 	@Builder
@@ -107,7 +96,7 @@ public class TestModuleEngine {
 		for (HighlightBlockSetting s : cmd.getStorageBlocks()) {
 			TestBlockState ts;
 			try {
-				ts = this.getBlock(s.getStorageBlock());
+				ts = this.getBlock(s.getBlockNum());
 			} catch(Throwable e) {
 				log.error("Error getting block: ", e);
 				return CommandResponse.builder()
@@ -177,7 +166,7 @@ public class TestModuleEngine {
 			command = OBJECT_MAPPER.readValue(data, Command.class);
 		} catch(JsonProcessingException e) {
 			log.error("Error parsing command", e);
-			return errFormatResponse;
+			return ERR_FORMAT_RESPONSE;
 		}
 
 		try {
@@ -194,6 +183,22 @@ public class TestModuleEngine {
 			this.resetLights();
 			this.resetLightsAt = null;
 		}
+	}
+
+	public void resetModuleState(){
+		log.info("Resetting module state for module: {}", this.getModuleInfo().getSerialId());
+		this.blocks = new ArrayList<>(getModuleInfo().getNumBlocks()) {{
+			for (int i = 1; i <= getModuleInfo().getNumBlocks(); i++) {
+				this.add(
+					TestBlockState.builder()
+						.blockNum(i)
+						.lightSettings(getModuleInfo().getCapabilities().isBlockLights() ? TestBlockState.TestLightSettings.builder().build() : null)
+						.weight(getModuleInfo().getCapabilities().isItemEventReporting() ? TestBlockState.TestWeight.builder().build() : null)
+						.build()
+				);
+			}
+		}};
+		this.resetLightsAt = null;
 	}
 
 }

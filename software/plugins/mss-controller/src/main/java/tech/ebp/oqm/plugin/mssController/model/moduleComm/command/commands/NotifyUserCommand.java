@@ -1,6 +1,7 @@
-package tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.highlight;
+package tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -12,22 +13,22 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.CommandType;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
-//@AllArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Data
 @ToString(callSuper = true)
-public class HighlightBlocksCommand extends Command {
+public class NotifyUserCommand extends Command {
 
 	@Override
 	public CommandType getCommand() {
-		return CommandType.HIGHLIGHT_BLOCKS;
+		return CommandType.NOTIFY_USER;
 	}
-
-	private int duration;
-	private boolean carry;
-	private boolean beep;
 
 	@NonNull
 	@NotNull
-	private List<HighlightBlockSetting> storageBlocks;
+	private Notification action;
+
+	public enum Notification {
+		INV_UPDATE_FAILED
+	}
 }

@@ -1,18 +1,17 @@
 package tech.ebp.oqm.plugin.mssController.service.media;
 
 import io.quarkus.test.junit.QuarkusTest;
-import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.Capabilities;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.BlockState;
-import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.BlockWeightReport;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.BlockWeightState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.ModuleState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.light.BlockLightPowerState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.light.BlockLightSetting;
+import tech.ebp.oqm.plugin.mssController.testResources.testClasses.RunningServerTest;
 
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
@@ -23,11 +22,9 @@ import java.time.LocalDate;
 import java.util.UUID;
 import java.util.stream.IntStream;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 @Slf4j
-//@QuarkusTest
-class ModuleStateImageServiceTest {
+@QuarkusTest
+class ModuleStateImageServiceTest extends RunningServerTest {
 	private static final String IMAGE_OUTPUT_DIR = "build/test-results/test/moduleStateImageService";
 
 	protected static ModuleInfo getModuleInfo(Capabilities capabilities) {
@@ -46,7 +43,7 @@ class ModuleStateImageServiceTest {
 								 .blockLights(true)
 								 .blockLightColor(true)
 								 .blockLightBrightness(true)
-								 .blockWeightReporting(true)
+								 .itemEventReporting(true)
 								 .build());
 	}
 
@@ -61,8 +58,8 @@ class ModuleStateImageServiceTest {
 													.powerState(BlockLightPowerState.OFF)
 													.color("#FFFFFF").build()
 											)
-											.weightReport(
-												BlockWeightReport.builder()
+											.weightState(
+												BlockWeightState.builder()
 													.weightUnit("lbs")
 													.weightValue(5.0)
 													.weightStr("5lbs")
@@ -87,7 +84,7 @@ class ModuleStateImageServiceTest {
 			state
 		);
 
-		Path output = Path.of(IMAGE_OUTPUT_DIR, "test.svg");
+		Path output = this.getImageOutputDir().resolve( "test.svg");
 		Files.createDirectories(output.getParent());
 
 		try(

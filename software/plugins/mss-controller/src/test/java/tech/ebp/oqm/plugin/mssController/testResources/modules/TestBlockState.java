@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.BlockState;
-import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.BlockWeightReport;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.BlockWeightState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.light.BlockLightPowerState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.light.BlockLightSetting;
 
@@ -22,7 +22,7 @@ public class TestBlockState {
 		return BlockState.builder()
 				   .blockNum(blockNum)
 				   .lightSettings(this.lightSettings == null ? null : this.lightSettings.toBlockLightSetting())
-				   .weightReport(this.weight == null ? null : this.weight.toWeightReport())
+				   .weightState(this.weight == null ? null : this.weight.toWeightState())
 				   .build();
 	}
 
@@ -63,8 +63,8 @@ public class TestBlockState {
 		private double weightValue;
 		private String weightUnit;
 
-		public BlockWeightReport toWeightReport(){
-			return BlockWeightReport.builder()
+		public BlockWeightState toWeightState(){
+			return BlockWeightState.builder()
 					   .weightUnit(this.weightUnit)
 					   .weightValue(this.weightValue)
 					   .weightStr(this.weightValue + this.weightUnit)

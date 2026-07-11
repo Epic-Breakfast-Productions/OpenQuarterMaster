@@ -36,6 +36,8 @@ public class ModuleInfo {
 	@Min(1)
 	private int numBlocks;
 
+	@NotNull
+	@NonNull
 	@Builder.Default
 	private Capabilities capabilities = new Capabilities();
 }

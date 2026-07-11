@@ -1,6 +1,5 @@
 package tech.ebp.oqm.plugin.mssController.testResources.modules;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
@@ -19,7 +18,7 @@ public class TestModule implements AutoCloseable {
 
 	@Getter
 	private final TestModuleEngine engine;
-	private final TestModuleInterface modEngine;
+	private final TestModuleInterface modInterface;
 
 
 	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
@@ -30,9 +29,9 @@ public class TestModule implements AutoCloseable {
 		TestModuleInterface modInterface
 	) throws Exception {
 		this.engine = engine;
-		this.modEngine = modInterface;
+		this.modInterface = modInterface;
 
-		this.modEngine.init();
+		this.modInterface.init();
 
 		this.scheduler.scheduleAtFixedRate(this::iterate, 0, SLEEP_TIME, TimeUnit.MILLISECONDS);
 	}
@@ -47,7 +46,7 @@ public class TestModule implements AutoCloseable {
 	@Override
 	public void close() throws Exception {
 		this.scheduler.shutdown();
-		this.modEngine.close();
+		this.modInterface.close();
 	}
 
 	public ModuleInfo getModuleInfo() {
@@ -56,6 +55,10 @@ public class TestModule implements AutoCloseable {
 
 	public ModuleState getModuleState() {
 		return this.getEngine().getModuleState();
+	}
+
+	public void resetModuleState(){
+		this.engine.resetModuleState();
 	}
 
 	public String generateStateImage() {

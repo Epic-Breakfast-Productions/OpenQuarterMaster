@@ -1,5 +1,6 @@
 package tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -7,16 +8,18 @@ import lombok.ToString;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.CommandType;
 
+import java.util.List;
+
 @EqualsAndHashCode(callSuper = true)
-//@AllArgsConstructor
-@NoArgsConstructor
+@AllArgsConstructor
+//@NoArgsConstructor
 @Data
 @ToString(callSuper = true)
-public class ResetBlockLightsCommand extends Command {
+public class PauseReportsCommand extends Command {
 
 	@Override
 	public CommandType getCommand() {
-		return CommandType.RESET_BLOCK_HIGHLIGHTS;
+		return CommandType.PAUSE_REPORTS;
 	}
 
 }

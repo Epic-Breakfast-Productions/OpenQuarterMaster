@@ -10,6 +10,7 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetMo
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
 import tech.ebp.oqm.plugin.mssController.service.mssConn.serial.SerialMssConnector;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.TestModuleResource;
+import tech.ebp.oqm.plugin.mssController.testResources.testClasses.RunningServerTest;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -22,7 +23,7 @@ import static org.junit.jupiter.api.Assertions.*;
 		@ResourceArg(name = TestModuleResource.NUM_SERIAL_MODULE_RES_NAME, value = "1")
 	}
 )
-class MssConnectionServiceTest {
+class MssConnectionServiceTest extends RunningServerTest {
 
 	@Inject
 	MssConnectionService mssConnectionService;

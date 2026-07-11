@@ -1,10 +1,11 @@
-package tech.ebp.oqm.plugin.mssController.model.moduleComm.command;
+package tech.ebp.oqm.plugin.mssController.model.moduleComm.message;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.CommandType;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.CalibrateWeightsCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.ClearHighlightCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleInfoCommand;
@@ -13,6 +14,7 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.LockB
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.NotifyUserCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.PauseReportsCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.highlight.HighlightBlocksCommand;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.report.InventoryEventReport;
 
 @Data
 @SuperBuilder
@@ -20,20 +22,13 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.highl
 @NoArgsConstructor
 @JsonTypeInfo(
 	use = JsonTypeInfo.Id.NAME,
-	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "command"
+	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "msgType"
 )
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = GetModuleInfoCommand.class, name = "GET_MODULE_INFO"),
-	@JsonSubTypes.Type(value = GetModuleStateCommand.class, name = "GET_MODULE_STATE"),
-	@JsonSubTypes.Type(value = HighlightBlocksCommand.class, name = "HIGHLIGHT_BLOCKS"),
-	@JsonSubTypes.Type(value = ClearHighlightCommand.class, name = "CLEAR_BLOCK_HIGHLIGHT"),
-	@JsonSubTypes.Type(value = CalibrateWeightsCommand.class, name = "CALIBRATE_WEIGHTS"),
-	@JsonSubTypes.Type(value = PauseReportsCommand.class, name = "PAUSE_REPORTS"),
-	@JsonSubTypes.Type(value = LockBlocksCommand.class, name = "LOCK_BLOCK"),
-	@JsonSubTypes.Type(value = NotifyUserCommand.class, name = "NOTIFY_USER"),
+	@JsonSubTypes.Type(value = InventoryEventReport.class, name = "INV_EVENT_REPORT"),
 
 })
-public abstract class Command {
+public abstract class Message {
 
-	public abstract CommandType getCommand();
+	public abstract MessageType getMsgType();
 }

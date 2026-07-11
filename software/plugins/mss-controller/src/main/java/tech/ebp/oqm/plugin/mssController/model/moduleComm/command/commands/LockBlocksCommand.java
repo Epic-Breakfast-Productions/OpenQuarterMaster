@@ -1,10 +1,9 @@
-package tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.highlight;
+package tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands;
 
-import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.NonNull;
 import lombok.ToString;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.CommandType;
@@ -12,22 +11,22 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.CommandType;
 import java.util.List;
 
 @EqualsAndHashCode(callSuper = true)
-//@AllArgsConstructor
+@AllArgsConstructor
 @NoArgsConstructor
 @Data
 @ToString(callSuper = true)
-public class HighlightBlocksCommand extends Command {
+public class LockBlocksCommand extends Command {
 
 	@Override
 	public CommandType getCommand() {
-		return CommandType.HIGHLIGHT_BLOCKS;
+		return CommandType.LOCK_BLOCK;
 	}
 
-	private int duration;
-	private boolean carry;
-	private boolean beep;
+	private LockAction action = LockAction.LOCK;
+	private List<Integer> storageBlocks;
 
-	@NonNull
-	@NotNull
-	private List<HighlightBlockSetting> storageBlocks;
+	public enum LockAction {
+		LOCK,
+		UNLOCK
+	}
 }

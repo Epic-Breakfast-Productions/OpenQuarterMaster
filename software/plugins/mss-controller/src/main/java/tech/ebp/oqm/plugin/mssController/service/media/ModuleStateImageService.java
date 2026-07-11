@@ -123,11 +123,11 @@ public class ModuleStateImageService {
 					g2.drawString(text, textX, textY);
 					offset += BASE_FONT.getSize();
 				}
-				if(moduleInfo.getCapabilities().isBlockWeightReporting()){
+				if(moduleInfo.getCapabilities().isItemEventReporting()){
 					{
 						g2.setFont(BASE_FONT);
 
-						String text = "Weight: " + s.getWeightReport().getWeightStr();
+						String text = "Weight: " + s.getWeightState().getWeightStr();
 						FontMetrics fm = g2.getFontMetrics();
 						int textX = startx + ((BLOCK_SIZE - fm.stringWidth(text)) / 2);
 						int textY = offset + starty + ((BLOCK_BORDER_SIZE + 24 - fm.getHeight()) / 2) + fm.getAscent();

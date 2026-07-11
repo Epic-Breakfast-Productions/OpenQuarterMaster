@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class BlockWeightReport {
+public class BlockWeightState {
 	private String weightStr;
 	private double weightValue;
 	private String weightUnit;

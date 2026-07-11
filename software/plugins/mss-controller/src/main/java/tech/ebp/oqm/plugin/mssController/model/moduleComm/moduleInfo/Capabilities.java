@@ -18,5 +18,12 @@ public class Capabilities {
 	@Builder.Default
 	private boolean blockLightBrightness = false;
 	@Builder.Default
-	private boolean blockWeightReporting = false;
+	private boolean blockWeights = false;
+	@Builder.Default
+	private boolean itemEventReporting = false;
+	@Builder.Default
+	private boolean blockLocking = false;
+	@Builder.Default
+	private boolean userNotifying = false;
+
 }
