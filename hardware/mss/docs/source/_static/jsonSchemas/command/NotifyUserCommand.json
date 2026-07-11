@@ -18,7 +18,7 @@
 		"notification": {
 			"description": "Which thing to notify the user about.",
 			"type": "string",
-			"enum": ["INV_UPDATE_FAILED", "LOCK_FAILED"]
+			"enum": ["INV_UPDATE_FAILED"]
 		}
 	},
 	"required": [

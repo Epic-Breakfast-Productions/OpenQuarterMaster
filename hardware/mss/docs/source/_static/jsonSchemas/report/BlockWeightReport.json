@@ -12,7 +12,8 @@
 	"properties": {
 		"blockNum": {
 			"description": "The block number this report is for.",
-			"type": "integer"
+			"type": "integer",
+			"minimum": 1
 		}
 	},
 	"required": [

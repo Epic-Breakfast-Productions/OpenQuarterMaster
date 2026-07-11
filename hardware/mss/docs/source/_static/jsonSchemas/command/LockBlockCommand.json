@@ -1,6 +1,6 @@
 {
 	"$schema": "https://json-schema.org/draft/2020-12/schema",
-	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/GetModuleInfoCommand.json",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/LockBlockCommand.json",
 	"title": "Get Info Command",
 	"description": "Command to get a module's info.",
 	"type": "object",
@@ -20,12 +20,8 @@
 			"type": "string",
 			"enum": ["LOOCK", "UNLOCK"]
 		},
-		"all": {
-			"description": "If we are to lock all the blocks.",
-			"type": "boolean"
-		},
 		"blocks": {
-			"description": "The block(s) to lock.",
+			"description": "The block(s) to un/lock. Empty or null to specify all blocks.",
 			"type": "array",
 			"items": {
 				"type": "integer"

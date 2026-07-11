@@ -12,7 +12,8 @@
 	"properties": {
 		"amount": {
 			"description": "The amount of the item to perform the action on.",
-			"type": "number"
+			"type": "number",
+			"minimum": 0
 		},
 		"unit": {
 			"description": "The unit of the item to perform the action on. Defaults to base 'unit'.",

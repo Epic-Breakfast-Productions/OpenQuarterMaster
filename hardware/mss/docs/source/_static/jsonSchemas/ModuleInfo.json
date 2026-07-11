@@ -55,6 +55,10 @@
 				"blockLocking": {
 					"description": "If this module supports physically locking blocks.",
 					"type": "boolean"
+				},
+				"userNotifying": {
+					"description": "If this module supports notifying users about things.",
+					"type": "boolean"
 				}
 			},
 			"required": [

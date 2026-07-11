@@ -14,9 +14,9 @@
 			"title": "Block Light Settings",
 			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/state/BlockLightSetting.json"
 		},
-		"weightReport": {
-			"title": "Block Weight Report",
-			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/state/BlockWeightReport.json"
+		"weightState": {
+			"title": "Block Weight State",
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/state/BlockWeightState.json"
 		},
 		"locked": {
 			"description": "If this block is locked.",

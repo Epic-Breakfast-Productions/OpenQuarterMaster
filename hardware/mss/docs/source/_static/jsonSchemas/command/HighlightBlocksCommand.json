@@ -34,7 +34,7 @@
 			"items": {
 				"type": "object",
 				"properties": {
-					"storageBlock": {
+					"blockNum": {
 						"description": "The block these settings are for",
 						"type": "integer",
 						"minimum": 1

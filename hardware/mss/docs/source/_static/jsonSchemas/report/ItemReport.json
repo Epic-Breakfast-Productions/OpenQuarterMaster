@@ -17,7 +17,7 @@
 		"operation": {
 			"description": "What happened.",
 			"type": "string",
-			"enum": ["add", "remove"]
+			"enum": ["ADD", "REMOVE"]
 		}
 	},
 	"required": [
