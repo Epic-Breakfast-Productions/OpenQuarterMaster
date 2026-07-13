@@ -29,6 +29,13 @@ import java.util.concurrent.TimeUnit;
 
 import static tech.ebp.oqm.plugin.mssController.model.utils.JacksonUtils.OBJECT_MAPPER;
 
+/**
+ * In-memory simulator for a physical storage module.
+ * <p>Parses incoming JSON commands ({@link Command} subclasses), mutates
+ * block-level state ({@link tech.ebp.oqm.plugin.mssController.testResources.modules.TestBlockState}),
+ * and runs a scheduled executor to reset lights after timed durations.
+ *</p>
+ */
 @Slf4j
 public class TestModuleEngine implements AutoCloseable {
 

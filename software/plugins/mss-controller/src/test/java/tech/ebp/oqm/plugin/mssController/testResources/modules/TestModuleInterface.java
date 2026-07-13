@@ -10,6 +10,13 @@ import tech.ebp.oqm.plugin.mssController.testResources.modules.engine.TestModule
 
 import java.util.Optional;
 
+/**
+ * Abstract transport layer for {@link TestModule} test harnesses.
+ *
+ *<p>Subclasses define the actual send/receive channel (serial, network, mock, etc.).
+ * This base class wires a Jackson {@link ObjectMapper} so callers can send and receive
+ * strongly-typed {@link Command} objects without handling JSON manually.</p>
+ */
 @SuperBuilder
 public abstract class TestModuleInterface implements AutoCloseable {
 
@@ -25,21 +32,23 @@ public abstract class TestModuleInterface implements AutoCloseable {
 		this.engine = engine;
 	}
 
-	/**
-	 * Initializes and sets up the module interface.
-	 */
+	/** Initialize the transport channel (e.g. open socket, connect serial port). */
 	public abstract void init() throws Exception;
 
+	/** Send a raw JSON message over the transport channel. */
 	public abstract void send(String message);
 
+	/** Convenience wrapper that serializes {@code command} to JSON before sending. */
 	public void send(Command command) throws JsonProcessingException {
 		this.send(
 			this.getObjectMapper().writeValueAsString(command)
 		);
 	}
 
+	/** Receive the next raw message, if available. Returns {@link Optional#empty()} on timeout or no data. */
 	public abstract Optional<String> receive();
 
+	/** Convenience wrapper that deserializes the received message back to a {@link Command}. */
 	public Optional<Command> receiveCommand() throws JsonProcessingException {
 		Optional<String> op = this.receive();
 
