@@ -23,11 +23,16 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static tech.ebp.oqm.plugin.mssController.model.utils.JacksonUtils.OBJECT_MAPPER;
 
 @Slf4j
-public class TestModuleEngine {
+public class TestModuleEngine implements AutoCloseable {
+
+	private static final long SLEEP_TIME = 100;
 
 	private static final String ERR_FORMAT_RESPONSE;
 
@@ -43,11 +48,14 @@ public class TestModuleEngine {
 	private final ModuleInfo moduleInfo;
 	private List<TestBlockState> blocks;
 	private ZonedDateTime resetLightsAt = null;
+	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
 	public TestModuleEngine(ModuleInfo moduleInfo) {
 		this.moduleInfo = moduleInfo;
 
 		this.resetModuleState();
+
+		this.scheduler.scheduleAtFixedRate(this::iterate, 0, SLEEP_TIME, TimeUnit.MILLISECONDS);
 	}
 
 	@Builder
@@ -185,7 +193,7 @@ public class TestModuleEngine {
 		}
 	}
 
-	public void resetModuleState(){
+	public void resetModuleState() {
 		log.info("Resetting module state for module: {}", this.getModuleInfo().getSerialId());
 		this.blocks = new ArrayList<>(getModuleInfo().getNumBlocks()) {{
 			for (int i = 1; i <= getModuleInfo().getNumBlocks(); i++) {
@@ -201,4 +209,16 @@ public class TestModuleEngine {
 		this.resetLightsAt = null;
 	}
 
+
+	protected void iterate() {
+		log.debug("Running TestModuleThread for module {}", this.getModuleInfo().getSerialId());
+
+		this.runTimedTasks();
+	}
+
+
+	@Override
+	public void close() throws Exception {
+		this.scheduler.shutdown();
+	}
 }
