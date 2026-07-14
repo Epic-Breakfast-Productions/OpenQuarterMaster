@@ -32,7 +32,7 @@ class ModuleStateImageServiceTest extends RunningServerTest {
 			"1.0.0",
 			"1.2.3",
 			UUID.fromString("00000000-0000-0000-0000-000000000000").toString(),
-			LocalDate.of(2026, 1, 1),
+			"2026-07-13",
 			64,
 			capabilities
 		);

@@ -80,7 +80,7 @@ public class TestModuleEngine implements AutoCloseable {
 				"1.0.0",
 				"1.0.0",
 				UUID.randomUUID().toString(),
-				LocalDate.now(),
+				"2026-07-13",
 				numBlocks,
 				capabilities
 			)

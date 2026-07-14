@@ -37,6 +37,7 @@ dependencies {
 
 	testImplementation 'io.quarkus:quarkus-junit'
 	testImplementation 'io.rest-assured:rest-assured'
+	testImplementation 'com.networknt:json-schema-validator:1.5.5'
 }
 
 group = 'tech.ebp.oqm.plugin'

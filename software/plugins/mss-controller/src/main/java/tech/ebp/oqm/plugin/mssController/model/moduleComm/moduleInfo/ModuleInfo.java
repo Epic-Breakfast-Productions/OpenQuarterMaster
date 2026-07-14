@@ -30,7 +30,7 @@ public class ModuleInfo {
 
 	@NonNull
 	@NotNull
-	private LocalDate manufactureDate;
+	private String manufactureDate;
 
 	@NotNull
 	@Min(1)
