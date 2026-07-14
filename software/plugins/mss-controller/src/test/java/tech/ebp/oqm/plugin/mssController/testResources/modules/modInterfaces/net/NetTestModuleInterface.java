@@ -6,11 +6,11 @@ import com.sun.net.httpserver.HttpServer;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import tech.ebp.oqm.plugin.mssController.testResources.modules.TestModule;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.TestModuleInterface;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.engine.TestModuleEngine;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.util.Optional;
@@ -25,20 +25,21 @@ public class NetTestModuleInterface  extends TestModuleInterface {
 		super(objectMapper, engine);
 	}
 
-	void handleRequest(HttpExchange exchange) throws IOException {
 
-		exchange.getRequestBody();
 
-		// Define the plain-text message response
-		String response = "Hello from Java 25 HttpServer!";
-		byte[] responseBytes = response.getBytes();
+	void handleCommandRequest(HttpExchange exchange) throws IOException {
+		//TODO:: validate authorization
 
-		// Set HTTP status code 200 (OK) and content length
-		exchange.sendResponseHeaders(200, responseBytes.length);
+		String command;
+		try (InputStream is = exchange.getRequestBody()) {
+			command = new String(is.readAllBytes());
+		}
 
-		// Write the message payload to the output stream
+		String response = this.getEngine().handleData(command);
+
+		exchange.sendResponseHeaders(200, response.length());
 		try (OutputStream os = exchange.getResponseBody()) {
-			os.write(responseBytes);
+			os.write(response.getBytes());
 		}
 	}
 
@@ -50,7 +51,7 @@ public class NetTestModuleInterface  extends TestModuleInterface {
 			0
 		);
 
-		server.createContext("/", this::handleRequest);
+		server.createContext("/command", this::handleCommandRequest);
 		server.start();
 	}
 
