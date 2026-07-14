@@ -11,6 +11,7 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetMo
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleStateCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.LockBlocksCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.NotifyUserCommand;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.PauseAction;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.PauseReportsCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.highlight.HighlightBlockSetting;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.highlight.HighlightBlocksCommand;
@@ -61,6 +62,7 @@ public class TestModuleEngine implements AutoCloseable {
 	private final ModuleInfo moduleInfo;
 	private List<TestBlockState> blocks;
 	private ZonedDateTime resetLightsAt = null;
+	private boolean reportsPaused = false;
 	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
 	public TestModuleEngine(ModuleInfo moduleInfo) {
@@ -214,8 +216,17 @@ public class TestModuleEngine implements AutoCloseable {
 	}
 
 	private CommandResponse handlePauseReportsCommand(PauseReportsCommand c) {
-		//TODO:: this
-		return null;
+		log.info("Received PauseReportsCommand. Handling.");
+
+		if (c.getAction() == PauseAction.PAUSE) {
+			this.reportsPaused = true;
+		} else if (c.getAction() == PauseAction.UNPAUSE) {
+			this.reportsPaused = false;
+		}
+
+		return CommandResponse.builder()
+			   .status(CommandResponseType.OK)
+			   .build();
 	}
 
 
