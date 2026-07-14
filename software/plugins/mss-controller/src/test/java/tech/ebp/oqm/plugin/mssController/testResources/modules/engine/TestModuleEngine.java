@@ -33,6 +33,7 @@ import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.IntStream;
 
 import static tech.ebp.oqm.plugin.mssController.model.utils.JacksonUtils.OBJECT_MAPPER;
 
@@ -180,13 +181,46 @@ public class TestModuleEngine implements AutoCloseable {
 	}
 
 	private CommandResponse handleCalibrateWeightsCommand(CalibrateWeightsCommand c) {
-		//TODO:: this
-		return null;
+		log.info("Received CalibrateWeightsCommand. Handling.");
+
+		List<Integer> blockNums = c.getStorageBlocks();
+
+		if(blockNums == null || blockNums.isEmpty()) {
+			blockNums = IntStream.range(1, this.getModuleInfo().getNumBlocks() + 1).boxed().toList();
+		}
+
+		for (int blockNum : blockNums) {
+			TestBlockState block;
+			try {
+				block = this.getBlock(blockNum);
+			} catch(Throwable e) {
+				log.error("Error getting block: ", e);
+				return CommandResponse.builder()
+						   .status(CommandResponseType.R_ERROR)
+						   .build();
+			}
+
+			block.getWeight().setWeightValue(0.0);
+		}
+
+		return CommandResponse.builder()
+				   .status(CommandResponseType.OK)
+				   .build();
 	}
 
 	private CommandResponse handleNotifyUserCommand(NotifyUserCommand c) {
-		//TODO:: this
-		return null;
+		log.info("Received NotifyUserCommand with action: {}. Handling.", c.getAction());
+
+		switch (c.getAction()) {
+			case INV_UPDATE_FAILED -> log.warn("Inventory update failed notification received.");
+			default -> CommandResponse.builder()
+						   .status(CommandResponseType.R_ERROR)
+						   .build();
+		}
+
+		return CommandResponse.builder()
+				   .status(CommandResponseType.OK)
+				   .build();
 	}
 
 	private CommandResponse handleLockBlocksCommand(LockBlocksCommand c) {
