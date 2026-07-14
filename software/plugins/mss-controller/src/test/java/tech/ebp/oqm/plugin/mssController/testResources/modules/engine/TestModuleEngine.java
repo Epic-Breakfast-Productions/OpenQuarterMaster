@@ -5,8 +5,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.CalibrateWeightsCommand;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.ClearHighlightCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleInfoCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleStateCommand;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.LockBlocksCommand;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.NotifyUserCommand;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.PauseReportsCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.highlight.HighlightBlockSetting;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.highlight.HighlightBlocksCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
@@ -94,6 +99,7 @@ public class TestModuleEngine implements AutoCloseable {
 
 	protected void resetLights() {
 		this.blocks.forEach(TestBlockState::resetLights);
+		this.resetLightsAt = null;
 	}
 
 	protected TestBlockState getBlock(int blockNum) {
@@ -160,6 +166,38 @@ public class TestModuleEngine implements AutoCloseable {
 		return output;
 	}
 
+	protected CommandResponse handleClearHighlightCommand(ClearHighlightCommand c) {
+		log.info("Received ClearHighlightCommand. Handling.");
+
+		this.resetLights();
+
+		return CommandResponse.builder()
+				   .status(CommandResponseType.OK)
+				   .build();
+	}
+
+	private CommandResponse handleCalibrateWeightsCommand(CalibrateWeightsCommand c) {
+		//TODO:: this
+		return null;
+	}
+
+	private CommandResponse handleNotifyUserCommand(NotifyUserCommand c) {
+		//TODO:: this
+		return null;
+	}
+
+	private CommandResponse handleLockBlocksCommand(LockBlocksCommand c) {
+		//TODO:: this
+		return null;
+	}
+
+	private CommandResponse handlePauseReportsCommand(PauseReportsCommand c) {
+		//TODO:: this
+		return null;
+	}
+
+
+
 	protected CommandResponse handleCommand(Command command) {
 		log.info("Received command {}", command);
 		try {
@@ -167,6 +205,11 @@ public class TestModuleEngine implements AutoCloseable {
 				case GetModuleInfoCommand c -> this.handleModuleInfoCommand(c);
 				case GetModuleStateCommand c -> this.handleGetModuleStateCommand(c);
 				case HighlightBlocksCommand c -> this.handleHighlightBlocksCommand(c);
+				case ClearHighlightCommand c -> this.handleClearHighlightCommand(c);
+				case CalibrateWeightsCommand c -> this.handleCalibrateWeightsCommand(c);
+				case PauseReportsCommand c -> this.handlePauseReportsCommand(c);
+				case LockBlocksCommand c -> this.handleLockBlocksCommand(c);
+				case NotifyUserCommand c -> this.handleNotifyUserCommand(c);
 				default -> throw new IllegalStateException("Unexpected value: " + command);
 			};
 		} catch(Throwable e) {
@@ -174,6 +217,7 @@ public class TestModuleEngine implements AutoCloseable {
 			throw new RuntimeException("Failed to handle command.", e);
 		}
 	}
+
 
 	public String handleData(String data) {
 		Command command;
@@ -196,7 +240,6 @@ public class TestModuleEngine implements AutoCloseable {
 		if (this.resetLightsAt != null && this.resetLightsAt.isBefore(ZonedDateTime.now())) {
 			log.info("Resetting lights.");
 			this.resetLights();
-			this.resetLightsAt = null;
 		}
 	}
 
@@ -215,6 +258,8 @@ public class TestModuleEngine implements AutoCloseable {
 		}};
 		this.resetLightsAt = null;
 	}
+
+	//TODO:: reporting
 
 
 	protected void iterate() {
