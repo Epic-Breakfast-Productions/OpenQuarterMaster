@@ -26,12 +26,12 @@ public class XChartGraphService implements GraphProvider {
 
     private XYChart createChart(List<Transactions> transactionsList) {
         XYChart chart = new XYChartBuilder()
-            .width(1000)
-            .height(800)
+            .width(1280)
+            .height(720)
             .theme(Styler.ChartTheme.GGPlot2)
-            .title("Transactions Over Time")
-            .xAxisTitle("Timestamp")
-            .yAxisTitle("Value")
+            .title("Item value over time")
+            .xAxisTitle("Date")
+            .yAxisTitle("Units in stock")
             .build();
 
         chart.getStyler().setPlotGridLinesVisible(true);

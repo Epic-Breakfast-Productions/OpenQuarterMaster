@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.baseStation.service.graph;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.validation.Valid;
 import tech.ebp.oqm.core.baseStation.interfaces.rest.ApiProvider;
 import tech.ebp.oqm.core.baseStation.model.graph.GraphRequest;
 import tech.ebp.oqm.core.baseStation.model.graph.TimeRange;
@@ -20,7 +21,7 @@ public class GraphicsService extends ApiProvider {
         this.graphProvider = graphProvider;
     }
 
-    public byte[] createGraph(GraphRequest graphRequest) throws IOException {
+    public byte[] createGraph(@Valid GraphRequest graphRequest) throws IOException {
         TimeRange timeRange = TransactionMapper.normalizeTimeRange(graphRequest.getStartDateTime(), graphRequest.getEndDateTime());
         ObjectNode jsonResponse = this.getTransactions(graphRequest.getDbIdOrName(), graphRequest.getItemId(), timeRange);
         List<Transactions> transactionsList = TransactionMapper.mapTransactionsToArray(jsonResponse);
