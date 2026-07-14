@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Data;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.BlockState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.BlockWeightState;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.LockState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.light.BlockLightPowerState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.light.BlockLightSetting;
 
@@ -17,12 +18,15 @@ public class TestBlockState {
 	private final int blockNum;
 	private final TestLightSettings lightSettings;
 	private final TestWeight weight;
+	@Builder.Default
+	private LockState lockState = LockState.UNLOCKED;
 
 	public BlockState toBlockState(){
 		return BlockState.builder()
 				   .blockNum(blockNum)
 				   .lightSettings(this.lightSettings == null ? null : this.lightSettings.toBlockLightSetting())
 				   .weightState(this.weight == null ? null : this.weight.toWeightState())
+				   .lockState(this.lockState)
 				   .build();
 	}
 

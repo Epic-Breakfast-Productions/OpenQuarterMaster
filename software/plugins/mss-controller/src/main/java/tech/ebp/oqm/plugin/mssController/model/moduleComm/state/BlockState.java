@@ -20,5 +20,5 @@ public class BlockState {
 
 	private BlockLightSetting lightSettings;
 	private BlockWeightState weightState;
-	private boolean locked;
+	private LockState lockState;
 }

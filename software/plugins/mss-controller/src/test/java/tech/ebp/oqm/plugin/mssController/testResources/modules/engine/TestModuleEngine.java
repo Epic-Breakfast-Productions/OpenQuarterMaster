@@ -18,6 +18,7 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.Comma
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponseType;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.Capabilities;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.LockState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.ModuleState;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.TestBlockState;
 
@@ -187,8 +188,29 @@ public class TestModuleEngine implements AutoCloseable {
 	}
 
 	private CommandResponse handleLockBlocksCommand(LockBlocksCommand c) {
-		//TODO:: this
-		return null;
+		log.info("Received LockBlocksCommand. Handling.");
+
+		for (int blockNum : c.getStorageBlocks()) {
+			TestBlockState block;
+			try {
+				block = this.getBlock(blockNum);
+			} catch(Throwable e) {
+				log.error("Error getting block: ", e);
+				return CommandResponse.builder()
+						   .status(CommandResponseType.R_ERROR)
+						   .build();
+			}
+
+			if (c.getAction() == LockBlocksCommand.LockAction.LOCK) {
+				block.setLockState(LockState.LOCKED);
+			} else if (c.getAction() == LockBlocksCommand.LockAction.UNLOCK) {
+				block.setLockState(LockState.UNLOCKED);
+			}
+		}
+
+		return CommandResponse.builder()
+				   .status(CommandResponseType.OK)
+				   .build();
 	}
 
 	private CommandResponse handlePauseReportsCommand(PauseReportsCommand c) {
