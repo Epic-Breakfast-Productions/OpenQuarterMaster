@@ -10,13 +10,13 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleInfoCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.Capabilities;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
 
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.time.LocalDate;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
@@ -44,7 +44,8 @@ public class JsonSchemaAdherenceTest {
 
 		SCHEMA_MAP = Map.of(
 			ModuleInfo.class, s.apply("ModuleInfo.json")
-			//TODO:: rest
+//			GetModuleInfoCommand.class, s.apply("command/GetModuleInfoCommand.json")
+			//TODO:: rest once the schemas are all in main
 		);
 	}
 
@@ -59,7 +60,11 @@ public class JsonSchemaAdherenceTest {
 											   .numBlocks(64)
 											   .capabilities(Capabilities.builder().build())
 											   .build())
-			//TODO:: rest
+			//Commands
+//			Arguments.of(GetModuleInfoCommand.class, GetModuleInfoCommand.builder().build())
+
+
+			//TODO:: rest once the schemas are all in main
 		);
 	}
 
