@@ -10,10 +10,6 @@ OQM MSS Hardware Documentation
 	/_static/module_lit.png
 	:align: center
 
-.. jsonschema:: ./_static/jsonSchemas/ModuleInfo.json
-	:lift_description: true
-
-
 .. toctree::
    :maxdepth: 2
    :caption: Contents:

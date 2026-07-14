@@ -20,7 +20,8 @@
 		},
 		"locked": {
 			"description": "If this block is locked.",
-			"type": "boolean"
+			"type": "string",
+			"enum": [ "LOCKED", "UNLOCKED" ]
 		}
 	},
 	"required": [
