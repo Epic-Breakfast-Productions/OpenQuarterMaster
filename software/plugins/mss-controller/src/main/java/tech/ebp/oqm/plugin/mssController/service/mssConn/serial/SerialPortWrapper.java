@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
+import com.fazecast.jSerialComm.SerialPortInvalidPortException;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -30,7 +31,8 @@ public class SerialPortWrapper implements AutoCloseable {
 	private final Duration commSpacing;
 	private final Duration commandResponseTimeout;
 	private final SerialPort port;
-	private ZonedDateTime lastComm = null;
+
+	private ZonedDateTime noCommBefore = null;
 
 
 	public SerialPortWrapper(
@@ -47,7 +49,12 @@ public class SerialPortWrapper implements AutoCloseable {
 		this.commSpacing = commSpacing;
 		this.commandResponseTimeout = commandResponseTimeout;
 
-		SerialPort newPort = SerialPort.getCommPort(portPath);
+		SerialPort newPort;
+		try{
+			newPort = SerialPort.getCommPort(portPath);
+		} catch (SerialPortInvalidPortException e) {
+			throw new SerialPortSetupFailedException(portPath, e);
+		}
 
 		baudRate.ifPresent(newPort::setBaudRate);
 
@@ -80,24 +87,30 @@ public class SerialPortWrapper implements AutoCloseable {
 		this.port = newPort;
 	}
 
-	private void updateLastComm() {
-		this.lastComm = ZonedDateTime.now();
+	public void updateNoCommBefore() {
+		this.noCommBefore = ZonedDateTime.now().plus(this.getCommSpacing());
+	}
+
+	public boolean pastCommSpacing() {
+		if(this.getNoCommBefore() == null){
+			return true;
+		}
+		return !ZonedDateTime.now().isBefore(this.getNoCommBefore());
 	}
 
 	public void waitForCommSpacing() {
-		if (this.lastComm == null) {
+		if (this.noCommBefore == null) {
 			return;
 		}
 		ZonedDateTime now = ZonedDateTime.now();
-		ZonedDateTime timeEnd = this.lastComm.plus(this.getCommSpacing());
 
-		if (now.isBefore(timeEnd)) {
+		if (!this.pastCommSpacing()) {
+			Duration waitTime = Duration.between(
+				now,
+				this.getNoCommBefore()
+			);
 			try {
-				Thread.sleep(
-					Duration.between(
-						now,
-						timeEnd
-					).toMillis());
+				Thread.sleep(waitTime.toMillis() + 1); //plus one to ensure clear threshold
 			} catch(InterruptedException e) {
 				throw new RuntimeException("Failed to wait for comm spacing.", e);
 			}
@@ -105,7 +118,7 @@ public class SerialPortWrapper implements AutoCloseable {
 	}
 
 
-	private void assertLockAcquired() throws SerialModuleLockRequiredException {
+	public void assertLockAcquired() throws SerialModuleLockRequiredException {
 		if (!this.getLock().isHeldByCurrentThread()) {
 			throw new SerialModuleLockRequiredException();
 		}
@@ -119,7 +132,7 @@ public class SerialPortWrapper implements AutoCloseable {
 		@Override
 		public void close() {
 			this.wrapper.getLock().unlock();
-			this.wrapper.updateLastComm();
+			this.wrapper.updateNoCommBefore();
 		}
 	}
 

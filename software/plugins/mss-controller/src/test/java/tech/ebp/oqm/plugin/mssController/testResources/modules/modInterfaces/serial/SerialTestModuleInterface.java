@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fazecast.jSerialComm.SerialPort;
 import com.fazecast.jSerialComm.SerialPortDataListener;
 import com.fazecast.jSerialComm.SerialPortEvent;
-import lombok.Getter;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.TestModuleInterface;
@@ -12,34 +11,15 @@ import tech.ebp.oqm.plugin.mssController.testResources.modules.engine.TestModule
 import tech.ebp.oqm.plugin.mssController.testResources.serial.SocatProcess;
 
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.util.Optional;
-import java.util.Scanner;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 public class SerialTestModuleInterface extends TestModuleInterface {
 
-	private static final String[] NEW_SERIAL_COMMAND = {
-		"socat", "-d", "-d", "pty,raw,echo=0", "pty,raw,echo=0"
-	};
-	private static final Pattern DEVICE_FIND_PATTERN = Pattern.compile("\\/\\w+\\/\\w+\\/\\w+$");
-
-	private static String parseOutPort(String logLine) {
-		Matcher matcher = DEVICE_FIND_PATTERN.matcher(logLine);
-		if (!matcher.find()) {
-			throw new IllegalStateException("Unable to find device from log line: \"" + logLine + "\"");
-		}
-		return matcher.group();
-	}
-
 	private SocatProcess process;
-
 	private SerialPort mssModuleSerialPort;
 
-	public String getMssModulePortLocation() {
+	protected String getMssModulePortLocation() {
 		return this.process.getPortALocation();
 	}
 	public String getMssConnectionPortLocation() {
@@ -53,9 +33,7 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 	@Override
 	public void init() throws IOException {
 		this.process = new SocatProcess();
-
 		this.process.init();
-
 
 		this.mssModuleSerialPort = SerialPort.getCommPort(this.getMssModulePortLocation());
 
