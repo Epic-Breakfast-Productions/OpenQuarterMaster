@@ -22,6 +22,13 @@ import java.util.Optional;
 import java.util.Queue;
 import java.util.concurrent.locks.ReentrantLock;
 
+/**
+ * Thread-safe wrapper around a serial port for JSON communication with an MSS module.
+ * <p>
+ * Provides mutual exclusion via {@link ReentrantLock}, enforces a minimum spacing
+ * between messages, and handles blocking timeouts. Use {@link #startComm()} to begin
+ * a locked transaction, then {@link #write(Object)} or {@link #readJson()} inside it.
+ */
 @Getter(AccessLevel.PRIVATE)
 @Slf4j
 public class SerialPortWrapper implements AutoCloseable {
@@ -35,6 +42,7 @@ public class SerialPortWrapper implements AutoCloseable {
 	private ZonedDateTime noCommBefore = null;
 
 
+	/** Opens the port and configures timeouts. */
 	public SerialPortWrapper(
 		ObjectMapper objectMapper,
 		String portPath,
@@ -87,10 +95,12 @@ public class SerialPortWrapper implements AutoCloseable {
 		this.port = newPort;
 	}
 
+	/** Updates the comm-spacing deadline to now + configured spacing. */
 	public void updateNoCommBefore() {
 		this.noCommBefore = ZonedDateTime.now().plus(this.getCommSpacing());
 	}
 
+	/** Returns true if the minimum inter-message spacing has elapsed. */
 	public boolean pastCommSpacing() {
 		if(this.getNoCommBefore() == null){
 			return true;
@@ -98,6 +108,7 @@ public class SerialPortWrapper implements AutoCloseable {
 		return !ZonedDateTime.now().isBefore(this.getNoCommBefore());
 	}
 
+	/** Blocks until the minimum inter-message spacing has elapsed. */
 	public void waitForCommSpacing() {
 		if (this.noCommBefore == null) {
 			return;
@@ -118,12 +129,19 @@ public class SerialPortWrapper implements AutoCloseable {
 	}
 
 
+	/** Asserts the current thread holds the serial lock; throws otherwise. */
 	public void assertLockAcquired() throws SerialModuleLockRequiredException {
 		if (!this.getLock().isHeldByCurrentThread()) {
 			throw new SerialModuleLockRequiredException();
 		}
 	}
 
+	/**
+	 * Scoped lock token for a serial transaction.
+	 * <p>
+	 * Use in a try-with-resources block; {@link #close()} releases the lock
+	 * and updates the comm-spacing deadline. Prefer {@link #startComm()} to acquire one.
+	 */
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class CommAction implements AutoCloseable {
 
@@ -136,11 +154,13 @@ public class SerialPortWrapper implements AutoCloseable {
 		}
 	}
 
+	/** Acquires the serial lock and returns a scoped {@link CommAction} token. */
 	public CommAction acquireLock() {
 		this.lock.lock();
 		return new CommAction(this);
 	}
 
+	/** Tries to acquire the lock without blocking; returns empty if locked by another thread. */
 	public Optional<CommAction> acquireLockTry() {
 		if (this.lock.tryLock()) {
 			return Optional.of(new CommAction(this));
@@ -148,10 +168,18 @@ public class SerialPortWrapper implements AutoCloseable {
 		return Optional.empty();
 	}
 
+	/** Returns true if the underlying port is still open. */
 	public boolean isOpen() {
 		return this.port.isOpen();
 	}
 
+	/**
+	 * Serializes {@code object} to JSON and writes it to the port.
+	 * <p>
+	 * Requires the lock, see {@link #acquireLock()}.
+	 *
+	 * @param object The command object to serialize and send.
+	 */
 	public void write(Object object) throws SerialModuleLockRequiredException {
 		this.assertLockAcquired();
 
@@ -165,6 +193,12 @@ public class SerialPortWrapper implements AutoCloseable {
 		this.port.writeBytes(buff, buff.length);
 	}
 
+	/**
+	 * Begins a serial transaction: waits for spacing (if requested), checks port is open, and acquires the lock.
+	 *
+	 * @param waitForCommSpacing if true, blocks until inter-message spacing elapses
+	 * @return a scoped {@link CommAction} that releases the lock on close
+	 */
 	public CommAction startComm(boolean waitForCommSpacing) throws SerialPortClosedException {
 		if (!this.isOpen()) {
 			throw new SerialPortClosedException();
@@ -176,16 +210,17 @@ public class SerialPortWrapper implements AutoCloseable {
 		return this.acquireLock();
 	}
 
+	/** Begins a serial transaction, waiting for inter-message spacing. Shorthand for {@link #startComm(boolean)} with {@code true}. */
 	public CommAction startComm() throws SerialPortClosedException {
 		return this.startComm(true);
 	}
 
 	/**
-	 * Reads a single line from the serial port.
+	 * Reads a complete JSON object from the port by tracking brace depth.
 	 * <p>
-	 * Requires locked status, see {@link #acquireLock()}.
+	 * Requires the lock, see {@link #acquireLock()}.
 	 *
-	 * @return The line from the serial port.
+	 * @return the parsed JSON node.
 	 */
 	public ObjectNode readJson() throws SerialModuleLockRequiredException, JsonProcessingException {
 		this.assertLockAcquired();
@@ -225,11 +260,13 @@ public class SerialPortWrapper implements AutoCloseable {
 		return (ObjectNode) this.getObjectMapper().readTree(output);
 	}
 
+	/** Returns true if any bytes are waiting on the port. Requires the lock. */
 	public boolean bytesAvailable() throws SerialModuleLockRequiredException {
 		this.assertLockAcquired();
 		return this.port.bytesAvailable() > 0;
 	}
 
+	/** Returns true if enough bytes are available for a minimal JSON message (>= 7 bytes). Requires the lock. */
 	public boolean messageAvailable() throws SerialModuleLockRequiredException {
 		this.assertLockAcquired();
 		int bytesAvailable = this.getPort().bytesAvailable();
@@ -237,6 +274,7 @@ public class SerialPortWrapper implements AutoCloseable {
 		return bytesAvailable >= 7;//7 being the smallest size of a populated json document
 	}
 
+	/** Drains all available JSON messages into the queue. Requires the lock. */
 	public void readAllMessages(Queue<ObjectNode> queue) throws SerialModuleLockRequiredException, JsonProcessingException {
 		this.assertLockAcquired();
 		while (this.bytesAvailable()) {
@@ -246,6 +284,7 @@ public class SerialPortWrapper implements AutoCloseable {
 		}
 	}
 
+	/** Blocks until a JSON message arrives or the command-response timeout elapses. Requires the lock. */
 	public ObjectNode waitForMessage() throws JsonProcessingException, MssCommandTimeoutException {
 		this.assertLockAcquired();
 		ZonedDateTime timeoutTime = ZonedDateTime.now().plus(this.getCommandResponseTimeout());
@@ -265,6 +304,7 @@ public class SerialPortWrapper implements AutoCloseable {
 		return this.readJson();
 	}
 
+	/** Closes the underlying serial port under the lock. */
 	@Override
 	public void close() {
 		try (
