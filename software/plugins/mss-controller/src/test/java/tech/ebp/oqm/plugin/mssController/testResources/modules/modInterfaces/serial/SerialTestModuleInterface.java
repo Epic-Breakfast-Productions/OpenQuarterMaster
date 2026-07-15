@@ -9,6 +9,7 @@ import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.TestModuleInterface;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.engine.TestModuleEngine;
+import tech.ebp.oqm.plugin.mssController.testResources.serial.SocatProcess;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -34,16 +35,16 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 		return matcher.group();
 	}
 
-	private Process process;
-	private InputStream inputStream;
-	private OutputStream outputStream;
-	private InputStream errStream;
-
-	private String mssModulePortLocation;
-	@Getter
-	private String mssConnectionPortLocation;
+	private SocatProcess process;
 
 	private SerialPort mssModuleSerialPort;
+
+	public String getMssModulePortLocation() {
+		return this.process.getPortALocation();
+	}
+	public String getMssConnectionPortLocation() {
+		return this.process.getPortBLocation();
+	}
 
 	public SerialTestModuleInterface(ObjectMapper objectMapper, TestModuleEngine engine) throws IOException {
 		super(objectMapper, engine);
@@ -51,30 +52,12 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 
 	@Override
 	public void init() throws IOException {
-		ProcessBuilder pb = new ProcessBuilder(NEW_SERIAL_COMMAND);
-		log.info("Starting new Socat process.");
-		//		pb.inheritIO(); //debugging
-		this.process = pb.start();
-		log.info("Started new socat process. pid: {}, normTerm: {}", this.process.pid(), this.process.supportsNormalTermination());
+		this.process = new SocatProcess();
 
-		this.inputStream = this.process.getInputStream();
-		this.errStream = this.process.getErrorStream();
-		this.outputStream = this.process.getOutputStream();
+		this.process.init();
 
-		/*
-		Output should look like this:
-			2022/04/07 11:46:05 socat[23094] N PTY is /dev/pts/6
-			2022/04/07 11:46:05 socat[23094] N PTY is /dev/pts/7
-			2022/04/07 11:46:05 socat[23094] N starting data transfer loop with FDs [5,5] and [7,7]
-		 */
-		try (
-			Scanner scanner = new Scanner(new UnClosableDecorator(this.errStream))
-		) {
-			this.mssModulePortLocation = parseOutPort(scanner.nextLine());
-			this.mssConnectionPortLocation = parseOutPort(scanner.nextLine());
-		}
 
-		this.mssModuleSerialPort = SerialPort.getCommPort(this.mssModulePortLocation);
+		this.mssModuleSerialPort = SerialPort.getCommPort(this.getMssModulePortLocation());
 
 		this.mssModuleSerialPort.addDataListener(
 			new SerialPortDataListener() {
@@ -94,7 +77,7 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 
 		this.mssModuleSerialPort.openPort();
 
-		log.info("Got ports: {} (for hw impl) and {} (to connect to)", this.mssModulePortLocation, this.mssConnectionPortLocation);
+		log.info("Got ports: {} (for hw impl) and {} (to connect to)", this.getMssModulePortLocation(), this.getMssConnectionPortLocation());
 	}
 
 	private void handleDataReceived(SerialPortEvent serialPortEvent) {
@@ -153,14 +136,7 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 	@SneakyThrows
 	public void close() {
 		log.info("Closing out test serial port.");
-		this.process.destroy();
-		try {
-			this.process.waitFor();
-		} catch(InterruptedException e) {
-			log.error("Failed to wait for process to finish.", e);
-			this.process.destroyForcibly();
-		}
-		log.info("Exited socat with code {}", this.process.exitValue());
+		this.process.close();
 	}
 
 	@Override
@@ -182,57 +158,4 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 		return Optional.of(curLine);
 	}
 
-	private static class UnClosableDecorator extends InputStream {
-
-		private final InputStream inputStream;
-
-		public UnClosableDecorator(InputStream inputStream) {
-			this.inputStream = inputStream;
-		}
-
-		@Override
-		public int read() throws IOException {
-			return inputStream.read();
-		}
-
-		@Override
-		public int read(byte[] b) throws IOException {
-			return inputStream.read(b);
-		}
-
-		@Override
-		public int read(byte[] b, int off, int len) throws IOException {
-			return inputStream.read(b, off, len);
-		}
-
-		@Override
-		public long skip(long n) throws IOException {
-			return inputStream.skip(n);
-		}
-
-		@Override
-		public int available() throws IOException {
-			return inputStream.available();
-		}
-
-		@Override
-		public synchronized void mark(int readlimit) {
-			inputStream.mark(readlimit);
-		}
-
-		@Override
-		public synchronized void reset() throws IOException {
-			inputStream.reset();
-		}
-
-		@Override
-		public boolean markSupported() {
-			return inputStream.markSupported();
-		}
-
-		@Override
-		public void close() throws IOException {
-			//do nothing
-		}
-	}
 }

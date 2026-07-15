@@ -61,7 +61,7 @@ public class TestModuleEngine implements AutoCloseable {
 	private final ModuleInfo moduleInfo;
 	@Getter
 	private TestModuleEngineState state;
-	
+
 	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
 	public TestModuleEngine(ModuleInfo moduleInfo) {
