@@ -24,10 +24,8 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.ModuleState;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.TestBlockState;
 
 import java.time.Duration;
-import java.time.LocalDate;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.Executors;
@@ -61,9 +59,9 @@ public class TestModuleEngine implements AutoCloseable {
 
 	@Getter
 	private final ModuleInfo moduleInfo;
-	private List<TestBlockState> blocks;
-	private ZonedDateTime resetLightsAt = null;
-	private boolean reportsPaused = false;
+	@Getter
+	private TestModuleEngineState state;
+	
 	private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor();
 
 	public TestModuleEngine(ModuleInfo moduleInfo) {
@@ -94,7 +92,7 @@ public class TestModuleEngine implements AutoCloseable {
 	public ModuleState getModuleState() {
 		return ModuleState.builder()
 				   .storageBlocks(
-					   this.blocks.stream()
+					   this.getState().getBlocks().stream()
 						   .map(TestBlockState::toBlockState)
 						   .toList()
 				   )
@@ -102,12 +100,12 @@ public class TestModuleEngine implements AutoCloseable {
 	}
 
 	protected void resetLights() {
-		this.blocks.forEach(TestBlockState::resetLights);
-		this.resetLightsAt = null;
+		this.getState().getBlocks().forEach(TestBlockState::resetLights);
+		this.getState().setResetLightsAt(null);
 	}
 
 	protected TestBlockState getBlock(int blockNum) {
-		return this.blocks.stream().filter(b->b.getBlockNum() == blockNum).findFirst().orElseThrow();
+		return this.getState().getBlocks().stream().filter(b->b.getBlockNum() == blockNum).findFirst().orElseThrow();
 	}
 
 
@@ -136,7 +134,7 @@ public class TestModuleEngine implements AutoCloseable {
 		}
 
 		if (cmd.getDuration() != 0) {
-			this.resetLightsAt = ZonedDateTime.now().plus(Duration.of(cmd.getDuration(), ChronoUnit.SECONDS));
+			this.getState().setResetLightsAt(ZonedDateTime.now().plus(Duration.of(cmd.getDuration(), ChronoUnit.SECONDS)));
 		}
 
 		return CommandResponse.builder()
@@ -253,9 +251,9 @@ public class TestModuleEngine implements AutoCloseable {
 		log.info("Received PauseReportsCommand. Handling.");
 
 		if (c.getAction() == PauseAction.PAUSE) {
-			this.reportsPaused = true;
+			this.getState().setReportsPaused(true);
 		} else if (c.getAction() == PauseAction.UNPAUSE) {
-			this.reportsPaused = false;
+			this.getState().setReportsPaused(false);
 		}
 
 		return CommandResponse.builder()
@@ -304,7 +302,7 @@ public class TestModuleEngine implements AutoCloseable {
 	}
 
 	public void runTimedTasks() {
-		if (this.resetLightsAt != null && this.resetLightsAt.isBefore(ZonedDateTime.now())) {
+		if (this.getState().getResetLightsAt() != null && this.getState().getResetLightsAt().isBefore(ZonedDateTime.now())) {
 			log.info("Resetting lights.");
 			this.resetLights();
 		}
@@ -312,18 +310,7 @@ public class TestModuleEngine implements AutoCloseable {
 
 	public void resetModuleState() {
 		log.info("Resetting module state for module: {}", this.getModuleInfo().getSerialId());
-		this.blocks = new ArrayList<>(getModuleInfo().getNumBlocks()) {{
-			for (int i = 1; i <= getModuleInfo().getNumBlocks(); i++) {
-				this.add(
-					TestBlockState.builder()
-						.blockNum(i)
-						.lightSettings(getModuleInfo().getCapabilities().isBlockLights() ? TestBlockState.TestLightSettings.builder().build() : null)
-						.weight(getModuleInfo().getCapabilities().isItemEventReporting() ? TestBlockState.TestWeight.builder().build() : null)
-						.build()
-				);
-			}
-		}};
-		this.resetLightsAt = null;
+		this.state = new TestModuleEngineState(this.getModuleInfo());
 	}
 
 	//TODO:: reporting
@@ -340,4 +327,5 @@ public class TestModuleEngine implements AutoCloseable {
 	public void close() throws Exception {
 		this.scheduler.shutdown();
 	}
+
 }
