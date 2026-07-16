@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.baseStation.service.graph;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import jakarta.validation.Valid;
 import tech.ebp.oqm.core.baseStation.interfaces.rest.ApiProvider;
 import tech.ebp.oqm.core.baseStation.model.graph.GraphRequest;
@@ -13,6 +14,9 @@ import java.io.IOException;
 @ApplicationScoped
 public class GraphicsService extends ApiProvider {
 
+    @ConfigProperty(name = "ui.defaults.search.defaultPageSize")
+    int defaultPageSize;
+
     private final GraphProvider graphProvider;
     private final PrintoutDataSearchUtilService printoutDataSearchUtilService;
 
@@ -23,20 +27,21 @@ public class GraphicsService extends ApiProvider {
 
     public byte[] createGraph(@Valid GraphRequest graphRequest) throws IOException {
         TimeRange timeRange = TransactionMapper.normalizeTimeRange(graphRequest.getStartDateTime(), graphRequest.getEndDateTime());
-        PrintoutDataSearchUtilService.ResultsIterator transactionsIterator = this.getTransactions(graphRequest.getDbIdOrName(), graphRequest.getItemId(), timeRange);
+        PrintoutDataSearchUtilService.ResultsIterator transactionsIterator = this.getTransactions(graphRequest, timeRange);
         return graphProvider.getGraph(transactionsIterator);
     }
 
-    private PrintoutDataSearchUtilService.ResultsIterator getTransactions(String dbIdOrName, String itemId, TimeRange timeRange) {
+    private PrintoutDataSearchUtilService.ResultsIterator getTransactions(GraphRequest graphRequest, TimeRange timeRange) {
         AppliedTransactionSearch search = new AppliedTransactionSearch();
-        search.setInventoryItemId(itemId);
+        search.setInventoryItemId(graphRequest.getItemId());
         search.setStartDateTime(timeRange.start());
         search.setEndDateTime(timeRange.end());
+        search.setPageSize(graphRequest.getPageSize() == null ? this.defaultPageSize : graphRequest.getPageSize());
 
         return this.printoutDataSearchUtilService.getTransactionsIterator(
             this.getBearerHeaderStr(),
-            dbIdOrName,
-            itemId,
+            graphRequest.getDbIdOrName(),
+            graphRequest.getItemId(),
             search
         );
     }

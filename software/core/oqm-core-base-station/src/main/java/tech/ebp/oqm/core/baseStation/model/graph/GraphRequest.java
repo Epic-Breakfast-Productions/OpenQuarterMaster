@@ -24,4 +24,10 @@ public class GraphRequest {
 
     @QueryParam("endDateTime")
     private OffsetDateTime endDateTime;
+
+    @QueryParam("pageSize")
+    private Integer pageSize;
+
+    @QueryParam("pageNum")
+    private Integer pageNum;
 }
