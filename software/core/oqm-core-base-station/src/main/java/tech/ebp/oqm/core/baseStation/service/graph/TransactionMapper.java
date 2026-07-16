@@ -17,7 +17,7 @@ public class TransactionMapper {
 
     private TransactionMapper(){}
 
-    static List<Transactions> mapTransactionsToArray(JsonNode jsonResponse) {
+    public static List<Transactions> mapTransactionsToArray(JsonNode jsonResponse) {
         if(jsonResponse.get("results") == null || jsonResponse.get("results").isEmpty()) {
             return new ArrayList<>();
         }

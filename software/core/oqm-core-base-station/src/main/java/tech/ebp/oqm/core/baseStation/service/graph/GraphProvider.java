@@ -1,10 +1,10 @@
 package tech.ebp.oqm.core.baseStation.service.graph;
 
-import tech.ebp.oqm.core.baseStation.model.graph.Transactions;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 import java.io.IOException;
-import java.util.List;
+import java.util.Iterator;
 
 public interface GraphProvider {
-    byte[] getGraph(List<Transactions> transactions) throws IOException;
+    byte[] getGraph(Iterator<ObjectNode> transactionsIterator) throws IOException;
 }
