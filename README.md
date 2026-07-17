@@ -9,11 +9,11 @@
 ![GitHub all releases](https://img.shields.io/github/downloads/Epic-Breakfast-Productions/OpenQuarterMaster/total)
 [![Code Triage Open Source Helpers](https://www.codetriage.com/epic-breakfast-productions/openquartermaster/badges/users.svg)](https://www.codetriage.com/epic-breakfast-productions/openquartermaster)
 
-[//]: # (![Station Captain]&#40;https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/actions/workflows/stationCaptain.yml/badge.svg&#41;)
 <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/releases.atom">![Rss](https://img.shields.io/badge/rss-F88900?style=for-the-badge&logo=rss&logoColor=white)</a>
 ![GitHub](https://img.shields.io/github/license/Epic-Breakfast-Productions/OpenQuarterMaster)
 [![](https://dcbadge.limes.pink/api/server/cpcVh6SyNn?style=flat)](https://discord.gg/cpcVh6SyNn)
-<a href="https://openquartermaster.com/public/demo" target="_blank">![Demo Badge](https://img.shields.io/badge/demo-instance?style=flat&link=https%3A%2F%2Fopenquartermaster.com%2Fpublic%2Fdemo)</a><!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+<a href="https://openquartermaster.com/public/demo" target="_blank">![Demo Badge](https://img.shields.io/badge/demo-instance?style=flat&link=https%3A%2F%2Fopenquartermaster.com%2Fpublic%2Fdemo)</a>
+<a href="https://docs.openquartermaster.com" target="_blank">![Documentation](https://img.shields.io/badge/Documentation-docs.openquartermaster.com-green?logo=bookstack&logoColor=white)</a><!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
 [![All Contributors](https://img.shields.io/badge/all_contributors-22-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
@@ -39,10 +39,12 @@
 
 Open Quartermaster is an open source inventory management system, designed to be simple to use yet powerful and extendable. The last inventory management system you will ever need!
 
-We are very much in development still, so check back often! We are also accepting any and all assistance, so feel free to report issues or feature requests, as well as pull requests! Additionally, feel free to ask questions in
+We are very much in active development, so check back often! We are also accepting any and all assistance, so feel free to report issues or feature requests, as well as pull requests! Additionally, feel free to ask questions in
 the [Discussions](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/discussions) or just hang out with us on our [Discord](https://discord.gg/cpcVh6SyNn)
 
 ## Quick Links
+
+All documentation can be found on https://docs.openquartermaster.com
 
 - For a quick start running on your own computer, check out [Single Host Deployment](deployment/Single%20Host)
 - To see all the ways you can deploy OQM for yourself, see [Deployment](deployment/)
