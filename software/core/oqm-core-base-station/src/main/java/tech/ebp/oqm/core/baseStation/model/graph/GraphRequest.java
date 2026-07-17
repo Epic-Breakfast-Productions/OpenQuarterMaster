@@ -6,28 +6,23 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.time.OffsetDateTime;
+import java.time.ZonedDateTime;
 
 @Getter
 @Setter
 public class GraphRequest {
 
-    @NotNull
-    @QueryParam("dbIdOrName")
-    private String dbIdOrName;
+	@NotNull
+	@QueryParam("dbIdOrName")
+	private String dbIdOrName;
 
-    @NotNull
-    @QueryParam("itemId")
-    private String itemId;
+	@NotNull
+	@QueryParam("itemId")
+	private String itemId;
 
-    @QueryParam("startDateTime")
-    private OffsetDateTime startDateTime;
+	@QueryParam("startDateTime")
+	private ZonedDateTime startDateTime;
 
-    @QueryParam("endDateTime")
-    private OffsetDateTime endDateTime;
-
-    @QueryParam("pageSize")
-    private Integer pageSize;
-
-    @QueryParam("pageNum")
-    private Integer pageNum;
+	@QueryParam("endDateTime")
+	private ZonedDateTime endDateTime;
 }

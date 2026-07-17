@@ -20,21 +20,16 @@ import java.util.Iterator;
 import java.util.List;
 
 @ApplicationScoped
-public class XChartGraphService implements GraphProvider {
+public class ItemStockGraphService extends GraphProvider {
 
-    @Override
-    public byte[] getGraph(Iterator<ObjectNode> transactionsIterator) throws IOException {
+    public byte[] getGraph(ObjectNode item, Iterator<ObjectNode> transactionsIterator) throws IOException {
         return this.toByteArray(createChart(transactionsIterator));
     }
 
     private XYChart createChart(Iterator<ObjectNode> transactionsIterator) {
-        XYChart chart = new XYChartBuilder()
-            .width(1280)
-            .height(720)
-            .theme(Styler.ChartTheme.GGPlot2)
-            .title("Item value over time")
+        XYChart chart = this.getChartBuilder("Item Stock over time")
             .xAxisTitle("Date")
-            .yAxisTitle("Units in stock")
+            .yAxisTitle("Amount in stock")
             .build();
 
         chart.getStyler().setPlotGridLinesVisible(true);
@@ -52,7 +47,7 @@ public class XChartGraphService implements GraphProvider {
             }
         }
 
-        XYSeries series = chart.addSeries("Transaction", xData, yData);
+        XYSeries series = chart.addSeries("Item Stock", xData, yData);
         series.setMarker(SeriesMarkers.CIRCLE);
 
         return chart;

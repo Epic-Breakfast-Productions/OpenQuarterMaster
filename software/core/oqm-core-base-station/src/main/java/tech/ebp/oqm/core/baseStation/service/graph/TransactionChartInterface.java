@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.baseStation.service.graph;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
@@ -19,24 +20,24 @@ import java.io.IOException;
 @Slf4j
 @RolesAllowed(Roles.INVENTORY_VIEW)
 @RequestScoped
-@Path(ApiProvider.API_ROOT + "/v1")
-public class TransactionChartInterface {
+@Path(ApiProvider.API_ROOT + "/media/charts/graph/")
+public class TransactionChartInterface extends ApiProvider {
 
-    private final GraphicsService provider;
-
-    public TransactionChartInterface(GraphicsService provider) {
-        this.provider = provider;
-    }
+    @Inject
+	GraphService provider;
 
     @GET
-    @Path("/graph/transactions")
+    @Path("transactions")
     @Produces("image/svg+xml")
     @Operation(summary = "Returns transaction history as SVG chart.")
     @APIResponse(responseCode = "200", description = "SVG chart generated.")
     public Response getTransactionCount(@BeanParam GraphRequest graphRequest) throws IOException {
-        return Response.ok(provider.createGraph(graphRequest))
+        return Response.ok(provider.createGraphItemStock(
+			this.getBearerHeaderStr(),
+			graphRequest
+			))
             .type("image/svg+xml")
-            .header("Content-Disposition", "inline; filename=transactions.svg")
+            .header("Content-Disposition", "attachment; filename=transactions.svg")
             .build();
     }
 }
