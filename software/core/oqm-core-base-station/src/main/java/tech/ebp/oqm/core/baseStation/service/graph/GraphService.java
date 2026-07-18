@@ -6,9 +6,7 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import jakarta.validation.Valid;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import tech.ebp.oqm.core.baseStation.interfaces.rest.ApiProvider;
 import tech.ebp.oqm.core.baseStation.model.graph.GraphRequest;
-import tech.ebp.oqm.core.baseStation.model.graph.TimeRange;
 import tech.ebp.oqm.core.baseStation.service.graph.xchart.ItemStockGraphService;
 import tech.ebp.oqm.core.baseStation.service.printout.PrintoutDataSearchUtilService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
@@ -33,8 +31,18 @@ public class GraphService {
 		String userApiKey,
 		@Valid GraphRequest graphRequest
 	) throws IOException {
-		TimeRange timeRange = TransactionMapper.normalizeTimeRange(graphRequest.getStartDateTime(), graphRequest.getEndDateTime());
-		PrintoutDataSearchUtilService.ResultsIterator transactionsIterator = this.getTransactions(userApiKey, graphRequest, timeRange);
+		AppliedTransactionSearch search = new AppliedTransactionSearch();
+		search.setInventoryItemId(graphRequest.getItemId());
+		search.setStartDateTime(graphRequest.getStartDateTime());
+		search.setEndDateTime(graphRequest.getEndDateTime());
+		search.setPageSize(this.defaultPageSize);
+
+		PrintoutDataSearchUtilService.ResultsIterator transactionsIterator = this.printoutDataSearchUtilService.getTransactionsIterator(
+			userApiKey,
+			graphRequest.getDbIdOrName(),
+			graphRequest.getItemId(),
+			search
+		);
 
 		ObjectNode item = this.coreApiClientService.invItemGet(
 			userApiKey,
@@ -43,23 +51,5 @@ public class GraphService {
 		).await().indefinitely();
 
 		return graphProvider.getGraph(item, transactionsIterator);
-	}
-
-	private PrintoutDataSearchUtilService.ResultsIterator getTransactions(
-		String userApiKey,
-		GraphRequest graphRequest, TimeRange timeRange
-	) {
-		AppliedTransactionSearch search = new AppliedTransactionSearch();
-		search.setInventoryItemId(graphRequest.getItemId());
-		search.setStartDateTime(timeRange.start());
-		search.setEndDateTime(timeRange.end());
-		search.setPageSize(this.defaultPageSize);
-
-		return this.printoutDataSearchUtilService.getTransactionsIterator(
-			userApiKey,
-			graphRequest.getDbIdOrName(),
-			graphRequest.getItemId(),
-			search
-		);
 	}
 }

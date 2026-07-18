@@ -4,11 +4,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.knowm.xchart.VectorGraphicsEncoder;
 import org.knowm.xchart.XYChart;
-import org.knowm.xchart.XYChartBuilder;
 import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.style.Styler;
 import org.knowm.xchart.style.markers.SeriesMarkers;
-import tech.ebp.oqm.core.baseStation.model.graph.Transactions;
+import tech.ebp.oqm.core.baseStation.model.graph.TransactionGraphValue;
 import tech.ebp.oqm.core.baseStation.service.graph.GraphProvider;
 import tech.ebp.oqm.core.baseStation.service.graph.TransactionMapper;
 
@@ -41,7 +40,7 @@ public class ItemStockGraphService extends GraphProvider {
         List<Double> yData = new ArrayList<>();
         while (transactionsIterator.hasNext()) {
             ObjectNode page = transactionsIterator.next();
-            for (Transactions transaction : TransactionMapper.mapTransactionsToArray(page)) {
+            for (TransactionGraphValue transaction : TransactionMapper.mapTransactionsToArray(page)) {
                 xData.add(Date.from(transaction.timestamp()));
                 yData.add(transaction.value());
             }

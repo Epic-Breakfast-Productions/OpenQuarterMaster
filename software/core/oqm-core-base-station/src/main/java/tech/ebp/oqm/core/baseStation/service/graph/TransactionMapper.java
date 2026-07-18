@@ -2,55 +2,41 @@ package tech.ebp.oqm.core.baseStation.service.graph;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import lombok.extern.slf4j.Slf4j;
-import tech.ebp.oqm.core.baseStation.model.graph.TimeRange;
-import tech.ebp.oqm.core.baseStation.model.graph.Transactions;
+import tech.ebp.oqm.core.baseStation.model.graph.TransactionGraphValue;
 
 import java.time.Instant;
-import java.time.OffsetDateTime;
-import java.time.ZoneOffset;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static java.time.ZoneOffset.UTC;
 
 @Slf4j
 public class TransactionMapper {
 
     private TransactionMapper(){}
 
-    public static List<Transactions> mapTransactionsToArray(JsonNode jsonResponse) {
+    public static List<TransactionGraphValue> mapTransactionsToArray(JsonNode jsonResponse) {
         if(jsonResponse.get("results") == null || jsonResponse.get("results").isEmpty()) {
             return new ArrayList<>();
         }
         jsonResponse = jsonResponse.get("results");
-        List<Transactions> transactionsList = new ArrayList<>();
+        List<TransactionGraphValue> transactionGraphValueList = new ArrayList<>();
         for (JsonNode transaction : jsonResponse) {
-            transactionsList.add(mapTransaction(transaction));
+            transactionGraphValueList.add(mapTransaction(transaction));
         }
-        return transactionsList;
+        return transactionGraphValueList;
     }
 
-    private static Transactions mapTransaction(JsonNode transactionNode) {
-        Instant timestamp = ZonedDateTime.parse(transactionNode.get("timestamp").asText()).toInstant();
-        int value = transactionNode
+    private static TransactionGraphValue mapTransaction(JsonNode transactionNode) {
+        Instant timestamp = ZonedDateTime.parse(transactionNode.get("timestamp").asText()).withZoneSameInstant(UTC).toInstant();
+        double value = transactionNode
             .get("postApplyResults")
             .get("stats")
             .get("total")
             .get("value")
-            .asInt();
-        return new Transactions(timestamp, value);
+            .asDouble();
+        return new TransactionGraphValue(timestamp, value);
     }
 
-    static TimeRange normalizeTimeRange(OffsetDateTime start, OffsetDateTime end) {
-        if (start != null && end != null) {
-            return new TimeRange(start.atZoneSameInstant(ZoneOffset.UTC), end.atZoneSameInstant(ZoneOffset.UTC));
-        }
-        if (start != null) {
-            return new TimeRange(start.atZoneSameInstant(ZoneOffset.UTC), ZonedDateTime.now(ZoneOffset.UTC));
-        }
-        if (end != null) {
-            ZonedDateTime zonedDateTime = end.atZoneSameInstant(ZoneOffset.UTC);
-            return new TimeRange(zonedDateTime.minusMonths(1), zonedDateTime);
-        }
-        return new TimeRange(null, null);
-    }
 }
