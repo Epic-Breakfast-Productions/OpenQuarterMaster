@@ -26,6 +26,8 @@ export class ItemView extends PageUtility {
 	static viewBsModal = new bootstrap.Modal($("#itemViewModal"), {});
 	static itemViewMessages = $("#itemViewMessages");
 	static itemViewModalLabel = $("#itemViewModalLabel");
+	static storageTab = $("#itemViewMainPaneStorageTab");
+	static statsTab = $("#itemViewMainPaneStatsTab");
 
 	static itemTransactionButtonContainer = $("#itemViewTransactButtonContainer");
 
@@ -92,7 +94,7 @@ export class ItemView extends PageUtility {
 	static viewAttsSection = $("#viewAttsSection");
 	static itemViewId = $("#itemViewId");
 	static itemViewEditButton = $('#itemViewEditButton');
-	static itemHistoryAccordionCollapse = $("#itemHistoryAccordionCollapse");
+	static itemHistoryAccordionCollapse = $("#itemViewMainPaneHistoryTabContent");
 	static itemViewCheckedOutResultsContainer = $("#itemViewCheckedOutResultsContainer");
 	static checkoutSearchForm = $("#itemViewCheckoutSearchForm");
 	static checkoutSearchResults = $("#itemViewCheckoutSearchResults");
@@ -110,7 +112,13 @@ export class ItemView extends PageUtility {
 
 	static allStoredSearchFormBlockInput = $("#itemViewAllStoredSearchForm-storageBlockInput");
 
+	static statsShown = false;
+	static statsTransactionsAmountGraphImg = $("#itemViewMainPaneStatsItemTransactionsAmountGraph");
+
 	static resetView() {
+		ItemView.statsTransactionsAmountGraphImg.attr("href", "");
+		ItemView.statsShown = false;
+		ItemView.storageTab.click();
 		ItemView.itemViewModalLabel.text("");
 		ItemView.itemTransactionButtonContainer.text("");
 		ItemView.storedMultiContainer.hide();
@@ -749,6 +757,26 @@ export class ItemView extends PageUtility {
 					ItemView.checkoutSearchResults.html(data);
 				}
 			});
+		});
+
+		ItemView.statsTab.on("click", function (){
+			if(ItemView.statsShown){
+				return;
+			}
+			console.log("Setting up item stats view.");
+
+			{
+				let params = new URLSearchParams();
+				params.append("dbIdOrName", OqmDbUtils.getSelectedDb());
+				params.append("itemId", ItemView.itemViewId.text());
+
+				ItemView.statsTransactionsAmountGraphImg.attr(
+					"src",
+					Rest.apiRoot + "/media/charts/graph/transactions?" + params.toString()
+				);
+			}
+
+			ItemView.statsShown = true;
 		});
 
 		$(document).ready(function () {
