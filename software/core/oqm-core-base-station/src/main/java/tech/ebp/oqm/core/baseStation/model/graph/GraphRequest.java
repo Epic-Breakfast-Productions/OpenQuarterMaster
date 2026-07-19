@@ -13,10 +13,6 @@ import java.time.ZonedDateTime;
 public class GraphRequest {
 
 	@NotNull
-	@QueryParam("dbIdOrName")
-	private String dbIdOrName;
-
-	@NotNull
 	@QueryParam("itemId")
 	private String itemId;
 

@@ -1,6 +1,5 @@
-package tech.ebp.oqm.core.baseStation.interfaces.rest;
+package tech.ebp.oqm.core.baseStation.interfaces.rest.media;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -19,6 +18,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.core.baseStation.interfaces.rest.ApiProvider;
 import tech.ebp.oqm.core.baseStation.model.CodeImageType;
 import tech.ebp.oqm.core.baseStation.model.ObjectCodeContentType;
 import tech.ebp.oqm.core.baseStation.service.BarcodeService;
@@ -34,17 +34,17 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientServ
 @RolesAllowed(Roles.INVENTORY_VIEW)
 @RequestScoped
 public class BarcodeImageCreation extends ApiProvider {
-	
+
 	@Inject
 	BarcodeService barcodeService;
 	@RestClient
 	OqmCoreApiClientService coreApiClientService;
-	
+
 	@ConfigProperty(name = "runningInfo.baseUrl")
 	String selfBaseUrl;
 	@ConfigProperty(name = "oqm.core.api.baseUri")
 	String apiUri;
-	
+
 	private Response getBarcodeResponse(
 		CodeImageType codeType,
 		String data,
@@ -57,7 +57,7 @@ public class BarcodeImageCreation extends ApiProvider {
 				   .type(BarcodeService.DATA_MEDIA_TYPE)
 				   .build();
 	}
-	
+
 	@GET
 	@Path("{codeType}/{code}")
 	@Operation(
@@ -79,7 +79,7 @@ public class BarcodeImageCreation extends ApiProvider {
 				   .type(BarcodeService.DATA_MEDIA_TYPE)
 				   .build();
 	}
-	
+
 	@GET
 	@Path("object/{object}/{id}/{codeType}/{codeContentType}")
 	@Operation(
@@ -97,7 +97,7 @@ public class BarcodeImageCreation extends ApiProvider {
 		@NonNull @PathParam("codeContentType") ObjectCodeContentType codeContent
 	) {
 		log.info("Getting {} with {} for object {} {}.", codeType, codeContent, object, id);
-		
+
 		//ensure object exists
 		String label = null;
 		ObjectNode item = null;
@@ -112,7 +112,7 @@ public class BarcodeImageCreation extends ApiProvider {
 			default:
 				throw new IllegalArgumentException("Invalid object to get a code for: " + object);
 		}
-		
+
 		String data = null;
 		switch (object) {
 			case "storageBlock":
@@ -145,14 +145,14 @@ public class BarcodeImageCreation extends ApiProvider {
 				}
 				break;
 		}
-		
+
 		if (label == null || label.isBlank()) {
 			throw new IllegalStateException("Should not happen.");
 		}
 		if (data == null || data.isBlank()) {
 			throw new IllegalStateException("Should not happen.");
 		}
-		
+
 		return this.getBarcodeResponse(
 			codeType,
 			data,
@@ -160,7 +160,7 @@ public class BarcodeImageCreation extends ApiProvider {
 			codeContent
 		);
 	}
-	
+
 	@GET
 	@Path("item/{id}/barcode")
 	@Operation(
@@ -176,11 +176,11 @@ public class BarcodeImageCreation extends ApiProvider {
 	) {
 		ObjectNode item = this.coreApiClientService.invItemGet(this.getBearerHeaderStr(), this.getSelectedDb(), id).await().indefinitely();
 		String barcode = item.get("barcode").asText();
-		
+
 		if (barcode == null || barcode.isBlank()) {
 			return Response.status(Response.Status.BAD_REQUEST).entity("Barcode field for item " + id + " (" + item.get("name").asText() + " is empty.").build();
 		}
-		
+
 		return this.getBarcodeResponse(
 			CodeImageType.barcode,
 			barcode,
@@ -188,9 +188,9 @@ public class BarcodeImageCreation extends ApiProvider {
 			ObjectCodeContentType.barcode
 		);
 	}
-	
+
 	//TODO:: think about these next two
-	
+
 //	@GET
 //	@Path("item/{id}/barcode/stored/{storageBlockId}")
 //	@Operation(
@@ -233,7 +233,7 @@ public class BarcodeImageCreation extends ApiProvider {
 //				   .type(BarcodeService.DATA_MEDIA_TYPE)
 //				   .build();
 //	}
-	
+
 //	@GET
 //	@Path("item/{id}/barcode/stored/{storageBlockId}/{index}")
 //	@Operation(

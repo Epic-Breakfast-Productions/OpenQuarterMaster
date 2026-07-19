@@ -28,6 +28,7 @@ public class GraphService {
 	OqmCoreApiClientService coreApiClientService;
 
 	public byte[] createGraphItemStock(
+		String oqmDbIdOrName,
 		String userApiKey,
 		@Valid GraphRequest graphRequest
 	) throws IOException {
@@ -39,14 +40,14 @@ public class GraphService {
 
 		PrintoutDataSearchUtilService.ResultsIterator transactionsIterator = this.printoutDataSearchUtilService.getTransactionsIterator(
 			userApiKey,
-			graphRequest.getDbIdOrName(),
+			oqmDbIdOrName,
 			graphRequest.getItemId(),
 			search
 		);
 
 		ObjectNode item = this.coreApiClientService.invItemGet(
 			userApiKey,
-			graphRequest.getDbIdOrName(),
+			oqmDbIdOrName,
 			graphRequest.getItemId()
 		).await().indefinitely();
 

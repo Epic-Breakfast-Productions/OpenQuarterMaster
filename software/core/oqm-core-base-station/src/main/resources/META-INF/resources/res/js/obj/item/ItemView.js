@@ -767,7 +767,6 @@ export class ItemView extends PageUtility {
 
 			{
 				let params = new URLSearchParams();
-				params.append("dbIdOrName", OqmDbUtils.getSelectedDb());
 				params.append("itemId", ItemView.itemViewId.text());
 
 				ItemView.statsTransactionsAmountGraphImg.attr(

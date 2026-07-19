@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.baseStation.service.graph;
+package tech.ebp.oqm.core.baseStation.interfaces.rest.media;
 
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.enterprise.context.RequestScoped;
@@ -13,6 +13,7 @@ import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import tech.ebp.oqm.core.baseStation.interfaces.rest.ApiProvider;
 import tech.ebp.oqm.core.baseStation.model.graph.GraphRequest;
+import tech.ebp.oqm.core.baseStation.service.graph.GraphService;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class TransactionChartInterface extends ApiProvider {
     @APIResponse(responseCode = "200", description = "SVG chart generated.")
     public Response getTransactionCount(@BeanParam GraphRequest graphRequest) throws IOException {
         return Response.ok(provider.createGraphItemStock(
+			this.getSelectedDb(),
 			this.getBearerHeaderStr(),
 			graphRequest
 			))
