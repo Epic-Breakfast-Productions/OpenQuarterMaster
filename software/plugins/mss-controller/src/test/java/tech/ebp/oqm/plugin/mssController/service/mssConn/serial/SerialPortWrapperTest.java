@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialModuleLockRequiredException;
+import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortClosedException;
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortSetupFailedException;
 import tech.ebp.oqm.plugin.mssController.testResources.serial.SocatProcess;
 
@@ -137,7 +138,7 @@ class SerialPortWrapperTest {
 	}
 
 	@Test
-	public void testCommSpacing() throws IOException, SerialPortSetupFailedException, InterruptedException {
+	public void testCommSpacing() throws IOException, SerialPortSetupFailedException {
 		this.setupSocatProcess();
 
 		try (
@@ -160,6 +161,51 @@ class SerialPortWrapperTest {
 			serialPortWrapper.waitForCommSpacing();
 
 			assertTrue(serialPortWrapper.pastCommSpacing());
+		}
+	}
+
+	@Test
+	public void testStartCommWhenClosed() throws IOException, SerialPortSetupFailedException {
+		this.setupSocatProcess();
+
+		try (
+			SerialPortWrapper serialPortWrapper = new SerialPortWrapper(
+				OBJECT_MAPPER,
+				this.process.getPortALocation(),
+				Optional.empty(),
+				Duration.ofSeconds(1),
+				Duration.ofSeconds(1),
+				Duration.ofSeconds(1),
+				Duration.ofSeconds(1)
+			)
+		) {
+			serialPortWrapper.close();
+
+			assertThrows(
+				SerialPortClosedException.class,
+				serialPortWrapper::startComm
+			);
+		}
+	}
+
+	@Test
+	public void testClosesOnDeadSocat() throws IOException, SerialPortSetupFailedException {
+		this.setupSocatProcess();
+
+		try (
+			SerialPortWrapper serialPortWrapper = new SerialPortWrapper(
+				OBJECT_MAPPER,
+				this.process.getPortALocation(),
+				Optional.empty(),
+				Duration.ofSeconds(1),
+				Duration.ofSeconds(1),
+				Duration.ofSeconds(1),
+				Duration.ofSeconds(1)
+			)
+		) {
+			this.process.close();
+
+			assertFalse(serialPortWrapper.isOpen());
 		}
 	}
 
