@@ -16,7 +16,7 @@ public abstract class GraphProvider {
 		return new XYChartBuilder()
 							.width(1280)
 							.height(720)
-							.theme(Styler.ChartTheme.Matlab)
+							.theme(Styler.ChartTheme.GGPlot2)
 							.title(title)
 			;
 	}
