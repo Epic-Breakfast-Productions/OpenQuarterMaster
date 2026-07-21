@@ -5,8 +5,11 @@ import {PageUtility} from "./utilClasses/PageUtility.js";
 export class OqmDbUtils extends PageUtility {
 	static navDbSelectForm = $("#navDbSelectForm");
 	static navDatabaseSelector = $("#navDatabaseSelector");
+	static getSelectedDb(){
+		return this.navDatabaseSelector.val();
+	}
 	static newDbSelected() {
-		let newDbId = this.navDatabaseSelector.val();
+		let newDbId = this.getSelectedDb();
 		console.log("Input to select database changed. New selection: ", newDbId);
 
 		if (confirm("Are you sure you want to swap databases?")) {

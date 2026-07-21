@@ -40,6 +40,8 @@ dependencies {
     implementation 'uk.org.okapibarcode:okapibarcode:0.5.6'
     implementation 'com.itextpdf:html2pdf:6.3.3'
 
+    implementation 'org.knowm.xchart:xchart:4.0.2'
+
     //webjars
     implementation 'org.webjars:jquery:4.0.0'
     implementation 'org.webjars:bootstrap:5.3.8'
