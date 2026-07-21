@@ -8,7 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleStateCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
-import tech.ebp.oqm.plugin.mssController.service.mssConn.serial.SerialMssConnector;
+import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.MssConnector;
+import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial.SerialMssConnector;
 import tech.ebp.oqm.plugin.mssController.testResources.modules.TestModuleResource;
 import tech.ebp.oqm.plugin.mssController.testResources.testClasses.RunningServerTest;
 

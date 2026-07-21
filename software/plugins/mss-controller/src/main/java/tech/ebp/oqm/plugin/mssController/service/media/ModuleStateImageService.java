@@ -6,7 +6,7 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.BlockState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.ModuleState;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.light.BlockLightPowerState;
-import tech.ebp.oqm.plugin.mssController.service.mssConn.MssConnector;
+import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.MssConnector;
 
 import java.awt.*;
 import java.awt.geom.Rectangle2D;

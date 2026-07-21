@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.mssController.service.mssConn.serial;
+package tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;

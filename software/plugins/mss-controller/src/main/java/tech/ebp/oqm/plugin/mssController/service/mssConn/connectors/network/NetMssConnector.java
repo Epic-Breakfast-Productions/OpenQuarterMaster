@@ -1,7 +1,6 @@
-package tech.ebp.oqm.plugin.mssController.service.mssConn.network;
+package tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.network;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -10,7 +9,7 @@ import tech.ebp.oqm.plugin.mssController.config.ModuleConfig;
 import tech.ebp.oqm.plugin.mssController.model.exception.ModuleSetupFailedException;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
-import tech.ebp.oqm.plugin.mssController.service.mssConn.MssConnector;
+import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.MssConnector;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;

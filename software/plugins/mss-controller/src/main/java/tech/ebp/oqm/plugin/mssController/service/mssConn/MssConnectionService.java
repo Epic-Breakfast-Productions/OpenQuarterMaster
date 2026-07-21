@@ -1,7 +1,6 @@
 package tech.ebp.oqm.plugin.mssController.service.mssConn;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Validator;
@@ -9,7 +8,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.config.ModuleConfig;
 import tech.ebp.oqm.plugin.mssController.model.exception.ModuleSetupFailedException;
-import tech.ebp.oqm.plugin.mssController.service.mssConn.serial.SerialMssConnector;
+import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.MssConnector;
+import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial.SerialMssConnector;
 
 import java.util.ArrayList;
 import java.util.List;

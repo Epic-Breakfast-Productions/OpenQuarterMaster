@@ -1,9 +1,8 @@
-package tech.ebp.oqm.plugin.mssController.service.mssConn.serial;
+package tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -14,10 +13,8 @@ import tech.ebp.oqm.plugin.mssController.model.exception.MssCommandTimeoutExcept
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortClosedException;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
-import tech.ebp.oqm.plugin.mssController.service.mssConn.MssConnector;
+import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.MssConnector;
 
-import java.util.ArrayDeque;
-import java.util.Queue;
 import java.util.concurrent.locks.ReentrantLock;
 
 

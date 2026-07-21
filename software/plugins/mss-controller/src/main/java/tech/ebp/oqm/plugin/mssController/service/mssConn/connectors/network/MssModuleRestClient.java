@@ -1,7 +1,6 @@
-package tech.ebp.oqm.plugin.mssController.service.mssConn.network;
+package tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.network;
 
 import io.quarkus.rest.client.reactive.Url;
-import io.smallrye.config.ConfigMapping;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.mssController.service.mssConn.serial;
+package tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial;
 
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
