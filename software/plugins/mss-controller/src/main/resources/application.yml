@@ -1,0 +1,73 @@
+
+oqm:
+    core:
+        characteristics:
+            serviceId: plugin-mss_controller
+            serviceCategory: plugin
+
+quarkus:
+    application:
+        name: oqm-plugin-mss_controller
+    container-image:
+        name: oqm-plugin-mss_controller
+        group: ebprod
+    http:
+        port: 80
+        ssl-port: 443
+        auth:
+            proactive: false
+            permission:
+                logout:
+                    paths: ${quarkus.oidc.logout.path}
+                    policy: authenticated
+    rest-client:
+        mss-module-rest-client:
+            url: " " # this is provided by and used on a per-module basis
+            scope: jakarta.inject.Singleton
+    oidc:
+        application-type: hybrid
+        token-state-manager:
+            split-tokens: true
+        logout:
+            path: /logout
+            post-logout-path: /?message=You%20have%20successfully%20logged%20out&messageType=success&messageHeading=Logged%20Out
+    keycloak:
+        devservices:
+            port: 9328
+            realm-path: "dev/oqm-realm.json"
+            realm-name: oqm
+
+smallrye:
+    jwt:
+        always-check-authorization: true
+
+"%dev":
+    quarkus:
+        log:
+            level: INFO
+            category:
+                "tech.ebp.oqm.plugin.mss_controller":
+                    level: DEBUG
+        #    opentelemetry:
+        #      enabled: true
+        #      tracer:
+        #        exporter:
+        #          otlp:
+        #            endpoint: http://localhost:8096
+        http:
+            port: 8080
+            ssl-port: 8443
+        oidc:
+            # TODO:: remove when https://github.com/quarkusio/quarkus/issues/47581
+            client-id: oqm-app
+            credentials:
+                secret: "**********"
+        #      auth-server-url: http://localhost:8115/realms/oqm
+    oqm:
+        core:
+            api:
+                caching:
+                    oqmDatabase:
+                        refreshFrequencyEvery: "5m"
+                    unit:
+                        refreshFrequencyEvery: "5m"

@@ -1,0 +1,39 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/LockBlockCommand.json",
+	"title": "Get Info Command",
+	"description": "Command to get a module's info.",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/Command.json"
+		}
+	],
+	"properties": {
+		"command": {
+			"description": "The command.",
+			"type": "string",
+			"const": "LOCK_BLOCK"
+		},
+		"action": {
+			"description": "If we are to lock or unlock the blocks.",
+			"type": "string",
+			"enum": ["LOOCK", "UNLOCK"]
+		},
+		"blocks": {
+			"description": "The block(s) to un/lock. Empty or null to specify all blocks.",
+			"type": "array",
+			"items": {
+				"type": "integer"
+			}
+		}
+	},
+	"oneOf": [
+		{"required": ["all"]},
+		{"required": ["blocks"]}
+	],
+	"required": [
+		"command",
+		"action"
+	]
+}
