@@ -2,12 +2,44 @@ greeting:
   message: "hello"
 mp:
   messaging:
-    outgoing:
-      words-out:
-        topic: "words"
     incoming:
-      words-in:
-        auto:
-          offset:
-            reset: "earliest"
-        topic: "words"
+      oqm-events:
+        topic: "oqm-core-all-events"
+#        auto:
+#          offset:
+#            reset: "earliest"
+
+quarkus:
+  log:
+    level: "INFO"
+  mongodb:
+    database: "oqm-image-search"
+    tracing:
+      enabled: true
+  keycloak:
+    devservices:
+      port: 9328
+      realm-path: "dev/oqm-realm.json"
+      realm-name: oqm
+  kafka:
+    devservices:
+      enabled: true
+      port: 9192
+  otel:
+    metrics:
+      enabled: true
+    traces:
+      enabled: true
+    logs:
+      enabled: true
+
+"%dev":
+  quarkus:
+    http:
+      port: 8080
+      ssl-port: 8443
+    oidc:
+      # TODO:: remove when https://github.com/quarkusio/quarkus/issues/47581
+      client-id: oqm-app
+      credentials:
+        secret: "**********"
