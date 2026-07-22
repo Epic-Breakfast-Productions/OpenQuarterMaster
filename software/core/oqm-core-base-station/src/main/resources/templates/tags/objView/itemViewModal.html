@@ -155,10 +155,36 @@
         <!-- TODO:: add expiry warning duration -->
     </div>
 </div>
-<hr />
 <div class="row">
-    <div class="col">
-        <div id="itemViewStoredNonePresentContainer">
+    {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
+    {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
+</div>
+
+<ul class="nav nav-tabs mt-4" id="itemViewMainPane" role="tablist">
+  <li class="nav-item" role="presentation">
+    <button class="nav-link active" id="itemViewMainPaneStorageTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneStorageTabContent" type="button" role="tab" aria-controls="itemViewMainPaneStorageTabContent" aria-selected="true">
+    	{#icons/stored /} Stored
+	</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="itemViewMainPaneCheckedOutTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneCheckedOutTabContent" type="button" role="tab" aria-controls="itemViewMainPaneCheckedOutTabContent" aria-selected="false">
+    {#icons/transactionCheckout /} Checked Out
+</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="itemViewMainPaneStatsTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneStatsTabContent" type="button" role="tab" aria-controls="itemViewMainPaneStatsTabContent" aria-selected="false">
+    {#icons/stats /} Stats
+</button>
+  </li>
+  <li class="nav-item" role="presentation">
+    <button class="nav-link" id="itemViewMainPaneHistoryTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneHistoryTabContent" type="button" role="tab" aria-controls="itemViewMainPaneHistoryTabContent" aria-selected="false">
+    {#icons/history /} History
+</button>
+  </li>
+</ul>
+<div class="tab-content" id="itemViewMainPaneContent">
+  <div class="tab-pane fade show active pt-2" id="itemViewMainPaneStorageTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneStorageTab" tabindex="0">
+  	<div id="itemViewStoredNonePresentContainer">
             <h4>Nothing Stored</h4>
             <div id="itemViewStoredNonePresentHasStorageContainer">
                 <button class="btn btn-primary" id="itemViewStoredNonePresentHasStorageAddStoredButton" data-bs-target="#itemStoredTransactionAddModal" data-bs-toggle="modal" onclick="ItemStoredTransaction.Add.setupForm(ItemView.itemViewId.text(), null, this);">+ Add Stored</button>
@@ -249,21 +275,9 @@
             <div class="accordion" id="itemViewStoredSingleAccordion">
             </div>
         </div>
-    </div>
 </div>
-<div class="itemViewCheckedOutContainer">
-    <hr />
-    <div class="row">
-        <div class="col accordion" id="itemViewCheckedOutAccordion">
-            <div class="accordion-item">
-                <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewCheckedOutAccordionCollapse" aria-expanded="false" aria-controls="itemViewCheckedOutAccordionCollapse">
-                        {#icons/transactionCheckout /} Checked out:
-                    </button>
-                </h2>
-                <div id="itemViewCheckedOutAccordionCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewCheckedOutAccordion">
-                    <div class="accordion-body p-0 pt-1">
-                        <div class="row">
+  <div class="tab-pane fade" id="itemViewMainPaneCheckedOutTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneCheckedOutTab" tabindex="0">
+  	<div class="row">
                             <div class="col accordion" id="itemViewCheckoutSearchAccordion">
                                 <div class="accordion-item">
                                     <h2 class="accordion-header" id="itemViewCheckoutSearchAccordionFieldsHeader">
@@ -290,24 +304,13 @@
                                 </table>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
+</div>
+  <div class="tab-pane fade" id="itemViewMainPaneStatsTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneStatsTab" tabindex="0">
+  	<img src="" id="itemViewMainPaneStatsItemTransactionsAmountGraph" class="mt-2" style="max-width:100%">
+	</div>
+  <div class="tab-pane fade" id="itemViewMainPaneHistoryTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneHistoryTab" tabindex="0">
+  	{#objView/history/objHistoryView containerId='itemHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item/') accordion=false /}
+	</div>
+</div>
 
-            {!<h4></h4><!-- TODO:: search form, set to this specific item. -->!}
-            {!<table class="table table-sm table-bordered table-hover" id="itemViewCheckedOutResultsContainer">!}
-            {!</table>!}
-        </div>
-    </div>
-</div>
-<hr />
-<div class="row">
-    {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
-    {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
-</div>
-<div class="row">
-    <div class="col">
-        {#objView/history/objHistoryView containerId='itemHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item/')}{/objView/history/objHistoryView}
-    </div>
-</div>
 {/modal}
