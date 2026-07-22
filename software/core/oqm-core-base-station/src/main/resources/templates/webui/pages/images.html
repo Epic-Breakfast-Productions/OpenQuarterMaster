@@ -110,8 +110,8 @@
     {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
 </div>
 <div class="row">
-    {#objView/history/objHistoryView containerId='imageHistory' objectUrl=(rootPrefix + '/api/passthrough/media/image/') /}
-    
+    {#objView/history/objHistoryView containerId='imageHistory' objectUrl=(rootPrefix + '/api/passthrough/media/image/') accordion=true /}
+
 </div>
 <hr />
 <div class="text-end">
@@ -136,13 +136,13 @@
 		import { KeywordAttEdit } from '{rootPrefix}/res/js/obj/ObjEditUtils.js';
 		import { KeywordAttUtils } from '{rootPrefix}/res/js/obj/ObjViewUtils.js';
 		import { ImageAdd } from '{rootPrefix}/res/js/obj/media/ImageAdd.js';
-		
+
 		SearchUtils.init();
 		ImageAdd.init();
 		KeywordAttEdit.init();
 		KeywordAttUtils.init();
 		HistorySearchUtils.init();
-		
+
 	</script>
 <script defer>
 	$(document).ready(function () {
@@ -202,7 +202,7 @@ function setupAddEditForEdit(id){
             addEditDescriptionInput.text(data.description);
 
             ImageAdd.bindCroppie(Rest.passRoot + "/media/image/" + id + "/revision/latest/data");
-			
+
 			KeywordAttEdit.addKeywordInputs(keywordInputDiv, data.keywords);
 			KeywordAttEdit.addAttInputs(attInputDiv, data.attributes);
         },
@@ -219,14 +219,14 @@ addEditImageForm.submit(function (ev) {
 	}).then(async function (imageDataBlob) {
 		console.log("Got image data.");
 		let addEditData = new FormData();
-		
+
 		addEditData.append("fileName", addEditFileInput[0].files[0].name);
 		addEditData.append("description", addEditDescriptionInput.val());
 		addEditData.append("source", "user");
 		addEditData.append("file", imageDataBlob);//imageDataBlob);
-    
+
         console.log("Got image data: ", imageDataBlob);
-    
+
         if (addEditFormMode.val() === "add") {
             console.log("Adding new image.");
             Rest.call({
@@ -246,7 +246,7 @@ addEditImageForm.submit(function (ev) {
         } else if (addEditFormMode.val() === "edit") {
             let id = addEditFormId.val();
             console.log("Editing image " + id);
-        
+
             Rest.call({
                 url: Rest.passRoot + "/media/image/" + id,
                 method: "PUT",
@@ -257,7 +257,7 @@ addEditImageForm.submit(function (ev) {
                 },
                 failMessagesDiv: addEditFormMessages
             });
-        
+
         } else {
             PageMessageUtils.addMessageToDiv(addEditFormMessages, "danger", "Failed to do action.", "Failed", null);
         }
@@ -287,7 +287,7 @@ function resetView(){
     viewDescriptionText.text("");
 	KeywordAttUtils.clearHideKeywordDisplay(viewKeywordsSection);
 	KeywordAttUtils.clearHideAttDisplay(viewAttsSection);
-    
+
     HistorySearchUtils.resetHistorySearch(imageHistoryAccordionCollapse);
 
     imageDeleteButton.off('click');
@@ -339,9 +339,9 @@ function setupViewForImage(id){
         },
         failMessagesDiv: imageViewMessages
     });
-	
+
 	HistorySearchUtils.setupHistorySearch(imageHistoryAccordionCollapse, id);
- 
+
 }
 </script>
 {/pageScript}
