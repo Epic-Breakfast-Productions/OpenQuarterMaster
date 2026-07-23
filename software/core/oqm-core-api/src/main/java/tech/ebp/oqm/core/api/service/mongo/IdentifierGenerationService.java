@@ -10,8 +10,6 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated.Generated;
-import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated.GeneratedIdentifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdGenResult;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.generation.IdentifierGenerator;
@@ -21,6 +19,7 @@ import tech.ebp.oqm.core.api.exception.db.DbModValidationException;
 
 import java.math.BigInteger;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.HashSet;
@@ -158,21 +157,21 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 						
 						int padding = INC_DEFAULT_PADDING;
 						int base = INC_DEFAULT_BASE;
-						
+
 						if (args.length > 0) {
 							padding = Integer.parseInt(args[0]);
 						}
 						if (args.length > 1) {
 							base = Integer.parseInt(args[1]);
 						}
-						
+
 						if (padding < 1 || padding > 50) {
 							throw new IllegalArgumentException("Length of padding characters must be between 1 and 50 (inclusive).");
 						}
 						if (base < 2 || base > 36) {
 							throw new IllegalArgumentException("Base must be between 2 and 36 (inclusive).");
 						}
-						
+
 						BigInteger lastNum = new BigInteger("0", base);
 						if (generator.getLastIncremented() != null) {
 							lastNum = generator.getLastIncremented();
@@ -188,11 +187,72 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 						generator.setLastIncremented(newNum);
 					}
 					break;
-					default:
+                    case "dateinc": {
+                        if (hadInc.get()) {
+                            throw new IllegalArgumentException(
+                                "Cannot have more than one increment placeholder."
+                            );
+                        }
+                        hadInc.set(true);
+
+                        if (args.length == 0 || args[0].isBlank())
+                            throw new IllegalArgumentException("dateinc requires a date format.");
+
+                        int padding = INC_DEFAULT_PADDING;
+                        int base = INC_DEFAULT_BASE;
+
+                        if (args.length > 1) {
+                            padding = Integer.parseInt(args[1]);
+                        }
+
+                        if (args.length > 2) {
+                            base = Integer.parseInt(args[2]);
+                        }
+
+                        if (padding < 1 || padding > 50) {
+                            throw new IllegalArgumentException(
+                                "Length of padding characters must be between 1 and 50 (inclusive)."
+                            );
+                        }
+
+                        if (base < 2 || base > 36) {
+                            throw new IllegalArgumentException(
+                                "Base must be between 2 and 36 (inclusive)."
+                            );
+                        }
+
+                        String dateFormat = args[0];
+                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+                        String currentPeriod = LocalDateTime.now(ZoneId.systemDefault()).format(formatter);
+                        String previousPeriod = generator.getLastIncrementedDate();
+                        BigInteger lastNum = BigInteger.ZERO;
+
+                        if (currentPeriod.equals(previousPeriod) && generator.getLastIncremented() != null) {
+                            lastNum = generator.getLastIncremented();
+                        }
+
+                        BigInteger newNum = lastNum.add(BigInteger.ONE);
+
+                        String formattedNumber = String.format(
+                                "%" + padding + "s",
+                                newNum.toString(base)
+                            )
+                            .replace(' ', '0')
+                            .toUpperCase();
+
+                        sb.append(currentPeriod);
+                        sb.append("-");
+                        sb.append(formattedNumber);
+
+                        generator.setLastIncremented(newNum);
+                        generator.setLastIncrementedDate(currentPeriod);
+                    }
+                    break;
+                    default:
 						throw new IllegalArgumentException("Unknown placeholder type: " + placeholderType);
 				}
 			});
-		
+
 		if (numPlaceholders.intValue() == 0) {
 			throw new IllegalArgumentException("No placeholders found in format.");
 		}
