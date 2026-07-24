@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.nio.file.Path;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,9 +32,9 @@ public class SocatProcess implements AutoCloseable {
 	private InputStream errStream;
 
 	@Getter
-	private String portALocation;
+	private Path portALocation;
 	@Getter
-	private String portBLocation;
+	private Path portBLocation;
 
 	public void init() throws IOException {
 		ProcessBuilder pb = new ProcessBuilder(NEW_SERIAL_COMMAND);
@@ -56,8 +57,8 @@ public class SocatProcess implements AutoCloseable {
 		try (
 			Scanner scanner = new Scanner(new UnClosableDecorator(this.errStream))
 		) {
-			this.portALocation = parseOutPort(scanner.nextLine());
-			this.portBLocation = parseOutPort(scanner.nextLine());
+			this.portALocation = Path.of(parseOutPort(scanner.nextLine()));
+			this.portBLocation = Path.of(parseOutPort(scanner.nextLine()));
 		}
 	}
 

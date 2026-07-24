@@ -71,7 +71,7 @@ public class TestModuleResource implements QuarkusTestResourceLifecycleManager {
 
 			configMap.put(
 				"moduleConfig.serial.modules[" + i + "].portPath",
-				serialInterface.getMssConnectionPortLocation()
+				serialInterface.getMssConnectionPortLocation().toString()
 			);
 
 		}

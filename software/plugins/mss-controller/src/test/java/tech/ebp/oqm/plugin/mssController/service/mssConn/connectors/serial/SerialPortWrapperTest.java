@@ -1,5 +1,6 @@
 package tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -9,6 +10,9 @@ import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortSetupFailedEx
 import tech.ebp.oqm.plugin.mssController.testResources.serial.SocatProcess;
 
 import java.io.IOException;
+import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Optional;
 
@@ -59,7 +63,7 @@ class SerialPortWrapperTest {
 			()->{
 				new SerialPortWrapper(
 					OBJECT_MAPPER,
-					"/foo/bar",
+					Path.of("/foo/bar"),
 					Optional.empty(),
 					Duration.ofSeconds(1),
 					Duration.ofSeconds(1),
@@ -206,6 +210,73 @@ class SerialPortWrapperTest {
 			this.process.close();
 
 			assertFalse(serialPortWrapper.isOpen());
+		}
+	}
+
+	private void writeToTestPort(String data) throws IOException {
+		try (
+			OutputStream os = Files.newOutputStream(this.process.getPortBLocation())
+		) {
+			os.write(data.getBytes());
+		}
+	}
+
+	@Test
+	public void testReadOneJson() throws IOException, SerialPortSetupFailedException {
+		this.setupSocatProcess();
+
+		try (
+			SerialPortWrapper serialPortWrapper = new SerialPortWrapper(
+				OBJECT_MAPPER,
+				this.process.getPortALocation(),
+				Optional.empty(),
+				Duration.ofSeconds(1),
+				Duration.ofSeconds(1),
+				Duration.ofSeconds(1),
+				Duration.ofSeconds(1)
+			)
+		) {
+			ObjectNode one = OBJECT_MAPPER.createObjectNode().put("foo", "bar");
+
+			this.writeToTestPort(one.toString());
+
+			try(
+				SerialPortWrapper.CommAction a = serialPortWrapper.acquireLock()
+			) {
+
+				assertEquals(one, serialPortWrapper.readJson());
+			}
+		}
+	}
+	@Test
+	public void testReadMultiJson() throws IOException, SerialPortSetupFailedException {
+		this.setupSocatProcess();
+
+		try (
+			SerialPortWrapper serialPortWrapper = new SerialPortWrapper(
+				OBJECT_MAPPER,
+				this.process.getPortALocation(),
+				Optional.empty(),
+				Duration.ofSeconds(1),
+				Duration.ofSeconds(1),
+				Duration.ofSeconds(1),
+				Duration.ofSeconds(1)
+			)
+		) {
+			ObjectNode one = OBJECT_MAPPER.createObjectNode().put("foo", "bar");
+			ObjectNode two = OBJECT_MAPPER.createObjectNode().put("fat", "bat");
+
+
+			this.writeToTestPort(one.toString());
+			this.writeToTestPort(two.toString());
+
+			try(
+				SerialPortWrapper.CommAction a = serialPortWrapper.acquireLock()
+			) {
+
+				assertEquals(one, serialPortWrapper.readJson());
+				assertEquals(two, serialPortWrapper.readJson());
+			}
 		}
 	}
 

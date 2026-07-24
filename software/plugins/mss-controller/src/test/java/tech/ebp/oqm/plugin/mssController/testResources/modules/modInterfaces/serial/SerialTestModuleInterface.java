@@ -11,6 +11,7 @@ import tech.ebp.oqm.plugin.mssController.testResources.modules.engine.TestModule
 import tech.ebp.oqm.plugin.mssController.testResources.serial.SocatProcess;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.Optional;
 
 @Slf4j
@@ -19,10 +20,10 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 	private SocatProcess process;
 	private SerialPort mssModuleSerialPort;
 
-	protected String getMssModulePortLocation() {
+	protected Path getMssModulePortLocation() {
 		return this.process.getPortALocation();
 	}
-	public String getMssConnectionPortLocation() {
+	public Path getMssConnectionPortLocation() {
 		return this.process.getPortBLocation();
 	}
 
@@ -35,7 +36,7 @@ public class SerialTestModuleInterface extends TestModuleInterface {
 		this.process = new SocatProcess();
 		this.process.init();
 
-		this.mssModuleSerialPort = SerialPort.getCommPort(this.getMssModulePortLocation());
+		this.mssModuleSerialPort = SerialPort.getCommPort(this.getMssModulePortLocation().toString());
 
 		this.mssModuleSerialPort.addDataListener(
 			new SerialPortDataListener() {

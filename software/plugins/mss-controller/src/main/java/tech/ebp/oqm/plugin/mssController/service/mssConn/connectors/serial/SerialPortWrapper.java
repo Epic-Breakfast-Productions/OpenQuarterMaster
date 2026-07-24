@@ -16,6 +16,7 @@ import tech.ebp.oqm.plugin.mssController.model.exception.SerialModuleLockRequire
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortClosedException;
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortSetupFailedException;
 
+import java.nio.file.Path;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Optional;
@@ -25,9 +26,8 @@ import java.util.concurrent.locks.ReentrantLock;
 /**
  * Thread-safe wrapper around a serial port for JSON communication with an MSS module.
  * <p>
- * Provides mutual exclusion via {@link ReentrantLock}, enforces a minimum spacing
- * between messages, and handles blocking timeouts. Use {@link #startComm()} to begin
- * a locked transaction, then {@link #write(Object)} or {@link #readJson()} inside it.
+ * Provides mutual exclusion via {@link ReentrantLock}, enforces a minimum spacing between messages, and handles blocking timeouts. Use {@link #startComm()} to begin a locked transaction, then {@link #write(Object)} or {@link #readJson()}
+ * inside it.
  */
 @Getter(AccessLevel.PRIVATE)
 @Slf4j
@@ -45,7 +45,7 @@ public class SerialPortWrapper implements AutoCloseable {
 	/** Opens the port and configures timeouts. */
 	public SerialPortWrapper(
 		ObjectMapper objectMapper,
-		String portPath,
+		Path portPath,
 		Optional<Integer> baudRate,
 		Duration commSpacing,
 		Duration readTimeout,
@@ -58,9 +58,9 @@ public class SerialPortWrapper implements AutoCloseable {
 		this.commandResponseTimeout = commandResponseTimeout;
 
 		SerialPort newPort;
-		try{
-			newPort = SerialPort.getCommPort(portPath);
-		} catch (SerialPortInvalidPortException e) {
+		try {
+			newPort = SerialPort.getCommPort(portPath.toString());
+		} catch(SerialPortInvalidPortException e) {
 			throw new SerialPortSetupFailedException(portPath, e);
 		}
 
@@ -102,7 +102,7 @@ public class SerialPortWrapper implements AutoCloseable {
 
 	/** Returns true if the minimum inter-message spacing has elapsed. */
 	public boolean pastCommSpacing() {
-		if(this.getNoCommBefore() == null){
+		if (this.getNoCommBefore() == null) {
 			return true;
 		}
 		return !ZonedDateTime.now().isBefore(this.getNoCommBefore());
@@ -139,8 +139,7 @@ public class SerialPortWrapper implements AutoCloseable {
 	/**
 	 * Scoped lock token for a serial transaction.
 	 * <p>
-	 * Use in a try-with-resources block; {@link #close()} releases the lock
-	 * and updates the comm-spacing deadline. Prefer {@link #startComm()} to acquire one.
+	 * Use in a try-with-resources block; {@link #close()} releases the lock and updates the comm-spacing deadline. Prefer {@link #startComm()} to acquire one.
 	 */
 	@AllArgsConstructor(access = AccessLevel.PRIVATE)
 	public static class CommAction implements AutoCloseable {
@@ -197,6 +196,7 @@ public class SerialPortWrapper implements AutoCloseable {
 	 * Begins a serial transaction: waits for spacing (if requested), checks port is open, and acquires the lock.
 	 *
 	 * @param waitForCommSpacing if true, blocks until inter-message spacing elapses
+	 *
 	 * @return a scoped {@link CommAction} that releases the lock on close
 	 */
 	public CommAction startComm(boolean waitForCommSpacing) throws SerialPortClosedException {
@@ -216,44 +216,89 @@ public class SerialPortWrapper implements AutoCloseable {
 	}
 
 	/**
-	 * Reads a complete JSON object from the port by tracking brace depth.
+	 * Reads a complete JSON object from the port using a brace-depth state machine.
 	 * <p>
-	 * Requires the lock, see {@link #acquireLock()}.
+	 * Tracks string literal boundaries so that {@code '{'} / {@code '}'} characters inside JSON string values do not affect brace depth. Batches reads when bytes are already buffered, falling back to single-byte blocking reads while
+	 * waiting for the device to respond.
 	 *
 	 * @return the parsed JSON node.
 	 */
 	public ObjectNode readJson() throws SerialModuleLockRequiredException, JsonProcessingException {
 		this.assertLockAcquired();
 
-		//TODO:: smarter way to accomplish? Scanner?
-		StringBuilder sb = new StringBuilder();
-		byte[] buffer = new byte[1];
-		log.info("Trying to read a json document from serial port...");
+		final StringBuilder sb = new StringBuilder();
 
-		boolean run = true;
-		int bracketDepth = 0;
-		//read until we get a closing bracket
-		do {
-			int read = this.port.readBytes(buffer, 1);
-			//			log.debug("Read {} bytes ({})", read, (char)buffer[0]);
-			if (read > 0) {
-				char curchar = (char) buffer[0];
-				sb.append(curchar);
+		log.debug("Reading JSON from serial port...");
+		{
+			final byte[] buffer = new byte[1];
+			boolean complete = false;
+			int braceDepth = 0;
+			boolean inString = false;
+			boolean escaped = false;
 
-				//TODO:: ignore curly brackets in string literals
-				if (curchar == '{') {
-					bracketDepth++;
-				} else if (curchar == '}') {
-					bracketDepth--;
-					if (bracketDepth == 0) {
-						run = false;
+			while (!complete) {
+				// Drain any bytes already buffered (bulk read)
+				int avail = this.port.bytesAvailable();
+				if (avail > 0) {
+					int batchSize = Math.min(avail, buffer.length);
+					int read = this.port.readBytes(buffer, batchSize);
+					if (read <= 0) {
+						continue;
+					}
+
+					for (int i = 0; i < read && !complete; i++) {
+						char c = (char) buffer[i];
+						sb.append(c);
+
+						if (escaped) {
+							escaped = false;
+						} else if (c == '\\') {
+							escaped = true;
+						} else if (c == '"') {
+							inString = !inString;
+						} else if (!inString) {
+							if (c == '{') {
+								braceDepth++;
+							} else if (c == '}') {
+								braceDepth--;
+								if (braceDepth == 0) {
+									complete = true;
+								}
+							}
+						}
 					}
 				}
-			} else {
-				run = false;
-			}
 
-		} while (run);
+				// Block for next byte if JSON not yet complete
+				if (!complete) {
+					int read = this.port.readBytes(buffer, 1);
+					if (read <= 0) {
+						break; // timeout or port closed
+					}
+
+					char c = (char) buffer[0];
+					sb.append(c);
+
+					if (escaped) {
+						escaped = false;
+					} else if (c == '\\') {
+						escaped = true;
+					} else if (c == '"') {
+						inString = !inString;
+					} else if (!inString) {
+						if (c == '{') {
+							braceDepth++;
+						} else if (c == '}') {
+							braceDepth--;
+							if (braceDepth == 0) {
+								complete = true;
+							}
+						}
+					}
+				}
+
+			}
+		}
 
 		String output = sb.toString().trim();
 		log.debug("Got json: {}", output);
@@ -291,12 +336,12 @@ public class SerialPortWrapper implements AutoCloseable {
 		while (!this.messageAvailable()) {
 			try {
 				Thread.sleep(100);
-			} catch (InterruptedException e) {
+			} catch(InterruptedException e) {
 				log.error("Interrupted while waiting for message", e);
 				throw new RuntimeException("Interrupted while waiting for message.", e);
 			}
 			//TODO:: timeout
-			if(ZonedDateTime.now().isAfter(timeoutTime)) {
+			if (ZonedDateTime.now().isAfter(timeoutTime)) {
 				log.error("Timed out waiting for message.");
 				throw new MssCommandTimeoutException();
 			}
