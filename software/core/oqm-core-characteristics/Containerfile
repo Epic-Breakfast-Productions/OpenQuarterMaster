@@ -12,8 +12,8 @@ COPY ./app /code/app
 
 USER appRunner
 
-CMD ["fastapi", "run", "app/main.py", "--port", "80"]
+CMD ["fastapi", "run", "app/main.py", "--port", "8080"]
 
-EXPOSE 80/tcp
+EXPOSE 8080/tcp
 HEALTHCHECK --interval=1s --timeout=5s --start-period=1s --retries=20 \
 	CMD python3 -c "import http.client; conn=conn = http.client.HTTPConnection('localhost', 80); conn.request('GET', '/health'); res = conn.getresponse(); exit(0 if res.status == 200 else 1)"
