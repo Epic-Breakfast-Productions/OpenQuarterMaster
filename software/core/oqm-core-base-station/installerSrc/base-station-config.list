@@ -5,7 +5,7 @@
 
 # Basic configs
 quarkus.http.port=8080
-quarkus.http.ssl.port=8443
+quarkus.http.ssl-port=8443
 quarkus.http.insecure-requests=enabled
 #quarkus.http.insecure-requests=redirect
 quarkus.log.level=INFO
