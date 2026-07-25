@@ -87,8 +87,8 @@ quarkus:
       proactive: false
     access-log:
       enabled: true
-    port: 80
-    ssl-port: 443
+    port: 8080
+    ssl-port: 8443
   messaging:
     health:
       enabled: true
