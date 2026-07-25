@@ -23,7 +23,7 @@ runningInfo:
   hostnamePort: ${runningInfo.hostname}:${runningInfo.port}
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
   fromEmail: no-reply@${runningInfo.hostname}
-  
+
 ui:
   defaults:
     indexRedirect: /overview
@@ -112,8 +112,8 @@ quarkus:
     theme: flattop
     footer: With ❤️, EBP
   http:
-    port: 80
-    ssl-port: 443
+    port: 8080
+    ssl-port: 8443
     body:
       preallocate-body-buffer: true
     limits:
@@ -143,7 +143,7 @@ quarkus:
       enabled: true
     logs:
       enabled: true
-    
+
   keycloak:
     devservices:
       port: 9328
@@ -219,7 +219,7 @@ smallrye:
                 website: http://devlopment.dev
                 haveBannerImg: true
                 haveLogoImg: true
-                
+
   service:
     runBy:
       name: The Developers
