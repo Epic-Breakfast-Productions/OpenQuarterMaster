@@ -46,8 +46,10 @@ public class ItemStockGraphService extends GraphProvider {
             }
         }
 
-        XYSeries series = chart.addSeries("Item Stock", xData, yData);
-        series.setMarker(SeriesMarkers.CIRCLE);
+		if(!xData.isEmpty()) {
+			XYSeries series = chart.addSeries("Item Stock", xData, yData);
+			series.setMarker(SeriesMarkers.CIRCLE);
+		}
 
         return chart;
     }
