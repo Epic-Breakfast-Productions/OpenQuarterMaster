@@ -47,6 +47,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  -v /etc/oqm/static/media/:/data/oqm/media:ro \
                                  --env-file $ENV_CONFIG_FILE \
                                  --env-file $USER_CONFIG_FILE \
+                                 --memory 256M \
                                  $IMAGE_NAME:$IMAGE_VERSION"
 # ensure up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \

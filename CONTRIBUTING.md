@@ -1,65 +1,10 @@
 ## How to contribute to Open QuarterMaster
 
-### How we conduct our project management
+### How to contribute to the codebase?
 
-#### Issue Workflow
+Looking to change something directly in the codebase, or otherwise directly develop here?
 
-```mermaid
----
-title: Issue Workflow
----
-graph LR
-
-    S1((GitHub Issues))
-    S2((GitHub Discussions))
-
-    I[Github Issue]
-    P[OQM Github Project]
-    R{Refined; info gathered, prioritized}
-    M[Milestone]
-    Ready[Issue Ready for Work]
-    W[Work done]
-    Review[Review]
-    Merged[Merged]
-    C[Closed]
-
-    
-    S1 --> I
-    S2 -- Generates --> I
-    I -- Added to --> P
-    P --> R
-    R --> P
-    P -- Issue added to --> M
-    M --> Ready
-    Ready --> W
-    W --> Review
-    Review --> Merged
-    Merged --> C
-```
-#### Git Workflow
-
-```mermaid
----
-title: Git Workflow
----
-gitGraph
-   commit
-   commit
-   branch development
-   checkout development
-   commit
-   commit
-   branch dev/issNum-some-issue
-   checkout dev/issNum-some-issue
-   commit
-   commit
-   checkout development
-   merge dev/issNum-some-issue
-   checkout main
-   merge development
-   commit
-   commit
-```
+Check out our [Development Documentation](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/development/CONTRIBUTING.md#how-to-contribute-to-the-codebase)
 
 
 ### Did you find a bug?
@@ -80,7 +25,7 @@ gitGraph
 * Ensure the PR description clearly describes the problem and solution. Include the relevant issue number if applicable.
 
 * Ensure you are working off of the `development` branch, and making your PR merge into that branch.
-  
+
 * Typically, working branches are structured as `dev/<issue # / name>`, to help denote the branch flow
 
 ### **Do you intend to add a new feature or change an existing one?**
@@ -89,7 +34,9 @@ gitGraph
 
 * Do not open an issue on GitHub until you have collected positive feedback about the change. GitHub issues are primarily intended for bug reports and fixes.
 
-### **Do you have questions about the source code?**
+### **Do you have questions about... anything?**
 
-* Ask any question in [Github Discussions](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/discussions)
+Ask any question in:
+ * [Github Discussions](https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/discussions)
+ * Our [Discord](https://discord.gg/cpcVh6SyNn)
 
