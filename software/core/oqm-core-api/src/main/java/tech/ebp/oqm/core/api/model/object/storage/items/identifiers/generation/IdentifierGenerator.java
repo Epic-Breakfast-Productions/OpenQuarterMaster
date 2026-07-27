@@ -71,9 +71,11 @@ public class IdentifierGenerator extends MainObject {
 
     /**
      * The last date period that was incremented. This is used to determine if the increment should reset or not.
+     * Used by {@link IdentifierGenerationService#getNextId(IdentifierGenerator)}
      */
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String lastIncrementedDatePeriod;
-	
+
 	/**
 	 * The last generated increment
 	 */

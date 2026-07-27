@@ -25,8 +25,10 @@ import java.util.Base64;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.MatchResult;
@@ -50,6 +52,7 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 	private static final int RAND_DEFAULT_LENGTH = 6;
 	private static final int INC_DEFAULT_PADDING = 6;
 	private static final int INC_DEFAULT_BASE = 10;
+    private static final Map<String, DateTimeFormatter> DATE_FORMATTER_CACHE = new ConcurrentHashMap<>();
 	
 	/**
 	 * Actually generates the next id in the sequence.
@@ -223,7 +226,7 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
                         }
 
                         String dateFormat = args[0];
-                        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
+                        DateTimeFormatter formatter = getDateFormatter(dateFormat);
                         String currentPeriod = LocalDateTime.now(ZoneId.systemDefault()).format(formatter);
                         String previousPeriod = generator.getLastIncrementedDatePeriod();
                         BigInteger lastNum = BigInteger.ZERO;
@@ -421,4 +424,8 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
 		
 		return output;
 	}
+
+    private static DateTimeFormatter getDateFormatter(String format) {
+        return DATE_FORMATTER_CACHE.computeIfAbsent(format, DateTimeFormatter::ofPattern);
+    }
 }
