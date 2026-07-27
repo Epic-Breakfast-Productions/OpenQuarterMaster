@@ -239,7 +239,42 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 		
 		assertEquals("000002", output.getGeneratedIds().getFirst().getValue());
 	}
-	
+
+    @Test
+    public void timeIncrementTest() {
+        IdentifierGenerator gen = IdentifierGenerator.builder()
+            .name(FAKER.name().name())
+            .idFormat("{dateinc;yyyy-MM;6;10}")
+            .build();
+
+        User testUser = TestUserService.getInstance().getTestUser();
+        this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
+        IdGenResult output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+        String first = output.getGeneratedIds().getFirst().getValue();
+        assertTrue(first.matches("\\d{4}-\\d{2}-000001"));
+        output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+        String second = output.getGeneratedIds().getFirst().getValue();
+        assertTrue(second.matches("\\d{4}-\\d{2}-000002"));
+    }
+
+    @Test
+    public void timeIncrementResetTest() {
+        IdentifierGenerator gen = IdentifierGenerator.builder()
+            .name(FAKER.name().name())
+            .idFormat("{dateinc;yyyy;6;10}")
+            .lastIncremented(BigInteger.valueOf(1974))
+            .lastIncrementedDatePeriod("1984")
+            .build();
+
+        User testUser = TestUserService.getInstance().getTestUser();
+        this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
+        IdGenResult output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+        String first = output.getGeneratedIds().getFirst().getValue();
+        assertTrue(first.matches("\\d{4}-\\d{2}-000001"));
+        output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+        String second = output.getGeneratedIds().getFirst().getValue();
+        assertTrue(second.matches("\\d{4}-\\d{2}-000002"));
+    }
 	
 	public static Stream<Arguments> getThreadTestParams() {
 		List<Arguments> output = new ArrayList<>();
