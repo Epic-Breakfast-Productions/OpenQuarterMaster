@@ -195,8 +195,9 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
                         }
                         hadInc.set(true);
 
-                        if (args.length == 0 || args[0].isBlank())
+                        if (args.length == 0 || args[0].isBlank()){
                             throw new IllegalArgumentException("dateinc requires a date format.");
+                        }
 
                         int padding = INC_DEFAULT_PADDING;
                         int base = INC_DEFAULT_BASE;
@@ -224,7 +225,7 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
                         String dateFormat = args[0];
                         DateTimeFormatter formatter = DateTimeFormatter.ofPattern(dateFormat);
                         String currentPeriod = LocalDateTime.now(ZoneId.systemDefault()).format(formatter);
-                        String previousPeriod = generator.getLastIncrementedDate();
+                        String previousPeriod = generator.getLastIncrementedDatePeriod();
                         BigInteger lastNum = BigInteger.ZERO;
 
                         if (currentPeriod.equals(previousPeriod) && generator.getLastIncremented() != null) {
@@ -245,7 +246,7 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
                         sb.append(formattedNumber);
 
                         generator.setLastIncremented(newNum);
-                        generator.setLastIncrementedDate(currentPeriod);
+                        generator.setLastIncrementedDatePeriod(currentPeriod);
                     }
                     break;
                     default:
