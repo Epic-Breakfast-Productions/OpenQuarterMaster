@@ -6,6 +6,9 @@ plugins {
 	id "io.freefair.lombok" version "8.14"
 }
 
+group 'tech.ebp.oqm.plugin'
+version '1.0.0-SNAPSHOT'
+
 repositories {
 	mavenCentral()
 	mavenLocal()
@@ -25,6 +28,7 @@ dependencies {
 	implementation 'io.quarkus:quarkus-oidc'
 	implementation 'io.quarkus:quarkus-smallrye-openapi'
 	implementation 'io.quarkus:quarkus-micrometer-opentelemetry'
+	implementation 'io.quarkus:quarkus-container-image-docker'
 
 	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:6.0.0'
 
@@ -38,9 +42,6 @@ dependencies {
 	testImplementation 'net.datafaker:datafaker:2.4.4'
 }
 
-group 'tech.ebp.oqm.plugin'
-version '1.0.0-SNAPSHOT'
-
 java {
 	sourceCompatibility = JavaVersion.VERSION_25
 	targetCompatibility = JavaVersion.VERSION_25
@@ -50,6 +51,7 @@ java {
 test {
 	systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
 }
+
 compileJava {
 	options.encoding = 'UTF-8'
 	options.compilerArgs << '-parameters'
