@@ -10,6 +10,12 @@ mp:
 #            reset: "earliest"
 
 quarkus:
+  container-image:
+    name: oqm-plugin-image_search
+    group: ebprod
+  http:
+    port: 8080
+    ssl-port: 8443
   log:
     level: "INFO"
   mongodb:
