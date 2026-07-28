@@ -270,10 +270,10 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
         this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
         IdGenResult output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
         String first = output.getGeneratedIds().getFirst().getValue();
-        assertTrue(first.matches("\\d{4}-\\d{2}-000001"));
+        assertTrue(first.matches("\\d{4}-000001"));
         output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
         String second = output.getGeneratedIds().getFirst().getValue();
-        assertTrue(second.matches("\\d{4}-\\d{2}-000002"));
+        assertTrue(second.matches("\\d{4}-000002"));
     }
 	
 	public static Stream<Arguments> getThreadTestParams() {
