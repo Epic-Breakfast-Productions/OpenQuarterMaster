@@ -1,13 +1,17 @@
 package tech.ebp.oqm.plugin.mssController.service.mssConn;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Validator;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.config.ModuleConfig;
 import tech.ebp.oqm.plugin.mssController.model.exception.ModuleSetupFailedException;
+import tech.ebp.oqm.plugin.mssController.service.db.ModuleRecordRepository;
+import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.ConnState;
 import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.MssConnector;
 import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial.SerialMssConnector;
 
@@ -15,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Slf4j
+@Getter(AccessLevel.PRIVATE)
 @ApplicationScoped
 public class MssConnectionService {
 
@@ -30,18 +35,32 @@ public class MssConnectionService {
 	@Inject
 	Validator validator;
 
+	@Inject
+	ModuleRecordRepository mrr;
+
 	@Getter
-	private List<MssConnector> connectors = new ArrayList<>();
+	private List<MssConnector> activeConnections = new ArrayList<>();
 
 	@Getter
 	private List<ModuleSetupFailedException> moduleSetupFailedExceptions = new ArrayList<>();
 
 
-	public void initializeMssConnections(){
-		log.info("Setting up MSS connection service.");
+	public void cullDisconnectedModules() {
+		for(MssConnector curConn : this.getActiveConnections()){
+			switch (curConn.getConnState()){
+				case DEGRADED -> {
+					log.warn("Connector for MSS module {} marked as {}", curConn.getModuleInfo().getSerialId(), curConn.getConnState());
 
-		log.info("Serial modules from config: {}", this.moduleConfig.serial().modules());
+					//TODO:: do what?
+				}
+				case FAIL -> {
+					//TODO:: do anything?
+				}
+			}
+		}
+	}
 
+	public void scanModules() {
 		for (ModuleConfig.SerialConfig.SerialModuleConfig module : this.moduleConfig.serial().modules()) {
 
 			try {
@@ -51,13 +70,11 @@ public class MssConnectionService {
 					module,
 					moduleConfig.serial().timings()
 				);
-				this.connectors.add(connector);
+				this.activeConnections.add(connector);
 			} catch(ModuleSetupFailedException e) {
 				log.error("Failed to setup serial module: {}", module, e);
 				this.moduleSetupFailedExceptions.add(e);
 			}
-
-
 		}
 
 		//TODO:: serial scanning
@@ -65,9 +82,31 @@ public class MssConnectionService {
 		//TODO:: net modules
 		//TODO:: net scanning
 
+		for(MssConnector curConn : this.getActiveConnections()){
+			this.getMrr().ensurePresent(curConn);
+		}
+	}
+
+
+	public void initializeMssConnections() {
+		log.info("Setting up MSS connection service.");
+
+		log.info("Serial modules from config: {}", this.moduleConfig.serial().modules());
+
+		this.scanModules();
+
 		this.setUp = true;
 	}
 
+	@Scheduled(every = "${moduleConfig.management.scheduledEvery}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+	public void manageModules() {
+		log.debug("Managing Modules.");
+
+		this.cullDisconnectedModules();
+		this.scanModules();
+
+		log.debug("Done managing modules.");
+	}
 
 
 }

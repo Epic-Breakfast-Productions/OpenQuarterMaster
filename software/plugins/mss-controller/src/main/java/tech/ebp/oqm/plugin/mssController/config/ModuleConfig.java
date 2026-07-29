@@ -6,6 +6,7 @@ import io.smallrye.config.WithName;
 
 import java.nio.file.Path;
 import java.time.Duration;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
@@ -21,6 +22,9 @@ public interface ModuleConfig {
 
 	@WithName("net")
 	NetConfig net();
+
+	@WithName("management")
+	ManagementConfig management();
 
 	interface SerialConfig {
 
@@ -55,9 +59,9 @@ public interface ModuleConfig {
 			@WithDefault("false")
 			boolean enabled();
 
-			@WithName("scanDir")
+			@WithName("scanDirs")
 			@WithDefault("/dev/")//TODO:: doublecheck
-			String scanDir();
+			List<String> scanDirs();
 		}
 	}
 
@@ -76,6 +80,16 @@ public interface ModuleConfig {
 			@WithName("secret")
 			Optional<String> secret();
 		}
+	}
+
+	interface ManagementConfig {
+		@WithName("scheduledEvery")
+		@WithDefault("1s")
+		String every();
+
+		@WithName("failTimeout")
+		@WithDefault("10s")
+		Duration failTimeout();
 	}
 
 }

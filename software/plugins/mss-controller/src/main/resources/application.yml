@@ -36,6 +36,8 @@ quarkus:
             port: 9328
             realm-path: "dev/oqm-realm.json"
             realm-name: oqm
+    datasource:
+        db-kind: postgresql
 
 smallrye:
     jwt:
@@ -63,6 +65,9 @@ smallrye:
             credentials:
                 secret: "**********"
         #      auth-server-url: http://localhost:8115/realms/oqm
+        hibernate-orm:
+          schema-management:
+              strategy: drop-and-create
     oqm:
         core:
             api:

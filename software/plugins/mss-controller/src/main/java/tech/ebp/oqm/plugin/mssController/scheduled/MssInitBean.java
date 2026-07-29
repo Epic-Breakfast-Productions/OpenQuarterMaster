@@ -4,6 +4,7 @@ import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.event.Observes;
 import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.service.mssConn.MssConnectionService;
 
@@ -14,7 +15,7 @@ public class MssInitBean {
 	@Inject
 	MssConnectionService mssConnectionService;
 
-
+	@Transactional
 	void onStartUp(
 		@Observes
 		StartupEvent ev

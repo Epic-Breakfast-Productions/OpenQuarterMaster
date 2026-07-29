@@ -26,6 +26,8 @@ dependencies {
 	implementation 'io.quarkus:quarkus-oidc'
 	implementation 'io.quarkus:quarkus-rest-csrf'
 	implementation 'io.quarkus:quarkus-arc'
+	implementation 'io.quarkus:quarkus-hibernate-orm-panache'
+	implementation 'io.quarkus:quarkus-jdbc-postgresql'
 
 	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-characteristics-lib-quarkus:1.1.1'
 	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:6.0.0'

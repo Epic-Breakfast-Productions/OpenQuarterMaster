@@ -19,3 +19,6 @@ quarkus:
         credentials:
             secret: "**********"
     #      auth-server-url: http://localhost:8115/realms/oqm
+    hibernate-orm:
+        schema-management:
+            strategy: drop-and-create
