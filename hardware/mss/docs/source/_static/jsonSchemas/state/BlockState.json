@@ -22,6 +22,11 @@
 			"description": "If this block is locked.",
 			"type": "string",
 			"enum": [ "LOCKED", "UNLOCKED" ]
+		},
+		"open": {
+			"description": "If this block is open or closed.",
+			"type": "string",
+			"enum": [ "OPENED", "CLOSED" ]
 		}
 	},
 	"required": [

@@ -56,6 +56,10 @@
 					"description": "If this module supports physically locking blocks.",
 					"type": "boolean"
 				},
+				"openState": {
+					"description": "If this module supports reporting blocks being open or closed.",
+					"type": "boolean"
+				},
 				"userNotifying": {
 					"description": "If this module supports notifying users about things.",
 					"type": "boolean"
