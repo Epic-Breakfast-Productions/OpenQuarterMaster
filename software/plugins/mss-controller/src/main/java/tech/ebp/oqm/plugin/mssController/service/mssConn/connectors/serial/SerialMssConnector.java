@@ -17,12 +17,10 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.Comma
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.Message;
 import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.MssConnector;
 
-import java.time.Duration;
+import java.nio.file.Path;
 import java.time.Instant;
-import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
 
@@ -104,5 +102,9 @@ public class SerialMssConnector extends MssConnector implements AutoCloseable {
 		if(this.port != null){
 			this.port.close();
 		}
+	}
+
+	public Path getPortPath(){
+		return this.getPort().getPortPath();
 	}
 }

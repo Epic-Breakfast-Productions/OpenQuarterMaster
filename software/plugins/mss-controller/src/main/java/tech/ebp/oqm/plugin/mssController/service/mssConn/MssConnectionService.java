@@ -66,8 +66,17 @@ public class MssConnectionService {
 		}
 	}
 
-	public void scanModules() {
+	public void scanModules(boolean rescan) {
 		for (ModuleConfig.SerialConfig.SerialModuleConfig module : this.moduleConfig.serial().modules()) {
+
+			if(
+				rescan &&
+				this.getActiveConnections().values().stream()
+					.filter((m)->m instanceof SerialMssConnector)
+					.anyMatch((m)->((SerialMssConnector) m).getPortPath().equals(module.portPath()))
+			){
+				continue;
+			}
 
 			try {
 				SerialMssConnector connector = new SerialMssConnector(
@@ -100,7 +109,7 @@ public class MssConnectionService {
 
 		log.info("Serial modules from config: {}", this.moduleConfig.serial().modules());
 
-		this.scanModules();
+		this.scanModules(false);
 
 		this.setUp = true;
 	}
@@ -110,7 +119,7 @@ public class MssConnectionService {
 		log.debug("Managing Modules.");
 
 		this.cullDisconnectedModules();
-//		this.scanModules();
+		this.scanModules(true);
 
 		log.debug("Done managing modules.");
 	}

@@ -36,6 +36,8 @@ import java.util.concurrent.locks.ReentrantLock;
 @Slf4j
 public class SerialPortWrapper implements AutoCloseable {
 
+	@Getter
+	private final Path portPath;
 	private final ReentrantLock lock = new ReentrantLock();
 	private final ObjectMapper objectMapper;
 	private final Duration commSpacing;
@@ -62,6 +64,7 @@ public class SerialPortWrapper implements AutoCloseable {
 		Duration commandResponseTimeout
 	) throws SerialPortSetupFailedException {
 		log.info("Setting up connection to MSS serial port: {}", portPath);
+		this.portPath = portPath;
 		this.objectMapper = objectMapper;
 		this.commSpacing = commSpacing;
 		this.commandResponseTimeout = commandResponseTimeout;
