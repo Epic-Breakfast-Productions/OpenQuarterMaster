@@ -1,6 +1,6 @@
-package tech.ebp.oqm.plugin.mssController.model.exception;
+package tech.ebp.oqm.plugin.mssController.model.exception.command;
 
-public class MssCommandTimeoutException extends Exception {
+public class MssCommandTimeoutException extends MssCommandError {
 
 	public MssCommandTimeoutException() {
 	}

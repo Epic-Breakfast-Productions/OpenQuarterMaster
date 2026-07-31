@@ -13,10 +13,9 @@ import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import tech.ebp.oqm.plugin.mssController.model.exception.MssCommandTimeoutException;
-import tech.ebp.oqm.plugin.mssController.model.exception.SerialModuleLockRequiredException;
-import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortClosedException;
-import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortSetupFailedException;
+import tech.ebp.oqm.plugin.mssController.model.exception.module.serial.SerialModuleLockRequiredException;
+import tech.ebp.oqm.plugin.mssController.model.exception.module.serial.SerialPortClosedException;
+import tech.ebp.oqm.plugin.mssController.model.exception.module.serial.SerialPortSetupFailedException;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.Message;
 

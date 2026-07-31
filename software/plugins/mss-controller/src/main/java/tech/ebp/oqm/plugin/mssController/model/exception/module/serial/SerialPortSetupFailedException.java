@@ -1,4 +1,6 @@
-package tech.ebp.oqm.plugin.mssController.model.exception;
+package tech.ebp.oqm.plugin.mssController.model.exception.module.serial;
+
+import tech.ebp.oqm.plugin.mssController.model.exception.module.ModuleSetupFailedException;
 
 public class SerialPortSetupFailedException extends ModuleSetupFailedException {
 

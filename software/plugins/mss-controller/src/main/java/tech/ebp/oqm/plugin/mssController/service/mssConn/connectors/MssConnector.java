@@ -14,7 +14,8 @@ import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
-import tech.ebp.oqm.plugin.mssController.model.exception.ModuleSetupFailedException;
+import tech.ebp.oqm.plugin.mssController.model.exception.command.MssCommandError;
+import tech.ebp.oqm.plugin.mssController.model.exception.module.ModuleSetupFailedException;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleInfoCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
@@ -23,14 +24,12 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.Message;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
 
 import java.time.ZonedDateTime;
-import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -133,9 +132,18 @@ public abstract class MssConnector {
 
 	protected abstract CommandResponse sendCommandImpl(Command command) throws Exception;
 
-	public CommandResponse sendCommand(@Valid Command command) throws Exception {
+	public String getSerialId(){
+		return this.getModuleInfo().getSerialId();
+	}
+
+	public CommandResponse sendCommand(@Valid Command command) throws MssCommandError {
 		log.info("Sending command: {}", command);
-		CommandResponse response = this.sendCommandImpl(command);
+		CommandResponse response = null;
+		try {
+			response = this.sendCommandImpl(command);
+		} catch(Exception e) {
+			throw new MssCommandError("Failed to run command.", e);
+		}
 		log.info("Command response: {}", response);
 		//TODO:: error check
 		this.setLastComm(ZonedDateTime.now());

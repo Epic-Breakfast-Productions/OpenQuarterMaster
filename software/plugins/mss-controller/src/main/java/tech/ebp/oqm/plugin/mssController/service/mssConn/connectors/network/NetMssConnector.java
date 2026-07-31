@@ -7,7 +7,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.config.ModuleConfig;
-import tech.ebp.oqm.plugin.mssController.model.exception.ModuleSetupFailedException;
+import tech.ebp.oqm.plugin.mssController.model.exception.module.ModuleSetupFailedException;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.Message;

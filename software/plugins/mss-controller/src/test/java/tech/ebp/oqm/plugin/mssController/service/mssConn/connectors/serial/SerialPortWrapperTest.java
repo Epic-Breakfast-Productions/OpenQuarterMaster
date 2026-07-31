@@ -1,18 +1,14 @@
 package tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial;
 
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
-import org.awaitility.Durations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
-import tech.ebp.oqm.plugin.mssController.model.exception.SerialModuleLockRequiredException;
-import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortClosedException;
-import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortSetupFailedException;
+import tech.ebp.oqm.plugin.mssController.model.exception.module.serial.SerialModuleLockRequiredException;
+import tech.ebp.oqm.plugin.mssController.model.exception.module.serial.SerialPortClosedException;
+import tech.ebp.oqm.plugin.mssController.model.exception.module.serial.SerialPortSetupFailedException;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponseType;
-import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.Message;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.report.InventoryEventReport;
-import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.report.UniqueItemReport;
 import tech.ebp.oqm.plugin.mssController.testResources.serial.SocatProcess;
 
 import java.io.IOException;

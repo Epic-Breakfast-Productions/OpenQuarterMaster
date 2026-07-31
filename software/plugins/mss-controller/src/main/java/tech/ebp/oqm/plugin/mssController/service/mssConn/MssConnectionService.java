@@ -6,12 +6,20 @@ import io.quarkus.vertx.ConsumeEvent;
 import io.vertx.mutiny.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.config.ModuleConfig;
-import tech.ebp.oqm.plugin.mssController.model.exception.ModuleSetupFailedException;
+import tech.ebp.oqm.plugin.mssController.model.exception.command.MssCommandError;
+import tech.ebp.oqm.plugin.mssController.model.exception.command.MssCommandReturnedError;
+import tech.ebp.oqm.plugin.mssController.model.exception.module.ModuleConnectionNotOkException;
+import tech.ebp.oqm.plugin.mssController.model.exception.module.ModuleSetupFailedException;
+import tech.ebp.oqm.plugin.mssController.model.exception.module.MssModuleNotFoundException;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponseType;
 import tech.ebp.oqm.plugin.mssController.service.db.ModuleRecordRepository;
 import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.ConnState;
 import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.MssConnector;
@@ -124,12 +132,42 @@ public class MssConnectionService {
 		log.debug("Done managing modules.");
 	}
 
+	public CommandResponse sendCommand(String serialId, @Valid Command command) throws MssModuleNotFoundException, ModuleConnectionNotOkException, MssCommandError {
+		log.info("Sending command to module: {} - {}", serialId, command);
+
+		MssConnector connector = this.getActiveConnections().get(serialId);
+
+		if(connector == null){
+			throw new MssModuleNotFoundException(serialId);
+		}
+
+		if(!ConnState.OK.equals(connector.getConnState())){
+			throw new ModuleConnectionNotOkException(connector);
+		}
+
+		CommandResponse output = connector.sendCommand(command);
+
+		if(!CommandResponseType.OK.equals(output.getStatus())){
+			log.warn("Command returned with error: {} / {}", output.getStatus(), output);
+			throw new MssCommandReturnedError(
+				serialId,
+				command,
+				output
+			);
+		}
+
+		log.info("Command sent with successful response: {}", output);
+
+		return output;
+	}
+
 
 	@ConsumeEvent("module-event-msg-received")
 	void handleMsgReceivedEvent(String moduleSerialId){
 		log.info("Received an event that a module has a new message: {}", moduleSerialId);
 
 		//TODO:: act on it
+
 	}
 
 

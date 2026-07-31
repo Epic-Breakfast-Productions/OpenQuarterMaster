@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.mssController.model.exception;
+package tech.ebp.oqm.plugin.mssController.model.exception.module.serial;
 
 public class SerialPortClosedException extends Exception {
 

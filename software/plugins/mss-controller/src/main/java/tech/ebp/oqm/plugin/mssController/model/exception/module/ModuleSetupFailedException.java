@@ -1,7 +1,6 @@
-package tech.ebp.oqm.plugin.mssController.model.exception;
+package tech.ebp.oqm.plugin.mssController.model.exception.module;
 
 import lombok.Getter;
-import tech.ebp.oqm.plugin.mssController.config.ModuleConfig;
 
 public class ModuleSetupFailedException extends Exception {
 
