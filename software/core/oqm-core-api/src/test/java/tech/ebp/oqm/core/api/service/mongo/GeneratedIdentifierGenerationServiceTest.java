@@ -25,6 +25,7 @@ import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import java.math.BigInteger;
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -251,10 +252,10 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
         this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
         IdGenResult output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
         String first = output.getGeneratedIds().getFirst().getValue();
-        assertTrue(first.matches("\\d{4}-\\d{2}-000001"));
+        assertTrue(first.matches("\\d{4}-\\d{2}000001"));
         output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
         String second = output.getGeneratedIds().getFirst().getValue();
-        assertTrue(second.matches("\\d{4}-\\d{2}-000002"));
+        assertTrue(second.matches("\\d{4}-\\d{2}000002"));
     }
 
     @Test
@@ -270,10 +271,33 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
         this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
         IdGenResult output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
         String first = output.getGeneratedIds().getFirst().getValue();
-        assertTrue(first.matches("\\d{4}-000001"));
+        assertTrue(first.matches("\\d{4}000001"));
         output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
         String second = output.getGeneratedIds().getFirst().getValue();
-        assertTrue(second.matches("\\d{4}-000002"));
+        assertTrue(second.matches("\\d{4}000002"));
+    }
+
+    @Test
+    public void timeIncrementContinuesWithinExistingDatePeriodTest() {
+        String currentYear = java.time.LocalDate.now().format(DateTimeFormatter.ofPattern("yyyy"));
+        IdentifierGenerator gen = IdentifierGenerator.builder()
+            .name(FAKER.name().name())
+            .idFormat("{dateinc;yyyy;3;10}")
+            .lastIncremented(BigInteger.valueOf(1999))
+            .lastIncrementedDatePeriod(currentYear)
+            .build();
+
+        assertEquals(currentYear + "2000", IdentifierGenerationService.getNextId(gen));
+    }
+
+    @Test
+    public void dateIncrementAllowsUserSuppliedSeparatorTest() {
+        IdentifierGenerator gen = IdentifierGenerator.builder()
+            .name("test")
+            .idFormat("{dateinc;yyyy-MM-;6;10}")
+            .build();
+
+        assertTrue(IdentifierGenerationService.getNextId(gen).matches("\\d{4}-\\d{2}-000001"));
     }
 	
 	public static Stream<Arguments> getThreadTestParams() {
