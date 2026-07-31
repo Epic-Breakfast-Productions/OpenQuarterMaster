@@ -4,6 +4,7 @@ package tech.ebp.oqm.plugin.mssController.service.mssConn.connectors;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.vertx.mutiny.core.eventbus.EventBus;
 import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
 import jakarta.validation.Validator;
@@ -18,14 +19,18 @@ import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleInfoCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponseType;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.Message;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
 import java.util.Queue;
 import java.util.Set;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -33,11 +38,13 @@ public abstract class MssConnector {
 
 	@NonNull
 	@NotNull
+	@Getter(AccessLevel.PROTECTED)
+	private final EventBus eventBus;
+
+	@NonNull
+	@NotNull
 	@Getter
 	private final ModuleInfo moduleInfo;
-
-	@Getter
-	private final Queue<ObjectNode> incomingMessages = new ArrayDeque<>();
 
 	@NonNull
 	@NotNull
@@ -56,6 +63,17 @@ public abstract class MssConnector {
 	@Setter(AccessLevel.PROTECTED)
 	private ConnState connState;
 
+	public abstract Queue<Message> getIncomingMessages();
+
+	public Optional<Message> getNextMessage(){
+		try{
+			return Optional.of(this.getIncomingMessages().remove());
+		} catch(NoSuchElementException e) {
+			return Optional.empty();
+		}
+	}
+
+
 	protected void resetErrsSinceLastComm(){
 		this.errsSinceLastComm = new ArrayList<>();
 	}
@@ -65,8 +83,15 @@ public abstract class MssConnector {
 		this.resetErrsSinceLastComm();
 	}
 
-	protected MssConnector(Validator validator, ObjectMapper objectMapper, Object moduleConfig) throws ModuleSetupFailedException {
+	protected MssConnector(
+		Validator validator,
+		ObjectMapper objectMapper,
+		EventBus eventBus,
+		Object moduleConfig
+	) throws ModuleSetupFailedException {
 		log.info("Initializing new MSS module connector.");
+		this.eventBus = eventBus;
+
 		CommandResponse response = null;
 		try {
 			response = this.sendCommand(GetModuleInfoCommand.builder().build());

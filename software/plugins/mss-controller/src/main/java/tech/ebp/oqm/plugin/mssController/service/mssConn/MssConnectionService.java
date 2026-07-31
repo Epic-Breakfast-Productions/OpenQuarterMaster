@@ -2,6 +2,8 @@ package tech.ebp.oqm.plugin.mssController.service.mssConn;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.scheduler.Scheduled;
+import io.quarkus.vertx.ConsumeEvent;
+import io.vertx.mutiny.core.eventbus.EventBus;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.validation.Validator;
@@ -17,6 +19,7 @@ import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial.Seria
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 
 @Slf4j
 @Getter(AccessLevel.PRIVATE)
@@ -36,17 +39,20 @@ public class MssConnectionService {
 	Validator validator;
 
 	@Inject
+	EventBus eventBus;
+
+	@Inject
 	ModuleRecordRepository mrr;
 
 	@Getter
-	private List<MssConnector> activeConnections = new ArrayList<>();
+	private TreeMap<String, MssConnector> activeConnections = new TreeMap<>();
 
 	@Getter
 	private List<ModuleSetupFailedException> moduleSetupFailedExceptions = new ArrayList<>();
 
 
 	public void cullDisconnectedModules() {
-		for(MssConnector curConn : this.getActiveConnections()){
+		for(MssConnector curConn : this.getActiveConnections().values()){
 			switch (curConn.getConnState()){
 				case DEGRADED -> {
 					log.warn("Connector for MSS module {} marked as {}", curConn.getModuleInfo().getSerialId(), curConn.getConnState());
@@ -67,10 +73,11 @@ public class MssConnectionService {
 				SerialMssConnector connector = new SerialMssConnector(
 					validator,
 					this.objectMapper,
+					this.eventBus,
 					module,
 					moduleConfig.serial().timings()
 				);
-				this.activeConnections.add(connector);
+				this.activeConnections.put(connector.getModuleInfo().getSerialId(), connector);
 			} catch(ModuleSetupFailedException e) {
 				log.error("Failed to setup serial module: {}", module, e);
 				this.moduleSetupFailedExceptions.add(e);
@@ -82,7 +89,7 @@ public class MssConnectionService {
 		//TODO:: net modules
 		//TODO:: net scanning
 
-		for(MssConnector curConn : this.getActiveConnections()){
+		for(MssConnector curConn : this.getActiveConnections().values()){
 			this.getMrr().ensurePresent(curConn);
 		}
 	}
@@ -103,9 +110,17 @@ public class MssConnectionService {
 		log.debug("Managing Modules.");
 
 		this.cullDisconnectedModules();
-		this.scanModules();
+//		this.scanModules();
 
 		log.debug("Done managing modules.");
+	}
+
+
+	@ConsumeEvent("module-event-msg-received")
+	void handleMsgReceivedEvent(String moduleSerialId){
+		log.info("Received an event that a module has a new message: {}", moduleSerialId);
+
+		//TODO:: act on it
 	}
 
 

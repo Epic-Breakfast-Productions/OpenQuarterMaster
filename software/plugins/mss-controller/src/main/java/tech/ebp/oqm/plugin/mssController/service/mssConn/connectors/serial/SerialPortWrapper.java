@@ -1,6 +1,8 @@
 package tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial;
 
+import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.JsonToken;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fazecast.jSerialComm.SerialPort;
@@ -15,19 +17,20 @@ import tech.ebp.oqm.plugin.mssController.model.exception.MssCommandTimeoutExcept
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialModuleLockRequiredException;
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortClosedException;
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortSetupFailedException;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.Message;
 
+import java.io.IOException;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.time.ZonedDateTime;
 import java.util.Optional;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
 /**
  * Thread-safe wrapper around a serial port for JSON communication with an MSS module.
- * <p>
- * Provides mutual exclusion via {@link ReentrantLock}, enforces a minimum spacing between messages, and handles blocking timeouts. Use {@link #startComm()} to begin a locked transaction, then {@link #write(Object)} or {@link #readJson()}
- * inside it.
  */
 @Getter(AccessLevel.PRIVATE)
 @Slf4j
@@ -38,8 +41,14 @@ public class SerialPortWrapper implements AutoCloseable {
 	private final Duration commSpacing;
 	private final Duration commandResponseTimeout;
 	private final SerialPort port;
+	private final Thread readingThread;
 
 	private ZonedDateTime noCommBefore = null;
+
+	@Getter
+	private Queue<Message> receivedMessages = new ConcurrentLinkedQueue<>();
+
+	private CommandResponse returnedResponse = null;
 
 
 	/** Opens the port and configures timeouts. */
@@ -69,20 +78,43 @@ public class SerialPortWrapper implements AutoCloseable {
 		newPort.addDataListener(new SerialPortDataListener() {
 			@Override
 			public int getListeningEvents() {
-				return SerialPort.LISTENING_EVENT_PORT_DISCONNECTED;
+				return
+//					SerialPort.LISTENING_EVENT_DATA_RECEIVED |
+				       SerialPort.LISTENING_EVENT_PORT_DISCONNECTED;
 			}
 
 			@Override
 			public void serialEvent(SerialPortEvent serialPortEvent) {
-				if (serialPortEvent.getEventType() == SerialPort.LISTENING_EVENT_PORT_DISCONNECTED) {
-					newPort.closePort();
+				switch (serialPortEvent.getEventType()) {
+					case SerialPort.LISTENING_EVENT_PORT_DISCONNECTED:
+						newPort.closePort();
+						break;
+					case SerialPort.LISTENING_EVENT_DATA_RECEIVED:
+//						handleDataReceived(serialPortEvent);
+						break;
+					default:
+						log.info("Got unhandling event: {}", serialPortEvent.getEventType());
 				}
 			}
 		});
 
-		if (!newPort.openPort((int) commSpacing.toMillis())) {
-			throw new SerialPortSetupFailedException(portPath);
-		}
+		int tries = 0;
+		do {
+			if (!newPort.openPort((int) commSpacing.toMillis())) {
+				int errCode = newPort.getLastErrorCode();
+
+				if(tries >= 3) {
+					log.error("FAILED to connect to serial port {}: {}", portPath, errCode);
+					throw new SerialPortSetupFailedException(portPath.toString() + " - Error: " + errCode);
+				}
+				tries++;
+				try {
+					Thread.sleep(100);
+				} catch(InterruptedException e) {
+					throw new RuntimeException(e);
+				}
+			}
+		} while (!newPort.isOpen());
 
 		newPort.setComPortTimeouts(
 			SerialPort.TIMEOUT_READ_BLOCKING | SerialPort.TIMEOUT_WRITE_BLOCKING,
@@ -93,7 +125,55 @@ public class SerialPortWrapper implements AutoCloseable {
 		log.info("Connection to MSS serial port setup: {}", portPath);
 
 		this.port = newPort;
+
+		this.readingThread = Thread.startVirtualThread(this::readThreadMain);
 	}
+
+	private synchronized Optional<CommandResponse> getSetCommandResponse(Optional<CommandResponse> newResponse) {
+		Optional<CommandResponse> output = Optional.ofNullable(this.returnedResponse);
+
+		this.returnedResponse = newResponse.orElse(null);
+
+		return output;
+	}
+
+	public Optional<CommandResponse> getCommandresponse() {
+		return this.getSetCommandResponse(Optional.empty());
+	}
+
+	private void handleDataReceived(SerialPortEvent event) {
+		try {
+			log.debug("Received data from module: {} / {}", event, new String(event.getReceivedData()));
+
+			//TODO:: read from stream, not received data.
+
+
+			try (JsonParser parser = this.getObjectMapper().getFactory().createParser(event.getReceivedData())) {
+				while (parser.nextToken() != null) {
+					if (parser.currentToken() == JsonToken.START_OBJECT) {
+						ObjectNode json = parser.readValueAsTree();
+						if (json.has("msgType")) {
+							log.info("Message received from module: {}", json);
+							Message m = this.getObjectMapper().treeToValue(json, Message.class);
+							this.receivedMessages.add(m);
+							//TODO:: send message
+						} else if (json.has("status")) {
+							log.info("Command response received from module: {}", json);
+							CommandResponse r = this.getObjectMapper().treeToValue(json, CommandResponse.class);
+							this.getSetCommandResponse(Optional.of(r));
+						} else {
+							log.warn("Received unknown data from module: {}", json);
+						}
+					}
+				}
+			}
+
+		} catch(IOException e) {
+			//TODO:: handle this.
+			throw new RuntimeException("Failed to deserialize data received from model.", e);
+		}
+	}
+
 
 	/** Updates the comm-spacing deadline to now + configured spacing. */
 	public void updateNoCommBefore() {
@@ -215,6 +295,64 @@ public class SerialPortWrapper implements AutoCloseable {
 		return this.startComm(true);
 	}
 
+	private void readThreadMain(){
+		log.info("Starting port listening thread.");
+		int bytesAvail = 0;
+		while(this.isOpen()){
+			bytesAvail = this.getPort().bytesAvailable();
+
+			if(bytesAvail != 0){
+				log.info("Listening thread got bytes to read.");
+				ObjectNode json;
+				try {
+					json = this.readJson();
+				} catch(JsonProcessingException e) {
+					log.error("Failed to read in json: ", e);
+					continue;
+				}
+
+				try {
+					if (json.has("msgType")) {
+						log.info("Message received from module: {}", json);
+						Message m = this.getObjectMapper().treeToValue(json, Message.class);
+						this.receivedMessages.add(m);
+						//TODO:: send message
+					} else if (json.has("status")) {
+						log.info("Command response received from module: {}", json);
+						CommandResponse r = this.getObjectMapper().treeToValue(json, CommandResponse.class);
+						this.getSetCommandResponse(Optional.of(r));
+					} else {
+						log.warn("Received unknown data from module: {}", json);
+					}
+				} catch(JsonProcessingException e) {
+					log.error("Failed to parse json to object: ", e);
+					continue;
+				}
+			}
+
+			try {
+				Thread.sleep(50);
+			} catch(InterruptedException e) {
+				break;
+			}
+		}
+	}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 	/**
 	 * Reads a complete JSON object from the port using a brace-depth state machine.
 	 * <p>
@@ -223,9 +361,7 @@ public class SerialPortWrapper implements AutoCloseable {
 	 *
 	 * @return the parsed JSON node.
 	 */
-	public ObjectNode readJson() throws SerialModuleLockRequiredException, JsonProcessingException {
-		this.assertLockAcquired();
-
+	private ObjectNode readJson() throws SerialModuleLockRequiredException, JsonProcessingException {
 		final StringBuilder sb = new StringBuilder();
 
 		log.debug("Reading JSON from serial port...");
@@ -305,49 +441,53 @@ public class SerialPortWrapper implements AutoCloseable {
 		return (ObjectNode) this.getObjectMapper().readTree(output);
 	}
 
-	/** Returns true if any bytes are waiting on the port. Requires the lock. */
-	public boolean bytesAvailable() throws SerialModuleLockRequiredException {
-		this.assertLockAcquired();
-		return this.port.bytesAvailable() > 0;
-	}
+//	@Deprecated
+//	/** Returns true if any bytes are waiting on the port. Requires the lock. */
+//	public boolean bytesAvailable() throws SerialModuleLockRequiredException {
+//		this.assertLockAcquired();
+//		return this.port.bytesAvailable() > 0;
+//	}
 
-	/** Returns true if enough bytes are available for a minimal JSON message (>= 7 bytes). Requires the lock. */
-	public boolean messageAvailable() throws SerialModuleLockRequiredException {
-		this.assertLockAcquired();
-		int bytesAvailable = this.getPort().bytesAvailable();
-		log.debug("Bytes available: {}", bytesAvailable);
-		return bytesAvailable >= 7;//7 being the smallest size of a populated json document
-	}
+//	@Deprecated
+//	/** Returns true if enough bytes are available for a minimal JSON message (>= 7 bytes). Requires the lock. */
+//	public boolean messageAvailable() throws SerialModuleLockRequiredException {
+//		this.assertLockAcquired();
+//		int bytesAvailable = this.getPort().bytesAvailable();
+//		log.debug("Bytes available: {}", bytesAvailable);
+//		return bytesAvailable >= 7;//7 being the smallest size of a populated json document
+//	}
 
-	/** Drains all available JSON messages into the queue. Requires the lock. */
-	public void readAllMessages(Queue<ObjectNode> queue) throws SerialModuleLockRequiredException, JsonProcessingException {
-		this.assertLockAcquired();
-		while (this.bytesAvailable()) {
-			if (this.messageAvailable()) {
-				queue.add(this.readJson());
-			}
-		}
-	}
+//	@Deprecated
+//	/** Drains all available JSON messages into the queue. Requires the lock. */
+//	public void readAllMessages(Queue<ObjectNode> queue) throws SerialModuleLockRequiredException, JsonProcessingException {
+//		this.assertLockAcquired();
+//		while (this.bytesAvailable()) {
+//			if (this.messageAvailable()) {
+//				queue.add(this.readJson());
+//			}
+//		}
+//	}
 
-	/** Blocks until a JSON message arrives or the command-response timeout elapses. Requires the lock. */
-	public ObjectNode waitForMessage() throws JsonProcessingException, MssCommandTimeoutException {
-		this.assertLockAcquired();
-		ZonedDateTime timeoutTime = ZonedDateTime.now().plus(this.getCommandResponseTimeout());
-		while (!this.messageAvailable()) {
-			try {
-				Thread.sleep(100);
-			} catch(InterruptedException e) {
-				log.error("Interrupted while waiting for message", e);
-				throw new RuntimeException("Interrupted while waiting for message.", e);
-			}
-			//TODO:: timeout
-			if (ZonedDateTime.now().isAfter(timeoutTime)) {
-				log.error("Timed out waiting for message.");
-				throw new MssCommandTimeoutException();
-			}
-		}
-		return this.readJson();
-	}
+//	@Deprecated
+//	/** Blocks until a JSON message arrives or the command-response timeout elapses. Requires the lock. */
+//	public ObjectNode waitForMessage() throws JsonProcessingException, MssCommandTimeoutException {
+//		this.assertLockAcquired();
+//		ZonedDateTime timeoutTime = ZonedDateTime.now().plus(this.getCommandResponseTimeout());
+//		while (!this.messageAvailable()) {
+//			try {
+//				Thread.sleep(100);
+//			} catch(InterruptedException e) {
+//				log.error("Interrupted while waiting for message", e);
+//				throw new RuntimeException("Interrupted while waiting for message.", e);
+//			}
+//			//TODO:: timeout
+//			if (ZonedDateTime.now().isAfter(timeoutTime)) {
+//				log.error("Timed out waiting for message.");
+//				throw new MssCommandTimeoutException();
+//			}
+//		}
+//		return this.readJson();
+//	}
 
 	/** Closes the underlying serial port under the lock. */
 	@Override

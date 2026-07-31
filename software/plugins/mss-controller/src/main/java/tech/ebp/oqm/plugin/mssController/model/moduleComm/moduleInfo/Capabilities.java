@@ -24,6 +24,8 @@ public class Capabilities {
 	@Builder.Default
 	private boolean blockLocking = false;
 	@Builder.Default
+	private boolean openState = false;
+	@Builder.Default
 	private boolean userNotifying = false;
 
 }

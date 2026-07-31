@@ -31,9 +31,10 @@ class MssConnectionServiceTest extends RunningServerTest {
 
 	@Test
 	public void testGetSerialModule() throws Exception {
+		assertEquals(0, this.mssConnectionService.getModuleSetupFailedExceptions().size());
 		assertEquals(1, this.mssConnectionService.getActiveConnections().size());
 
-		MssConnector connector = this.mssConnectionService.getActiveConnections().get(0);
+		MssConnector connector = this.mssConnectionService.getActiveConnections().get(this.mssConnectionService.getActiveConnections().firstKey());
 
 		assertEquals(SerialMssConnector.class, connector.getClass());
 

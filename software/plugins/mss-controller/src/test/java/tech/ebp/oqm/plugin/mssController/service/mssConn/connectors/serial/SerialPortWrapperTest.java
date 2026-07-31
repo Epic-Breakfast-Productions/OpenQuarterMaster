@@ -2,11 +2,17 @@ package tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import lombok.extern.slf4j.Slf4j;
+import org.awaitility.Durations;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialModuleLockRequiredException;
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortClosedException;
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortSetupFailedException;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponseType;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.Message;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.report.InventoryEventReport;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.report.UniqueItemReport;
 import tech.ebp.oqm.plugin.mssController.testResources.serial.SocatProcess;
 
 import java.io.IOException;
@@ -15,7 +21,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicReference;
 
+import static org.awaitility.Awaitility.await;
 import static org.junit.jupiter.api.Assertions.*;
 import static tech.ebp.oqm.plugin.mssController.model.utils.JacksonUtils.OBJECT_MAPPER;
 
@@ -236,20 +244,35 @@ class SerialPortWrapperTest {
 				Duration.ofSeconds(1)
 			)
 		) {
-			ObjectNode one = OBJECT_MAPPER.createObjectNode().put("foo", "bar");
+			CommandResponse commandResponseOg = CommandResponse.builder()
+													.status(CommandResponseType.OK)
+													.build();
+
+
+			String one = OBJECT_MAPPER.writeValueAsString(commandResponseOg);
 
 			this.writeToTestPort(one.toString());
 
 			try(
 				SerialPortWrapper.CommAction a = serialPortWrapper.acquireLock()
 			) {
+				AtomicReference<Optional<CommandResponse>> responseOp = new AtomicReference<>();
+				await()
+					.atMost(Duration.ofSeconds(2))
+					.until(()->{
+						 responseOp.set(serialPortWrapper.getCommandresponse());
+						 return responseOp.get().isPresent();
+					});
 
-				assertEquals(one, serialPortWrapper.readJson());
+				CommandResponse response = responseOp.get().get();
+
+				assertEquals(commandResponseOg, response);
+
 			}
 		}
 	}
 	@Test
-	public void testReadMultiJson() throws IOException, SerialPortSetupFailedException {
+	public void testReadMultiJson() throws IOException, SerialPortSetupFailedException, InterruptedException {
 		this.setupSocatProcess();
 
 		try (
@@ -263,19 +286,28 @@ class SerialPortWrapperTest {
 				Duration.ofSeconds(1)
 			)
 		) {
-			ObjectNode one = OBJECT_MAPPER.createObjectNode().put("foo", "bar");
-			ObjectNode two = OBJECT_MAPPER.createObjectNode().put("fat", "bat");
+			int num = 50;
 
-
-			this.writeToTestPort(one.toString());
-			this.writeToTestPort(two.toString());
+			for(int i = 0; i < num; i++){
+				this.writeToTestPort(OBJECT_MAPPER.writeValueAsString(new InventoryEventReport()));
+				Thread.sleep(100);
+			}
 
 			try(
 				SerialPortWrapper.CommAction a = serialPortWrapper.acquireLock()
 			) {
+				await()
+					.atMost(Duration.ofSeconds(15))
+					.until(()->serialPortWrapper.getReceivedMessages().size() == num);
 
-				assertEquals(one, serialPortWrapper.readJson());
-				assertEquals(two, serialPortWrapper.readJson());
+				for(int i = 0; i < num; i++){
+					InventoryEventReport gotten = (InventoryEventReport) serialPortWrapper.getReceivedMessages().remove();
+
+					assertEquals(
+						new InventoryEventReport(),
+						gotten
+					);
+				}
 			}
 		}
 	}

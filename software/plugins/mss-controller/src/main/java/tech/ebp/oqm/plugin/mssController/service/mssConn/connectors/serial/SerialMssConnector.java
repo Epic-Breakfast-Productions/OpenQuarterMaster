@@ -3,6 +3,7 @@ package tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.vertx.mutiny.core.eventbus.EventBus;
 import jakarta.validation.Validator;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -13,8 +14,15 @@ import tech.ebp.oqm.plugin.mssController.model.exception.MssCommandTimeoutExcept
 import tech.ebp.oqm.plugin.mssController.model.exception.SerialPortClosedException;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.Message;
 import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.MssConnector;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.time.ZonedDateTime;
+import java.util.Optional;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.locks.ReentrantLock;
 
 
@@ -37,6 +45,7 @@ public class SerialMssConnector extends MssConnector implements AutoCloseable {
 	public SerialMssConnector(
 		Validator validator,
 		ObjectMapper mapper,
+		EventBus eventBus,
 		ModuleConfig.SerialConfig.SerialModuleConfig moduleConfig,
 		ModuleConfig.SerialConfig.Timings timings
 	) throws ModuleSetupFailedException {
@@ -53,20 +62,40 @@ public class SerialMssConnector extends MssConnector implements AutoCloseable {
 			timings.commandResponseTimeout()
 		);
 
-		super(validator, mapper, moduleConfig);
+		super(validator, mapper, eventBus, moduleConfig);
+	}
+
+	@Override
+	public Queue<Message> getIncomingMessages() {
+		return this.getPort().getReceivedMessages();
 	}
 
 	@Override
 	protected CommandResponse sendCommandImpl(Command command) throws SerialPortClosedException, JsonProcessingException, MssCommandTimeoutException {
 		try (
-			SerialPortWrapper.CommAction r = this.port.startComm()
+			SerialPortWrapper.CommAction commAction = this.port.startComm()
 		) {
-			this.port.readAllMessages(this.getIncomingMessages());
+			//TODO:: something to account for incoming messages?
 
 			this.port.write(command);
 
-			ObjectNode responseJson = this.port.waitForMessage();
-			return this.getObjectMapper().treeToValue(responseJson, CommandResponse.class);
+			Instant timeoutTime = Instant.now().plus(this.getTimings().commandResponseTimeout());
+			do{
+				Optional<CommandResponse> responseOp = this.getPort().getCommandresponse();
+
+				if(responseOp.isPresent()){
+					return responseOp.get();
+				}
+
+				try {
+					Thread.sleep(100);
+				} catch(InterruptedException e) {
+					log.error("Interrupted while waiting for message", e);
+					throw new RuntimeException("Interrupted while waiting for message.", e);
+				}
+			}while(timeoutTime.isAfter(Instant.now()));
+
+			throw new MssCommandTimeoutException();
 		}
 	}
 

@@ -1,6 +1,7 @@
 package tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.network;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import io.vertx.mutiny.core.eventbus.EventBus;
 import jakarta.validation.Validator;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -9,10 +10,13 @@ import tech.ebp.oqm.plugin.mssController.config.ModuleConfig;
 import tech.ebp.oqm.plugin.mssController.model.exception.ModuleSetupFailedException;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.Message;
 import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.MssConnector;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 @Getter(AccessLevel.PRIVATE)
 @Slf4j
@@ -21,10 +25,13 @@ public class NetMssConnector extends MssConnector {
 	private final MssModuleRestClient restClient;
 	private final String url;
 	private final String authorization;
+	@Getter
+	private Queue<Message> incomingMessages = new ConcurrentLinkedQueue<>();
 
 	public NetMssConnector(
 		Validator validator,
 		ObjectMapper mapper,
+		EventBus eventBus,
 		ModuleConfig.NetConfig.NetModuleConfig netModuleConfig,
 		MssModuleRestClient restClient
 	) throws ModuleSetupFailedException {
@@ -38,7 +45,7 @@ public class NetMssConnector extends MssConnector {
 						.getBytes(StandardCharsets.UTF_8)
 				);
 
-		super(validator, mapper, netModuleConfig);
+		super(validator, mapper, eventBus, netModuleConfig);
 
 		if (!this.getModuleInfo().getSerialId().equals(netModuleConfig.serialId())) {
 			throw new ModuleSetupFailedException("Serial id of module config does not match module info.");
