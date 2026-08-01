@@ -244,8 +244,8 @@ public class IdentifierGenerationService extends MongoHistoriedObjectService<Ide
                             .replace(' ', '0')
                             .toUpperCase();
 
+                        // Separators are part of the user-supplied format.
                         sb.append(currentPeriod);
-                        sb.append("-");
                         sb.append(formattedNumber);
 
                         generator.setLastIncremented(newNum);
