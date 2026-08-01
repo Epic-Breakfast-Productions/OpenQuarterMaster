@@ -15,13 +15,16 @@ import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.model.exception.command.MssCommandError;
+import tech.ebp.oqm.plugin.mssController.model.exception.command.MssCommandReturnedError;
 import tech.ebp.oqm.plugin.mssController.model.exception.module.ModuleSetupFailedException;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleInfoCommand;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleStateCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponse;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.response.CommandResponseType;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.message.Message;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.moduleInfo.ModuleInfo;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.ModuleState;
 
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
@@ -44,6 +47,11 @@ public abstract class MssConnector {
 	@NotNull
 	@Getter
 	private final ModuleInfo moduleInfo;
+
+	@NonNull
+	@NotNull
+	@Getter
+	private ModuleState lastModuleState;
 
 	@NonNull
 	@NotNull
@@ -100,12 +108,6 @@ public abstract class MssConnector {
 		}
 		log.info("Received response from module during init: {}.", response);
 
-		if(!CommandResponseType.OK.equals(response.getStatus())){
-			log.error("Could not get module info: {}", response);
-			this.setConnState(ConnState.FAIL);
-			throw new ModuleSetupFailedException(moduleConfig, "Could not get module info.");
-		}
-
 		ObjectNode responseData = response.getResponse();
 
 		try {
@@ -127,6 +129,20 @@ public abstract class MssConnector {
 
 		this.setConnState(ConnState.OK);
 
+		try {
+			response = this.sendCommand(new GetModuleStateCommand());
+		} catch(Exception e) {
+			this.setConnState(ConnState.FAIL);
+			throw new ModuleSetupFailedException(moduleConfig, "Failed to get module state during init.", e);
+		}
+		log.info("Received response from module during init: {}.", response);
+
+		try {
+			this.lastModuleState = objectMapper.treeToValue(response.getResponse(), ModuleState.class);
+		} catch(JsonProcessingException e) {
+			throw new ModuleSetupFailedException(moduleConfig, "Failed to get module state during init. Failed to parse state.", e);
+		}
+
 		log.info("Module initialized. Module info: {}", this.moduleInfo);
 	}
 
@@ -145,7 +161,16 @@ public abstract class MssConnector {
 			throw new MssCommandError("Failed to run command.", e);
 		}
 		log.info("Command response: {}", response);
-		//TODO:: error check
+
+		if(!CommandResponseType.OK.equals(response.getStatus())){
+			log.warn("Command returned with error: {} / {}", response.getStatus(), response);
+			throw new MssCommandReturnedError(
+				this.getSerialId(),
+				command,
+				response
+			);
+		}
+
 		this.setLastComm(ZonedDateTime.now());
 		return response;
 	}

@@ -27,7 +27,9 @@ import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial.Seria
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Slf4j
 @Getter(AccessLevel.PRIVATE)
@@ -53,7 +55,7 @@ public class MssConnectionService {
 	ModuleRecordRepository mrr;
 
 	@Getter
-	private TreeMap<String, MssConnector> activeConnections = new TreeMap<>();
+	private Map<String, MssConnector> activeConnections = new ConcurrentHashMap<>();
 
 	@Getter
 	private List<ModuleSetupFailedException> moduleSetupFailedExceptions = new ArrayList<>();
@@ -147,15 +149,6 @@ public class MssConnectionService {
 
 		CommandResponse output = connector.sendCommand(command);
 
-		if(!CommandResponseType.OK.equals(output.getStatus())){
-			log.warn("Command returned with error: {} / {}", output.getStatus(), output);
-			throw new MssCommandReturnedError(
-				serialId,
-				command,
-				output
-			);
-		}
-
 		log.info("Command sent with successful response: {}", output);
 
 		return output;
@@ -168,6 +161,10 @@ public class MssConnectionService {
 
 		//TODO:: act on it
 
+	}
+
+	public MssConnector getConnector(String serialId){
+		return this.getActiveConnections().get(serialId);
 	}
 
 

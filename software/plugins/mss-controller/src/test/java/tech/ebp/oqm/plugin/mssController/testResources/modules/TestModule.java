@@ -62,6 +62,10 @@ public class TestModule implements AutoCloseable {
 		return this.getEngine().getModuleState();
 	}
 
+	public String getModuleId(){
+		return this.getModuleInfo().getSerialId();
+	}
+
 	public void resetModuleState(){
 		this.engine.resetModuleState();
 	}
