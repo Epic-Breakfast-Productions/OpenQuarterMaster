@@ -51,6 +51,8 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 	
 	public static Stream<Arguments> getGenerationValidTestArgs() {
 		return Stream.of(
+			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{dateinc;yyyy-MM;6;10}").build(), "^\\d{4}-\\d{2}000001$"),
+			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{dateinc;yyyy-MM-;6;10}").build(), "^\\d{4}-\\d{2}-000001$"),
 			/*
 			 * Basics/ individual
 			 */
@@ -120,7 +122,11 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{inc;51}").build()),
 			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{inc;3;37}").build()),
 			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{inc;3;1}").build()),
-			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{inc}{inc}").build())
+			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{inc}{inc}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{dateinc}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{dateinc;yyyy;0;10}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{dateinc;yyyy;6;1}").build()),
+			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{dateinc;yyyy}{inc}").build())
 		);
 	}
 	
