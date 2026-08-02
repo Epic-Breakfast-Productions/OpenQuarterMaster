@@ -55,7 +55,7 @@ our `Compose Deployment Method <https://github.com/Epic-Breakfast-Productions/Op
        networks:
          - oqm_internal
        ports:
-         - "${CORE_API_PORT}:80"
+         - "${CORE_API_PORT}:8080"
        environment:
          "smallrye.jwt.verify.key.location": http://oqm-infra-keycloak:8080/realms/oqm/protocol/openid-connect/certs
          QUARKUS_MONGODB_CONNECTION-STRING: mongodb://${MONGO_ROOT_USERNAME}:${MONGO_ROOT_PASSWORD}@oqm-infra-mongo:27017
