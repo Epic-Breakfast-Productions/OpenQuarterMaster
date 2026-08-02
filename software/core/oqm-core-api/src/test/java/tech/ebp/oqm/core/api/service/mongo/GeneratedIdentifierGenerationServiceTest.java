@@ -45,10 +45,10 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 @Slf4j
 @QuarkusTest
 class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
-	
+
 	@Inject
 	IdentifierGenerationService identifierGenerationService;
-	
+
 	public static Stream<Arguments> getGenerationValidTestArgs() {
 		return Stream.of(
 			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{dateinc;yyyy-MM;6;10}").build(), "^\\d{4}-\\d{2}000001$"),
@@ -98,7 +98,7 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("foo-{inc}").encoded(true).build(), "^Zm9vLTAwMDAwMQ$")
 		);
 	}
-	
+
 	public static Stream<Arguments> getGenerationInValidTestArgs() {
 		return Stream.of(
 			//blank things
@@ -129,8 +129,8 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 			Arguments.of(IdentifierGenerator.builder().name("test").idFormat("{dateinc;yyyy}{inc}").build())
 		);
 	}
-	
-	
+
+
 	@ParameterizedTest
 	@MethodSource("getGenerationValidTestArgs")
 	public void validFormatTest(IdentifierGenerator generator, String expectedFormat) {
@@ -138,20 +138,20 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 		String result = IdentifierGenerationService.getNextId(generator);
 		sw.stop();
 		log.info("Generated ID in {}: {}", sw, result);
-		
+
 		assertNotNull(result);
 		assertTrue(
 			result.matches(expectedFormat),
 			"Generated ID (\"" + result + "\") does not match expected format: " + expectedFormat
 		);
 	}
-	
+
 	@ParameterizedTest
 	@MethodSource("getGenerationInValidTestArgs")
 	public void invalidFormatTest(IdentifierGenerator generator) {
 		assertThrows(IllegalArgumentException.class, ()->IdentifierGenerationService.getNextId(generator));
 	}
-	
+
 	@Test
 	public void getNewGeneralIdTest() {
 		IdentifierGenerator gen = IdentifierGenerator.builder()
@@ -160,22 +160,22 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 									  .build();
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
-		
+
 		IdGenResult output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
-		
+
 		log.info("Generated ID: {}", output);
-		
+
 		assertNotNull(output);
 		assertEquals(1, output.getGeneratedIds().size());
-		
+
 		GeneratedIdentifier id = output.getGeneratedIds().getFirst();
-		
+
 		assertEquals(gen.getId(), id.getGeneratedFrom());
 		assertEquals(gen.getName(), id.getLabel());
 		assertNotNull(id.getValue());
 		assertEquals(gen.isBarcode(), id.isBarcode());
 	}
-	
+
 	@Test
 	public void getNewUniqueIdTest() {
 		IdentifierGenerator gen = IdentifierGenerator.builder()
@@ -184,22 +184,22 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 									  .build();
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
-		
+
 		IdGenResult output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
-		
+
 		log.info("Generated ID: {}", output);
-		
+
 		assertNotNull(output);
 		assertEquals(1, output.getGeneratedIds().size());
-		
+
 		GeneratedIdentifier id = output.getGeneratedIds().getFirst();
-		
+
 		assertEquals(gen.getId(), id.getGeneratedFrom());
 		assertEquals(gen.getName(), id.getLabel());
 		assertNotNull(id.getValue());
 		assertEquals(gen.isBarcode(), id.isBarcode());
 	}
-	
+
 	@Test
 	public void getNewIdBarcodeTest() {
 		IdentifierGenerator gen = IdentifierGenerator.builder()
@@ -209,22 +209,22 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 									  .build();
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
-		
+
 		IdGenResult output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
-		
+
 		log.info("Generated ID: {}", output);
-		
+
 		assertNotNull(output);
 		assertEquals(1, output.getGeneratedIds().size());
-		
+
 		GeneratedIdentifier id = output.getGeneratedIds().getFirst();
-		
+
 		assertEquals(gen.getId(), id.getGeneratedFrom());
 		assertEquals(gen.getName(), id.getLabel());
 		assertNotNull(id.getValue());
 		assertEquals(gen.isBarcode(), id.isBarcode());
 	}
-	
+
 	@Test
 	public void incrementTest() {
 		IdentifierGenerator gen = IdentifierGenerator.builder()
@@ -233,17 +233,17 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 									  .build();
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
-		
+
 		IdGenResult output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
-		
+
 		log.info("Generated ID: {}", output);
-		
+
 		assertEquals("000001", output.getGeneratedIds().getFirst().getValue());
-		
+
 		output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
-		
+
 		log.info("Second Generated ID: {}", output);
-		
+
 		assertEquals("000002", output.getGeneratedIds().getFirst().getValue());
 	}
 
@@ -264,24 +264,51 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
         assertTrue(second.matches("\\d{4}-\\d{2}000002"));
     }
 
-    @Test
-    public void timeIncrementResetTest() {
-        IdentifierGenerator gen = IdentifierGenerator.builder()
-            .name(FAKER.name().name())
-            .idFormat("{dateinc;yyyy;6;10}")
-            .lastIncremented(BigInteger.valueOf(1974))
-            .lastIncrementedDatePeriod("1984")
-            .build();
+	@Test
+	public void timeIncrementResetTestYear() {
+		IdentifierGenerator gen = IdentifierGenerator.builder()
+									  .name(FAKER.name().name())
+									  .idFormat("{dateinc;yyyy-;6;10}")
+									  .lastIncremented(BigInteger.valueOf(1974))
+									  .lastIncrementedDatePeriod("1984")
+									  .build();
 
-        User testUser = TestUserService.getInstance().getTestUser();
-        this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
-        IdGenResult output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
-        String first = output.getGeneratedIds().getFirst().getValue();
-        assertTrue(first.matches("\\d{4}000001"));
-        output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
-        String second = output.getGeneratedIds().getFirst().getValue();
-        assertTrue(second.matches("\\d{4}000002"));
-    }
+		User testUser = TestUserService.getInstance().getTestUser();
+		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
+
+		IdGenResult output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+		String first = output.getGeneratedIds().getFirst().getValue();
+		log.info("First: {}", first);
+		assertTrue(first.matches("\\d{4}-000001"));
+
+		output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+		String second = output.getGeneratedIds().getFirst().getValue();
+		log.info("Second: {}", second);
+		assertTrue(second.matches("\\d{4}-000002"));
+	}
+
+	@Test
+	public void timeIncrementResetTestMonth() {
+		IdentifierGenerator gen = IdentifierGenerator.builder()
+									  .name(FAKER.name().name())
+									  .idFormat("{dateinc;yyyy-MM-;6;10}")
+									  .lastIncremented(BigInteger.valueOf(1974))
+									  .lastIncrementedDatePeriod("1984")
+									  .build();
+
+		User testUser = TestUserService.getInstance().getTestUser();
+		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
+
+		IdGenResult output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+		String first = output.getGeneratedIds().getFirst().getValue();
+		log.info("First: {}", first);
+		assertTrue(first.matches("\\d{4}-\\d{2}-000001"));
+
+		output = this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, gen.getId(), 1);
+		String second = output.getGeneratedIds().getFirst().getValue();
+		log.info("Second: {}", second);
+		assertTrue(second.matches("\\d{4}-\\d{2}-000002"));
+	}
 
     @Test
     public void timeIncrementContinuesWithinExistingDatePeriodTest() {
@@ -305,13 +332,13 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 
         assertTrue(IdentifierGenerationService.getNextId(gen).matches("\\d{4}-\\d{2}-000001"));
     }
-	
+
 	public static Stream<Arguments> getThreadTestParams() {
 		List<Arguments> output = new ArrayList<>();
-		
+
 		output.add(Arguments.of("{inc}", 2, 10, 5));
 		output.add(Arguments.of("{inc}", 10, 10, 20));
-		
+
 //		for (int curNumThreads : List.of(2, 5, 10, 20)) {
 //			for (int curNumIterations : List.of(10, 20)) {
 //				for (int curNumPerIteration : List.of(1, 2, 5, 10, 20)) {
@@ -319,7 +346,7 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 //				}
 //			}
 //		}
-		
+
 //		for (int curNumThreads : List.of(2, 10)) {
 //			for (int curNumIterations : List.of(10)) {
 //				for (int curNumPerIteration : List.of(1, 2, 5, 10, 20)) {
@@ -327,10 +354,10 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 //				}
 //			}
 //		}
-		
+
 		return output.stream();
 	}
-	
+
 	@ParameterizedTest
 	@MethodSource("getThreadTestParams")
 	public void generateThreadTest(String format, int numThreads, int numIterations, int numPerIteration) throws InterruptedException, ExecutionException {
@@ -340,10 +367,10 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 									  .build();
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
-		
+
 		List<Future<List<IdGenResult>>> futures = new ArrayList<>(numThreads);
 		SortedSet<GeneratedIdentifier> results = new TreeSet<>();
-		
+
 		StopWatch sw;
 		try (ExecutorService executor = Executors.newVirtualThreadPerTaskExecutor()) {
 			TestThread.TestThreadBuilder threadBuilder = TestThread.builder()
@@ -351,11 +378,11 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 												   .numIterations(numIterations)
 												   .numPerIteration(numPerIteration)
 												   .identifierGenerationService(this.identifierGenerationService);
-			
+
 			sw = StopWatch.createStarted();
 			for (int i = 1; i <= numThreads; i++) {
 				threadBuilder.threadId("testThread-" + i);
-				
+
 				futures.add(executor.submit(threadBuilder.build()));
 			}
 			executor.shutdown();
@@ -364,52 +391,52 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 			}
 			sw.stop();
 		}
-		
+
 		for (Future<List<IdGenResult>> future : futures) {
 			List<IdGenResult> curResultList = future.get();
-			
+
 			for (IdGenResult curResult : curResultList) {
 				assertEquals(numPerIteration, curResult.getGeneratedIds().size());
 				results.addAll(curResult.getGeneratedIds());
 			}
 		}
-		
+
 		Duration avgDurationPerId = sw.getDuration().dividedBy(results.size());
 		log.info("Generated {} results in {} ms ({} per id average)", results.size(), sw.getDuration(), avgDurationPerId);
-		
+
 		assertEquals(numIterations * numThreads * numPerIteration, results.size(), "Did not have expected number of results.");
-		
+
 		if (format.equals("{inc}")) {
-			
+
 			BigInteger expected = BigInteger.ONE;
 			for (GeneratedIdentifier curId : results) {
 				BigInteger curResult = new BigInteger(curId.getValue());
-				
+
 				assertEquals(expected, curResult, "Was not a contiguous set of ids; expected: " + expected.toString() + " Got: " + curResult.toString());
-				
+
 				expected = expected.add(BigInteger.ONE);
 			}
 		}
 	}
-	
+
 	@Builder
 	@Slf4j
 	@AllArgsConstructor
 	static class TestThread implements Callable<List<IdGenResult>> {
-		
+
 		private String threadId;
 		private ObjectId generatorId;
 		private IdentifierGenerationService identifierGenerationService;
 		private int numIterations;
 		private int numPerIteration;
-		
+
 		@SneakyThrows
 		@Override
 		public List<IdGenResult> call() {
 			log.info("Running test thread {}", this.threadId);
-			
+
 			List<IdGenResult> results = new ArrayList<>(this.numIterations);
-			
+
 			for (int i = 1; i <= this.numIterations; i++) {
 				results.add(this.identifierGenerationService.getNextNIds(DEFAULT_TEST_DB_NAME, this.generatorId, this.numPerIteration));
 			}
@@ -417,7 +444,7 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 			return results;
 		}
 	}
-	
+
 	public static Stream<Arguments> getPlaceholderParams() {
 		IdentifierGenerator uniqueGen = IdentifierGenerator.builder()
 											.id(ObjectId.get())
@@ -451,19 +478,19 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 			)
 		);
 	}
-	
+
 	@ParameterizedTest
 	@MethodSource("getPlaceholderParams")
 	public void testPlaceholderReplacement(IdentifierGenerator gen, LinkedHashSet<Identifier> placeholders, LinkedHashSet<Identifier> expectedIds) {
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen, testUser);
-		
+
 		LinkedHashSet<Identifier> output = this.identifierGenerationService.replaceIdPlaceholders(DEFAULT_TEST_DB_NAME, placeholders);
-		
+
 		assertEquals(expectedIds, output);
 	}
-	
-	
+
+
 	@Test
 	public void no2sameNamesTestNew() {
 		IdentifierGenerator gen1 = IdentifierGenerator.builder()
@@ -472,15 +499,15 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 									   .build();
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen1, testUser);
-		
+
 		IdentifierGenerator gen2 = IdentifierGenerator.builder()
 									   .name(gen1.getLabel())
 									   .idFormat("{inc}")
 									   .build();
-		
+
 		assertThrows(DbModValidationException.class, ()->this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen2, testUser));
 	}
-	
+
 	@Test
 	public void no2sameNamesTestUpdates() {
 		IdentifierGenerator gen1 = IdentifierGenerator.builder()
@@ -489,14 +516,14 @@ class GeneratedIdentifierGenerationServiceTest extends RunningServerTest {
 									   .build();
 		User testUser = TestUserService.getInstance().getTestUser();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen1, testUser);
-		
+
 		IdentifierGenerator gen2 = IdentifierGenerator.builder()
 									   .name(FAKER.name().name())
 									   .idFormat("{inc}")
 									   .build();
 		this.identifierGenerationService.add(DEFAULT_TEST_DB_NAME, gen2, testUser);
-		
+
 		assertThrows(DbModValidationException.class, ()->this.identifierGenerationService.update(DEFAULT_TEST_DB_NAME, gen2.setName(gen1.getName()), testUser));
 	}
-	
+
 }
