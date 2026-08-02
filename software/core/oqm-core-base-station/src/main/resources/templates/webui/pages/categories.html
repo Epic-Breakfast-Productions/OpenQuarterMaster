@@ -4,7 +4,7 @@
 		<link rel="stylesheet" href="{rootPrefix}/lib/Croppie/2.6.4/croppie.css"/>
 	{/styleSheets}
     {#pageStyle}
-    
+
     {/pageStyle}
     {#pageContent}
     <div class="row mb-2">
@@ -144,7 +144,7 @@
             </div>
             <div class="row">
                 <div class="col">
-                    {#objView/history/objHistoryView containerId='itemCategoryHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item-category/') /}
+                    {#objView/history/objHistoryView containerId='itemCategoryHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item-category/') accordion=true /}
                 </div>
             </div>
         {/modal}
@@ -156,7 +156,7 @@
 		<script src="{rootPrefix}/lib/treant-js/vendor/jquery.easing.js"></script>
 		<script src="{rootPrefix}/lib/treant-js/Treant.js"></script>
     {/scripts}
-    
+
     {#pageScript}
 		<script type="module">
 			import { Rest } from '{rootPrefix}/res/js/Rest.js';
@@ -184,7 +184,7 @@
 			SearchUtils.init();
 			ItemCategoryInput.init();
 			HistorySearchUtils.init();
-			
+
 			console.log("Page modules loaded.");
 		</script>
         <script defer>
@@ -203,7 +203,7 @@
                 imagesInputDiv: $("#addEditItemCategoryForm").find('.imagesSelected'),
                 keywordInputs: $("#addEditItemCategoryForm").find('.keywordInputDiv'),
                 attInputs: $("#addEditItemCategoryForm").find('.attInputDiv'),
-                
+
                 colorCheckboxChanged(){
                     if(Category.colorCheckInput.is(':checked')){
                         Category.colorInput.prop("disabled", false);
@@ -236,7 +236,7 @@
                     Category.addEditModalLabelIcon.html(Icons.edit);
                     Category.modeInput.val("edit");
                     Category.idInput.val(categoryId);
-    
+
                     await Rest.call({
                         url: Rest.passRoot + "/inventory/item-category/" + categoryId,
                         method: "GET",
@@ -266,7 +266,7 @@
             Category.addEditForm.on("submit", async function (e) {
                 e.preventDefault();
                 console.log("Submitting Item Category Add Edit form");
-    
+
                 let data = {
                     name: Category.nameInput.val(),
                     description: Category.descInput.val(),
@@ -275,12 +275,12 @@
                 };
 				KeywordAttEdit.addKeywordAttData(data, Category.keywordInputs, Category.attInputs);
                 ImageSearchSelect.addImagesToData(data, Category.imagesInputDiv);
-                
+
                 var result = false;
                 var verb = "";
                 if (Category.modeInput.val() === "add") {
                     verb = "Created";
-        
+
                     console.log("Adding new item category.");
                     await Rest.call({
                         url: Rest.passRoot + "/inventory/item-category",
@@ -300,7 +300,7 @@
                     verb = "Edited";
                     let id = Category.idInput.val();
                     console.log("Editing item category " + id);
-        
+
                     await Rest.call({
                         url: Rest.passRoot + "/inventory/item-category/" + id,
                         method: "PUT",
@@ -313,18 +313,18 @@
                         failMessagesDiv: Category.addEditFormMessages
                     });
                 }
-    
+
                 if (result) {
                     PageMessageUtils.reloadPageWithMessage(verb + " item category successfully!", "success", "Success!");
                 }
             });
-            
+
             async function removeItemCategory(id, name){
                 if(!confirm("Are you sure to delete item category " + name + "?\nThis cannot be undone.")){
                     console.log("User decided to not delete item category.");
                     return;
                 }
-    
+
                 await Rest.call({
                     url: Rest.passRoot + "/inventory/item-category/" + id,
                     method: "DELETE",
@@ -350,8 +350,8 @@
                 carousel: $("#itemCategoryViewCarousel"),
                 breadcrumbContainer: $("#itemCategoryViewBreadcrumbContainer"),
                 childrenContainer: $("#itemCategoryViewChildrenContainer"),
-                
-                
+
+
                 resetView(){
                     ItemCategoryView.modalLabel.text("Item Category View");
                     ItemCategoryView.catId.text("");
@@ -361,7 +361,7 @@
                     ItemCategoryView.colorContainer.removeAttr("style");
                     ItemCategoryView.breadcrumbContainer.text('');
                     ItemCategoryView.childrenContainer.text('');
-                    
+
                     Carousel.clearCarousel(ItemCategoryView.carousel);
 					KeywordAttUtils.clearHideKeywordDisplay(ItemCategoryView.keywordView);
 					KeywordAttUtils.clearHideAttDisplay(ItemCategoryView.attsView);
@@ -372,7 +372,7 @@
                     ItemCategoryView.resetView();
                     UriUtils.addOrReplaceParams("view", categoryId);
                     ItemCategoryView.catId.text(categoryId);
-                    
+
                     await Rest.call({
                         url: Rest.passRoot +"/inventory/item-category/" + categoryId,
                         method: "GET",
@@ -383,7 +383,7 @@
                             promises.push(ItemCategoryTree.getBreadcrumbs(ItemCategoryView.breadcrumbContainer, categoryId));
                             ItemCategoryView.modalLabel.text(data.name);
                             promises.push(Carousel.processImagedObjectImages(data, ItemCategoryView.carousel));
-    
+
                             if(data.color) {
                                 ItemCategoryView.color.text(data.color);
                                 ItemCategoryView.colorContainer.css("background-color", data.color);
@@ -391,17 +391,17 @@
                             } else {
                                 ItemCategoryView.color.text("None");
                             }
-                            
+
                             if(data.description){
                                 ItemCategoryView.desc.text(data.description);
                                 ItemCategoryView.descContainer.show();
                             }
-                            
+
                             //TODO:: parent (similar to storage)
-							
+
 							KeywordAttUtils.processKeywordDisplay(ItemCategoryView.keywordView, data.keywords);
 							KeywordAttUtils.processAttDisplay(ItemCategoryView.attsView, data.attributes);
-    
+
                             children = await children;
                             if(children.empty){
                                 ItemCategoryView.childrenContainer.text("No children!")
@@ -410,13 +410,13 @@
                                 children.results.forEach(function (child) {
                                     let newGetParams = new URLSearchParams(window.location.search);
                                     newGetParams.set("view", child.id)
-            
+
                                     let newChildLink = $('<li class="list-inline-item"><a href="/itemCategories?'+newGetParams.toString()+'"></li></a>');
                                     newChildLink.find("a").text(child.name);
                                     ItemCategoryView.childrenContainer.append(newChildLink);
                                 });
                             }
-                            
+
                             await Promise.all(promises);
                         },
                         fail: function (data) {

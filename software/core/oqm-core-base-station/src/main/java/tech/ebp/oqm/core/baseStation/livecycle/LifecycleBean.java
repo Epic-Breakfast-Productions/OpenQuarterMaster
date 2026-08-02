@@ -3,7 +3,6 @@ package tech.ebp.oqm.core.baseStation.livecycle;
 import io.quarkus.runtime.ShutdownEvent;
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.event.Observes;
-import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
@@ -18,11 +17,11 @@ import java.util.TreeMap;
 public class LifecycleBean {
 
 	private ZonedDateTime startDateTime;
-	
+
 	public static void logConfig(){
 		if (log.isDebugEnabled()) {
 			TreeMap<String, String> configMap = new TreeMap<>();
-			
+
 			for(String curProp : ConfigProvider.getConfig().getPropertyNames()){
 				String value;
 				try {
@@ -32,10 +31,10 @@ public class LifecycleBean {
 				}
 				configMap.put(curProp, value);
 			}
-			
+
 			StringBuilder sb = new StringBuilder();
 			for (String curProp : configMap.keySet()) {
-				
+
 				sb.append('\t');
 				sb.append(curProp);
 				sb.append('=');
@@ -45,7 +44,7 @@ public class LifecycleBean {
 			log.debug("Configuration: \n{}", sb);
 		}
 	}
-	
+
 	private void startLogAnnounce(){
 		log.info("Open QuarterMaster Web Server starting.");
 		//		log.info("Base URL: {}", this.serverUrlService.getBaseServerUrl());
@@ -57,7 +56,7 @@ public class LifecycleBean {
 		//		log.debug("Web lib version: {}", this.webLibVersion);
 		logConfig();
 	}
-	
+
 	void onStart(
 		@Observes
 		StartupEvent ev
@@ -65,7 +64,7 @@ public class LifecycleBean {
 		this.startDateTime = ZonedDateTime.now();
 		this.startLogAnnounce();
 	}
-	
+
 	void onStop(
 		@Observes
 		ShutdownEvent ev
