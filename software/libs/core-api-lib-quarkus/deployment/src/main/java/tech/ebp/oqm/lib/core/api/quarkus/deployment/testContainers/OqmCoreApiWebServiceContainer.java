@@ -40,7 +40,7 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 
 		//TODO:: #1287 these lines are related to not host netowrking
 //		ConfigureUtil.configureSharedNetwork(this, "oqm-core-api");
-//		this.addFixedExposedPort(devserviceConfig.port(), 80);
+//		this.addFixedExposedPort(devserviceConfig.port(), 8080);
 //		this.withAccessToHost(true);
 
 		//TODO:: #1287 don't do this
