@@ -1,16 +1,12 @@
 package tech.ebp.oqm.lib.core.characteristics.quarkus.deployment.testContainers;
 
-import com.github.dockerjava.api.model.HostConfig;
 import io.quarkus.devservices.common.ConfigureUtil;
 import org.testcontainers.containers.GenericContainer;
-import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
 import org.testcontainers.images.builder.Transferable;
 import tech.ebp.oqm.lib.core.characteristics.quarkus.deployment.config.CoreCharacteristicsLibBuildTimeConfig;
-import tech.ebp.oqm.lib.core.characteristics.quarkus.runtime.config.OqmCoreCharacteristicsConfig;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Container for the Open QuarterMaster Core API web service.
