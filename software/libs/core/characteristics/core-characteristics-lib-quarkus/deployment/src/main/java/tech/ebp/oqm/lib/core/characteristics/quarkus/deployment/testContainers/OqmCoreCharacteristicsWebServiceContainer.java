@@ -16,10 +16,10 @@ import java.util.Map;
  * Container for the Open QuarterMaster Core API web service.
  */
 public class OqmCoreCharacteristicsWebServiceContainer extends GenericContainer<OqmCoreCharacteristicsWebServiceContainer> {
-	
+
 	private final CoreCharacteristicsLibBuildTimeConfig serviceConfig;
 	private final CoreCharacteristicsLibBuildTimeConfig.DevserviceConfig devserviceConfig;
-	
+
 	/**
 	 * Initializes the container
 	 */
@@ -30,27 +30,27 @@ public class OqmCoreCharacteristicsWebServiceContainer extends GenericContainer<
 		this.serviceConfig = serviceConfig;
 		this.devserviceConfig = serviceConfig.devservices();
 	}
-	
+
 	@Override
 	protected void configure() {
 		//configure network
 		ConfigureUtil.configureSharedNetwork(this, "oqm-core-characteristics");
-		
+
 		// Tell the dev service how to know the container is ready. All 3 is likely overkill, but eh
 		this.waitingFor(Wait.forHealthcheck());
-		this.addExposedPort(80);
-		
+		this.addExposedPort(8080);
+
 		//configuration of characteristics
-		
+
 		this.devserviceConfig.devData().characteristics().title().ifPresent(title -> this.addEnv("CHARACTERISTICS_VAL_TITLE", title));
 		this.devserviceConfig.devData().characteristics().motd().ifPresent(motd -> this.addEnv("CHARACTERISTICS_VAL_MOTD", motd));
-		
+
 		this.devserviceConfig.devData().characteristics().runBy().name().ifPresent(name -> this.addEnv("CHARACTERISTICS_VAL_RUNBY_NAME", name));
 		this.devserviceConfig.devData().characteristics().runBy().email().ifPresent(email -> this.addEnv("CHARACTERISTICS_VAL_RUNBY_EMAIL", email));
 		this.devserviceConfig.devData().characteristics().runBy().phone().ifPresent(phone -> this.addEnv("CHARACTERISTICS_VAL_RUNBY_PHONE", phone));
 		this.devserviceConfig.devData().characteristics().runBy().website().ifPresent(website -> this.addEnv("CHARACTERISTICS_VAL_RUNBY_WEBSITE", website));
-		
-		
+
+
 		if(this.devserviceConfig.devData().characteristics().runBy().haveLogoImg()){
 			this.addEnv("CHARACTERISTICS_RUNBY_IMG_DIR", "/data/");
 			this.addEnv("CHARACTERISTICS_VAL_RUNBY_LOGOIMG", "logo.svg");
@@ -58,7 +58,7 @@ public class OqmCoreCharacteristicsWebServiceContainer extends GenericContainer<
 				"""
 					<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 					<!-- Created with Inkscape (http://www.inkscape.org/) -->
-					
+
 					<svg
 					   width="152.40408mm"
 					   height="143.43915mm"
@@ -127,12 +127,12 @@ public class OqmCoreCharacteristicsWebServiceContainer extends GenericContainer<
 		if(this.devserviceConfig.devData().characteristics().runBy().haveBannerImg()){
 			this.addEnv("CHARACTERISTICS_RUNBY_IMG_DIR", "/data/");
 			this.addEnv("CHARACTERISTICS_VAL_RUNBY_BANNERIMG", "banner.svg");
-			
+
 			this.withCopyToContainer(Transferable.of(
 				"""
 					<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 					      <!-- Created with Inkscape (http://www.inkscape.org/) -->
-					
+
 					      <svg
 					         width="369.29794mm"
 					         height="142.86076mm"
@@ -212,16 +212,16 @@ public class OqmCoreCharacteristicsWebServiceContainer extends GenericContainer<
 					"""
 			), "/data/banner.svg");
 		}
-		
-		
+
+
 		//configuration of UI's
 		this.addEnv("CHARACTERISTICS_UIS_ICON_DIR", "/data/uis/images/");
-		
+
 		this.withCopyToContainer(Transferable.of(
 			"""
 				<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 				<!-- Created with Inkscape (http://www.inkscape.org/) -->
-				
+
 				<svg
 				   width="90.806229mm"
 				   height="93.119766mm"
@@ -302,7 +302,7 @@ public class OqmCoreCharacteristicsWebServiceContainer extends GenericContainer<
 			"""
 				<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 				<!-- Created with Inkscape (http://www.inkscape.org/) -->
-				
+
 				<svg
 				   width="90.806229mm"
 				   height="93.119766mm"
@@ -383,7 +383,7 @@ public class OqmCoreCharacteristicsWebServiceContainer extends GenericContainer<
 			"""
 				<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 				<!-- Created with Inkscape (http://www.inkscape.org/) -->
-				
+
 				<svg
 				   width="90.806229mm"
 				   height="93.119766mm"
@@ -464,7 +464,7 @@ public class OqmCoreCharacteristicsWebServiceContainer extends GenericContainer<
 			"""
 				<?xml version="1.0" encoding="UTF-8" standalone="no"?>
 				<!-- Created with Inkscape (http://www.inkscape.org/) -->
-				
+
 				<svg
 				   width="90.806229mm"
 				   height="93.119766mm"
@@ -541,9 +541,9 @@ public class OqmCoreCharacteristicsWebServiceContainer extends GenericContainer<
 				</svg>
 				"""
 		), "/data/uis/images/metrics.svg");
-		
+
 		this.serviceConfig.serviceId();
-		
+
 		this.withCopyToContainer(Transferable.of(
 			"""
 				{
@@ -567,7 +567,7 @@ public class OqmCoreCharacteristicsWebServiceContainer extends GenericContainer<
 					this.serviceConfig.serviceId()
 			)
 		), "/data/uis/consuming.json");
-		
+
 		for(String curCat : List.of("core", "plugin", "infra", "metrics")) {
 			for(int i = 1; i <= 3; i++) {
 				this.withCopyToContainer(Transferable.of(
@@ -596,6 +596,6 @@ public class OqmCoreCharacteristicsWebServiceContainer extends GenericContainer<
 				), "/data/uis/"+curCat+"-"+i+".json");
 			}
 		}
-		
+
 	}
 }

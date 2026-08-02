@@ -82,7 +82,7 @@ public interface CoreCharacteristicsLibBuildTimeConfig {
 			 *
 			 * @return The version/ tag of the core api container image
 			 */
-			@WithDefault("1.1.1")
+			@WithDefault("1.1.2-SNAPSHOT")
 			String version();
 
 			/**
