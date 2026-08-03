@@ -17,7 +17,7 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 public abstract class CodeUtilTestBase {
-	
+
 	protected static final List<String> UPCA_CODES = List.of(
 		"012345678905",
 		"078000003239",
@@ -25,21 +25,22 @@ public abstract class CodeUtilTestBase {
 		"022000159359",
 		"887386978761"
 	);
-	
+
 	protected static final List<String> UPCE_CODES = List.of(
 		"02345673",
 		"02345147"
 	);
-	
+
 	protected static final List<String> ISBN13_CODES = List.of(
 		"9780306406157",
 		"9798886451740"
 	);
-	
+
 	protected static final List<String> ISBN10_CODES = List.of(
 		"0747532699"
+		//, "007042585X" // TODO:: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/issues/1330
 	);
-	
+
 	protected static final List<String> EAN13_CODES = List.of(
 		"0997253048258",
 		"4001686310854"
@@ -53,8 +54,8 @@ public abstract class CodeUtilTestBase {
 	protected static final List<String> GENERIC_IDENTIFIERS = List.of(
 		"Model T"
 	);
-	
-	
+
+
 	/**
 	 * Gets a list of arguments comprised of the codes given.
 	 *
@@ -65,7 +66,7 @@ public abstract class CodeUtilTestBase {
 	protected static Stream<Arguments> validCodes(List<String> validCodes) {
 		return validCodes.stream().map(Arguments::of);
 	}
-	
+
 	/**
 	 * Gets all codes available except the ones given
 	 *
@@ -86,11 +87,11 @@ public abstract class CodeUtilTestBase {
 				   .filter(s->!validCodes.contains(s))
 				   .map(Arguments::of);
 	}
-	
+
 	private static <T extends Identifier> Stream<Arguments> getArgs(List<String> codes, Function<String, T> generalBuilderFunc) {
 		return codes.stream().map(code->Arguments.of(code, generalBuilderFunc.apply(code)));
 	}
-	
+
 	public static Stream<Arguments> getCodes() {
 		return Stream.of(
 				getArgs(UPCA_CODES, (code)->UPC_A.builder().value(code).build()),
@@ -120,5 +121,5 @@ public abstract class CodeUtilTestBase {
 			).reduce(Stream::concat)
 				   .orElseGet(Stream::empty);
 	}
-	
+
 }
