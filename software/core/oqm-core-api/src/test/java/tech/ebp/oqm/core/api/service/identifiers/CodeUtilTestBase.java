@@ -50,7 +50,8 @@ public abstract class CodeUtilTestBase {
 		"12345670"
 	);
 	protected static final List<String> NSN_CODES = List.of(
-		"6240000272059"
+		"6240000272059",
+		"4710999238641"
 	);
 	protected static final List<String> GTIN14_CODES = List.of(
 		"10012345678902"
