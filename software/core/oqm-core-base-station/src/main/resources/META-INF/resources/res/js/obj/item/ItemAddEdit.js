@@ -370,7 +370,7 @@ export class ItemAddEdit extends PageUtility {
 		static removeStorage(removeButtonClicked) {//or input card?
 			if (confirm("Are you sure you want to\nremove this associated storage?")) {
 				console.log("Removing associated storage.");
-				removeButtonClicked.parentElement.parentElement.parentElement.remove();
+				removeButtonClicked.parentElement.parentElement.parentElement.parentElement.remove();
 			} else {
 				console.log("User canceled removing the associated storage.");
 			}
