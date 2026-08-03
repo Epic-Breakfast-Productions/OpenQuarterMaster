@@ -15,6 +15,7 @@ import org.jetbrains.annotations.NotNull;
 import tech.ebp.oqm.core.api.model.object.Labeled;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.GenericIdentifier;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.NSN;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.ean.EAN_13;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.ean.EAN_8;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.generated.GeneratedIdentifier;
@@ -39,6 +40,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.upc.UP
 	@JsonSubTypes.Type(value = ISBN_13.class, name = "ISBN_13"),
 	@JsonSubTypes.Type(value = UPC_A.class, name = "UPC_A"),
 	@JsonSubTypes.Type(value = UPC_E.class, name = "UPC_E"),
+	@JsonSubTypes.Type(value = NSN.class, name = "NSN"),
 	@JsonSubTypes.Type(value = GenericIdentifier.class, name = "GENERIC"),
 	@JsonSubTypes.Type(value = GeneratedIdentifier.class, name = "GENERATED"),
 	@JsonSubTypes.Type(value = ToGenerateIdentifier.class, name = "TO_GENERATE"),
@@ -48,34 +50,34 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.upc.UP
 @AllArgsConstructor
 @NoArgsConstructor
 public abstract class Identifier implements Labeled, Comparable<Identifier> {
-	
+
 	@lombok.Builder.Default
 	private String label = null;
-	
+
 	//TODO:: contemplate
 	//	@lombok.Builder.Default
 	//	private boolean unique = true;
-	
+
 	public abstract IdentifierType getType();
-	
+
 	public abstract String getValue();
-	
+
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isBarcode() {
 		return this.getType().isBarcode;
 	}
-	
+
 	public boolean hasLabel() {
 		return this.label != null;
 	}
-	
+
 	public String getLabel() {
 		if (!this.hasLabel()) {
 			return this.getType().prettyName();
 		}
 		return this.label;
 	}
-	
+
 	@Override
 	public int compareTo(@NotNull Identifier identifier) {
 		{
@@ -96,7 +98,7 @@ public abstract class Identifier implements Labeled, Comparable<Identifier> {
 				return valueComp;
 			}
 		}
-		
+
 		return 0;
 	}
 }

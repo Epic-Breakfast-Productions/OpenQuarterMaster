@@ -14,29 +14,30 @@ public enum IdentifierType {
 	ISBN_13,
 	EAN_8,
 	EAN_13,
+	NSN,
 	GTIN_14,
-	
+
 //	ASIN, Amazon specific, ignore
 //	SKU, no way to determine proper format
-	
+
 	GENERIC(false, false),
 	GENERATED(false, false),
 	TO_GENERATE(false, false),
 	;
-	
+
 	public final boolean isBarcode;
 	public final boolean displayInBarcode;
-	
+
 	IdentifierType() {
 		this.isBarcode = true;
 		this.displayInBarcode = true;
 	}
-	
+
 	IdentifierType(boolean isBarcode, boolean displayInBarcode) {
 		this.isBarcode = isBarcode;
 		this.displayInBarcode = displayInBarcode;
 	}
-	
+
 	public String prettyName() {
 		return this.name().replaceAll("_", "-");
 	}
