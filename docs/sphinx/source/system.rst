@@ -84,7 +84,7 @@ Core Components
 These are the components that make up the core functionalities of the system. Any OQM system is expected to include these.
 
 * `Core API <https://docs.openquartermaster.com/components/software/core/api/>`_ - The Core service in charge of handling all inventory management tasks. Can be run as the IMS component in any software ecosystem.
-* `Characteristics <https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-characteristics>`_ - Service for disseminating characteristics about a system, including who runs it, custom logos, etc.
+* `Characteristics <https://docs.openquartermaster.com/components/software/core/characteristics/>`_ - Service for disseminating characteristics about a system, including who runs it, custom logos, etc.
 * `Base Station <https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-base-station>`_ - The main frontend of the OQM system. Intended as a close to 1:1 feature parity for the core api backend.
 
 Plugins

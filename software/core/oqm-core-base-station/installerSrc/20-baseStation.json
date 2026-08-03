@@ -2,8 +2,8 @@
 	"core": {
 		"baseStation": {
 			"internalHost": "oqm-core-base_station",
-			"internalHttpPort": 80,
-			"internalHttpsPort": 443,
+			"internalHttpPort": 8080,
+			"internalHttpsPort": 8443,
 			"internalBaseUri": "http://#{core.baseStation.internalHost}:#{core.baseStation.internalHttpPort}",
 			"externalBaseUri": "#{infra.traefik.externalRootUri}/core/base-station",
 			"csrfSigKey": "<secret>"

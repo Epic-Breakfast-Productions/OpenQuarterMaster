@@ -116,7 +116,7 @@ export class ItemView extends PageUtility {
 	static statsTransactionsAmountGraphImg = $("#itemViewMainPaneStatsItemTransactionsAmountGraph");
 
 	static resetView() {
-		ItemView.statsTransactionsAmountGraphImg.attr("href", "");
+		ItemView.statsTransactionsAmountGraphImg.attr("src", "");
 		ItemView.statsShown = false;
 		ItemView.storageTab.click();
 		ItemView.itemViewModalLabel.text("");

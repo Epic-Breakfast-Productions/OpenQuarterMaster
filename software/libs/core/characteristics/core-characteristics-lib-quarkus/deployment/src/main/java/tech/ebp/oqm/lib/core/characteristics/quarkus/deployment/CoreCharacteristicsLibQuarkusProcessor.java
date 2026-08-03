@@ -26,35 +26,35 @@ import java.util.Map;
  * Processes runtime features like configs, health checks, and devservices
  */
 class CoreCharacteristicsLibQuarkusProcessor {
-	
+
 	private static final Logger log = Logger.getLogger(CoreCharacteristicsLibQuarkusProcessor.class);
-	
+
 	private static final String FEATURE = "core-characteristics-lib-quarkus";
 	private static final String HOST = "localhost";
-	
+
 	private static volatile boolean firstSetup = true;
-	
+
 	private static volatile Map<String, DevServicesResultBuildItem.RunningDevService> DEVSERVICES = new HashMap<>();
-	
-	
+
+
 	@BuildStep
 	FeatureBuildItem feature() {
 		return new FeatureBuildItem(FEATURE);
 	}
-	
+
 	@BuildStep
 	List<RunTimeConfigurationDefaultBuildItem> addRestConfiguration() {
 		return List.of(
 			new RunTimeConfigurationDefaultBuildItem("quarkus.rest-client.\"" + Constants.REST_CLIENT_NAME + "\".url", "${" + Constants.CONFIG_ROOT_NAME + ".baseUri}")
 		);
 	}
-	
+
 	@BuildStep
 	HealthBuildItem addHealthCheck(CoreCharacteristicsLibBuildTimeConfig buildTimeConfig) {
 		return new HealthBuildItem("tech.ebp.oqm.lib.core.characteristics.quarkus.runtime.health.CoreCharacteristicsHealthCheck", buildTimeConfig.health().enabled());
 	}
-	
-	
+
+
 	private OqmCoreCharacteristicsWebServiceContainer newCoreCharacteristicsContainer(
 		CoreCharacteristicsLibBuildTimeConfig config
 	) {
@@ -62,13 +62,13 @@ class CoreCharacteristicsLibQuarkusProcessor {
 		OqmCoreCharacteristicsWebServiceContainer
 			container =
 			new OqmCoreCharacteristicsWebServiceContainer(config);
-		
+
 		container.start();
-		
+
 		return container;
 	}
-	
-	
+
+
 	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
 	public List<DevServicesResultBuildItem> createContainer(
 		LaunchModeBuildItem launchMode,
@@ -80,21 +80,21 @@ class CoreCharacteristicsLibQuarkusProcessor {
 		List<DevServicesResultBuildItem> output = new ArrayList<>();
 		{//Core Characteristics
 			DevServicesResultBuildItem.RunningDevService coreApiDevService = DEVSERVICES.get("coreCharacteristics");
-			
+
 			if (coreApiDevService == null) {
 				OqmCoreCharacteristicsWebServiceContainer container = this.newCoreCharacteristicsContainer(config);
-				
+
 				Map<String, String> props = new HashMap<>();
-				props.put(Constants.CONFIG_ROOT_NAME + ".baseUri", "http://" + container.getHost() + ":" + container.getMappedPort(80));
+				props.put(Constants.CONFIG_ROOT_NAME + ".baseUri", "http://" + container.getHost() + ":" + container.getMappedPort(8080));
 				props.put("quarkus.rest-client.\"" + Constants.REST_CLIENT_NAME + "\".url", "${" + Constants.CONFIG_ROOT_NAME + ".baseUri}");
-				
+
 				coreApiDevService = new DevServicesResultBuildItem.RunningDevService(FEATURE, container.getContainerId(), container::close, props);
 				DEVSERVICES.put("coreCharacteristics", coreApiDevService);
 			}
-			
+
 			output.add(coreApiDevService.toBuildItem());
 		}
-		
+
 		if (firstSetup) {
 			firstSetup = false;
 			closeBuildItem.addCloseTask(
@@ -109,12 +109,12 @@ class CoreCharacteristicsLibQuarkusProcessor {
 							log.error("Failed to close devservice: " + curDevservice.toString(), e);
 						}
 					}
-					
+
 					firstSetup = true;
 				}, true
 			);
 		}
-		
+
 		return output;
 	}
 }
