@@ -13,10 +13,10 @@ import java.util.List;
 public class NSNValidator extends Validator<ValidNSN, String> {
 
 	@Override
-	public boolean isValid(String upcaCode, ConstraintValidatorContext constraintValidatorContext) {
+	public boolean isValid(String nsnCode, ConstraintValidatorContext constraintValidatorContext) {
 		List<String> errs = new ArrayList<>();
 
-		if (!NsnCodeUtilities.isValidNsnCode(upcaCode)) {
+		if (nsnCode != null && !NsnCodeUtilities.isValidNsnCode(nsnCode)) {
 			errs.add("Invalid NSN code.");
 		}
 		return this.processValidationResults(errs, constraintValidatorContext);
