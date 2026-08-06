@@ -41,7 +41,7 @@ dependencies {
     implementation 'com.itextpdf:html2pdf:6.3.3'
 
 	implementation 'de.erichseifert.vectorgraphics2d:VectorGraphics2D:0.13'
-    implementation 'org.knowm.xchart:xchart:4.0.3'
+    implementation 'org.knowm.xchart:xchart:4.0.4'
 
     //webjars
     implementation 'org.webjars:jquery:4.0.0'
