@@ -9,6 +9,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
+import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidNSN;
 import tech.ebp.oqm.core.api.model.validation.annotations.identifiers.ValidUPCA;
 
 @Data
@@ -21,7 +22,7 @@ public class NSN extends Identifier {
 
 	@NonNull
 	@NotNull
-	@ValidUPCA
+	@ValidNSN
 	private String value;
 
 	@Override
