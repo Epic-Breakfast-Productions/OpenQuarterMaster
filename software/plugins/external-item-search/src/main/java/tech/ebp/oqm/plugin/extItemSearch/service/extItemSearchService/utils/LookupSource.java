@@ -5,5 +5,6 @@ public enum LookupSource {
 	DATAKICK,
 	REBRICKABLE,
 	UPC_ITEM_DB,
-    OPENFOODFACTS
+    OPENFOODFACTS,
+    OPENLIBRARY
 }

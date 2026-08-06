@@ -18,6 +18,8 @@ productLookup:
       apiKey: " "
     openfoodfacts:
       enabled: true
+    openlibrary:
+      enabled: true
 
 quarkus:
   container-image:
@@ -48,6 +50,9 @@ quarkus:
       scope: jakarta.inject.Singleton
     openfoodfacts-search:
       url: https://search.openfoodfacts.net
+      scope: jakarta.inject.Singleton
+    openlibrary:
+      url: https://openlibrary.org
       scope: jakarta.inject.Singleton
   smallrye-openapi:
     info-title: External Item Search API
@@ -110,3 +115,5 @@ quarkus:
         url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
       openfoodfacts-search:
         url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+      open-library:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/openlibrary/

@@ -1,0 +1,53 @@
+{
+  "request": {
+    "urlPath": "/openlibrary/search.json",
+    "method": "GET",
+    "queryParameters": {
+      "q": {
+        "equalTo": "6010414288"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 5000,
+      "sigma": 0.4
+    },
+    "jsonBody": {
+      "numFound": 1,
+      "start": 0,
+      "numFoundExact": true,
+      "num_found": 1,
+      "documentation_url": "https://openlibrary.org/dev/docs/api/search",
+      "q": "6010414288",
+      "offset": null,
+      "docs": [
+        {
+          "author_key": [
+            "OL8956035A",
+            "OL11920021A"
+          ],
+          "author_name": [
+            "A. Salqynbaĭ",
+            "Ăl-Farabi atyndaghy Qazaq ūlttyq universitetī"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2015,
+          "has_fulltext": false,
+          "key": "/works/OL45692676W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Абай сөзінің лингвопоэтикасы"
+        }
+      ]
+    }
+  }
+}
