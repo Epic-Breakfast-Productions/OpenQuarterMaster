@@ -1,7 +1,8 @@
 name: Feature Request
 description: File Feature Request
 title: "[FR]: <type> - <component> - "
-labels: ["type-enhancement", "state-triage"]
+labels: ["state-triage"]
+type: feature
 assignees:
   - gregjstewart
 body:

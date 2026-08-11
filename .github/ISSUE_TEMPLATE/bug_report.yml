@@ -1,7 +1,8 @@
 name: Bug Report
 description: File a bug report
 title: "[Bug]: <group> - <component> - "
-labels: ["type-bug", "state-triage"]
+labels: ["state-triage"]
+type: bug
 assignees:
   - gregjstewart
 body:
