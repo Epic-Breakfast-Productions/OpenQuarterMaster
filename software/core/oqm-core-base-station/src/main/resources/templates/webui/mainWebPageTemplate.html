@@ -464,10 +464,12 @@ Ingests:
 <script src="{rootPrefix}/webjars/jquery/4.0.0/jquery.min.js"></script>
 <script src="{rootPrefix}/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
 <script src="{rootPrefix}/lib/luxon/3.3.0/luxon.min.js"></script>
+<script src="{rootPrefix}/lib/spin.js/spin.umd.js"></script>
 <script src="{rootPrefix}/lib/dselect/1.0.4/dist/js/dselect.js"></script><!-- Not usable as a module -->
 
 <!-- needed globally and assured loaded synchronously as non-modules -->
 <script src="{rootPrefix}/res/js/constants.js"></script>
+<script src="{rootPrefix}/res/js/SpinnerUtils.js"></script>
 <script src="{rootPrefix}/res/js/main.js"></script>
 
 <!-- Bring in libs that are needed everywhere by the plain js / need activated -->
@@ -487,7 +489,7 @@ Ingests:
 	TimeUtils.init();
 	TextCopyUtils.init();
 
-	console.log("Main modules loaded.");
+	Main.processStop("Main page modules load");
 </script>
 
 {#insert scripts}{/}
