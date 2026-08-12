@@ -6,6 +6,8 @@ plugins {
 	id 'org.cyclonedx.bom' version '3.4.0'
 	id("org.spdx.sbom") version "0.12.0"
 }
+import org.cyclonedx.Version
+import org.cyclonedx.model.Component
 
 group 'com.ebp.openQuarterMaster'
 version '6.2.0'
@@ -109,6 +111,8 @@ check {
 
 // https://github.com/CycloneDX/cyclonedx-gradle-plugin
 tasks.cyclonedxDirectBom {
+	schemaVersion = Version.VERSION_17
+	projectType = Component.Type.APPLICATION
 	// includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration), regex is supported
 	includeConfigs = ["runtimeClasspath"]
 
@@ -118,14 +122,11 @@ tasks.cyclonedxDirectBom {
 	// skipProjects is a list of project names to exclude when generating the BOM
 //	skipProjects = [rootProject.name, "yourTestSubProject"]
 
-	// Specified the type of project being built. Defaults to 'library'
-	projectType = "application"
 	// Include resolution of full metadata for components including licenses. Defaults to 'true'
 	includeMetadataResolution = true
 }
 tasks.cyclonedxBom {
-	// Specified the version of the CycloneDX specification to use. Defaults to '1.6'
-	schemaVersion = "VERSION_16"
+
 	// Include BOM Serial Number. Defaults to 'true'
 	includeBomSerialNumber = true
 	// Include License Text. Defaults to 'true'
