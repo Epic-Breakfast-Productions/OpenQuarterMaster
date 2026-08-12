@@ -37,17 +37,7 @@ export class ImageSearchSelect extends PageUtility {
 					}
 				});
 			})
-		)
-		// imageList.forEach(async function (imageId, i) {
-		// 	await Rest.call({
-		// 		async: false,
-		// 		spinnerContainer: null,
-		// 		url: Rest.passRoot+"/media/image/" + imageId + "/revision/latest",
-		// 		done: function (data) {
-		// 			titleArr[i] = data.title
-		// 		}
-		// 	});
-		// });
+		);
 
 		imageList.forEach(function (imageId, i) {
 			ImageSearchSelect.selectImage(titleArr[imageId], imageId);
