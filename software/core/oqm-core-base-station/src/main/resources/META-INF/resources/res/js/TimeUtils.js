@@ -98,7 +98,6 @@ export class TimeUtils extends PageUtility {
 	static {
 		console.log("Initting dateTime inputs.");
 		TimeUtils.setupDateTimeInputs();
-		Main.processStop();
 		console.log("Done processing page message.");
 	}
 }
