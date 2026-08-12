@@ -1,0 +1,32 @@
+{
+  "request": {
+    "urlPath": "/openlibrary/search.json",
+    "method": "GET",
+    "queryParameters": {
+      "q": {
+        "equalTo": "(?!3046920029759(?=/|$))([^/]+).json$"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 5000,
+      "sigma": 0.4
+    },
+    "jsonBody": {
+      "numFound": 1,
+      "start": 0,
+      "numFoundExact": true,
+      "num_found": 1,
+      "documentation_url": "https://openlibrary.org/dev/docs/api/search",
+      "q": "(?!3046920029759(?=/|$))([^/]+).json$",
+      "offset": null,
+      "docs": []
+    }
+  }
+}
