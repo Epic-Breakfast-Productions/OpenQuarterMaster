@@ -105,7 +105,6 @@ export class PageMessageUtils extends PageUtility {
 			console.log("No page message.");
 		}
 		console.log("Done processing page messages.");
-		Main.processStop();
 
 		console.log(this.name + " done initializing.");
 	}
