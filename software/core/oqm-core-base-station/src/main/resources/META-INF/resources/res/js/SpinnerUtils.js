@@ -68,6 +68,9 @@ class SpinnerUtils {
 		if(container == null){
 			container = document.body;
 		}
+		if(container.jquery){
+			container = container[0];
+		}
 
 		output.spin(container);
 

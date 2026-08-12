@@ -156,7 +156,9 @@ export class ItemAddEdit extends PageUtility {
 			url: Rest.passRoot + "/inventory/item/" + itemId,
 			failMessagesDiv: ItemAddEdit.addEditItemFormMessages,
 			done: async function (data) {
-				ImageSearchSelect.addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds);
+				let promises = [];
+
+				promises.push(ImageSearchSelect.addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds));
 				KeywordAttEdit.addKeywordInputs(ItemAddEdit.addEditKeywordDiv, data.keywords);
 				KeywordAttEdit.addAttInputs(ItemAddEdit.addEditAttDiv, data.attributes);
 				FileAttachmentSearchSelect.populateFileInputFromObject(
@@ -170,6 +172,7 @@ export class ItemAddEdit extends PageUtility {
 				ItemAddEdit.addEditItemNameInput.val(data.name);
 				ItemAddEdit.addEditItemDescriptionInput.setValue(data.description);
 				ItemAddEdit.addEditItemStorageTypeInput.val(data.storageType);
+
 				DselectUtils.setValues(ItemAddEdit.addEditItemUnitInput, data.unit.string);
 				DselectUtils.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
 				ItemAddEdit.addEditStoredTypeInputChanged(true)
@@ -207,22 +210,25 @@ export class ItemAddEdit extends PageUtility {
 
 				data.storageBlocks.forEach(curStorageBlockSettings => {
 					let curStorageBlockId = curStorageBlockSettings.storageBlock;
-					Getters.StorageBlock.getStorageBlockLabel(curStorageBlockId, function (label) {
+					promises.push(Getters.StorageBlock.getStorageBlockLabel(curStorageBlockId, function (label) {
 						//TODO:: determine if we are allowed to remove (if has stored items in it or not)
 						ItemAddEdit.storageInput.addStorage(label, curStorageBlockId, curStorageBlockSettings);
-					});
+					}));
 				});
-
 
 				ItemAddEdit.defaultStoredLabelInput.val(data.defaultLabelFormat);
 				AssociatedLinks.Form.populateInput(ItemAddEdit.linkInput, data.associatedLinks);
-				await Pricing.populateInput(
-					ItemAddEdit.addEditItemPricingInput,
-					ItemAddEdit.getUnit(),
-					data.defaultPrices
+
+				promises.push(
+					Pricing.populateInput(
+						ItemAddEdit.addEditItemPricingInput,
+						ItemAddEdit.getUnit(),
+						data.defaultPrices
+					)
 				);
 
-				await ItemAddEdit.unitChanged();
+				promises.push(ItemAddEdit.unitChanged());
+				await Promise.all(promises);
 			}
 		});
 		Main.processStop("Setup Item Add/Edit form for edit")
