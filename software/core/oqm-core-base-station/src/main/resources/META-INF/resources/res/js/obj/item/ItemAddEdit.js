@@ -142,7 +142,7 @@ export class ItemAddEdit extends PageUtility {
 
 	static async setupAddEditForEdit(itemId, otherModal = null) {
 		console.log("Setting up add/edit form for editing item " + itemId);
-		Main.processStart("Setup Item Add/Edit form for edit", ItemAddEdit.addEditItemModal)
+		Main.processStart("Setup Item Add/Edit form for edit", ItemAddEdit.addEditItemModal);
 		ModalUtils.setReturnModal(ItemAddEdit.addEditItemModal, otherModal);
 		await ItemAddEdit.resetAddEditForm();
 		ItemAddEdit.addEditItemModalLabel.text("Item Edit");
