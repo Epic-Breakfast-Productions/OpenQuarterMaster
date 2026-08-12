@@ -1,8 +1,6 @@
-import {Spinner} from "../../lib/spin.js/spin.js";
-
-
-export class SpinnerUtils {
-	static spinnerOpts = {
+// import {Spinner} from "../../lib/spin.js/spin.js";
+class SpinnerUtils {
+	static #spinnerOpts = {
 		lines: 20, // The number of lines to draw
 		length: 38, // The length of each line
 		width: 17, // The line thickness
@@ -22,13 +20,57 @@ export class SpinnerUtils {
 		shadow: '0 0 1px transparent', // Box-shadow for the lines
 		position: 'absolute' // Element positioning
 	}
-	static newSpinner(container = null){
-		let output = new Spinner(SpinnerUtils.spinnerOpts);
 
-		if(container != null || container != undefined){
-			output.spin(container);
+	/**
+	 *
+	 * @type {Spinner|null}
+	 */
+	static #curSpinner = null;
+	static #spinnerCount = 0;
+
+	static hasSpinner(){
+		return this.#curSpinner != null;
+	}
+
+
+	static stopSpinner(){
+		this.#spinnerCount--;
+		if(this.#spinnerCount < 1){
+			this.resetAllSpinner();
+		}
+	}
+
+	static resetAllSpinner(){
+		if(this.hasSpinner()){
+			this.#curSpinner.stop();
+		}
+		this.#curSpinner = null;
+		this.#spinnerCount = 0;
+	}
+
+	/**
+	 * Starts a spinner on a given html element.
+	 * @param container {HTMLElement|null} Defaults to document body
+	 * @param opts {{lines: number, length: number, width: number, radius: number, scale: number, corners: number, color: string, fadeColor: string, speed: number, rotate: number, animation: string, direction: number, zIndex: number, className: string, top: string, left: string, shadow: string, position: string}}
+	 */
+	static startSpinner(container = null, opts = this.#spinnerOpts){
+		this.#spinnerCount++;
+
+		if(this.hasSpinner()){
+			console.debug("Incremented already running spinner", this.#spinnerCount);
+			return;
 		}
 
-		return output;
+		console.log("Starting new spinner. Container:", container);
+
+		let output = new Spin.Spinner(opts);
+
+		if(container == null){
+			container = document.body;
+		}
+
+		output.spin(container);
+
+		this.#curSpinner = output;
 	}
 }

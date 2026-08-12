@@ -142,6 +142,7 @@ export class ItemAddEdit extends PageUtility {
 
 	static async setupAddEditForEdit(itemId, otherModal = null) {
 		console.log("Setting up add/edit form for editing item " + itemId);
+		Main.processStart("Setup Item Add/Edit form for edit", ItemAddEdit.addEditItemModal)
 		ModalUtils.setReturnModal(ItemAddEdit.addEditItemModal, otherModal);
 		await ItemAddEdit.resetAddEditForm();
 		ItemAddEdit.addEditItemModalLabel.text("Item Edit");
@@ -151,8 +152,7 @@ export class ItemAddEdit extends PageUtility {
 
 		ItemAddEdit.addEditItemStorageTypeInput.prop("disabled", true);
 
-		Rest.call({
-			spinnerContainer: ItemAddEdit.addEditItemModal,
+		await Rest.call({
 			url: Rest.passRoot + "/inventory/item/" + itemId,
 			failMessagesDiv: ItemAddEdit.addEditItemFormMessages,
 			done: async function (data) {
@@ -225,6 +225,7 @@ export class ItemAddEdit extends PageUtility {
 				await ItemAddEdit.unitChanged();
 			}
 		});
+		Main.processStop("Setup Item Add/Edit form for edit")
 	}
 	static async addEditStoredTypeInputChanged(force = false) {
 		await ItemAddEdit.foreachStoredTypeFromStorageInput(
