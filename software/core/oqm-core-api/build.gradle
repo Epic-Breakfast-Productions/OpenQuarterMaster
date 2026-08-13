@@ -4,13 +4,13 @@ plugins {
 	id "io.freefair.lombok" version "9.5.0"
 	id 'jacoco'
 	id 'org.cyclonedx.bom' version '3.4.0'
-	id("org.spdx.sbom") version "0.12.0"
+	id "org.spdx.sbom" version "0.12.0"
 }
 import org.cyclonedx.Version
 import org.cyclonedx.model.Component
 
-group 'com.ebp.openQuarterMaster'
-version '6.2.0'
+group = 'com.ebp.openQuarterMaster'
+version = '6.2.0'
 
 repositories {
 	mavenCentral()
@@ -61,9 +61,9 @@ dependencies {
 	/*
 	Test Dependencies
 	 */
-	testImplementation group: 'io.quarkus', name: 'quarkus-junit5'
-	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
-	testImplementation group: 'io.rest-assured', name: 'rest-assured'
+	testImplementation 'io.quarkus:quarkus-junit5'
+	testImplementation 'io.quarkus:quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
+	testImplementation 'io.rest-assured:rest-assured'
 	testImplementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	testImplementation 'io.quarkus:quarkus-test-kafka-companion'
 	testImplementation 'net.datafaker:datafaker:2.7.0'
@@ -171,6 +171,7 @@ spdxSbom {
 }
 
 tasks.register('generateSbom'){
+	group = "sbom"
 	dependsOn tasks.cyclonedxBom
 	dependsOn tasks.spdxSbom
 	doLast {
@@ -183,9 +184,12 @@ tasks.register('generateSbom'){
  *
  * Used by the `makeInstallers.sh` script to get the version.
  */
+String v = project.version.toString()
 tasks.register('printVersion') {
+	group = "documentation"
 	doLast {
-		println project.version
+
+		println v
 	}
 }
 
