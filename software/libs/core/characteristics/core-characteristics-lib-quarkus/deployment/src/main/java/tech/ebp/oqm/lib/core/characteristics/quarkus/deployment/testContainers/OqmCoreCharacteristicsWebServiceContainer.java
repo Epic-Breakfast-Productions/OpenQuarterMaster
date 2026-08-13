@@ -33,7 +33,8 @@ public class OqmCoreCharacteristicsWebServiceContainer extends GenericContainer<
 		ConfigureUtil.configureSharedNetwork(this, "oqm-core-characteristics");
 
 		// Tell the dev service how to know the container is ready. All 3 is likely overkill, but eh
-		this.waitingFor(Wait.forHealthcheck());
+//		this.waitingFor(Wait.forHealthcheck()); //TODO:: use this. Podman cant do this yet
+		this.waitingFor(Wait.forLogMessage(".*Uvicorn running on.*", 1));
 		this.addExposedPort(8080);
 
 		//configuration of characteristics

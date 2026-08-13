@@ -2,6 +2,7 @@ package tech.ebp.oqm.core.api.service.identifiers;
 
 import lombok.NonNull;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.IdentifierType;
+import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.NSN;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.ean.EAN_13;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.ean.EAN_8;
 import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.Identifier;
@@ -14,6 +15,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.identifiers.types.upc.UP
 import tech.ebp.oqm.core.api.service.identifiers.upc.EANCodeUtilities;
 import tech.ebp.oqm.core.api.service.identifiers.upc.GTINCodeUtilities;
 import tech.ebp.oqm.core.api.service.identifiers.upc.ISBNCodeUtilities;
+import tech.ebp.oqm.core.api.service.identifiers.upc.NsnCodeUtilities;
 import tech.ebp.oqm.core.api.service.identifiers.upc.UpcCodeUtilities;
 
 /**
@@ -25,7 +27,7 @@ import tech.ebp.oqm.core.api.service.identifiers.upc.UpcCodeUtilities;
  * </p>
  */
 public class IdentifierUtils {
-	
+
 	/**
 	 * Determines the type of identifier from the given code and returns the appropriate
 	 * Identifier implementation.
@@ -60,13 +62,16 @@ public class IdentifierUtils {
 		if(GTINCodeUtilities.isValidGTIN14Code(code)) {
 			return GTIN_14.builder().value(code).build();
 		}
+		if(NsnCodeUtilities.isValidNsnCode(code)) {
+			return NSN.builder().value(code).build();
+		}
 		if(isValidGenericId(code)) {
 			return GenericIdentifier.builder().value(code).build();
 		}
-		
+
 		throw new IllegalArgumentException("Code given does not fit into any category of id.");
 	}
-	
+
 	/**
 	 * Validates that the given code is valid for the specified identifier type.
 	 *
@@ -95,6 +100,9 @@ public class IdentifierUtils {
 			case EAN_13 -> {
 				return EANCodeUtilities.isValidEAN13Code(code);
 			}
+			case NSN -> {
+				return NsnCodeUtilities.isValidNsnCode(code);
+			}
 			case GTIN_14 -> {
 				return GTINCodeUtilities.isValidGTIN14Code(code);
 			}
@@ -104,7 +112,7 @@ public class IdentifierUtils {
 		}
 		throw new IllegalArgumentException("Unknown id type: " + type);
 	}
-	
+
 	/**
 	 * Creates an Identifier object of the specified type from the given code string.
 	 * Validates the code before creating the identifier and throws an exception if invalid.
@@ -158,6 +166,12 @@ public class IdentifierUtils {
 				}
 				throw new IllegalArgumentException("Invalid GTIN-14 code: " + code);
 			}
+			case NSN -> {
+				if(NsnCodeUtilities.isValidNsnCode(code)) {
+					return NSN.builder().value(code).build();
+				}
+				throw new IllegalArgumentException("Invalid NSN code: " + code);
+			}
 			case GENERIC -> {
 				if(isValidGenericId(code)) {
 					return GenericIdentifier.builder().value(code).build();
@@ -167,7 +181,7 @@ public class IdentifierUtils {
 		}
 		throw new IllegalArgumentException("Unknown id type: " + type);
 	}
-	
+
 	/**
 	 * Validates that a generic identifier is not blank.
 	 *

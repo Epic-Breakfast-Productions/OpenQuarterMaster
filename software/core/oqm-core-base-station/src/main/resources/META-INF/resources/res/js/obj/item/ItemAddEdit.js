@@ -82,6 +82,7 @@ export class ItemAddEdit extends PageUtility {
 			whenUniqueSingle
 		);
 	}
+
 	static async foreachStoredTypeFromStorageInput(
 		whenAmount,
 		whenUnique
@@ -92,6 +93,7 @@ export class ItemAddEdit extends PageUtility {
 			whenUnique
 		);
 	}
+
 	static async resetAddEditForm() {
 		let promises = [];
 		ExtItemSearch.hideAddEditProductSearchPane();
@@ -129,6 +131,7 @@ export class ItemAddEdit extends PageUtility {
 		await Promise.all(promises);
 		console.log("Reset item add/edit form.");
 	}
+
 	static async setupAddEditForAdd() {
 		console.log("Setting up add/edit form for add.");
 		await ItemAddEdit.resetAddEditForm();
@@ -142,90 +145,103 @@ export class ItemAddEdit extends PageUtility {
 
 	static async setupAddEditForEdit(itemId, otherModal = null) {
 		console.log("Setting up add/edit form for editing item " + itemId);
-		ModalUtils.setReturnModal(ItemAddEdit.addEditItemModal, otherModal);
-		await ItemAddEdit.resetAddEditForm();
-		ItemAddEdit.addEditItemModalLabel.text("Item Edit");
-		ItemAddEdit.addEditItemFormMode.val("edit");
-		ItemAddEdit.addEditItemModalLabelIcon.html(Icons.iconWithSub(Icons.item, Icons.edit));
-		ItemAddEdit.addEditItemFormSubmitButton.html(Icons.iconWithSub(Icons.item, Icons.edit) + " Edit Item");
+		Main.processStart("Setup Item Add/Edit form for edit", ItemAddEdit.addEditItemModal);
+		try {
+			ModalUtils.setReturnModal(ItemAddEdit.addEditItemModal, otherModal);
+			await ItemAddEdit.resetAddEditForm();
+			ItemAddEdit.addEditItemModalLabel.text("Item Edit");
+			ItemAddEdit.addEditItemFormMode.val("edit");
+			ItemAddEdit.addEditItemModalLabelIcon.html(Icons.iconWithSub(Icons.item, Icons.edit));
+			ItemAddEdit.addEditItemFormSubmitButton.html(Icons.iconWithSub(Icons.item, Icons.edit) + " Edit Item");
 
-		ItemAddEdit.addEditItemStorageTypeInput.prop("disabled", true);
+			ItemAddEdit.addEditItemStorageTypeInput.prop("disabled", true);
 
-		Rest.call({
-			spinnerContainer: ItemAddEdit.addEditItemModal,
-			url: Rest.passRoot + "/inventory/item/" + itemId,
-			failMessagesDiv: ItemAddEdit.addEditItemFormMessages,
-			done: async function (data) {
-				ImageSearchSelect.addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds);
-				KeywordAttEdit.addKeywordInputs(ItemAddEdit.addEditKeywordDiv, data.keywords);
-				KeywordAttEdit.addAttInputs(ItemAddEdit.addEditAttDiv, data.attributes);
-				FileAttachmentSearchSelect.populateFileInputFromObject(
-					ItemAddEdit.fileInput,
-					data.attachedFiles,
-					ItemAddEdit.addEditItemModal,
-					ItemAddEdit.addEditItemFormMessages
-				);
+			await Rest.call({
+				url: Rest.passRoot + "/inventory/item/" + itemId,
+				failMessagesDiv: ItemAddEdit.addEditItemFormMessages,
+				done: async function (data) {
+					let promises = [];
 
-				ItemAddEdit.addEditItemIdInput.val(data.id);
-				ItemAddEdit.addEditItemNameInput.val(data.name);
-				ItemAddEdit.addEditItemDescriptionInput.setValue(data.description);
-				ItemAddEdit.addEditItemStorageTypeInput.val(data.storageType);
-				DselectUtils.setValues(ItemAddEdit.addEditItemUnitInput, data.unit.string);
-				DselectUtils.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
-				ItemAddEdit.addEditStoredTypeInputChanged(true)
-					.then(function () {
-						if (data.lowStockThreshold) {
-							console.log("Item had low stock threshold: ", data.lowStockThreshold);
-							ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(data.lowStockThreshold.value)
-							ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val(data.lowStockThreshold.unit.string)
-						}
+					promises.push(ImageSearchSelect.addSelectedImages(ItemAddEdit.addEditItemImagesSelected, data.imageIds));
+					KeywordAttEdit.addKeywordInputs(ItemAddEdit.addEditKeywordDiv, data.keywords);
+					KeywordAttEdit.addAttInputs(ItemAddEdit.addEditAttDiv, data.attributes);
+					FileAttachmentSearchSelect.populateFileInputFromObject(
+						ItemAddEdit.fileInput,
+						data.attachedFiles,
+						ItemAddEdit.addEditItemModal,
+						ItemAddEdit.addEditItemFormMessages
+					);
+
+					ItemAddEdit.addEditItemIdInput.val(data.id);
+					ItemAddEdit.addEditItemNameInput.val(data.name);
+					ItemAddEdit.addEditItemDescriptionInput.setValue(data.description);
+					ItemAddEdit.addEditItemStorageTypeInput.val(data.storageType);
+
+					DselectUtils.setValues(ItemAddEdit.addEditItemUnitInput, data.unit.string);
+					DselectUtils.setValues(ItemAddEdit.addEditItemCategoriesInput, data.categories);
+					promises.push(
+						ItemAddEdit.addEditStoredTypeInputChanged(true)
+						.then(function () {
+							if (data.lowStockThreshold) {
+								console.log("Item had low stock threshold: ", data.lowStockThreshold);
+								ItemAddEdit.addEditItemTotalLowStockThresholdInput.val(data.lowStockThreshold.value)
+								ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.val(data.lowStockThreshold.unit.string)
+							}
+						})
+					);
+
+					Identifiers.populateEdit(ItemAddEdit.identifierInputContainer, data.identifiers);
+					IdGeneratorSearchSelect.AssociatedInput.populateAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput, data.idGenerators);
+
+					let durationTimespan = TimeUtils.durationNumSecsToTimespan(data.expiryWarningThreshold);
+
+					ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(TimeUtils.durationNumSecsTo(data.expiryWarningThreshold, durationTimespan));
+					switch (durationTimespan) {
+						case "weeks":
+							ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 4);
+							break;
+						case "days":
+							ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 3);
+							break;
+						case "hours":
+							ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 2);
+							break;
+						case "minutes":
+							ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 1);
+							break;
+						case "seconds":
+							ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 0);
+							break;
+					}
+
+					data.storageBlocks.forEach(curStorageBlockSettings => {
+						let curStorageBlockId = curStorageBlockSettings.storageBlock;
+						promises.push(Getters.StorageBlock.getStorageBlockLabel(curStorageBlockId, function (label) {
+							//TODO:: determine if we are allowed to remove (if has stored items in it or not)
+							ItemAddEdit.storageInput.addStorage(label, curStorageBlockId, curStorageBlockSettings);
+						}));
 					});
 
-				Identifiers.populateEdit(ItemAddEdit.identifierInputContainer, data.identifiers);
-				IdGeneratorSearchSelect.AssociatedInput.populateAssociatedIdGenListData(ItemAddEdit.associatedGeneratorInput, data.idGenerators);
+					ItemAddEdit.defaultStoredLabelInput.val(data.defaultLabelFormat);
+					AssociatedLinks.Form.populateInput(ItemAddEdit.linkInput, data.associatedLinks);
 
-				let durationTimespan = TimeUtils.durationNumSecsToTimespan(data.expiryWarningThreshold);
+					promises.push(
+						Pricing.populateInput(
+							ItemAddEdit.addEditItemPricingInput,
+							ItemAddEdit.getUnit(),
+							data.defaultPrices
+						)
+					);
 
-				ItemAddEdit.addEditItemExpiryWarningThresholdInput.val(TimeUtils.durationNumSecsTo(data.expiryWarningThreshold, durationTimespan));
-				switch (durationTimespan) {
-					case "weeks":
-						ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 4);
-						break;
-					case "days":
-						ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 3);
-						break;
-					case "hours":
-						ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 2);
-						break;
-					case "minutes":
-						ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 1);
-						break;
-					case "seconds":
-						ItemAddEdit.addEditItemExpiryWarningThresholdUnitInput.prop('selectedIndex', 0);
-						break;
+					await Promise.all(promises);
 				}
+			});
+		} finally {
+			Main.processStop("Setup Item Add/Edit form for edit");
+		}
 
-				data.storageBlocks.forEach(curStorageBlockSettings => {
-					let curStorageBlockId = curStorageBlockSettings.storageBlock;
-					Getters.StorageBlock.getStorageBlockLabel(curStorageBlockId, function (label) {
-						//TODO:: determine if we are allowed to remove (if has stored items in it or not)
-						ItemAddEdit.storageInput.addStorage(label, curStorageBlockId, curStorageBlockSettings);
-					});
-				});
-
-
-				ItemAddEdit.defaultStoredLabelInput.val(data.defaultLabelFormat);
-				AssociatedLinks.Form.populateInput(ItemAddEdit.linkInput, data.associatedLinks);
-				await Pricing.populateInput(
-					ItemAddEdit.addEditItemPricingInput,
-					ItemAddEdit.getUnit(),
-					data.defaultPrices
-				);
-
-				await ItemAddEdit.unitChanged();
-			}
-		});
 	}
+
 	static async addEditStoredTypeInputChanged(force = false) {
 		await ItemAddEdit.foreachStoredTypeFromStorageInput(
 			function () {
@@ -253,26 +269,33 @@ export class ItemAddEdit extends PageUtility {
 				advancedDiv.hide();
 			}
 		}
+
 		static Getters = class {
-			static blockIdInput(blockInput){
+			static blockIdInput(blockInput) {
 				return blockInput.find("input[name='storageBlock']");
 			}
-			static getStorageBlockIds(){
+
+			static getStorageBlockIds() {
 				return ItemAddEdit.associatedStorageInputContainer.find("input[name='storageBlock']");
 			}
-			static getStorageBlockInputs(){
+
+			static getStorageBlockInputs() {
 				return ItemAddEdit.associatedStorageInputContainer.find(".blockSelection");
 			}
-			static lowStockSettingUnitInput(blockInput){
+
+			static lowStockSettingUnitInput(blockInput) {
 				return blockInput.find(".storedSettingLowStockThresholdUnit");
 			}
-			static lowStockSettingValueInput(blockInput){
+
+			static lowStockSettingValueInput(blockInput) {
 				return blockInput.find(".storedSettingLowStockThresholdValue");
 			}
-			static notesSettingInput(blockInput){
+
+			static notesSettingInput(blockInput) {
 				return blockInput.find(".storedSettingNotesInput");
 			}
-			static notesSettingField(blockInput){
+
+			static notesSettingField(blockInput) {
 				return blockInput.data("notesField");
 			}
 		}
@@ -321,7 +344,7 @@ export class ItemAddEdit extends PageUtility {
 			UnitUtils.getCompatibleUnitOptions(ItemAddEdit.getUnit())
 				.then(function (options) {
 					ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(newBlock).html(options);
-					if(settings.lowStockThreshold){
+					if (settings.lowStockThreshold) {
 						ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(newBlock).val(settings.lowStockThreshold.unit.string)
 					}
 				});
@@ -332,14 +355,14 @@ export class ItemAddEdit extends PageUtility {
 			//TODO:: image
 
 
-			if(settings){
-				if(settings.hasSettings){
+			if (settings) {
+				if (settings.hasSettings) {
 					newBlock.find(".storageBlockInputAdvancedSettingsToggle").prop("checked", true);
 				}
-				if(settings.notes){
+				if (settings.notes) {
 					ItemAddEdit.storageInput.Getters.notesSettingField(newBlock).setValue(settings.notes);
 				}
-				if(settings.lowStockThreshold){
+				if (settings.lowStockThreshold) {
 					ItemAddEdit.storageInput.Getters.lowStockSettingValueInput(newBlock).val(settings.lowStockThreshold.value)
 				}
 			}
@@ -367,14 +390,16 @@ export class ItemAddEdit extends PageUtility {
 			);
 			Main.processStop();
 		}
+
 		static removeStorage(removeButtonClicked) {//or input card?
 			if (confirm("Are you sure you want to\nremove this associated storage?")) {
 				console.log("Removing associated storage.");
-				removeButtonClicked.parentElement.parentElement.parentElement.remove();
+				removeButtonClicked.parentElement.parentElement.parentElement.parentElement.remove();
 			} else {
 				console.log("User canceled removing the associated storage.");
 			}
 		}
+
 		static selectedStorageList() {
 			return ItemAddEdit.storageInput.Getters.getStorageBlockInputs()//TODO:: update to do advanced fields
 				.map(function () {
@@ -391,12 +416,14 @@ export class ItemAddEdit extends PageUtility {
 				.get();
 		}
 	}
-	static getUnit(force = false){
+
+	static getUnit(force = false) {
 		return (force || ItemAddEdit.addEditItemUnitNameRow.is(":visible")) ?
 			ItemAddEdit.addEditItemUnitInput.val() :
 			"units";
 	}
-	static async unitChanged(force = false){
+
+	static async unitChanged(force = false) {
 		let itemUnit = ItemAddEdit.getUnit();
 
 		console.log("Item Unit Changed to ", itemUnit);
@@ -410,12 +437,14 @@ export class ItemAddEdit extends PageUtility {
 
 		await Promise.all([lowStockUnitPromise, storageBlocksSettingsLowStockUnitsPromise, pricingUnitPromise]);
 	}
+
 	static updateLowStockUnits(itemUnit, force = false) {
 		return UnitUtils.getCompatibleUnitOptions(itemUnit)
 			.then(function (options) {
 				ItemAddEdit.addEditItemTotalLowStockThresholdUnitInput.html(options);
 			});
 	}
+
 	static storageBlockSettingsLowStockUnits(itemUnit, force = false) {
 		return UnitUtils.getCompatibleUnitOptions(itemUnit)
 			.then(function (options) {
@@ -425,6 +454,7 @@ export class ItemAddEdit extends PageUtility {
 				});
 			});
 	}
+
 	static {
 		window.ItemAddEdit = this;
 
