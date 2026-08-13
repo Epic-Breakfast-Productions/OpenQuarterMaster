@@ -20,6 +20,9 @@ productLookup:
       enabled: true
     openlibrary:
       enabled: true
+    isbndb:
+      enabled: true
+      apiKey: " "
 
 quarkus:
   container-image:
@@ -53,6 +56,9 @@ quarkus:
       scope: jakarta.inject.Singleton
     openlibrary:
       url: https://openlibrary.org
+      scope: jakarta.inject.Singleton
+    isbndb:
+      url: https://api2.isbndb.com
       scope: jakarta.inject.Singleton
   smallrye-openapi:
     info-title: External Item Search API
@@ -115,5 +121,7 @@ quarkus:
         url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
       openfoodfacts-search:
         url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
-      open-library:
+      openlibrary:
         url: http://localhost:${quarkus.wiremock.devservices.port}/openlibrary/
+      isbndb:
+        url: http://localhost:${quarkus.wiremock.devservices.port}/isbndb/

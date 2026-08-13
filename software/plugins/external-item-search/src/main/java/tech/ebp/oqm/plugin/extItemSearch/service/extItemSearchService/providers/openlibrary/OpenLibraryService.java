@@ -22,7 +22,6 @@ import java.util.Map;
 import com.fasterxml.jackson.databind.JsonNode;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResultNoResults;
-import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.ResultMappingUtils;
 
 public class OpenLibraryService extends ItemSearchService {
 
@@ -56,6 +55,7 @@ public class OpenLibraryService extends ItemSearchService {
                         .map(result -> mapJsonToResponse(source, lookupMethod, result))
                         .onFailure().recoverWithItem(e -> this.handleErrorRetCollection(source, lookupMethod, e))
                         .onItem().transformToMulti(collection -> Multi.createFrom().iterable(collection));
+                    case TEXT -> throw new IllegalArgumentException("Text lookup method search is not implemented yet");
                     default -> throw new IllegalArgumentException("Invalid lookup method: " + lookupMethod);
                 };
             default -> throw new IllegalArgumentException("Invalid lookup source: " + source);
@@ -63,7 +63,7 @@ public class OpenLibraryService extends ItemSearchService {
     }
 
     private Collection<LookupResult> mapJsonToResponse(LookupSource source, LookupMethod method, ObjectNode results) {
-        if (results.get("docs") == null) {
+        if (results.get("docs") == null || results.get("docs").isEmpty()) {
             return List.of(
                 this.setupResponseBuilder(LookupResultNoResults.builder(), source, method)
                     .detail("No items found.")

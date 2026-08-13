@@ -6,5 +6,6 @@ public enum LookupSource {
 	REBRICKABLE,
 	UPC_ITEM_DB,
     OPENFOODFACTS,
-    OPENLIBRARY
+    OPENLIBRARY,
+    ISBNDB
 }

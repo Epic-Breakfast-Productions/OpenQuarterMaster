@@ -1,7 +1,12 @@
 {
   "request": {
-    "urlPathPattern": "/book/examle",
-    "method": "GET"
+    "method": "GET",
+    "urlPathPattern": "/isbndb/book/1503632431",
+    "headers": {
+      "Authorization": {
+        "equalTo": " "
+      }
+    }
   },
   "response": {
     "status": 200,

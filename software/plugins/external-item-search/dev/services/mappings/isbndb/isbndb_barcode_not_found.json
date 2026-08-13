@@ -1,20 +1,20 @@
 {
   "request": {
-    "urlPathPattern": "/book/examle_not_found",
-    "method": "GET"
+    "method": "GET",
+    "urlPath": "/isbndb/book/(?!1503632431$)[^/]+",
+    "headers": {
+      "Authorization": {
+        "equalTo": " "
+      }
+    }
   },
   "response": {
     "status": 404,
     "headers": {
       "Content-Type": "application/json"
     },
-    "delayDistribution": {
-      "type": "lognormal",
-      "median": 5000,
-      "sigma": 0.4
-    },
     "jsonBody": {
-      "error_message": "string"
+      "error_message": "Book not found"
     }
   }
 }

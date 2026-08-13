@@ -4,7 +4,7 @@
     "method": "GET",
     "queryParameters": {
       "q": {
-        "equalTo": "(?!3046920029759(?=/|$))([^/]+).json$"
+        "matches": "^(?!1501752014).+"
       }
     }
   },
@@ -24,7 +24,7 @@
       "numFoundExact": true,
       "num_found": 1,
       "documentation_url": "https://openlibrary.org/dev/docs/api/search",
-      "q": "(?!3046920029759(?=/|$))([^/]+).json$",
+      "q": "0000000000000",
       "offset": null,
       "docs": []
     }
