@@ -21,7 +21,10 @@
 </tr>
 <tr>
 	<th scope="col" class="searchResultImageCol text-center"><abbr title="Image">{#icons/image /}</abbr></th>
-	<th scope="col">Name</th>
+	<th scope="col">
+		{#search/sortFieldSelector form=searchFormId field="name" searchResults=searchResults /}
+		Name
+	</th>
 	<th scope="col"><abbr title="Storage Type">Type</abbr></th>
 	<th scope="col" class="text-center"><abbr title="Categories">{#icons/categories /}</abbr></th>
 	<th scope="col">Total</th>
