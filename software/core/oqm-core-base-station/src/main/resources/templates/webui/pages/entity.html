@@ -71,11 +71,11 @@
     	import { EntityRef } from '{rootPrefix}/res/js/EntityRef.js';
 		import { UriUtils } from '{rootPrefix}/res/js/UriUtils.js';
 		import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
-		
+
 		SearchUtils.init();
 		EntityRef.init();
-		
-		console.log("Page modules loaded.");
+
+		Main.pageModulesLoaded();
     </script>
     <script defer>
 
@@ -85,7 +85,7 @@
         let viewType = $("#viewType");
         let viewEmailLink = $("#viewEmailLink");
         let viewRoles = $("#viewRoles");
-    	
+
         function resetView(){
             viewName.text("");
             viewType.text("");
@@ -106,7 +106,7 @@
                 failMessagesDiv: viewModalMessages,
                 done: async function(data){
                     viewName.text(data.name);
-					
+
 					viewType.append(EntityRef.getEntityRefIcon(data));
 					viewType.append(data.type);
 
@@ -128,14 +128,14 @@
         viewModal[0].addEventListener("hidden.bs.modal", function (){
             UriUtils.removeParam("view");
         });
-		
+
 		$(document).ready(function(){
 			if(UriUtils.getParams.has("view")){
 				setupView(UriUtils.getParams.get("view"));
 				viewModalBs.show();
 			}
 		});
-		
+
 	</script>
 {/pageScript}
 {/include}

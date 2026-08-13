@@ -29,8 +29,8 @@ quarkus:
     name: oqm-plugin-ext_item_search
     group: ebprod
   http:
-    port: 80
-    ssl-port: 443
+    port: 8080
+    ssl-port: 8443
   application:
 #    name: ${service.nameShort} - V${service.apiVersion}
   rest-client:

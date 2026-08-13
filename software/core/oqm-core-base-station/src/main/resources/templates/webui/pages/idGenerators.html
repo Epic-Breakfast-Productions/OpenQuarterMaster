@@ -1,6 +1,6 @@
 {#include webui/mainWebPageTemplate navbar="full" showTitle=true title="Id Generators" page='idGenerators'}
     {#pageStyle}
-    
+
     {/pageStyle}
     {#pageContent}
     <div class="row mb-2">
@@ -42,17 +42,18 @@
     	{#object/idGenerator/GenerateResultModal /}
     {/modals}
     {#scripts}
-    
+
     {/scripts}
-    
+
     {#pageScript}
         <script type="module">
 		import { IdGeneratorUtils } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorUtils.js';
 		import { IdGeneratorAddEdit } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorAddEdit.js';
-		
+
 		IdGeneratorUtils.init();
 		IdGeneratorAddEdit.init();
-		
+
+		Main.pageModulesLoaded();
         </script>
     {/pageScript}
 {/include}

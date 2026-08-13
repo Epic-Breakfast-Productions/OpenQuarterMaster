@@ -3,12 +3,14 @@ plugins {
 	id 'io.quarkus'
 	id "io.freefair.lombok" version "9.5.0"
 	id 'jacoco'
-	id 'org.cyclonedx.bom' version '3.2.4'
-	id("org.spdx.sbom") version "0.11.0"
+	id 'org.cyclonedx.bom' version '3.4.0'
+	id "org.spdx.sbom" version "0.12.0"
 }
+import org.cyclonedx.Version
+import org.cyclonedx.model.Component
 
-group 'com.ebp.openQuarterMaster'
-version '6.1.0'
+group = 'com.ebp.openQuarterMaster'
+version = '6.2.0'
 
 repositories {
 	mavenCentral()
@@ -34,12 +36,10 @@ dependencies {
 	implementation 'io.quarkus:quarkus-elytron-security'
 	implementation 'io.quarkus:quarkus-elytron-security-properties-file'
 
-	//implementation 'io.opentelemetry.instrumentation:opentelemetry-mongo-3.1:1.24.0-alpha'
-	// https://quarkus.io/guides/logging
 	implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
 
 	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
-	implementation "com.fasterxml.jackson.datatype:jackson-datatype-javax-money:2.22.0"
+	implementation "com.fasterxml.jackson.datatype:jackson-datatype-javax-money:2.22.1"
 	implementation 'com.fasterxml.jackson.module:jackson-module-blackbird'
 
 	// https://mvnrepository.com/artifact/tech.units/indriya
@@ -52,8 +52,8 @@ dependencies {
 	implementation 'org.apache.commons:commons-lang3:3.20.0'
 	implementation 'org.apache.commons:commons-compress:1.28.0'
 	implementation 'org.apache.commons:commons-io:1.3.2'
-	implementation("commons-validator:commons-validator:1.10.1")
-	implementation 'org.apache.tika:tika-core:3.3.1'
+	implementation("commons-validator:commons-validator:1.11.0")
+	implementation 'org.apache.tika:tika-core:3.3.2'
 	implementation 'uk.org.okapibarcode:okapibarcode:0.5.6'
 
 	implementation("org.javamoney:moneta:1.4.5")
@@ -61,9 +61,9 @@ dependencies {
 	/*
 	Test Dependencies
 	 */
-	testImplementation group: 'io.quarkus', name: 'quarkus-junit5'
-	testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
-	testImplementation group: 'io.rest-assured', name: 'rest-assured'
+	testImplementation 'io.quarkus:quarkus-junit5'
+	testImplementation 'io.quarkus:quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
+	testImplementation 'io.rest-assured:rest-assured'
 	testImplementation 'io.quarkus:quarkus-smallrye-jwt-build'
 	testImplementation 'io.quarkus:quarkus-test-kafka-companion'
 	testImplementation 'net.datafaker:datafaker:2.7.0'
@@ -111,6 +111,8 @@ check {
 
 // https://github.com/CycloneDX/cyclonedx-gradle-plugin
 tasks.cyclonedxDirectBom {
+	schemaVersion = Version.VERSION_17
+	projectType = Component.Type.APPLICATION
 	// includeConfigs is the list of configuration names to include when generating the BOM (leave empty to include every configuration), regex is supported
 	includeConfigs = ["runtimeClasspath"]
 
@@ -120,14 +122,11 @@ tasks.cyclonedxDirectBom {
 	// skipProjects is a list of project names to exclude when generating the BOM
 //	skipProjects = [rootProject.name, "yourTestSubProject"]
 
-	// Specified the type of project being built. Defaults to 'library'
-	projectType = "application"
 	// Include resolution of full metadata for components including licenses. Defaults to 'true'
 	includeMetadataResolution = true
 }
 tasks.cyclonedxBom {
-	// Specified the version of the CycloneDX specification to use. Defaults to '1.6'
-	schemaVersion = "VERSION_16"
+
 	// Include BOM Serial Number. Defaults to 'true'
 	includeBomSerialNumber = true
 	// Include License Text. Defaults to 'true'
@@ -172,6 +171,7 @@ spdxSbom {
 }
 
 tasks.register('generateSbom'){
+	group = "sbom"
 	dependsOn tasks.cyclonedxBom
 	dependsOn tasks.spdxSbom
 	doLast {
@@ -184,9 +184,12 @@ tasks.register('generateSbom'){
  *
  * Used by the `makeInstallers.sh` script to get the version.
  */
+String v = project.version.toString()
 tasks.register('printVersion') {
+	group = "documentation"
 	doLast {
-		println project.version
+
+		println v
 	}
 }
 
