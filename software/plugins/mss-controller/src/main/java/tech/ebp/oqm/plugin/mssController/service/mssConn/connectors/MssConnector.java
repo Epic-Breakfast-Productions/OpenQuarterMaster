@@ -17,6 +17,7 @@ import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.plugin.mssController.model.exception.command.MssCommandError;
 import tech.ebp.oqm.plugin.mssController.model.exception.command.MssCommandReturnedError;
 import tech.ebp.oqm.plugin.mssController.model.exception.module.ModuleSetupFailedException;
+import tech.ebp.oqm.plugin.mssController.model.moduleComm.MssConnectorInfo;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.Command;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleInfoCommand;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.command.commands.GetModuleStateCommand;
@@ -173,5 +174,19 @@ public abstract class MssConnector {
 
 		this.setLastComm(ZonedDateTime.now());
 		return response;
+	}
+
+	public MssConnectorInfo toConnInfo(){
+		return MssConnectorInfo.builder()
+				   .specVersion(this.getModuleInfo().getSpecVersion())
+				   .firmwareVersion(this.getModuleInfo().getFirmwareVersion())
+				   .serialId(this.getSerialId())
+				   .manufactureDate(this.getModuleInfo().getManufactureDate())
+				   .numBlocks(this.getModuleInfo().getNumBlocks())
+				   .capabilities(this.getModuleInfo().getCapabilities())
+				   .lastComm(this.getLastComm())
+				   .numErrsSinceLastComm(this.getErrsSinceLastComm().size())
+				   .connState(this.getConnState())
+				   .build();
 	}
 }

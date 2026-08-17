@@ -26,6 +26,7 @@ import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.MssConnector
 import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.serial.SerialMssConnector;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -163,9 +164,11 @@ public class MssConnectionService {
 
 	}
 
+	public Collection<MssConnector> getConnectors(){
+		return this.getActiveConnections().values();
+	}
+
 	public MssConnector getConnector(String serialId){
 		return this.getActiveConnections().get(serialId);
 	}
-
-
 }
