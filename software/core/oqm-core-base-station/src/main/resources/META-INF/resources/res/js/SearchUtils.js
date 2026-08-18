@@ -102,6 +102,26 @@ export class SearchUtils extends PageUtility {
 		$("#" + pageNumInputId).val(1);
 	}
 
+	static sortFieldClicked(clickedSortSelector, formId, field){
+		console.log("Sort field clicked: ", clickedSortSelector, formId, field);
+
+		let searchForm = $("#" + formId);
+		let clickedSortSelectorJq = $(clickedSortSelector);
+
+		if(clickedSortSelectorJq.children(".sortByFieldNotSelected").length){
+			searchForm.find('input[name="sortBy"]').val(field);
+			searchForm.find('input[name="sortType"]').val("ASCENDING");
+		} else if(clickedSortSelectorJq.children(".sortByFieldAscending").length) {
+			searchForm.find('input[name="sortBy"]').val(field);
+			searchForm.find('input[name="sortType"]').val("DESCENDING");
+		} else if(clickedSortSelectorJq.children(".sortByFieldDescending").length) {
+			searchForm.find('input[name="sortBy"]').val("");
+			searchForm.find('input[name="sortType"]').val("");
+		}
+
+		searchForm.submit();
+	}
+
 	static {
 		window.SearchUtils = this;
 		console.log("Initting search utils.");
