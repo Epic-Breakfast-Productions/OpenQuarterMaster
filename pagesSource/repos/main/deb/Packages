@@ -613,6 +613,21 @@ Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/m
 Description: Core API instance for Open QuarterMaster.
 Licence: GPL-3+
 
+Package: oqm-core-api
+Version: 6.3.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.10.0), oqm-infra-keycloak (>= 1.2.3), oqm-infra-mongodb (>= 1.1.0), oqm-infra-traefik (>= 1.0.0)
+Filename: ./oqm-core-api_6.3.0_all.deb
+Size: 5068
+MD5sum: 28f2e030f2293d97c4822aab44acebb4
+SHA1: 7f125a4dc09cc3f9ed6e84bb6c6fabf06b0cf2fe
+SHA256: 386a6f46f7756fbe893fb87c6906531ac1a03fe03d02860570b64659309cacae
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/core/oqm-core-api
+Description: Core API instance for Open QuarterMaster.
+Licence: GPL-3+
+
 Package: oqm-core-base+station
 Version: 1.0.40
 Architecture: all
@@ -1099,6 +1114,22 @@ Size: 5420
 MD5sum: 0714bccf61c6bba6750778d56fde240c
 SHA1: 3569cc2f34c54721709d4fcb76c7032d6e3b8621
 SHA256: 4e2ddab38b9d9670fe5513fbe78cdb3e5ab71b0789055372ea8d6f1a73bc4bb1
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-core-base+station
+Version: 1.20.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.11.0), oqm-infra-keycloak (>= 2.0.0), oqm-infra-traefik (>= 1.0.0), oqm-core-api (>= 6.2.0), oqm-core-characteristics (>= 1.0.1)
+Recommends: oqm-plugin-ext_item_search
+Filename: ./oqm-core-base+station_1.20.1_all.deb
+Size: 5418
+MD5sum: 9ce9eb6aa78fee8f506f333e87b492a7
+SHA1: 535215c0094463b8b445ca15cf17f3906e52bb1a
+SHA256: 179c2d8dae72a9f46f49b7fb32b30c40fa1a1f1579d7eb96396ed50cf1e14942
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
 Description: Base Station instance for Open QuarterMaster.
@@ -2674,6 +2705,21 @@ Description: Utility for setting up and maintaining an instance of Open QuarterM
 Licence: GPL-3+
 
 Package: oqm-manager-station+captain
+Version: 2.12.3
+Architecture: all
+Maintainer: EBP
+Pre-Depends: bash, curl, jq, libnss-mdns, hwinfo, moreutils, dialog, docker.io, unattended-upgrades, ca-certificates, python3 (>= 3.10.0), python3-cryptography, python3-dialog, python3-docker, python3-systemd, python3-argcomplete, python3-jinja2, python3-distutils-extra, python3-boto3, python3-requests, python3-psutil, python3-cpuinfo
+Filename: ./oqm-manager-station+captain_2.12.3_all.deb
+Size: 51104
+MD5sum: 2ae06a2004f2ad9b959370f819c91589
+SHA1: 8c4c18b6c79a811814235b92cbe5ba06b0868e21
+SHA256: 233d3453bfa496969d8cdaa16cae603021c0a1b110028e7e087496927e5e734b
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Station%20Captain
+Description: Utility for setting up and maintaining an instance of Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-manager-station+captain
 Version: 2.2.0
 Architecture: all
 Maintainer: EBP
@@ -3045,6 +3091,21 @@ Size: 3504
 MD5sum: c7301b811f716b87d217d8da11b2b400
 SHA1: 2d7b1c793a89c89162d8ddd63b3099d222e448fa
 SHA256: d89af214740760684575b7267f15e63feca986cca0fe03f449f5c4fc0f9549f1
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/external-item-search
+Description: Allows for Open QuarterMaster services to search for items from outside sources. Requires internet connection.
+Licence: GPL-3+
+
+Package: oqm-plugin-ext+item+search
+Version: 2.1.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.9.0)
+Filename: ./oqm-plugin-ext+item+search_2.1.1_all.deb
+Size: 3504
+MD5sum: 858ee1c44ef56f7380a5337c78ab59b2
+SHA1: 37ad6ca4236783eeb0275c0fb375b31c80aa66aa
+SHA256: 26ee7a4db5127db94f41af3f9eb0fd636a98730ee1535a6eeb55008692483769
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/external-item-search
 Description: Allows for Open QuarterMaster services to search for items from outside sources. Requires internet connection.

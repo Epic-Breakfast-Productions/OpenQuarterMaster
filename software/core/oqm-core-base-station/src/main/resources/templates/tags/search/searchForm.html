@@ -19,21 +19,21 @@ Ingests:
 		</div>
         {#if showKeywords?? && showKeywords == true}
         <div class="col">
-            {#inputs/keywordInput}
-            {/inputs/keywordInput}
+            {#inputs/keywordInput /}
         </div>
         {/if}
         {#if showAttributes?? && showAttributes == true}
         <div class="col">
-            {#inputs/attInput}
-            {/inputs/attInput}
+            {#inputs/attInput /}
         </div>
         {/if}
     </div>
     <hr />
+	<input type="hidden" name="sortBy" />
+	<input type="hidden" name="sortType" />
     <div class="row">
         <div class="col col-2 text-center">
-            <button type="submit" class="btn btn-info mb-1">{#icons/search}{/icons/search} Search</button>
+            <button type="submit" class="btn btn-info mb-1">{#icons/search /} Search</button>
             <button type="reset" class="btn btn-warning mb-1">Reset</button>
         </div>
         <div class="col col-2">
