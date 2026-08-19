@@ -1,0 +1,5 @@
+sphinx
+sphinx-toolbox
+sphinxcontrib-mermaid
+sphinx-jsonschema
+sphinx_design
