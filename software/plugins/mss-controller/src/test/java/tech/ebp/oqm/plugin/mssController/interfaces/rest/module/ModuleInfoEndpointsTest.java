@@ -28,7 +28,7 @@ import static org.junit.jupiter.api.Assertions.*;
 		@ResourceArg(name = TestModuleResource.NUM_SERIAL_MODULE_RES_NAME, value = "1")
 	}
 )
-class ModuleInfoTest extends RunningServerTest {
+class ModuleInfoEndpointsTest extends RunningServerTest {
 
 	@Test
 	public void testGetModules() throws JsonProcessingException {

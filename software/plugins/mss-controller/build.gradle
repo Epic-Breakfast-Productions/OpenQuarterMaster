@@ -29,6 +29,8 @@ dependencies {
 	implementation 'io.quarkus:quarkus-hibernate-orm-panache'
 	implementation 'io.quarkus:quarkus-jdbc-postgresql'
 	implementation 'io.quarkus:quarkus-vertx'
+	implementation 'io.quarkus:quarkus-flyway'
+	implementation 'org.flywaydb:flyway-database-postgresql'
 
 	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-characteristics-lib-quarkus:1.1.1'
 	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:6.0.0'
@@ -59,4 +61,8 @@ compileJava {
 
 compileTestJava {
 	options.encoding = 'UTF-8'
+}
+
+check {
+	finalizedBy quarkusIntTest
 }

@@ -1,14 +1,12 @@
 package tech.ebp.oqm.plugin.mssController.interfaces.rest.module;
 
 import jakarta.inject.Inject;
-import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import lombok.Getter;
-import lombok.NonNull;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.MssConnectorInfo;
 import tech.ebp.oqm.plugin.mssController.model.moduleComm.state.ModuleState;
 import tech.ebp.oqm.plugin.mssController.service.mssConn.MssConnectionService;
@@ -17,7 +15,7 @@ import tech.ebp.oqm.plugin.mssController.service.mssConn.connectors.MssConnector
 import java.util.stream.Stream;
 
 @Path("/module/")
-public class ModuleInfo {
+public class ModuleInfoEndpoints {
 
 	@Getter
 	@Inject

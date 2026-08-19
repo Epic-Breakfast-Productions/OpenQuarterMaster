@@ -1,4 +1,3 @@
-
 oqm:
     core:
         characteristics:
@@ -38,6 +37,11 @@ quarkus:
             realm-name: oqm
     datasource:
         db-kind: postgresql
+    hibernate-orm:
+        schema-management:
+            strategy: none
+    flyway:
+        migrate-at-start: true
 
 smallrye:
     jwt:
@@ -66,8 +70,8 @@ smallrye:
                 secret: "**********"
         #      auth-server-url: http://localhost:8115/realms/oqm
         hibernate-orm:
-          schema-management:
-              strategy: drop-and-create
+            schema-management:
+                strategy: drop-and-create
     oqm:
         core:
             api:
