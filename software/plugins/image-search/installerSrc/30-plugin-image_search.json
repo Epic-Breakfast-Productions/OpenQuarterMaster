@@ -1,0 +1,10 @@
+{
+	"plugin": {
+		"imageSearch": {
+			"internalHost": "oqm-plugin-image-search",
+			"internalHttpPort": 8080,
+			"internalHttpsPort": 8443,
+			"internalBaseUri": "http://#{plugin.imageSearch.internalHost}:#{plugin.imageSearch.internalHttpPort}"
+		}
+	}
+}
