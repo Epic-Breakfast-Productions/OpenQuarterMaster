@@ -16,7 +16,7 @@
 		"serialId": {
 			"description": "The unique identifier for a module. Must be unique to all modules. Must be consistent between module restarts.",
 			"type": "string",
-			"pattern": "^[a-zA-Z0-9_.-]+$"
+			"pattern": "^[a-zA-Z0-9_.-]{1,40}+$"
 		},
 		"manufactureDate": {
 			"description": "When this module was manufactured. Must to adhere to ISO standard format yyyy-mm-dd",
