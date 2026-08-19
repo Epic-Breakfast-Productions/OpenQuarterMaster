@@ -1,0 +1,70 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/isbndb/book/1503632431",
+    "headers": {
+      "Authorization": {
+        "equalTo": " "
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 5000,
+      "sigma": 0.4
+    },
+    "jsonBody": {
+      "book": {
+        "title": "string",
+        "isbn13": "string",
+        "isbn10": "string",
+        "binding": "string",
+        "publisher": "string",
+        "language": "string",
+        "date_published": "2005-07-01",
+        "edition": "string",
+        "pages": 0,
+        "dimensions_structured": [
+          "string"
+        ],
+        "image": "string",
+        "image_original": "string",
+        "msrp": 0,
+        "excerpt": "string",
+        "synopsis": "string",
+        "authors": [
+          "string"
+        ],
+        "subjects": [
+          "string"
+        ],
+        "prices": [
+          {
+            "condition": "string",
+            "merchant": "string",
+            "merchant_logo": "string",
+            "merchant_logo_offset": {
+              "x": "string",
+              "y": "string"
+            },
+            "shipping": "string",
+            "price": "string",
+            "total": "string",
+            "link": "string"
+          }
+        ],
+        "other_isbns": [
+          {
+            "isbn": "string",
+            "binding": "string"
+          }
+        ]
+      }
+    }
+  }
+}
