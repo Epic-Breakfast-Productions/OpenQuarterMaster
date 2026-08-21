@@ -1,0 +1,106 @@
+{#include webui/mainWebPageTemplate navbar="full" showTitle=true title='Items Stored' page='itemsStored'}
+{!{@java.util.Map allowedUnitsMap}!}
+{#styleSheets}
+    <link rel="stylesheet" href="{rootPrefix}/lib/Croppie/2.6.4/croppie.css"/>
+{/styleSheets}
+{#pageContent}
+<div class="row">
+    <div class="col d-grid gap-2">
+        {#itemStored/transaction/buttons/transactionDropdown dropdownStyles="width:100%;" checkinButton=false /}
+    </div>
+    <!--
+    <div class="col d-grid gap-2">
+        <button type="button" class="btn btn-info">{#icons/view /} Item stats</button>
+    </div>
+    -->
+</div>
+<br/>
+<div class="row">
+    <div class="col accordion" id="searchAccordion">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="searchHeader">
+                <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
+                        data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
+                        aria-controls="searchCollapse">
+                    {#icons/search /}
+                    Search Fields
+                </button>
+            </h2>
+            <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
+                 aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
+                <div class="accordion-body">
+                    {#search/itemStored/searchForm id='mainPageSearch' rootPrefix=rootPrefix resultsContainer='mainPageSearchResults' /}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col">
+        <table id="mainPageSearchResults" class="table table-bordered table-striped table-hover table-sm">
+            {#search/itemStored/searchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' rootPrefix=rootPrefix showType=true showItem=true showStorage=true /}
+        </table>
+    </div>
+</div>
+{#search/image/imageSelectFormInputHidden /}
+{/pageContent}
+{#modals}
+	{#search/storage/searchSelectModal rootPrefix=rootPrefix /}
+	{#search/image/imageSearchSelectModal rootPrefix=rootPrefix /}
+	{#search/item/itemSearchSelectModal rootPrefix=rootPrefix allCategorySearchResults=allCategorySearchResults /}
+	{#itemStored/itemStoredViewModal rootPrefix=rootPrefix /}
+	{#itemStored/itemStoredEditModal rootPrefix=rootPrefix /}
+	{#itemStored/transaction/allTransactionModals /}
+	{#CodeScannerModal /}
+	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal" /}
+	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal' /}
+	{#object/idGenerator/searchSelectModal rootPrefix=rootPrefix /}
+{/modals}
+
+{#scripts}
+    <script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script><!-- doesn't play nice with import -->
+{/scripts}
+{#pageScript}
+<script type="module">
+	import { SearchUtils } from '{rootPrefix}/res/js/SearchUtils.js';
+	import { ItemSearchSelect } from '{rootPrefix}/res/js/obj/item/ItemSearchSelect.js';
+	import { ItemStoredEdit } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredEdit.js';
+	import { HistorySearchUtils } from '{rootPrefix}/res/js/HistorySearchUtils.js';
+	import { StorageSearchSelect } from '{rootPrefix}/res/js/obj/storageBlock/StorageSearchSelect.js';
+	import { IdGeneratorAddEdit } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorAddEdit.js';
+	import { IdGeneratorSearchSelect } from '{rootPrefix}/res/js/obj/idGenerator/IdGeneratorSearchSelect.js';
+	import { FileAttachmentSearchSelect } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js';
+	import { FileAttachmentAddEdit } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js';
+	import { FileAttachmentView } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js';
+	import { ImageSearchSelect } from '{rootPrefix}/res/js/obj/media/ImageSearchSelect.js';
+	import { ImageAdd } from '{rootPrefix}/res/js/obj/media/ImageAdd.js';
+	import { ImageAddFromSelect } from '{rootPrefix}/res/js/obj/media/ImageAddFromSelect.js';
+	import { ItemStoredTransaction } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredTransaction.js';
+	import { ItemStoredSearchSelect } from '{rootPrefix}/res/js/obj/itemStored/ItemStoredSearchSelect.js';
+	import { CodeScanner } from '{rootPrefix}/res/js/CodeScanner.js';
+	import { ItemCategoryInput } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js';
+
+	SearchUtils.init();
+	ItemSearchSelect.init();
+	ItemStoredEdit.init();
+	StorageSearchSelect.init();
+	IdGeneratorAddEdit.init();
+	IdGeneratorSearchSelect.init();
+	FileAttachmentSearchSelect.init();
+	FileAttachmentAddEdit.init();
+	FileAttachmentView.init();
+	ImageSearchSelect.init();
+	ImageAdd.init();
+	ImageAddFromSelect.init();
+	ItemStoredTransaction.init();
+	ItemStoredSearchSelect.init();
+	CodeScanner.init();
+	ItemCategoryInput.init();
+	HistorySearchUtils.init();
+
+	Main.pageModulesLoaded();
+</script>
+<script defer>
+</script>
+{/pageScript}
+{/include}
