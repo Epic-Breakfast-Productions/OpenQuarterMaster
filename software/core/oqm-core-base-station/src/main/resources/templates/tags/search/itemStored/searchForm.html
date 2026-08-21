@@ -5,7 +5,7 @@ Ingests:
 - id - the id to give the form
 !}
 {!{@tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch searchObject}!}
-{#include tags/search/searchForm id=id action='' showKeywords=true showAttributes=true onSubmit=str:fmt("ItemStoredSearch.search(this, event,'%s',false, true);",resultsContainer) defaultPageSize=config:['ui.itemsStored.search.defaultPageSize']}
+{#include tags/search/searchForm id=id action='' showKeywords=true showAttributes=true defaultPageSize=config:['ui.itemsStored.search.defaultPageSize']}
     {#inputs}
         <div class="mb-3 col col-3">
             {#inputs/item/itemSelectInput id=id /}

@@ -2,18 +2,27 @@
   <thead>
   <tr>
     <td colspan="100" class="text-center searchResultsContainer">
-      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
     </td>
   </tr>
   <tr>
     <th scope="col" class="searchResultImageCol">Image</th>
-    <th scope="col">Label</th>
-    <th scope="col" style="width: 125px;">Id?</th>
-    {#if showType??}<th scope="col">Type</th>{/if}
-    {#if showItem??}<th scope="col">Item</th>{/if}
-    {#if showStorage??}<th scope="col">{#icons/storageBlock}{/icons/storageBlock} Stored In</th>{/if}
-    {#if showAmount}<th scope="col">Amount</th>{/if}
-    <th scope="col" style="width: 114px;">{#icons/flags /} Flags</th>
+    <th scope="col">
+		{#search/sortFieldSelector form=searchFormId field="labelText" searchResults=searchResults /}
+		Label
+	</th>
+    <th scope="col" style="width: 125px;">Id</th>
+    {#if showType??}<th scope="col" class="text-center">Type</th>{/if}
+    {#if showItem??}
+		<th scope="col">
+			{#search/sortFieldSelector form=searchFormId field="item" searchResults=searchResults /}
+			{#icons/item /}
+			Item
+		</th>
+	{/if}
+    {#if showStorage??}<th scope="col">{#icons/storageBlock /} Stored In</th>{/if}
+    {#if showAmount}<th scope="col" class="text-center">Amount</th>{/if}
+    <th scope="col" style="width: 114px;" class="text-center"><abbr title="Flags">{#icons/flags /}</abbr></th>
     <th scope="col" style="width: 150px;">Actions</th>
   </tr>
   </thead>
@@ -22,6 +31,7 @@
   <tr>
     <td colspan="100" class="text-center">
       <h2>
+		  {#icons/stored /}
         Nothing Stored
       </h2>
       {#if actionType == 'full'}
@@ -41,27 +51,27 @@
   <tr class="itemStoredResultRow align-middle">
     <td>
       {#if !result.get("imageIds").isEmpty()}
-      <img src="{rootPrefix}/api/passthrough/media/image/for/item_stored/{id}" class="searchResultImage">
+      <img src="{rootPrefix}/api/passthrough/media/image/for/item_stored/{id}" class="searchResultImage" alt="{labelText} image">
       {/if}
     </td>
-    <td class="">{labelText}</td>
+    <td class="user-select-all">{labelText}</td>
     <td>
 		<abbr title="{id}">...{id.substring(id.length() - 6)}</abbr>{#copyTextButton fromTitle=true /}
 	</td>
 
-    {#if showType}<td>{cdi:EnumFormattingService.formatEnum(result.get("type").asText())}</td>{/if}
+    {#if showType}<td class="text-center">{#icons/storedTypeIconFromType type=result.get("type").asText() /}</td>{/if}
     {#if showItem}<td>{result.get("item-name").asText()}</td>{/if}{!TODO:: link this !}
     {#if showStorage}<td>{result.get("state").get("storageBlock-labelText").asText()}</td>{/if}{!TODO:: link !}
     {#if showAmount}
 		<td>
 			{#if cdi:ItemStoredResultsQuteFunctions.storedIsAmount(result)}
-				{#amountDisplay amount=result.get("amount")}{/amountDisplay}
+				{#amountDisplay amount=result.get("amount") /}
 			{#else}
 				n/a
 			{/if}
 		</td>
 	{/if}
-	<td>
+	<td class="text-center">
 		{#if result.get("notificationStatus").get("lowStock").asBoolean()}
 		<span class="badge rounded-pill text-bg-danger" title="Low Stock">
 			{#icons/lowStock /}
@@ -85,10 +95,10 @@
 			{!{#icons/view}{/icons/view}!}
 		{!</button>!}
 		<button type="button" class="btn btn-sm btn-info me-1" title="View" onclick="StoredView.toggleViewResultTableRow(this, '{result.get("item").asText()}', '{id}');">
-			{#icons/view}{/icons/view}
+			{#icons/view /}
 		</button>
       <button type="button" class="btn btn-sm btn-warning me-1" title="Edit" data-bs-toggle="modal" data-bs-target="#itemStoredEditModal" onclick="ItemStoredEdit.setupEditForm(this, '{result.get("item").asText()}', '{id}');">
-        {#icons/edit}{/icons/edit}
+        {#icons/edit /}
       </button>
       {#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false storedId=id itemId=itemId checkinButton=false /}
 
@@ -97,7 +107,7 @@
       <button type="button" class="btn btn-sm btn-success" title="Select {labelText}"
               data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
               onclick="ItemStoredSearchSelect.selectStoredItem('{labelText}', '{result.get("state").get("storageBlock").asText()}', '{id}', '{inputIdPrepend}');">
-        {#icons/select}{/icons/select} Select
+        {#icons/select /} Select
       </button>
 	{#else if actionType == 'view'}
 	  <td class="d-grid gap-2">
@@ -112,7 +122,7 @@
   <tfoot>
   <tr>
     <td colspan="100" class="text-center searchResultsContainer">
-      {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
     </td>
   </tr>
   </tfoot>
