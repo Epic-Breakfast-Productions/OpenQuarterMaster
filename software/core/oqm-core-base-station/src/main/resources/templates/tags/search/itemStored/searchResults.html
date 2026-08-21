@@ -7,12 +7,12 @@
   </tr>
   <tr>
     <th scope="col" class="searchResultImageCol">Image</th>
+	  {#if showType??}<th scope="col" class="text-center" style="width: 45px;">Type</th>{/if}
     <th scope="col">
 		{#search/sortFieldSelector form=searchFormId field="labelText" searchResults=searchResults /}
 		Label
 	</th>
-    <th scope="col" style="width: 125px;">Id</th>
-    {#if showType??}<th scope="col" class="text-center">Type</th>{/if}
+    <th scope="col" style="width: 100px;">Id</th>
     {#if showItem??}
 		<th scope="col">
 			{#search/sortFieldSelector form=searchFormId field="item" searchResults=searchResults /}
@@ -54,13 +54,13 @@
       <img src="{rootPrefix}/api/passthrough/media/image/for/item_stored/{id}" class="searchResultImage" alt="{labelText} image">
       {/if}
     </td>
+	  {#if showType}<td class="text-center">{#icons/storedTypeIconFromType type=result.get("type").asText() /}</td>{/if}
     <td class="user-select-all">{labelText}</td>
     <td>
-		<abbr title="{id}">...{id.substring(id.length() - 6)}</abbr>{#copyTextButton fromTitle=true /}
+		<abbr title="{id}">...{id.substring(id.length() - 6)}</abbr>{#copyTextButton fromTitle=true cssClasses="me-0 p-1 ms-1" /}
 	</td>
 
-    {#if showType}<td class="text-center">{#icons/storedTypeIconFromType type=result.get("type").asText() /}</td>{/if}
-    {#if showItem}<td>{result.get("item-name").asText()}</td>{/if}{!TODO:: link this !}
+    {#if showItem}<td>{#icons/storageTypeIconFromType type=result.get("item-storageType").asText() /}{result.get("item-name").asText()}</td>{/if}{!TODO:: link this !}
     {#if showStorage}<td>{result.get("state").get("storageBlock-labelText").asText()}</td>{/if}{!TODO:: link !}
     {#if showAmount}
 		<td>

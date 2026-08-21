@@ -66,7 +66,7 @@ public class ItemStoredUi extends UiProvider {
 				"allCategorySearchResults", this.coreApiClient.itemCatSearch(this.getBearerHeaderStr(), this.getSelectedDb(), new ItemCategorySearch()),
 				"searchResults", this.coreApiClient.invItemStoredSearch(this.getBearerHeaderStr(), this.getSelectedDb(), search)
 									 .call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr(), "state", "storageBlock"))
-									 .call(results->searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr())),
+									 .call(results->searchResultTweak.addItemDetailsToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr())),
 				"allUnitMap", this.coreApiClient.unitGetAll(this.getBearerHeaderStr())
 			)
 		);
