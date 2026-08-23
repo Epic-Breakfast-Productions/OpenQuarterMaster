@@ -11,6 +11,7 @@ import {ItemAddEdit} from "./ItemAddEdit.js";
 import {UriUtils} from "../../UriUtils.js";
 import {Rest} from "../../Rest.js";
 import {ItemStoredTransaction} from "../itemStored/ItemStoredTransaction.js";
+import {ItemStoredSearch} from "../itemStored/ItemStoredSearch.js";
 import {MarkdownUtils} from "../../MarkdownUtils.js";
 import {Identifiers} from "../../Identifiers.js";
 import {CheckoutTypeUtils, StorageTypeUtils, StoredTypeUtils} from "../../StoredTypeUtils.js";
@@ -276,6 +277,11 @@ export class ItemView extends PageUtility {
 
 		Getters.StorageBlock.getStorageBlockLabel(blockId, function (blockLabel) {
 			output.find("#" + searchFormId + "-storageBlockInputName").val(blockLabel);
+		});
+
+		output.on("submit", function(e){
+			e.preventDefault();
+			ItemStoredSearch.search(output.find("#"+searchFormId)[0], e,"#"+searchResultsId,false, false);
 		});
 
 		return output;
@@ -732,6 +738,11 @@ export class ItemView extends PageUtility {
 		ItemView.checkoutSearchFormItemSearchButt.prop("disabled", true);
 		ItemView.checkoutSearchFormItemClearButt.prop("disabled", true);
 		ItemView.checkoutSearchFormItemNameInput.prop("disabled", true);
+
+		ItemView.allStoredSearchForm.on("submit", function (e){
+			e.preventDefault();
+			ItemStoredSearch.search(ItemView.allStoredSearchForm[0], e,"#itemViewAllStoredSearchResults",false, true);
+		});
 
 		ItemView.checkoutSearchForm.on("submit", function (e) {
 			e.preventDefault();
