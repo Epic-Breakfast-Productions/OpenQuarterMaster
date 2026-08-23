@@ -26,7 +26,7 @@ Accepts:
         <div class="col d-grid gap-2">
             <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addEditModal"
                     onclick="setupAddEditForAdd();"
-                    id="mainAddButton">{#icons/add}{/icons/add} Add Storage Block
+                    id="mainAddButton">{#icons/add /} Add Storage Block
             </button>
         </div>
         <!--
@@ -48,8 +48,7 @@ Accepts:
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/storage/searchForm id='mainPageSearch' rootPrefix=rootPrefix}
-                    {/search/storage/searchForm}
+                    {#search/storage/searchForm id='mainPageSearch' rootPrefix=rootPrefix /}
                 </div>
             </div>
         </div>
@@ -58,8 +57,7 @@ Accepts:
 <div class="row">
     <div class="col table-responsive">
         <table id="mainPageSearchResults" class="table table-bordered table-striped table-hover table-sm">
-            {#search/storage/searchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' rootPrefix=rootPrefix}
-            {/search/storage/searchResults}
+            {#search/storage/searchResults searchResults=searchResults actionType='full' searchFormId='mainPageSearch' rootPrefix=rootPrefix /}
         </table>
     </div>
 </div>
@@ -131,10 +129,8 @@ Accepts:
             {!{#inputs/capacityInput}!}
             {!{/inputs/capacityInput}!}
 
-            {#inputs/keywordInput}
-            {/inputs/keywordInput}
-            {#inputs/attInput}
-            {/inputs/attInput}
+            {#inputs/keywordInput /}
+            {#inputs/attInput /}
             <hr />
             <div class="accordion" id="addBulkAccord">
                 <div class="accordion-item">
@@ -199,7 +195,7 @@ Accepts:
 {#search/image/imageSearchSelectModal otherModalId="addEditModal" rootPrefix=rootPrefix /}
 
 {#modal id='storageBlockInventorySheetPrintout' title='Inventory Sheet Printout' otherModalId="storageBlockViewModal" submitForm="storageBlockInventorySheetPrintoutForm" submitDismiss=false}
-	{#titleIcon}{#icons/print}{/icons/print}{/titleIcon}
+	{#titleIcon}{#icons/print /}{/titleIcon}
     <div class="row">
         <form class="col" id="storageBlockInventorySheetPrintoutForm" method="get" action="">
             <div class="mb-3 row">
@@ -254,7 +250,7 @@ Accepts:
 {/modal}
 
 {#modal id='storageBlockView' size='xl' title='Storage Block View'}
-    {#titleIcon}{#icons/storageBlock}{/icons/storageBlock}{/titleIcon}
+    {#titleIcon}{#icons/storageBlock /}{/titleIcon}
     <div class="row">
         <div class="col" id="storageBlockViewMessages">
         </div>
@@ -302,7 +298,7 @@ Accepts:
             </div>
             <div class="card" id="storageBlockViewStoredItemCategoriesContainer">
                 <div class="card-body">
-                    <h5 class="card-title">{#icons/categories}{/icons/categories} Stored Item Categories:</h5>
+                    <h5 class="card-title">{#icons/categories /} Stored Item Categories:</h5>
                     <div id="storageBlockViewStoredItemCategories">
                     </div>
                 </div>
@@ -614,7 +610,6 @@ Accepts:
 			Carousel.clearCarousel(storageBlockViewCarousel);
 			KeywordAttUtils.clearHideKeywordDisplay(viewKeywordsSection);
 			KeywordAttUtils.clearHideAttDisplay(viewAttsSection);
-
 		}
 
 		function setupView(blockId){
@@ -696,6 +691,7 @@ Accepts:
 			});
 
 			HistorySearchUtils.setupHistorySearch(storageBlockHistoryAccordionCollapse, blockId);
+			Main.processStop();
 		}
 
 		let viewModal = new bootstrap.Modal(storageBlockViewModal, { });
