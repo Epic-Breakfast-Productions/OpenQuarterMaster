@@ -344,7 +344,7 @@ export class ItemAddEdit extends PageUtility {
 			UnitUtils.getCompatibleUnitOptions(ItemAddEdit.getUnit())
 				.then(function (options) {
 					ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(newBlock).html(options);
-					if (settings.lowStockThreshold) {
+					if (settings && settings.lowStockThreshold) {
 						ItemAddEdit.storageInput.Getters.lowStockSettingUnitInput(newBlock).val(settings.lowStockThreshold.unit.string)
 					}
 				});
