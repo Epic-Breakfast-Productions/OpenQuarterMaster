@@ -4,6 +4,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.test.common.http.TestHTTPEndpoint;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import tech.ebp.oqm.plugin.extItemSearch.model.SearchType;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ResultType;
 import tech.ebp.oqm.plugin.extItemSearch.testResources.RunningServerTest;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
@@ -58,7 +60,7 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 		//TODO:: validate
 	}
 
-	public static Stream<Arguments> getSearches(){
+	public static Stream<Arguments> getSearches() {
 		return Stream.of(
 			Arguments.of(
 				Map.of(
@@ -70,7 +72,7 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 			),
 			Arguments.of(
 				Map.of(
-					"lookupMethod",  SearchType.BARCODE,
+					"lookupMethod", SearchType.BARCODE,
 					"q", "00888109010058"
 				),
 				List.of(
@@ -79,29 +81,41 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 			),
 			Arguments.of(
 				Map.of(
-					"lookupMethod",  SearchType.BARCODE,
+					"lookupMethod", SearchType.BARCODE,
 					"q", "886736874135"
 				),
 				List.of(
 					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name())
 				)
+			),
+			Arguments.of(
+				Map.of(
+					"lookupMethod", SearchType.TEXT,
+					"q", "GPS"
+				),
+				List.of(
+					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
+					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
+					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
+					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
+					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
+					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
+					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
+					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
+					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
+					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name())
+				)
 			)
-//			Arguments.of(
-//				Map.of(
-//					"lookupMethod",  SearchType.TEXT,
-//					"q", "GPS"
-//				),
-//				List.of(
-//					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name())
-//				)
-//			)
 		);
 	}
 
 	public record Result(
 		String source,
 		String type
-	) {}
+	)
+	{
+
+	}
 
 	@ParameterizedTest
 	@MethodSource("getSearches")
@@ -110,24 +124,30 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 		List<Result> expected
 	) throws JsonProcessingException {
 		String searchResultsStr = given()
-								   .when()
+									  .when()
 									  .params(parameters)
 									  .get("search")
-								   .then()
-								   .statusCode(200)
-								   .extract().body().asString();
+									  .then()
+									  .statusCode(200)
+									  .extract().body().asString();
 		log.info("Search results: {}", searchResultsStr);
 
 		ArrayNode results = (ArrayNode) objectMapper.readTree(searchResultsStr);
 
 		assertEquals(expected.size(), results.size(), "Wrong number of search results.");
 
-		for(Result curExpected : expected){
+		List<ObjectNode> remaining = new ArrayList<>(results.size());
+		for(JsonNode cur : results){
+			remaining.add((ObjectNode) cur);
+		}
+
+		for (Result curExpected : expected) {
 			boolean found = false;
-			for(JsonNode curResult : results){
-				if(
+			for (ObjectNode curResult : remaining) {
+				if (
 					curExpected.source().equals(curResult.get("source").asText())
-				){
+				) {
+					remaining.remove(curResult);
 					found = true;
 					assertEquals(curExpected.type(), curResult.get("type").asText());
 					break;
@@ -135,6 +155,7 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 			}
 			assertTrue(found, "Did not find expected result.");
 		}
+		assertTrue(remaining.isEmpty(), "Failed to find all expected entries.");
 	}
 
 }
