@@ -94,5 +94,5 @@ Plugins are how we achieve our modular system. They add onto the core functional
 
 Listed below are plugins we consider "released" and ready to use:
 
-* `External Item Search <https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/external-item-search>`_ - A tool to get information about items from external sources.
+* `External Item Search <https://docs.openquartermaster.com/components/software/plugin/extItemSearch/>`_ - A tool to get information about items from external sources.
 * `Storagotchi <https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/storagotchi>`_ - A fun virtual pet to encourage inventory management.
