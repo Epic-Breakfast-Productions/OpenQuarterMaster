@@ -83,6 +83,8 @@ quarkus:
             reload: true
             files-mapping: ./dev/services/
             global-response-templating: true
+    test:
+        integration-test-profile: intTest
 
 "%dev":
     productLookup:
@@ -116,3 +118,26 @@ quarkus:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
             openfoodfacts-search:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+
+"%intTest":
+    quarkus:
+        http:
+        #    port: 8081
+        log:
+            level: DEBUG
+    productLookup:
+        providers:
+            rebrickable:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
+                apiKey: devKey
+            upcitemdb:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
+            datakick:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
+            barcodelookup-com:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
+                apiKey: devKey
+            openfoodfacts:
+                url-barcode: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+                url-search: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+#

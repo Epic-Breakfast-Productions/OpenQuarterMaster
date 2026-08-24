@@ -14,6 +14,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.plugin.extItemSearch.model.SearchType;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ResultType;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
 import tech.ebp.oqm.plugin.extItemSearch.testResources.RunningServerTest;
 
 import java.util.ArrayList;
@@ -24,8 +25,7 @@ import java.util.stream.Stream;
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
-import static tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource.BARCODE_LOOKUP;
-import static tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource.DATAKICK;
+import static tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupSource.*;
 
 @Slf4j
 @QuarkusTest
@@ -93,18 +93,72 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 					"lookupMethod", SearchType.TEXT,
 					"q", "GPS"
 				),
+				new ArrayList<>(10){{
+					for(int i = 0; i < 10; i++){add(new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()));}
+				}}
+			),
+			Arguments.of(
+				Map.of(
+					"lookupMethod", SearchType.BARCODE,
+					"q", "3046920029759"
+				),
 				List.of(
-					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
-					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
-					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
-					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
-					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
-					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
-					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
-					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
-					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name()),
-					new Result(BARCODE_LOOKUP.name(), ResultType.SUCCESS.name())
+					new Result(OPENFOODFACTS.name(), ResultType.SUCCESS.name())
 				)
+			),
+			Arguments.of(
+				Map.of(
+					"lookupMethod", SearchType.TEXT,
+					"q", "beshbarmak"
+				),
+				List.of(
+					new Result(OPENFOODFACTS.name(), ResultType.SUCCESS.name())
+				)
+			),
+			Arguments.of(
+				Map.of(
+					"lookupMethod", SearchType.BARCODE,
+					"q", "017078987621"
+				),
+				List.of(
+					new Result(UPC_ITEM_DB.name(), ResultType.SUCCESS.name())
+				)
+			),
+			Arguments.of(
+				Map.of(
+					"lookupMethod", LookupMethod.PART_NUM,
+					"q", "012345"
+				),
+				List.of(
+					new Result(REBRICKABLE.name(), ResultType.SUCCESS.name())
+				)
+			),
+			Arguments.of(
+				Map.of(
+					"lookupMethod", LookupMethod.TEXT,
+					"q", "2x2 brick"
+				),
+				new ArrayList<>(100){{
+					for(int i = 0; i < 100; i++){add(new Result(REBRICKABLE.name(), ResultType.SUCCESS.name()));}
+				}}
+			),
+			Arguments.of(
+				Map.of(
+					"lookupMethod", LookupMethod.SET_NUM,
+					"q", "21309-1"
+				),
+				List.of(
+					new Result(REBRICKABLE.name(), ResultType.SUCCESS.name())
+				)
+			),
+			Arguments.of(
+				Map.of(
+					"lookupMethod", LookupMethod.TEXT,
+					"q", "Saturn V"
+				),
+				new ArrayList<>(3){{
+					for(int i = 0; i < 3; i++){add(new Result(REBRICKABLE.name(), ResultType.SUCCESS.name()));}
+				}}
 			)
 		);
 	}

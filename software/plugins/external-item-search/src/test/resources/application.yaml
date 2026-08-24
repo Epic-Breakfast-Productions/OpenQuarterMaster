@@ -21,3 +21,4 @@ quarkus:
   log:
     level: DEBUG
 
+
