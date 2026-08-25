@@ -123,7 +123,7 @@
 	import { ExtItemSearch } from '{rootPrefix}/res/js/item/ExtItemSearch.js';
 	import { CodeScanner } from '{rootPrefix}/res/js/CodeScanner.js';
 	import { ItemCategoryInput } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js';
-	
+
 	SearchUtils.init();
 	ItemAddEdit.init();
 	ItemView.init();
@@ -144,8 +144,8 @@
 	CodeScanner.init();
 	ItemCategoryInput.init();
 	HistorySearchUtils.init();
-	
-	console.log("Page modules loaded.");
+
+	Main.pageModulesLoaded();
 </script>
 <script defer>
 
@@ -154,13 +154,13 @@ let addItemFromFileFormMessages = $("#addItemFromFileFormMessages");
 
 $("#addItemFromFileForm").submit(function (e){
     e.preventDefault();
-    
+
     let formData = new FormData();
     let file = addFromFileInput.files[0];
-    
+
     formData.append("fileName", file.name);
     formData.append("file", file);
-    
+
     Rest.call({
         url: Rest.passRoot + '/inventory/item',
         method: "post",
@@ -178,7 +178,7 @@ function removeItem(itemId){
         return;
     }
     console.log("Removing item " + itemId);
-    
+
     Rest.call({
         url: Rest.passRoot + "/inventory/item/" + itemId,
         method: "DELETE",

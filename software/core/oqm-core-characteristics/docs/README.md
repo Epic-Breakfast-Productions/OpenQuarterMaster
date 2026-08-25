@@ -2,5 +2,3 @@
 
 [Back](../README.md)
 
- - [Interface](./interface.md)
- - [Configuration](./configuration.md)

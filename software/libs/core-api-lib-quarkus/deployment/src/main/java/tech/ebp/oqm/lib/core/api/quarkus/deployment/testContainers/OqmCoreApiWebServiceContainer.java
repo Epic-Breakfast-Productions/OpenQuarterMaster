@@ -40,7 +40,7 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 
 		//TODO:: #1287 these lines are related to not host netowrking
 //		ConfigureUtil.configureSharedNetwork(this, "oqm-core-api");
-//		this.addFixedExposedPort(devserviceConfig.port(), 80);
+//		this.addFixedExposedPort(devserviceConfig.port(), 8080);
 //		this.withAccessToHost(true);
 
 		//TODO:: #1287 don't do this
@@ -55,7 +55,7 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 		this.withEnv(kafkaConnectionInfo);
 
 		// Tell the dev service how to know the container is ready. All 3 is likely overkill, but eh
-		this.waitingFor(Wait.forHealthcheck());
+//		this.waitingFor(Wait.forHealthcheck());
 		this.waitingFor(Wait.forLogMessage(".*oqm-core-api .* started.*", 1));
 
 		//don't need to do this, the docker healthcheck covers this. Not included as logs a superfluous stacktrace at startup.

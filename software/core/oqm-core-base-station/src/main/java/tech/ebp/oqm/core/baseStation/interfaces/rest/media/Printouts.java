@@ -1,8 +1,7 @@
-package tech.ebp.oqm.core.baseStation.interfaces.rest;
+package tech.ebp.oqm.core.baseStation.interfaces.rest.media;
 
 import io.smallrye.common.annotation.Blocking;
 import jakarta.annotation.security.RolesAllowed;
-import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.enterprise.context.RequestScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
@@ -13,6 +12,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
+import tech.ebp.oqm.core.baseStation.interfaces.rest.ApiProvider;
 import tech.ebp.oqm.core.baseStation.model.printouts.InventorySheetsOptions;
 import tech.ebp.oqm.core.baseStation.service.printout.StorageBlockInventorySheetService;
 import tech.ebp.oqm.core.baseStation.utils.Roles;

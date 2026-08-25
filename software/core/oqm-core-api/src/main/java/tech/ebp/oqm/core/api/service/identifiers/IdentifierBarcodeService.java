@@ -12,6 +12,7 @@ import uk.org.okapibarcode.backend.Code128;
 import uk.org.okapibarcode.backend.Code2Of5;
 import uk.org.okapibarcode.backend.Ean;
 import uk.org.okapibarcode.backend.HumanReadableLocation;
+import uk.org.okapibarcode.backend.Logmars;
 import uk.org.okapibarcode.backend.Symbol;
 import uk.org.okapibarcode.backend.Upc;
 import uk.org.okapibarcode.graphics.Color;
@@ -45,14 +46,14 @@ import java.io.IOException;
 @ApplicationScoped
 public class IdentifierBarcodeService {
 	public static final String DATA_MEDIA_TYPE = "image/svg+xml";
-	
+
 	private static final DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 	private static final TransformerFactory tf = TransformerFactory.newInstance();
-	
+
 	static {
 		//prevent factory from validating schema, reaching out to URL's
 		docBuilderFactory.setValidating(false);
-		
+
 		try {
 			docBuilderFactory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
 			docBuilderFactory.setFeature("http://xml.org/sax/features/external-general-entities", false);
@@ -61,7 +62,7 @@ public class IdentifierBarcodeService {
 			throw new IllegalStateException("FAILED to setup document builder (this should not happen)", e);
 		}
 	}
-	
+
 	private static String toImageData(Symbol code){
 		ByteArrayOutputStream os = new ByteArrayOutputStream();
 		SvgRenderer renderer = new SvgRenderer(os, 1, Color.WHITE, Color.BLACK, true);
@@ -72,7 +73,7 @@ public class IdentifierBarcodeService {
 		}
 		return os.toString();
 	}
-	
+
 	/**
 	 * Renders a barcode symbol to SVG format with optional label.
 	 * <p>
@@ -86,7 +87,7 @@ public class IdentifierBarcodeService {
 	 */
 	public static String processBarcodeData(Symbol code, String label){
 		String output = toImageData(code);
-		
+
 		if(label != null && !label.isBlank()){// add label to image
 			log.debug("Adding label: {}", label);
 			Document document;
@@ -98,44 +99,44 @@ public class IdentifierBarcodeService {
 			} catch(ParserConfigurationException | SAXException | IOException e) {
 				throw new RuntimeException("Failed to parse svg xml.", e);
 			}
-			
+
 			Element svgNode = (Element) document.getElementsByTagName("svg").item(0);
 			Element barcodeNode = (Element) svgNode.getElementsByTagName("g").item(0);
-			
+
 			NodeList barcodeElementList = barcodeNode.getChildNodes();
 			Element backdropNode = (Element) barcodeNode.getElementsByTagName("rect").item(0);
-			
+
 			float imgWidth = Float.parseFloat(svgNode.getAttribute("width"));
 			float origHeight = Float.parseFloat(svgNode.getAttribute("height"));
 			float fontSize = Float.parseFloat(
 				((Element)barcodeNode.getElementsByTagName("text").item(0)).getAttribute("font-size")
 			);
-			
+
 			float newTextLineHeight = fontSize + 1;
 			float newHeight = origHeight + newTextLineHeight;
-			
+
 			//adjust image size, current elements
 			svgNode.setAttribute("height", String.valueOf(newHeight));
 			backdropNode.setAttribute("height", String.valueOf(newHeight));
-			
+
 			for(int i = 0; i < barcodeElementList.getLength(); i++){
 				if(!(barcodeElementList.item(i) instanceof Element curNode)){
 					continue;
 				}
-				
+
 				if(
 					!curNode.hasAttribute("y") ||
 					curNode.getAttribute("y").equals("0")
 				){
 					continue;
 				}
-				
+
 				float oldY = Float.parseFloat(curNode.getAttribute("y"));
 				float newY = oldY + newTextLineHeight;
-				
+
 				curNode.setAttribute("y", String.valueOf(newY));
 			}
-			
+
 			//add new text element for label
 			Element newLabelNode = document.createElement("text");
 			newLabelNode.setAttribute("x", String.valueOf(imgWidth / 2));
@@ -146,13 +147,13 @@ public class IdentifierBarcodeService {
 			newLabelNode.setAttribute("font-size", "8.00");
 			newLabelNode.setAttribute("fill", "#000000");
 			newLabelNode.appendChild(document.createTextNode(label));
-			
+
 			barcodeNode.appendChild(newLabelNode);
-			
+
 			try(ByteArrayOutputStream baos = new ByteArrayOutputStream()) {
 				Transformer transformer = tf.newTransformer();
 				transformer.transform(new DOMSource(document), new StreamResult(baos));
-				
+
 				output = baos.toString();
 			} catch(IOException | TransformerException e) {
 				throw new RuntimeException("Failed to get string of svg xml.", e);
@@ -160,7 +161,7 @@ public class IdentifierBarcodeService {
 		}
 		return output;
 	}
-	
+
 	/**
 	 * Generates a barcode SVG for the specified identifier type and data.
 	 *
@@ -172,7 +173,7 @@ public class IdentifierBarcodeService {
 	public String getBarcodeData(IdentifierType type, String data, String label){
 		String dataIn = data;
 		int hQuietZone = 10;
-		
+
 		Symbol barcode = switch (type){
 			case UPC_A -> {
 				Upc upcaCode = new Upc(Upc.Mode.UPCA);
@@ -204,6 +205,13 @@ public class IdentifierBarcodeService {
 				dataIn = data.substring(0, 12);//shave off check bit
 				yield ean13Code;
 			}
+			case NSN -> {
+//				Logmars nsnCode = new Logmars();
+				Code128 nsnCode = new Code128();
+				nsnCode.setDataType(Symbol.DataType.GS1);
+				dataIn = "[7001]"+data;
+				yield nsnCode;
+			}
 			case GTIN_14 -> {
 				Code2Of5 gtin14Code = new Code2Of5(Code2Of5.ToFMode.ITF14);
 				dataIn = data.substring(0, 13);//shave off check bit
@@ -213,10 +221,10 @@ public class IdentifierBarcodeService {
 				Code128 genericCode = new Code128();
 				yield genericCode;
 			}
-			
+
 			default -> throw new IllegalStateException("Unexpected value: " + type);
 		};
-		
+
 		barcode.setFontName("Monospaced");
 		barcode.setFontSize(8);
 //		barcode.setModuleWidth(1);
@@ -225,13 +233,13 @@ public class IdentifierBarcodeService {
 		barcode.setQuietZoneVertical(2);
 		barcode.setHumanReadableLocation(HumanReadableLocation.BOTTOM);
 		barcode.setContent(dataIn);
-		
+
 		String labelStr = null;
 		boolean haveLabelGiven = label != null && !label.isBlank();
-		
+
 		if(type.displayInBarcode){
 			labelStr = type.prettyName();
-			
+
 			if(haveLabelGiven && !(type.name().equals(label) || labelStr.equals(label))){
 				labelStr += " / " + label;
 			}
@@ -242,15 +250,15 @@ public class IdentifierBarcodeService {
 				labelStr = label;
 			}
 		}
-		
+
 		log.debug("Built label for {}/{}: {}", type, label, labelStr);
-		
+
 		return processBarcodeData(
 			barcode,
 			labelStr
 		);
 	}
-	
+
 	/**
 	 * Generates a barcode SVG for the given identifier object.
 	 * Uses the identifier's type, value, and label properties.
@@ -261,5 +269,5 @@ public class IdentifierBarcodeService {
 	public String getBarcodeData(Identifier identifier){
 		return this.getBarcodeData(identifier.getType(), identifier.getValue(), identifier.getLabel());
 	}
-	
+
 }
