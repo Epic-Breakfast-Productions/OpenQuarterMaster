@@ -22,11 +22,11 @@ public class LifecycleBean {
 	@Inject
 	ExtItemLookupService extItemLookupService;
 	private ZonedDateTime startDateTime;
-	
+
 	public static void logConfig(){
-		if (log.isDebugEnabled()) {
+//		if (log.isDebugEnabled()) {
 			TreeMap<String, String> configMap = new TreeMap<>();
-			
+
 			for(String curProp : ConfigProvider.getConfig().getPropertyNames()){
 				String value;
 				try {
@@ -36,20 +36,20 @@ public class LifecycleBean {
 				}
 				configMap.put(curProp, value);
 			}
-			
+
 			StringBuilder sb = new StringBuilder();
 			for (String curProp : configMap.keySet()) {
-				
+
 				sb.append('\t');
 				sb.append(curProp);
 				sb.append('=');
 				sb.append(configMap.get(curProp));
 				sb.append(System.lineSeparator());
 			}
-			log.debug("Configuration: \n{}", sb);
-		}
+			log.info("Configuration: \n{}", sb);
+//		}
 	}
-	
+
 	private void startLogAnnounce(){
 		this.startDateTime = ZonedDateTime.now();
 		log.info("Open QuarterMaster external item search plugin Server starting.");
@@ -60,21 +60,21 @@ public class LifecycleBean {
 		//		log.debug("ManagerIO lib version: {}", this.managerIOVersion);
 		//		log.debug("Stats lib version: {}", this.statsVersion);
 		//		log.debug("Web lib version: {}", this.webLibVersion);
-		
+
 		logConfig();
 	}
-	
+
 	void onStart(
 		@Observes
 		StartupEvent ev
 	) {
 		this.startLogAnnounce();
-		
+
 		for(ItemSearchService curService : this.extItemLookupService.getSearchServices()) {
 			log.info("Loaded service: {}", curService.getProviderInfo());
 		}
 	}
-	
+
 	void onStop(
 		@Observes
 		ShutdownEvent ev

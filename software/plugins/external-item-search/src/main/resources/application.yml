@@ -1,112 +1,143 @@
 service:
-  version: ${quarkus.application.version}
-  gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
+    version: ${quarkus.application.version}
+    gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
 
 
 productLookup:
-  providers:
-    barcodelookup-com:
-      enabled: true
-      apiKey: " "
-    datakick:
-      enabled: true
-    rebrickable:
-      enabled: true
-      apiKey: " "
-    upcitemdb:
-      enabled: true
-      apiKey: " "
-    openfoodfacts:
-      enabled: true
+    providers:
+        barcodelookup-com:
+            url: https://api.barcodelookup.com/
+            enabled: true
+            apiKey: " "
+        datakick:
+            url: https://www.gtinsearch.org
+            enabled: true
+        rebrickable:
+            url: https://rebrickable.com
+            enabled: true
+            apiKey: " "
+        upcitemdb:
+            url: https://api.upcitemdb.com
+            enabled: true
+            apiKey: " "
+        openfoodfacts:
+            url-barcode: https://world.openfoodfacts.net
+            url-search: https://search.openfoodfacts.net
+            enabled: true
 
 quarkus:
-  container-image:
-    name: oqm-plugin-ext_item_search
-    group: ebprod
-  http:
-    port: 8080
-    ssl-port: 8443
-  application:
-#    name: ${service.nameShort} - V${service.apiVersion}
-  rest-client:
-    logging:
-      scope: all
-    barcodelookup-com:
-      url: https://api.barcodelookup.com/
-      scope: jakarta.inject.Singleton
-    datakick:
-      url: https://www.gtinsearch.org
-      scope: jakarta.inject.Singleton
-    upcitemdb:
-      url: https://api.upcitemdb.com
-      scope: jakarta.inject.Singleton
-    rebrickable:
-      url: https://rebrickable.com
-      scope: jakarta.inject.Singleton
-    openfoodfacts-barcode:
-      url: https://world.openfoodfacts.net
-      scope: jakarta.inject.Singleton
-    openfoodfacts-search:
-      url: https://search.openfoodfacts.net
-      scope: jakarta.inject.Singleton
-  smallrye-openapi:
-    info-title: External Item Search API
-    info-version: ${quarkus.application.version}
-    info-description: API documentation for the External Item Search Plugin.
-    #    info-terms-of-service: <url>
-    info-contact-email: greg@epic-breakfast-productions.tech
-    info-contact-name: EBP
-    info-contact-url: ${service.gitLink}
-    info-license-name: GNU General Public License v3.0
-    info-license-url: ${service.gitLink}/blob/main/LICENSE
-  swagger-ui:
-    always-include: true
-    title: External Item Search v${quarkus.application.version}
-    theme: flattop
-    footer: With ❤️, EBP
-  otel:
-    metrics:
-      enabled: true
-    traces:
-      enabled: true
-    logs:
-      enabled: true
-  wiremock:
-    devservices:
-      enabled: true
-      reload: true
-      files-mapping: ./dev/services/
-      global-response-templating: true
+    container-image:
+        name: oqm-plugin-ext_item_search
+        group: ebprod
+    http:
+        port: 8080
+        ssl-port: 8443
+    application:
+    #    name: ${service.nameShort} - V${service.apiVersion}
+    rest-client:
+        logging:
+            scope: all
+        barcodelookup-com:
+            url: ${productLookup.providers.barcodelookup-com.url}
+            scope: jakarta.inject.Singleton
+        datakick:
+            url: ${productLookup.providers.datakick.url}
+            scope: jakarta.inject.Singleton
+        upcitemdb:
+            url: ${productLookup.providers.upcitemdb.url}
+            scope: jakarta.inject.Singleton
+        rebrickable:
+            url: ${productLookup.providers.rebrickable.url}
+            scope: jakarta.inject.Singleton
+        openfoodfacts-barcode:
+            url: ${productLookup.providers.openfoodfacts.url-barcode}
+            scope: jakarta.inject.Singleton
+        openfoodfacts-search:
+            url: ${productLookup.providers.openfoodfacts.url-search}
+            scope: jakarta.inject.Singleton
+    smallrye-openapi:
+        info-title: External Item Search API
+        info-version: ${quarkus.application.version}
+        info-description: API documentation for the External Item Search Plugin.
+        #    info-terms-of-service: <url>
+        info-contact-email: greg@epic-breakfast-productions.tech
+        info-contact-name: EBP
+        info-contact-url: ${service.gitLink}
+        info-license-name: GNU General Public License v3.0
+        info-license-url: ${service.gitLink}/blob/main/LICENSE
+    swagger-ui:
+        always-include: true
+        title: External Item Search v${quarkus.application.version}
+        theme: flattop
+        footer: With ❤️, EBP
+    otel:
+        metrics:
+            enabled: true
+        traces:
+            enabled: true
+        logs:
+            enabled: true
+    wiremock:
+        devservices:
+            enabled: true
+            reload: true
+            files-mapping: ./dev/services/
+            global-response-templating: true
+    test:
+        integration-test-profile: intTest
 
 "%dev":
-  productLookup:
-    providers:
-      rebrickable:
-        apiKey: devKey
-      barcodelookup-com:
-        apiKey: devKey
+    productLookup:
+        providers:
+            rebrickable:
+                apiKey: devKey
+            barcodelookup-com:
+                apiKey: devKey
 
-  quarkus:
-    http:
-      port: 8080
-      ssl-port: 8443
-    log:
-      level: DEBUG
-    rest-client:
-      logging:
-        scope: all
-      barcodelookup-com:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
-        scope: jakarta.inject.Singleton
-      datakick:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
-        scope: jakarta.inject.Singleton
-      upcitemdb:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
-        scope: jakarta.inject.Singleton
-      rebrickable:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
-      openfoodfacts-barcode:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
-      openfoodfacts-search:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+    quarkus:
+        http:
+            port: 8080
+            ssl-port: 8443
+        log:
+            level: DEBUG
+        rest-client:
+            logging:
+                scope: all
+            barcodelookup-com:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
+                scope: jakarta.inject.Singleton
+            datakick:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
+                scope: jakarta.inject.Singleton
+            upcitemdb:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
+                scope: jakarta.inject.Singleton
+            rebrickable:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
+            openfoodfacts-barcode:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+            openfoodfacts-search:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+
+"%intTest":
+    quarkus:
+        http:
+        #    port: 8081
+        log:
+            level: DEBUG
+    productLookup:
+        providers:
+            rebrickable:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
+                apiKey: devKey
+            upcitemdb:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
+            datakick:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
+            barcodelookup-com:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
+                apiKey: devKey
+            openfoodfacts:
+                url-barcode: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+                url-search: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+#
