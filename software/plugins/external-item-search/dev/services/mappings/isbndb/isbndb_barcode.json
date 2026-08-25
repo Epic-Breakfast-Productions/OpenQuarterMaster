@@ -4,7 +4,7 @@
     "urlPathPattern": "/isbndb/book/1503632431",
     "headers": {
       "Authorization": {
-        "equalTo": " "
+        "equalTo": "devKey"
       }
     }
   },

@@ -96,6 +96,8 @@ quarkus:
         apiKey: devKey
       barcodelookup-com:
         apiKey: devKey
+      isbndb:
+        apiKey: devKey
 
   quarkus:
     http:

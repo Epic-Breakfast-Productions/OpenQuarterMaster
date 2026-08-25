@@ -4,17 +4,17 @@
     "urlPath": "/isbndb/book/(?!1503632431$)[^/]+",
     "headers": {
       "Authorization": {
-        "equalTo": "devKey"
+        "equalTo": "^devKey$"
       }
     }
   },
   "response": {
-    "status": 404,
+    "status": 401,
     "headers": {
       "Content-Type": "application/json"
     },
     "jsonBody": {
-      "error_message": "Book not found"
+      "message": "Full authentication is required to access this resource."
     }
   }
 }

@@ -2,6 +2,7 @@ package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Multi;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
@@ -23,6 +24,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResultNoResults;
 
+@ApplicationScoped
 public class OpenLibraryService extends ItemSearchService {
 
     private final OpenLibraryLookupClient openLibraryLookupClient;
@@ -55,6 +57,7 @@ public class OpenLibraryService extends ItemSearchService {
                         .map(result -> mapJsonToResponse(source, lookupMethod, result))
                         .onFailure().recoverWithItem(e -> this.handleErrorRetCollection(source, lookupMethod, e))
                         .onItem().transformToMulti(collection -> Multi.createFrom().iterable(collection));
+                    //TODO: #1338
                     case TEXT -> throw new IllegalArgumentException("Text lookup method search is not implemented yet");
                     default -> throw new IllegalArgumentException("Invalid lookup method: " + lookupMethod);
                 };
