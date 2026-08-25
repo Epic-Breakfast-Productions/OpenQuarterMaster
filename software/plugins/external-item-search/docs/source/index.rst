@@ -14,9 +14,17 @@ interface, and the schema of the results.
 This tool is intended to be used as a plugin for the OQM ecosystem, but there is no reason that it couldn't be used
 outside of this context.
 
+Supported item providers (sources of our searches) (* = requires your own API key / auth):
+
+ - \* `Barcode Lookup <https://www.barcodelookup.com/>`_
+ - `DataKick <https://gtinsearch.org/>`_
+ - \* `UPC Item DB <https://www.upcitemdb.com/>`_ (can require key, uses trial if no key)
+ - `Open Food Facts <https://world.openfoodfacts.org/>`_
+ - \* `Rebrickable <https://rebrickable.com/>`_
+
 .. toctree::
 	:maxdepth: 3
-	:caption: Contents:
+	:caption: Guides:
 
 	general
 	usage
