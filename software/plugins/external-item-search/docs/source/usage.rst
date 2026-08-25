@@ -3,6 +3,9 @@ Usage Guide
 
 This section goes over how to use the External Item Search service.
 
+Endpoints
+---------
+
 The service is fairly simple, and only has a few endpoints available.
 
 These endpoints are documented at the running service's swagger endpoint at ``/q/swagger-ui/``
@@ -117,4 +120,33 @@ These endpoints are documented at the running service's swagger endpoint at ``/q
 			},
 			//...
 		]
+
+Searching Specifics
+-------------------
+
+Searches take the following important GET parameters:
+
+Search Query
+............
+
+``q`` (String)
+
+This is the main search query. Required.
+
+Lookup Method
+.............
+
+``lookupMethod``
+
+One of the methods returned from the get methods endpoint, i.e, ``TEXT`` or ``BARCODE``
+
+This is how to specify the method to use for search. Can specify multiple times to specify
+multiple methods.
+
+Omit to default to ``TEXT``.
+
+
+
+
+
 

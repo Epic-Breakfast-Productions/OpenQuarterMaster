@@ -72,6 +72,14 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 			),
 			Arguments.of(
 				Map.of(
+					"q", "beshbarmak"
+				),
+				List.of(
+					new Result(OPENFOODFACTS.name(), ResultType.SUCCESS.name())
+				)
+			),
+			Arguments.of(
+				Map.of(
 					"lookupMethod", SearchType.BARCODE,
 					"q", "00888109010058"
 				),
