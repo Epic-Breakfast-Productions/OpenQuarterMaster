@@ -6,6 +6,11 @@
 			"key": {
 				"equalTo": "devKey"
 			},
+			"barcode": {
+				"not": {
+					"equalTo": "886736874135"
+				}
+			},
 			"search": {
 				"not": {
 					"equalTo": "GPS"
@@ -14,7 +19,7 @@
 		}
 	},
 	"response": {
-		"status": 400,
+		"status": 404,
 		"headers": {
 			"Content-Type": "application/json"
 		},
@@ -22,8 +27,7 @@
 			"type": "lognormal",
 			"median": 3000,
 			"sigma": 0.4
-		},
-		"body": "\"\""
+		}
 	}
 }
 

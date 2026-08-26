@@ -12,18 +12,13 @@ productLookup:
       url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
       apiKey: devKey
     openfoodfacts:
-      url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
-    openfoodfacts-search:
-      url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+      url-barcode: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+      url-search: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
 
 quarkus:
   http:
 #    port: 8081
   log:
     level: DEBUG
-  wiremock:
-    devservices:
-      enabled: true
-      reload: true
-      files-mapping: dev/wmMapping
-      global-response-templating: true
+
+
