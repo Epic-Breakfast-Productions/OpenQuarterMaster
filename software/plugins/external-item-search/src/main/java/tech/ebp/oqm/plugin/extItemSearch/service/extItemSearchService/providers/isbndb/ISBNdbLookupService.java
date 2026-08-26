@@ -27,16 +27,16 @@ import java.util.Map;
 
 @ApplicationScoped
 @Slf4j
-public class IsbndbLookupService extends ItemSearchService {
+public class ISBNdbLookupService extends ItemSearchService {
 
     private final String apiKey;
-    private final IsbndbLookupClient isbndbLookupClient;
+    private final ISBNdbLookupClient isbndbLookupClient;
     private final ObjectMapper objectMapper;
 
     @Inject
-    public IsbndbLookupService(
+    public ISBNdbLookupService(
         @RestClient
-        IsbndbLookupClient isbndbLookupClient,
+        ISBNdbLookupClient isbndbLookupClient,
         @ConfigProperty(name = "productLookup.providers.isbndb.enabled", defaultValue = "false")
         boolean enabled,
         @ConfigProperty(name = "productLookup.providers.isbndb.apiKey", defaultValue = "")
@@ -47,7 +47,7 @@ public class IsbndbLookupService extends ItemSearchService {
             LookupService.ISBNDB,
             ExtItemLookupProviderInfo
                 .builder()
-                .displayName("isbnDB")
+                .displayName("ISBNdb")
                 .description("The World's largest book database.")
                 .acceptsContributions(false)
                 .homepage(URI.create("https://isbndb.com/"))
@@ -88,7 +88,7 @@ public class IsbndbLookupService extends ItemSearchService {
     }
 
     private Collection<LookupResult> mapJsonToResponse(LookupSource source, LookupMethod method, JsonNode results) {
-        log.debug("Data from isbnDB: {}", results.toPrettyString());
+        log.debug("Data from ISBNdb: {}", results.toPrettyString());
         ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
         List<LookupResult> resultList = new ArrayList<>(results.size());
         if (results.get("book") != null && results.get("book").isObject()) {

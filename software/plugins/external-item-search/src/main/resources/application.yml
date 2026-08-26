@@ -24,6 +24,9 @@ productLookup:
             url-barcode: https://world.openfoodfacts.net
             url-search: https://search.openfoodfacts.net
             enabled: true
+        openlibrary:
+            url: https://openlibrary.org
+            enabled: true
         isbndb:
             url: https://api2.isbndb.com
             enabled: true
@@ -57,6 +60,9 @@ quarkus:
             scope: jakarta.inject.Singleton
         openfoodfacts-search:
             url: ${productLookup.providers.openfoodfacts.url-search}
+            scope: jakarta.inject.Singleton
+        openlibrary:
+            url: ${productLookup.providers.openlibrary.url}
             scope: jakarta.inject.Singleton
         isbndb:
             url: ${productLookup.providers.isbndb.url-search}
@@ -121,6 +127,8 @@ quarkus:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
             openfoodfacts-search:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+            openlibrary:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/openlibrary
             isbndb:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/isbndb/
 

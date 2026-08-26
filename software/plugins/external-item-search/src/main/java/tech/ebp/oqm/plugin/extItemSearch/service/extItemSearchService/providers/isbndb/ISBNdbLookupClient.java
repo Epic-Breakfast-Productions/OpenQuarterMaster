@@ -11,7 +11,7 @@ import jakarta.ws.rs.PathParam;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 @RegisterRestClient(configKey = "isbndb")
-public interface IsbndbLookupClient {
+public interface ISBNdbLookupClient {
     @WithSpan
     @GET
     @Path("/book/{isbn}")

@@ -3,7 +3,7 @@ package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.ItemSearchService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.barcodeLookup.BarcodeLookupService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.dataKick.DatakickService;
-import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.isbndb.IsbndbLookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.isbndb.ISBNdbLookupService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.openfoodfacts.OpenFoodFactsService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.openlibrary.OpenLibraryService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.rebrickable.RebrickableService;
@@ -46,7 +46,7 @@ public enum LookupService {
         // List.of(LookupMethod.TEXT)
     ),
     ISBNDB(
-        IsbndbLookupService.class,
+        ISBNdbLookupService.class,
         List.of(LookupSource.ISBNDB),
         List.of(LookupMethod.BARCODE)
         //TODO: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/issues/1338
