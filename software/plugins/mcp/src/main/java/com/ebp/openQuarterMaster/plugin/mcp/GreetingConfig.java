@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster;
+package com.ebp.openQuarterMaster.plugin.mcp;
 
 import io.smallrye.config.ConfigMapping;
 import io.smallrye.config.WithName;

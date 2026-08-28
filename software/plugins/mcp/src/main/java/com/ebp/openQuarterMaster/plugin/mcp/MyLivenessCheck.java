@@ -1,4 +1,4 @@
-package com.ebp.openQuarterMaster;
+package com.ebp.openQuarterMaster.plugin.mcp;
 
 import org.eclipse.microprofile.health.HealthCheck;
 import org.eclipse.microprofile.health.HealthCheckResponse;

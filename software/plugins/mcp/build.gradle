@@ -1,42 +1,46 @@
 plugins {
-    id 'java'
-    id 'io.quarkus'
-}
-
-repositories {
-    mavenCentral()
-    mavenLocal()
-}
-
-dependencies {
-    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-    implementation enforcedPlatform("${quarkusPlatformGroupId}:quarkus-mcp-server-bom:${quarkusPlatformVersion}")
-    implementation 'io.quarkus:quarkus-container-image-docker'
-    implementation 'io.quarkus:quarkus-oidc'
-    implementation 'io.quarkus:quarkus-config-yaml'
-    implementation 'io.quarkus:quarkus-micrometer-opentelemetry'
-    implementation 'io.quarkus:quarkus-smallrye-health'
-    implementation 'io.quarkiverse.mcp:quarkus-mcp-server-hibernate-validator'
-    implementation 'io.quarkiverse.mcp:quarkus-mcp-server-http'
-    implementation 'io.quarkiverse.mcp:quarkus-mcp-server-schema-validator'
-    implementation 'io.quarkiverse.mcp:quarkus-mcp-server-oidc'
-    implementation 'io.quarkus:quarkus-arc'
-    testImplementation 'io.quarkus:quarkus-junit'
+	id 'java'
+	id 'io.quarkus'
+	id "io.freefair.lombok" version "9.5.0"
 }
 
 group = 'com.ebp.openQuarterMaster'
 version = '1.0.0-SNAPSHOT'
 
+repositories {
+	mavenCentral()
+	mavenLocal()
+}
+
+dependencies {
+	implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+	implementation enforcedPlatform("${quarkusPlatformGroupId}:quarkus-mcp-server-bom:${quarkusPlatformVersion}")
+	implementation 'io.quarkus:quarkus-container-image-docker'
+	implementation 'io.quarkus:quarkus-oidc'
+	implementation 'io.quarkus:quarkus-config-yaml'
+	implementation 'io.quarkus:quarkus-micrometer-opentelemetry'
+	implementation 'io.quarkus:quarkus-smallrye-health'
+	implementation 'io.quarkiverse.mcp:quarkus-mcp-server-hibernate-validator'
+	implementation 'io.quarkiverse.mcp:quarkus-mcp-server-http'
+	implementation 'io.quarkiverse.mcp:quarkus-mcp-server-schema-validator'
+	implementation 'io.quarkiverse.mcp:quarkus-mcp-server-oidc'
+	implementation 'io.quarkus:quarkus-arc'
+
+	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:6.3.0'
+
+	testImplementation 'io.quarkus:quarkus-junit'
+}
+
 java {
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << '-parameters'
+	options.encoding = 'UTF-8'
+	options.compilerArgs << '-parameters'
 }
 
 compileTestJava {
-    options.encoding = 'UTF-8'
+	options.encoding = 'UTF-8'
 }

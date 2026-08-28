@@ -1,2 +1,22 @@
 greeting:
-  message: "hello"
+    message: "hello"
+
+
+quarkus:
+    container-image:
+        name: oqm-plugin-mcp
+        group: ebprod
+
+    keycloak:
+        devservices:
+            port: 9328
+            realm-path: "dev/oqm-realm.json"
+            realm-name: oqm
+
+"%dev":
+    quarkus:
+        oidc:
+            # TODO:: remove when https://github.com/quarkusio/quarkus/issues/47581
+            client-id: oqm-app
+            credentials:
+                secret: "**********"
