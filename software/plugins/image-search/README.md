@@ -1,5 +1,47 @@
 # Image Search Plugin
 
+
+ - store image vectors in mongodb
+ - pull image data from OQM
+ - present an endpoint to upload an image, search for matches
+
+
+
+
+
+## TODOS
+
+ - [ ] Return actual search results, not image IDs Colten
+ - [x] Scope each search to specific database Greg
+ - [x] Process image changes as they happen, not just when DB is initialized Colten/Greg
+ - [ ] Redesign TreeMap (possibly different structure) to not store extra objects Colten
+ - [ ] Testing...
+ - [ ] Integration into deployment methodology Greg
+ - [ ] Memory leaks (Mat objects)
+ - [ ] OpenCV library optimization (System.loadLibrary())
+ - [ ] Verify and ensure concurrent calls work in ImageSearchService
+ - [ ] Logging in ImageSearchService
+ - [ ] Check if new Java TF
+
+## LATER TODO
+
+- [ ] UI?
+- [ ] potential batch-processing / multi-threading (optional)
+-
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 This plugin is intended to provide image-based searches of items.
 
 Use case is to take a picure of something, and then identify which items in the database it could be based on that image.
