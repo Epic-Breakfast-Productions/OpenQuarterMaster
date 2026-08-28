@@ -1,0 +1,22 @@
+name: CI - Plugin - MSS Controller
+
+on:
+  pull_request:
+    paths:
+      - "software/plugins/mss-controller/**"
+      - ".github/workflows/plugin-mssController.yml"
+  workflow_call:
+  workflow_dispatch:
+
+concurrency:
+  group: ci-plugin-mssController-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  CI-Pipeline:
+    uses: Epic-Breakfast-Productions/ebp-ci/.github/workflows/quarkus-ci-pipeline.yml@main
+    with:
+      path: "software/plugins/mss-controller/"
+      java-version: "25"
+      run-int-tests: true
+      container-based-int-tests: false
