@@ -29,6 +29,7 @@ dependencies {
 	implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:6.3.0'
 
 	testImplementation 'io.quarkus:quarkus-junit'
+	testImplementation 'io.quarkiverse.mcp:quarkus-mcp-server-test'
 }
 
 java {

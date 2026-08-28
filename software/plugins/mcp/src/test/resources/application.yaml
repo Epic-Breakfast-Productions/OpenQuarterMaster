@@ -1,0 +1,5 @@
+quarkus:
+    oidc:
+        client-id: oqm-app
+        credentials:
+            secret: "**********"
