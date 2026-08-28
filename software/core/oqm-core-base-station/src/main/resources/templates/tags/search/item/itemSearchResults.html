@@ -57,7 +57,7 @@
 <tr class="itemResultRow align-middle">
 	<td>
 		{#if ! result.get("imageIds").isEmpty()}
-			<img src="{rootPrefix}/api/passthrough/media/image/for/item/{id}" class="searchResultImage">
+			<img src="{rootPrefix}/api/passthrough/media/image/for/item/{id}" class="searchResultImage" alt="{result.get("name").asText()} image">
 		{/if}
 	</td>
 	<td class="itemResultsName user-select-all">{name}</td>
@@ -71,7 +71,7 @@
 		{/for}
 	</td>
 	<td>
-		{#amountDisplay amount = result.get("stats").get("total")}{/amountDisplay}
+		{#amountDisplay amount = result.get("stats").get("total") /}
 	</td>
 	<td class="text-center">
 		{result.get("stats").get("numStored").asInt()}
@@ -85,10 +85,10 @@
 	{#if actionType == 'full'}
 	<td class="d-flex flex-row">
 		<button type="button" class="btn btn-sm btn-info viewButton me-1" title="View" data-bs-toggle="modal" data-bs-target="#itemViewModal" onclick="ItemView.setupView('{id}');">
-			{#icons/view}{/icons/view}
+			{#icons/view /}
 		</button>
 		<button type="button" class="btn btn-sm btn-warning me-1" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForEdit('{id}');">
-			{#icons/edit}{/icons/edit}
+			{#icons/edit /}
 		</button>
 		{#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false itemId=id checkinButton=false /}
 		<button type="button" class="btn btn-sm btn-danger me-1" title="Remove"
