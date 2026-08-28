@@ -61,7 +61,7 @@
 		{/if}
 	</td>
 	<td class="itemResultsName user-select-all">{name}</td>
-	<td>
+	<td class="text-center">
 		{#icons/storageTypeIconFromType type=result.get("storageType").asText() /}
 		{!{cdi:EnumFormattingService.formatEnum(result.get("storageType").asText())}!}
 	</td>
