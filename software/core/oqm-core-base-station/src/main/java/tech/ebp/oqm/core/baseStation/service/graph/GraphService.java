@@ -7,12 +7,15 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import jakarta.validation.Valid;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.model.graph.GraphRequest;
+import tech.ebp.oqm.core.baseStation.model.graph.ItemNameIterator;
 import tech.ebp.oqm.core.baseStation.service.graph.xchart.ItemStockGraphService;
 import tech.ebp.oqm.core.baseStation.service.printout.PrintoutDataSearchUtilService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.AppliedTransactionSearch;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 @ApplicationScoped
 public class GraphService {
@@ -32,25 +35,31 @@ public class GraphService {
 		String userApiKey,
 		@Valid GraphRequest graphRequest
 	) throws IOException {
-		AppliedTransactionSearch search = new AppliedTransactionSearch();
-		search.setInventoryItemId(graphRequest.getItemId());
-		search.setStartDateTime(graphRequest.getStartDateTime());
-		search.setEndDateTime(graphRequest.getEndDateTime());
-		search.setPageSize(this.defaultPageSize);
+        List<ItemNameIterator> transactionItemNameIterator = new ArrayList<>();
 
-		PrintoutDataSearchUtilService.ResultsIterator transactionsIterator = this.printoutDataSearchUtilService.getTransactionsIterator(
-			userApiKey,
-			oqmDbIdOrName,
-			graphRequest.getItemId(),
-			search
-		);
+        for (String itemId : graphRequest.getItemId()) {
+            ObjectNode item = this.coreApiClientService.invItemGet(
+                userApiKey,
+                oqmDbIdOrName,
+                itemId
+            ).await().indefinitely();
 
-		ObjectNode item = this.coreApiClientService.invItemGet(
-			userApiKey,
-			oqmDbIdOrName,
-			graphRequest.getItemId()
-		).await().indefinitely();
+            AppliedTransactionSearch search = new AppliedTransactionSearch();
+            search.setInventoryItemId(itemId);
+            search.setStartDateTime(graphRequest.getStartDateTime());
+            search.setEndDateTime(graphRequest.getEndDateTime());
+            search.setPageSize(this.defaultPageSize);
 
-		return graphProvider.getGraph(item, transactionsIterator);
+            PrintoutDataSearchUtilService.ResultsIterator transactionsIterator = this.printoutDataSearchUtilService.getTransactionsIterator(
+                userApiKey,
+                oqmDbIdOrName,
+                itemId,
+                search
+            );
+            //FIXME: key "name" and name
+            transactionItemNameIterator.add(new ItemNameIterator(item.get("name").asText(), transactionsIterator));
+        }
+
+        return graphProvider.getGraph(transactionItemNameIterator);
 	}
 }
