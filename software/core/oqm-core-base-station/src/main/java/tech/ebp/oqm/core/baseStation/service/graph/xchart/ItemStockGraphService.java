@@ -2,12 +2,13 @@ package tech.ebp.oqm.core.baseStation.service.graph.xchart;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.enterprise.context.ApplicationScoped;
+import org.knowm.xchart.ChartEncoder;
 import org.knowm.xchart.VectorGraphicsEncoder;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.style.Styler;
 import org.knowm.xchart.style.markers.SeriesMarkers;
-import tech.ebp.oqm.core.baseStation.model.graph.ItemNameIterator;
+import tech.ebp.oqm.core.baseStation.model.graph.ItemNameTransactionIterator;
 import tech.ebp.oqm.core.baseStation.model.graph.TransactionGraphValue;
 import tech.ebp.oqm.core.baseStation.service.graph.GraphProvider;
 import tech.ebp.oqm.core.baseStation.service.graph.TransactionMapper;
@@ -21,11 +22,11 @@ import java.util.List;
 @ApplicationScoped
 public class ItemStockGraphService extends GraphProvider {
 
-    public byte[] getGraph(List<ItemNameIterator> itemNameIterators) throws IOException {
-        return this.toByteArray(createChart(itemNameIterators));
+    public byte[] getGraph(List<ItemNameTransactionIterator> itemNameTransactionIterators) throws IOException {
+        return this.toByteArray(createChart(itemNameTransactionIterators));
     }
 
-    private XYChart createChart(List<ItemNameIterator> transactionsIterator) {
+    private XYChart createChart(List<ItemNameTransactionIterator> transactionsIterator) {
         XYChart chart = this.getChartBuilder("Item Stock over time")
             .xAxisTitle("Date")
             .yAxisTitle("Amount in stock")
@@ -39,9 +40,9 @@ public class ItemStockGraphService extends GraphProvider {
         List<Date> xData = new ArrayList<>();
         List<Double> yData = new ArrayList<>();
 
-        for (ItemNameIterator itemNameIterator : transactionsIterator) {
-            while (itemNameIterator.iterator().hasNext()) {
-                ObjectNode page = itemNameIterator.iterator().next();
+        for (ItemNameTransactionIterator itemNameTransactionIterator : transactionsIterator) {
+            while (itemNameTransactionIterator.iterator().hasNext()) {
+                ObjectNode page = itemNameTransactionIterator.iterator().next();
                 for (TransactionGraphValue transaction : TransactionMapper.mapTransactionsToArray(page)) {
                     xData.add(Date.from(transaction.timestamp()));
                     yData.add(transaction.value());
@@ -49,7 +50,7 @@ public class ItemStockGraphService extends GraphProvider {
             }
 
             if(!xData.isEmpty() && !yData.isEmpty()) {
-                XYSeries series = chart.addSeries("Item: " + itemNameIterator.name(), xData, yData);
+                XYSeries series = chart.addSeries("Item: " + itemNameTransactionIterator.name(), xData, yData);
                 //TODO: add logic to hash name to get color of the line and cache it if needer (awt colors)
                 series.setMarker(SeriesMarkers.CIRCLE);
             }
@@ -63,8 +64,7 @@ public class ItemStockGraphService extends GraphProvider {
 
     private byte[] toByteArray(XYChart chart) throws IOException {
         ByteArrayOutputStream heapSvg = new ByteArrayOutputStream();
-        //FIXME: depricated API
-        VectorGraphicsEncoder.saveVectorGraphic(chart, heapSvg, VectorGraphicsEncoder.VectorGraphicsFormat.SVG);
+        ChartEncoder.saveChart(chart, heapSvg, "svg");
         return heapSvg.toByteArray();
     }
 }

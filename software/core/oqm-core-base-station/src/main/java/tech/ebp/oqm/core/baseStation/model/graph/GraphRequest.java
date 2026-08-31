@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.QueryParam;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.validator.constraints.UniqueElements;
 
 import java.time.ZonedDateTime;
 import java.util.List;
@@ -15,6 +16,7 @@ public class GraphRequest {
 
 	@NotNull
     @NotEmpty
+    @UniqueElements
 	@QueryParam("itemId")
 	private List<String> itemId;
 

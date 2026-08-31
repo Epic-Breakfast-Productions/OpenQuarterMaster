@@ -7,7 +7,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import jakarta.validation.Valid;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.model.graph.GraphRequest;
-import tech.ebp.oqm.core.baseStation.model.graph.ItemNameIterator;
+import tech.ebp.oqm.core.baseStation.model.graph.ItemNameTransactionIterator;
 import tech.ebp.oqm.core.baseStation.service.graph.xchart.ItemStockGraphService;
 import tech.ebp.oqm.core.baseStation.service.printout.PrintoutDataSearchUtilService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
@@ -35,7 +35,7 @@ public class GraphService {
 		String userApiKey,
 		@Valid GraphRequest graphRequest
 	) throws IOException {
-        List<ItemNameIterator> transactionItemNameIterator = new ArrayList<>();
+        List<ItemNameTransactionIterator> transactionItemNameTransactionIterator = new ArrayList<>();
 
         for (String itemId : graphRequest.getItemId()) {
             ObjectNode item = this.coreApiClientService.invItemGet(
@@ -56,10 +56,9 @@ public class GraphService {
                 itemId,
                 search
             );
-            //FIXME: key "name" and name
-            transactionItemNameIterator.add(new ItemNameIterator(item.get("name").asText(), transactionsIterator));
+            transactionItemNameTransactionIterator.add(new ItemNameTransactionIterator(item.get("name").asText(), transactionsIterator));
         }
 
-        return graphProvider.getGraph(transactionItemNameIterator);
+        return graphProvider.getGraph(transactionItemNameTransactionIterator);
 	}
 }
