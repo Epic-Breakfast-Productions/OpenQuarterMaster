@@ -16,10 +16,9 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 import java.util.List;
 
 @RequestScoped
-public class StorageTools extends McpTool {
-	public static final String TN_GET_NUM_STORAGE_BLOCKS = "getNumStorageBlocks";
-	public static final String TN_GET_SEARCH_STORAGE_BLOCKS_BY_NAME = "searchStorageBlocksByName";
-	public static final String TN_GET_SEARCH_STORAGE_BLOCKS_BY_ITEM = "searchStorageBlocksByItem";
+public class InvItemTools extends McpTool {
+	public static final String TN_GET_NUM_ITEMS = "getNumInventoryItems";
+	public static final String TN_SEARCH_ITEMS_BY_NAME = "searchInventoryItemsByName";
 
 	private final ObjectMapper mapper = new ObjectMapper();
 
@@ -27,13 +26,13 @@ public class StorageTools extends McpTool {
 	KcClientAuthService serviceAccountService;
 
 	@Tool(
-		title = "Get number of storage blocks.",
-		name = TN_GET_NUM_STORAGE_BLOCKS,
-		description = "Get number of storage blocks present in the database."
+		title = "Get number of inventory items.",
+		name = TN_GET_NUM_ITEMS,
+		description = "Get number of inventory items present in the database."
 	)
-	public Uni<String> getNumStorageBlocks() {
+	public Uni<String> getNumItems() {
 		return this.getOqmCoreApiClientService()
-				   .storageBlockCollectionStats(
+				   .invItemCollectionStats(
 					   serviceAccountService.getAuthString(),
 					   "default"
 				   )
@@ -41,17 +40,17 @@ public class StorageTools extends McpTool {
 	}
 
 	@Tool(
-		title = "Search for storage blocks by name.",
-		name = TN_GET_SEARCH_STORAGE_BLOCKS_BY_NAME,
-		description = "Search storage blocks present in the database by name."
+		title = "Search for inventory items by name.",
+		name = TN_SEARCH_ITEMS_BY_NAME,
+		description = "Search inventory items present in the database by name."
 	)
-	public Uni<ArrayNode> searchStorageBlocksByName(@ToolArg(description = "The name") String name) {
+	public Uni<ArrayNode> searchItemsByName(@ToolArg(description = "The name, full or partial, of the item(s) to search for.") String name) {
 		return this.getOqmCoreApiClientService()
-				   .storageBlockSearch(
+				   .invItemSearch(
 					   serviceAccountService.getAuthString(),
 					   "default",
-					   StorageBlockSearch.builder()
-						   .labelOrNickname(name)
+					   InventoryItemSearch.builder()
+						   .name(name)
 						   .build()
 				   )
 				   .map(s->{
@@ -62,7 +61,6 @@ public class StorageTools extends McpTool {
 							   mapper.createObjectNode()
 								   .put("id", curResult.get("id").asText())
 								   .put("name", curResult.get("name").asText())
-								   .put("label", curResult.get("label").asText())
 						   );
 					   }
 
