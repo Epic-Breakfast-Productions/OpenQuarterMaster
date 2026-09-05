@@ -4,7 +4,9 @@
     "method": "GET",
     "queryParameters": {
       "q": {
-        "matches": "^(?!1501752014).+"
+		  "not": {
+			  "equalTo": "1501752014"
+		  }
       }
     }
   },
@@ -19,10 +21,10 @@
       "sigma": 0.4
     },
     "jsonBody": {
-      "numFound": 1,
+      "numFound": 0,
       "start": 0,
       "numFoundExact": true,
-      "num_found": 1,
+      "num_found": 0,
       "documentation_url": "https://openlibrary.org/dev/docs/api/search",
       "q": "0000000000000",
       "offset": null,

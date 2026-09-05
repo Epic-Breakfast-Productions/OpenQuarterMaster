@@ -1,7 +1,12 @@
 {
   "request": {
     "method": "GET",
-    "urlPathPattern": "/isbndb/book/1503632431",
+    "urlPathTemplate": "/isbndb/book/{isbn}",
+	  "pathParameters": {
+		  "isbn": {
+			  "equalTo": "1603632431"
+		  }
+	  },
     "headers": {
       "Authorization": {
         "equalTo": "devKey"

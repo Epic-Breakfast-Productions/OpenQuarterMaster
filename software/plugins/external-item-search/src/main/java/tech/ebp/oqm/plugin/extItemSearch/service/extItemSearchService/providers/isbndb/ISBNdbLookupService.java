@@ -9,9 +9,11 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.jboss.resteasy.reactive.ClientWebApplicationException;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ExtItemLookupResult;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResultNoResults;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.ItemSearchService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
@@ -24,6 +26,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @ApplicationScoped
 @Slf4j
@@ -158,4 +161,16 @@ public class ISBNdbLookupService extends ItemSearchService {
 
         return result;
     }
+
+	@Override
+	protected Optional<LookupResult> handleClientError(LookupSource source, LookupMethod method, ClientWebApplicationException e) {
+		if (e.getResponse().getStatus() == 404) {
+			return Optional.of(
+				this.setupResponseBuilder(LookupResultNoResults.builder(), source, method)
+					.detail("No items found.")
+					.build()
+			);
+		}
+		return Optional.empty();
+	}
 }

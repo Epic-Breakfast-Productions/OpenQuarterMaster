@@ -1,10 +1,12 @@
 {
   "request": {
     "method": "GET",
-    "urlPath": "/isbndb/book/(?!1503632431$)[^/]+",
+    "urlPathPattern": "/isbndb/book/.*",
     "headers": {
       "Authorization": {
-        "equalTo": "^devKey$"
+		  "not": {
+			  "equalTo": "devKey"
+		  }
       }
     }
   },
