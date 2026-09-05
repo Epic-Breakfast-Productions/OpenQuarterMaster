@@ -24,6 +24,13 @@ productLookup:
             url-barcode: https://world.openfoodfacts.net
             url-search: https://search.openfoodfacts.net
             enabled: true
+        openlibrary:
+            url: https://openlibrary.org
+            enabled: true
+        isbndb:
+            url: https://api2.isbndb.com
+            enabled: true
+            apiKey: " "
 
 quarkus:
     container-image:
@@ -54,6 +61,12 @@ quarkus:
             scope: jakarta.inject.Singleton
         openfoodfacts-search:
             url: ${productLookup.providers.openfoodfacts.url-search}
+            scope: jakarta.inject.Singleton
+        openlibrary:
+            url: ${productLookup.providers.openlibrary.url}
+            scope: jakarta.inject.Singleton
+        isbndb:
+            url: ${productLookup.providers.isbndb.url}
             scope: jakarta.inject.Singleton
     smallrye-openapi:
         info-title: External Item Search API
@@ -93,6 +106,8 @@ quarkus:
                 apiKey: devKey
             barcodelookup-com:
                 apiKey: devKey
+            isbndb:
+              apiKey: devKey
 
     quarkus:
         http:
@@ -105,19 +120,20 @@ quarkus:
                 scope: all
             barcodelookup-com:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/barcodelookup/
-                scope: jakarta.inject.Singleton
             datakick:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/datakick/
-                scope: jakarta.inject.Singleton
             upcitemdb:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/upcitemdb/
-                scope: jakarta.inject.Singleton
             rebrickable:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/rebrickable/
             openfoodfacts-barcode:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
             openfoodfacts-search:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
+            openlibrary:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/openlibrary/
+            isbndb:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/isbndb/
 
 "%intTest":
     quarkus:
@@ -140,4 +156,8 @@ quarkus:
             openfoodfacts:
                 url-barcode: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
                 url-search: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
-#
+            openlibrary:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/openlibrary/
+            isbndb:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/isbndb/
+                apiKey: devKey

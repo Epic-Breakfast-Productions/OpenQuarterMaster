@@ -167,6 +167,24 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 				new ArrayList<>(3){{
 					for(int i = 0; i < 3; i++){add(new Result(REBRICKABLE.name(), ResultType.SUCCESS.name()));}
 				}}
+			),
+			Arguments.of(
+				Map.of(
+					"lookupMethod", LookupMethod.BARCODE,
+					"q", "1603632431"
+				),
+				List.of(
+					new Result(ISBNDB.name(), ResultType.SUCCESS.name())
+				)
+			),
+			Arguments.of(
+				Map.of(
+					"lookupMethod", LookupMethod.BARCODE,
+					"q", "1501752014"
+				),
+				List.of(
+					new Result(OPENLIBRARY.name(), ResultType.SUCCESS.name())
+				)
 			)
 		);
 	}

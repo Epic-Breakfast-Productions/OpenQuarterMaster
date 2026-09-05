@@ -1,0 +1,27 @@
+{
+	"request": {
+		"method": "GET",
+		"urlPathTemplate": "/isbndb/book/{isbn}",
+		"pathParameters": {
+			"isbn": {
+				"not": {
+					"equalTo": "1603632431"
+				}
+			}
+		},
+		"headers": {
+			"Authorization": {
+				"equalTo": "devKey"
+			}
+		}
+	},
+	"response": {
+		"status": 404,
+		"headers": {
+			"Content-Type": "application/json"
+		},
+		"jsonBody": {
+			"error_message": "Book not found"
+		}
+	}
+}
