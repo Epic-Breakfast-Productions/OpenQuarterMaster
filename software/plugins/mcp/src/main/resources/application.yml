@@ -20,3 +20,5 @@ quarkus:
             client-id: oqm-app
             credentials:
                 secret: "**********"
+        observability:
+            enabled: false

@@ -4,6 +4,7 @@ import com.ebp.openQuarterMaster.plugin.mcp.interfaces.McpTool;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkiverse.mcp.server.Tool;
 import io.quarkiverse.mcp.server.ToolArg;
 import io.smallrye.mutiny.Uni;
@@ -18,24 +19,21 @@ import java.util.List;
 @RequestScoped
 public class StorageTools extends McpTool {
 	public static final String TN_GET_NUM_STORAGE_BLOCKS = "getNumStorageBlocks";
+	public static final String TN_GET_STORAGE_BLOCK_DETAILS = "getStorageBlockDetails";
 	public static final String TN_GET_SEARCH_STORAGE_BLOCKS_BY_NAME = "searchStorageBlocksByName";
-	public static final String TN_GET_SEARCH_STORAGE_BLOCKS_BY_ITEM = "searchStorageBlocksByItem";
-
-	private final ObjectMapper mapper = new ObjectMapper();
-
-	@Inject
-	KcClientAuthService serviceAccountService;
 
 	@Tool(
 		title = "Get number of storage blocks.",
 		name = TN_GET_NUM_STORAGE_BLOCKS,
 		description = "Get number of storage blocks present in the database."
 	)
-	public Uni<String> getNumStorageBlocks() {
+	public Uni<String> getNumStorageBlocks(
+		@ToolArg(description = "The database to use.") String dbName
+	) {
 		return this.getOqmCoreApiClientService()
 				   .storageBlockCollectionStats(
-					   serviceAccountService.getAuthString(),
-					   "default"
+					   getAuthString(),
+					   dbName
 				   )
 				   .map(s->s.get("size").asText());
 	}
@@ -45,21 +43,24 @@ public class StorageTools extends McpTool {
 		name = TN_GET_SEARCH_STORAGE_BLOCKS_BY_NAME,
 		description = "Search storage blocks present in the database by name."
 	)
-	public Uni<ArrayNode> searchStorageBlocksByName(@ToolArg(description = "The name") String name) {
+	public Uni<ArrayNode> searchStorageBlocksByName(
+		@ToolArg(description = "The database to use.") String dbName,
+		@ToolArg(description = "The name") String name
+	) {
 		return this.getOqmCoreApiClientService()
 				   .storageBlockSearch(
-					   serviceAccountService.getAuthString(),
-					   "default",
+					   getAuthString(),
+					   dbName,
 					   StorageBlockSearch.builder()
 						   .labelOrNickname(name)
 						   .build()
 				   )
 				   .map(s->{
-					   ArrayNode output = mapper.createArrayNode();
+					   ArrayNode output = getMapper().createArrayNode();
 
 					   for(JsonNode curResult : s.get("results")){
 						   output.add(
-							   mapper.createObjectNode()
+							   getMapper().createObjectNode()
 								   .put("id", curResult.get("id").asText())
 								   .put("name", curResult.get("name").asText())
 								   .put("label", curResult.get("label").asText())
@@ -71,4 +72,20 @@ public class StorageTools extends McpTool {
 	}
 
 
+	@Tool(
+		title = "Get storage block details.",
+		name = TN_GET_STORAGE_BLOCK_DETAILS,
+		description = "Get a storage block's details."
+	)
+	public Uni<ObjectNode> getBlockDetails(
+		@ToolArg(description = "The database to use.") String dbName,
+		@ToolArg(description = "The ID of the storage block being gotten.") String blockId
+	) {
+		return this.getOqmCoreApiClientService()
+				   .storageBlockGet(
+					   getAuthString(),
+					   dbName,
+					   blockId
+				   );
+	}
 }
