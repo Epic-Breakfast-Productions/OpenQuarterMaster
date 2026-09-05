@@ -19,4 +19,4 @@ jobs:
       path: "software/plugins/external-item-search/"
       java-version: "25"
       run-int-tests: true
-      container-based-int-tests: true
+      container-based-int-tests: false
