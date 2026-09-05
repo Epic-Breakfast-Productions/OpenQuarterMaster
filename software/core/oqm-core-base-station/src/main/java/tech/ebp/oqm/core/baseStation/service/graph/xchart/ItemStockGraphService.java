@@ -3,7 +3,6 @@ package tech.ebp.oqm.core.baseStation.service.graph.xchart;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.knowm.xchart.ChartEncoder;
-import org.knowm.xchart.VectorGraphicsEncoder;
 import org.knowm.xchart.XYChart;
 import org.knowm.xchart.XYSeries;
 import org.knowm.xchart.style.Styler;
@@ -17,7 +16,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @ApplicationScoped
 public class ItemStockGraphService extends GraphProvider {
@@ -37,10 +38,13 @@ public class ItemStockGraphService extends GraphProvider {
         chart.getStyler().setLegendVisible(true);
         chart.getStyler().setDatePattern("dd-MM-yyyy HH:mm");
 
-        List<Date> xData = new ArrayList<>();
-        List<Double> yData = new ArrayList<>();
+        Map<String, List<Date>> seriesXData = new HashMap<>();
+        Map<String, List<Double>> seriesYData = new HashMap<>();
+        Date globalMaxDate = null;
 
         for (ItemNameTransactionIterator itemNameTransactionIterator : transactionsIterator) {
+            List<Date> xData = new ArrayList<>();
+            List<Double> yData = new ArrayList<>();
             while (itemNameTransactionIterator.iterator().hasNext()) {
                 ObjectNode page = itemNameTransactionIterator.iterator().next();
                 for (TransactionGraphValue transaction : TransactionMapper.mapTransactionsToArray(page)) {
@@ -49,16 +53,32 @@ public class ItemStockGraphService extends GraphProvider {
                 }
             }
 
-            if(!xData.isEmpty() && !yData.isEmpty()) {
-                XYSeries series = chart.addSeries("Item: " + itemNameTransactionIterator.name(), xData, yData);
-                //TODO: add logic to hash name to get color of the line and cache it if needer (awt colors)
-                series.setMarker(SeriesMarkers.CIRCLE);
-            }
+            if (!xData.isEmpty()) {
+                String name = "Item: " + itemNameTransactionIterator.name();
+                seriesXData.put(name, xData);
+                seriesYData.put(name, yData);
 
-            xData.clear();
-            yData.clear();
+                Date lastPointDate = xData.getFirst();
+                if (globalMaxDate == null || lastPointDate.after(globalMaxDate)) {
+                    globalMaxDate = lastPointDate;
+                }
+            }
         }
 
+        for (Map.Entry<String, List<Date>> entry : seriesXData.entrySet()) {
+            String name = entry.getKey();
+            List<Date> xData = entry.getValue();
+            List<Double> yData = seriesYData.get(name);
+
+            Date lastPointDate = xData.getFirst();
+            if (globalMaxDate != null && lastPointDate.before(globalMaxDate)) {
+                xData.addFirst(globalMaxDate);
+                yData.addFirst(yData.getFirst());
+            }
+
+            XYSeries series = chart.addSeries(name, xData, yData);
+            series.setMarker(SeriesMarkers.CIRCLE);
+        }
         return chart;
     }
 
