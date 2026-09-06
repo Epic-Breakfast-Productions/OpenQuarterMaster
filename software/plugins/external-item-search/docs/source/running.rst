@@ -286,7 +286,7 @@ Note:: URL configuration is noted here for completeness, but you should never ne
 
 .. dropdown:: ISBNdb
 
-	https://openlibrary.org
+	https://isbndb.com/
 
 	.. list-table::
 		:header-rows: 1

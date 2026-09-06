@@ -25,20 +25,19 @@ These endpoints are documented at the running service's swagger endpoint at ``/q
 		{
 			"BARCODE": [
 				"BARCODE_LOOKUP",
-				"DATAKICK",
-				"UPC_ITEM_DB",
-				"OPENFOODFACTS"
+				...
 			],
 			"TEXT": [
 				"BARCODE_LOOKUP",
-				"REBRICKABLE",
-				"OPENFOODFACTS"
+				...
 			],
 			"PART_NUM": [
-				"REBRICKABLE"
+				"REBRICKABLE",
+				...
 			],
 			"SET_NUM": [
-				"REBRICKABLE"
+				"REBRICKABLE",
+				...
 			]
 		}
 
@@ -79,7 +78,7 @@ These endpoints are documented at the running service's swagger endpoint at ``/q
 
 	``GET`` ``/api/v1/search``
 
-	This endpoint gathers what providers (downstream services) we have available.
+	This endpoint performs the actual search on the various providers enabled.
 
 	Example return data:
 

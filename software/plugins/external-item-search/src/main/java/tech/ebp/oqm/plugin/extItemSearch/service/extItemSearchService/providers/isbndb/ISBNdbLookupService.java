@@ -40,11 +40,23 @@ public class ISBNdbLookupService extends ItemSearchService {
     public ISBNdbLookupService(
         @RestClient
         ISBNdbLookupClient isbndbLookupClient,
-        @ConfigProperty(name = "productLookup.providers.isbndb.enabled", defaultValue = "false")
+        @ConfigProperty(name = "productLookup.providers.isbndb.enabled", defaultValue = "true")
         boolean enabled,
         @ConfigProperty(name = "productLookup.providers.isbndb.apiKey", defaultValue = "")
         String apiKey,
         ObjectMapper objectMapper) {
+
+		if(apiKey == null || apiKey.isBlank()) {
+			log.warn("API key for ISBNDB was null or blank.");
+			this.apiKey = null;
+			enabled = false;
+		} else {
+			this.apiKey = apiKey;
+		}
+
+		this.isbndbLookupClient = isbndbLookupClient;
+		this.objectMapper = objectMapper;
+
         super(
             enabled,
             LookupService.ISBNDB,
@@ -56,16 +68,6 @@ public class ISBNdbLookupService extends ItemSearchService {
                 .homepage(URI.create("https://isbndb.com/"))
                 .cost("Paid")
         );
-
-        if(apiKey == null || apiKey.isBlank()) {
-            log.warn("API key for ISBNDB was null or blank.");
-            this.apiKey = null;
-        } else {
-            this.apiKey = apiKey;
-        }
-
-        this.isbndbLookupClient = isbndbLookupClient;
-        this.objectMapper = objectMapper;
     }
 
     @Override
