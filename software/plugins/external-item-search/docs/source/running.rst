@@ -251,3 +251,75 @@ Note:: URL configuration is noted here for completeness, but you should never ne
 			- .. code-block:: none
 
 				https://search.openfoodfacts.net
+
+.. dropdown:: Open Library
+
+	https://openlibrary.org
+
+	.. list-table::
+		:header-rows: 1
+
+		*	- Config Key
+			- Description
+			- Values (Examples)
+			- Default
+
+		*	- .. code-block:: none
+
+				productLookup.providers.openlibrary.enabled
+			- If this provider is enabled or not.
+			- .. code-block:: none
+
+				true
+			- .. code-block:: none
+
+				true
+
+		*	- .. code-block:: none
+
+				productLookup.providers.openlibrary.url
+			- The base URL of the website for API calls for barcodes
+			-
+			- .. code-block:: none
+
+				https://openlibrary.org
+
+.. dropdown:: ISBNdb
+
+	https://openlibrary.org
+
+	.. list-table::
+		:header-rows: 1
+
+		*	- Config Key
+			- Description
+			- Values (Examples)
+			- Default
+
+		*	- .. code-block:: none
+
+				productLookup.providers.isbndb.enabled
+			- If this provider is enabled or not.
+			- .. code-block:: none
+
+				true
+			- .. code-block:: none
+
+				true
+
+		*	- .. code-block:: none
+
+				productLookup.providers.isbndb.url
+			- The base URL of the website for API calls for barcodes
+			-
+			- .. code-block:: none
+
+				https://api2.isbndb.com
+
+		*	- .. code-block:: none
+
+				productLookup.providers.isbndb.apiKey
+			- The API key to use to authenticate with the service. If api key is blank or unspecified, the trial endpoint is used.
+			-
+			- .. code-block:: none
+

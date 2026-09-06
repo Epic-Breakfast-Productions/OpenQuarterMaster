@@ -21,6 +21,8 @@ Supported item providers (sources of our searches) (* = requires your own API ke
  - \* `UPC Item DB <https://www.upcitemdb.com/>`_ (can require key, uses trial if no key)
  - `Open Food Facts <https://world.openfoodfacts.org/>`_
  - \* `Rebrickable <https://rebrickable.com/>`_
+ - `Open Library <https://openlibrary.org>`_
+ - \* `ISBNdb <https://isbndb.com/>`_
 
 .. toctree::
 	:maxdepth: 3
