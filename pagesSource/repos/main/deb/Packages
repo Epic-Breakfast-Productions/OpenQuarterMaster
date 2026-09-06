@@ -1152,6 +1152,22 @@ Description: Base Station instance for Open QuarterMaster.
 Licence: GPL-3+
 
 Package: oqm-core-base+station
+Version: 1.21.1
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.11.0), oqm-infra-keycloak (>= 2.0.0), oqm-infra-traefik (>= 1.0.0), oqm-core-api (>= 6.2.0), oqm-core-characteristics (>= 1.0.1)
+Recommends: oqm-plugin-ext_item_search
+Filename: ./oqm-core-base+station_1.21.1_all.deb
+Size: 5420
+MD5sum: 96e3ef3ece9a2b81d9b891af7926e395
+SHA1: 2942d0dda2b3af794b0937fa7bf01fe9e79e2f74
+SHA256: af8f239778adf068ed8fe5ddbce9d53a265ee511d972ab80673107be238b9ad4
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/open-qm-base-station
+Description: Base Station instance for Open QuarterMaster.
+Licence: GPL-3+
+
+Package: oqm-core-base+station
 Version: 1.3.0
 Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
@@ -3122,6 +3138,21 @@ Size: 3504
 MD5sum: 858ee1c44ef56f7380a5337c78ab59b2
 SHA1: 37ad6ca4236783eeb0275c0fb375b31c80aa66aa
 SHA256: 26ee7a4db5127db94f41af3f9eb0fd636a98730ee1535a6eeb55008692483769
+Section: Open QuarterMaster
+Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/external-item-search
+Description: Allows for Open QuarterMaster services to search for items from outside sources. Requires internet connection.
+Licence: GPL-3+
+
+Package: oqm-plugin-ext+item+search
+Version: 2.2.0
+Architecture: all
+Maintainer: EBP <greg@epic-breakfast-productions.tech>
+Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.9.0)
+Filename: ./oqm-plugin-ext+item+search_2.2.0_all.deb
+Size: 3508
+MD5sum: 007058fe5d5ded8c9256ea82162c060f
+SHA1: e5764faab262e751cbcbd8775097ad6bebc9ecf9
+SHA256: 7bd194600bcb93a2b12d0c7000aac07392fb88151ea204816a0243e83c4d1a26
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/external-item-search
 Description: Allows for Open QuarterMaster services to search for items from outside sources. Requires internet connection.
