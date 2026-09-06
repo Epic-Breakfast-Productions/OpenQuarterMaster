@@ -36,8 +36,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestHTTPEndpoint(UnitsEndpoints.class)
 class UnitsEndpointsTest extends RunningServerTest {
 
-	@BeforeEach
-	public void setup() {
+	{
 		this.setNeedResets(false);
 	}
 
