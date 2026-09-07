@@ -17,12 +17,11 @@ public class InventoryItemTestObjectCreator extends TestObjectCreator<InventoryI
 
 	private static int COUNTER = 0;
 
-	@Override
-	public InventoryItem getTestObject() {
+	public static InventoryItem getNewInvItem(){
 		InventoryItem item = new InventoryItem()
-			.setName(faker.commerce().productName() + "-" + COUNTER++)
-			.setDescription(faker.lorem().sentence())
-			.setUnit(OqmProvidedUnits.UNIT)
+								 .setName(faker.commerce().productName() + "-" + COUNTER++)
+								 .setDescription(faker.lorem().sentence())
+								 .setUnit(OqmProvidedUnits.UNIT)
 								 .setDefaultPrices(new LinkedHashSet<>(){{
 									 add(
 										 StoredPricing.builder()
@@ -31,8 +30,13 @@ public class InventoryItemTestObjectCreator extends TestObjectCreator<InventoryI
 											 .build()
 									 );
 								 }})
-			.setStorageType(StorageType.BULK);
+								 .setStorageType(StorageType.BULK);
 
 		return item;
+	}
+
+	@Override
+	public InventoryItem getTestObject() {
+		return getNewInvItem();
 	}
 }
