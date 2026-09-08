@@ -50,20 +50,12 @@ import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 //@TestHTTPEndpoint(StoredEndpoints.class)
 public class StoredInItemEndpointsTest extends RunningServerTest {
 
-	@Inject
-	StorageBlockTestObjectCreator testBlockCreator;
-	@Inject
-	InventoryItemTestObjectCreator testObjectCreator;
-
-	@Inject
-	ObjectMapper objectMapper;
-
 	@Test
 	public void testSearchEmptyDb() throws JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
 
 		String json = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-						  .body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
+						  .body(OBJECT_MAPPER.writeValueAsString(InventoryItemTestObjectCreator.getNewInvItem()))
 						  .contentType(ContentType.JSON)
 						  .post("/api/v1/db/"+DEFAULT_TEST_DB_NAME+"/inventory/item")
 						  .then().statusCode(200)
@@ -87,7 +79,7 @@ public class StoredInItemEndpointsTest extends RunningServerTest {
 		StorageBlock block =
 			OBJECT_MAPPER.readValue(
 				setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-					.body(OBJECT_MAPPER.writeValueAsString(testBlockCreator.getTestObject()))
+					.body(OBJECT_MAPPER.writeValueAsString(StorageBlockTestObjectCreator.getNewStorageBlock()))
 					.contentType(ContentType.JSON)
 					.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/storage-block")
 					.then().statusCode(200)
@@ -101,7 +93,7 @@ public class StoredInItemEndpointsTest extends RunningServerTest {
 				setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 					.body(
 						OBJECT_MAPPER.writeValueAsString(
-							testObjectCreator.getTestObject()
+							InventoryItemTestObjectCreator.getNewInvItem()
 								.setStorageType(StorageType.AMOUNT_LIST)
 								.setStorageBlocks(new ArrayList<>() {{
 													  add(StorageBlockSettings.builder().storageBlock(block.getId()).build());
@@ -210,7 +202,7 @@ public class StoredInItemEndpointsTest extends RunningServerTest {
 		StorageBlock block =
 			OBJECT_MAPPER.readValue(
 				setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-					.body(OBJECT_MAPPER.writeValueAsString(testBlockCreator.getTestObject()))
+					.body(OBJECT_MAPPER.writeValueAsString(StorageBlockTestObjectCreator.getNewStorageBlock()))
 					.contentType(ContentType.JSON)
 					.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/storage-block")
 					.then().statusCode(200)
@@ -224,7 +216,7 @@ public class StoredInItemEndpointsTest extends RunningServerTest {
 				setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 					.body(
 						OBJECT_MAPPER.writeValueAsString(
-							testObjectCreator.getTestObject()
+							InventoryItemTestObjectCreator.getNewInvItem()
 								.setStorageType(StorageType.AMOUNT_LIST)
 								.setStorageBlocks(new LinkedList<>() {{
 													  add(StorageBlockSettings.builder().storageBlock(block.getId()).build());

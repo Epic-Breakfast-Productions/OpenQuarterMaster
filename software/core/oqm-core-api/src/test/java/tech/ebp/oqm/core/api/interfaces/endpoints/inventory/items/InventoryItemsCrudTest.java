@@ -60,24 +60,12 @@ import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 @TestHTTPEndpoint(InventoryItemsCrud.class)
 class InventoryItemsCrudTest extends RunningServerTest {
 
-	@Inject
-	InventoryItemTestObjectCreator testObjectCreator;
-
-	@Inject
-	ObjectMapper objectMapper;
-
-	@Inject
-	InventoryItemService inventoryItemService;
-
-
-
-
 	@Test
 	public void testItemSearchId() throws JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
 
 		String json = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-						  .body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
+						  .body(OBJECT_MAPPER.writeValueAsString(InventoryItemTestObjectCreator.getNewInvItem()))
 						  .contentType(ContentType.JSON)
 						  .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
 						  .post()
@@ -87,7 +75,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		String id = OBJECT_MAPPER.readValue(json, InventoryItem.class).getId().toHexString();
 
 		String resultStr = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-							   .body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
+							   .body(OBJECT_MAPPER.writeValueAsString(InventoryItemTestObjectCreator.getNewInvItem()))
 							   .contentType(ContentType.JSON)
 							   .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
 							   .params(Map.of("id", id))
@@ -100,7 +88,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		assertEquals(1, resultNode.get("numResults").asInt());
 
 		resultStr = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-						.body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
+						.body(OBJECT_MAPPER.writeValueAsString(InventoryItemTestObjectCreator.getNewInvItem()))
 						.contentType(ContentType.JSON)
 						.pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
 						.params(Map.of("id", new ObjectId().toHexString()))
@@ -118,7 +106,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 		User testUser = this.getTestUserService().getTestUser();
 
 		String json = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-						  .body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
+						  .body(OBJECT_MAPPER.writeValueAsString(InventoryItemTestObjectCreator.getNewInvItem()))
 						  .contentType(ContentType.JSON)
 						  .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
 						  .post()
@@ -180,7 +168,7 @@ class InventoryItemsCrudTest extends RunningServerTest {
 	public void basicThreadTest(int numThreads, int numIterations) throws InterruptedException, ExecutionException, JsonProcessingException {
 		User testUser = this.getTestUserService().getTestUser();
 		String json = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-						  .body(objectMapper.writeValueAsString(testObjectCreator.getTestObject()))
+						  .body(OBJECT_MAPPER.writeValueAsString(InventoryItemTestObjectCreator.getNewInvItem()))
 						  .contentType(ContentType.JSON)
 						  .pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
 						  .post()
