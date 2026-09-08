@@ -41,9 +41,7 @@ public enum LookupService {
     OPENLIBRARY(
         OpenLibraryService.class,
         List.of(LookupSource.OPENLIBRARY),
-        List.of(LookupMethod.BARCODE)
-        //TODO: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/issues/1338
-        // List.of(LookupMethod.TEXT)
+        List.of(LookupMethod.BARCODE, LookupMethod.TEXT)
     ),
     ISBNDB(
         ISBNdbLookupService.class,

@@ -4,9 +4,7 @@
     "method": "GET",
     "queryParameters": {
       "q": {
-		  "not": {
-			  "equalTo": "1501752014"
-		  }
+        "matches": "^(?!1501752014$|Alash$).+"
       }
     }
   },
