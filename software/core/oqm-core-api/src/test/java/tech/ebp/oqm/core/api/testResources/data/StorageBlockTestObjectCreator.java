@@ -8,10 +8,8 @@ import java.util.LinkedHashSet;
 
 @ApplicationScoped
 public class StorageBlockTestObjectCreator extends TestObjectCreator<StorageBlock> {
-	private static final String TEST_IMAGE = "/testFiles/test_image.png";
-	
-	@Override
-	public StorageBlock getTestObject() {
+
+	public static StorageBlock getNewStorageBlock(){
 		StorageBlock block = new StorageBlock(
 			faker.name().fullName(),
 			faker.name().fullName(),
@@ -22,7 +20,12 @@ public class StorageBlockTestObjectCreator extends TestObjectCreator<StorageBloc
 			new LinkedHashSet<>(),
 			new LinkedHashSet<>()
 		);
-		
+
 		return block;
+	}
+
+	@Override
+	public StorageBlock getTestObject() {
+		return getNewStorageBlock();
 	}
 }
