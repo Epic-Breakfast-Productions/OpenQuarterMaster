@@ -4,17 +4,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.restassured.specification.RequestSpecification;
 import io.smallrye.jwt.build.Jwt;
+import io.smallrye.jwt.build.JwtClaimsBuilder;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.Claims;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.GeneralService;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 
-import jakarta.enterprise.context.ApplicationScoped;
+import tech.ebp.oqm.core.api.service.JwtUtils;
 import tech.ebp.oqm.core.api.testResources.TestRestUtils;
 
 import java.util.HashSet;
@@ -70,9 +72,9 @@ public class TestUserService {
 	public static TestUserService getInstance() {
 		return INSTANCE;
 	}
-	
+
 	private final String jwtIssuer = ConfigProvider.getConfig().getValue("mp.jwt.verify.issuer", String.class);
-	
+
 //	quarkus.oidc.application-type=hybrid
 //	quarkus.oidc.auth-server-url=http://localhost:32769/realms/oqm
 //	quarkus.oidc.client-id=oqm-app
@@ -80,11 +82,11 @@ public class TestUserService {
 //	quarkus.oidc.logout.path=/logout
 //	quarkus.oidc.logout.post-logout-path=/
 //	quarkus.oidc.token-state-manager.split-tokens=true
-	
+
 	public TestUserService(){
-	
+
 	}
-	
+
 	private static String getRandomPassword() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 16; i += 4) {
@@ -95,40 +97,79 @@ public class TestUserService {
 		}
 		return sb.toString();
 	}
-	
-	public String getUserToken(User testUser) {
-		String token =
-			Jwt.issuer(testUser.getAuthProvider())
-				.upn(testUser.getUsername())
-				.groups(testUser.getRoles())
-				.claim(Claims.email, testUser.getEmail())
-				.claim(Claims.preferred_username, testUser.getName())
-				.claim("name", testUser.getName())
-				.subject(testUser.getIdFromAuthProvider())
-//				.sign()
-				.sign(ConfigProvider.getConfig().getValue("smallrye.jwt.sign.key.location", String.class))
-			;
-		return token;
+
+	private JwtClaimsBuilder getBasicJwtBuilder(InteractingEntity entity){
+		return Jwt.issuer(entity.getAuthProvider())
+				   .groups(entity.getRoles())
+				   .subject(entity.getIdFromAuthProvider());
 	}
 
-	public RequestSpecification newJwtCall(User testUser) {
-		return TestRestUtils.newJwtCall(this.getUserToken(testUser));
+	private String finalizeNewToken(JwtClaimsBuilder builder){
+		return builder.sign(ConfigProvider.getConfig().getValue("smallrye.jwt.sign.key.location", String.class));
 	}
-	
+
+	public String getUserToken(User testUser) {
+		JwtClaimsBuilder builder = this.getBasicJwtBuilder(testUser)
+									   .upn(
+										   testUser.getUsername() == null?
+											   testUser.getName() :
+											   testUser.getUsername()
+									   )
+									   .claim(JwtUtils.CLAIM_NAME, testUser.getName());
+
+		if(testUser.getEmail() != null){
+			builder = builder.claim(Claims.email, testUser.getEmail());
+		}
+		if(testUser.getUsername() != null){
+			builder = builder.claim(Claims.preferred_username, testUser.getUsername());
+		}
+
+		return this.finalizeNewToken(builder);
+	}
+
+	public String getServiceToken(GeneralService testUser) {
+
+		JwtClaimsBuilder builder = this.getBasicJwtBuilder(testUser)
+									   .upn(testUser.getName())
+									   .claim(JwtUtils.CLAIM_NAME, testUser.getName());
+
+		if(testUser.getEmail() != null){
+			builder = builder.claim(JwtUtils.CLAIM_DEV_EMAIL, testUser.getEmail());
+		}
+		if(testUser.getDeveloperName() != null){
+			builder = builder.claim(JwtUtils.CLAIM_DEV_NAME, testUser.getDeveloperName());
+		}
+		if(testUser.getDeveloperWebsite() != null){
+			builder = builder.claim(JwtUtils.CLAIM_DEV_WEBSITE, testUser.getDeveloperWebsite());
+		}
+
+		return this.finalizeNewToken(builder);
+	}
+
+	public RequestSpecification newJwtCall(InteractingEntity testUser) {
+		return TestRestUtils.newJwtCall(
+			switch (testUser.getType()){
+				case USER -> this.getUserToken((User) testUser);
+				case SERVICE_GENERAL -> this.getServiceToken((GeneralService) testUser);
+				case CORE_API -> null;
+			}
+		);
+	}
+
 	public User getTestUser(Set<String> roles, boolean create) {
 		User.UserBuilder builder = User.builder();
-		
+
 		builder.username(FAKER.credentials().username());
 		builder.email(FAKER.internet().emailAddress());
 		builder.name(FAKER.name().fullName());
 		builder.roles(roles);
 		User testUser = builder.build();
-		
+
 		testUser.setAuthProvider(this.jwtIssuer);
 		testUser.setIdFromAuthProvider(UUID.randomUUID().toString());
-		
+
 		testUser.getAttributes().put(TEST_PASSWORD_ATT_KEY, getRandomPassword());
-		
+
 		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getUserToken(testUser));
 
 		if(create) {
@@ -149,7 +190,7 @@ public class TestUserService {
 
 		return testUser;
 	}
-	
+
 	public User getTestUser(String ... roles) {
 		return this.getTestUser(Set.of(roles), true);
 	}
@@ -167,8 +208,45 @@ public class TestUserService {
 	public User getTestUser(boolean admin) {
 		return this.getTestUser(admin, true);
 	}
-	
+
 	public User getTestUser(){
 		return this.getTestUser(true);
 	}
+
+	public GeneralService getServiceAccount(boolean create){
+		GeneralService.GeneralServiceBuilder<?, ?> builder = GeneralService.builder();
+
+		builder.name("service-account-" + FAKER.internet().domainName());
+		builder.developerEmail(FAKER.internet().emailAddress());
+		builder.developerName(FAKER.name().fullName());
+		builder.developerWebsite(FAKER.internet().url());
+		GeneralService testUser = builder.build();
+
+		testUser.setAuthProvider(this.jwtIssuer);
+		testUser.setIdFromAuthProvider(UUID.randomUUID().toString());
+
+		testUser.getAttributes().put(TEST_PASSWORD_ATT_KEY, getRandomPassword());
+
+		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getServiceToken(testUser));
+
+		if(create) {
+			//ensure user is added to db
+			String userJsonString = this.newJwtCall(testUser)
+										.basePath("")
+										.get("/api/v1/interacting-entity/self")
+										.then()
+										.statusCode(200)
+										.extract().body().asString();
+			try {
+				ObjectNode userJson = (ObjectNode) OBJECT_MAPPER.readTree(userJsonString);
+				testUser.setId(new ObjectId(userJson.get("id").asText()));
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		return testUser;
+	}
+
+
 }

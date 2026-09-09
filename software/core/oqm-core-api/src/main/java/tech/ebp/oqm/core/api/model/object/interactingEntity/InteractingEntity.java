@@ -2,6 +2,9 @@ package tech.ebp.oqm.core.api.model.object.interactingEntity;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
+import jakarta.annotation.Nonnull;
+import jakarta.annotation.Nullable;
+import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.core.SecurityContext;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -54,8 +57,10 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 
 	private String authProvider;
 
+	@NotNull
 	public abstract String getName();
 
+	@Nullable
 	public abstract String getEmail();
 
 	public abstract InteractingEntityType getType();
@@ -72,9 +77,10 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 			GeneralService newService = new GeneralService();
 
 			newService.setName(jwt.getClaim(Claims.upn));
-			newService.setDescription("Service account from OIDC provider.");
-			newService.setDeveloperEmail("foo@bar.com");
-			newService.setDeveloperName("Developers");
+
+			newService.setDeveloperEmail(JwtUtils.getDevEmail(jwt));
+			newService.setDeveloperName(JwtUtils.getDevName(jwt));
+			newService.setDeveloperWebsite(JwtUtils.getDevWebsite(jwt));
 
 			newEntity = newService;
 		} else {

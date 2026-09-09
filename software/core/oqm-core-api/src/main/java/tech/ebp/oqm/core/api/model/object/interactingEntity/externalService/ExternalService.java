@@ -1,9 +1,11 @@
 package tech.ebp.oqm.core.api.model.object.interactingEntity.externalService;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,6 +14,7 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.hibernate.validator.constraints.URL;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidServiceRole;
 
@@ -25,45 +28,32 @@ import java.util.Set;
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
 public abstract class ExternalService extends InteractingEntity {
-	
+
 	@NonNull
 	@NotNull
 	@NotBlank
 	@Size(max = 100)
 	private String name;
-	
-	@NonNull
-	@NotNull
-	@NotBlank
-	@lombok.Builder.Default
-	private String description = "";
-	
-	@NonNull
-	@NotNull
-	@NotBlank
-	@Size(max = 50)
+
+	@Nullable
+	@Pattern(regexp = ".*\\S.*")//not blank, allow null
 	private String developerName;
-	
-	@NonNull
-	@NotNull
-	@NotBlank
+
+	@Nullable
+	@Pattern(regexp = ".*\\S.*")//not blank, allow null
 	@Email
 	private String developerEmail;
-	
-	
-	/**
-	 * Only used when authmode == SELF
-	 */
+
+	@Nullable
+	@Pattern(regexp = ".*\\S.*")//not blank, allow null
+	@URL
+	private String developerWebsite;
+
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
 	private Set<@ValidServiceRole String> roles = new HashSet<>();
-	
-	/**
-	 * Only used when authmode == SELF
-	 */
-	private String setupTokenHash;
-	
+
 	/**
 	 * Wrapper for {@link #getDeveloperEmail()}
 	 *
@@ -74,7 +64,7 @@ public abstract class ExternalService extends InteractingEntity {
 	public String getEmail() {
 		return this.getDeveloperEmail();
 	}
-	
+
 	//TODO:: do a updater from
-	
+
 }

@@ -1,8 +1,10 @@
 package tech.ebp.oqm.core.api.model.object.interactingEntity.user;
 
+import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -34,45 +36,44 @@ import java.util.Set;
 @BsonDiscriminator
 @Schema(title = "User", description = "An air breathing human user.")
 public class User extends InteractingEntity {
-	
+
 	@NonNull
 	@NotNull
 	@NotBlank
 	@Size(max = 30)
 	private String name;
-	
+
+	@Nullable
 //	@NonNull
 //	@NotNull
 //	@NotBlank
 //	@Size(max = 30)
+	@Pattern(regexp = ".*\\S.*")//not blank, allow null
 	private String username;
-	
+
+	@Nullable
 //	@NonNull
 //	@NotNull
 	@Email
 	private String email;
-	
-	@NonNull
-	@NotNull
-	@lombok.Builder.Default
-	private NotificationSettings notificationSettings = new NotificationSettings();
-
 
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
 	private Set<@ValidUserRole String> roles = new HashSet<>();
-	
+
 	@Override
 	@Schema(constValue = "USER", readOnly = true, required = true, examples = "USER")
 	public InteractingEntityType getType() {
 		return InteractingEntityType.USER;
 	}
-	
+
 	@Override
 	public boolean updateFrom(JsonWebToken jwt) {
 		boolean updated = false;
-		if(!this.getEmail().equals(JwtUtils.getEmail(jwt))){
+		if(
+			!this.getEmail().equals(JwtUtils.getEmail(jwt))
+		){
 			this.setEmail(JwtUtils.getEmail(jwt));
 			updated = true;
 		}
@@ -88,7 +89,7 @@ public class User extends InteractingEntity {
 			this.setRoles(JwtUtils.getRoles(jwt));
 			updated = true;
 		}
-		
+
 		return updated;
 	}
 }
