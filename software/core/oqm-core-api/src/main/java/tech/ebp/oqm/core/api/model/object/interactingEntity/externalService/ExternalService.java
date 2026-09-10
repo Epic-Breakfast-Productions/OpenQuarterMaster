@@ -51,11 +51,6 @@ public abstract class ExternalService extends InteractingEntity {
 	@URL
 	private String developerWebsite;
 
-	@NonNull
-	@NotNull
-	@lombok.Builder.Default
-	private Set<@ValidServiceRole String> roles = new HashSet<>();
-
 	/**
 	 * Wrapper for {@link #getDeveloperEmail()}
 	 *
