@@ -12,7 +12,7 @@ import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 @Setter(AccessLevel.PRIVATE)
 public class EventNotificationWrapper {
 	private ObjectId database;
-	private String objectName;
+	private String objectType;
 	private ObjectHistoryEvent event;
 
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
