@@ -36,35 +36,35 @@ import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 @Tags({@Tag(name = "Inventory Items", description = "Endpoints for inventory item CRUD, and managing stored items.")})
 @RequestScoped
 public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearch> {
-	
+
 	@Getter
 	@Inject
 	StoredService objectService;
-	
+
 	@Getter
 	@Inject
 	InventoryItemService inventoryItemService;
-	
+
 	@Getter
 	@Inject
 	AppliedTransactionService appliedTransactionService;
-	
+
 	@Getter
 	Class<Stored> objectClass = Stored.class;
-	
+
 	@Getter
 	@PathParam("itemId")
 	ObjectId itemId;
-	
+
 	private InventoryItem inventoryItem;
-	
+
 	public InventoryItem getInventoryItem() {
 		if (this.inventoryItem == null) {
 			this.inventoryItem = this.inventoryItemService.get(this.getOqmDbIdOrName(), this.itemId);
 		}
 		return this.inventoryItem;
 	}
-	
+
 	@POST
 	@Operation(
 		summary = "Applies a transaction to a stored item."
@@ -74,11 +74,11 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 		description = "The id of the applied transaction record."
 	)
 	@Produces(MediaType.APPLICATION_JSON)
-	@RolesAllowed(Roles.INVENTORY_VIEW)
+	@RolesAllowed(Roles.INVENTORY_EDIT)
 	public AppliedTransaction transact(@Valid ItemStoredTransaction transaction) throws Exception {
 		return this.appliedTransactionService.apply(this.getOqmDbIdOrName(), null, this.getInventoryItem(), transaction, this.getInteractingEntity());
 	}
-	
+
 	@GET
 	@Operation(
 		summary = "Searches all of an item's stored item transactions."
@@ -94,7 +94,7 @@ public class TransactionEndpoints extends MainObjectProvider<Stored, StoredSearc
 	) {
 		return this.appliedTransactionService.search(this.getOqmDbIdOrName(), storedSearch);
 	}
-	
+
 	@GET
 	@Path("{transactionId}")
 	@Operation(

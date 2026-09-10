@@ -24,34 +24,34 @@ import java.util.Optional;
 @Slf4j
 @ApplicationScoped
 public class HistoryEventNotificationService {
-	
+
 	public static final String INTERNAL_EVENT_CHANNEL = "events-internal";
 	public static final String OUTGOING_EVENT_CHANNEL = "events-outgoing";
 	public static final String TOPIC_PREPEND = "oqm-core-";
 	public static final String ALL_EVENT_TOPIC_LABEL = "all-events";
 	public static final String ALL_EVENT_TOPIC = TOPIC_PREPEND + ALL_EVENT_TOPIC_LABEL;
-	
+
 	@ConfigProperty(name = "mp.messaging.outgoing.events-outgoing.enabled", defaultValue = "false")
 	Boolean outgoingServersEnabled;
-	
+
 	@ConfigProperty(name = "mp.messaging.outgoing.events-outgoing.bootstrap.servers")
 	Optional<String> outgoingServers;
 	@ConfigProperty(name = "kafka.bootstrap.servers")
 	Optional<String> kafkaServers;
-	
+
 	@Inject
 	@Broadcast
 	@Channel(INTERNAL_EVENT_CHANNEL)
 	@OnOverflow(value = OnOverflow.Strategy.DROP)
 	Emitter<EventNotificationWrapper> internalEventEmitter;
-	
+
 	@Inject
 	OutgoingNotificationService outgoingEventService;
-	
+
 	private boolean outgoingEnabled() {
 		return this.outgoingServersEnabled && (this.outgoingServers.isPresent() || this.kafkaServers.isPresent());
 	}
-	
+
 	/**
 	 * Don't call this directly, use the other one(s)
 	 */
@@ -68,7 +68,7 @@ public class HistoryEventNotificationService {
 		try {
 			Headers headers = new RecordHeaders()
 								  .add("database", notificationWrapper.getDatabase().toHexString().getBytes())
-								  .add("object", notificationWrapper.getObjectName().getBytes());
+								  .add("object", notificationWrapper.getObjectType().getBytes());
 			this.outgoingEventService.sendEvent(
 				Message.of(notificationWrapper)
 					.addMetadata(
@@ -89,8 +89,8 @@ public class HistoryEventNotificationService {
 			//						.withHeaders(headers)
 			//						.build()
 			//				));
-			
-			
+
+
 			//TODO:: maybe support this in future
 			//			this.outgoingEventEmitter.send(
 			//				Message.of(notificationWrapper.getEvent()).addMetadata(
@@ -107,15 +107,15 @@ public class HistoryEventNotificationService {
 			throw e;
 		}
 	}
-	
+
 	public void sendEvent(ObjectId oqmDatabase, Class<?> objectClass, ObjectHistoryEvent event) {
 		this.sendEvents(oqmDatabase, objectClass, event);
 	}
-	
+
 	public void sendEvents(ObjectId oqmDatabase, Class<?> objectClass, ObjectHistoryEvent... events) {
 		this.sendEvents(oqmDatabase, objectClass, Arrays.asList(events));
 	}
-	
+
 	/**
 	 * Call this method (or wrappers) to send out event messages.
 	 * <p>
@@ -134,5 +134,5 @@ public class HistoryEventNotificationService {
 			this.internalEventEmitter.send(new EventNotificationWrapper(oqmDatabase, objectClass.getSimpleName(), event));
 		}
 	}
-	
+
 }

@@ -32,22 +32,25 @@ dependencies {
     // Add Quarkus REST Client dependency
     implementation 'io.quarkus:quarkus-rest-client'
 
-    implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:4.4.4-SNAPSHOT'
+    implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:6.3.0'
     implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
 
     // Added Mockito for mocking in unit tests.
     testImplementation 'org.mockito:mockito-core:5.4.0'
-    
+
 }
 
 group 'tech.ebp.openQuarterMaster'
 version '1.0.0-SNAPSHOT'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_21
-    targetCompatibility = JavaVersion.VERSION_21
+	java {
+		toolchain {
+			languageVersion.set(JavaLanguageVersion.of(25))
+		}
+	}
 }
 
 test {

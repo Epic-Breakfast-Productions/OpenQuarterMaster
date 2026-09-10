@@ -14,7 +14,11 @@ productLookup:
     openfoodfacts:
       url-barcode: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
       url-search: http://localhost:${quarkus.wiremock.devservices.port}/openfoodfacts/
-
+    openlibrary:
+      url: http://localhost:${quarkus.wiremock.devservices.port}/openlibrary/
+    isbndb:
+      url: http://localhost:${quarkus.wiremock.devservices.port}/isbndb/
+      apiKey: devKey
 quarkus:
   http:
 #    port: 8081
