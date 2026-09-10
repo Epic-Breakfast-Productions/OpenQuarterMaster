@@ -1,6 +1,6 @@
-
-
 quarkus:
+  log:
+    level: DEBUG
   oidc:
     client-id: oqm-app
     credentials:

@@ -6,20 +6,20 @@ import org.eclipse.microprofile.reactive.messaging.*;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventType;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.HistoryEventFilter;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.ObjectType;
 import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
 
-import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 
 @Slf4j
 @ApplicationScoped
 public class OqmCoreEventsHandler {
 
-	private static final HistoryEventFilter.FilterOptions IMAGE_FILTER = HistoryEventFilter.FilterOptions.builder().objectName(List.of("Image")).build();
-	private static final HistoryEventFilter.FilterOptions NEW_IMAGE_FILTER = HistoryEventFilter.FilterOptions.builder().eventType(List.of("CREATE", "FILE_NEW_VERSION")).build();
-	private static final HistoryEventFilter.FilterOptions DELETED_IMAGE_FILTER = HistoryEventFilter.FilterOptions.builder().eventType(List.of("DELETE")).build();
+	private static final HistoryEventFilter.FilterOptions IMAGE_FILTER = HistoryEventFilter.FilterOptions.builder().objectType(List.of(ObjectType.Image)).build();
+	private static final HistoryEventFilter.FilterOptions NEW_IMAGE_FILTER = HistoryEventFilter.FilterOptions.builder().eventType(List.of(EventType.CREATE, EventType.FILE_NEW_VERSION)).build();
+	private static final HistoryEventFilter.FilterOptions DELETED_IMAGE_FILTER = HistoryEventFilter.FilterOptions.builder().eventType(List.of(EventType.DELETE)).build();
 
 	@Inject
 	ResnetVectorService resnetVectorService;
