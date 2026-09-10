@@ -20,7 +20,7 @@ public class EventNotificationWrapper {
 	/** The name of the object that was affected. */
 	private String objectName;
 	/** The type of event that occurred. */
-	private String eventType;
+	private EventType eventType;
 	/** The id of the object that was affected. */
 	private String objectId;
 	/** The event data. */

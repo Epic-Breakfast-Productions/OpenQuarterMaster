@@ -38,8 +38,8 @@ public final class HistoryEventFilter {
 			}
 		}
 
-		if(filterOptions.getObjectName() != null && !filterOptions.getObjectName().isEmpty()){
-			if(!filterOptions.getObjectName().contains(event.getObjectName())){
+		if(filterOptions.getObjectType() != null && !filterOptions.getObjectType().isEmpty()){
+			if(!filterOptions.getObjectType().contains(event.getObjectName())){
 				return false;
 			}
 		}
@@ -68,7 +68,7 @@ public final class HistoryEventFilter {
 		private String databaseId;
 
 		private Collection<String> objectIds;
-		private Collection<String> objectName;
-		private Collection<String> eventType;
+		private Collection<ObjectType> objectType;
+		private Collection<EventType> eventType;
 	}
 }
