@@ -8,6 +8,7 @@ import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.MediaType;
 import lombok.Builder;
+import lombok.ToString;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.jboss.resteasy.reactive.PartType;
 import tech.ebp.oqm.plugin.imageSearch.model.Model;
@@ -16,6 +17,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+@ToString
 @Builder
 public class ImageSearch {
 
@@ -37,16 +39,19 @@ public class ImageSearch {
 	@FormParam("maxResults")
 	@DefaultValue("10")
 	@PartType(MediaType.TEXT_PLAIN)
-	public Integer maxResults;
+	@Builder.Default
+	public Integer maxResults = 10;
 
 	@Parameter(description = "The threshold of how similar to identify with.")
 	@FormParam("maxResults")
 	@DefaultValue("75.0")
 	@Min(50) @Max(100)
 	@PartType(MediaType.TEXT_PLAIN)
-	public Double threshold;
+	@Builder.Default
+	public Double threshold = 75.0;
 
 	@Parameter(description = "The models to use to identify the given image.")
 	@FormParam("models")
-	public List<Model> models = new ArrayList<>();
+	@Builder.Default
+	public List<Model> models = List.of();
 }

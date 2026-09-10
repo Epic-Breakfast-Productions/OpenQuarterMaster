@@ -11,27 +11,24 @@
 
 ## TODOS
 
- - [ ] Return actual search results, not image IDs Colten
+ - [x] Return actual search results, not image IDs Colten
  - [x] Scope each search to specific database Greg
  - [x] Process image changes as they happen, not just when DB is initialized Colten/Greg
- - [ ] Redesign TreeMap (possibly different structure) to not store extra objects Colten
+ - [x] Redesign TreeMap (possibly different structure) to not store extra objects Colten
  - [ ] Testing...
  - [ ] Integration into deployment methodology Greg
- - [ ] Memory leaks (Mat objects)
+ - [x] Memory leaks (Mat objects)
  - [ ] OpenCV library optimization (System.loadLibrary())
  - [ ] Verify and ensure concurrent calls work in ImageSearchService
  - [ ] Logging in ImageSearchService
  - [ ] Check if new Java TF
+ - [ ] Integration tests
+ - [ ] Documentation
 
 ## LATER TODO
 
 - [ ] UI?
 - [ ] potential batch-processing / multi-threading (optional)
--
-
-
-
-
 
 
 

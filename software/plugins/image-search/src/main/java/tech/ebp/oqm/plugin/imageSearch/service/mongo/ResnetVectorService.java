@@ -18,10 +18,9 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ImageSearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
-import tech.ebp.oqm.plugin.imageSearch.interfaces.ImageSearchEndpoint;
 import tech.ebp.oqm.plugin.imageSearch.model.resnet.ImageVector;
 
-import tech.ebp.oqm.plugin.imageSearch.service.ImageSearchService;
+import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.ResnetProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -48,7 +47,7 @@ public class ResnetVectorService {
 	KcClientAuthService serviceAccountService;
 
 	@Inject
-	ImageSearchService imageSearchService;
+	ResnetProvider resnetProvider;
 
 
 	protected MongoDatabase getMongoDatabase() {
@@ -104,7 +103,7 @@ public class ResnetVectorService {
 			builder.oqmDb(database);
 			builder.imageId(imageId);
 			builder.imageRevision(imageRevision);
-			builder.vector(this.imageSearchService.generateImageFeatureVector(is));
+			builder.vector(this.resnetProvider.generateImageFeatureVector(is));
 
 			this.getTypedCollection().insertOne(builder.build());
 		} catch(IOException e) {
