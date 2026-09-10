@@ -49,7 +49,7 @@
 				<p class="mt-3">
 					{itemCollectionStats.get("size").asLong()} types of items stored in over {storageCollectionStats.get("size").asLong()} storage blocks
 				</p>
-				
+
 				{#if parentBlocks.get("hasPages").asBoolean()}
 					<form id="overviewParentBlocksTreeForm" method="get" action="{rootPrefix}/overview#overview">
 						<input type="hidden" name="pageNum">
@@ -159,7 +159,7 @@
 	{/modals}
 	{#scripts}
 	<script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
-	
+
 	{/scripts}
 	{#pageScript}
 		<script type="module">
@@ -182,7 +182,7 @@
 			import { FileAttachmentAddEdit } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js';
 			import { FileAttachmentView } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentView.js';
 			import { KeywordAttEdit } from '{rootPrefix}/res/js/obj/ObjEditUtils.js';
-			
+
 			ItemStoredEdit.init();
 			ItemStoredTransaction.init();
 			CodeScanner.init();
@@ -194,17 +194,18 @@
 			FileAttachmentSearchSelect.init();
 			FileAttachmentAddEdit.init();
 			Getters.init();
-			
+
+			Main.pageModulesLoaded();
 		</script>
 		<script defer>
 			let overviewParentBlocksTreeForm = $("#overviewParentBlocksTreeForm");
 			let overviewLowStockSearchForm = $("#overviewLowStockSearchForm");
 			let overviewExpiringSearchForm = $("#overviewExpiringSearchForm");
 			let overviewExpiredSearchForm = $("#overviewExpiredSearchForm");
-			
+
 			let created = { };
 			let anchor = $(location).attr('hash');
-			
+
 			function getInvItemSection(invItemSearchResult, parentId){
 				if(invItemSearchResult.empty){
 					return $('<p>{#icons/items /} No inventory items held.</p>');
@@ -240,7 +241,7 @@
 						$('<img class="accordion-thumb" src="'+Rest.passRoot+'/media/image/for/item/'+invItem.id+'" alt="">'),
 						$('<span></span>').text(invItem.name + " - " + UnitUtils.quantityToDisplayStr(blockTotal))
 					);
-					
+
 					accordion = accordion.append(curAccord);
 				});
 
@@ -248,14 +249,14 @@
 				output = output.add(accordion);
 				return output;
 			}
-			
+
 			function getStorageBlockSection(storageBlockArr, parentId){
 				if(storageBlockArr.results.length === 0){
 					return $('<p>{#icons/storageBlocks}{/icons/storageBlocks} No children.</p>');
 				}
 				let accordId = "storageBlockAccord" + parentId;
 				let accordion = $('<div class="accordion " id="'+accordId+'"></div>');
-				
+
 				storageBlockArr.results.forEach(function(storageBlock){
 					let curAccord = $('<div class="accordion-item" id="accordItem'+storageBlock.id+'" data-storage-block-id="'+storageBlock.id+'">' +
 											'<h2 class="accordion-header " id="accordHeader'+storageBlock.id+'" onclick="overviewAccordionClicked(\''+storageBlock.id+'\', $(this).parent())">' +
@@ -269,20 +270,20 @@
 											'</div>'+
 										'</div>');
 					let accordButt = curAccord.find(".accordion-button");
-					
+
 					accordButt.append(
 						$('<img class="accordion-thumb" src="'+Rest.passRoot+'/media/image/for/storageBlock/'+storageBlock.id+'" alt=" image">'),
 						$('<span></span>').text(storageBlock.labelText)
 					);
-					
+
 					accordion = accordion.append(curAccord);
 				});
-				
+
 				let output = $('<h5>{#icons/storageBlocks}{/icons/storageBlocks} Storage Blocks ('+storageBlockArr.numResults+'):</h5>');
 				output = output.add(accordion);
 				return output;
 			}
-			
+
 			function getBlockDetailsSection(storageBlockData){
 				let output = $('<div class="row">' +
 					'<div class="col">' +
@@ -293,9 +294,9 @@
 				let detailsRow = $(
 					'<div class="row storageBlockDetailsRow">'+
 					'</div>');
-				
+
 				detailsRow.append('<div class="col-sm-1">' +Links.getStorageViewButtonAsHtml(storageBlockData.id, "View") + '</div>');
-				
+
 				if(storageBlockData.description){
 					//TODO:: might need better format
 					let locationData = $('<div class="col">' +
@@ -314,34 +315,34 @@
 					detailsRow = detailsRow.append(locationData);
 				}
 				//TODO:: barcode
-				
+
 				//TODO:: images, attr/keywords?, capacities?
-				
+
 				output = output.add(detailsRow);
 				return output;
 			}
 
 			function getInvItemDetailsSection(itemData, storageBlockId){
 				let output = $('<div class="row"></div>');
-				
+
 				output.append($('<div class="col-1">'+Links.getItemViewButtonAsHtml(itemData.id, "View")+'</div>'));
-				
+
 				if(itemData.description){
 					//TODO
 				}
 				//TODO:: fill with details #918
-				
+
 				return output;
 			}
-			
+
 			async function createNewStorageBlockContent(storageBlockData){
 				let storageBlockItems = Getters.StorageBlock.getStorageBlockItemData(storageBlockData.id);
 				let storageBlockChildren = Getters.StorageBlock.getStorageBlockChildrenData(storageBlockData.id);
 				storageBlockItems = await storageBlockItems;
 				storageBlockChildren = await storageBlockChildren;
-				
+
 				console.log("Got " + storageBlockItems.numResultsForEntireQuery + " items, " + storageBlockChildren.numResultsForEntireQuery + " children for storage block " + storageBlockData.id);
-				
+
 				let output = $();
 
 				output = output.add(getBlockDetailsSection(storageBlockData));
@@ -351,10 +352,10 @@
 				output = output.add(getStorageBlockSection(storageBlockChildren, storageBlockData.id));
 				return output;
 			}
-			
+
 			function overviewAccordionClicked(storageBlockId, accordionDivJq){
 				console.debug("Accordion " + accordionDivJq.attr("id") + " for storage block " + storageBlockId + " clicked.");
-				
+
 				if(created[storageBlockId]){
 					console.log("Already clicked on this.");
 					return;
@@ -371,7 +372,7 @@
 						accordionDivJq.find(".accordion-body").html(newContent);
 					},
 					fail: function(data) {
-					
+
 					}
 				});
 			}
@@ -398,7 +399,7 @@
 					}
 				});
 			}
-			
+
 			$(document).ready(function(){
 				if(overviewParentBlocksTreeForm.length !== 0){
 					overviewParentBlocksTreeForm.on("submit", function(e){
@@ -406,28 +407,28 @@
 						overviewParentBlocksTreeForm.find("input[name='pageNum']").attr("name", "storageBlockTreePage");
 					});
 				}
-				
+
 				if(overviewLowStockSearchForm.length !== 0){
 					overviewLowStockSearchForm.on("submit", function(e){
 						// e.preventDefault();
 						overviewLowStockSearchForm.find("input[name='pageNum']").attr("name", "lowStockPage");
 					});
 				}
-				
+
 				if(overviewExpiringSearchForm.length !== 0){
 					overviewExpiringSearchForm.on("submit", function(e){
 						// e.preventDefault();
 						overviewExpiringSearchForm.find("input[name='pageNum']").attr("name", "expiringPage");
 					});
 				}
-				
+
 				if(overviewExpiredSearchForm.length !== 0){
 					overviewExpiredSearchForm.on("submit", function(e){
 						// e.preventDefault();
 						overviewExpiredSearchForm.find("input[name='pageNum']").attr("name", "expiredPage");
 					});
 				}
-				
+
 				if(anchor){
 					$(anchor).click();
 				}

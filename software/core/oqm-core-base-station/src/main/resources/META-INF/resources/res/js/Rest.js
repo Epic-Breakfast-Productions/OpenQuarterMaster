@@ -1,4 +1,4 @@
-import {SpinnerUtils} from "./SpinnerUtils.js";
+// import {SpinnerUtils} from "./SpinnerUtils.js";
 import {PageMessageUtils} from "./PageMessageUtils.js";
 
 export class Rest {
@@ -97,7 +97,7 @@ export class Rest {
 		} = {}
 	) {
 		console.log("Making "+ method +" rest call to " + url);
-		let spinner = (spinnerContainer === null ? null : SpinnerUtils.newSpinner(spinnerContainer));
+		Main.processStart("REST call to " + url, spinnerContainer);
 
 		let ajaxOps = {
 			url: url,
@@ -201,9 +201,7 @@ export class Rest {
 					fail(data);
 				}
 			}).always(function () {
-				if (spinner != null) {
-					spinner.stop();
-				}
+				Main.processStop("REST call to " + url, spinnerContainer);
 			});
 
 		if (!async) {

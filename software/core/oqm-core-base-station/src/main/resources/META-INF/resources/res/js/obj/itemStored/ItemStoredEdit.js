@@ -44,7 +44,7 @@ export class ItemStoredEdit extends PageUtility {
 		ItemStoredEdit.infoStoredLabel.text(stored.labelText);
 		ItemStoredEdit.infoItemName.text(item.name);
 
-		promises.push(Getters.StorageBlock.getStorageBlockLabel(stored.storageBlock, function (blockLabel){
+		promises.push(Getters.StorageBlock.getStorageBlockLabel(stored.state.storageBlock, function (blockLabel){
 			ItemStoredEdit.infoBlockLabel.text(blockLabel);
 		}));
 

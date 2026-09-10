@@ -32,10 +32,10 @@ import java.util.*;
 @ApplicationScoped
 @Slf4j
 public class UpcItemDbService extends ItemSearchService {
-	
+
 	private UpcItemDbLookupClient upcItemDbLookupClient;
 	private String apiKey;
-	
+
 	@Inject
 	public UpcItemDbService(
 		@RestClient
@@ -64,33 +64,34 @@ public class UpcItemDbService extends ItemSearchService {
 				.cost("Paid, Free tier")
 		);
 	}
-	
+
 	public boolean hasKey() {
 		return this.apiKey != null && !this.apiKey.isBlank();
 	}
-	
+
 	private ExtItemLookupResult jsonToResult(LookupSource source, LookupMethod method, ObjectNode json) {
 		ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
-		
+
 		Map<String, String> attributes = new HashMap<>();
 		Map<String, String> identifiers = new HashMap<>();
 		Map<String, String> links = new HashMap<>();
 		Map<String, String> prices = new HashMap<>();
 		List<String> images = new ArrayList<>();
-		
+
 		for (Map.Entry<String, JsonNode> curField : json.properties()) {
 			String curFieldName = curField.getKey();
 			JsonNode curFieldVal = curField.getValue();
-			
+
 			if (ResultMappingUtils.isFieldEmpty(curFieldVal)) {
 				continue;
 			}
-			
+
 			switch (curFieldName) {
 				case "ean":
 				case "upc":
 				case "asin":
 				case "elid":
+				case "isbn":
 					identifiers.put(curFieldName, curFieldVal.asText());
 					break;
 				case "title":
@@ -108,11 +109,11 @@ public class UpcItemDbService extends ItemSearchService {
 				case "offers":
 					for (JsonNode curOffer : curFieldVal) {
 						String name = curOffer.get("merchant").asText();
-						
+
 						if(!ResultMappingUtils.isFieldEmpty(curOffer.get("link"))){
 							links.put(name, curOffer.get("link").asText());
 						}
-						
+
 						if(!ResultMappingUtils.isFieldEmpty(curOffer.get("price"))){
 							prices.put(name, curOffer.get("price").asText());
 						}
@@ -125,7 +126,7 @@ public class UpcItemDbService extends ItemSearchService {
 					break;
 			}
 		}
-		
+
 		return resultBuilder
 				   .attributes(attributes)
 				   .identifiers(identifiers)
@@ -134,7 +135,7 @@ public class UpcItemDbService extends ItemSearchService {
 				   .prices(prices)
 				   .build();
 	}
-	
+
 	/**
 	 * https://www.upcitemdb.com/wp/docs/main/development/responses/
 	 *
@@ -145,18 +146,18 @@ public class UpcItemDbService extends ItemSearchService {
 	@WithSpan
 	public Collection<LookupResult> jsonNodeToSearchResults(LookupSource source, LookupMethod type, ObjectNode results) {
 		log.debug("Data from upcitemdb: {}", results.toPrettyString());
-		
+
 		ArrayNode resultsAsArr = (ArrayNode) results.get("items");
 		List<LookupResult> resultList = new ArrayList<>(resultsAsArr.size());
-		
+
 		for (JsonNode result : resultsAsArr) {
 			resultList.add(this.jsonToResult(source, type, (ObjectNode) result));
 		}
-		
+
 		return resultList;
 	}
-	
-	
+
+
 	protected Uni<ObjectNode> performBarcodeSearchCall(String barcode) {
 		if (this.hasKey()) {
 			return this.upcItemDbLookupClient.getFromUpcCode(
@@ -165,10 +166,10 @@ public class UpcItemDbService extends ItemSearchService {
 				UpcItemDbLookupClient.Request.builder().upc(barcode).build()
 			);
 		}
-		
+
 		return this.upcItemDbLookupClient.getFromUpcCodeTrial(barcode);
 	}
-	
+
 	@Override
 	protected Multi<LookupResult> performSearch(LookupSource source, LookupMethod method, String term) {
 		return switch (source) {
@@ -185,7 +186,7 @@ public class UpcItemDbService extends ItemSearchService {
 			default -> throw new IllegalArgumentException("Invalid lookup source: " + source);
 		};
 	}
-	
+
 	@Override
 	protected Optional<LookupResult> handleClientError(LookupSource source, LookupMethod method, ClientWebApplicationException e) {
 		if (e.getResponse().getStatus() == 404) {

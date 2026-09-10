@@ -62,6 +62,7 @@ export class FileAttachmentAddEdit extends PageUtility {
 	}
 	static {
 		window.FileAttachmentAddEdit = this;
+		console.log("Initializing FileAttachmentAddEdit");
 		FileAttachmentAddEdit.form.on("submit", function(e){FileAttachmentAddEdit.submitForm(e)});
 	}
 }

@@ -5,7 +5,7 @@ plugins {
 }
 
 group 'tech.ebp.openQuarterMaster'
-version '2.1.0'
+version '2.2.0'
 
 repositories {
 	mavenCentral()
@@ -28,8 +28,8 @@ dependencies {
 	implementation 'io.quarkus:quarkus-container-image-docker'
 	implementation 'io.quarkus:quarkus-cache'
 	implementation 'io.quarkus:quarkus-arc'
-	implementation 'io.quarkiverse.wiremock:quarkus-wiremock:1.6.3'
-	implementation group: 'org.jsoup', name: 'jsoup', version: '1.22.2'
+	implementation 'io.quarkiverse.wiremock:quarkus-wiremock:1.7.0'
+	implementation group: 'org.jsoup', name: 'jsoup', version: '1.23.2'
 
 	testImplementation 'io.quarkus:quarkus-junit5'
 	testImplementation 'io.rest-assured:rest-assured'

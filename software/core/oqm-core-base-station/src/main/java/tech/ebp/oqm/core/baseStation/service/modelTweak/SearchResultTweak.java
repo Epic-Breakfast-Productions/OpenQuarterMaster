@@ -23,11 +23,11 @@ import java.util.stream.Stream;
 @Slf4j
 @ApplicationScoped
 public class SearchResultTweak {
-	
+
 	@RestClient
 	@Getter
 	OqmCoreApiClientService oqmCoreApiClient;
-	
+
 	private JsonNode nodeFromKeys(JsonNode node, boolean includeLast, String... keys){
 		JsonNode curNode = node;
 		for(int i = 0; i < (includeLast ? keys.length : keys.length - 1); i++){
@@ -35,12 +35,12 @@ public class SearchResultTweak {
 		}
 		return curNode;
 	}
-	
+
 	public Uni<ObjectNode> addStorageBlockLabelToSearchResult(ObjectNode searchResults, String oqmDb, String apiToken, String... keys) {
 		if (searchResults.get("empty").asBoolean()) {
 			return Uni.createFrom().item(searchResults);
 		}
-		
+
 		Map<String, List<ObjectNode>> resultIdMap = new HashMap<>();
 		for (JsonNode curResult : searchResults.get("results")) {
 			//TODO:: this is probably bad for performance
@@ -50,13 +50,13 @@ public class SearchResultTweak {
 				(objectNodes, collection)->Stream.concat(objectNodes.stream(), collection.stream()).toList()
 			);
 		}
-		
+
 		UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
-		
+
 		for (String storageBlockId : resultIdMap.keySet()) {
 			uniJoinBuilder.add(getOqmCoreApiClient().storageBlockGet(apiToken, oqmDb, storageBlockId));
 		}
-		
+
 		//returns a uni, not a response
 		return uniJoinBuilder.joinAll()
 				   .andCollectFailures()
@@ -71,12 +71,12 @@ public class SearchResultTweak {
 					   return searchResults;
 				   });
 	}
-	
+
 	public Uni<ObjectNode> addCreatedByInteractingEntityRefToCheckoutSearchResult(ObjectNode searchResults, String oqmDb, String apiToken) {
 		if (searchResults.get("empty").asBoolean()) {
 			return Uni.createFrom().item(searchResults);
 		}
-		
+
 		UniJoin.Builder<Tuple2<ObjectNode, ObjectNode>> uniJoinBuilder = Uni.join().builder();
 		for (JsonNode curResult : searchResults.get("results")) {
 			uniJoinBuilder.add(
@@ -90,9 +90,9 @@ public class SearchResultTweak {
 						if (result.get("empty").asBoolean()) {
 							throw new IllegalStateException("Cannot have a create search result with an empty result");
 						}
-						
+
 						ObjectNode createEvent = (ObjectNode) result.get("results").get(0);
-						
+
 						return getOqmCoreApiClient().interactingEntityGetReference(apiToken, createEvent.get("entity").asText());
 					})
 					.map((ObjectNode entityRef)->{
@@ -100,26 +100,26 @@ public class SearchResultTweak {
 					})
 			);
 		}
-		
+
 		return uniJoinBuilder.joinAll()
 				   .andCollectFailures()
 				   .map((List<Tuple2<ObjectNode, ObjectNode>> resultList)->{
 					   for (Tuple2<ObjectNode, ObjectNode> cur : resultList) {
 						   ObjectNode searchResult = cur.getItem1();
 						   ObjectNode entityRef = cur.getItem2();
-						   
+
 						   searchResult.set("creatorRef", entityRef);
 					   }
 					   return searchResults;
 				   })
 			;
 	}
-	
+
 	public Uni<ObjectNode> addItemNameToSearchResult(ObjectNode searchResults, String oqmDb, String key, String apiToken) {
 		if (searchResults.get("empty").asBoolean()) {
 			return Uni.createFrom().item(searchResults);
 		}
-		
+
 		Map<String, List<ObjectNode>> resultIdMap = new HashMap<>();
 		for (JsonNode curResult : searchResults.get("results")) {
 			//TODO:: this is probably bad for performance
@@ -129,13 +129,13 @@ public class SearchResultTweak {
 				(objectNodes, collection)->Stream.concat(objectNodes.stream(), collection.stream()).toList()
 			);
 		}
-		
+
 		UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
-		
+
 		for (String itemId : resultIdMap.keySet()) {
 			uniJoinBuilder.add(getOqmCoreApiClient().invItemGet(apiToken, oqmDb, itemId));
 		}
-		
+
 		//returns a uni, not a response
 		return uniJoinBuilder.joinAll()
 				   .andCollectFailures()
@@ -150,19 +150,58 @@ public class SearchResultTweak {
 					   return searchResults;
 				   });
 	}
-	
+
+	public Uni<ObjectNode> addItemDetailsToSearchResult(ObjectNode searchResults, String oqmDb, String key, String apiToken) {
+		if (searchResults.get("empty").asBoolean()) {
+			return Uni.createFrom().item(searchResults);
+		}
+
+		Map<String, List<ObjectNode>> resultIdMap = new HashMap<>();
+		for (JsonNode curResult : searchResults.get("results")) {
+			//TODO:: this is probably bad for performance
+			resultIdMap.merge(
+				curResult.get(key).asText(),
+				List.of((ObjectNode) curResult),
+				(objectNodes, collection)->Stream.concat(objectNodes.stream(), collection.stream()).toList()
+			);
+		}
+
+		UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
+
+		for (String itemId : resultIdMap.keySet()) {
+			uniJoinBuilder.add(getOqmCoreApiClient().invItemGet(apiToken, oqmDb, itemId));
+		}
+
+		//returns a uni, not a response
+		return uniJoinBuilder.joinAll()
+				   .andCollectFailures()
+				   .map((List<ObjectNode> resultList)->{
+					   String newNameFieldName = key + "-name";
+					   String newTypeFieldName = key + "-storageType";
+					   for (ObjectNode curItem : resultList) {
+						   String curName = curItem.get("name").asText();
+						   String curType = curItem.get("storageType").asText();
+						   for (ObjectNode curResult : resultIdMap.get(curItem.get("id").asText())) {
+							   curResult.put(newNameFieldName, curName);
+							   curResult.put(newTypeFieldName, curType);
+						   }
+					   }
+					   return searchResults;
+				   });
+	}
+
 	public Uni<ObjectNode> addInteractingEntityRefToCheckoutSearchResult(ObjectNode searchResults, String apiToken) {
 		if (searchResults.get("empty").asBoolean()) {
 			return Uni.createFrom().item(searchResults);
 		}
-		
+
 		Map<String, List<ObjectNode>> resultIdMap = new HashMap<>();
 		for (JsonNode curResult : searchResults.get("results")) {
 			ObjectNode curCheckoutFor = (ObjectNode) curResult.get("checkoutDetails").get("checkedOutFor");
 			if (!"OQM_ENTITY".equals(curCheckoutFor.get("type").asText())) {
 				continue;
 			}
-			
+
 			log.debug("Checkout for: {}", curCheckoutFor);
 			//TODO:: this is probably bad for performance
 			resultIdMap.merge(
@@ -171,17 +210,17 @@ public class SearchResultTweak {
 				(objectNodes, collection)->Stream.concat(objectNodes.stream(), collection.stream()).toList()
 			);
 		}
-		
+
 		if (resultIdMap.isEmpty()) {
 			return Uni.createFrom().item(searchResults);
 		}
-		
+
 		UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
-		
+
 		for (String entityIds : resultIdMap.keySet()) {
 			uniJoinBuilder.add(getOqmCoreApiClient().interactingEntityGetReference(apiToken, entityIds));
 		}
-		
+
 		//returns a uni, not a response
 		return uniJoinBuilder.joinAll()
 				   .andCollectFailures()
@@ -195,12 +234,12 @@ public class SearchResultTweak {
 					   return searchResults;
 				   });
 	}
-	
+
 	public Uni<ObjectNode> addStoredDetailToSearchResult(ObjectNode searchResults, String oqmDb, String key, String apiToken) {
 		if (searchResults.get("empty").asBoolean()) {
 			return Uni.createFrom().item(searchResults);
 		}
-		
+
 		Map<String, List<ObjectNode>> resultIdMap = new HashMap<>();
 		for (JsonNode curResult : searchResults.get("results")) {
 			resultIdMap.merge(
@@ -209,13 +248,13 @@ public class SearchResultTweak {
 				(objectNodes, collection)->Stream.concat(objectNodes.stream().filter((curResult1)->curResult1.has(key)), collection.stream()).toList()
 			);
 		}
-		
+
 		UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
-		
+
 		for (String storageBlockId : resultIdMap.keySet()) {
 			uniJoinBuilder.add(getOqmCoreApiClient().invItemStoredGet(apiToken, oqmDb, storageBlockId));
 		}
-		
+
 		//returns a uni, not a response
 		return uniJoinBuilder.joinAll()
 				   .andCollectFailures()
@@ -230,56 +269,56 @@ public class SearchResultTweak {
 					   return searchResults;
 				   });
 	}
-	
-	
+
+
 	public Uni<ObjectNode> addCategoriesObjectsToSearchResult(ObjectNode searchResults, String oqmDb, String key, String apiToken) {
 		if (searchResults.get("empty").asBoolean()) {
 			return Uni.createFrom().item(searchResults);
 		}
 		String objSetKey = key+"-objs";
-		
+
 		// id -> results with that id?
 		Map<String, List<ObjectNode>> resultIdMap = new HashMap<>();
 		for (JsonNode curResult : searchResults.get("results")) {
 			//TODO:: this is probably bad for performance
-			
+
 			for(JsonNode curCatNode : curResult.get(key)){
 				String curCat = curCatNode.asText();
-				
+
 				resultIdMap.merge(
 					curCat,
 					List.of((ObjectNode) curResult),
 					(objectNodes, collection)->Stream.concat(objectNodes.stream(), collection.stream()).toList()
 				);
 			}
-			
+
 			((ObjectNode)curResult).putArray(objSetKey);
 		}
-		
+
 		if(resultIdMap.isEmpty()){
 			return Uni.createFrom().item(searchResults);
 		}
-		
+
 		UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
-		
+
 		for (String catId : resultIdMap.keySet()) {
 			uniJoinBuilder.add(getOqmCoreApiClient().itemCatGet(apiToken, oqmDb, catId));
 		}
-		
+
 		//returns a uni, not a response
 		return uniJoinBuilder.joinAll()
 				   .andCollectFailures()
 				   .map((List<ObjectNode> resultList)->{
-					   
+
 					   for(ObjectNode curCategory : resultList){
 						   for(ObjectNode curResult : resultIdMap.get(curCategory.get("id").asText())){
 							   //TODO:: might need a mutex
 							   ((ArrayNode)curResult.get(objSetKey)).add(curCategory);
 						   }
 					   }
-					   
+
 					   return searchResults;
 				   });
 	}
-	
+
 }

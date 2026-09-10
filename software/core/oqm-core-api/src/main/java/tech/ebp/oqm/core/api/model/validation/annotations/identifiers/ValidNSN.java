@@ -1,11 +1,11 @@
-package tech.ebp.oqm.core.api.model.validation.annotations;
+package tech.ebp.oqm.core.api.model.validation.annotations.identifiers;
 
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
-import tech.ebp.oqm.core.api.model.validation.validators.UserRoleValidator;
+import tech.ebp.oqm.core.api.model.validation.validators.identifiers.NSNValidator;
+import tech.ebp.oqm.core.api.model.validation.validators.identifiers.UPCAValidator;
 
 import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
@@ -19,15 +19,15 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  * <p>
  * https://docs.jboss.org/hibernate/validator/5.0/reference/en-US/html/validator-customconstraints.html#validator-customconstraints-validator
  */
-@Target({ElementType.TYPE_USE, FIELD, METHOD, PARAMETER})
+@Target({FIELD, METHOD, PARAMETER})
 @Retention(RUNTIME)
-@Constraint(validatedBy = UserRoleValidator.class)
+@Constraint(validatedBy = NSNValidator.class)
 @Documented
-public @interface ValidUserRole {
-	
-	String message() default "Role is not allowed for user.";
-	
+public @interface ValidNSN {
+
+	String message() default "String was not a valid NSN code.";
+
 	Class<?>[] groups() default {};
-	
+
 	Class<? extends Payload>[] payload() default {};
 }

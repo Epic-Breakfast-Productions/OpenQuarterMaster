@@ -11,28 +11,39 @@ function updateNavSearchDestination(action, icon, fieldName) {
 const Main = {
 	/**
 	 *
-	 * Initial value for processes:
-	 *  - page messages
-	 *  - time helpers
-	 *  - this popovers
-	 *  - dselect
+	 *  @param process {string|null} The name of the process we are starting. Used for logging.
+	 *  @param spinner {boolean|HTMLElement}
 	 */
-	processCount: 4,
-	processStart(process = null) {
+	processCount: 0,
+	processStart(process = null, spinner = false) {
 		this.processCount++;
+		if(spinner !== false){
+			SpinnerUtils.startSpinner(
+				spinner === true ? null : spinner
+			);
+		}
 		if (process) {
 			console.log("Started process " + process);
 		}
 	},
-	processStop(process = null) {
+	processStop(process = null, spinner=false) {
 		if(Main.processCount <= 0){
 			console.error("Tried to stop a process that was never started! (Process count before stop: " + Main.processCount +")");
 			return;
 		}
 
+		console.debug("Stopping process.")
+
 		Main.processCount--;
+		if(spinner){
+			SpinnerUtils.stopSpinner();
+		}
 		if (process) {
 			console.log("Finished process " + process);
+		}
+		if(Main.processCount == 0){
+			SpinnerUtils.resetAllSpinner();
+			console.log("All processes finished.");
 		}
 	},
 	processesRunning() {
@@ -71,8 +82,15 @@ const Main = {
 			timePassed += interval;
 			setTimeout(() => poll(resolve, reject), interval);
 		});
+	},
+
+	pageModulesLoaded(){
+		Main.processStop("Main page load", true);
 	}
 }
+
+Main.processStart("Main page load", true);
+
 
 const UserUtils = {
 	userId: $("#userNameDisplay").data("userid")
@@ -83,4 +101,4 @@ let popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggl
 let popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
 	return new bootstrap.Popover(popoverTriggerEl)
 });
-Main.processStop();
+Main.processStart("Main page modules load");

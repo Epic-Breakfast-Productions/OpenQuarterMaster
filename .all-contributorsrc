@@ -324,6 +324,15 @@
         "design",
         "research"
       ]
+    },
+    {
+      "login": "hongshengy",
+      "name": "hongshengy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23276040?v=4",
+      "profile": "https://github.com/hongshengy",
+      "contributions": [
+        "security"
+      ]
     }
   ],
   "contributorsPerLine": 7,

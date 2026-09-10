@@ -60,6 +60,7 @@ export class FileAttachmentSearchSelect extends PageUtility {
 	}
 	static {
 		window.FileAttachmentSearchSelect = this;
+		console.log("Initializing FileAttachmentSearchSelect");
 		FileAttachmentSearchSelect.selectSearch.on("submit", function (e){
 			e.preventDefault();
 			console.log("Submitting File Attachment Select Search");

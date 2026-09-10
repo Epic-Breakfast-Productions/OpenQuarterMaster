@@ -116,8 +116,14 @@ Ingests:
 							{#icons/add}{/icons/add} New Item List
 						</a>
 						-->
+						<a class="dropdown-item {#if page is 'itemsStored'}active{/if}" href="{rootPrefix}/itemsStored">
+							{#icons/stored /} Items Stored
+							{#if page is 'itemsStored'}
+							<span class="visually-hidden">(current)</span>
+							{/if}
+						</a>
 						<a class="dropdown-item {#if page is 'categories'}active{/if}" href="{rootPrefix}/itemCategories">
-							{#icons/categories}{/icons/categories} Categories
+							{#icons/categories /} Categories
 							{#if page is 'categories'}
 							<span class="visually-hidden">(current)</span>
 							{/if}
@@ -464,10 +470,12 @@ Ingests:
 <script src="{rootPrefix}/webjars/jquery/4.0.0/jquery.min.js"></script>
 <script src="{rootPrefix}/webjars/bootstrap/5.3.8/js/bootstrap.bundle.min.js"></script>
 <script src="{rootPrefix}/lib/luxon/3.3.0/luxon.min.js"></script>
+<script src="{rootPrefix}/lib/spin.js/spin.umd.js"></script>
 <script src="{rootPrefix}/lib/dselect/1.0.4/dist/js/dselect.js"></script><!-- Not usable as a module -->
 
 <!-- needed globally and assured loaded synchronously as non-modules -->
 <script src="{rootPrefix}/res/js/constants.js"></script>
+<script src="{rootPrefix}/res/js/SpinnerUtils.js"></script>
 <script src="{rootPrefix}/res/js/main.js"></script>
 
 <!-- Bring in libs that are needed everywhere by the plain js / need activated -->
@@ -487,7 +495,7 @@ Ingests:
 	TimeUtils.init();
 	TextCopyUtils.init();
 
-	console.log("Main modules loaded.");
+	Main.processStop("Main page modules load");
 </script>
 
 {#insert scripts}{/}

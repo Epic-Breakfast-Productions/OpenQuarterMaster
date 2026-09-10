@@ -93,6 +93,7 @@ export class StorageBlockTree {
 				let nav = $('<nav aria-label="Storage Block Breadcrumb"></nav>');
 				nav.append(crumbList);
 				crumbContainer.append(nav);
+				console.log("Added storage block breadcrumbs.")
 			},
 			fail: function () {
 			}

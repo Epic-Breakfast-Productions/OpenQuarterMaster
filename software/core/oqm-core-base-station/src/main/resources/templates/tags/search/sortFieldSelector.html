@@ -1,0 +1,13 @@
+<button type="button" class="sortByFieldInput btn btn-link btn-sm ps-0 pt-0 pb-0 border-0" onclick="SearchUtils.sortFieldClicked(this, '{form}', '{field}')">
+	{#let sortField=searchResults.get("searchObject").path("sortField").asText("") sortType=searchResults.get("searchObject").path("sortType").asText("")}
+		{#if sortField == field}
+			{#if sortType == 'ASCENDING'}
+				<span class="sortByFieldAscending" title="Currently Ascending">{#icons/sortAscending /}</span>
+			{#else}
+				<span class="sortByFieldDescending" title="Currently Descending">{#icons/sortDescending /}</span>
+			{/if}
+		{#else}
+			<span class="sortByFieldNotSelected"  title="Click to sort by {field}.">{#icons/sortNotSelected /}</span>
+		{/if}
+	{/let}
+</button>

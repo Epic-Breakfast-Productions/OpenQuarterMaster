@@ -34,7 +34,7 @@ export class DselectUtils extends PageUtility {
 
 		console.log("Setting up dselects");
 		DselectUtils.setupPageDselects();
-		Main.processStop();
+
 		console.log("Finished setting up dselects");
 	}
 }

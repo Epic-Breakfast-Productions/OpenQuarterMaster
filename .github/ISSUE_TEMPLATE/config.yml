@@ -1,5 +1,14 @@
 blank_issues_enabled: true
 contact_links:
-  - name: Open QuarterMaster Discussions
-    url: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/discussions
-    about: Chat hangout for all things OpenQuarterMaster. You can try asking your questions there first!
+    -
+        name: Open QuarterMaster Discussions
+        url: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/discussions
+        about: Chat hangout for all things Open QuarterMaster. You can try asking your questions there first!
+    -
+        name: Open QuarterMaster Discord
+        url: https://discord.gg/cpcVh6SyNn
+        about: More relaxed hangout for Open QuarterMaster. Questions asked here too!
+    -
+        name: Open QuarterMaster Reddit
+        url: https://www.reddit.com/r/OpenQuarterMaster/
+        about: The official Reddit community for Open QuarterMaster.

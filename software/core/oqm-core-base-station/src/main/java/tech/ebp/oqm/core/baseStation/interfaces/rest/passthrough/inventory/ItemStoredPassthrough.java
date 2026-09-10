@@ -30,19 +30,19 @@ import java.util.Optional;
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class ItemStoredPassthrough extends PassthroughProvider {
-	
+
 	@Getter
 	@Inject
 	@Location("tags/search/itemStored/searchResults")
 	Template searchResultTemplate;
-	
+
 	@Getter
 	@PathParam("itemId")
 	String itemId;
-	
+
 	@Inject
 	SearchResultTweak searchResultTweak;
-	
+
 	@GET
 	@Operation(
 		summary = "Searches all of an item's stored entries."
@@ -72,7 +72,7 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 								.invItemStoredSearch(this.getBearerHeaderStr(), this.getSelectedDb(), this.getItemId(), storedSearch)
 								.call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr(), "state",
 									"storageBlock"))
-								.call(results->searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
+								.call(results->searchResultTweak.addItemDetailsToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr()))
 							,
 							this.searchResultTemplate
 								.data("showItem", showItem)
@@ -90,7 +90,7 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 				)
 		);
 	}
-	
+
 	//	@GET //TODO if necessary
 	//	@Path("history")
 	//	@Operation(
@@ -129,8 +129,8 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 	//			actionType.orElse("select")
 	//		);
 	//	}
-	
-	
+
+
 	@GET
 	@Path("{storedId}")
 	@Operation(
@@ -153,7 +153,7 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 			)
 		);
 	}
-	
+
 	@PUT
 	@Path("{storedId}")
 	@Operation(
@@ -178,7 +178,7 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 			)
 		);
 	}
-	
+
 	@GET
 	@Path("{storedId}/history")
 	@Operation(

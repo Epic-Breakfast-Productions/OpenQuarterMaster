@@ -231,6 +231,7 @@ class PackageManagement:
             "core": {},
             "plugin": {},
             "infra": {},
+            "metrics": {},
             "other": {}
         }
         for curPackage in packageList:

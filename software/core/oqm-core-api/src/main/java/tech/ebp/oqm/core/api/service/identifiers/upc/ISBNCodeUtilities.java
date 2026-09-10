@@ -14,10 +14,10 @@ import org.apache.commons.validator.routines.checkdigit.ISBN10CheckDigit;
  * </ul>
  */
 public class ISBNCodeUtilities {
-	
+
 	private static final ISBN10CheckDigit VALIDATOR_10 = new ISBN10CheckDigit();
 	private static final EAN13CheckDigit VALIDATOR_13 = new EAN13CheckDigit();
-	
+
 	/**
 	 * Checks if an ISBN-13 code is valid.
 	 *
@@ -34,7 +34,7 @@ public class ISBNCodeUtilities {
 		}
 		return VALIDATOR_13.isValid(code);
 	}
-	
+
 	/**
 	 * Checks if as ISBN-10 code is valid.
 	 * <p>
@@ -48,8 +48,11 @@ public class ISBNCodeUtilities {
 	 * @return If it is a valid EAN-10 code.
 	 */
 	public static boolean isValidISBN10Code(@NonNull String code) {
+		if(code.length() != 10){
+			return false;
+		}
 		return VALIDATOR_10.isValid(code);
 	}
-	
-	
+
+
 }

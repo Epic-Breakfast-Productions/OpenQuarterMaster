@@ -58,18 +58,10 @@ import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 @QuarkusTest
 class InventoryItemsStatsTest extends RunningServerTest {
 
-	@Inject
-	InventoryItemTestObjectCreator testObjectCreator;
-	@Inject
-	StorageBlockTestObjectCreator testBlockCreator;
-
-	@Inject
-	InventoryItemService inventoryItemService;
-
 	private StorageBlock newBlock(User testUser) throws JsonProcessingException {
 		return OBJECT_MAPPER.readValue(
 			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
-				.body(OBJECT_MAPPER.writeValueAsString(testBlockCreator.getTestObject()))
+				.body(OBJECT_MAPPER.writeValueAsString(StorageBlockTestObjectCreator.getNewStorageBlock()))
 				.contentType(ContentType.JSON)
 				.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/storage-block")
 				.then().statusCode(200)
@@ -83,7 +75,7 @@ class InventoryItemsStatsTest extends RunningServerTest {
 			setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 				.body(
 					OBJECT_MAPPER.writeValueAsString(
-						testObjectCreator.getTestObject()
+						InventoryItemTestObjectCreator.getNewInvItem()
 							.setStorageType(StorageType.AMOUNT_LIST)
 							.setStorageBlocks(new LinkedList<>() {{
 								for (StorageBlock block : blocks) {
@@ -189,7 +181,7 @@ class InventoryItemsStatsTest extends RunningServerTest {
 				setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
 					.body(
 						OBJECT_MAPPER.writeValueAsString(
-							testObjectCreator.getTestObject()
+							InventoryItemTestObjectCreator.getNewInvItem()
 								.setStorageType(StorageType.AMOUNT_LIST)
 								.setStorageBlocks(new ArrayList<>() {{
 													  add(StorageBlockSettings.builder().storageBlock(block.getId()).build());

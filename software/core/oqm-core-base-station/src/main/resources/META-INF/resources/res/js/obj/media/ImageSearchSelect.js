@@ -23,22 +23,24 @@ export class ImageSearchSelect extends PageUtility {
 
 		ImageSearchSelect.curImagesSelectedDiv.append(newImageSelected);
 	}
-	static addSelectedImages(selectedImagesDiv, imageList) {
+	static async addSelectedImages(selectedImagesDiv, imageList) {
 		ImageSearchSelect.setupImageSearchModal(selectedImagesDiv);
 		let titleArr = [];
-		imageList.forEach(async function (imageId, i) {
-			await Rest.call({
-				async: false,
-				spinnerContainer: null,
-				url: Rest.passRoot+"/media/image/" + imageId + "/revision/latest",
-				done: function (data) {
-					titleArr[i] = data.title
-				}
-			});
-		});
+		await Promise.all(
+			imageList.map(function(imageId){
+				return Rest.call({
+					async: false,
+					spinnerContainer: null,
+					url: Rest.passRoot+"/media/image/" + imageId + "/revision/latest",
+					done: function (data) {
+						titleArr[imageId] = data.title
+					}
+				});
+			})
+		);
 
 		imageList.forEach(function (imageId, i) {
-			ImageSearchSelect.selectImage(titleArr[i], imageId);
+			ImageSearchSelect.selectImage(titleArr[imageId], imageId);
 		});
 	}
 	static moveImageInputUp(imageDiv) {

@@ -43,7 +43,7 @@
 	{#search/image/imageSearchSelectModal otherModalId="addEditItemModal" rootPrefix=rootPrefix /}
 	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal" /}
 	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal' /}
-	
+
 {/modals}
 {#scripts}
 
@@ -61,7 +61,7 @@
 		import { ImageAddFromSelect } from '{rootPrefix}/res/js/obj/media/ImageAddFromSelect.js';
 		import { FileAttachmentSearchSelect } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentSearchSelect.js';
 		import { FileAttachmentAddEdit } from '{rootPrefix}/res/js/obj/media/fileAttachment/FileAttachmentAddEdit.js';
-		
+
 		ItemSearchSelect.init();
 		SearchUtils.init();
 		ItemStoredTransaction.init();
@@ -73,9 +73,8 @@
 		FileAttachmentAddEdit.init();
 		ItemCheckoutView.init();
 		HistorySearchUtils.init();
-		
-		
-		console.log("Page modules loaded.");
+
+		Main.pageModulesLoaded();
     </script>
 {/pageScript}
 {/include}

@@ -1,9 +1,9 @@
 {#let id=(id.or("idGeneratorAddEditForm"))}
 <form id="{id}" class="idGeneratorAddEditForm">
 	<input type="hidden" name="generatorId" value="">
-	
+
 	<div class="formMessages"></div>
-	
+
 	<div class="mb-3">
 		<label for="{id}-nameInput" class="form-label">Name</label>
 		<input type="text" class="form-control" id="{id}-nameInput" name="name" placeholder="Name" aria-describedby="{id}-nameInputHelp" required>
@@ -11,7 +11,7 @@
 			Required. A helpful name to give the generator. Must be unique.
 		</div>
 	</div>
-	
+
 	<div class="row">
 		<div class="col mb-3">
 			<label for="{id}-genForInput" class="form-label">Generator For:</label>
@@ -26,7 +26,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="row">
 		<div class="col mb-3">
 			<div class="form-check">
@@ -53,7 +53,7 @@
 			</div>
 		</div>
 	</div>
-	
+
 	<div class="mb-3">
 		<label for="{id}-formatInput" class="form-label">Format</label>
 		<input type="text" class="form-control" id="{id}-formatInput" name="format" placeholder="Format" aria-describedby="{id}-formatInputHelp" required>
@@ -64,19 +64,34 @@
 			Supported format placeholders:
 			<ul>
 				<li>
-					Datetime: <code>\{dt;format}</code>- Insert a formatted local datetime. Format should match standard Java datetime syntax. Default format is <code>MM/dd/yyyy-HH:mm:ss</code>
+					Datetime: <code class="user-select-all">\{dt;format}</code>- Insert a formatted local datetime. Format should match standard Java datetime syntax. Default format is <code>MM/dd/yyyy-HH:mm:ss</code>
 				</li>
 				<li>
-					Uuid: <code>\{uuid}</code>- a standard java-generated uuid, which will look like: <code>62db9e28-8ec1-4064-b691-b8e667bbf181</code>
+					Uuid: <code class="user-select-all">\{uuid}</code>- a standard java-generated uuid, which will look like: <code>62db9e28-8ec1-4064-b691-b8e667bbf181</code>
 				</li>
 				<li>
-					Random: <code>\{rand;length}</code>- a random series of digits and letters. Min length is 1, max length is 50. Length defaults to <code>5</code>.
+					Random: <code class="user-select-all">\{rand;length}</code>- a random series of digits and letters. Min length is 1, max length is 50. Length defaults to <code>6</code>.
 				</li>
 				<li>
-					Increment: <code>\{inc;padding;base}</code>- an auto-incrementing number. Options:
+					Increment: <code class="user-select-all">\{inc;padding;base}</code>- an auto-incrementing number. Options:
 					<ol>
 						<li>
-							Padding: How many digits to pad out to. For example, a value of <code>5</code> produces <code>00001</code>. Defaults to <code>5</code>
+							Padding: How many digits to pad out to. For example, a value of <code>6</code> produces <code>000001</code>. Defaults to <code>6</code>
+						</li>
+						<li>
+							Base: what base of number to use to increment; <code>10</code> for standard digits, <code>16</code> for base 16, etc. Defaults to <code>10</code>
+						</li>
+					</ol>
+				</li>
+
+				<li>
+					Date-based Increment: <code class="user-select-all">\{dateinc;format;padding;base}</code>- an auto-incrementing number with associated datetime stamp. Counter resets on increment of the datetime. Options:
+					<ol>
+						<li>
+							Format: Required. A formatted local date/time. Format should match standard Java datetime syntax. The counter will reset on increment of this datetime stamp.
+						</li>
+						<li>
+							Padding: How many digits to pad out to. For example, a value of <code>6</code> produces <code>000001</code>. Defaults to <code>6</code>
 						</li>
 						<li>
 							Base: what base of number to use to increment; <code>10</code> for standard digits, <code>16</code> for base 16, etc. Defaults to <code>10</code>
@@ -84,17 +99,26 @@
 					</ol>
 				</li>
 			</ul>
-			
+
 			Examples:
 			<ul>
 				<li>
-					Possible SKU of a shirt (<code>C</code> for "clothing", <code>S</code> for shirt, <code>L</code> for Large): <code>C-S-L-\{inc}</code> {#icons/arrowRight /} <code>C-S-L-00001</code>
+					Possible SKU of a shirt (<code>C</code> for "clothing", <code>S</code> for shirt, <code>L</code> for Large): <code class="user-select-all">C-S-L-\{inc}</code> {#icons/arrowRight /} <code>C-S-L-00001</code>
 				</li>
 				<li>
-					<code>\{dt}-\{inc}</code> {#icons/arrowRight /} <code>01/30/2020-24:30:30-00001</code>
+					<code class="user-select-all">\{dt}-\{inc}</code> {#icons/arrowRight /} <code>01/30/2020-24:30:30-00001</code>
+				</li>
+				<li>
+					Serial number incrementing and resetting based on manufacture date: <code class="user-select-all">\{dateinc;yyyy-MM-}</code> {#icons/arrowRight /}
+					<ol>
+						<li><code>2024-03-00001</code> (first in March)</li>
+						<li><code>2024-03-00002</code> (second in March)</li>
+						<li>...</li>
+						<li><code>2024-04-00001</code> (first in April)</li>
+					</ol>
 				</li>
 			</ul>
 		</div>
 	</div>
-	
+
 </form>

@@ -119,7 +119,9 @@ export class ItemStoredSearchSelect extends PageUtility {
 	}
 	static {
 		window.ItemStoredSearchSelect = this;
-		
+
+		console.log("Initializing ItemStoredSearchResults.")
+
 		ItemStoredSearchSelect.form.on(
 			"submit",
 			function (event) {
@@ -138,5 +140,6 @@ export class ItemStoredSearchSelect extends PageUtility {
 		ItemStoredSearchSelect.itemNameInput.prop("readOnly", true);
 		ItemStoredSearchSelect.itemClearButton.prop("disabled", true);
 		ItemStoredSearchSelect.itemSearchButton.prop("disabled", true);
+
 	}
 }

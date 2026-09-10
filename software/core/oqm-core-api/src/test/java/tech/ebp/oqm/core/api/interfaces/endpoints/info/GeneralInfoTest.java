@@ -21,15 +21,19 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 @TestHTTPEndpoint(GeneralInfo.class)
 class GeneralInfoTest extends RunningServerTest {
 
+	{
+		this.setNeedResets(false);
+	}
+
 	Currency currency = ConfigProvider.getConfig().getValue("service.ops.currency", Currency.class);
-	
+
 	@Test
 	public void testGetCurrency(){
 		ValidatableResponse response = given()
 			.get("currency")
 			.then()
 			.statusCode(200);
-		
+
 		assertEquals(
 			this.currency,
 			response.extract().as(Currency.class)
