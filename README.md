@@ -14,7 +14,7 @@
 [![](https://dcbadge.limes.pink/api/server/cpcVh6SyNn?style=flat)](https://discord.gg/cpcVh6SyNn)
 <a href="https://openquartermaster.com/public/demo" target="_blank">![Demo Badge](https://img.shields.io/badge/demo-instance?style=flat&link=https%3A%2F%2Fopenquartermaster.com%2Fpublic%2Fdemo)</a>
 <a href="https://docs.openquartermaster.com" target="_blank">![Documentation](https://img.shields.io/badge/Documentation-docs.openquartermaster.com-green?logo=bookstack&logoColor=white)</a><!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
-[![All Contributors](https://img.shields.io/badge/all_contributors-25-orange.svg?style=flat-square)](#contributors-)
+[![All Contributors](https://img.shields.io/badge/all_contributors-26-orange.svg?style=flat-square)](#contributors-)
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 
 <details>
@@ -115,6 +115,7 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/kyleighpea123"><img src="https://avatars.githubusercontent.com/u/243836400?v=4?s=100" width="100px;" alt="kyleighpea123"/><br /><sub><b>kyleighpea123</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=kyleighpea123" title="Code">💻</a> <a href="#design-kyleighpea123" title="Design">🎨</a> <a href="#research-kyleighpea123" title="Research">🔬</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/elsamlt"><img src="https://avatars.githubusercontent.com/u/185091248?v=4?s=100" width="100px;" alt="elsamlt"/><br /><sub><b>elsamlt</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=elsamlt" title="Code">💻</a> <a href="#design-elsamlt" title="Design">🎨</a> <a href="#research-elsamlt" title="Research">🔬</a></td>
       <td align="center" valign="top" width="14.28%"><a href="https://github.com/JakeElston"><img src="https://avatars.githubusercontent.com/u/144830849?v=4?s=100" width="100px;" alt="Jake Elston"/><br /><sub><b>Jake Elston</b></sub></a><br /><a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/commits?author=JakeElston" title="Code">💻</a> <a href="#design-JakeElston" title="Design">🎨</a> <a href="#research-JakeElston" title="Research">🔬</a></td>
+      <td align="center" valign="top" width="14.28%"><a href="https://github.com/hongshengy"><img src="https://avatars.githubusercontent.com/u/23276040?v=4?s=100" width="100px;" alt="hongshengy"/><br /><sub><b>hongshengy</b></sub></a><br /><a href="#security-hongshengy" title="Security">🛡️</a></td>
     </tr>
   </tbody>
 </table>
