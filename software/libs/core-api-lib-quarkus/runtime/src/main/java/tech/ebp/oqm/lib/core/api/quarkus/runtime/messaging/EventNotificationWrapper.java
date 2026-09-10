@@ -17,8 +17,8 @@ import lombok.Setter;
 public class EventNotificationWrapper {
 	/** The database the event occurred in. */
 	private String database;
-	/** The name of the object that was affected. */
-	private String objectName;
+	/** The type of the object that was affected. */
+	private ObjectType objectType;
 	/** The type of event that occurred. */
 	private EventType eventType;
 	/** The id of the object that was affected. */

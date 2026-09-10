@@ -39,7 +39,7 @@ public final class HistoryEventFilter {
 		}
 
 		if(filterOptions.getObjectType() != null && !filterOptions.getObjectType().isEmpty()){
-			if(!filterOptions.getObjectType().contains(event.getObjectName())){
+			if(!filterOptions.getObjectType().contains(event.getObjectType())){
 				return false;
 			}
 		}
