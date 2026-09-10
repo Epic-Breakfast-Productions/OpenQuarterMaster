@@ -10,6 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import lombok.extern.slf4j.Slf4j;
@@ -23,6 +24,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.Gene
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.service.JwtUtils;
 
+import java.util.HashSet;
 import java.util.Set;
 
 /**
@@ -85,9 +87,11 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 
 	/**
 	 * The roles this entity has to interact with the system.
-	 * @return The roles this entity has to interact with the system.
 	 */
-	public abstract Set<String> getRoles();
+	@NonNull
+	@NotNull
+	@lombok.Builder.Default
+	private Set<String> roles = new HashSet<>();
 
 	/**
 	 * A function called to update this entity from a JWT.
@@ -108,7 +112,6 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 			GeneralService newService = new GeneralService();
 
 			newService.setName(JwtUtils.getServiceName(jwt));
-
 			newService.setDeveloperEmail(JwtUtils.getDevEmail(jwt));
 			newService.setDeveloperName(JwtUtils.getDevName(jwt));
 			newService.setDeveloperWebsite(JwtUtils.getDevWebsite(jwt));
@@ -116,12 +119,14 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 			newEntity = newService;
 		} else {
 			User newUser = new User();
-			newEntity = newUser;
-			newUser.setEmail(JwtUtils.getEmail(jwt));
+
 			newUser.setName(JwtUtils.getName(jwt));
+			newUser.setEmail(JwtUtils.getEmail(jwt));
 			newUser.setUsername(JwtUtils.getUserName(jwt));
-			newUser.setRoles(JwtUtils.getRoles(jwt));
+
+			newEntity = newUser;
 		}
+		newEntity.setRoles(JwtUtils.getRoles(jwt));
 		newEntity.setAuthProvider(jwt.getIssuer());
 		newEntity.setIdFromAuthProvider(jwt.getSubject());
 

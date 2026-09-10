@@ -17,11 +17,7 @@ import lombok.experimental.SuperBuilder;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.hibernate.validator.constraints.URL;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.core.api.model.validation.annotations.ValidServiceRole;
 import tech.ebp.oqm.core.api.service.JwtUtils;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -50,11 +46,6 @@ public abstract class ExternalService extends InteractingEntity {
 	@Pattern(regexp = ".*\\S.*")//not blank, allow null
 	@URL
 	private String developerWebsite;
-
-	@NonNull
-	@NotNull
-	@lombok.Builder.Default
-	private Set<@ValidServiceRole String> roles = new HashSet<>();
 
 	/**
 	 * Wrapper for {@link #getDeveloperEmail()}
