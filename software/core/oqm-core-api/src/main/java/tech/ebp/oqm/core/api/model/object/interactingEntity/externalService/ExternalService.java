@@ -17,11 +17,7 @@ import lombok.experimental.SuperBuilder;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.hibernate.validator.constraints.URL;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
-import tech.ebp.oqm.core.api.model.validation.annotations.ValidServiceRole;
 import tech.ebp.oqm.core.api.service.JwtUtils;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Data
 @NoArgsConstructor

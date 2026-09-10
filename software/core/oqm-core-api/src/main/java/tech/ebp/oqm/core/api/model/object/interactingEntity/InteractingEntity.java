@@ -22,7 +22,6 @@ import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.object.AttKeywordMainObject;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.GeneralService;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
-import tech.ebp.oqm.core.api.model.validation.annotations.ValidServiceRole;
 import tech.ebp.oqm.core.api.service.JwtUtils;
 
 import java.util.HashSet;
@@ -92,7 +91,7 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
-	private Set<@ValidServiceRole String> roles = new HashSet<>();
+	private Set<String> roles = new HashSet<>();
 
 	/**
 	 * A function called to update this entity from a JWT.

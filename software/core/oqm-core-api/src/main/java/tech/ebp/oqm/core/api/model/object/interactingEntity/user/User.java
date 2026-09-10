@@ -18,7 +18,6 @@ import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityType;
-import tech.ebp.oqm.core.api.model.validation.annotations.ValidUserRole;
 import tech.ebp.oqm.core.api.service.JwtUtils;
 
 import java.util.HashSet;
@@ -56,11 +55,6 @@ public class User extends InteractingEntity {
 //	@NotNull
 	@Email
 	private String email;
-
-	@NonNull
-	@NotNull
-	@lombok.Builder.Default
-	private Set<@ValidUserRole String> roles = new HashSet<>();
 
 	@Override
 	@Schema(constValue = "USER", readOnly = true, required = true, examples = "USER")
