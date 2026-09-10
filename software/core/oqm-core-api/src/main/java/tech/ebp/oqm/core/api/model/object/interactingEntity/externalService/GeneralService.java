@@ -18,17 +18,12 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityTyp
 @SuperBuilder(toBuilder = true)
 @Schema(title = "GeneralService", description = "A non-user service.")
 public class GeneralService extends ExternalService {
-	
+
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Override
 	@Schema(constValue = "SERVICE_GENERAL", readOnly = true, required = true, examples = "SERVICE_GENERAL")
 	public InteractingEntityType getType() {
 		return InteractingEntityType.SERVICE_GENERAL;
 	}
-	
-	@Override
-	public boolean updateFrom(JsonWebToken jwt) {
-		//TODO
-		return false;
-	}
+
 }

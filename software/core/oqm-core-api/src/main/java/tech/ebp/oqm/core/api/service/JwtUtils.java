@@ -15,6 +15,9 @@ public class JwtUtils {
 	public static String getName(JsonWebToken jwt){
 		return jwt.getClaim(CLAIM_NAME);
 	}
+	public static String getServiceName(JsonWebToken jwt){
+		return jwt.getClaim(Claims.azp);
+	}
 	public static String getEmail(JsonWebToken jwt){
 		return jwt.getClaim(Claims.email);
 	}

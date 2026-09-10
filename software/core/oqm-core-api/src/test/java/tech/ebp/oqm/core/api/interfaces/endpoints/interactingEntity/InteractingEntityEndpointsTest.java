@@ -7,18 +7,14 @@ import io.restassured.http.ContentType;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
-import tech.ebp.oqm.core.api.interfaces.endpoints.inventory.ItemCategoriesCrud;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.GeneralService;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
-import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
-import tech.ebp.oqm.core.api.testResources.data.TestUserService;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import java.util.Map;
 
 import static io.restassured.RestAssured.given;
 import static org.junit.jupiter.api.Assertions.*;
-import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 import static tech.ebp.oqm.core.api.testResources.TestRestUtils.setupJwtCall;
 import static tech.ebp.oqm.core.api.testResources.data.TestUserService.TEST_JWT_ATT_KEY;
 
@@ -51,7 +47,48 @@ class InteractingEntityEndpointsTest extends RunningServerTest {
 						 .build(),
 			gotten
 		);
+
+		// assert can do basic update check
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200);
 	}
+
+	@Test
+	public void testUserGetSelfUpdateName() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser(true, false);
+
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200);
+
+		testUser.setName(FAKER.name().fullName());
+		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getTestUserService().getUserToken(testUser));
+
+		String result = setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+							.contentType(ContentType.JSON)
+							.get("self")
+							.then().statusCode(200)
+							.extract().body().asString();
+
+		User gotten = OBJECT_MAPPER.readValue(result, User.class);
+
+		log.info(" Original User info: {}", testUser);
+		log.info("Resulting User info: {}", gotten);
+
+		assertNotNull(gotten.getId());
+
+		assertEquals(
+			testUser.toBuilder()
+				.attributes(Map.of())
+				.id(gotten.getId())
+				.build(),
+			gotten
+		);
+	}
+
 
 
 	@Test
@@ -71,6 +108,46 @@ class InteractingEntityEndpointsTest extends RunningServerTest {
 
 		User gotten = OBJECT_MAPPER.readValue(result, User.class);
 
+
+		log.info(" Original User info: {}", testUser);
+		log.info("Resulting User info: {}", gotten);
+
+		assertNotNull(gotten.getId());
+
+		assertEquals(
+			testUser.toBuilder()
+				.attributes(Map.of())
+				.id(gotten.getId())
+				.build(),
+			gotten
+		);
+
+		// assert can do basic update check
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200);
+	}
+
+	@Test
+	public void testUserGetSelfUpdateEmail() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser(true, false);
+
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200);
+
+		testUser.setEmail(FAKER.internet().emailAddress());
+		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getTestUserService().getUserToken(testUser));
+
+		String result = setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+							.contentType(ContentType.JSON)
+							.get("self")
+							.then().statusCode(200)
+							.extract().body().asString();
+
+		User gotten = OBJECT_MAPPER.readValue(result, User.class);
 
 		log.info(" Original User info: {}", testUser);
 		log.info("Resulting User info: {}", gotten);
@@ -116,6 +193,46 @@ class InteractingEntityEndpointsTest extends RunningServerTest {
 				.build(),
 			gotten
 		);
+
+		// assert can do basic update check
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200);
+	}
+
+	@Test
+	public void testUserGetSelfUpdateUsername() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser(true, false);
+
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200);
+
+		testUser.setUsername(FAKER.credentials().username());
+		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getTestUserService().getUserToken(testUser));
+
+		String result = setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+							.contentType(ContentType.JSON)
+							.get("self")
+							.then().statusCode(200)
+							.extract().body().asString();
+
+		User gotten = OBJECT_MAPPER.readValue(result, User.class);
+
+		log.info(" Original User info: {}", testUser);
+		log.info("Resulting User info: {}", gotten);
+
+		assertNotNull(gotten.getId());
+
+		assertEquals(
+			testUser.toBuilder()
+				.attributes(Map.of())
+				.id(gotten.getId())
+				.build(),
+			gotten
+		);
 	}
 
 	@Test
@@ -148,12 +265,63 @@ class InteractingEntityEndpointsTest extends RunningServerTest {
 				.build(),
 			gotten
 		);
+
+		// assert can do basic update check
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200);
 	}
 
 
 	@Test
 	public void testServiceGetSelf() throws JsonProcessingException {
 		GeneralService testUser = this.getTestUserService().getServiceAccount(false);
+
+		log.info("Service account token: {}", testUser.getAttributes().get(TEST_JWT_ATT_KEY));
+
+		String result = setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+							.contentType(ContentType.JSON)
+							.get("self")
+							.then().statusCode(200)
+							.extract().body().asString();
+
+
+		GeneralService gotten = OBJECT_MAPPER.readValue(result, GeneralService.class);
+
+
+		log.info(" Original User info: {}", testUser);
+		log.info("Resulting User info: {}", gotten);
+
+		assertNotNull(gotten.getId());
+
+		assertEquals(
+			testUser.toBuilder()
+				.attributes(Map.of())
+				.id(gotten.getId())
+				.build(),
+			gotten
+		);
+
+		// assert can do basic update check
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200);
+	}
+
+	@Test
+	public void testServiceUpdateName() throws JsonProcessingException {
+		GeneralService testUser = this.getTestUserService().getServiceAccount(false);
+
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200)
+			.extract().body().asString();
+
+		testUser.setName("service-account-" + FAKER.internet().domainName());
+		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getTestUserService().getServiceToken(testUser));
 
 		log.info("Service account token: {}", testUser.getAttributes().get(TEST_JWT_ATT_KEY));
 
@@ -186,6 +354,51 @@ class InteractingEntityEndpointsTest extends RunningServerTest {
 		GeneralService testUser = this.getTestUserService().getServiceAccount(false);
 
 		testUser.setDeveloperName(null);
+		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getTestUserService().getServiceToken(testUser));
+
+		log.info("Service account token: {}", testUser.getAttributes().get(TEST_JWT_ATT_KEY));
+
+		String result = setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+							.contentType(ContentType.JSON)
+							.get("self")
+							.then().statusCode(200)
+							.extract().body().asString();
+
+
+		GeneralService gotten = OBJECT_MAPPER.readValue(result, GeneralService.class);
+
+
+		log.info(" Original User info: {}", testUser);
+		log.info("Resulting User info: {}", gotten);
+
+		assertNotNull(gotten.getId());
+
+		assertEquals(
+			testUser.toBuilder()
+				.attributes(Map.of())
+				.id(gotten.getId())
+				.build(),
+			gotten
+		);
+
+		// assert can do basic update check
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200);
+	}
+
+	@Test
+	public void testServiceUpdateDevName() throws JsonProcessingException {
+		GeneralService testUser = this.getTestUserService().getServiceAccount(false);
+
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200)
+			.extract().body().asString();
+
+		testUser.setDeveloperName(FAKER.name().fullName());
 		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getTestUserService().getServiceToken(testUser));
 
 		log.info("Service account token: {}", testUser.getAttributes().get(TEST_JWT_ATT_KEY));
@@ -245,6 +458,51 @@ class InteractingEntityEndpointsTest extends RunningServerTest {
 				.build(),
 			gotten
 		);
+
+		// assert can do basic update check
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200);
+	}
+
+	@Test
+	public void testServiceUpdateDevEmail() throws JsonProcessingException {
+		GeneralService testUser = this.getTestUserService().getServiceAccount(false);
+
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200)
+			.extract().body().asString();
+
+		testUser.setDeveloperEmail(FAKER.internet().emailAddress());
+		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getTestUserService().getServiceToken(testUser));
+
+		log.info("Service account token: {}", testUser.getAttributes().get(TEST_JWT_ATT_KEY));
+
+		String result = setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+							.contentType(ContentType.JSON)
+							.get("self")
+							.then().statusCode(200)
+							.extract().body().asString();
+
+
+		GeneralService gotten = OBJECT_MAPPER.readValue(result, GeneralService.class);
+
+
+		log.info(" Original User info: {}", testUser);
+		log.info("Resulting User info: {}", gotten);
+
+		assertNotNull(gotten.getId());
+
+		assertEquals(
+			testUser.toBuilder()
+				.attributes(Map.of())
+				.id(gotten.getId())
+				.build(),
+			gotten
+		);
 	}
 
 	@Test
@@ -252,6 +510,51 @@ class InteractingEntityEndpointsTest extends RunningServerTest {
 		GeneralService testUser = this.getTestUserService().getServiceAccount(false);
 
 		testUser.setDeveloperWebsite(null);
+		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getTestUserService().getServiceToken(testUser));
+
+		log.info("Service account token: {}", testUser.getAttributes().get(TEST_JWT_ATT_KEY));
+
+		String result = setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+							.contentType(ContentType.JSON)
+							.get("self")
+							.then().statusCode(200)
+							.extract().body().asString();
+
+
+		GeneralService gotten = OBJECT_MAPPER.readValue(result, GeneralService.class);
+
+
+		log.info(" Original User info: {}", testUser);
+		log.info("Resulting User info: {}", gotten);
+
+		assertNotNull(gotten.getId());
+
+		assertEquals(
+			testUser.toBuilder()
+				.attributes(Map.of())
+				.id(gotten.getId())
+				.build(),
+			gotten
+		);
+
+		// assert can do basic update check
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200);
+	}
+
+	@Test
+	public void testServiceUpdateDevWebsite() throws JsonProcessingException {
+		GeneralService testUser = this.getTestUserService().getServiceAccount(false);
+
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200)
+			.extract().body().asString();
+
+		testUser.setDeveloperWebsite(FAKER.internet().url());
 		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getTestUserService().getServiceToken(testUser));
 
 		log.info("Service account token: {}", testUser.getAttributes().get(TEST_JWT_ATT_KEY));
@@ -313,6 +616,11 @@ class InteractingEntityEndpointsTest extends RunningServerTest {
 				.build(),
 			gotten
 		);
-	}
 
+		// assert can do basic update check
+		setupJwtCall(given(), testUser.getAttributes().get(TEST_JWT_ATT_KEY))
+			.contentType(ContentType.JSON)
+			.get("self")
+			.then().statusCode(200);
+	}
 }

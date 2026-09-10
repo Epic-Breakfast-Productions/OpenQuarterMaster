@@ -52,31 +52,62 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 
 	public static final int CUR_SCHEMA_VERSION = 2;
 
+	/**
+	 * The ID provided by the authentication provider. Used as the main ID to identify the entity when requests come in.
+	 */
 	@Schema(description = "The id of the entity from the auth provider. This is used to link the user as kept track of here to the auth provider.")
 	private String idFromAuthProvider;
 
+	/**
+	 * The name of the auth provider that this entity used to authenticate.
+	 */
 	private String authProvider;
 
+	/**
+	 * The name of the entity.
+	 * @return The name of the entity
+	 */
 	@NotNull
 	public abstract String getName();
 
+	/**
+	 * The email that can be used to contact the entity
+	 * @return The email that can be used to contact the entity
+	 */
 	@Nullable
 	public abstract String getEmail();
 
+	/**
+	 * The type of this entity
+	 * @return The type of this entity
+	 */
 	public abstract InteractingEntityType getType();
 
+	/**
+	 * The roles this entity has to interact with the system.
+	 * @return The roles this entity has to interact with the system.
+	 */
 	public abstract Set<String> getRoles();
 
+	/**
+	 * A function called to update this entity from a JWT.
+	 * @param jwt The JWT to update information from.
+	 * @return If this object was updated or not
+	 */
 	public abstract boolean updateFrom(JsonWebToken jwt);
 
+	/**
+	 * Creates an entity
+	 * @param jwt
+	 * @return
+	 */
 	public static InteractingEntity createEntity(JsonWebToken jwt) {
 		InteractingEntity newEntity;
 
-		//TODO:: support services better. Probably should setup keycloak to set some of these values.
 		if (((String) jwt.getClaim(Claims.upn)).startsWith("service-account-")) {
 			GeneralService newService = new GeneralService();
 
-			newService.setName(jwt.getClaim(Claims.upn));
+			newService.setName(JwtUtils.getServiceName(jwt));
 
 			newService.setDeveloperEmail(JwtUtils.getDevEmail(jwt));
 			newService.setDeveloperName(JwtUtils.getDevName(jwt));
@@ -94,7 +125,7 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 		newEntity.setAuthProvider(jwt.getIssuer());
 		newEntity.setIdFromAuthProvider(jwt.getSubject());
 
-		log.debug("New entity: {}", newEntity);
+		log.debug("New entity from jwt: {}", newEntity);
 		return newEntity;
 	}
 
@@ -102,7 +133,7 @@ public abstract class InteractingEntity extends AttKeywordMainObject {
 		User newUser = new User();
 		newUser.setName(context.getUserPrincipal().getName());
 
-		log.debug("New entity: {}", newUser);
+		log.debug("New entity from security context: {}", newUser);
 		return newUser;
 	}
 

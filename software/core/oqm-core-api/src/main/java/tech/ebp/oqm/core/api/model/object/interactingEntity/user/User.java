@@ -71,20 +71,39 @@ public class User extends InteractingEntity {
 	@Override
 	public boolean updateFrom(JsonWebToken jwt) {
 		boolean updated = false;
-		if(
-			!this.getEmail().equals(JwtUtils.getEmail(jwt))
-		){
-			this.setEmail(JwtUtils.getEmail(jwt));
-			updated = true;
+
+		{//name
+			String newName = JwtUtils.getName(jwt);
+			if(!this.getName().equals(newName)) {
+				this.setName(newName);
+				updated = true;
+			}
 		}
-		if(!this.getName().equals(JwtUtils.getName(jwt))){
-			this.setName(JwtUtils.getName(jwt));
-			updated = true;
+		{//email
+			String newEmail = JwtUtils.getEmail(jwt);
+			if(this.getEmail() == null){
+				if(newEmail != null) {
+					this.setEmail(newEmail);
+					updated = true;
+				}
+			} else if(!this.getEmail().equals(newEmail)) {
+				this.setEmail(newEmail);
+				updated = true;
+			}
 		}
-		if(!this.getUsername().equals(JwtUtils.getUserName(jwt))){
-			this.setName(JwtUtils.getName(jwt));
-			updated = true;
+		{//username
+			String newUsername = JwtUtils.getUserName(jwt);
+			if(this.getUsername() == null){
+				if(newUsername != null) {
+					this.setUsername(newUsername);
+					updated = true;
+				}
+			} else if(!this.getUsername().equals(newUsername)) {
+				this.setUsername(newUsername);
+				updated = true;
+			}
 		}
+
 		if(!this.getRoles().equals(JwtUtils.getRoles(jwt))){
 			this.setRoles(JwtUtils.getRoles(jwt));
 			updated = true;
