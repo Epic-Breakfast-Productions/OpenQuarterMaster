@@ -1,22 +1,26 @@
-(function () {
-  // This file runs fresh every time the toolbar icon is clicked on this tab.
-  // If the sidebar is already present, treat this click as "close it".
+(async function () {
+  // 1. Close sidebar if it already exists
   const existingHost = document.getElementById("ext-sidebar-host");
   if (existingHost) {
     existingHost.remove();
     return;
   }
 
+  // 2. Create host and attach Shadow DOM
   const host = document.createElement("div");
   host.id = "ext-sidebar-host";
   document.documentElement.appendChild(host);
 
-  // Shadow DOM keeps our CSS from leaking into (or being clobbered by) the page
   const shadow = host.attachShadow({ mode: "open" });
 
+  // 3. Inject HTML and CSS FIRST so elements exist in the DOM
   shadow.innerHTML = `
     <style>
       :host { all: initial; }
+
+      .hidden {
+        display: none !important;
+      }
 
       .sidebar {
         position: fixed;
@@ -27,7 +31,7 @@
         background: #ffffff;
         border-left: 1px solid #d0d0d0;
         box-shadow: -2px 0 6px rgba(0, 0, 0, 0.08);
-        z-index: 2147483647; /* stay above page content */
+        z-index: 2147483647;
         font-family: system-ui, -apple-system, sans-serif;
         transition: width 0.15s ease;
         box-sizing: border-box;
@@ -98,24 +102,69 @@
     <div class="sidebar" id="sidebar">
       <button class="toggle-btn" id="toggle-btn" title="Collapse">&rsaquo;</button>
       <div class="content">
-        <button class="action" id="scan-btn">Scan Page</button>
-        <button class="action" id="feedback-btn">Feedback</button>
-        <button class="action" id="integrate-btn" disabled>Request integration with this site</button>
+        <p>OQM Shopping Cart Integrator</p>
+        <button class="action" id="authenticate-btn" title="Log in to your OQM account">Login</button>
+        <button class="action" id="logout-btn" title="Log out of your OQM account">Logout</button>
+        <button class="action" id="choose-db-btn" title="Pick a database to connect to">Choose Database</button>
+        <button class="action" id="scan-btn" title="Automatically populates the data fields with info from your shopping cart">Scan Page</button>
+        <button class="action" id="feedback-btn" title="Provide feedback about the extension">Feedback</button>
+        <button class="action" id="integrate-btn" disabled title="Try scanning the page first">Request integration with this site</button>
       </div>
     </div>
   `;
 
+  // 4. Query elements from Shadow DOM NOW that they exist
   const sidebar = shadow.getElementById("sidebar");
   const toggleBtn = shadow.getElementById("toggle-btn");
+  const authBtn = shadow.getElementById("authenticate-btn");
+  const logoutBtn = shadow.getElementById("logout-btn");
 
+  // 5. Auth State Manager
+  async function updateAuthState() {
+    const isLoggedIn = Boolean(localStorage.getItem("oqm_user_token"));
+
+    if (isLoggedIn) {
+      authBtn.classList.add("hidden");
+      logoutBtn.classList.remove("hidden");
+    } else {
+      authBtn.classList.remove("hidden");
+      logoutBtn.classList.add("hidden");
+    }
+  }
+
+  // Initialize auth UI state immediately
+  await updateAuthState();
+
+  // 6. Bind Event Listeners
   toggleBtn.addEventListener("click", () => {
     const collapsed = sidebar.classList.toggle("collapsed");
     toggleBtn.innerHTML = collapsed ? "&lsaquo;" : "&rsaquo;";
     toggleBtn.title = collapsed ? "Expand" : "Collapse";
   });
 
+  authBtn.addEventListener("click", async () => {
+    console.log("Login clicked");
+    localStorage.setItem("oqm_user_token", "example-token-123");
+    await updateAuthState();
+  });
+
+  logoutBtn.addEventListener("click", async () => {
+    console.log("Logout clicked");
+    localStorage.removeItem("oqm_user_token");
+    await updateAuthState();
+  });
+
   shadow.getElementById("scan-btn").addEventListener("click", () => {
     console.log("Scan Page clicked");
+    shadow.getElementById("integrate-btn").disabled = false;
+  });
+
+  shadow.getElementById("choose-db-btn").addEventListener("click", () => {
+    console.log("Choose Database clicked");
+  });
+
+  shadow.getElementById("integrate-btn").addEventListener("click", () => {
+    console.log("Request integration clicked");
   });
 
   shadow.getElementById("feedback-btn").addEventListener("click", () => {
