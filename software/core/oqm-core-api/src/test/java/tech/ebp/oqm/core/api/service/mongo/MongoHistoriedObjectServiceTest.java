@@ -16,7 +16,6 @@ import tech.ebp.oqm.core.api.model.object.history.EventType;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.service.notification.HistoryEventNotificationService;
-import tech.ebp.oqm.core.api.service.serviceState.db.OqmDatabaseService;
 import tech.ebp.oqm.core.api.testResources.data.TestMainObject;
 import tech.ebp.oqm.core.api.testResources.data.TestMongoHistoriedService;
 import tech.ebp.oqm.core.api.testResources.testClasses.KafkaTest;
@@ -91,7 +90,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest implements Kafka
 
 		log.info("Received event from Kafka: {}", createEventFromMessage);
 
-		assertEquals("TestMainObject", createEventFromMessage.getObjectName());
+		assertEquals("TestMainObject", createEventFromMessage.getObjectType());
 		assertEquals(createEvent, createEventFromMessage.getEvent());
 
 		// TODO: more when we want to #1080

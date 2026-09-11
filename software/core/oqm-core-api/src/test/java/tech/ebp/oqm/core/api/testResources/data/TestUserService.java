@@ -4,17 +4,19 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.restassured.specification.RequestSpecification;
 import io.smallrye.jwt.build.Jwt;
+import io.smallrye.jwt.build.JwtClaimsBuilder;
 import lombok.extern.slf4j.Slf4j;
 import net.datafaker.Faker;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.config.ConfigProvider;
 import org.eclipse.microprofile.jwt.Claims;
-import org.testcontainers.shaded.com.fasterxml.jackson.databind.JsonNode;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.GeneralService;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
 
-import jakarta.enterprise.context.ApplicationScoped;
+import tech.ebp.oqm.core.api.service.JwtUtils;
 import tech.ebp.oqm.core.api.testResources.TestRestUtils;
 
 import java.util.HashSet;
@@ -25,39 +27,7 @@ import static io.restassured.RestAssured.given;
 import static tech.ebp.oqm.core.api.model.object.ObjectUtils.OBJECT_MAPPER;
 
 /**
- *
- * {
- *   "exp": 1706447044,
- *   "iat": 1706445545,
- *   "auth_time": 1706445544,
- *   "jti": "0c2d411d-1012-499e-a548-6919f384084a",
- *   "iss": "http://oqm-dev.local:8115/realms/oqm",
- *   "aud": "oqm-base-station",
- *   "sub": "575eb08f-7a8a-41cc-ac87-c41f84e03c84",
- *   "typ": "ID",
- *   "azp": "oqm-base-station",
- *   "session_state": "cfa63d15-f520-4e90-a204-9cafb5cc5621",
- *   "at_hash": "ry6laHfVyN7hlYTBzpmTAA",
- *   "acr": "1",
- *   "sid": "cfa63d15-f520-4e90-a204-9cafb5cc5621",
- *   "upn": "snappawapa",
- *   "email_verified": false,
- *   "name": "Greg Stewart",
- *   "groups": [
- *     "default-roles-oqm",
- *     "inventoryView",
- *     "offline_access",
- *     "itemCheckout",
- *     "inventoryEdit",
- *     "uma_authorization",
- *     "inventoryAdmin",
- *     "user"
- *   ],
- *   "preferred_username": "snappawapa",
- *   "given_name": "Greg",
- *   "family_name": "Stewart",
- *   "email": "contact@gjstewart.net"
- * }
+ * Service for providing test users and service accounts for use in testing.
  */
 @Slf4j
 public class TestUserService {
@@ -70,21 +40,13 @@ public class TestUserService {
 	public static TestUserService getInstance() {
 		return INSTANCE;
 	}
-	
+
 	private final String jwtIssuer = ConfigProvider.getConfig().getValue("mp.jwt.verify.issuer", String.class);
-	
-//	quarkus.oidc.application-type=hybrid
-//	quarkus.oidc.auth-server-url=http://localhost:32769/realms/oqm
-//	quarkus.oidc.client-id=oqm-app
-//	quarkus.oidc.credentials.secret=**********
-//	quarkus.oidc.logout.path=/logout
-//	quarkus.oidc.logout.post-logout-path=/
-//	quarkus.oidc.token-state-manager.split-tokens=true
-	
+
 	public TestUserService(){
-	
+
 	}
-	
+
 	private static String getRandomPassword() {
 		StringBuilder sb = new StringBuilder();
 		for (int i = 0; i < 16; i += 4) {
@@ -95,40 +57,196 @@ public class TestUserService {
 		}
 		return sb.toString();
 	}
-	
-	public String getUserToken(User testUser) {
-		String token =
-			Jwt.issuer(testUser.getAuthProvider())
-				.upn(testUser.getUsername())
-				.groups(testUser.getRoles())
-				.claim(Claims.email, testUser.getEmail())
-				.claim(Claims.preferred_username, testUser.getName())
-				.claim("name", testUser.getName())
-				.subject(testUser.getIdFromAuthProvider())
-//				.sign()
-				.sign(ConfigProvider.getConfig().getValue("smallrye.jwt.sign.key.location", String.class))
-			;
-		return token;
+
+	private JwtClaimsBuilder getBasicJwtBuilder(InteractingEntity entity){
+		return Jwt.issuer(entity.getAuthProvider())
+				   .groups(entity.getRoles())
+				   .subject(entity.getIdFromAuthProvider());
 	}
 
-	public RequestSpecification newJwtCall(User testUser) {
-		return TestRestUtils.newJwtCall(this.getUserToken(testUser));
+	private String finalizeNewToken(JwtClaimsBuilder builder){
+		return builder.sign(ConfigProvider.getConfig().getValue("smallrye.jwt.sign.key.location", String.class));
 	}
-	
+
+	/**
+	 * Should look like:
+	 *
+	 * <code>
+	 *     {
+	 *   "exp": 1788903348,
+	 *   "iat": 1788901848,
+	 *   "auth_time": 1787934573,
+	 *   "jti": "onrtac:d5f008c3-d219-e090-2129-ce541d005a0f",
+	 *   "iss": "https://oqm.localdomain/infra/keycloak/realms/oqm",
+	 *   "aud": "account",
+	 *   "sub": "57d9a59b-4af0-4b14-8220-39b29fae1a2e",
+	 *   "typ": "Bearer",
+	 *   "azp": "oqm-base-station",
+	 *   "sid": "tqtgtN9qZm1l1UX0Nmeo3mjd",
+	 *   "acr": "0",
+	 *   "realm_access": {
+	 *     "roles": [
+	 *       "default-roles-oqm",
+	 *       "inventoryView",
+	 *       "offline_access",
+	 *       "itemCheckout",
+	 *       "inventoryEdit",
+	 *       "uma_authorization",
+	 *       "inventoryAdmin",
+	 *       "user"
+	 *     ]
+	 *   },
+	 *   "resource_access": {
+	 *     "account": {
+	 *       "roles": [
+	 *         "manage-account",
+	 *         "manage-account-links",
+	 *         "view-profile"
+	 *       ]
+	 *     }
+	 *   },
+	 *   "scope": "openid email microprofile-jwt profile",
+	 *   "upn": "snappawapa",
+	 *   "email_verified": false,
+	 *   "name": "Greg Stewart",
+	 *   "groups": [
+	 *     "default-roles-oqm",
+	 *     "inventoryView",
+	 *     "offline_access",
+	 *     "itemCheckout",
+	 *     "inventoryEdit",
+	 *     "uma_authorization",
+	 *     "inventoryAdmin",
+	 *     "user"
+	 *   ],
+	 *   "preferred_username": "snappawapa",
+	 *   "given_name": "Greg",
+	 *   "family_name": "Stewart",
+	 *   "email": "contact@gjstewart.net"
+	 * }
+	 * </code>
+	 * @param testUser
+	 * @return
+	 */
+	public String getUserToken(User testUser) {
+		JwtClaimsBuilder builder = this.getBasicJwtBuilder(testUser)
+									   .upn(
+										   testUser.getUsername() == null?
+											   testUser.getName() :
+											   testUser.getUsername()
+									   )
+									   .claim(JwtUtils.CLAIM_NAME, testUser.getName());
+
+		if(testUser.getEmail() != null){
+			builder = builder.claim(Claims.email, testUser.getEmail());
+		}
+		if(testUser.getUsername() != null){
+			builder = builder.claim(Claims.preferred_username, testUser.getUsername());
+		}
+
+		return this.finalizeNewToken(builder);
+	}
+
+	/**
+	 * Should look like:
+	 *
+	 * <code>
+	 *     {
+	 *   "exp": 1788976935,
+	 *   "iat": 1788975435,
+	 *   "jti": "trrtcc:4e97796a-82d6-c14c-097d-d914f057b15e",
+	 *   "iss": "https://oqm-test-ud-24-04.local/infra/keycloak/realms/oqm",
+	 *   "aud": "account",
+	 *   "sub": "66f3849c-c867-4bc3-b317-e78f96357ea8",
+	 *   "typ": "Bearer",
+	 *   "azp": "oqm-base-station",
+	 *   "acr": "1",
+	 *   "realm_access": {
+	 *     "roles": [
+	 *       "default-roles-oqm",
+	 *       "inventoryView",
+	 *       "offline_access",
+	 *       "itemCheckout",
+	 *       "inventoryEdit",
+	 *       "uma_authorization",
+	 *       "inventoryAdmin",
+	 *       "user"
+	 *     ]
+	 *   },
+	 *   "resource_access": {
+	 *     "account": {
+	 *       "roles": [
+	 *         "manage-account",
+	 *         "manage-account-links",
+	 *         "view-profile"
+	 *       ]
+	 *     }
+	 *   },
+	 *   "scope": "email microprofile-jwt profile",
+	 *   "upn": "service-account-oqm-base-station",
+	 *   "email_verified": false,
+	 *   "clientHost": "172.18.0.1",
+	 *   "groups": [
+	 *     "default-roles-oqm",
+	 *     "inventoryView",
+	 *     "offline_access",
+	 *     "itemCheckout",
+	 *     "inventoryEdit",
+	 *     "uma_authorization",
+	 *     "inventoryAdmin",
+	 *     "user"
+	 *   ],
+	 *   "preferred_username": "service-account-oqm-base-station",
+	 *   "clientAddress": "172.18.0.1",
+	 *   "client_id": "oqm-base-station"
+	 * }
+	 * </code>
+	 *
+	 * @param testUser
+	 * @return
+	 */
+	public String getServiceToken(GeneralService testUser) {
+		JwtClaimsBuilder builder = this.getBasicJwtBuilder(testUser)
+									   .upn("service-account-" + testUser.getName())
+									   .claim(Claims.azp, testUser.getName());
+
+		if(testUser.getEmail() != null){
+			builder = builder.claim(JwtUtils.CLAIM_DEV_EMAIL, testUser.getEmail());
+		}
+		if(testUser.getDeveloperName() != null){
+			builder = builder.claim(JwtUtils.CLAIM_DEV_NAME, testUser.getDeveloperName());
+		}
+		if(testUser.getDeveloperWebsite() != null){
+			builder = builder.claim(JwtUtils.CLAIM_DEV_WEBSITE, testUser.getDeveloperWebsite());
+		}
+
+		return this.finalizeNewToken(builder);
+	}
+
+	public RequestSpecification newJwtCall(InteractingEntity testUser) {
+		return TestRestUtils.newJwtCall(
+			switch (testUser.getType()){
+				case USER -> this.getUserToken((User) testUser);
+				case SERVICE_GENERAL -> this.getServiceToken((GeneralService) testUser);
+				case CORE_API -> null;
+			}
+		);
+	}
+
 	public User getTestUser(Set<String> roles, boolean create) {
 		User.UserBuilder builder = User.builder();
-		
+
 		builder.username(FAKER.credentials().username());
 		builder.email(FAKER.internet().emailAddress());
 		builder.name(FAKER.name().fullName());
 		builder.roles(roles);
 		User testUser = builder.build();
-		
+
 		testUser.setAuthProvider(this.jwtIssuer);
 		testUser.setIdFromAuthProvider(UUID.randomUUID().toString());
-		
+
 		testUser.getAttributes().put(TEST_PASSWORD_ATT_KEY, getRandomPassword());
-		
+
 		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getUserToken(testUser));
 
 		if(create) {
@@ -149,7 +267,7 @@ public class TestUserService {
 
 		return testUser;
 	}
-	
+
 	public User getTestUser(String ... roles) {
 		return this.getTestUser(Set.of(roles), true);
 	}
@@ -167,8 +285,45 @@ public class TestUserService {
 	public User getTestUser(boolean admin) {
 		return this.getTestUser(admin, true);
 	}
-	
+
 	public User getTestUser(){
 		return this.getTestUser(true);
 	}
+
+	public GeneralService getServiceAccount(boolean create){
+		GeneralService.GeneralServiceBuilder<?, ?> builder = GeneralService.builder();
+
+		builder.name("service-account-" + FAKER.internet().domainName());
+		builder.developerEmail(FAKER.internet().emailAddress());
+		builder.developerName(FAKER.name().fullName());
+		builder.developerWebsite(FAKER.internet().url());
+		GeneralService testUser = builder.build();
+
+		testUser.setAuthProvider(this.jwtIssuer);
+		testUser.setIdFromAuthProvider(UUID.randomUUID().toString());
+
+		testUser.getAttributes().put(TEST_PASSWORD_ATT_KEY, getRandomPassword());
+
+		testUser.getAttributes().put(TEST_JWT_ATT_KEY, this.getServiceToken(testUser));
+
+		if(create) {
+			//ensure user is added to db
+			String userJsonString = this.newJwtCall(testUser)
+										.basePath("")
+										.get("/api/v1/interacting-entity/self")
+										.then()
+										.statusCode(200)
+										.extract().body().asString();
+			try {
+				ObjectNode userJson = (ObjectNode) OBJECT_MAPPER.readTree(userJsonString);
+				testUser.setId(new ObjectId(userJson.get("id").asText()));
+			} catch (JsonProcessingException e) {
+				throw new RuntimeException(e);
+			}
+		}
+
+		return testUser;
+	}
+
+
 }
