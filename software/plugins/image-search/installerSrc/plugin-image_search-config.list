@@ -1,0 +1,50 @@
+#
+# The Main config for Base Station. Do not edit. To adjust configuration, edit:
+# /etc/oqm/serviceConfig/plugin/external-item-search/user-config.list
+#
+
+# Basic configs
+quarkus.http.insecure-requests=enabled
+quarkus.log.level=INFO
+
+#quarkus.rest-csrf.token-signature-key={core.baseStation.csrfSigKey}
+quarkus.rest-csrf.cookie-path=/core/base-station/
+
+# SSL Config
+quarkus.tls.key-store.pem.0.cert=/etc/oqm/serviceConfig/plugin/image-search/files/serviceCert.crt
+quarkus.tls.key-store.pem.0.key=/etc/oqm/serviceConfig/plugin/image-search/files/serviceCertKey.pem
+
+QUARKUS_TLS__EXT_INGRESS__TRUST_STORE_PEM_CERTS={cert.trustStore.files.selfSigned.crt}{% if cert.externalDefault == "acme" %},{cert.trustStore.files.acme.crt}{% endif %}
+
+# https://quarkus.io/guides/http-reference#reverse-proxy
+quarkus.http.proxy.proxy-address-forwarding=true
+quarkus.http.proxy.allow-x-forwarded=true
+quarkus.http.proxy.enable-forwarded-host=true
+quarkus.http.proxy.enable-forwarded-prefix=true
+
+# Keycloak Config:
+quarkus.oidc.client-id=oqm-plugin-image_search
+quarkus.oidc.credentials.secret={infra.keycloak.clientSecrets.oqm-plugin-image_search}
+quarkus.oidc.auth-server-url={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}
+#quarkus.oidc.authentication.redirect-path=/plugin/image-search
+#quarkus.oidc.authentication.restore-path-after-redirect=false
+
+quarkus.oidc.authentication.cookie-path=/plugin/image-search/
+quarkus.oidc.authentication.cookie-suffix=plugin-image-search
+quarkus.oidc.tls.tls-configuration-name=ext.ingress
+
+# Core API config
+oqm.core.api.baseUri={core.api.internalBaseUri}
+quarkus.rest-client."oqm.core.api".tls-configuration-name=ext.ingress
+quarkus.rest-client."oqm.core.api-oidc".tls-configuration-name=ext.ingress
+
+runningInfo.protocol=https
+runningInfo.hostname={system.hostname}
+
+# Characteristics config
+oqm.core.characteristics.baseUri={core.characteristics.internalBaseUri}
+
+{% if metrics is defined %}
+# Metrics Config:
+quarkus.otel.exporter.otlp.endpoint={metrics.otlp-collector.endpoint}
+{% endif %}
