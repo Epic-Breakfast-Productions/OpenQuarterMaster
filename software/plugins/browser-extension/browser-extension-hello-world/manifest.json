@@ -1,0 +1,11 @@
+{
+  "manifest_version": 3,
+  "name": "OQM Shopping Cart Integrator",
+  "version": "1.0.0",
+  "description": "An extension that automatically populates the data fields with cart information from the current page, to be added to OQM.",
+  "action": {},
+  "background": {
+    "service_worker": "background.js"
+  },
+  "permissions": ["scripting", "activeTab"]
+}

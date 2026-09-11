@@ -1,9 +1,0 @@
-{
-  "manifest_version": 3,
-  "name": "Hello World Extension",
-  "version": "1.0.0",
-  "description": "A barebones Hello World Chrome extension.",
-  "action": {
-    "default_popup": "popup.html"
-  }
-}
