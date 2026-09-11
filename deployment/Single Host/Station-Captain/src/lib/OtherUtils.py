@@ -88,6 +88,13 @@ class OtherUtils:
 		return number / cls._gbConversionFactor
 
 	@classmethod
+	def __normalizeMinMaxInput(cls, mm)->float:
+		try:
+			return float(mm)
+		except ValueError:
+			return float(mainCM.getConfigVal(mm))
+
+	@classmethod
 	def service_ram_limit(
 		cls,
 		min: float | str | None = None,
@@ -99,6 +106,10 @@ class OtherUtils:
 		:return:
 		"""
 		numOqmServices = ServiceUtils.getNumOqmServices()
+
+		if numOqmServices == 0:
+			numOqmServices = 1
+
 		profileLimitFraction = RamLimitProfile.get_profile_fraction()
 		hostRamB = psutil.virtual_memory().total
 
@@ -116,14 +127,12 @@ class OtherUtils:
 		calculated = cls.__BtoGB(fairShareB)
 
 		if min is not None:
-			if isinstance(min, str):
-				min = float(mainCM.getConfigVal(min))
+			min = cls.__normalizeMinMaxInput(min)
 
 			if calculated < min:
 				calculated = min
 		if max is not None:
-			if isinstance(max, str):
-				max = float(mainCM.getConfigVal(max))
+			max = cls.__normalizeMinMaxInput(max)
 
 			if calculated > max:
 				calculated = max
