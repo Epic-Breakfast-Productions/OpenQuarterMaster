@@ -21,7 +21,6 @@ Environment="ENV_CONFIG_TEMPLATE=/etc/oqm/serviceConfig/core/characteristics/cor
 Environment="ENV_CONFIG_FILE=/tmp/oqm/serviceConfig/core/characteristics/env.list"
 Environment="USER_CONFIG_TEMPLATE=/etc/oqm/serviceConfig/core/characteristics/user-config.list"
 Environment="USER_CONFIG_FILE=/tmp/oqm/serviceConfig/core/characteristics/user.list"
-Environment="MEMORY_LIMIT=$(oqm-captain u calcRamLimit)"
 
 ExecStartPre=/bin/bash -c "oqm-captain container ensure-setup"
 
