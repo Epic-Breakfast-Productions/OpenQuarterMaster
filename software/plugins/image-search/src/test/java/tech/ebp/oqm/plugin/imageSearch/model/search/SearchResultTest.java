@@ -81,7 +81,7 @@ class SearchResultTest {
 
 		assertThrows(
 			NoSuchElementException.class,
-			()->result.removeMin()
+			result::removeMin
 		);
 
 		assertEquals(0, result.getNumResults());

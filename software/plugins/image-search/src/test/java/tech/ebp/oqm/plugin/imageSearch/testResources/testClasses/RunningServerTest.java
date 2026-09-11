@@ -58,7 +58,7 @@ public abstract class RunningServerTest extends WebServerTest {
 
     @BeforeEach
     public void beforeEach(TestInfo testInfo) {
-        log.info("Before test " + testInfo.getTestMethod().get().getName());
+        log.info("Before test {}", testInfo.getTestMethod().get().getName());
     }
 
     @AfterEach

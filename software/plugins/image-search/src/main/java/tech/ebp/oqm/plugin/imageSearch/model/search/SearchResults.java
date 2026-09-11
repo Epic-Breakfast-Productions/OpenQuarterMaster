@@ -39,7 +39,7 @@ public class SearchResults {
 	/**
 	 * Results for the search.
 	 */
-	private TreeSet<SearchResult> results = new TreeSet<>();
+	private TreeSet<SearchResult> results = new TreeSet<>(Comparator.reverseOrder());
 
 	/**
 	 * Number of individual item-image score entries to retain before

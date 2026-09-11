@@ -7,6 +7,7 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import nu.pattern.OpenCV;
+import org.bson.types.ObjectId;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -25,6 +26,7 @@ import tech.ebp.oqm.plugin.imageSearch.model.resnet.ImageVector;
 import tech.ebp.oqm.plugin.imageSearch.model.search.ImageFinding;
 import tech.ebp.oqm.plugin.imageSearch.model.search.ImageSearch;
 import tech.ebp.oqm.plugin.imageSearch.model.search.SearchResults;
+import tech.ebp.oqm.plugin.imageSearch.service.ImageToItemCache;
 import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.ImageSearchService;
 import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
 
@@ -51,6 +53,9 @@ public class ResnetProvider extends ImageSearchProvider {
 
 	@Inject
 	ResnetVectorService resnetVectorService;
+
+	@Inject
+	ImageToItemCache imageToItemCache;
 
 	@Inject
 	MeterRegistry registry;
@@ -175,25 +180,30 @@ public class ResnetProvider extends ImageSearchProvider {
 			throw new RuntimeException("Failed to get features for input file.", e);
 		}
 
-		long numComparisons = 0;
 		for (Iterator<ImageVector> it = this.resnetVectorService.getAllVectors(query.oqmDbIdOrName); it.hasNext(); ) {
 			ImageVector curData = it.next();
-			numComparisons++;
+
 			log.trace("Processing image comparison with image: {}", curData.getImageId());
 			double simScore = cosineSimilarity(queryFeatures, curData.getVector());
 
-			output.add(
-				ImageFinding.builder()
-					.model(Model.RESNET_v2)
-					.itemId(curData.getImageId())
-					.imageId(curData.getImageId())
-					.score(simScore)
-					.build()
-			);
+			if(simScore < query.threshold){
+				continue;
+			}
+
+			for(String curItemId : this.imageToItemCache.getItemsForImage(query.oqmDbIdOrName, curData.getImageId())){
+				output.add(
+					ImageFinding.builder()
+						.model(Model.RESNET_v2)
+						.itemId(curItemId)
+						.imageId(curData.getImageId())
+						.score(simScore)
+						.build()
+				);
+			}
 
 			log.trace("Done processing image comparison with image: {}", curData.getImageId());
 		}
 
-		log.info("Done getting similarities for query. Comparisons: {}", numComparisons);
+		log.info("Done getting similarities for query.");
 	}
 }
