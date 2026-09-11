@@ -10,6 +10,9 @@
 			"type": "core",
 			"name": "base-station",
 			"path": "/"
+		},
+		"resources": {
+			"ramLimitProfile": "SLIM"
 		}
 	},
 	"captain": {

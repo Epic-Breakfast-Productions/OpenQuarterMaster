@@ -15,6 +15,7 @@ from LogManagement import *
 from CertsUtils import *
 from RegistrationUtils import *
 from DemoModeUtils import *
+from OtherUtils import *
 import argparse
 import atexit
 import argcomplete
@@ -57,6 +58,7 @@ LogManagement.setupArgParser(subparsers)
 CertsUtils.setupArgParser(subparsers)
 RegistrationUtils.setupArgParser(subparsers)
 DemoModeUtils.setupArgParser(subparsers)
+OtherUtils.setupArgParser(subparsers)
 
 # TODO:: subscription utility
 # TODO:: plugin utilities
