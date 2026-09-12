@@ -6,7 +6,7 @@
 	"configs": [
 	],
 	"dependencies": {
-		"deb": ", oqm-manager-station+captain (>= 2.10.0)"
+		"deb": ", oqm-manager-station+captain (>= 2.13.0)"
 	},
 	"configFiles":{
 	},
