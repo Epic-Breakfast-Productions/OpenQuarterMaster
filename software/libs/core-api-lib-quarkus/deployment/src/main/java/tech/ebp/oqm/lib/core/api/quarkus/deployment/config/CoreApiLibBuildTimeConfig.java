@@ -96,7 +96,7 @@ public interface CoreApiLibBuildTimeConfig {
 			 *
 			 * @return The version/ tag of the core api container image
 			 */
-			@WithDefault("6.4.1-SNAPSHOT")
+			@WithDefault("6.4.1")
 			String version();
 
 			/**
