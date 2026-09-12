@@ -8,7 +8,13 @@
 			"externalBaseUri": "#{infra.traefik.externalRootUri}/plugin/storagotchi",
 			"postgresUser": "oqm_plugin_storagotchi_main",
 			"postgresPass": "<secret>",
-			"postgresDb": "oqm_plugin_storagotchi"
+			"postgresDb": "oqm_plugin_storagotchi",
+			"resourceLimits": {
+				"mem": {
+					"min": 0.512,
+					"max": 1
+				}
+			}
 		}
 	}
 }

@@ -53,12 +53,10 @@ public class OpenLibraryService extends ItemSearchService {
         return switch (source){
             case OPENLIBRARY ->
                 switch (lookupMethod) {
-                    case BARCODE -> this.openLibraryLookupClient.search(term)
+                    case BARCODE, TEXT -> this.openLibraryLookupClient.search(term)
                         .map(result -> mapJsonToResponse(source, lookupMethod, result))
                         .onFailure().recoverWithItem(e -> this.handleErrorRetCollection(source, lookupMethod, e))
                         .onItem().transformToMulti(collection -> Multi.createFrom().iterable(collection));
-                    //TODO: #1338
-                    case TEXT -> throw new IllegalArgumentException("Text lookup method search is not implemented yet");
                     default -> throw new IllegalArgumentException("Invalid lookup method: " + lookupMethod);
                 };
             default -> throw new IllegalArgumentException("Invalid lookup source: " + source);

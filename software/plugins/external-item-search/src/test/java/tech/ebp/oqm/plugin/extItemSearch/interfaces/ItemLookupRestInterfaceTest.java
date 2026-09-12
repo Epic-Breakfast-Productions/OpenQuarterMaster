@@ -179,12 +179,30 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 			),
 			Arguments.of(
 				Map.of(
+					"lookupMethod", LookupMethod.TEXT,
+					"q", "Biology"
+				),
+				List.of(
+					new Result(ISBNDB.name(), ResultType.SUCCESS.name())
+				)
+			),
+			Arguments.of(
+				Map.of(
 					"lookupMethod", LookupMethod.BARCODE,
 					"q", "1501752014"
 				),
 				List.of(
 					new Result(OPENLIBRARY.name(), ResultType.SUCCESS.name())
 				)
+			),
+			Arguments.of(
+				Map.of(
+					"lookupMethod", LookupMethod.TEXT,
+					"q", "Alash"
+				),
+				new ArrayList<>(10){{
+					for(int i = 0; i < 10; i++){add(new Result(OPENLIBRARY.name(), ResultType.SUCCESS.name()));}
+				}}
 			)
 		);
 	}

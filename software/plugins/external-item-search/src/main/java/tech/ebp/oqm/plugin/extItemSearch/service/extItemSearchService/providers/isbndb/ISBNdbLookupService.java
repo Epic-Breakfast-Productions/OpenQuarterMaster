@@ -84,8 +84,10 @@ public class ISBNdbLookupService extends ItemSearchService {
                         .map(result -> mapJsonToResponse(source, lookupMethod, result))
                         .onFailure().recoverWithItem(e -> this.handleErrorRetCollection(source, lookupMethod, e))
                         .onItem().transformToMulti(collection -> Multi.createFrom().iterable(collection));
-                    //TODO: #1338
-                    case TEXT -> throw new IllegalArgumentException("Text lookup method search is not implemented yet");
+                    case TEXT -> this.isbndbLookupClient.searchText(apiKey,  term)
+                        .map(result -> mapJsonToResponse(source, lookupMethod, result))
+                        .onFailure().recoverWithItem(e -> this.handleErrorRetCollection(source, lookupMethod, e))
+                        .onItem().transformToMulti(collection -> Multi.createFrom().iterable(collection));
                     default -> throw new IllegalArgumentException("Invalid lookup method: " + lookupMethod);
                 };
             default -> throw new IllegalArgumentException("Invalid lookup source: " + source);

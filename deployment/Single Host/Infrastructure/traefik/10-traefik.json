@@ -8,7 +8,13 @@
 			"httpsAddress": ":#{infra.traefik.httpsPort}",
 			"externalRootUri": "https://#{system.hostname}:#{infra.traefik.httpsPort}",
 			"managementPortEnabled": false,
-			"logLevel": "INFO"
+			"logLevel": "INFO",
+			"resourceLimits": {
+				"mem": {
+					"min": 0.512,
+					"max": 5
+				}
+			}
 		}
 	}
 }
