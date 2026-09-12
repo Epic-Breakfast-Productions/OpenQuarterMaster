@@ -1,0 +1,27 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/report/AmountItemReport.json",
+	"title": "AmountItemReport",
+	"description": "A report of a change in inventory.",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/report/ItemReport.json"
+		}
+	],
+	"properties": {
+		"amount": {
+			"description": "The amount of the item to perform the action on.",
+			"type": "number",
+			"minimum": 0
+		},
+		"unit": {
+			"description": "The unit of the item to perform the action on. Defaults to base 'unit'.",
+			"type": "string",
+			"default": "unit"
+		}
+	},
+	"required": [
+		"amount"
+	]
+}
