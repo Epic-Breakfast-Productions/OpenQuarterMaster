@@ -58,6 +58,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         --env-file /tmp/oqm/serviceConfig/plugin/storagotchi/storagotchi-config.list \
                                         --env-file /tmp/oqm/serviceConfig/plugin/storagotchi/user-config.list \
                                         --add-host $(oqm-config g system.hostname):host-gateway \
+                                        --memory \"$(oqm-captain u calcRamLimit --min plugin.storagotchi.resourceLimits.mem.min --max plugin.storagotchi.resourceLimits.mem.max)\" \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \

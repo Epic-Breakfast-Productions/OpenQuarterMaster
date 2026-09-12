@@ -10,6 +10,12 @@
 				"user": "core_api_user",
 				"pass": "<secret>",
 				"database": "oqmCoreApiMain"
+			},
+			"resourceLimits": {
+				"mem": {
+					"min": 0.512,
+					"max": "none"
+				}
 			}
 		}
 	}

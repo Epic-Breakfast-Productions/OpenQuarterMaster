@@ -88,18 +88,24 @@ class OtherUtils:
 		return number / cls._gbConversionFactor
 
 	@classmethod
-	def __normalizeMinMaxInput(cls, mm)->float:
+	def __normalizeMinMaxInput(cls, mm)->float | None:
 		try:
 			return float(mm)
 		except ValueError:
-			return float(mainCM.getConfigVal(mm))
+			fromConfig = mainCM.getConfigVal(mm)
+			try:
+				return float(fromConfig)
+			except ValueError as e:
+				if fromConfig == "none":
+					return None
+				raise e
 
 	@classmethod
 	def service_ram_limit(
 		cls,
 		min: float | str | None = None,
 		max: float | str | None = None
-	) -> float:
+	) -> (bool, float):
 		"""
 		:param min: the minimum amount of ram to set as a limit, in Gigabytes
 		:param max: the maximum amount of ram to set as a limit, in Gigabytes
@@ -129,12 +135,12 @@ class OtherUtils:
 		if min is not None:
 			min = cls.__normalizeMinMaxInput(min)
 
-			if calculated < min:
+			if  min is not None and calculated < min:
 				calculated = min
 		if max is not None:
 			max = cls.__normalizeMinMaxInput(max)
 
-			if calculated > max:
+			if  max is not None and calculated > max:
 				calculated = max
 
 		return True, calculated
