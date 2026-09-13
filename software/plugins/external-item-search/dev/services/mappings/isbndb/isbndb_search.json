@@ -1,0 +1,68 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathTemplate": "/isbndb/books/{query}",
+    "pathParameters": {
+      "query": {
+        "equalTo": "Biology"
+      }
+    },
+    "headers": {
+      "Authorization": {
+        "equalTo": "devKey"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 5000,
+      "sigma": 0.4
+    },
+    "jsonBody": {
+      "books": [
+        {
+          "title": "Campbell Biology",
+          "isbn13": "9780134093413",
+          "isbn10": "0134093410",
+          "binding": "Hardcover",
+          "publisher": "Pearson",
+          "language": "eng",
+          "date_published": "2017",
+          "edition": "11",
+          "pages": 1488,
+          "dimensions_structured": [],
+          "image": "https://images.isbndb.com/covers/9780134093413.jpg",
+          "image_original": null,
+          "msrp": 249.99,
+          "excerpt": null,
+          "synopsis": null,
+          "authors": [
+            "Lisa A. Urry",
+            "Michael L. Cain",
+            "Steven A. Wasserman",
+            "Peter V. Minorsky",
+            "Jane B. Reece"
+          ],
+          "subjects": [
+            "Biology",
+            "Textbooks"
+          ],
+          "other_isbns": [
+            {
+              "isbn": "string",
+              "binding": "string"
+            }
+          ]
+        }
+      ],
+      "total": 1024,
+      "page": 1,
+      "page_size": 20
+    }
+  }
+}

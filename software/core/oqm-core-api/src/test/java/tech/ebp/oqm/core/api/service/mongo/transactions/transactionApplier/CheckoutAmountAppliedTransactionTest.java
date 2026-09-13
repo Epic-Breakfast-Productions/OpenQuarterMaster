@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.api.service.mongo.transactions.transactionApplier;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.quarkus.test.kafka.KafkaCompanionResource;
+import jakarta.validation.ConstraintViolationException;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
@@ -107,6 +108,68 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 		assertEquals(details, resultingCheckout.getCheckoutDetails());
 		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckOutTransaction());
 		assertEquals(Quantities.getQuantity(5, item.getUnit()), resultingCheckout.getCheckedOut());
+	}
+
+	@Test
+	public void applyCheckoutAmountSuccessBulkAllFromBlock() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+		ObjectId blockId = item.getStorageBlocks().getFirst().getStorageBlock();
+
+		ObjectId initialStoredId = this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			AmountStored.builder()
+				.item(item.getId())
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
+				.amount(Quantities.getQuantity(6, item.getUnit()))
+				.build(),
+			entity
+		).getId();
+
+		CheckoutDetails details = CheckoutDetails.builder()
+									  .checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
+									  .build();
+		ItemStoredTransaction preApplyTransaction = CheckoutAmountTransaction.builder()
+														.all(true)
+														.fromBlock(blockId)
+														.checkoutDetails(details)
+														.build();
+
+		AppliedTransaction appliedTransaction = this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity);
+
+		assertEquals(entity.getId(), appliedTransaction.getEntity());
+		assertEquals(item.getId(), appliedTransaction.getInventoryItem());
+		assertEquals(1, appliedTransaction.getAffectedStored().size());
+		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
+		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
+
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
+		//TODO:: storage block stats
+
+
+		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()));
+		assertEquals(storedSearchResult.getNumResults(), 1);
+		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
+
+		AmountStored stored = (AmountStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().stream().findFirst().get());
+		assertEquals(storedFromSearch, stored);
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), stored.getAmount());
+
+		SearchResult<ObjectHistoryEvent> storedHistory = this.storedService.getHistoryService().search(DEFAULT_TEST_DB_NAME, new HistorySearch().setObjectId(stored.getId()));
+		assertFalse(storedHistory.isEmpty());
+		UpdateEvent event = (UpdateEvent) storedHistory.getResults().getFirst();
+		assertTrue(event.getDetails().containsKey(ITEM_TRANSACTION.name()));
+		assertEquals(appliedTransaction.getId(), ((ItemTransactionDetail) event.getDetails().get(ITEM_TRANSACTION.name())).getInventoryItemTransaction());
+
+		SearchResult<ItemCheckout> checkoutSearch = this.checkoutService.search(DEFAULT_TEST_DB_NAME, new ItemCheckoutSearch().setItemCheckedOut(item.getId()));
+		assertEquals(checkoutSearch.getNumResults(), 1);
+		ItemAmountCheckout resultingCheckout = (ItemAmountCheckout) checkoutSearch.getResults().getFirst();
+
+		assertEquals(initialStoredId, resultingCheckout.getFromStored());
+		assertEquals(details, resultingCheckout.getCheckoutDetails());
+		assertEquals(appliedTransaction.getId(), resultingCheckout.getCheckOutTransaction());
+		assertEquals(Quantities.getQuantity(6, item.getUnit()), resultingCheckout.getCheckedOut());
 	}
 
 	@Test
@@ -264,6 +327,37 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 	}
 
 	@Test
+	public void applyCheckoutAmountFailBulkCheckoutZero() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.BULK, entity);
+		ObjectId blockId = item.getStorageBlocks().getFirst().getStorageBlock();
+
+		ObjectId initialStoredId = this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			AmountStored.builder()
+				.item(item.getId())
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
+				.amount(Quantities.getQuantity(6, item.getUnit()))
+				.build(),
+			entity
+		).getId();
+
+		CheckoutDetails details = CheckoutDetails.builder()
+									  .checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
+									  .build();
+		ItemStoredTransaction preApplyTransaction = CheckoutAmountTransaction.builder()
+														.fromBlock(blockId)
+														.amount(Quantities.getQuantity(0, item.getUnit()))
+														.checkoutDetails(details)
+														.build();
+
+		ConstraintViolationException
+			e =
+			assertThrows(ConstraintViolationException.class, ()->this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertTrue(e.getMessage().contains("The value must be greater than zero."));
+	}
+
+	@Test
 	public void applyCheckoutAmountFailAmtListFromNothing() throws Exception {
 		InteractingEntity entity = this.getTestUserService().getTestUser();
 		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
@@ -354,6 +448,38 @@ public class CheckoutAmountAppliedTransactionTest extends AppliedTransactionServ
 			e =
 			assertThrows(IllegalArgumentException.class, ()->this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
 		assertEquals("From Storage block given mismatched stored's block.", e.getMessage());
+	}
+
+	@Test
+	public void applyCheckoutAmountFailAmtListCheckoutZero() throws Exception {
+		InteractingEntity entity = this.getTestUserService().getTestUser();
+		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
+		ObjectId blockId = item.getStorageBlocks().getFirst().getStorageBlock();
+
+		ObjectId initialStoredId = this.storedService.add(
+			DEFAULT_TEST_DB_NAME,
+			AmountStored.builder()
+				.item(item.getId())
+				.state(StoredInBlock.builder().storageBlock(blockId).build())
+				.amount(Quantities.getQuantity(6, item.getUnit()))
+				.build(),
+			entity
+		).getId();
+
+		CheckoutDetails details = CheckoutDetails.builder()
+									  .checkedOutFor(CheckoutForOqmEntity.builder().entity(entity.getId()).build())
+									  .build();
+		ItemStoredTransaction preApplyTransaction = CheckoutAmountTransaction.builder()
+														.amount(Quantities.getQuantity(0, item.getUnit()))
+														.fromBlock(blockId)
+														.fromStored(initialStoredId)
+														.checkoutDetails(details)
+														.build();
+
+		ConstraintViolationException
+			e =
+			assertThrows(ConstraintViolationException.class, ()->this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+		assertTrue(e.getMessage().contains("The value must be greater than zero."));
 	}
 
 	@Test

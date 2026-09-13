@@ -85,6 +85,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
                                  --health-timeout=10s \
                                  --health-retries=10 \
                                  --health-start-period=1m \
+                                 --memory \"$(oqm-captain u calcRamLimit --min infra.keycloak.resourceLimits.mem.min --max infra.keycloak.resourceLimits.mem.max)\" \
                                  $IMAGE_NAME:$IMAGE_VERSION start --import-realm"
 
 # Ensure is up, healthy

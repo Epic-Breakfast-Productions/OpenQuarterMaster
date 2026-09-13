@@ -52,6 +52,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --health-timeout=10s \
                                  --health-retries=5 \
                                  --health-start-period=20s \
+                                 --memory \"$(oqm-captain u calcRamLimit --min infra.postgres.resourceLimits.mem.min --max infra.postgres.resourceLimits.mem.max)\" \
                                  $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \

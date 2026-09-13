@@ -41,18 +41,13 @@ public enum LookupService {
     OPENLIBRARY(
         OpenLibraryService.class,
         List.of(LookupSource.OPENLIBRARY),
-        List.of(LookupMethod.BARCODE)
-        //TODO: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/issues/1338
-        // List.of(LookupMethod.TEXT)
+        List.of(LookupMethod.BARCODE, LookupMethod.TEXT)
     ),
     ISBNDB(
         ISBNdbLookupService.class,
         List.of(LookupSource.ISBNDB),
-        List.of(LookupMethod.BARCODE)
-        //TODO: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/issues/1338
-        // List.of(LookupMethod.TEXT)
-    )
-    ;
+        List.of(LookupMethod.BARCODE, LookupMethod.TEXT)
+    );
 
 	public final Class<? extends ItemSearchService> searchClass;
 	public final Collection<LookupSource> supportedSources;
