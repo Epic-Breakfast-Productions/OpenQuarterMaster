@@ -14,6 +14,12 @@
 			"oqmRealmName": "oqm",
 			"options": {
 				"userSelfRegistration": true
+			},
+			"resourceLimits": {
+				"mem": {
+					"min": 0.750,
+					"max": 5
+				}
 			}
 		}
 	}

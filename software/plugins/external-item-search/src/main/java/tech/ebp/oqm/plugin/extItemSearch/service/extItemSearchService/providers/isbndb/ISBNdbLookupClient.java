@@ -17,4 +17,10 @@ public interface ISBNdbLookupClient {
     @Path("/book/{isbn}")
     @CacheResult(cacheName = "isbndb-barcode")
     Uni<ObjectNode> searchBarcode(@HeaderParam("Authorization") String apiKey, @PathParam("isbn") String barcode);
+
+    @WithSpan
+    @GET
+    @Path("/books/{query}")
+    @CacheResult(cacheName = "isbndb-text")
+    Uni<ObjectNode> searchText(@HeaderParam("Authorization") String apiKey, @PathParam("query") String query);
 }

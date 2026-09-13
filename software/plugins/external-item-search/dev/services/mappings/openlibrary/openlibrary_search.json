@@ -1,0 +1,1720 @@
+{
+  "request" : {
+    "urlPath": "/openlibrary/search.json",
+    "method": "GET",
+    "queryParameters": {
+      "q": {
+        "equalTo": "Alash"
+      }
+    }
+  },
+  "response" : {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 5000,
+      "sigma": 0.4
+    },
+    "jsonBody": {
+      "numFound": 94,
+      "start": 0,
+      "numFoundExact": true,
+      "num_found": 94,
+      "documentation_url": "https://openlibrary.org/dev/docs/api/search",
+      "q": "Alash",
+      "offset": null,
+      "docs": [
+        {
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1992,
+          "has_fulltext": false,
+          "key": "/works/OL23537318W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Alash-Orda"
+        },
+        {
+          "author_key": [
+            "OL414008A"
+          ],
+          "author_name": [
+            "D. A. Amanzholova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2013,
+          "has_fulltext": false,
+          "key": "/works/OL23358634W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Alash"
+        },
+        {
+          "author_key": [
+            "OL11999902A"
+          ],
+          "author_name": [
+            "Marat Eskendiruly (Abdeshev)"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2008,
+          "has_fulltext": false,
+          "key": "/works/OL33088507W",
+          "language": [
+            "kaz",
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "\"Alash Orda\" ministrlerï = Ministry \"Alash Ordy\""
+        },
+        {
+          "author_key": [
+            "OL11694901A"
+          ],
+          "author_name": [
+            "N. Omashev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2010,
+          "has_fulltext": false,
+          "key": "/works/OL32254339W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash kȯsemsȯzī"
+        },
+        {
+          "author_key": [
+            "OL11935188A"
+          ],
+          "author_name": [
+            "E. Tīleshov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2014,
+          "has_fulltext": false,
+          "key": "/works/OL32863391W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash qozghalysy"
+        },
+        {
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2004,
+          "has_fulltext": false,
+          "key": "/works/OL19284924W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash qozghalysy"
+        },
+        {
+          "author_key": [
+            "OL8462596A"
+          ],
+          "author_name": [
+            "Rymghali Nūrghaliev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1997,
+          "has_fulltext": false,
+          "key": "/works/OL23722834W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Ăuezov zhană Alash"
+        },
+        {
+          "author_key": [
+            "OL612996A"
+          ],
+          "author_name": [
+            "U̇ Subkhanberdina"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1993,
+          "has_fulltext": false,
+          "key": "/works/OL3610294W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Qazaq, Alash, Saryarqa"
+        },
+        {
+          "author_key": [
+            "OL8679995A"
+          ],
+          "author_name": [
+            "Mămbet Qoĭgeldiev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2008,
+          "has_fulltext": false,
+          "key": "/works/OL39452933W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash qozghalysy"
+        },
+        {
+          "author_key": [
+            "OL11943359A"
+          ],
+          "author_name": [
+            "N. Dulambekov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2013,
+          "has_fulltext": false,
+          "key": "/works/OL32889268W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash ardaqtylary"
+        },
+        {
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2014,
+          "has_fulltext": false,
+          "key": "/works/OL32762948W",
+          "language": [
+            "kaz",
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Alash kȯsemsȯzī"
+        },
+        {
+          "author_key": [
+            "OL11742777A"
+          ],
+          "author_name": [
+            "B. Ăbdīghaliūly"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2017,
+          "has_fulltext": false,
+          "key": "/works/OL32361435W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash ăskerī, 1918-1920 zhzh"
+        },
+        {
+          "author_key": [
+            "OL15745437A"
+          ],
+          "author_name": [
+            "Khazretălī Tūrsūn"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2013,
+          "has_fulltext": false,
+          "key": "/works/OL43894901W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash ḣăm Tu̇rkīstan"
+        },
+        {
+          "author_key": [
+            "OL8574419A"
+          ],
+          "author_name": [
+            "Tūrsyn Zhūrtbaev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2016,
+          "has_fulltext": false,
+          "key": "/works/OL45503645W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Bīrtūtas alash idei͡asy"
+        },
+        {
+          "author_key": [
+            "OL1443765A"
+          ],
+          "author_name": [
+            "R. K. Nurmagambetova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2003,
+          "has_fulltext": false,
+          "key": "/works/OL5868269W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Dvizhenie Alash i Alash-Orda"
+        },
+        {
+          "author_key": [
+            "OL6481086A"
+          ],
+          "author_name": [
+            "Roza Kaĭrbekovna Nurmagambetova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2003,
+          "has_fulltext": false,
+          "key": "/works/OL13623623W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Dvizhenie Alash i Alash-Orda"
+        },
+        {
+          "author_key": [
+            "OL9039474A",
+            "OL9034299A"
+          ],
+          "author_name": [
+            "M. Ăbīlova",
+            "A. Nurseitova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2005,
+          "has_fulltext": false,
+          "key": "/works/OL24023131W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "\"Alash\" qozghalysy"
+        },
+        {
+          "author_key": [
+            "OL6314824A"
+          ],
+          "author_name": [
+            "Kalibek Danii︠a︡rov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2006,
+          "has_fulltext": false,
+          "key": "/works/OL33219433W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Istorii︠a︡ Alash"
+        },
+        {
+          "author_key": [
+            "OL11752773A"
+          ],
+          "author_name": [
+            "Bolatbek Tȯlepbergen"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2017,
+          "has_fulltext": false,
+          "key": "/works/OL32396768W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash zholy"
+        },
+        {
+          "author_key": [
+            "OL8462640A"
+          ],
+          "author_name": [
+            "Dikhan Qamzabekūly"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2017,
+          "has_fulltext": false,
+          "key": "/works/OL32501193W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash Arqauy"
+        },
+        {
+          "author_key": [
+            "OL8449513A"
+          ],
+          "author_name": [
+            "Mūkhtar Qūl-Mūkhammed"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1996,
+          "has_fulltext": false,
+          "key": "/works/OL44489657W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash ardagerī"
+        },
+        {
+          "author_key": [
+            "OL1411513A"
+          ],
+          "author_name": [
+            "A. S. Ismakova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2017,
+          "has_fulltext": false,
+          "key": "/works/OL32501240W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash ădebiettanuy"
+        },
+        {
+          "author_key": [
+            "OL964959A"
+          ],
+          "author_name": [
+            "Nurpeisov, K."
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1993,
+          "has_fulltext": false,
+          "key": "/works/OL23650774W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash miras"
+        },
+        {
+          "author_key": [
+            "OL11999883A"
+          ],
+          "author_name": [
+            "S. Alʹzhanova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2008,
+          "has_fulltext": false,
+          "key": "/works/OL33088449W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Berkut Alash-Ordy"
+        },
+        {
+          "author_key": [
+            "OL8462640A"
+          ],
+          "author_name": [
+            "Dikhan Qamzabekūly"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2013,
+          "has_fulltext": false,
+          "key": "/works/OL32889288W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Ombynyn︠g︡ Alash dăpterī"
+        },
+        {
+          "author_key": [
+            "OL8970415A",
+            "OL11935150A"
+          ],
+          "author_name": [
+            "Qaĭsar Ălīm",
+            "E. Satybaldiev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2014,
+          "has_fulltext": false,
+          "key": "/works/OL32863299W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash qyzy Gu̇lnar"
+        },
+        {
+          "author_key": [
+            "OL8449513A"
+          ],
+          "author_name": [
+            "Mūkhtar Qūl-Mūkhammed"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2000,
+          "has_fulltext": false,
+          "key": "/works/OL23829780W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "\"Alash\" baghdarlamasy--qii︠a︡nat pen aqiqat"
+        },
+        {
+          "author_key": [
+            "OL11788001A"
+          ],
+          "author_name": [
+            "S. A. Zhu̇sīp"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2017,
+          "has_fulltext": false,
+          "key": "/works/OL32501185W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "\"Alash\" qozghalysy"
+        },
+        {
+          "author_key": [
+            "OL1411513A"
+          ],
+          "author_name": [
+            "A. S. Ismakova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2009,
+          "has_fulltext": false,
+          "key": "/works/OL39453234W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash ădăbiettanuy"
+        },
+        {
+          "author_key": [
+            "OL15546613A"
+          ],
+          "author_name": [
+            "Aron Atabek"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1991,
+          "has_fulltext": false,
+          "key": "/works/OL43502748W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Alash i kazakhskai︠a︡ nat︠s︡ii︠a︡"
+        },
+        {
+          "author_key": [
+            "OL1411513A"
+          ],
+          "author_name": [
+            "A. S. Ismakova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2015,
+          "has_fulltext": false,
+          "key": "/works/OL44788262W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Tău̇elsīzdīk zhăne Alash ghylymy"
+        },
+        {
+          "author_key": [
+            "OL16059842A"
+          ],
+          "author_name": [
+            "Mīmūn Ghāzī"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2014,
+          "has_fulltext": false,
+          "key": "/works/OL44638415W",
+          "language": [
+            "ara"
+          ],
+          "public_scan_b": false,
+          "title": "ʻAlāsh anā māshī hūwa?"
+        },
+        {
+          "author_key": [
+            "OL8449513A"
+          ],
+          "author_name": [
+            "Mūkhtar Qūl-Mūkhammed"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1998,
+          "has_fulltext": false,
+          "key": "/works/OL22074074W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash qaĭratkerlerī sai︠a︡si- qūqyqtyq kozqarastarynyn︠g︡ ėvoli︠u︡t︠s︡ii︠a︡sy"
+        },
+        {
+          "author_key": [
+            "OL10187951A"
+          ],
+          "author_name": [
+            "Alash Hoster Publishing"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 2,
+          "first_publish_year": 2021,
+          "has_fulltext": false,
+          "key": "/works/OL27193677W",
+          "language": [
+            "eng"
+          ],
+          "public_scan_b": false,
+          "title": "Alligators and Crocodiles Coloring Book"
+        },
+        {
+          "author_key": [
+            "OL10189223A"
+          ],
+          "author_name": [
+            "Alash Publishing"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2021,
+          "has_fulltext": false,
+          "key": "/works/OL27193184W",
+          "language": [
+            "eng"
+          ],
+          "public_scan_b": false,
+          "title": "Flowers Adult Coloring Book"
+        },
+        {
+          "author_key": [
+            "OL5346195A"
+          ],
+          "author_name": [
+            "Georgiĭ Ivanovich Safarov"
+          ],
+          "cover_edition_key": "OL17843729M",
+          "cover_i": 5384831,
+          "ebook_access": "no_ebook",
+          "edition_count": 2,
+          "first_publish_year": 1921,
+          "has_fulltext": false,
+          "key": "/works/OL12249040W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Kolonialʹnai︠a︡ revoli︠u︡t︠s︡ii︠a︡"
+        },
+        {
+          "author_key": [
+            "OL15769126A"
+          ],
+          "author_name": [
+            "D. D. Su̇leĭmenova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2014,
+          "has_fulltext": false,
+          "key": "/works/OL43943691W",
+          "language": [
+            "kaz",
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Alash ku̇nīne arnalghan \"Alash idei͡asy-ūlttyq idei͡a\" atty respublikalyq ghylymi-praktikalyq konferent͡sii͡anyn͡g materialdary"
+        },
+        {
+          "author_key": [
+            "OL8462596A"
+          ],
+          "author_name": [
+            "Rymghali Nūrghaliev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2004,
+          "has_fulltext": false,
+          "key": "/works/OL24031307W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Alashordint︠s︡y"
+        },
+        {
+          "author_key": [
+            "OL11925867A"
+          ],
+          "author_name": [
+            "B. Mu̇rsălīm"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2012,
+          "has_fulltext": false,
+          "key": "/works/OL32832691W",
+          "language": [
+            "mul"
+          ],
+          "public_scan_b": false,
+          "title": "Alashorda"
+        },
+        {
+          "author_key": [
+            "OL414008A"
+          ],
+          "author_name": [
+            "D. A. Amanzholova"
+          ],
+          "cover_edition_key": "OL722008M",
+          "cover_i": 3797263,
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1994,
+          "has_fulltext": false,
+          "key": "/works/OL2795397W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Kazakhskiĭ avtonomizm i Rossii͡a︡"
+        },
+        {
+          "author_key": [
+            "OL8708832A"
+          ],
+          "author_name": [
+            "M. N. Sdykov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2012,
+          "has_fulltext": false,
+          "key": "/works/OL22909829W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Istorii︠a︡ Zapadnogo otdelenii︠a︡ Alash-Ordy"
+        },
+        {
+          "author_key": [
+            "OL11873803A"
+          ],
+          "author_name": [
+            "Kazakhstan) Alash Qozghalysy: Tarikhy men Taghdyry (2017 Almaty"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2017,
+          "has_fulltext": false,
+          "key": "/works/OL32701527W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash qozghalysynyn︠g︡ 100 zhyldyghyna arnalghan \"Alash Qozghalysy: Tarikhy men Taghdyry\" Respublikalyq ghylymi-tăzhīribelīk konferent︠s︡ii︠a︡sy"
+        },
+        {
+          "author_key": [
+            "OL16465857A"
+          ],
+          "author_name": [
+            "Merkhat Su̇ĭīndīkov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2017,
+          "has_fulltext": false,
+          "key": "/works/OL45629891W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Alash qaĭratkerī, khalyq aqyny Zhaqsylyq tȯlenūly"
+        },
+        {
+          "author_key": [
+            "OL11752770A"
+          ],
+          "author_name": [
+            "Ruda Zaĭkenqyzy Zaĭkenova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2017,
+          "has_fulltext": false,
+          "key": "/works/OL32396755W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "XX ghasyr basyndaghy ădebiet zhăne Alash ūstanymy"
+        },
+        {
+          "author_key": [
+            "OL15909236A",
+            "OL15909237A",
+            "OL15909238A"
+          ],
+          "author_name": [
+            "Гарифулла Анес",
+            "С. О. Смағұлова",
+            "Репрессияға ұшыраған Қазақстан зиялыларының мұрасын зерттейтін \"Арыс\" қоры"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2009,
+          "has_fulltext": false,
+          "key": "/works/OL44288193W",
+          "language": [
+            "rus",
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Алаш, Алашорда"
+        },
+        {
+          "author_key": [
+            "OL11881809A"
+          ],
+          "author_name": [
+            "Kazakhstan) 550 let Kazakhskomu khanstvu i veterany Alash (2015 Karaganda"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2015,
+          "has_fulltext": false,
+          "key": "/works/OL32721948W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "\"Qazaq khandyghynyn︠g︡ 550 zhyldyghy zhăne alash qaĭratkerlerī\""
+        },
+        {
+          "author_key": [
+            "OL10187951A"
+          ],
+          "author_name": [
+            "Alash Hoster Publishing"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2021,
+          "has_fulltext": false,
+          "key": "/works/OL27187470W",
+          "language": [
+            "eng"
+          ],
+          "public_scan_b": false,
+          "title": "Fairies Coloring Book for Kids Ages 4-8"
+        },
+        {
+          "author_key": [
+            "OL10187951A"
+          ],
+          "author_name": [
+            "Alash Hoster Publishing"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2021,
+          "has_fulltext": false,
+          "key": "/works/OL27575160W",
+          "language": [
+            "eng"
+          ],
+          "public_scan_b": false,
+          "title": "FROG Coloring Book"
+        },
+        {
+          "author_key": [
+            "OL10187951A"
+          ],
+          "author_name": [
+            "Alash Hoster Publishing"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2021,
+          "has_fulltext": false,
+          "key": "/works/OL27197632W",
+          "language": [
+            "eng"
+          ],
+          "public_scan_b": false,
+          "title": "Fairies Adult Coloring Book"
+        },
+        {
+          "author_key": [
+            "OL15183923A",
+            "OL15183924A"
+          ],
+          "author_name": [
+            "Asim ibn Ayyub al-Batalyusi",
+            "Nāṣīf Sulaymān ʻAwwād"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1979,
+          "has_fulltext": false,
+          "key": "/works/OL42831884W",
+          "language": [
+            "ara"
+          ],
+          "public_scan_b": false,
+          "title": "Sharh al-ash ar al-sittat al-jahiliyab"
+        },
+        {
+          "author_key": [
+            "OL8574419A"
+          ],
+          "author_name": [
+            "Tūrsyn Zhūrtbaev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2011,
+          "has_fulltext": false,
+          "key": "/works/OL32135972W",
+          "language": [
+            "rus",
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Dvizhenie Alash"
+        },
+        {
+          "author_key": [
+            "OL7144447A"
+          ],
+          "author_name": [
+            "Raḥel Herts-Lazarovits"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2003,
+          "has_fulltext": false,
+          "key": "/works/OL41054761W",
+          "language": [
+            "heb"
+          ],
+          "public_scan_b": false,
+          "title": "Oryanut bi-lemidah shitufit (Alash)"
+        },
+        {
+          "author_key": [
+            "OL414008A"
+          ],
+          "author_name": [
+            "D. A. Amanzholova"
+          ],
+          "cover_edition_key": "OL21905521M",
+          "cover_i": 3797264,
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1994,
+          "has_fulltext": false,
+          "key": "/works/OL2795398W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Kazakhskii avtonomizm i Rossiya"
+        },
+        {
+          "author_key": [
+            "OL8942900A"
+          ],
+          "author_name": [
+            "Saĭfolla Su̇ĭīnov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1997,
+          "has_fulltext": false,
+          "key": "/works/OL23722734W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Qaĭratker Qūlmanov"
+        },
+        {
+          "author_key": [
+            "OL6154570A"
+          ],
+          "author_name": [
+            "ʻĀdil Yusrī"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1974,
+          "has_fulltext": false,
+          "key": "/works/OL13249827W",
+          "language": [
+            "ara"
+          ],
+          "public_scan_b": false,
+          "title": "Riḥlat al-sāq al-muʻallaqah"
+        },
+        {
+          "author_key": [
+            "OL11680138A"
+          ],
+          "author_name": [
+            "Waḍḥah ʻAbd al-Karīm Jumʻah Mīʻān"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2011,
+          "has_fulltext": false,
+          "key": "/works/OL32195277W",
+          "language": [
+            "ara"
+          ],
+          "public_scan_b": false,
+          "title": "Ṣīghat afʻal wa-dalālatuhā fī al-muʻallaqāt al-ʻashr"
+        },
+        {
+          "author_key": [
+            "OL13852281A"
+          ],
+          "author_name": [
+            "Eruand H. Kasuni"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1987,
+          "has_fulltext": false,
+          "key": "/works/OL38488653W",
+          "language": [
+            "arm"
+          ],
+          "public_scan_b": false,
+          "title": "Ṛuben G. ishkhanapet (1175-1187 tt.) ew ir ktakě"
+        },
+        {
+          "author_key": [
+            "OL1448367A"
+          ],
+          "author_name": [
+            "Bakhyt Sadykova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2004,
+          "has_fulltext": false,
+          "key": "/works/OL5878123W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Mustafa Chokaĭ"
+        },
+        {
+          "author_key": [
+            "OL8996634A"
+          ],
+          "author_name": [
+            "Kȯlbaĭ Tȯgīsov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2003,
+          "has_fulltext": false,
+          "key": "/works/OL23904716W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Shygharmalar zhinaghy"
+        },
+        {
+          "author_key": [
+            "OL4494763A"
+          ],
+          "author_name": [
+            "Zhabaĭkhan Mubarakovich Abdilʹdin"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2003,
+          "has_fulltext": false,
+          "key": "/works/OL23904742W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Vremi︠a︡ i kulʹtura"
+        },
+        {
+          "author_key": [
+            "OL9039471A"
+          ],
+          "author_name": [
+            "Kh. M. Ghabzhalilov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2005,
+          "has_fulltext": false,
+          "key": "/works/OL24023125W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Qazaq ru-taĭpalarynyn︠g︡ tarikhy"
+        },
+        {
+          "author_key": [
+            "OL5964718A"
+          ],
+          "author_name": [
+            "K. B. Boztaev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2006,
+          "has_fulltext": false,
+          "key": "/works/OL22390960W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Chelovek i atom"
+        },
+        {
+          "author_key": [
+            "OL6488620A"
+          ],
+          "author_name": [
+            "Bakhyt Isaĭnovna Sadykova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2004,
+          "has_fulltext": false,
+          "key": "/works/OL13631883W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Mustafa Chokaĭ"
+        },
+        {
+          "author_key": [
+            "OL411742A"
+          ],
+          "author_name": [
+            "K. Kenzhetaev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2004,
+          "has_fulltext": false,
+          "key": "/works/OL33149250W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Eger suret sȯīlese--"
+        },
+        {
+          "author_key": [
+            "OL11694900A"
+          ],
+          "author_name": [
+            "Nyghmet Nūrmaqov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2005,
+          "has_fulltext": false,
+          "key": "/works/OL32254336W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Maqalalar, bai͡andamalar"
+        },
+        {
+          "author_key": [
+            "OL11917450A"
+          ],
+          "author_name": [
+            "V. P. Patrakov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2012,
+          "has_fulltext": false,
+          "key": "/works/OL32809854W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Astana--nachalo Evrazii"
+        },
+        {
+          "author_key": [
+            "OL300884A"
+          ],
+          "author_name": [
+            "Mūkhtar Maghauin"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2004,
+          "has_fulltext": false,
+          "key": "/works/OL2288952W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Ŭlsyzdanu ŭrany"
+        },
+        {
+          "author_key": [
+            "OL293159A"
+          ],
+          "author_name": [
+            "Smaghūl Saduaqasūly"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2003,
+          "has_fulltext": false,
+          "key": "/works/OL2255718W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Ekī tomdyq shygharmalar zhinaghy"
+        },
+        {
+          "author_key": [
+            "OL8728579A"
+          ],
+          "author_name": [
+            "Arghynbaĭ Bekbosynūly"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2012,
+          "has_fulltext": false,
+          "key": "/works/OL22956616W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Fănilīk drama"
+        },
+        {
+          "author_key": [
+            "OL8574419A"
+          ],
+          "author_name": [
+            "Tūrsyn Zhūrtbaev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2004,
+          "has_fulltext": false,
+          "key": "/works/OL22391113W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Zhetīnshī qazyna"
+        },
+        {
+          "author_key": [
+            "OL12030493A"
+          ],
+          "author_name": [
+            "Sh Ku̇mīsbaev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2017,
+          "has_fulltext": false,
+          "key": "/works/OL43664975W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Ȯmīrdīn͡g son͡gghy bīr sătī"
+        },
+        {
+          "author_key": [
+            "OL15705781A"
+          ],
+          "author_name": [
+            "Zhanar Ăbdīshova"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2017,
+          "has_fulltext": false,
+          "key": "/works/OL43812905W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Ȯmīr su̇rsem... kesh emes"
+        },
+        {
+          "author_key": [
+            "OL15697756A"
+          ],
+          "author_name": [
+            "Dīldăr Mamyrbaev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2017,
+          "has_fulltext": false,
+          "key": "/works/OL43797166W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Zhetīm qūlyn"
+        },
+        {
+          "author_key": [
+            "OL14171074A"
+          ],
+          "author_name": [
+            "Myn͡gbaĭ Răsh"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2019,
+          "has_fulltext": false,
+          "key": "/works/OL45690414W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Esīmde esīlgen estelīkter..."
+        },
+        {
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1990,
+          "has_fulltext": false,
+          "key": "/works/OL45566733W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "[Newspapers from Alma-Ata, Kazakhstan]"
+        },
+        {
+          "author_key": [
+            "OL8708833A"
+          ],
+          "author_name": [
+            "Adolʹf Art︠s︡ishevskiĭ"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2014,
+          "has_fulltext": false,
+          "key": "/works/OL32654803W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Neukrotimai︠a︡ ėpokha"
+        },
+        {
+          "author_key": [
+            "OL8708833A"
+          ],
+          "author_name": [
+            "Adolʹf Art︠s︡ishevskiĭ"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2013,
+          "has_fulltext": false,
+          "key": "/works/OL22909831W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Portret sovremennika v interʹere ėpokhi"
+        },
+        {
+          "author_key": [
+            "OL11935141A"
+          ],
+          "author_name": [
+            "Aĭgu̇l Kemelbaeva"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2013,
+          "has_fulltext": false,
+          "key": "/works/OL32863282W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Măzhnu̇n zhu̇rek"
+        },
+        {
+          "author_key": [
+            "OL12029146A"
+          ],
+          "author_name": [
+            "Ravilʹ Mazhitov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2007,
+          "has_fulltext": false,
+          "key": "/works/OL33202844W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Zhakhansha Dosmukhamedov"
+        },
+        {
+          "author_key": [
+            "OL5161556A"
+          ],
+          "author_name": [
+            "ʻAbd Allāh Ashʻal"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1989,
+          "has_fulltext": false,
+          "key": "/works/OL11980196W",
+          "language": [
+            "ara"
+          ],
+          "public_scan_b": false,
+          "title": "al- Mamlakah al-ʻArabīyah al-Saʻūdīyah wa-qaḍāyā al-ṣirāʻ al-ʻArabī al-Isrāʾīlī"
+        },
+        {
+          "author_key": [
+            "OL5161556A"
+          ],
+          "author_name": [
+            "ʻAbd Allāh Ashʻal"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2016,
+          "has_fulltext": false,
+          "key": "/works/OL32653705W",
+          "language": [
+            "ara"
+          ],
+          "public_scan_b": false,
+          "title": "al-Ḥaqāʼiq wa-al-asāṭīr ḥawla Miṣrīyat Tīrān wa-Ṣanāfīr"
+        },
+        {
+          "author_key": [
+            "OL214081A"
+          ],
+          "author_name": [
+            "ʻAbd Allāh Ashʻal"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1988,
+          "has_fulltext": false,
+          "key": "/works/OL1788361W",
+          "language": [
+            "ara"
+          ],
+          "public_scan_b": false,
+          "title": "al- Diblūmāsīyah al-Sūvyītīyah wa-al-ṣirāʻ al-dawlī fī al-Balqān"
+        },
+        {
+          "author_key": [
+            "OL214081A"
+          ],
+          "author_name": [
+            "ʻAbd Allāh Ashʻal"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1989,
+          "has_fulltext": false,
+          "key": "/works/OL1788363W",
+          "language": [
+            "ara"
+          ],
+          "public_scan_b": false,
+          "title": "al- Mamlakah al-ʻArabīyah al-Saʻūdīyah wa-qaḍāyā al-ṣirāʻ al-ʻArabī al-Isrāʼīlī"
+        },
+        {
+          "author_key": [
+            "OL14016879A"
+          ],
+          "author_name": [
+            "Zhaksybaĭ Abishevich Bazilʹbaev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2003,
+          "has_fulltext": false,
+          "key": "/works/OL39023371W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Ternistyĭ putʹ politika 1992-2003"
+        },
+        {
+          "author_key": [
+            "OL964959A"
+          ],
+          "author_name": [
+            "Nurpeisov, K."
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 1996,
+          "has_fulltext": false,
+          "key": "/works/OL19131403W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Khalel Dosmūkhamedūly, zhăne onyn︠g︡ ȯmīrī men shygharmashylyghy"
+        },
+        {
+          "author_key": [
+            "OL11917846A"
+          ],
+          "author_name": [
+            "Erlan Sydyqov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2008,
+          "has_fulltext": false,
+          "key": "/works/OL32810969W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Shăkărīm zhăne Alashorda"
+        },
+        {
+          "author_key": [
+            "OL11898715A"
+          ],
+          "author_name": [
+            "Sūltan Khan Aqqūly"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2016,
+          "has_fulltext": false,
+          "key": "/works/OL32762946W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Ălikhan Bȯkeĭkhan"
+        },
+        {
+          "author_key": [
+            "OL11824110A"
+          ],
+          "author_name": [
+            "Qūlbek Ergȯbekov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2018,
+          "has_fulltext": false,
+          "key": "/works/OL32583082W",
+          "language": [
+            "tur"
+          ],
+          "public_scan_b": false,
+          "title": "Alaş'ın azaplı yolu (Arıstarmen ağıstar)"
+        },
+        {
+          "author_key": [
+            "OL1528255A"
+          ],
+          "author_name": [
+            "Q. Zharyqbaev"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2017,
+          "has_fulltext": false,
+          "key": "/works/OL32471166W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Qughyndalghan qazaq psikhologii︠a︡sy"
+        },
+        {
+          "author_key": [
+            "OL8996682A"
+          ],
+          "author_name": [
+            "Nūrlan Orynbasarūly Dulatbekov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2015,
+          "has_fulltext": false,
+          "key": "/works/OL32641113W",
+          "language": [
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Dei︠a︡teli Alasha"
+        },
+        {
+          "author_key": [
+            "OL5078464A"
+          ],
+          "author_name": [
+            "Burkutbaĭ Ai︠a︡ganov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2005,
+          "has_fulltext": false,
+          "key": "/works/OL11866867W",
+          "language": [
+            "kir",
+            "rus"
+          ],
+          "public_scan_b": false,
+          "title": "Krasnye i chernye"
+        },
+        {
+          "author_key": [
+            "OL8574404A"
+          ],
+          "author_name": [
+            "Zii︠a︡da Izhanov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2016,
+          "has_fulltext": false,
+          "key": "/works/OL32361432W",
+          "language": [
+            "kaz"
+          ],
+          "public_scan_b": false,
+          "title": "Asyl mūra"
+        },
+        {
+          "cover_edition_key": "OL24630336M",
+          "cover_i": 6718518,
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2007,
+          "has_fulltext": false,
+          "key": "/works/OL15706784W",
+          "language": [
+            "tur"
+          ],
+          "public_scan_b": false,
+          "subtitle": "The Lost Land",
+          "title": "Khakassia"
+        },
+        {
+          "author_key": [
+            "OL1411488A"
+          ],
+          "author_name": [
+            "B. T. Zhumagulov"
+          ],
+          "ebook_access": "no_ebook",
+          "edition_count": 1,
+          "first_publish_year": 2012,
+          "has_fulltext": false,
+          "key": "/works/OL32915440W",
+          "language": [
+            "aze"
+          ],
+          "public_scan_b": false,
+          "title": "Klassikalyq zertteuler"
+        }
+      ]
+    }
+  }
+}
