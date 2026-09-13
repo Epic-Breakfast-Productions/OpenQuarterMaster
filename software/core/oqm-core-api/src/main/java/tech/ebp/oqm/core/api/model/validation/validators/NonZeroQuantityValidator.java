@@ -6,6 +6,7 @@ import tech.ebp.oqm.core.api.model.validation.annotations.NonZeroQuantity;
 import tech.ebp.oqm.core.api.model.validation.annotations.ValidQuantity;
 
 import javax.measure.Quantity;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
