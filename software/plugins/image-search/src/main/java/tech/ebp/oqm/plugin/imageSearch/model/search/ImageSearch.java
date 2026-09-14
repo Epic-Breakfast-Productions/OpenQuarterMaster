@@ -16,6 +16,7 @@ import tech.ebp.oqm.plugin.imageSearch.model.Model;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @ToString
 @Builder
@@ -53,5 +54,5 @@ public class ImageSearch {
 	@Parameter(description = "The models to use to identify the given image.")
 	@FormParam("models")
 	@Builder.Default
-	public List<Model> models = List.of();
+	public Set<Model> models = Set.of();
 }

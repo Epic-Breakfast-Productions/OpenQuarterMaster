@@ -21,32 +21,32 @@ import java.util.stream.Stream;
 @QuarkusTest
 class ImageSearchServiceTest extends RunningServerTest {
 
-    @Inject
+	@Inject
 	ImageSearchService imageSearchService;
 
-    @Inject
-    ResnetVectorService resnetVectorService;
+	@Inject
+	ResnetVectorService resnetVectorService;
 
-    @Test
-    public void testBasicSearch() throws IOException {
-        this.setupOqmDb(TEST_DB);
-        log.info("Testing initDb");
+	@Test
+	public void testBasicSearch() throws IOException {
+		this.setupOqmDb(TEST_DB);
+		log.info("Testing initDb");
 
-        this.resnetVectorService.initVectors();
+		this.resnetVectorService.initVectors();
 
-        log.info("Finished initDb");
+		log.info("Finished initDb");
 
-        try (Stream<Path> stream = Files.list(Paths.get(TEST_IMG_DIR)); InputStream is = Files.newInputStream(stream.findFirst().get());) {
-            SearchResults results = this.imageSearchService.search(
-                ImageSearch.builder()
-                    .oqmDbIdOrName(TEST_DB)
-                    .file(is)
-                    .fileName("foo.png")
-                    .maxResults(10)
-                    .threshold(0.75)
-                    .build()
-            );
-            log.info("Found results: {}", results);
-        }
-    }
+		try (Stream<Path> stream = Files.list(Paths.get(TEST_IMG_DIR)); InputStream is = Files.newInputStream(stream.findFirst().get());) {
+			SearchResults results = this.imageSearchService.search(
+				ImageSearch.builder()
+					.oqmDbIdOrName(TEST_DB)
+					.file(is)
+					.fileName("foo.png")
+					.maxResults(10)
+					.threshold(0.75)
+					.build()
+			);
+			log.info("Found results: {}", results);
+		}
+	}
 }

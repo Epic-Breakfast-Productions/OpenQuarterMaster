@@ -80,8 +80,6 @@ public class ResnetProvider extends ImageSearchProvider {
 	 */
 	@WithSpan
 	public float[] generateImageFeatureVector(byte[] imageBytes) {
-		//TODO:: need to release all `Mat` objects
-		// Release temporary buffer.
 		try (
 			Tensor inputTensor = preprocessImage(imageBytes);
 			Result outputTensor = model.session().runner().feed(inputTensorName, inputTensor).fetch(outputTensorName).run()

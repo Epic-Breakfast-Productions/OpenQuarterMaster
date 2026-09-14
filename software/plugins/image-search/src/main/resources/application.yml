@@ -1,5 +1,8 @@
-greeting:
-  message: "hello"
+image-search:
+    defaults:
+        models:
+            - RESNET_V2
+
 mp:
   messaging:
     incoming:

@@ -16,13 +16,13 @@
  - [x] Process image changes as they happen, not just when DB is initialized Colten/Greg
  - [x] Redesign TreeMap (possibly different structure) to not store extra objects Colten
  - [ ] Testing...
+ - [ ] Integration tests
  - [ ] Integration into deployment methodology Greg
  - [x] Memory leaks (Mat objects)
  - [ ] OpenCV library optimization (System.loadLibrary())
  - [ ] Verify and ensure concurrent calls work in ImageSearchService
- - [ ] Logging in ImageSearchService
+ - [x] Logging in ImageSearchService
  - [ ] Check if new Java TF
- - [ ] Integration tests
  - [ ] Documentation
 
 ## LATER TODO
