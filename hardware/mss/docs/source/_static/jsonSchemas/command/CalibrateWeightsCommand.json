@@ -1,0 +1,29 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/CalibrateWeightsCommand.json",
+	"title": "Calibrate Weights Command",
+	"description": "Commands the unit to recalibrate its weights. Effectively resets the weights to zero.",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/Command.json"
+		}
+	],
+	"properties": {
+		"command": {
+			"description": "The command.",
+			"type": "string",
+			"const": "CALIBRATE_WEIGHTS"
+		},
+		"storageBlocks": {
+			"description": "The array of storage blocks to be calibrated. Leave empty or omit for all blocks.",
+			"type": "array",
+			"items": {
+				"type": "integer"
+			}
+		}
+	},
+	"required": [
+		"command"
+	]
+}
