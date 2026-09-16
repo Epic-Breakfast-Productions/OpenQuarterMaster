@@ -96,7 +96,7 @@ public interface CoreApiLibBuildTimeConfig {
 			 *
 			 * @return The version/ tag of the core api container image
 			 */
-			@WithDefault("${quarkus.application.version}")
+			@WithDefault("6.4.2-SNAPSHOT")
 			String version();
 
 			/**
