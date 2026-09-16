@@ -1,0 +1,172 @@
+plugins {
+	id 'java-library'
+	id "io.freefair.lombok" version "9.1.0"
+	id "jacoco"
+	// https://docs.gradle.org/current/userguide/publishing_maven.html#publishing_maven:complete_example
+	id 'maven-publish'
+	// https://docs.gradle.org/current/userguide/signing_plugin.html#signing_plugin
+	id 'signing'
+	//id 'org.kordamp.gradle.jandex' version '0.11.0'
+}
+
+group 'tech.epic-breakfast-productions.openQuarterMaster.lib'
+archivesBaseName = "openQuarterMaster-lib-moduleDriver"
+version '1.0.2-DEV'
+
+repositories {
+	mavenLocal()
+	mavenCentral()
+}
+
+configurations.all {
+	resolutionStrategy.eachDependency { details ->
+		if (details.requested.group == 'org.junit.jupiter') {
+			details.useVersion "5.9.2"
+		}
+		if (
+			details.requested.group == 'com.fasterxml.jackson.core'
+				|| details.requested.group == 'com.fasterxml.jackson.datatype'
+				|| details.requested.group == 'com.fasterxml.jackson.module'
+		) {
+			details.useVersion "2.14.1"
+		}
+	}
+}
+
+dependencies {
+	implementation 'com.fasterxml.jackson.core:jackson-core'
+	implementation 'com.fasterxml.jackson.core:jackson-databind'
+	implementation 'com.fasterxml.jackson.core:jackson-annotations'
+	implementation 'com.fasterxml.jackson.datatype:jackson-datatype-jsr310'
+
+	implementation group: 'org.slf4j', name: 'slf4j-api', version: '2.0.7'
+
+	//if need ObjectIds, BsonIgnore
+//	implementation 'org.mongodb:bson:4.4.0'
+
+	implementation 'com.fazecast:jSerialComm:2.10.1'
+
+
+	// https://mvnrepository.com/artifact/tech.units/indriya
+	//     https://unitsofmeasurement.gitbook.io/uom-guide/getting-started/getting-started-with-indriya
+//	implementation 'tech.units:indriya:2.1.3'
+	// https://mvnrepository.com/artifact/tech.uom.lib/uom-lib-jackson
+//	implementation 'tech.uom.lib:uom-lib-jackson:2.1'
+//	implementation 'systems.uom:systems-common:2.1'
+
+	implementation 'javax.validation:validation-api:2.0.1.Final'
+	implementation 'org.eclipse.microprofile.openapi:microprofile-openapi-api:2.0.1'
+
+//	implementation 'org.passay:passay:1.6.1'
+//	implementation 'commons-io:commons-io:2.11.0'
+//	implementation 'commons-codec:commons-codec:1.15'
+
+	testImplementation 'org.hibernate:hibernate-validator:6.2.5.Final'
+	testImplementation 'javax.el:javax.el-api:3.0.0'
+	testImplementation 'org.glassfish.web:javax.el:2.2.6'
+//    testImplementation 'org.hibernate.validator:hibernate-validator:7.0.2.Final'
+//    testImplementation 'org.hibernate:hibernate-validator:7.0.3.Final'
+//    testImplementation 'org.hibernate.validator:hibernate-validator-cdi:7.0.1.Final'
+
+//    implementation 'org.abego.treelayout:org.abego.treelayout.core:1.0.3'
+
+	testImplementation 'org.junit.jupiter:junit-jupiter-api'
+	testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+	testImplementation 'org.junit.jupiter:junit-jupiter-params'
+	testImplementation 'org.assertj:assertj-core:3.24.2'
+//	implementation 'tech.uom.lib:uom-lib-assertj:2.1'
+
+	testImplementation 'com.github.javafaker:javafaker:1.0.2'
+	testImplementation 'ch.qos.logback:logback-classic:1.4.8'
+}
+
+test {
+	useJUnitPlatform()
+	reports.junitXml.enabled(true)
+	finalizedBy jacocoTestReport // report is always generated after tests run
+}
+jacocoTestReport {
+	dependsOn test // tests are required to run before generating the report
+	reports {
+		xml.required = true
+	}
+}
+
+java {
+	java {
+		toolchain {
+			languageVersion.set(JavaLanguageVersion.of(17))
+		}
+	}
+	withJavadocJar()
+	withSourcesJar()
+}
+
+publishing {
+	publications {
+		mavenJava(MavenPublication) {
+			artifactId = 'open-qm-lib-moduleDriver'
+			from components.java
+			versionMapping {
+				usage('java-api') {
+					fromResolutionOf('runtimeClasspath')
+				}
+				usage('java-runtime') {
+					fromResolutionResult()
+				}
+			}
+			pom {
+				name = 'Open QuarterMaster Module Driver Library'
+				description = 'A concise description of my library'
+				url = 'https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software'
+//                properties = [
+//                        myProp: "value",
+//                        "prop.with.dots": "anotherValue"
+//                ]
+				licenses {
+					license {
+						name = 'GNU General Public License v3.0'
+						url = 'https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE'
+					}
+				}
+				developers {
+					developer {
+						id = 'GregJohnStewart'
+						name = 'Greg Stewart'
+						email = 'greg@epic-breakfast-productions.tech'
+					}
+				}
+//                scm {
+//                    connection = 'scm:git:git://example.com/my-library.git'
+//                    developerConnection = 'scm:git:ssh://example.com/my-library.git'
+//                    url = 'http://example.com/my-library/'
+//                }
+			}
+		}
+	}
+	repositories {
+		maven {
+			// change URLs to point to your repos, e.g. http://my.org/repo
+			def releasesRepoUrl = "https://s01.oss.sonatype.org/content/repositories/releases/"
+			//layout.buildDirectory.dir('repos/releases')
+			def snapshotsRepoUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+			//layout.buildDirectory.dir('repos/snapshots')
+			url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+			credentials {
+				username = project.properties.ossUsername
+				password = project.properties.ossPassword
+			}
+		}
+	}
+}
+
+signing {
+	sign configurations.archives
+}
+
+javadoc {
+	if (JavaVersion.current().isJava11Compatible()) {
+		options.addBooleanOption('html5', true)
+		options.addBooleanOption('private', true)
+	}
+}

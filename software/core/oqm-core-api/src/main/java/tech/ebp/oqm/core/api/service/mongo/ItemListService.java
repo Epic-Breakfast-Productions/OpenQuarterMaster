@@ -1,0 +1,76 @@
+package tech.ebp.oqm.core.api.service.mongo;
+
+import com.mongodb.client.ClientSession;
+import com.mongodb.client.model.Indexes;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.json.JsonObject;
+import lombok.extern.slf4j.Slf4j;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
+import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.model.object.history.events.itemList.ItemListActionAddEvent;
+import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.core.api.model.object.itemList.ItemList;
+import tech.ebp.oqm.core.api.model.object.itemList.ItemListAction;
+import tech.ebp.oqm.core.api.model.rest.search.ItemListSearch;
+
+import java.util.List;
+
+@Slf4j
+@ApplicationScoped
+public class ItemListService extends MongoHistoriedObjectService<ItemList, ItemListSearch, CollectionStats> {
+	
+	public ItemListService() {
+		super(ItemList.class, false);
+	}
+	
+	@Override
+	public CollectionStats getStats(String oqmDbIdOrName) {
+		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
+				   .build();
+	}
+	
+	@Override
+	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, ItemList list, ClientSession clientSession) {
+		super.ensureObjectValid(oqmDbIdOrName, newObject, list, clientSession);
+		//TODO:: no duplicate names?
+		
+	}
+	
+	public ItemList addAction(String oqmDbIdOrName, ObjectId listId, ObjectId itemId, ItemListAction action, InteractingEntity entity) {
+		ItemList list = this.get(oqmDbIdOrName, listId);
+		
+		list.getItemActions(itemId).add(action);
+		
+		ItemListActionAddEvent event = new ItemListActionAddEvent(list, entity);
+		event.setItemId(itemId);
+		
+//		this.update(oqmDbIdOrName, null, list, entity, event); //TODO:: add back in
+		
+		return list;
+	}
+	
+	public ItemList remAction(String oqmDbIdOrName, ObjectId listId, ObjectId itemId, int index, InteractingEntity entity) {
+		ItemList list = this.get(oqmDbIdOrName, listId);
+		//TODO
+		return list;
+	}
+	
+	public ItemList updateAction(String oqmDbIdOrName, ObjectId listId, ObjectId itemId, int index, JsonObject updateJson, InteractingEntity entity) {
+		ItemList list = this.get(oqmDbIdOrName, listId);
+		//TODO
+		return list;
+	}
+	
+	@Override
+	public int getCurrentSchemaVersion() {
+		return ItemList.CUR_SCHEMA_VERSION;
+	}
+
+	@Override
+	public List<Bson> getDbIndexes() {
+		return List.of(
+			Indexes.ascending("name")
+		);
+	}
+}

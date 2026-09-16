@@ -1,0 +1,129 @@
+  {#let showAmount=cdi:ItemStoredResultsQuteFunctions.showAmount(inventoryItem.or(null))}
+  <thead>
+  <tr>
+    <td colspan="100" class="text-center searchResultsContainer">
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
+    </td>
+  </tr>
+  <tr>
+    <th scope="col" class="searchResultImageCol">Image</th>
+	  {#if showType??}<th scope="col" class="text-center" style="width: 45px;">Type</th>{/if}
+    <th scope="col">
+		{#search/sortFieldSelector form=searchFormId field="labelText" searchResults=searchResults /}
+		Label
+	</th>
+    <th scope="col" style="width: 100px;">Id</th>
+    {#if showItem??}
+		<th scope="col">
+			{#search/sortFieldSelector form=searchFormId field="item" searchResults=searchResults /}
+			{#icons/item /}
+			Item
+		</th>
+	{/if}
+    {#if showStorage??}<th scope="col">{#icons/storageBlock /} Stored In</th>{/if}
+    {#if showAmount}<th scope="col" class="text-center">Amount</th>{/if}
+    <th scope="col" style="width: 114px;" class="text-center"><abbr title="Flags">{#icons/flags /}</abbr></th>
+    <th scope="col" style="width: 150px;">Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+  {#if searchResults.get("empty").asBoolean()}
+  <tr>
+    <td colspan="100" class="text-center">
+      <h2>
+		  {#icons/stored /}
+        Nothing Stored
+      </h2>
+      {#if actionType == 'full'}
+      <div class="col d-grid gap-2">
+        {! TODO:: maybe an add button !}
+        {!<button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"!}
+                {!data-bs-target="#addEditItemModal" onclick="ItemAddEdit.setupAddEditForAdd();">!}
+          {!{#icons/add}{/icons/add} Add Item!}
+        {!</button>!}
+      </div>
+      {/if}
+    </td>
+  </tr>
+  {#else}
+  {#for result in searchResults.get("results")}
+  	{#let id=result.get("id").asText() labelText=result.get("labelText").asText() itemId=result.get("item").asText()}
+  <tr class="itemStoredResultRow align-middle">
+    <td>
+      {#if !result.get("imageIds").isEmpty()}
+      <img src="{rootPrefix}/api/passthrough/media/image/for/item_stored/{id}" class="searchResultImage" alt="{labelText} image">
+      {/if}
+    </td>
+	  {#if showType}<td class="text-center">{#icons/storedTypeIconFromType type=result.get("type").asText() /}</td>{/if}
+    <td class="user-select-all">{labelText}</td>
+    <td>
+		<abbr title="{id}">...{id.substring(id.length() - 6)}</abbr>{#copyTextButton fromTitle=true cssClasses="me-0 p-1 ms-1" /}
+	</td>
+
+    {#if showItem}<td>{#icons/storageTypeIconFromType type=result.get("item-storageType").asText() /}{result.get("item-name").asText()}</td>{/if}{!TODO:: link this !}
+    {#if showStorage}<td>{result.get("state").get("storageBlock-labelText").asText()}</td>{/if}{!TODO:: link !}
+    {#if showAmount}
+		<td>
+			{#if cdi:ItemStoredResultsQuteFunctions.storedIsAmount(result)}
+				{#amountDisplay amount=result.get("amount") /}
+			{#else}
+				n/a
+			{/if}
+		</td>
+	{/if}
+	<td class="text-center">
+		{#if result.get("notificationStatus").get("lowStock").asBoolean()}
+		<span class="badge rounded-pill text-bg-danger" title="Low Stock">
+			{#icons/lowStock /}
+		</span>
+		{/if}
+		{#if result.get("notificationStatus").get("expiredWarning").asBoolean()}
+		<span class="badge rounded-pill text-bg-warning" title="Expiring Soon">
+			{#icons/expiring /}
+		</span>
+		{/if}
+		{#if result.get("notificationStatus").get("expired").asBoolean()}
+		<span class="badge rounded-pill text-bg-danger" title="Expired">
+			{#icons/expired /}
+		</span>
+		{/if}
+	</td>
+    {#if actionType == 'full'}
+    <td class="d-flex flex-row">
+		{!TODO:: configure to choose row or modal. Separate button/group?!}
+		{!<button type="button" class="btn btn-sm btn-info" title="View" data-bs-toggle="modal" data-bs-target="#itemStoredViewModal" onclick="StoredView.setupViewModal('{result.get("item").asText()}', '{result.get("storageBlock").asText()}', '{id}');">!}
+			{!{#icons/view}{/icons/view}!}
+		{!</button>!}
+		<button type="button" class="btn btn-sm btn-info me-1" title="View" onclick="StoredView.toggleViewResultTableRow(this, '{result.get("item").asText()}', '{id}');">
+			{#icons/view /}
+		</button>
+      <button type="button" class="btn btn-sm btn-warning me-1" title="Edit" data-bs-toggle="modal" data-bs-target="#itemStoredEditModal" onclick="ItemStoredEdit.setupEditForm(this, '{result.get("item").asText()}', '{id}');">
+        {#icons/edit /}
+      </button>
+      {#itemStored/transaction/buttons/transactionDropdown dropdownClasses="btn-sm me-1" buttonText=false storedId=id itemId=itemId checkinButton=false /}
+
+    {#else if actionType == 'select'}
+    <td class="d-grid gap-2">
+      <button type="button" class="btn btn-sm btn-success" title="Select {labelText}"
+              data-bs-toggle="modal" {#if otherModalId??}data-bs-target="#{otherModalId}"{/if}
+              onclick="ItemStoredSearchSelect.selectStoredItem('{labelText}', '{result.get("state").get("storageBlock").asText()}', '{id}', '{inputIdPrepend}');">
+        {#icons/select /} Select
+      </button>
+	{#else if actionType == 'view'}
+	  <td class="d-grid gap-2">
+		  <a href="{rootPrefix}/items?viewStored={id}" class="btn btn-sm btn-info" title="View Stored">{#icons/view /}</a>
+      {/if}
+    </td>
+  </tr>
+  	{/let}
+  {/for}
+  {/if}
+  </tbody>
+  <tfoot>
+  <tr>
+    <td colspan="100" class="text-center searchResultsContainer">
+      {#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
+    </td>
+  </tr>
+  </tfoot>
+      {/let}

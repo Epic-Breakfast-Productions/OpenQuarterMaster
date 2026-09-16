@@ -1,0 +1,75 @@
+import {Rest} from "./Rest.js";
+import {PageUtility} from "./utilClasses/PageUtility.js";
+
+export class HistorySearchUtils extends PageUtility {
+	static getHistorySearchForm(historyViewContainer) {
+		return historyViewContainer.find(".historySearchForm");
+	}
+
+	static getHistorySearchResults(historyViewContainer) {
+		return historyViewContainer.find(".historyViewResults");
+	}
+
+	/**
+	 *
+	 * @param historyViewContainer
+	 */
+	static resetHistorySearch(historyViewContainer) {
+		HistorySearchUtils.getHistorySearchResults(historyViewContainer).text('');
+		HistorySearchUtils.getHistorySearchForm(historyViewContainer)[0].reset();
+
+	}
+
+	static setupHistorySearch(historyViewContainer, id) {
+		HistorySearchUtils.resetHistorySearch(historyViewContainer);
+
+		let historySearchForm = HistorySearchUtils.getHistorySearchForm(historyViewContainer);
+
+		historySearchForm.find("input[name='objectId']").val(id);
+
+		historySearchForm.submit();
+	}
+
+	static async runHistorySearch(historySearchFormJs, event) {
+		event.preventDefault();
+
+		let historySearchForm = $(historySearchFormJs);
+		let historySearchContainer = historySearchForm
+			.parent()
+			.parent()
+			.parent()
+			.parent()
+			.parent();
+
+		let historySearchResults = HistorySearchUtils.getHistorySearchResults(historySearchContainer);
+
+		const formData = new FormData(historySearchFormJs);
+		formData.delete("objectId");
+
+		let historyUrl = historySearchForm.attr("action") +
+			historySearchForm.find("input[name='objectId']").val() +
+			"/history?" +
+			new URLSearchParams(formData).toString();
+
+		return Rest.call({
+			spinnerContainer: historySearchContainer.get(0),
+			url: historyUrl,
+			method: 'GET',
+			failNoResponse: null,
+			failNoResponseCheckStatus: true,
+			returnType: "html",
+			extraHeaders: {
+				"accept": "text/html",
+				"searchFormId": historySearchForm.attr("id"),
+				// "inputIdPrepend": itemSearchSelectModal.attr("data-bs-inputIdPrepend"),
+			},
+			// async: false,
+			done: function (data) {
+				historySearchResults.html(data);
+			}
+		});
+	}
+	static {
+		window.HistorySearchUtils = this;
+	}
+}

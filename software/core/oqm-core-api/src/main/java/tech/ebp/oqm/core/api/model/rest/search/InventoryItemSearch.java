@@ -1,0 +1,139 @@
+package tech.ebp.oqm.core.api.model.rest.search;
+
+import com.mongodb.client.model.Filters;
+import jakarta.ws.rs.QueryParam;
+import lombok.Getter;
+import lombok.Setter;
+import lombok.ToString;
+import org.bson.conversions.Bson;
+import org.bson.types.ObjectId;
+import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
+import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
+import tech.ebp.oqm.core.api.model.object.storage.items.StorageType;
+import tech.ebp.oqm.core.api.service.mongo.search.SearchUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static com.mongodb.client.model.Filters.*;
+
+@ToString(callSuper = true)
+@Getter
+@Setter
+public class InventoryItemSearch extends SearchKeyAttObject<InventoryItem> {
+	@QueryParam("name")
+	@Parameter(description = "The name of the item to search for.")
+	String name;
+
+	@QueryParam("storageTypes") List<StorageType> storageTypes;
+	@QueryParam("itemCategories") List<ObjectId> categories;
+	@QueryParam("inStorageBlock") List<ObjectId> inStorageBlocks;
+	@QueryParam("hasImage") List<ObjectId> hasImages;
+	@QueryParam("hasExpired") Boolean hasExpired;
+	@QueryParam("hasNoExpired") Boolean hasNoExpired;
+	@QueryParam("hasExpiryWarn") Boolean hasExpiryWarn;
+	@QueryParam("hasNoExpiryWarn") Boolean hasNoExpiryWarn;
+	@QueryParam("hasLowStock") Boolean hasLowStock;
+	@QueryParam("hasNoLowStock") Boolean hasNoLowStock;
+	@QueryParam("identifier") List<String> identifiers;
+
+	//TODO:: object specific fields, add to bson filter list
+
+	@Override
+	public List<Bson> getSearchFilters() {
+		List<Bson> filters = super.getSearchFilters();
+
+		if (hasValue(this.getName())) {
+			filters.add(
+				SearchUtils.getBasicSearchFilter("name", this.getName())
+			);
+		}
+		if (this.getStorageTypes() != null && !this.getStorageTypes().isEmpty()) {
+			List<Bson> typeFilterList = new ArrayList<>(this.getStorageTypes().size());
+			for (StorageType curType : this.getStorageTypes()) {
+				typeFilterList.add(eq(
+					"storageType",
+					curType
+				));
+			}
+			filters.add(Filters.or(typeFilterList));
+		}
+		if (this.getCategories() != null && !this.getCategories().isEmpty()) {
+			List<Bson> catsFilterList = new ArrayList<>(this.getCategories().size());
+			for (ObjectId curCategoryId : this.getCategories()) {
+				catsFilterList.add(in(
+					"categories",
+					curCategoryId
+				));
+			}
+			filters.add(Filters.or(catsFilterList));
+		}
+		if(hasValue(this.getInStorageBlocks())){
+			filters.add(or(
+				this.getInStorageBlocks().stream().map((ObjectId storageBlockId) -> {
+					return eq("storageBlocks.storageBlock", storageBlockId);
+				}).toList()
+			));
+		}
+		if(hasValue(this.getHasImages())){
+			filters.add(or(
+				this.getHasImages().stream().map((ObjectId imageId) -> {
+					return in("imageIds", imageId);
+				}).toList()
+			));
+		}
+		if(hasValue(this.getHasExpired())){
+			if(this.getHasExpired()){
+				filters.add(
+					gt("stats.numExpired", 0)
+				);
+			}
+		}
+		if(hasValue(this.getHasNoExpired())){
+			if(this.getHasNoExpired()){
+				filters.add(
+					eq("stats.numExpired", 0)
+				);
+			}
+		}
+		if(hasValue(this.getHasExpiryWarn())){
+			if(this.getHasExpiryWarn()){
+				filters.add(
+					gt("stats.numExpiryWarn", 0)
+				);
+			}
+		}
+		if(hasValue(this.getHasNoExpiryWarn())){
+			if(this.getHasNoExpiryWarn()){
+				filters.add(
+					eq("stats.numExpiryWarn", 0)
+				);
+			}
+		}
+		if(hasValue(this.getHasLowStock())){
+			if(this.getHasLowStock()){
+				filters.add(
+					eq("stats.anyLowStock", true)
+				);
+			}
+		}
+		if(hasValue(this.getHasNoLowStock())){
+			if(this.getHasNoLowStock()){
+				filters.add(
+					eq("stats.anyLowStock", false)
+				);
+			}
+		}
+		if (hasValue(this.getIdentifiers())) {
+			List<Bson> typeFilterList = new ArrayList<>(this.getIdentifiers().size());
+			for (String curIdentifier : this.getIdentifiers()) {
+				typeFilterList.add(
+					eq("identifiers.value", curIdentifier)
+				);
+			}
+			filters.add(Filters.or(typeFilterList));
+		}
+
+		return filters;
+	}
+}

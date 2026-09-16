@@ -1,0 +1,14 @@
+{!
+Template for the options for a select input for units.
+
+Ingests:
+- allowedUnitsMap- Map
+<String, List
+<Unit>> the map of allowed units
+    !}
+{#for unitCategory in allUnitMap.fieldNames()}
+<optgroup label="{unitCategory}">
+	{#inputs/units/unitOptions units=allUnitMap.get(unitCategory)}
+	{/inputs/units/unitOptions}
+</optgroup>
+{/for}

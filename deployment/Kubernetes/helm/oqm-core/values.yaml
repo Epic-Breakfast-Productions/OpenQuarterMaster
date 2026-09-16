@@ -1,0 +1,9 @@
+
+# Service configs
+
+service:
+  core:
+    depot:
+      imageTag: "1.1.4-dev"
+      httpPort: 8080
+      httpsPort: 8443

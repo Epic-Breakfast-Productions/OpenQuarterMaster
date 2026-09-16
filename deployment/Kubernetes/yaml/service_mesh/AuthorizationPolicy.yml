@@ -1,0 +1,65 @@
+apiVersion: v1
+items:
+- apiVersion: security.istio.io/v1beta1
+  kind: AuthorizationPolicy
+  metadata:
+    name: allow-nothing
+    namespace: quartermaster
+  spec: {}
+- apiVersion: security.istio.io/v1beta1
+  kind: AuthorizationPolicy
+  metadata:
+    name: base-station
+    namespace: quartermaster
+  spec:
+    action: ALLOW
+    rules:
+    - to:
+      - operation:
+          methods:
+          - GET
+    selector:
+      matchLabels:
+        app: base-station
+- apiVersion: security.istio.io/v1beta1
+  kind: AuthorizationPolicy
+  metadata:
+    name: demo-plugin
+    namespace: quartermaster
+  spec:
+    action: ALLOW
+    rules:
+    - from:
+      - source:
+          principals:
+          - cluster.local/ns/quartermaster/sa/quartermaster-base
+      to:
+      - operation:
+          methods:
+          - GET
+      when:
+      - key: request.auth.claims[groups]
+        values:
+        - user
+    selector:
+      matchLabels:
+        app: demo-plugin
+- apiVersion: security.istio.io/v1beta1
+  kind: AuthorizationPolicy
+  metadata:
+    name: mongodb
+    namespace: quartermaster
+  spec:
+    action: ALLOW
+    rules:
+    - from:
+      - source:
+          principals:
+          - cluster.local/ns/quartermaster/sa/quartermaster-base
+    selector:
+      matchLabels:
+        app: mongodb
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

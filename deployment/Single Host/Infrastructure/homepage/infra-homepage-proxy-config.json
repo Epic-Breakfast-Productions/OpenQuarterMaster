@@ -1,0 +1,8 @@
+{
+	"type": "infra",
+	"name": "homepage",
+	"title": "Homepage",
+	"internalBaseUriConfig": "infra.homepage.internalBaseUri",
+	"preservePath": true,
+	"stripPrefixes": true
+}

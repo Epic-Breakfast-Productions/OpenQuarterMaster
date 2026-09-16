@@ -1,0 +1,11 @@
+<!-- Begin -->
+<div class="associatedLinkInput" {#if id?? }id="{id}"{/if}>
+	<div class="linksContainer pb-2"></div>
+	<div class="d-grid gap-2">
+		<button class="btn btn-outline-success btn-sm" type="button" onclick="AssociatedLinks.Form.addLink(AssociatedLinks.Form.getInput(this));">
+			{#icons/add /}
+			Add Link
+		</button>
+	</div>
+</div>
+<!-- end -->

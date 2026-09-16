@@ -1,0 +1,15 @@
+{
+	"_id": {
+		"$oid": "00000000aaaaaaaaaaffffff"
+	},
+	"_t": "tech.ebp.oqm.core.api.config.CoreApiInteractingEntity",
+	"attributes": {},
+	"email": " ",
+	"interactingEntityType": "CORE_API",
+	"keywords": [],
+	"name": "Core API",
+	"roles": [
+		"Yes"
+	],
+	"schemaVersion": 1
+}

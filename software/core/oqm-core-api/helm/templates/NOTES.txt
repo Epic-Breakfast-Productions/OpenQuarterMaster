@@ -1,0 +1,6 @@
+Thank you for installing {{ .Chart.Name }}; {{ .Chart.Description }}
+
+Your release is named "{{ .Release.Name }}".
+
+For issues with this chart, please let us know on our GitHub: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/issues
+For questions or discussion, also visit our GitHub: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/discussions

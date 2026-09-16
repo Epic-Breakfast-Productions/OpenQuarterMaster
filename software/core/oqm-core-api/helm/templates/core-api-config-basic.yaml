@@ -1,0 +1,11 @@
+# This configuration sets up the basics for a Kubernetes install
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Release.Name }}-oqm-core-api-config-basic
+data:
+  "quarkus.http.port": "80"
+  "quarkus.http.ssl.port": "443"
+  "quarkus.http.insecure-requests": "allow"
+  "quarkus.log.level": {{ .Values.service.core.api.logLevel | quote }}
+  "quarkus.mongodb.database": "oqm"

@@ -1,0 +1,18 @@
+{
+	"_id": {
+		"$oid": "68312c2a9c626c4e9ce642d8"
+	},
+	"_t": "tech.ebp.oqm.core.api.model.object.interactingEntity.externalService.GeneralService",
+	"attributes": {},
+	"authProvider": "https://oqm-test-ud-24-04.local/infra/keycloak/realms/oqm",
+	"description": "Service account from OIDC provider.",
+	"developerEmail": "foo@bar.com",
+	"developerName": "Developers",
+	"email": "foo@bar.com",
+	"idFromAuthProvider": "f1d0c99e-c6ed-4fe0-ad36-8c78b4c1c56d",
+	"interactingEntityType": "SERVICE_GENERAL",
+	"keywords": [],
+	"name": "service-account-oqm-base-station",
+	"roles": [],
+	"schemaVersion": 1
+}

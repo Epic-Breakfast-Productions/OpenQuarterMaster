@@ -1,0 +1,22 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPathPattern": "/isbndb/book/.*",
+    "headers": {
+      "Authorization": {
+		  "not": {
+			  "equalTo": "devKey"
+		  }
+      }
+    }
+  },
+  "response": {
+    "status": 401,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "message": "Full authentication is required to access this resource."
+    }
+  }
+}

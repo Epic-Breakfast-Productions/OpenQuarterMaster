@@ -1,0 +1,35 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: {{ .Release.Name }}-oqm-core-api
+  name: {{ .Release.Name }}-oqm-core-api
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-oqm-core-api
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-oqm-core-api
+    spec:
+      containers:
+        - image: "docker.io/ebprod/oqm-core-api:{{ default .Chart.AppVersion .Values.service.core.api.imageTag }}"
+          name: {{ .Release.Name }}-oqm-core-api
+          resources: {}
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+          env:
+            - name: "QUARKUS_MONGODB_CONNECTION_STRING"
+              valueFrom:
+                secretKeyRef:
+                  name: {{ .Release.Name }}-oqm-core-api-mongo-{{.Values.mongo.database}}-oqm-core-api-user #<metadata.name>-<auth-db>-<username> # test-api-oqm-core-api-mongo-config?
+                  key: connectionString.standardSrv
+            - name: "QUARKUS_MONGODB_DATABASE"
+              value: {{.Values.mongo.database}}

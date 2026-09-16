@@ -1,0 +1,346 @@
+{
+  "files": [
+    "README.md"
+  ],
+  "imageSize": 100,
+  "commit": false,
+  "contributors": [
+    {
+      "login": "GregJohnStewart",
+      "name": "Greg Stewart",
+      "avatar_url": "https://avatars.githubusercontent.com/u/7083701?v=4",
+      "profile": "http://gjstewart.net",
+      "contributions": [
+        "bug",
+        "business",
+        "code",
+        "content",
+        "data",
+        "doc",
+        "design",
+        "ideas",
+        "infra",
+        "maintenance",
+        "projectManagement",
+        "tool",
+        "test"
+      ]
+    },
+    {
+      "login": "anixon-rh",
+      "name": "Anthony Nixon",
+      "avatar_url": "https://avatars.githubusercontent.com/u/55244503?v=4",
+      "profile": "https://github.com/anixon-rh",
+      "contributions": [
+        "infra",
+        "mentoring"
+      ]
+    },
+    {
+      "login": "kfrankli",
+      "name": "kfrankli",
+      "avatar_url": "https://avatars.githubusercontent.com/u/3671139?v=4",
+      "profile": "https://github.com/kfrankli",
+      "contributions": [
+        "doc"
+      ]
+    },
+    {
+      "login": "ajoline",
+      "name": "ajoline",
+      "avatar_url": "https://avatars.githubusercontent.com/u/80230444?v=4",
+      "profile": "https://github.com/ajoline",
+      "contributions": [
+        "mentoring",
+        "review",
+        "security"
+      ]
+    },
+    {
+      "login": "piercde12",
+      "name": "piercde12",
+      "avatar_url": "https://avatars.githubusercontent.com/u/132835358?v=4",
+      "profile": "https://github.com/piercde12",
+      "contributions": [
+        "business",
+        "content",
+        "doc",
+        "design",
+        "test",
+        "userTesting"
+      ]
+    },
+    {
+      "login": "kyleclarktech",
+      "name": "Kyle Clark",
+      "avatar_url": "https://avatars.githubusercontent.com/u/86199883?v=4",
+      "profile": "https://github.com/kyleclarktech",
+      "contributions": [
+        "content",
+        "ideas",
+        "mentoring",
+        "review",
+        "security",
+        "test",
+        "userTesting"
+      ]
+    },
+    {
+      "login": "DanielKrejska",
+      "name": "DanielKrejska",
+      "avatar_url": "https://avatars.githubusercontent.com/u/44409727?v=4",
+      "profile": "https://github.com/DanielKrejska",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "LouisBarbier",
+      "name": "LouisBarbier",
+      "avatar_url": "https://avatars.githubusercontent.com/u/116147989?v=4",
+      "profile": "https://github.com/LouisBarbier",
+      "contributions": [
+        "content",
+        "projectManagement"
+      ]
+    },
+    {
+      "login": "BrendanAndrews",
+      "name": "Brendan Andrews",
+      "avatar_url": "https://avatars.githubusercontent.com/u/113378507?v=4",
+      "profile": "https://github.com/BrendanAndrews",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "Spitzer-Tech",
+      "name": "Spitzer-Tech",
+      "avatar_url": "https://avatars.githubusercontent.com/u/37207444?v=4",
+      "profile": "https://github.com/Spitzer-Tech",
+      "contributions": [
+        "bug",
+        "design",
+        "example",
+        "financial",
+        "test",
+        "userTesting",
+        "ideas"
+      ]
+    },
+    {
+      "login": "steve-dill",
+      "name": "steve-dill",
+      "avatar_url": "https://avatars.githubusercontent.com/u/175041555?v=4",
+      "profile": "https://github.com/steve-dill",
+      "contributions": [
+        "bug",
+        "code",
+        "ideas",
+        "infra",
+        "mentoring",
+        "tool",
+        "userTesting",
+        "maintenance",
+        "review",
+        "test"
+      ]
+    },
+    {
+      "login": "mulliar22",
+      "name": "mulliar22",
+      "avatar_url": "https://avatars.githubusercontent.com/u/168582625?v=4",
+      "profile": "https://github.com/mulliar22",
+      "contributions": [
+        "code",
+        "data",
+        "doc",
+        "example",
+        "plugin",
+        "research"
+      ]
+    },
+    {
+      "login": "mallom21",
+      "name": "mallom21",
+      "avatar_url": "https://avatars.githubusercontent.com/u/113387289?v=4",
+      "profile": "https://github.com/mallom21",
+      "contributions": [
+        "code",
+        "data",
+        "doc",
+        "example",
+        "plugin",
+        "research",
+        "projectManagement"
+      ]
+    },
+    {
+      "login": "Coletrane315",
+      "name": "Coletrane315",
+      "avatar_url": "https://avatars.githubusercontent.com/u/52933325?v=4",
+      "profile": "https://github.com/Coletrane315",
+      "contributions": [
+        "code",
+        "data",
+        "doc",
+        "example",
+        "plugin",
+        "research"
+      ]
+    },
+    {
+      "login": "simonramsey0",
+      "name": "Simon Ramsey",
+      "avatar_url": "https://avatars.githubusercontent.com/u/149826099?v=4",
+      "profile": "https://github.com/simonramsey0",
+      "contributions": [
+        "code",
+        "content",
+        "plugin",
+        "research"
+      ]
+    },
+    {
+      "login": "RaimonAbreu007",
+      "name": "RaimonAbreu007",
+      "avatar_url": "https://avatars.githubusercontent.com/u/199864098?v=4",
+      "profile": "https://github.com/RaimonAbreu007",
+      "contributions": [
+        "code",
+        "content",
+        "plugin",
+        "research",
+        "projectManagement"
+      ]
+    },
+    {
+      "login": "Maxf653",
+      "name": "Max",
+      "avatar_url": "https://avatars.githubusercontent.com/u/189031501?v=4",
+      "profile": "https://github.com/Maxf653",
+      "contributions": [
+        "content",
+        "plugin",
+        "research"
+      ]
+    },
+    {
+      "login": "thederpylama",
+      "name": "Ian Lauver",
+      "avatar_url": "https://avatars.githubusercontent.com/u/35352055?v=4",
+      "profile": "https://github.com/thederpylama",
+      "contributions": [
+        "code",
+        "content",
+        "plugin",
+        "research"
+      ]
+    },
+    {
+      "login": "CircuitSide",
+      "name": "CircuitSide",
+      "avatar_url": "https://avatars.githubusercontent.com/u/114544677?v=4",
+      "profile": "https://github.com/CircuitSide",
+      "contributions": [
+        "bug",
+        "business",
+        "code",
+        "content",
+        "data",
+        "doc",
+        "design",
+        "ideas",
+        "promotion",
+        "research",
+        "review",
+        "test",
+        "userTesting"
+      ]
+    },
+    {
+      "login": "axgiri",
+      "name": "Aidyn A.",
+      "avatar_url": "https://avatars.githubusercontent.com/u/146159445?v=4",
+      "profile": "http://cv.axgiri.tech",
+      "contributions": [
+        "code",
+        "maintenance",
+        "plugin",
+        "review",
+        "test",
+        "research"
+      ]
+    },
+    {
+      "login": "SanchitPanchwatikar",
+      "name": "Sanchit Panchwatikar",
+      "avatar_url": "https://avatars.githubusercontent.com/u/8617042?v=4",
+      "profile": "https://github.com/SanchitPanchwatikar",
+      "contributions": [
+        "code"
+      ]
+    },
+    {
+      "login": "jasecolino",
+      "name": "Jase Colino",
+      "avatar_url": "https://avatars.githubusercontent.com/u/144267432?v=4",
+      "profile": "https://github.com/jasecolino",
+      "contributions": [
+        "code",
+        "design",
+        "research"
+      ]
+    },
+    {
+      "login": "kyleighpea123",
+      "name": "kyleighpea123",
+      "avatar_url": "https://avatars.githubusercontent.com/u/243836400?v=4",
+      "profile": "https://github.com/kyleighpea123",
+      "contributions": [
+        "code",
+        "design",
+        "research"
+      ]
+    },
+    {
+      "login": "elsamlt",
+      "name": "elsamlt",
+      "avatar_url": "https://avatars.githubusercontent.com/u/185091248?v=4",
+      "profile": "https://github.com/elsamlt",
+      "contributions": [
+        "code",
+        "design",
+        "research"
+      ]
+    },
+    {
+      "login": "JakeElston",
+      "name": "Jake Elston",
+      "avatar_url": "https://avatars.githubusercontent.com/u/144830849?v=4",
+      "profile": "https://github.com/JakeElston",
+      "contributions": [
+        "code",
+        "design",
+        "research"
+      ]
+    },
+    {
+      "login": "hongshengy",
+      "name": "hongshengy",
+      "avatar_url": "https://avatars.githubusercontent.com/u/23276040?v=4",
+      "profile": "https://github.com/hongshengy",
+      "contributions": [
+        "security"
+      ]
+    }
+  ],
+  "contributorsPerLine": 7,
+  "projectName": "OpenQuarterMaster",
+  "projectOwner": "Epic-Breakfast-Productions",
+  "repoType": "github",
+  "repoHost": "https://github.com",
+  "skipCi": true,
+  "commitConvention": "angular",
+  "commitType": "docs"
+}

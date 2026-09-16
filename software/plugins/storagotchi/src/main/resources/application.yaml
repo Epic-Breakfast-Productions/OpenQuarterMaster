@@ -1,0 +1,48 @@
+runningInfo:
+  homeUrl: "#"
+
+quarkus:
+  http:
+    port: 80
+    ssl-port: 443
+    auth:
+      proactive: false
+      permission:
+        logout:
+          paths: ${quarkus.oidc.logout.path}
+          policy: authenticated
+  container-image:
+    name: oqm-plugin-storagotchi
+    group: ebprod
+  datasource:
+    db-kind: postgresql
+  
+  oidc:
+    application-type: hybrid
+    token-state-manager:
+      split-tokens: true
+    logout:
+      path: /logout
+      post-logout-path: /
+  keycloak:
+    devservices:
+      port: 9328
+      realm-path: "dev/oqm-realm.json"
+      realm-name: oqm
+
+smallrye:
+  jwt:
+    always-check-authorization: true
+
+"%dev":
+  quarkus:
+    http:
+      port: 8080
+      ssl-port: 8443
+    log:
+      level: DEBUG
+    oidc:
+      # TODO:: remove when https://github.com/quarkusio/quarkus/issues/47581
+      client-id: oqm-app
+      credentials:
+        secret: "**********"

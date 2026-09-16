@@ -1,0 +1,83 @@
+package tech.ebp.oqm.plugin.extItemSearch.interfaces;
+
+import io.smallrye.mutiny.Multi;
+import jakarta.annotation.security.PermitAll;
+import jakarta.enterprise.context.RequestScoped;
+import jakarta.inject.Inject;
+import jakarta.validation.Valid;
+import jakarta.ws.rs.BeanParam;
+import jakarta.ws.rs.GET;
+import jakarta.ws.rs.Path;
+import jakarta.ws.rs.Produces;
+import jakarta.ws.rs.core.MediaType;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
+import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import org.eclipse.microprofile.openapi.annotations.tags.Tags;
+import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemSearch;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.service.ExtItemLookupService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
+
+import java.util.List;
+import java.util.Map;
+
+@Slf4j
+@Path("/api/v1")
+@Tags({@Tag(name = "External Item Lookup", description = "Endpoints for searching for items from other places.")})
+@RequestScoped
+public class ItemLookupRestInterface {
+
+	@Inject
+	ExtItemLookupService productLookupService;
+	
+	@GET
+	@Path("/info/providers")
+	@Operation(
+		summary = "Gets all supported providers."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Image retrieved."
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public List<ExtItemLookupProviderInfo> allProviderInfo() {
+		return this.productLookupService.getProductProviderInfo();
+	}
+	
+	@GET
+	@Path("/info/methods")
+	@Operation(
+		summary = "Gets all search methods currently enabled."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Image retrieved."
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Map<LookupMethod, List<LookupService>> availableMethods() {
+		return this.productLookupService.getAvailableSearchMethods();
+	}
+	
+	@GET
+	@Path("/search")
+	@Operation(
+		summary = "Searches."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Image retrieved."
+	)
+	@PermitAll
+	@Produces(MediaType.APPLICATION_JSON)
+	public Multi<LookupResult> search(@Valid @BeanParam ExtItemSearch search) {
+		log.debug("Search parameters: {}", search);
+		return this.productLookupService.search(search);
+	}
+
+}

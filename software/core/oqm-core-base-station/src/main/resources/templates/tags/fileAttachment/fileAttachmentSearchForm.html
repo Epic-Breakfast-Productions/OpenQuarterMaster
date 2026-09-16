@@ -1,0 +1,16 @@
+{!
+Template for the search form for storage blocks
+
+Ingests:
+- id - the id to give the form
+!}
+{!{@tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch searchObject}!}
+{#include tags/search/searchForm id=id action='/items' showKeywords=true showAttributes=true defaultPageSize=config:['ui.fileAttachment.search.defaultPageSize']}
+{#inputs}
+{!<div class="mb-3 col col-3">!}
+    {!<label for="{id}-itemNameInput" class="form-label">Name</label>!}
+    {!<input type="text" class="form-control" name="name" id="{id}-itemNameInput" aria-describedby="{id}-itemNameInputHelp" value="">!}
+    {!<div id="{id}-itemNameInputHelp" class="form-text">The name of the item to find.</div>!}
+{!</div>!}
+{/inputs}
+{/include}

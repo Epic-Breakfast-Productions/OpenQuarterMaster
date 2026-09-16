@@ -1,0 +1,12 @@
+{
+	"packageName":"oqm-plugin-cloud+context",
+	"description":"MSS Controller Plugin for Open QuarterMaster.",
+	"homepage":"https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/mss-controller-plugin",
+	"configs": [
+	],
+	"dependencies": {
+		"deb": ", oqm-manager-station+captain"
+	},
+	"files":{
+	}
+}

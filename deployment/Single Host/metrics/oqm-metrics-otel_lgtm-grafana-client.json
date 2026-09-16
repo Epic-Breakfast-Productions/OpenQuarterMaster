@@ -1,0 +1,12 @@
+{
+	"service": "oqm-metrics-otel_lgtm-grafana",
+	"roles": [],
+	"clients": [
+		{
+			"clientId": "oqm-metrics-otel_lgtm-grafana",
+			"displayName": "OQM Grafana Client",
+			"description": "The client for OQM's Grafana component.",
+			"roles": []
+		}
+	]
+}

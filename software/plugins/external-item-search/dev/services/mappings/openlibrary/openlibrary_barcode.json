@@ -1,0 +1,53 @@
+{
+  "request": {
+    "urlPath": "/openlibrary/search.json",
+    "method": "GET",
+    "queryParameters": {
+      "q": {
+        "equalTo": "1501752014"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 5000,
+      "sigma": 0.4
+    },
+    "jsonBody": {
+      "numFound": 1,
+      "start": 0,
+      "numFoundExact": true,
+      "num_found": 1,
+      "documentation_url": "https://openlibrary.org/dev/docs/api/search",
+      "q": " 1501752014",
+      "offset": null,
+      "docs": [
+        {
+          "author_key": [
+            "OL2903603A"
+          ],
+          "author_name": [
+            "Sarah Cameron"
+          ],
+          "cover_edition_key": "OL29502600M",
+          "cover_i": 14207786,
+          "ebook_access": "no_ebook",
+          "edition_count": 2,
+          "first_publish_year": 2018,
+          "has_fulltext": false,
+          "key": "/works/OL21185923W",
+          "language": [
+            "eng"
+          ],
+          "public_scan_b": false,
+          "title": "Hungry Steppe"
+        }
+      ]
+    }
+  }
+}

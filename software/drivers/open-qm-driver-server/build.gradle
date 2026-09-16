@@ -1,0 +1,72 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+    id "io.freefair.lombok" version "9.1.0"
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-config-yaml'
+    implementation 'io.quarkus:quarkus-smallrye-health'
+    implementation 'io.quarkus:quarkus-resteasy-reactive'
+    implementation 'io.quarkus:quarkus-resteasy-reactive-jackson'
+    implementation 'io.quarkus:quarkus-hibernate-validator'
+    implementation 'io.quarkus:quarkus-arc'
+    implementation 'io.quarkus:quarkus-smallrye-openapi'
+    implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
+    implementation 'io.quarkus:quarkus-container-image-jib'
+
+    implementation 'com.ebp.openQuarterMaster.lib:open-qm-lib-driver:1.+'
+    implementation 'com.fazecast:jSerialComm:2.9.2'
+
+    testImplementation 'io.quarkiverse.cucumber:quarkus-cucumber:0.6.0'
+    testImplementation group: 'io.quarkus', name: 'quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
+}
+
+group 'com.ebp.openQuarterMaster'
+version '1.0.1-SNAPSHOT'
+
+java {
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+//tasks.withType(Test) {
+//    // Configuration for all test tasks
+//    //makes the standard streams (err and out) visible at console when running tests
+//    testLogging {
+//        displayGranularity -1
+//        minGranularity -1
+//        maxGranularity -1
+//        showStandardStreams true
+//        showStackTraces true
+//        showExceptions true
+//        showCauses true
+//        exceptionFormat "full"
+//        stackTraceFilters "truncate", "groovy"
+//        events "passed", "failed", "skipped"
+//    }
+//
+//    reports {
+//        junitXml.outputPerTestCase = true
+//    }
+//}

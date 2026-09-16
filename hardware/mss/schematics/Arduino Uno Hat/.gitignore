@@ -1,0 +1,5 @@
+Arduino Uno Hat-backups/
+fp-info-cache
+fp-lib-table
+~*.lck
+outputs/fab/

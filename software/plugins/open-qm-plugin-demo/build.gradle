@@ -1,0 +1,70 @@
+plugins {
+    id 'java'
+    id 'io.quarkus'
+    id "io.freefair.lombok" version "9.1.0"
+}
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+    //for getting OQM Library snapshot versions
+    maven({url= "https://s01.oss.sonatype.org/content/repositories/snapshots/"})
+}
+
+dependencies {
+    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+    implementation 'io.quarkus:quarkus-config-yaml'
+    implementation 'io.quarkus:quarkus-arc'
+    implementation 'io.quarkus:quarkus-resteasy'
+    implementation 'io.quarkus:quarkus-resteasy-jackson'
+    implementation 'io.quarkus:quarkus-smallrye-openapi'
+    implementation 'io.quarkus:quarkus-smallrye-health'
+    implementation 'io.quarkus:quarkus-micrometer-registry-prometheus'
+    implementation 'io.quarkus:quarkus-smallrye-opentracing'
+    implementation 'io.quarkus:quarkus-container-image-jib'
+    implementation 'io.quarkus:quarkus-rest-client'
+    implementation 'io.quarkus:quarkus-rest-client-jackson'
+    implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
+
+    implementation 'io.quarkus:quarkus-mongodb-panache'
+    implementation 'io.opentracing.contrib:opentracing-mongo-common'
+
+    implementation 'tech.epic-breakfast-productions.openQuarterMaster.lib:open-qm-lib-core:1.0.61'
+
+    testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.rest-assured:rest-assured'
+
+
+    testImplementation 'net.datafaker:datafaker:2.3.0'
+}
+
+group 'com.ebp.openQuarterMaster'
+version '0.0.1'
+
+java {
+    java {
+        toolchain {
+            languageVersion.set(JavaLanguageVersion.of(17))
+        }
+    }
+}
+
+compileJava {
+    options.encoding = 'UTF-8'
+    options.compilerArgs << '-parameters'
+}
+
+compileTestJava {
+    options.encoding = 'UTF-8'
+}
+
+/**
+ * Used to print the current version of this project.
+ *
+ * Used by the `makeInstallers.sh` script to get the version.
+ */
+tasks.register('printVersion') {
+    doLast {
+        println project.version
+    }
+}

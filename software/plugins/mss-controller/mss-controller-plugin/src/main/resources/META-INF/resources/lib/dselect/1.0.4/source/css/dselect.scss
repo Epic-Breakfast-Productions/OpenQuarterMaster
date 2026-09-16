@@ -1,0 +1,203 @@
+@import "../../node_modules/bootstrap/scss/functions";
+// @import "your-custom-variables";
+@import "../../node_modules/bootstrap/scss/variables";
+@import "../../node_modules/bootstrap/scss/mixins";
+
+$dselect-clear-icon-width: .625rem;
+
+.dselect-wrapper {
+
+  // Toggler
+  .form-select {
+    padding-left: $form-select-padding-x;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: .25rem;
+    text-align: left;
+    &.show { // ref: form-select:focus
+      border-color: $form-select-focus-border-color;
+      outline: 0;
+      @if $enable-shadows {
+        @include box-shadow($form-select-box-shadow, $form-select-focus-box-shadow);
+      } @else {
+        // Avoid using mixin so we can pass custom focus shadow properly
+        box-shadow: $form-select-focus-box-shadow;
+      }
+    }
+    &.dselect-clearable {
+      padding-right: add($form-select-indicator-padding + ($form-select-padding-x / 2), $dselect-clear-icon-width);
+    }
+    &.form-select-sm {
+      padding-left: $form-select-padding-x-sm;
+      &.dselect-clearable {
+        padding-right: add($form-select-indicator-padding + ($form-select-padding-x-sm / 2), $dselect-clear-icon-width);
+      }
+    }
+    &.form-select-lg {
+      padding-left: $form-select-padding-x-lg;
+      &.dselect-clearable {
+        padding-right: add($form-select-indicator-padding + ($form-select-padding-x-lg / 2), $dselect-clear-icon-width);
+      }
+    }
+  }
+
+  // Menu
+  .dropdown-menu {
+    padding: $form-select-padding-x / 2;
+    width: 100%;
+    > .flex-column {
+      gap:$form-select-padding-x / 2;
+    }
+  }
+  .form-select-sm + .dropdown-menu {
+    padding: $form-select-padding-x-sm / 2;
+    @include font-size($form-select-font-size-sm);
+  }
+  .form-select-lg + .dropdown-menu {
+    padding: $form-select-padding-x-lg / 2;
+    @include font-size($form-select-font-size-lg);
+  }
+
+  // Item
+  .dropdown-item,
+  .dropdown-header {
+    padding-left: $form-select-padding-x / 2;
+    padding-right: $form-select-padding-x / 2;
+  }
+  .form-select-sm + .dropdown-menu .dropdown-item,
+  .form-select-sm + .dropdown-menu .dropdown-header {
+    padding-left: $form-select-padding-x-sm / 2;
+    padding-right: $form-select-padding-x-sm / 2;
+  }
+  .form-select-lg + .dropdown-menu .dropdown-item,
+  .form-select-lg + .dropdown-menu .dropdown-header {
+    padding-left: $form-select-padding-x-lg / 2;
+    padding-right: $form-select-padding-x-lg / 2;
+  }
+
+  // Search input
+  .form-control {
+    border-radius: 0;
+    box-shadow: none !important;
+    border-color: $input-border-color !important;
+    padding: $dropdown-item-padding-y subtract($form-select-padding-x / 2, $input-border-width);
+    font-size: inherit;
+  }
+  .form-select-sm + .dropdown-menu .form-control {
+    padding: subtract($dropdown-item-padding-y, 1px) subtract($form-select-padding-x-sm / 2, $input-border-width);
+  }
+  .form-select-lg + .dropdown-menu .form-control {
+    padding: $dropdown-item-padding-y subtract($form-select-padding-x-lg / 2, $input-border-width);
+  }
+
+  // No results
+  .dselect-no-results {
+    padding: $dropdown-item-padding-y $form-select-padding-x / 2;
+  }
+  .form-select-sm + .dropdown-menu .dselect-no-results {
+    padding: subtract($dropdown-item-padding-y, 1px) $form-select-padding-x-sm / 2;
+  }
+  .form-select-lg + .dropdown-menu .dselect-no-results {
+    padding: $dropdown-item-padding-y $form-select-padding-x-lg / 2;
+  }
+
+  // Tag
+  .dselect-tag {
+    background-color: $secondary;
+    color: $light;
+    padding-left: add(.5rem, 14px);
+    padding-right: .5rem;
+    border-radius: $border-radius;
+    height: calc(#{$form-select-line-height} * #{$font-size-base});
+    line-height: calc((#{$form-select-line-height} * #{$font-size-base}) - 1px);
+    position: relative;
+  }
+  .form-select-sm .dselect-tag {
+    height: auto;
+    line-height: inherit;
+  }
+  .form-select-lg .dselect-tag {
+    height: calc(#{$form-select-line-height} * #{$font-size-lg});
+    line-height: calc(#{$form-select-line-height} * #{$font-size-lg});
+  }
+  .dselect-tag-remove {
+    position: absolute;
+    left: .25rem;
+    top: 50%;
+    margin-top: -7px;
+    color: rgba($light, .35);
+    @include transition(color .15s ease-in-out);
+    &:hover {
+      color: $light;
+    }
+  }
+
+  // Placeholder
+  .dselect-placeholder {
+    color: $input-placeholder-color;
+  }
+
+  // Optgroups
+  .dropdown-header ~ .dropdown-item {
+    padding-left: $form-select-padding-x;
+    padding-right: $form-select-padding-x;
+  }
+  .form-select-sm + .dropdown-menu .dropdown-header {
+    font-size: .85em;
+    ~ .dropdown-item {
+      padding-left: $form-select-padding-x-sm;
+      padding-right: $form-select-padding-x-sm;
+    }
+  }
+  .form-select-lg + .dropdown-menu .dropdown-header {
+    font-size: .85em;
+    ~ .dropdown-item {
+      padding-left: $form-select-padding-x-lg;
+      padding-right: $form-select-padding-x-lg;
+    }
+  }
+
+  // Clear
+  .dselect-clear {
+    position: absolute;
+    padding: 0;
+    border: 0;
+    box-shadow: none;
+    top: 0;
+    bottom: 0;
+    right: $form-select-indicator-padding;
+    display: flex;
+    align-items: center;
+    color: $text-muted;
+    cursor: pointer;
+    &:hover {
+      color: inherit;
+    }
+    svg {
+      width: $dselect-clear-icon-width;
+      height: $dselect-clear-icon-width;
+    }
+  }
+  [data-dselect-text=""] ~ .dselect-clear {
+    display: none;
+  }
+
+  // Validation
+  .was-validated .form-select:invalid + & .form-select,
+  .form-select.is-invalid + & .form-select {
+    border-color: $form-feedback-invalid-color;
+    &.show,
+    &:focus {
+      box-shadow: 0 0 $input-btn-focus-blur $input-focus-width rgba($form-feedback-invalid-color, $input-btn-focus-color-opacity);
+    }
+  }
+  .was-validated .form-select:valid + & .form-select,
+  .form-select.is-valid + & .form-select {
+    border-color: $form-feedback-valid-color;
+    &.show,
+    &:focus {
+      box-shadow: 0 0 $input-btn-focus-blur $input-focus-width rgba($form-feedback-valid-color, $input-btn-focus-color-opacity);
+    }
+  }
+}

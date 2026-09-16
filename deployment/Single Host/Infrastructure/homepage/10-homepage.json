@@ -1,0 +1,21 @@
+{
+	"infra": {
+		"homepage": {
+			"host": "oqm-infra-homepage",
+			"httpPort": "3000",
+			"httpsPort": "443",
+			"internalBaseUri": "http://#{infra.homepage.host}:#{infra.homepage.httpPort}",
+			"externalBaseUri": "#{infra.traefik.externalRootUri}",
+			"customization": {
+				"title": "Open QuarterMaster",
+				"description": "The homepage for Open QuarterMaster. Use this page to get to where you need to go within the system.",
+				"searchProvider": "duckduckgo",
+				"color": "slate",
+				"widgets": {
+					"resources": true,
+					"search": true
+				}
+			}
+		}
+	}
+}

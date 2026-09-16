@@ -1,0 +1,24 @@
+[Desktop Entry]
+##  The name of the application ##
+Name=Station Captain User Guide - OQM
+GenericName=Station Captain User Guide - OQM
+ 
+## A comment which act as a tooltip ##
+Comment=User guide for Open QuarterMaster station captain.
+ 
+## The executable of the application with optional args ##
+## You can state full path too ##
+Exec=xdg-open /usr/share/doc/oqm/stationCaptainUserGuide.html
+ 
+## State the name of the icon that will be used to display this entry ##
+Icon=/etc/oqm/static/media/sc/oqm-sc-guide-icon.svg
+ 
+## Is it a terminal app? For example htop will be set as Terminal=True ##
+## Then default terminal app will be used to open the 'htop' ##
+Terminal=false
+ 
+##  The type as listed  ##
+Type=Application
+ 
+## States the categories in which this entry should be shown menu ##
+Categories=System, Documentation

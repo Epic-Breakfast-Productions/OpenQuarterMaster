@@ -1,0 +1,16 @@
+{
+   "type": "Core",
+   "order": 0,
+   "id": "oqm-core-base_station",
+   "name": "Base Station",
+   "description": "The Main UI for Open QuarterMaster. If you are unsure where to start, start here!",
+  "url": "http://foo",
+   "urlConfigKey": "core.baseStation.externalBaseUri",
+   "icon": "/data/uis/ebp.png",
+   "monitorEndpoint": "/q/health",
+   "endpoints": {
+      "item": {
+         "view": "/items?item={item}"
+      }
+   }
+}

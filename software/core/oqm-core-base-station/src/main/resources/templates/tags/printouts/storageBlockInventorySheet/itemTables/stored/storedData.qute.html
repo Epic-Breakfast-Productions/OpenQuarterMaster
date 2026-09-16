@@ -1,0 +1,36 @@
+
+{#if storageType == 'AMOUNT_LIST' || storageType == 'UNIQUE_MULTI'}
+<td>
+	{stored.get("labelText").asText()}
+</td>
+{/if}
+
+{#if storageType == 'BULK' || storageType == 'AMOUNT_LIST'}
+	<td>
+		{stored.get("amount").get("value").asInt()}{stored.get("amount").get("unit").get("symbol").asText()}
+	</td>
+{/if}
+
+{#if options.includeConditionCol}
+	<td>
+		{#if stored??}
+			{#if !stored.get("condition").isNull()}
+				{stored.get("condition").asText()}%
+			{/if}
+		{/if}
+	</td>
+	<td>
+		{#if stored??}
+			{#if !stored.get("conditionNotes").isNull()}
+				{stored.get("conditionNotes").asText()}
+			{/if}
+		{/if}
+	</td>
+{/if}
+<td>
+	{#if stored??}
+		{#if !stored.get("expires").isNull()}
+			{cdi:DateTimeService.formatForUi(stored.get("expires").asText())}
+		{/if}
+	{/if}
+</td>

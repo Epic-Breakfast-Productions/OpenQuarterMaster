@@ -1,0 +1,62 @@
+{
+	"_id": {
+		"$oid": "684635d2816a8b5f668c7c44"
+	},
+	"storedType_mongo": "tech.ebp.oqm.core.api.model.object.storage.items.TrackedItem",
+	"attachedFiles": [],
+	"attributes": {},
+	"barcode": "",
+	"categories": [],
+	"defaultValue": {
+		"$numberDecimal": "0"
+	},
+	"description": "",
+	"expiryWarningThreshold": "0.0",
+	"imageIds": [],
+	"keywords": [],
+	"name": "Test item 3",
+	"notificationStatus": {
+		"lowStock": false
+	},
+	"numExpired": 0,
+	"numExpiryWarn": 0,
+	"numLowStock": 0,
+	"schemaVersion": 1,
+	"storageMap": {
+		"683149f38d98ce4f7f8a5820": {
+			"empty": false,
+			"notificationStatus": {
+				"lowStock": false
+			},
+			"numExpired": 0,
+			"numExpiryWarned": 0,
+			"numStored": 1,
+			"stored": {
+				"1234": {
+					"_id": "a001e2a4-c3e2-4b4b-870e-8d0adf97c961",
+					"_t": "tech.ebp.oqm.core.api.model.object.storage.items.stored.TrackedStored",
+					"attributes": {},
+					"barcode": "",
+					"conditionNotes": "",
+					"identifier": "1234",
+					"identifyingDetails": "",
+					"imageIds": [],
+					"keywords": [],
+					"labelText": "1234",
+					"notificationStatus": {
+						"expired": false,
+						"expiredWarning": false
+					},
+					"storedType": "TRACKED"
+				}
+			},
+			"total": "{\"unit\":{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"},\"scale\":\"ABSOLUTE\",\"value\":1}"
+		}
+	},
+	"storageType": "TRACKED",
+	"total": "{\"unit\":{\"string\":\"units\",\"name\":\"Units\",\"symbol\":\"units\"},\"scale\":\"ABSOLUTE\",\"value\":1}",
+	"trackedItemIdentifierName": "UID",
+	"valueOfStored": {
+		"$numberDecimal": "0.0"
+	}
+}

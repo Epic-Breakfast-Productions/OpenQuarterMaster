@@ -1,0 +1,90 @@
+# Service file for running an instance of the MSS Controller plugin.
+#  Author: Greg Stewart
+#  https://www.freedesktop.org/software/systemd/man/systemd.service.html
+#
+#  MSS Controller tags: https://hub.docker.com/repository/docker/ebprod/oqm-plugin-mss-controller/general
+#
+#
+
+[Unit]
+Description=MSS Controller Plugin server for Open Quartermaster. Version ${version}.
+Documentation=https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/Plugins/mss-controller-plugin
+After=docker.service
+Wants=network-online.target
+Requires=docker.socket
+Requires=open\x2bquarter\x2bmaster\x2dcore\x2dbase\x2bstation.service
+
+[Service]
+Type=simple
+Restart=always
+TimeoutSec=5m
+# setup operating variables
+Environment="CONTAINER_NAME=oqm_plugin_mss_controller"
+Environment="IMAGE_NAME=ebprod/oqm-plugin-mss-controller"
+Environment="IMAGE_VERSION=${version}"
+Environment="MAIN_CONFIG_FILE_TEMPLATE=/etc/oqm/serviceConfig/plugin/mss-controller/plugin-mss-controller-config.list"
+Environment="MAIN_CONFIG_FILE=/tmp/oqm/serviceConfig/plugins/mss-controller/env.list"
+
+# TODO:: stopped here
+ExecStartPre=/bin/bash -c "oqm-captain --ensure-container-setup"
+# Ensure previous runs gone
+ExecStartPre=/bin/bash -c "/usr/bin/docker stop -t 10 $CONTAINER_NAME || echo \"Could not stop $CONTAINER_NAME container\""
+ExecStartPre=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo \"Could not remove $CONTAINER_NAME container\""
+# Create filled out configuration
+ExecStartPre=/bin/bash -c "mkdir -p $(dirname $MAIN_CONFIG_FILE)"
+ExecStartPre=/bin/bash -c "/usr/bin/oqm-config -t $MAIN_CONFIG_FILE_TEMPLATE > $MAIN_CONFIG_FILE"
+ExecStartPre=/bin/bash -c "chmod 600 $MAIN_CONFIG_FILE"
+# Pull image as separate task
+ExecStartPre=/bin/bash -c "/usr/bin/docker pull $IMAGE_NAME:$IMAGE_VERSION || echo 'Could not pull image.'"
+ExecStart=/bin/bash -c "/usr/bin/docker run \
+                                 --name $CONTAINER_NAME \
+                                 --add-host host.docker.internal:host-gateway \
+                                 --network=oqm-internal \
+                                 -p $(oqm-config -g plugins.mss-controller.port):80 \
+                                 --env-file $MAIN_CONFIG_FILE \
+                                 $IMAGE_NAME:$IMAGE_VERSION"
+#  --proxy edge --hostname-path=/infra/keycloak/
+
+# Ensure is up
+
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            while [ \"$running\" != \"true\" ]; do \
+                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME 2> /dev/null)\"; \
+                                if [ \"$status\" == \"true\" ]; then \
+                                    echo \"Container running!\"; \
+                                    running=\"true\"; \
+                                    continue; \
+                                fi; \
+                                sleep 0.05s; \
+                                if [ $SECONDS -gt 30 ]; then \
+                                    echo \"Container not running after 30 seconds!\"; \
+                                    exit 1; \
+                                fi; \
+                            done; \
+                            "
+ExecStartPost=/bin/bash -c "running=\"false\"; \
+                            sleep 10s; \
+                            servicePort=$(oqm-config -g 'infra.keycloak.port'); \
+                            while [ \"$running\" != \"true\" ]; do \
+                                sleep 1s; \
+                                status=\"$(docker container inspect -f '{{.State.Running}}' $CONTAINER_NAME)\"; \
+                                if [ \"$status\" != \"true\" ]; then \
+                                    echo \"Container was stopped!\"; \
+                                    exit 1; \
+                                fi; \
+                                hcGet=\"$(/usr/bin/curl -k \"http://localhost:8115/health\")\"; \
+                                echo \"Health check get: $hcGet\"; \
+                                status=\"$(jq --argjson hcGet \"$hcGet\" -nr '$hcGet.status')\"; \
+                                echo \"Status: $status\"; \
+                                if [ \"$status\" = \"UP\" ]; then \
+                                    echo \"Keycloak running and available!\"; \
+                                    running=\"true\"; \
+                                fi; \
+                            done; \
+                            "
+
+ExecStop=/bin/bash -c "stop -t 10 $CONTAINER_NAME || echo 'Could not stop $CONTAINER_NAME container'"
+ExecStopPost=/bin/bash -c "/usr/bin/docker rm $CONTAINER_NAME || echo 'Could not remove $CONTAINER_NAME container'"
+
+[Install]
+WantedBy=multi-user.target

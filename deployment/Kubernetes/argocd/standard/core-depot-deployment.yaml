@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: oqm-core-depot
+  name: oqm-core-depot
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: oqm-core-depot
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: oqm-core-depot
+    spec:
+      containers:
+        - image: docker.io/ebprod/oqm-core-depot:1.1.4-dev
+          name: oqm-core-depot
+          resources: {}

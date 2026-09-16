@@ -1,0 +1,25 @@
+{#if item.get("stats").get("anyLowStock").asBoolean()}
+	<span class="badge rounded-pill text-bg-danger" title="Low Stock">
+		{#if item.get("stats").get("lowStock").asBoolean()}
+			{#icons/item /}
+		{/if}
+		{#if item.get("stats").get("hasLowStockInBlock").asBoolean()}
+			{#icons/storageBlock /}
+		{/if}
+		{#if item.get("stats").get("numLowStock").asInt() > 0}
+			{#icons/stored /}
+		{/if}
+
+		{#icons/lowStock /}
+</span>
+{/if}
+{#if item.get("stats").get("numExpiryWarn").asInt() > 0}
+	<span class="badge rounded-pill text-bg-warning" title="Expiring Soon">
+		{#icons/expiring /}
+</span>
+{/if}
+{#if item.get("stats").get("numExpired").asInt() > 0}
+	<span class="badge rounded-pill text-bg-danger" title="Expired">
+			{#icons/expired /}
+	</span>
+{/if}

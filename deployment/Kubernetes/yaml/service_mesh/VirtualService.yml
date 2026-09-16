@@ -1,0 +1,113 @@
+apiVersion: v1
+items:
+- apiVersion: networking.istio.io/v1beta1
+  kind: VirtualService
+  metadata:
+    name: base-station
+  spec:
+    hosts:
+    - base-station
+    http:
+    - route:
+      - destination:
+          host: base-station
+- apiVersion: networking.istio.io/v1beta1
+  kind: VirtualService
+  metadata:
+    name: demo-app
+  spec:
+    hosts:
+    - demo-app
+    http:
+    - route:
+      - destination:
+          host: demo-plugin
+- apiVersion: networking.istio.io/v1beta1
+  kind: VirtualService
+  metadata:
+    name: docker-laptop
+  spec:
+    hosts:
+    - docker-laptop
+    tls:
+    - match:
+      - port: 8080
+        sniHosts:
+        - docker-laptop
+      route:
+      - destination:
+          host: docker-laptop
+          port:
+            number: 8080
+        weight: 100
+- apiVersion: networking.istio.io/v1beta1
+  kind: VirtualService
+  metadata:
+    name: keycloak
+  spec:
+    hosts:
+    - keycloak-sso.apps.sno-demo.nixon.com
+    tls:
+    - match:
+      - port: 443
+        sniHosts:
+        - keycloak-sso.apps.sno-demo.nixon.com
+      route:
+      - destination:
+          host: keycloak-sso.apps.sno-demo.nixon.com
+          port:
+            number: 443
+        weight: 100
+- apiVersion: networking.istio.io/v1beta1
+  kind: VirtualService
+  metadata:
+    name: mongodb
+  spec:
+    hosts:
+    - mongodb
+    http:
+    - route:
+      - destination:
+          host: mongodb
+- apiVersion: networking.istio.io/v1beta1
+  kind: VirtualService
+  metadata:
+    name: quartermaster-gateway
+  spec:
+    gateways:
+    - qm-gw
+    hosts:
+    - '*'
+    http:
+    - match:
+      - uri:
+          exact: /
+      - uri:
+          exact: /overview
+      - uri:
+          prefix: /api/
+      - uri:
+          prefix: /lib/
+      - uri:
+          prefix: /res/
+      - uri:
+          prefix: /media/
+      - uri:
+          exact: /items
+      - uri:
+          exact: /storage
+      - uri:
+          prefix: /q/
+      - uri:
+          exact: /favicon.ico
+      - uri:
+          prefix: /webjars/
+      route:
+      - destination:
+          host: base-station
+          port:
+            number: 8080
+kind: List
+metadata:
+  resourceVersion: ""
+  selfLink: ""

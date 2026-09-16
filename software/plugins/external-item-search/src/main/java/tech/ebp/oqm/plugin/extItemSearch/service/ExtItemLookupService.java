@@ -1,0 +1,96 @@
+package tech.ebp.oqm.plugin.extItemSearch.service;
+
+import io.quarkus.cache.CacheResult;
+import io.smallrye.mutiny.Multi;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
+import lombok.NoArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemSearch;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.LookupResult;
+import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ResultType;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.ItemSearchService;
+import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupService;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+@ApplicationScoped
+@Slf4j
+@NoArgsConstructor
+public class ExtItemLookupService {
+	
+	private static <T extends Collection<? extends ItemSearchService>> List<ExtItemLookupProviderInfo> servicesToInfoList(T services) {
+		List<ExtItemLookupProviderInfo> output = new ArrayList<>(services.size());
+		
+		for (ItemSearchService curService : services) {
+			output.add(curService.getProviderInfo());
+		}
+		output.sort(ExtItemLookupProviderInfo.Comparator.INSTANCE);
+		return output;
+	}
+
+    @Inject
+    Instance<ItemSearchService> searchServices;
+
+    public List<ItemSearchService> getSearchServices() {
+		return this.searchServices.stream()
+            .filter(ItemSearchService::isEnabled)
+            .toList();
+	}
+	
+	@CacheResult(cacheName = "productProviderInfo")
+	public List<ExtItemLookupProviderInfo> getProductProviderInfo() {
+		return servicesToInfoList(this.searchServices.stream().toList());
+	}
+	
+	@CacheResult(cacheName = "availableSearchMethods")
+	public Map<LookupMethod, List<LookupService>> getAvailableSearchMethods() {
+		Map<LookupMethod, List<LookupService>> output = new LinkedHashMap<>();
+		
+		for (ItemSearchService curService : this.searchServices) {
+			if(!curService.isEnabled()){
+				continue;
+			}
+			for (LookupMethod curMethod : curService.getProviderInfo().getLookupMethods()) {
+				output.computeIfAbsent(curMethod, k->new ArrayList<>())
+					.add(curService.getService());
+			}
+		}
+		
+		return output;
+	}
+	
+	
+	public Multi<LookupResult> search(ExtItemSearch search) {
+		List<Multi<LookupResult>> resultUnis = new ArrayList<>();
+		
+		for (ItemSearchService curService : this.searchServices) {
+			if(search.getServices().isEmpty() || search.getServices().contains(curService.getProviderInfo().getId()))
+				resultUnis.add(
+					curService.search(
+						search.getSources(),
+						search.getLookupMethods(),
+						search.getSearch()
+					)
+				);
+		}
+		
+		Multi<LookupResult> output = Multi.createBy().merging().streams(
+			resultUnis.stream()
+				.toList()
+		);
+		
+		if(!search.isKeepNotFound()){
+			output = output.filter(r -> !r.getType().equals(ResultType.NO_RESULTS));
+		}
+		
+		return output;
+	}
+}

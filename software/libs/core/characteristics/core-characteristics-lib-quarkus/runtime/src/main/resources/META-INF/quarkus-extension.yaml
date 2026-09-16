@@ -1,0 +1,10 @@
+name: "OQM Core Characteristics Lib"
+description: Brings in tooling to interact with the OQM characteristics api.
+guide: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/software/libs/core/characteristics/core-characteristics-lib-quarkus
+metadata:
+  short-name: "oqm-core-characteristics-lib-quarkus"
+  categories:
+    - data
+#  categories:
+#    - "miscellaneous"
+#  status: "preview"

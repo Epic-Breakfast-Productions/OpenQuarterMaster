@@ -1,0 +1,12 @@
+apiVersion: v2
+name: oqm-core-api
+description: A chart to stand up the Core API component for Open QuarterMaster.
+type: application
+
+# These versions are automatically updated by the package script
+version: 0.1.0
+appVersion: "1.0.0"
+
+maintainers:
+  - email: greg@epic-breakfast-productions.tech
+    name: Greg Stewart

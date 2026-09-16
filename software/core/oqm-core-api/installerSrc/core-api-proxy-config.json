@@ -1,0 +1,7 @@
+{
+	"type": "core",
+	"name": "api",
+	"internalBaseUriConfig": "core.api.internalBaseUri",
+	"preservePath": true,
+	"stripPrefixes": true
+}

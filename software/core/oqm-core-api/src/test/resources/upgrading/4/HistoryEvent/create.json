@@ -1,0 +1,17 @@
+{
+	"_id": {
+		"$oid": "6835eaec9212b27e82cfbf99"
+	},
+	"_t": "CreateEvent",
+	"attributes": {},
+	"entity": {
+		"$oid": "683149e18d98ce4f7f8a581f"
+	},
+	"keywords": [],
+	"objectId": {
+		"$oid": "6835eaec9212b27e82cfbf98"
+	},
+	"schemaVersion": 1,
+	"timestamp": "\"2025-05-27T16:40:12.508950512Z[UTC]\"",
+	"type": "CREATE"
+}

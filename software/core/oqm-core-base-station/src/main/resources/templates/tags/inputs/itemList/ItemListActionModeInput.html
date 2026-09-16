@@ -1,0 +1,8 @@
+<select class="form-select" aria-label="The mode of this action" id="{id}">
+	{#if noDefault??}
+		<option selected>No Default</option>
+	{/if}
+	{#each tech_ebp_oqm_baseStation_interfaces_ui_qute_QuteEnumUtils:getItemListActionModes()}
+		<option value="{it}">{it}</option>
+	{/each}
+</select>

@@ -1,0 +1,23 @@
+{!
+Template for the search form for storage blocks
+
+Ingests:
+- id - the id to give the form
+!}
+{!{@tech.ebp.oqm.baseStation.rest.search.InventoryItemSearch searchObject}!}
+{#include tags/search/searchForm id=id action='' showKeywords=true showAttributes=true defaultPageSize=config:['ui.itemsStored.search.defaultPageSize']}
+    {#inputs}
+        <div class="mb-3 col col-3">
+            {#inputs/item/itemSelectInput id=id /}
+        </div>
+        <div class="mb-3 col col-3">
+            {#inputs/storageBlock/storageBlockSelectInput id=id blockIdName='blockId' /}
+        </div>
+		<div class="mb-3 col col-3">
+			<div>
+				<label for="{id}-itemGenIdInput" class="form-label">Identifier</label>
+				{#inputs/identifiers/identifierInput id=(id + "-itemGenIdInput") name="identifier" showAdd=false /}
+			</div>
+		</div>
+    {/inputs}
+{/include}

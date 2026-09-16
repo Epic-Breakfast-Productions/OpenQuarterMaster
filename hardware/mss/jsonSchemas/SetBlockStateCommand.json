@@ -1,0 +1,39 @@
+{
+    "$schema": "https://json-schema.org/draft/2020-12/schema",
+    "$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/SetBlockStateCommand.json",
+    "title": "Get Module State Command",
+    "description": "Command to get a module's state.",
+    "type": "object",
+    "allOf": [{ "$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/Command.json" }],
+    "properties": {
+        "command": {
+            "description": "The command.",
+            "type": "string",
+            "const": "GET_MODULE_STATE"
+        },
+        "storageBlocks": {
+            "description": "The array of storage blocks managed by this module.",
+            "type": "array",
+            "items": {
+                "$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockState.json"
+            }
+        },
+        "block": {
+            "$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/jsonSchemas/BlockState.json"
+        }
+    },
+    "oneOf": [
+        {
+            "required": [
+                "command",
+                "storageBlocks"
+            ]
+        },
+        {
+            "required": [
+                "command",
+                "block"
+            ]
+        }
+    ]
+}

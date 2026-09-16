@@ -1,0 +1,27 @@
+#
+# The Main config for the OQM Core API. Do not edit. To adjust configuration, edit:
+# /etc/oqm/serviceConfig/core/api/user-config.list
+#
+
+# General setup
+GF_PATHS_DATA=/data/grafana
+GF_SERVER_ROOT_URL={metrics.otel-lgtm.grafana.externalBaseUri}
+
+# OAUTH Setup
+GF_AUTH_ANONYMOUS_ENABLED=false
+GF_AUTH_DISABLE_LOGIN_FORM=true
+GF_AUTH_GENERIC_OAUTH_ENABLED=true
+GF_AUTH_GENERIC_OAUTH_CLIENT_ID=oqm-metrics-otel_lgtm-grafana
+GF_AUTH_GENERIC_OAUTH_CLIENT_SECRET={infra.keycloak.clientSecrets.oqm-metrics-otel_lgtm-grafana}
+
+GF_AUTH_GENERIC_OAUTH_AUTH_URL={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/auth
+GF_AUTH_GENERIC_OAUTH_TOKEN_URL={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/token
+GF_AUTH_GENERIC_OAUTH_API_URL={infra.keycloak.externalBaseUri}/realms/{infra.keycloak.oqmRealmName}/protocol/openid-connect/userinfo
+
+GF_AUTH_GENERIC_OAUTH_SCOPES=openid email profile offline_access roles
+GF_AUTH_GENERIC_OAUTH_USE_PROXY=false
+
+#TODO:: #1203
+GF_AUTH_GENERIC_OAUTH_TLS_SKIP_VERIFY_INSECURE=true
+#GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH=contains(roles[*], 'admin') && 'Admin' || contains(roles[*], 'editor') && 'Editor' || 'Viewer'
+GF_AUTH_GENERIC_OAUTH_ROLE_ATTRIBUTE_PATH='Admin'

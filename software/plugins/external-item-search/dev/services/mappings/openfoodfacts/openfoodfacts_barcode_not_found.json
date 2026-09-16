@@ -1,0 +1,45 @@
+{
+  "request": {
+    "urlPathPattern": "/openfoodfacts/api/v3/product/(?!3046920029759(?=/|$))([^/]+).json$",
+    "method": "GET"
+  },
+  "response": {
+    "status": 404,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 5000,
+      "sigma": 0.4
+    },
+    "jsonBody": {
+      "code": "304692002975000",
+      "errors": [
+        {
+          "field": {
+            "id": "code",
+            "value": "304692002975000"
+          },
+          "impact": {
+            "id": "failure",
+            "lc_name": "Failure",
+            "name": "Failure"
+          },
+          "message": {
+            "id": "product_not_found",
+            "lc_name": "",
+            "name": ""
+          }
+        }
+      ],
+      "result": {
+        "id": "product_not_found",
+        "lc_name": "Product not found",
+        "name": "Product not found"
+      },
+      "status": "failure",
+      "warnings": []
+    }
+  }
+}
