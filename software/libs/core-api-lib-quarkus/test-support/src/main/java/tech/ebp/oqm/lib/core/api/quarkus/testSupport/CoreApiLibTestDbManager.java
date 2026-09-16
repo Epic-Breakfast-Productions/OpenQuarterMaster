@@ -16,29 +16,21 @@
 */
 package tech.ebp.oqm.lib.core.api.quarkus.testSupport;
 
-import io.restassured.http.ContentType;
-import io.restassured.http.Header;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-import static io.restassured.RestAssured.given;
-
 @Slf4j
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class CoreApiLibTestDbManager {
+public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 
 	public static void clearAllDbs(String auth){
 		log.info("Clearing all databases on test instance of OQM core api. Auth: {}", auth);
 
-		given()
-			.when()
-			.header(new Header("Authorization", auth))
-			.accept(ContentType.JSON)
-			.delete(CoreApiLibTestUtils.getCoreApiBaseUri() + "/api/v1/inventory/manage/db/clearAllDbs")
-			.then()
-			.statusCode(200)
-		;
+		getCoreApiClientService()
+			.manageDbClearAll(auth)
+			.await().indefinitely();
+
 		log.info("Done clearing all databases.");
 	}
 

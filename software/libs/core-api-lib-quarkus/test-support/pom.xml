@@ -24,6 +24,11 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
+			<groupId>tech.epic-breakfast-productions.openquartermaster.lib.core</groupId>
+			<artifactId>core-api-lib-quarkus</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
 			<groupId>io.rest-assured</groupId>
 			<artifactId>rest-assured</artifactId>
 			<scope>provided</scope>
