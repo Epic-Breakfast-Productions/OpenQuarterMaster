@@ -16,6 +16,7 @@ import org.junit.jupiter.api.parallel.ExecutionMode;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
+import tech.ebp.oqm.lib.core.api.quarkus.testSupport.CoreApiLibTestDbManager;
 import tech.ebp.oqm.plugin.imageSearch.testResources.testUsers.TestUserService;
 
 import java.io.IOException;
@@ -67,7 +68,7 @@ public abstract class RunningServerTest extends WebServerTest {
     ) {
         log.info("Running after method for test {}", testInfo.getDisplayName());
 
-        this.oqmCoreApiClientService.manageDbClearAll(this.serviceAccountService.getAuthString()).await().indefinitely();
+		CoreApiLibTestDbManager.clearAllDbs(this.serviceAccountService.getAuthString());
 
         log.info("Completed after step.");
     }

@@ -15,7 +15,7 @@ class ImageSearchEndpointTest extends RunningServerTest {
 
 	@BeforeAll
 	public static void setUp(){
-		this.setupOqmDb(TEST_DB);
+//		this.setupOqmDb(TEST_DB);
 	}
 
 
