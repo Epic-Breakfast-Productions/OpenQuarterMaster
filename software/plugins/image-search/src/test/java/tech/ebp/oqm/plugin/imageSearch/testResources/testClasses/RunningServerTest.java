@@ -122,23 +122,4 @@ public abstract class RunningServerTest extends WebServerTest {
 		}
 		log.info("Completed setting up OQM Core API database with test images.");
 	}
-
-	public ObjectNode testGetTestImage() throws IOException {
-		try (
-			Stream<Path> stream = Files.list(Paths.get(TEST_IMG_DIR));
-			InputStream is = Files.newInputStream(stream.findFirst().get());
-		) {
-			return this.getOqmCoreApiClientService().imageAdd(
-				this.getServiceAccountService().getAuthString(),
-				TEST_DB,
-				FileUploadBody.builder()
-					.fileName("testFoo.jpg")
-					.file(is)
-					.description("Test Image")
-					.source("testFiles")
-					.build()
-			).await().indefinitely();
-		}
-	}
-
 }
