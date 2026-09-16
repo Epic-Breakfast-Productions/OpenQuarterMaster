@@ -1,5 +1,0 @@
-fastapi[standard]
-pyyaml
-pydantic-settings
-pillow
-jinja2

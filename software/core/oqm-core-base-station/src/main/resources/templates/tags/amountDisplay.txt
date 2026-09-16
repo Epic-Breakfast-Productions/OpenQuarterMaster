@@ -1,1 +1,0 @@
-{amount.get("value").asDouble()}{amount.get("unit").get("symbol").asText()}

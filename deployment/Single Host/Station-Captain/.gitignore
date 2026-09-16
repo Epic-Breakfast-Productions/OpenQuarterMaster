@@ -1,8 +1,0 @@
-installerBuild
-*.deb
-*.rpm
-/oqm-captain-*
-.pytest_cache
-bin/
-src/lib/__pycache__/
-.idea

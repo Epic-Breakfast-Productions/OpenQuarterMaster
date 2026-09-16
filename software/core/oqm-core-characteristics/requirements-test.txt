@@ -1,8 +1,0 @@
-# All from regular requirements
-fastapi[all]
-pyyaml
-pydantic-settings
-
-# Specific to testing
-pytest
-httpx

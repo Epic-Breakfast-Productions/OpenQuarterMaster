@@ -1,3 +1,0 @@
-const Constants = {
-	rootPrefix: "{rootPrefix}"
-}

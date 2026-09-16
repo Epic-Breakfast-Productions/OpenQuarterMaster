@@ -1,5 +1,0 @@
-quarkus:
-  http:
-    port: 8081
-  log:
-    level: DEBUG

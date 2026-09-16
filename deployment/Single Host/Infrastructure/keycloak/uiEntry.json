@@ -1,8 +1,0 @@
-{
-	"type": "Infra",
-	"id": "infra.keycloak",
-	"name": "Keycloak",
-	"description": "The Keycloak instance for Open QuarterMaster. This service manages users and handles authentication on the system.",
-	"urlConfigKey": "infra.keycloak.externalBaseUri",
-	"icon": "/infra/keycloak/kc.svg"
-}

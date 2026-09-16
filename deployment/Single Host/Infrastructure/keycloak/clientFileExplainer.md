@@ -1,4 +1,0 @@
-# OQM Keycloak Client Config
-
-
-

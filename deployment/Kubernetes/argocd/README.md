@@ -1,2 +1,0 @@
-# OQM Kubernetes with ArgoCD
-

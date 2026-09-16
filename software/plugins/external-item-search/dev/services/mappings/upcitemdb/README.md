@@ -1,3 +1,0 @@
-# UPC Item Database
-
- - 

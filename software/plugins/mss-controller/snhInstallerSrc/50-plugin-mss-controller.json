@@ -1,7 +1,0 @@
-{
-	"plugins": {
-		"mss-controller": {
-			"port": 9000
-		}
-	}
-}
