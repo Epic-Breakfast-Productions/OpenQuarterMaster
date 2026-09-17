@@ -27,7 +27,7 @@ import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_
 
 @Slf4j
 @QuarkusTest
-class ImageServiceTest extends RunningServerTest { //extends MongoHistoriedFileServiceTest<Image, ImageService> {
+public class ImageServiceTest extends RunningServerTest { //extends MongoHistoriedFileServiceTest<Image, ImageService> {
 	private static final Color COLOR_CENTER = new Color(255, 0, 0);
 	private static final Color COLOR_TOP_LEFT = new Color(0, 255, 0);
 	private static final Color COLOR_TOP_RIGHT = new Color(0, 0, 255);
@@ -148,15 +148,33 @@ class ImageServiceTest extends RunningServerTest { //extends MongoHistoriedFileS
 		);
 	}
 
-	public static Stream<Arguments> getTestImages() {
+	public static Stream<String> getTestImageStream(){
+		//commented out images here are not currently supported / easily so by Java
 		return Stream.of(
-			Arguments.of("/testFiles/test_image.png"),
-			Arguments.of("/testFiles/test_image.jpeg"),
-			Arguments.of("/testFiles/test_image.bmp"),
-			Arguments.of("/testFiles/test_image.gif")
-//						Arguments.of("/testFiles/test_image_big.png"),
-//			Arguments.of("/testFiles/test_image_big_tall.png")
+//			"/testFiles/test_image.avif",
+			"/testFiles/test_image.bmp",
+		"/testFiles/test_image.gif",
+		"/testFiles/test_image.jpeg",
+//		"/testFiles/test_image.jxl",
+		"/testFiles/test_image.png",
+		"/testFiles/test_image.svg",
+//		"/testFiles/test_image.tiff",
+		"/testFiles/test_image.webp"
 		);
+	}
+
+	public static Stream<Arguments> getTestImageArgs() {
+		return getTestImageStream()
+				   .map(Arguments::of);
+	}
+	public static Stream<Arguments> getTestImageBitmapArgs() {
+
+		return getTestImageStream()
+				   .filter(mt->{
+					   //svg does not count for resizing
+					   return !mt.contains(".svg");
+				   })
+				   .map(Arguments::of);
 	}
 
 	@Inject
@@ -170,7 +188,7 @@ class ImageServiceTest extends RunningServerTest { //extends MongoHistoriedFileS
 	}
 
 	@ParameterizedTest
-	@MethodSource("getTestImages")
+	@MethodSource("getTestImageBitmapArgs")
 	public void resizeImageTest(String imageFile) throws IOException {
 		BufferedImage imageIn = ImageIO.read(ImageServiceTest.class.getResourceAsStream(imageFile));
 
@@ -185,7 +203,7 @@ class ImageServiceTest extends RunningServerTest { //extends MongoHistoriedFileS
 	}
 
 	@ParameterizedTest
-	@MethodSource("getTestImages")
+	@MethodSource("getTestImageArgs")
 	public void addImageTest(String imageFile) throws IOException {
 		User user = this.getTestUserService().getTestUser();
 		File file = new File(ImageServiceTest.class.getResource(imageFile).getFile());

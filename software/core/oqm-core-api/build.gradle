@@ -55,6 +55,7 @@ dependencies {
 	implementation("commons-validator:commons-validator:1.11.0")
 	implementation 'org.apache.tika:tika-core:4.0.0'
 	implementation 'uk.org.okapibarcode:okapibarcode:0.5.6'
+	implementation 'com.twelvemonkeys.imageio:imageio-webp:3.15.0'
 
 	implementation("org.javamoney:moneta:1.4.5")
 
