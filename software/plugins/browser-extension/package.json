@@ -1,23 +1,18 @@
 {
-  "name": "oqm-cart-companion",
-  "version": "0.1.0",
-  "private": true,
-  "type": "module",
-  "scripts": {
-    "build": "node scripts/build.mjs",
-    "typecheck": "tsc --noEmit",
-    "test": "vitest run",
-    "check": "npm run typecheck && npm test && npm run build",
-    "test:browser": "npm run build && node scripts/browser-test.mjs",
-    "test:live": "node scripts/live-smoke.mjs"
+  "name": "browser-extension",
+  "version": "1.0.0",
+  "description": "An Amazon-first Chrome/Chromium Manifest V3 extension written in TypeScript. It turns completed purchases into **incoming purchase records attached to OpenQuarterMaster items**. It does not place orders, charge payment methods, or count an unpurchased cart as inventory.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
   },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
   "devDependencies": {
-    "@playwright/test": "^1.63.0",
-    "@types/chrome": "^0.1.0",
-    "@types/node": "^22.0.0",
-    "esbuild": "^0.25.0",
-    "jsdom": "^26.0.0",
-    "typescript": "^5.8.0",
-    "vitest": "^4.1.11"
+    "esbuild": "^0.28.2"
   }
 }

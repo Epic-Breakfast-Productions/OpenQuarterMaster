@@ -1,6 +1,17 @@
+# Simple Instructions
+
+1. open chrome://extensions
+2. Make sure developer mode is enabled, also make sure to delete any previous installations of this extension
+3. Select 'load unpacked'
+4. Select the /dist folder NOT the browser extension folder
+
+The extension won't open in a new tab or on the extensions page
+
+## AI GENERATED INFO AND INSTRUCTIONS BELOW:
+
 # OQM Cart Companion
 
-An Amazon-first Chrome/Chromium Manifest V3 extension written in TypeScript. It turns completed purchases into **incoming purchase records attached to OpenQuarterMaster items**. It does not place orders, charge payment methods, or count an unpurchased cart as inventory.
+Chrome/Chromium Manifest V3 extension written in TypeScript. It turns completed purchases into **incoming purchase records attached to OpenQuarterMaster items**. It does not place orders, charge payment methods, or count an unpurchased cart as inventory.
 
 No Python process, hosted middleware, or Chrome Web Store registration is needed for the local prototype. The bundled extension has no runtime package dependencies.
 
