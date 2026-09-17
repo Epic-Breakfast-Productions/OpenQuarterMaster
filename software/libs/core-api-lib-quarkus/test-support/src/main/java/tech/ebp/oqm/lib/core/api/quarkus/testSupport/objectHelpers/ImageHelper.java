@@ -1,15 +1,20 @@
 package tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import io.restassured.http.ContentType;
+import io.restassured.http.Header;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.CoreApiLibClientHelper;
+import tech.ebp.oqm.lib.core.api.quarkus.testSupport.CoreApiLibTestUtils;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+
+import static io.restassured.RestAssured.given;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class ImageHelper extends CoreApiLibClientHelper {
@@ -19,13 +24,19 @@ public final class ImageHelper extends CoreApiLibClientHelper {
 		String oqmDbIdOrName,
 		FileUploadBody upload
 	) {
-		return getCoreApiClientService()
-				   .imageAdd(
-					   auth,
-					   oqmDbIdOrName,
-					   upload
-				   )
-				   .await().indefinitely();
+		return given()
+			.header(new Header("Authorization", auth))
+			.accept(ContentType.JSON)
+			.multiPart("file", upload.fileName, upload.file)
+			.formParam("fileName", upload.fileName)
+			.formParam("source", "testFiles")
+			.formParam("description", upload.description)
+			.when()
+			.pathParam("db", oqmDbIdOrName)
+			.post(CoreApiLibTestUtils.getCoreApiBaseUri() + "/api/v1/{db}/media/image")
+			.then()
+			.statusCode(200)
+			.extract().body().as(ObjectNode.class);
 	}
 
 	public static ObjectNode newImage(

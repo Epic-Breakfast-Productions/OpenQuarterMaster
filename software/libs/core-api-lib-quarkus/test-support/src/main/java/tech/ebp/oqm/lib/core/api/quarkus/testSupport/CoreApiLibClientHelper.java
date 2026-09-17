@@ -10,12 +10,12 @@ import java.net.URI;
 public abstract class CoreApiLibClientHelper {
 
 	@Getter
-	private static final OqmCoreApiClientService coreApiClientService;
+	private static final OqmCoreApiClientService coreApiClientService = null;
 
 	static {
-		coreApiClientService = QuarkusRestClientBuilder.newBuilder()
-			.baseUri(ConfigProvider.getConfig().getValue("oqm.core.api.baseUri", URI.class))
-			.build(OqmCoreApiClientService.class);
+//		coreApiClientService = QuarkusRestClientBuilder.newBuilder()
+//			.baseUri(ConfigProvider.getConfig().getValue("oqm.core.api.baseUri", URI.class))
+//			.build(OqmCoreApiClientService.class);
 	}
 
 }
