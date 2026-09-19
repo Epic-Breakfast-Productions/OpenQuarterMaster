@@ -7,7 +7,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>tech.epic-breakfast-productions.openquartermaster.lib.core</groupId>
 	<artifactId>core-api-lib-quarkus-parent</artifactId>
-	<version>6.4.1</version>
+	<version>6.4.2-SNAPSHOT</version>
 	<packaging>pom</packaging>
 	<name>Core Api Lib Quarkus - Parent</name>
 	<description>The parent pom package for the Core API Library for Quarkus.</description>
@@ -37,6 +37,7 @@
 	<modules>
 		<module>deployment</module>
 		<module>runtime</module>
+		<module>test-support</module>
 	</modules>
 	<properties>
 		<compiler-plugin.version>3.14.0</compiler-plugin.version>
