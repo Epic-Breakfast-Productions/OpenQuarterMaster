@@ -1,8 +1,8 @@
 package tech.ebp.oqm.core.api.service.mongo;
 
-import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -10,9 +10,11 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.user.User;
+import tech.ebp.oqm.core.api.model.rest.media.ImageGet;
 import tech.ebp.oqm.core.api.service.mongo.image.ImageService;
 
 import jakarta.inject.Inject;
+import tech.ebp.oqm.core.api.service.mongo.utils.FileContentsGet;
 import tech.ebp.oqm.core.api.testResources.testClasses.RunningServerTest;
 
 import javax.imageio.ImageIO;
@@ -20,14 +22,18 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Path;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
 @Slf4j
 @QuarkusTest
 public class ImageServiceTest extends RunningServerTest { //extends MongoHistoriedFileServiceTest<Image, ImageService> {
+
 	private static final Color COLOR_CENTER = new Color(255, 0, 0);
 	private static final Color COLOR_TOP_LEFT = new Color(0, 255, 0);
 	private static final Color COLOR_TOP_RIGHT = new Color(0, 0, 255);
@@ -148,18 +154,24 @@ public class ImageServiceTest extends RunningServerTest { //extends MongoHistori
 		);
 	}
 
-	public static Stream<String> getTestImageStream(){
+	public static void assertImageSame(BufferedImage imageOrig, BufferedImage imageOut) {
+		for (AtVal cur : AtVal.values()) {
+			assertImageSameAt(imageOrig, imageOut, cur);
+		}
+	}
+
+	public static Stream<String> getTestImageStream() {
 		//commented out images here are not currently supported / easily so by Java
 		return Stream.of(
-//			"/testFiles/test_image.avif",
+			//			"/testFiles/test_image.avif",
 			"/testFiles/test_image.bmp",
-		"/testFiles/test_image.gif",
-		"/testFiles/test_image.jpeg",
-//		"/testFiles/test_image.jxl",
-		"/testFiles/test_image.png",
-		"/testFiles/test_image.svg",
-//		"/testFiles/test_image.tiff",
-		"/testFiles/test_image.webp"
+			"/testFiles/test_image.gif",
+			"/testFiles/test_image.jpeg",
+			//		"/testFiles/test_image.jxl",
+			"/testFiles/test_image.png",
+			"/testFiles/test_image.svg",
+			//		"/testFiles/test_image.tiff",
+			"/testFiles/test_image.webp"
 		);
 	}
 
@@ -167,8 +179,8 @@ public class ImageServiceTest extends RunningServerTest { //extends MongoHistori
 		return getTestImageStream()
 				   .map(Arguments::of);
 	}
-	public static Stream<Arguments> getTestImageBitmapArgs() {
 
+	public static Stream<Arguments> getTestImageBitmapArgs() {
 		return getTestImageStream()
 				   .filter(mt->{
 					   //svg does not count for resizing
@@ -197,9 +209,7 @@ public class ImageServiceTest extends RunningServerTest { //extends MongoHistori
 		sw.stop();
 		log.info("Took {} to resize image.", sw);
 
-		for (AtVal cur : AtVal.values()) {
-			assertImageSameAt(imageIn, imageOut, cur);
-		}
+		assertImageSame(imageIn, imageOut);
 	}
 
 	@ParameterizedTest
@@ -207,7 +217,8 @@ public class ImageServiceTest extends RunningServerTest { //extends MongoHistori
 	public void addImageTest(String imageFile) throws IOException {
 		User user = this.getTestUserService().getTestUser();
 		File file = new File(ImageServiceTest.class.getResource(imageFile).getFile());
-		this.imageService.add(
+
+		tech.ebp.oqm.core.api.model.object.media.Image result = this.imageService.add(
 			DEFAULT_TEST_DB_NAME,
 			tech.ebp.oqm.core.api.model.object.media.Image.builder()
 				.fileName(file.getName())
@@ -216,6 +227,33 @@ public class ImageServiceTest extends RunningServerTest { //extends MongoHistori
 			user
 		);
 
+		log.info("Resulting image entry: {}", result);
+		//TODO:: assert result, data
+		assertNotNull(result.getId());
+		assertEquals(file.getName(), result.getFileName());
+
+		ImageGet resultGet = this.imageService.fileObjToGet(DEFAULT_TEST_DB_NAME, result);
+
+		assertEquals(1, resultGet.getNumRevisions());
+
+		FileContentsGet contents = this.imageService.getFile(
+			DEFAULT_TEST_DB_NAME,
+			resultGet.getId(),
+			resultGet.getLatestRevision()
+		);
+
+		log.info("Image contents get: {}", contents);
+
+		if(contents.getMetadata().getMimeType().equals("image/svg+xml")){
+			assertEquals(
+				FileUtils.readFileToString(file, StandardCharsets.UTF_8),
+				FileUtils.readFileToString(contents.getContents(), StandardCharsets.UTF_8)
+			);
+		} else {
+			assertImageSame(ImageIO.read(file), ImageIO.read(contents.getContents()));
+		}
+
+//		contents.getContents()
 	}
 
 
