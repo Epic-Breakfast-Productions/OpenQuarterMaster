@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.alertMessenger.interfaces.ui;
+package tech.ebp.oqm.plugin.alertMessengerLegacy.interfaces.ui;
 
 import io.quarkus.qute.Location;
 import io.quarkus.qute.Template;
@@ -18,32 +18,21 @@ import jakarta.ws.rs.core.Response;
 import jakarta.transaction.Transactional;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import tech.ebp.oqm.plugin.alertMessenger.repositories.UserPreferencesRepository;
-import tech.ebp.oqm.plugin.alertMessenger.repositories.UserRepository;
-import tech.ebp.oqm.plugin.alertMessenger.AlertConsumer;
-import tech.ebp.oqm.plugin.alertMessenger.model.UserInfo;
-import tech.ebp.oqm.plugin.alertMessenger.model.UserPreferences;
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
-import io.quarkus.hibernate.orm.panache.PanacheRepository;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.repositories.UserPreferencesRepository;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.repositories.UserRepository;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.model.UserInfo;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.model.UserPreferences;
 
 import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionStage;
 
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 
-import com.fasterxml.jackson.databind.node.JsonNodeFactory;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-
 /*
  * Remove this after testing
  */
-import org.eclipse.microprofile.reactive.messaging.Message;
 
 @Slf4j
 @Path("/")

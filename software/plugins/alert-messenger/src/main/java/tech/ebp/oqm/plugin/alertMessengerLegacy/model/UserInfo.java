@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.alertMessenger.model;
+package tech.ebp.oqm.plugin.alertMessengerLegacy.model;
 
 import java.util.HashSet;
 /*import lombok.AllArgsConstructor;

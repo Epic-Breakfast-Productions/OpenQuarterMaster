@@ -1,9 +1,9 @@
-package tech.ebp.oqm.plugin.alertMessenger.utils;
+package tech.ebp.oqm.plugin.alertMessengerLegacy.utils;
 
 import java.util.UUID;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
-import tech.ebp.oqm.plugin.alertMessenger.model.UserInfo;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.model.UserInfo;
 
 import java.util.Set;
 

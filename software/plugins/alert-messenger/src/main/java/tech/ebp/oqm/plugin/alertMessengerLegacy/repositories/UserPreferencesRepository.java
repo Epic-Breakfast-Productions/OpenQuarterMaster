@@ -1,8 +1,8 @@
-package tech.ebp.oqm.plugin.alertMessenger.repositories;
+package tech.ebp.oqm.plugin.alertMessengerLegacy.repositories;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepositoryBase;
 import jakarta.enterprise.context.ApplicationScoped;
-import tech.ebp.oqm.plugin.alertMessenger.model.UserPreferences;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.model.UserPreferences;
 import java.util.UUID;
 
 @ApplicationScoped

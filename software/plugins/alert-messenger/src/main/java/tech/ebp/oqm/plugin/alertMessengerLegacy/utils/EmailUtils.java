@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.alertMessenger.utils;
+package tech.ebp.oqm.plugin.alertMessengerLegacy.utils;
 
 import io.quarkus.mailer.Mailer;
 import io.quarkus.mailer.Mail;
