@@ -17,6 +17,7 @@ import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
 import tech.ebp.oqm.core.api.service.mongo.ItemCategoryService;
 import tech.ebp.oqm.core.api.service.mongo.StorageBlockService;
 import tech.ebp.oqm.core.api.service.mongo.file.MongoHistoriedFileService;
+import tech.ebp.oqm.core.api.utils.FileUtils;
 
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
@@ -42,7 +43,7 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 	ItemCategoryService itemCategoryService;
 	@Inject
 	InventoryItemService inventoryItemService;
-	
+
 	public ImageService() {
 		super(
 			Image.class,
@@ -53,10 +54,12 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 			"image/png",
 			"image/jpeg",
 			"image/bmp",
-			"image/gif"
+			"image/gif",
+			"image/webp",
+			"image/svg+xml"
 		);
 	}
-	
+
 	/**
 	 * Resizes the given image to what should be held in the object.
 	 *
@@ -72,7 +75,7 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 			this.imageResizeConfig.height(),
 			inputImage.getType()
 		);
-		
+
 		// scales the input image to the output image
 		Graphics2D g2d = outputImage.createGraphics();
 		g2d.drawImage(
@@ -86,12 +89,12 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 		g2d.dispose();
 
 		log.debug("Resized image: {}", outputImage);
-		
+
 		return outputImage;
 	}
-	
+
 	public void writeImage(BufferedImage imageData, File endImage){
-		
+
 		if(this.imageResizeConfig.isJpg()) {
 			if (imageData.getType() != BufferedImage.TYPE_INT_RGB) {
 				log.debug("Converting image to rgb for jpeg writing.");
@@ -102,19 +105,19 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 				imageData = rgbImage;
 			}
 		}
-		
+
 		try {
 			if(this.imageResizeConfig.isJpg()){
-				
+
 				try(FileImageOutputStream out = new FileImageOutputStream(endImage)) {
 					//extra setup for higher quality jpg
 					final ImageWriter writer = ImageIO.getImageWritersByFormatName("jpg").next();
 					writer.setOutput(out);
-					
+
 					ImageWriteParam jpgWriteParam = writer.getDefaultWriteParam();
 					jpgWriteParam.setCompressionMode(ImageWriteParam.MODE_EXPLICIT);
 					jpgWriteParam.setCompressionQuality(this.imageResizeConfig.jsonCompression());
-					
+
 					writer.write(null, new IIOImage(imageData, null, null), jpgWriteParam);
 					writer.dispose();
 				}
@@ -127,9 +130,8 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 			throw new RuntimeException("Failed to write image data: " + e.getMessage(), e);
 		}
 	}
-	
-	@Override
-	public Image add(String oqmDbIdOrName, ClientSession clientSession, Image fileObject, File origImage, String fileName, InteractingEntity interactingEntity) throws IOException {
+
+	private File resizeImage(String fileName, File origImage) throws IOException {
 		File endImage;
 		if(this.imageResizeConfig.enabled()) {
 			String origFileNameNoExt = FilenameUtils.removeExtension(fileName);
@@ -153,30 +155,48 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 		} else {
 			endImage = origImage;
 		}
-		
+		return endImage;
+	}
+
+	@Override
+	public Image add(String oqmDbIdOrName, ClientSession clientSession, Image fileObject, File origImage, String fileName, InteractingEntity interactingEntity) throws IOException {
+		String mimeType = FileUtils.TIKA.detect(origImage);
+		log.debug("Image file type: {}", mimeType);
+
+		File endImage;
+
+		switch(mimeType){
+			//don't need to resize
+			case "image/svg+xml":
+				endImage = origImage;
+				break;
+			default:
+				endImage = this.resizeImage(fileName, origImage);
+		}
+
 		return super.add(oqmDbIdOrName, clientSession, fileObject, endImage, fileName, interactingEntity);
 	}
-	
+
 	@Override
 	public CollectionStats getStats(String oqmDbIdOrName) {
 		return super.addBaseStats(oqmDbIdOrName, CollectionStats.builder())
 				   .build();
 	}
-	
+
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, Image newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
 	}
-	
+
 	@Override
 	public ImageGet fileObjToGet(String oqmDbIdOrName, Image obj) {
 		return ImageGet.fromImage(obj, this.getRevisions(oqmDbIdOrName, obj.getId()));
 	}
-	
+
 	@Override
 	public Map<String, Set<ObjectId>> getReferencingObjects(String oqmDbIdOrName, ClientSession cs, Image objectToRemove) {
 		Map<String, Set<ObjectId>> objsWithRefs = super.getReferencingObjects(oqmDbIdOrName, cs, objectToRemove);
-		
+
 		Set<ObjectId> refs = this.storageBlockService.getBlocksReferencing(oqmDbIdOrName, cs, objectToRemove);
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.storageBlockService.getClazz().getSimpleName(), refs);
@@ -189,10 +209,10 @@ public class ImageService extends MongoHistoriedFileService<Image, FileUploadBod
 		if(!refs.isEmpty()){
 			objsWithRefs.put(this.itemCategoryService.getClazz().getSimpleName(), refs);
 		}
-		
+
 		return objsWithRefs;
 	}
-	
+
 	@Override
 	public int getCurrentSchemaVersion() {
 		return Image.CUR_SCHEMA_VERSION;

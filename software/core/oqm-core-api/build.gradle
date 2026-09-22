@@ -10,7 +10,7 @@ import org.cyclonedx.Version
 import org.cyclonedx.model.Component
 
 group = 'com.ebp.openQuarterMaster'
-version = '6.4.2'
+version = '6.4.3-SNAPSHOT'
 
 repositories {
 	mavenCentral()
@@ -55,6 +55,7 @@ dependencies {
 	implementation("commons-validator:commons-validator:1.11.0")
 	implementation 'org.apache.tika:tika-core:4.0.0'
 	implementation 'uk.org.okapibarcode:okapibarcode:0.5.6'
+	implementation 'com.twelvemonkeys.imageio:imageio-webp:3.15.0'
 
 	implementation("org.javamoney:moneta:1.4.5")
 
@@ -71,10 +72,8 @@ dependencies {
 }
 
 java {
-	java {
-		toolchain {
-			languageVersion.set(JavaLanguageVersion.of(25))
-		}
+	toolchain {
+		languageVersion.set(JavaLanguageVersion.of(25))
 	}
 }
 
@@ -170,7 +169,7 @@ spdxSbom {
 	}
 }
 
-tasks.register('generateSbom'){
+tasks.register('generateSbom') {
 	group = "sbom"
 	dependsOn tasks.cyclonedxBom
 	dependsOn tasks.spdxSbom
@@ -195,5 +194,5 @@ tasks.register('printVersion') {
 
 // lockAllConfigurations() is deprecated in Gradle 9; use the configurations API instead
 configurations.configureEach {
-    resolutionStrategy.activateDependencyLocking()
+	resolutionStrategy.activateDependencyLocking()
 }

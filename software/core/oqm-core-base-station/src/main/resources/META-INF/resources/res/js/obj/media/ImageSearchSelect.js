@@ -72,7 +72,7 @@ export class ImageSearchSelect extends PageUtility {
 		window.ImageSearchSelect = this;
 		ImageSearchSelect.searchForm.on("submit", function (event) {
 			event.preventDefault();
-			console.log("Submitting search form.");
+			console.log("Submitting image search form.");
 
 			let searchParams = new URLSearchParams(new FormData(event.target));
 			console.log("URL search params: " + searchParams);
