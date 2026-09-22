@@ -35,9 +35,11 @@ import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.StorageHelper
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.random.RandomGenerator;
 
 import static io.restassured.RestAssured.given;
@@ -47,12 +49,11 @@ import static io.restassured.RestAssured.given;
 public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 
 
+	private static final RandomGenerator rand = RandomGenerator.getDefault();
+
+
 	public static void clearAllDbs(String auth){
 		log.info("Clearing all databases on test instance of OQM core api. Auth: {}", auth);
-
-//		getCoreApiClientService()
-//			.manageDbClearAll(auth)
-//			.await().indefinitely();
 
 		given()
 			.when()
@@ -72,7 +73,7 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 			return Optional.empty();
 		}
 
-		return Optional.of(list.get(RandomGenerator.getDefault().nextInt(list.size())));
+		return Optional.of(list.get(rand.nextInt(list.size())));
 	}
 
 
@@ -96,9 +97,14 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 				ObjectNode template = StorageHelper.getStorageBlockTemplate();
 
 				if(options.getBlockImages()){
-					template.putArray("imageIds").add(randFromList(images).get());
+					Optional<String> img = randFromList(images);
+					img.ifPresent(s->template.putArray("imageIds").add(s));
 				}
 
+				if(options.getBlockParents() && rand.nextInt(100) < 90){
+					Optional<String> parent = randFromList(storageBlocks);
+					parent.ifPresent(s->template.put("parent", s));
+				}
 
 				ObjectNode curBlock = StorageHelper.addStorageBlock(
 					auth,
@@ -110,14 +116,17 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 			}
 		}
 		{//inventory items
-			for(int i = 0; i < options.getNumBlocks(); i++){
+			for(int i = 0; i < options.getNumItems(); i++){
 				ObjectNode template = ItemHelper.getItemTemplate(
 					ItemStorageType.values()[i % ItemStorageType.values().length].name()
 				);
 
 				if(options.getItemImages()){
-					template.putArray("imageIds").add(randFromList(images).get());
+					Optional<String> img = randFromList(images);
+					img.ifPresent(s->template.putArray("imageIds").add(s));
 				}
+
+				//TODO::: storage blocks
 
 
 				ObjectNode curItem = ItemHelper.addItem(
@@ -166,6 +175,9 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 
 		@Builder.Default
 		private Boolean blockImages = true;
+
+		@Builder.Default
+		private Boolean blockParents = true;
 
 		@Builder.Default
 		private Boolean itemImages = true;
