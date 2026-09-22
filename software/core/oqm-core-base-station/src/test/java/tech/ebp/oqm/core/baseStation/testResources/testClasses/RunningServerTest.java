@@ -19,6 +19,7 @@ import java.net.URL;
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
 public abstract class RunningServerTest extends WebServerTest {
+	protected static final String TEST_DB = "default";
 
 	@Getter
 	@TestHTTPResource("/")

@@ -16,6 +16,10 @@ public class MainAssertions {
 		}
 		page.waitForLoadState();
 
+		page.waitForFunction(
+			"()=>Array.from(document.images).every(img => img.complete);"
+		);
+
 		if(page.url().startsWith(NavUtils.getIndex().toString())){
 			log.info("Waiting for page processes to finish up.");
 			page.waitForFunction("()=>Main.noProcessesRunning();");
