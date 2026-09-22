@@ -65,4 +65,4 @@ https://central.sonatype.com/publishing/deployments
 
 ## Tips n Tricks
 
- - Connect to kafka with UI: `docker run --network=host -e KAFKA_BROKERS=localhost:9192 -e SERVER_LISTENPORT=8081 docker.redpanda.com/redpandadata/console:latest`
+- Connect to kafka with UI: `docker run --network=host -e KAFKA_BROKERS=localhost:9192 -e SERVER_LISTENPORT=8081 docker.redpanda.com/redpandadata/console:latest`

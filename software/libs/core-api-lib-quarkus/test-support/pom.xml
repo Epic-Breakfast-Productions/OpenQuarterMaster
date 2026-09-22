@@ -5,12 +5,13 @@
 	<parent>
 		<groupId>tech.epic-breakfast-productions.openquartermaster.lib.core</groupId>
 		<artifactId>core-api-lib-quarkus-parent</artifactId>
-		<version>6.4.2-SNAPSHOT</version>
+		<version>6.4.3-SNAPSHOT</version>
 	</parent>
 	<artifactId>core-api-lib-quarkus-test-support</artifactId>
 	<name>Core Api Lib Quarkus - Test Support</name>
 	<properties>
 		<skipITs>true</skipITs>
+		<versions.lombok>1.18.46</versions.lombok>
 	</properties>
 	<dependencies>
 		<dependency>
@@ -36,7 +37,13 @@
 		<dependency>
 			<groupId>org.projectlombok</groupId>
 			<artifactId>lombok</artifactId>
-			<version>1.18.46</version>
+			<version>${versions.lombok}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.datafaker</groupId>
+			<artifactId>datafaker</artifactId>
+			<version>2.7.0</version>
 			<scope>provided</scope>
 		</dependency>
 	</dependencies>
@@ -49,7 +56,7 @@
 						<path>
 							<groupId>org.projectlombok</groupId>
 							<artifactId>lombok</artifactId>
-							<version>1.18.46</version>
+							<version>${versions.lombok}</version>
 						</path>
 					</annotationProcessorPaths>
 				</configuration>

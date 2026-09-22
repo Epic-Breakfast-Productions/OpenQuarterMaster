@@ -13,7 +13,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static io.restassured.RestAssured.given;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
-public final class StorageHelper extends CoreApiLibClientHelper {
+public final class ItemHelper extends CoreApiLibClientHelper {
 	private static final AtomicInteger count = new AtomicInteger();
 
 	/**
@@ -34,28 +34,31 @@ public final class StorageHelper extends CoreApiLibClientHelper {
 	 * </code>
 	 * @return
 	 */
-	public static ObjectNode getStorageBlockTemplate(
+	public static ObjectNode getItemTemplate(
+		String storageType
 	){
 		ObjectNode output = getObjectMapper().createObjectNode();
 
-		output.put("label", count.incrementAndGet() + "-" + getFaker().location().building());
+		output.put("name", count.incrementAndGet() + "-" +getFaker().food().ingredient());
+		output.put("storageType", storageType);
+		output.put("description", getFaker().lorem().paragraph());
 
 		return output;
 	}
 
-	public static ObjectNode addStorageBlock(
+	public static ObjectNode addItem(
 		String auth,
 		String oqbDbNameOrId,
-		ObjectNode storageBlock
+		ObjectNode inventoryItem
 	){
 		return given()
 				   .header(new Header("Authorization", auth))
 				   .accept(ContentType.JSON)
 				   .contentType(ContentType.JSON)
-				   .body(storageBlock)
+				   .body(inventoryItem)
 				   .when()
 				   .pathParam("db", oqbDbNameOrId)
-				   .post(CoreApiLibTestUtils.getCoreApiBaseUri() + "/api/v1/db/{db}/inventory/storage-block")
+				   .post(CoreApiLibTestUtils.getCoreApiBaseUri() + "/api/v1/db/{db}/inventory/item")
 				   .then()
 				   .statusCode(200)
 				   .extract().body().as(ObjectNode.class);
