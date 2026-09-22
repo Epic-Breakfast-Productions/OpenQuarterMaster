@@ -36,6 +36,39 @@ Examples of unacceptable behavior include:
 * Other conduct which could reasonably be considered inappropriate in a
   professional setting
 
+### On Generative AI
+
+Generative AI has ingrained in the modern programming ethos, and thus deserves a mention here.
+As a guideline though, AI is a tool, not a replacement for individuals or proper
+communication. It is quite fallible, and when used requires an extra level of scrutiny.
+
+Generative AI for the purposes of code generation, is allowed. When used as a tool
+to accomplish code changes, this is fine. It is hard if near impossible to
+consistently accurately determine if code is generated anyway. Documentation
+(either code-level or high-level user documents) get a close pass here as well,
+as they are subject to the same scrutiny seen with the rest of the code.
+
+For the purposes of communication, however, we require to be human-to-human.
+Issues, discussions, and any other content intended to be read by humans
+needs to be written by humans. The purpose is to preserve mutual respect between
+parties. To us, this is a requirement to follow the "demonstrating empathy and kindness
+toward other people" example above. An exception to this would be for clearly marked
+and conceptualized excerpts within a larger communication that is written by a human.
+
+Acceptable uses:
+
+* Code generation
+* Code comments
+* Reviews (code rabbit, etc) as addendum to human review
+* Clearly marked snippets in an issue
+
+Unacceptable uses:
+
+* Generating issues
+* Generating security advisories
+* Generated discussions/responses to
+* Reviews as the entire review process
+
 ## Enforcement Responsibilities
 
 Community leaders are responsible for clarifying and enforcing our standards of
@@ -60,7 +93,7 @@ representative at an online or offline event.
 
 Instances of abusive, harassing, or otherwise unacceptable behavior may be
 reported to the community leaders responsible for enforcement at
-greg@epic-breakfast-productions.tech/.
+greg@epic-breakfast-productions.tech .
 All complaints will be reviewed and investigated promptly and fairly.
 
 All community leaders are obligated to respect the privacy and security of the

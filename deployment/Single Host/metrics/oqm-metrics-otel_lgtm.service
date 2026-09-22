@@ -47,6 +47,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm --name $CONTAINER_NAME \
                                         -v $(oqm-config g system.dataDir)${DATA_DIR}/loki:/data/loki \
                                         --env-file /tmp/oqm/serviceConfig/metrics/otel-lgtm/main-config.list \
                                         --env-file /tmp/oqm/serviceConfig/metrics/otel-lgtm/user-config.list \
+                                        --memory \"$(oqm-captain u calcRamLimit --min metrics.otel-lgtm.resourceLimits.mem.min --max metrics.otel-lgtm.resourceLimits.mem.max)\" \
                                         $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \

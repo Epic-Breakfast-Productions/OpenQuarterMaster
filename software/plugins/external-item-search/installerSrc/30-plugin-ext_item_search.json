@@ -21,6 +21,12 @@
 					"enabled": "true",
 					"apiKey": " "
 				}
+			},
+			"resourceLimits": {
+				"mem": {
+					"min": 0.75,
+					"max": 2.0
+				}
 			}
 		}
 	}

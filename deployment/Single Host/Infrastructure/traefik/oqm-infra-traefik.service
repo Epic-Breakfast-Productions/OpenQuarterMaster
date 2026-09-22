@@ -62,6 +62,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --health-timeout=10s \
                                  --health-retries=5 \
                                  --health-start-period=20s \
+                                 --memory \"$(oqm-captain u calcRamLimit --min infra.traefik.resourceLimits.mem.min --max infra.traefik.resourceLimits.mem.max)\" \
                                  $IMAGE_NAME:$IMAGE_VERSION --log.level=DEBUG"
 ExecStartPost=/bin/bash -c "running=\"false\"; \
                             while [ \"$running\" != \"true\" ]; do \

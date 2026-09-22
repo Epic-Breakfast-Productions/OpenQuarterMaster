@@ -32,7 +32,7 @@ dependencies {
     // Add Quarkus REST Client dependency
     implementation 'io.quarkus:quarkus-rest-client'
 
-    implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:6.3.0'
+    implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:6.4.1'
     implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'

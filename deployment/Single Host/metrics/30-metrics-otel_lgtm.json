@@ -13,6 +13,12 @@
 			"otlp-collector": {
 				"internalGrpcPort": 4317,
 				"internalGrpcUrl": "http://#{metrics.otel-lgtm.internalHost}:#{metrics.otel-lgtm.otlp-collector.internalGrpcPort}"
+			},
+			"resourceLimits": {
+				"mem": {
+					"min": 1,
+					"max": "none"
+				}
 			}
 		}
 	}

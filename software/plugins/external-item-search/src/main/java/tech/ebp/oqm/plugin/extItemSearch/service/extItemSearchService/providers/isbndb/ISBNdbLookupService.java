@@ -3,6 +3,7 @@ package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Multi;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -84,74 +85,86 @@ public class ISBNdbLookupService extends ItemSearchService {
                         .map(result -> mapJsonToResponse(source, lookupMethod, result))
                         .onFailure().recoverWithItem(e -> this.handleErrorRetCollection(source, lookupMethod, e))
                         .onItem().transformToMulti(collection -> Multi.createFrom().iterable(collection));
-                    //TODO: #1338
-                    case TEXT -> throw new IllegalArgumentException("Text lookup method search is not implemented yet");
+                    case TEXT -> this.isbndbLookupClient.searchText(apiKey,  term)
+                        .map(result -> mapJsonToResponse(source, lookupMethod, result))
+                        .onFailure().recoverWithItem(e -> this.handleErrorRetCollection(source, lookupMethod, e))
+                        .onItem().transformToMulti(collection -> Multi.createFrom().iterable(collection));
                     default -> throw new IllegalArgumentException("Invalid lookup method: " + lookupMethod);
                 };
             default -> throw new IllegalArgumentException("Invalid lookup source: " + source);
         };
     }
 
+	private LookupResult mapToResult(LookupSource source, LookupMethod method, ObjectNode curResult){
+		ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
+
+		List<String> images = new ArrayList<>();
+		Map<String, String> links = new HashMap<>();
+		Map<String, String> identifiers = new HashMap<>();
+		Map<String, String> attributes = new HashMap<>();
+		Map<String, String> prices = new HashMap<>();
+		String description = "";
+		String name = "";
+
+		for (Map.Entry<String, JsonNode> currentMap : curResult.properties()) {
+			String key = currentMap.getKey();
+			JsonNode value = currentMap.getValue();
+
+			if (ResultMappingUtils.isFieldEmpty(value)) {
+				continue;
+			}
+
+			switch (key) {
+				case "title" -> name = value.asText();
+				case "isbn10", "isbn13" -> identifiers.put(key, value.asText());
+				case "publisher", "language", "date_published" -> attributes.put(key, value.asText());
+				case "image", "image_original" -> images.add(value.asText());
+				case "excerpt" -> description = value.asText();
+				case "authors", "subjects" ->
+					attributes.put(key,
+						String.join(", ", this.fillList((ArrayNode) value, String.class))
+					);
+				case "prices" -> {
+					for (JsonNode item : value) {
+						String merchant = item.path("merchant").asText();
+						String price = item.path("price").asText();
+
+						if (!merchant.isBlank() && !price.isBlank()) {
+							prices.put(merchant, price);
+						}
+					}
+				}
+				default -> attributes.put(key, value.isValueNode() ? value.asText() : value.toString());
+			}
+		}
+		return resultBuilder
+				.name(name)
+				.unifiedName(name)
+				.description(description)
+				.identifiers(identifiers)
+				.links(links)
+				.images(images)
+				.prices(prices)
+				.attributes(attributes)
+				.build();
+	}
+
     private Collection<LookupResult> mapJsonToResponse(LookupSource source, LookupMethod method, JsonNode results) {
         log.debug("Data from ISBNdb: {}", results.toPrettyString());
-        ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
+
         List<LookupResult> resultList = new ArrayList<>(results.size());
+
         if (results.get("book") != null && results.get("book").isObject()) {
             results = results.get("book");
-        }
+			resultList.add(this.mapToResult(source, method, (ObjectNode) results));
+        } else if(results.get("books") != null && results.get("books").isArray()){
 
-        List<String> images = new ArrayList<>();
-        Map<String, String> links = new HashMap<>();
-        Map<String, String> identifiers = new HashMap<>();
-        Map<String, String> attributes = new HashMap<>();
-        Map<String, String> prices = new HashMap<>();
-        String description = "";
-        String name = "";
+			for(JsonNode curResult : results.get("books")){
+				resultList.add(this.mapToResult(source, method, (ObjectNode) curResult));
+			}
+		}
 
-        for (Map.Entry<String, JsonNode> currentMap : results.properties()) {
-            String key = currentMap.getKey();
-            JsonNode value = currentMap.getValue();
-
-            if (ResultMappingUtils.isFieldEmpty(value)) {
-                continue;
-            }
-
-            switch (key) {
-                case "title" -> name = value.asText();
-                case "isbn10", "isbn13" -> identifiers.put(key, value.asText());
-                case "publisher", "language", "date_published" -> attributes.put(key, value.asText());
-                case "image", "image_original" -> images.add(value.asText());
-                case "excerpt" -> description = value.asText();
-                case "authors", "subjects" ->
-                    attributes.put(key,
-                        String.join(", ", this.fillList((ArrayNode) value, String.class))
-                    );
-                case "prices" -> {
-                    for (JsonNode item : value) {
-                        String merchant = item.path("merchant").asText();
-                        String price = item.path("price").asText();
-
-                        if (!merchant.isBlank() && !price.isBlank()) {
-                            prices.put(merchant, price);
-                        }
-                    }
-                }
-                default -> attributes.put(key, value.isValueNode() ? value.asText() : value.toString());
-            }
-        }
-        resultList.add(
-            resultBuilder
-                .name(name)
-                .unifiedName(name)
-                .description(description)
-                .identifiers(identifiers)
-                .links(links)
-                .images(images)
-                .prices(prices)
-                .attributes(attributes)
-                .build()
-        );
-        return resultList;
+		return resultList;
     }
 
     private <T> List<T> fillList(ArrayNode array, Class<T> type) {

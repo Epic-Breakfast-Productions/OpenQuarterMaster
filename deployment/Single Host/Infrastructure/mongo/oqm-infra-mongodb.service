@@ -56,6 +56,7 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --health-timeout=10s \
                                  --health-retries=5 \
                                  --health-start-period=20s \
+                                 --memory \"$(oqm-captain u calcRamLimit --min infra.mongodb.resourceLimits.mem.min --max infra.mongodb.resourceLimits.mem.max)\" \
                                  $IMAGE_NAME:$IMAGE_VERSION mongod --keyFile /data/db/keyfile --replSet rs0"
 # Ensure is up, healthy
 ExecStartPost=/bin/bash -c "running=\"false\"; \

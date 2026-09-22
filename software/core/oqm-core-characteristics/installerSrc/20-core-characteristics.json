@@ -21,7 +21,13 @@
 					"backgroundColor": " "
 				}
 			},
-			"errorPage": "/serviceErr/errPage.html"
+			"errorPage": "/serviceErr/errPage.html",
+			"resourceLimits": {
+				"mem": {
+					"min": 0.05,
+					"max": 0.512
+				}
+			}
 		}
 	}
 }

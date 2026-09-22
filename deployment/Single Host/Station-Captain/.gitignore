@@ -6,3 +6,4 @@ installerBuild
 bin/
 src/lib/__pycache__/
 .idea
+unitTests/__pycache__
