@@ -72,10 +72,8 @@ dependencies {
 }
 
 java {
-	java {
-		toolchain {
-			languageVersion.set(JavaLanguageVersion.of(25))
-		}
+	toolchain {
+		languageVersion.set(JavaLanguageVersion.of(25))
 	}
 }
 
@@ -171,7 +169,7 @@ spdxSbom {
 	}
 }
 
-tasks.register('generateSbom'){
+tasks.register('generateSbom') {
 	group = "sbom"
 	dependsOn tasks.cyclonedxBom
 	dependsOn tasks.spdxSbom
@@ -196,5 +194,5 @@ tasks.register('printVersion') {
 
 // lockAllConfigurations() is deprecated in Gradle 9; use the configurations API instead
 configurations.configureEach {
-    resolutionStrategy.activateDependencyLocking()
+	resolutionStrategy.activateDependencyLocking()
 }
