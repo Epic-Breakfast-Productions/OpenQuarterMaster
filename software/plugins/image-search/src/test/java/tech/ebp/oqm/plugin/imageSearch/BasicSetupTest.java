@@ -22,16 +22,16 @@ import java.net.URISyntaxException;
 @Slf4j
 @QuarkusTest
 public class BasicSetupTest extends RunningServerTest {
-	
+
 	@RestClient
 	OqmCoreApiClientService oqmCoreApiClientService;
-	
+
 	@Inject
 	KcClientAuthService serviceAccountService;
- 
+
     @Inject
     CoreApiDevDbManagementService devDbManagementService;
-	
+
 	@Test
 	public void testBasicSetup() throws IOException, URISyntaxException {
 
@@ -58,8 +58,8 @@ public class BasicSetupTest extends RunningServerTest {
     public void uploadSingleImage(String resourceLocation, String outputFilename) throws IOException {
         this.setupOqmDb(TEST_DB);
         // ... init vectors
-        
-        
+
+
         //uploads image object and generates image id
         String imageId;
         try(
@@ -98,12 +98,13 @@ public class BasicSetupTest extends RunningServerTest {
 
 
         //Get image object data, don't fully understand this part
-        InputStream response = this.oqmCoreApiClientService.imageGetRevisionData(
+        InputStream response = (InputStream) this.oqmCoreApiClientService.imageGetRevisionData(
             this.serviceAccountService.getAuthString(),
             "default",
             imageId,
             "latest"
-        ).await().indefinitely();
+        ).await().indefinitely()
+								   .getEntity();
         log.info("Response: {}", response);
 
         //Pull the image data back down into a test image in a new folder
@@ -114,6 +115,6 @@ public class BasicSetupTest extends RunningServerTest {
         }
 
     }
-	
-	
+
+
 }

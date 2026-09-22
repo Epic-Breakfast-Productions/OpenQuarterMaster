@@ -95,9 +95,10 @@ public class ResnetVectorService {
 		}
 
 		try (
-			InputStream is = this.oqmCoreApiClientService.imageGetRevisionData(this.serviceAccountService.getAuthString(), database, imageId, imageRevision + "")
+			InputStream is = (InputStream) this.oqmCoreApiClientService.imageGetRevisionData(this.serviceAccountService.getAuthString(), database, imageId, imageRevision + "")
 								 .await()
 								 .indefinitely()
+								 .getEntity()
 		) {
 			ImageVector.ImageVectorBuilder builder = ImageVector.builder();
 

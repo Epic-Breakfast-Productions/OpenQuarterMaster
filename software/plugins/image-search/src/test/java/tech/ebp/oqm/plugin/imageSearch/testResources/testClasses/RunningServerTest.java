@@ -18,6 +18,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.CoreApiLibTestDbManager;
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.ImageHelper;
+import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.ItemHelper;
 import tech.ebp.oqm.plugin.imageSearch.testResources.testUsers.TestUserService;
 
 import java.io.IOException;
@@ -75,6 +76,10 @@ public abstract class RunningServerTest extends WebServerTest {
 	}
 
 
+	/**
+	 * TODO::: figure out how to integration test. Auth is the biggest issue
+	 * @param dbName
+	 */
 	protected void setupOqmDb(String dbName) {
 		//TODO:: setup core api database with images, items, etc
 		log.info("Setting up OQM Core API database with test images.");
@@ -100,18 +105,14 @@ public abstract class RunningServerTest extends WebServerTest {
 
 				log.debug("Added image: {}", image);
 
-
-				ObjectNode curItem = objectMapper.createObjectNode()
-										 .put("name", itemName)
-										 .put("storageType", "BULK");
+				ObjectNode curItem = ItemHelper.getItemTemplate("BULK");
 				curItem.putArray("imageIds").add(image.get("id").asText());
-				curItem.putObject("unit").put("string", "units");
 
-				curItem = this.oqmCoreApiClientService.invItemCreate(
+				curItem = ItemHelper.addItem(
 					this.serviceAccountService.getAuthString(),
 					dbName,
 					curItem
-				).await().indefinitely();
+				);
 
 				log.debug("Added item: {}", curItem);
 
