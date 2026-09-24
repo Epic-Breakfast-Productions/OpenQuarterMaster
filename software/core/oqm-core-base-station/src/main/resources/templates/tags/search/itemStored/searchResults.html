@@ -51,7 +51,7 @@
   <tr class="itemStoredResultRow align-middle">
     <td>
       {#if !result.get("imageIds").isEmpty()}
-      <img src="{rootPrefix}/api/passthrough/media/image/for/item_stored/{id}" class="searchResultImage" alt="{labelText} image">
+		{#imgView src=str:concat(rootPrefix,"/api/passthrough/media/image/for/item_stored/",id) css="searchResultImage" alt=str:concat(labelText, " image") /}
       {/if}
     </td>
 	  {#if showType}<td class="text-center">{#icons/storedTypeIconFromType type=result.get("type").asText() /}</td>{/if}

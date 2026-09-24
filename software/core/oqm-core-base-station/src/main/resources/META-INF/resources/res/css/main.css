@@ -134,3 +134,7 @@ Overtype tweaks
 .codeScannerDiv {
 	background-color: rgb(152, 152, 152);
 }
+
+.imgViewClickableImg {
+	cursor: pointer;
+}
