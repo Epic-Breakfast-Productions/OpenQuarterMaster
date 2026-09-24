@@ -16,7 +16,7 @@
 <thead>
 <tr>
   <td colspan="6" class="text-center">
-    {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
+    {#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
   </td>
 </tr>
 <tr>
@@ -49,7 +49,7 @@
 {#for result in searchResults.get("results")}
 {#let id=result.get("id").asText() label=result.get("labelText").asText()}
 <tr class="storageBlockResultRow align-middle">
-  <td>
+  <td class="searchResultImageTd">
     {#if !result.get("imageIds").isEmpty()}
 		{#imgView src=str:concat(rootPrefix,"/api/passthrough/media/image/for/storageBlock/",id) css="searchResultImage" alt=str:concat("Image for ",label) /}
     {/if}
@@ -78,7 +78,7 @@
     <button type="button" class="btn btn-sm btn-success blockSearchSelectButton" title="Select {label}"
             data-bs-toggle="modal" data-bs-target="#{otherModalId}"
             onclick="StorageSearchSelect.selectStorageBlock('{id}', '{label}');">
-      {#icons/select}{/icons/select} Select
+      {#icons/select /} Select
     </button>
     {/if}
   </td>
@@ -90,7 +90,7 @@
 <tfoot>
 <tr>
   <td colspan="6" class="text-center">
-    {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
+    {#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
   </td>
 </tr>
 </tfoot>
