@@ -3,7 +3,7 @@ import {ModalUtils} from "./ModalUtils.js";
 
 export class ImgView extends PageUtility {
 	static #viewModal = $("#imgViewModal");
-	static #vireModalTitle = ImgView.#viewModal.find(".modalTitleText");
+	static #viewModalTitle = ImgView.#viewModal.find(".modalTitleText");
 	static #viewImg = ImgView.#viewModal.find(".imgViewImg");
 
 	static viewImage(imgButtonClicked) {
@@ -15,9 +15,9 @@ export class ImgView extends PageUtility {
 
 		ImgView.#viewImg.prop("src", imgSrc);
 		ImgView.#viewImg.prop("alt", imgAlt);
-		ImgView.#vireModalTitle.text(imgAlt);
+		ImgView.#viewModalTitle.text(imgAlt);
 
-		ModalUtils.setReturnModal(ImgView.#viewModal, imgClicked);
+		ModalUtils.setReturnModal(ImgView.#viewModal, imgClickedJq);
 	}
 	static {
 		window.ImgView = this;

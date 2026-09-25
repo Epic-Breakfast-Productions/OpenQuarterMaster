@@ -140,6 +140,10 @@ Overtype tweaks
 	cursor: pointer;
 	line-height: 0;
 }
+.imgViewClickableImgButton:focus-visible {
+	outline: 1px solid;
+}
+
 .imgViewClickableImg {
 	display: block;
 	max-width: 100%;
