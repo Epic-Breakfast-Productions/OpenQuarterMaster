@@ -40,18 +40,18 @@ public class UserPreferencesInterface {
     public Response create(@Valid UserPreferences request) {
         UserPreferences created = service.create(request);
         return Response.status(Response.Status.CREATED).entity(created).build();
-    }
+    } //TODO: get userId from token without passing it in the request body
 
     @PUT
     @Path("/{id}")
     public Response update(@PathParam("id") String id, @Valid UserPreferences request) {
         return Response.ok(service.update(id, request)).build();
-    }
+    } //TODO: get userId from token without passing it in the request body
 
     @DELETE
     @Path("/{id}")
     public Response delete(@PathParam("id") String id) {
         service.delete(id);
         return Response.noContent().build();
-    }
+    } //TODO: get userId from token without passing it in the request body
 }
