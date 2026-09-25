@@ -1,0 +1,26 @@
+<div class="imageUploadInputContainer" id="{id}">
+	<label for="imageUploadInput-{id}" class="form-label">Image File</label>
+	<input class="form-control imageUploadInput" type="file" id="imageUploadInput-{id}" aria-describedby="imageUploadInputHelp-{id}" accept="image/*">
+	<div id="imageUploadInputHelp-{id}" class="form-text">
+		Images are treated like thumbnails. They are displayed in square views. If image resizing is enabled (default), they are resized into a
+		square.
+	</div>
+
+	<div class="imageUploadInputControls col-md-4 pt-3">
+		<div class="form-check form-switch">
+			<input class="form-check-input imageUploadInputControlsAdjustSwitch" type="checkbox" role="switch" id="imageUploadInputControlsAdjustSwitch-{id}" onchange="ImageAdd.Input.updateInputControls(this);" checked>
+			<label class="form-check-label" for="imageUploadInputControlsAdjustSwitch-{id}">Adjust Image</label>
+		</div>
+		<div class="imageUploadInputControlsInputsContainer">
+			<div class="imageUploadInputCroppieCopntainer text-center">
+				<div id="imageUploadInputCroppie-{id}" class="border imageUploadCroppieDiv" style="width:350px;"></div>
+			</div>
+		</div>
+	</div>
+	<div class="imageUploadInputPreviewContainer col-md-4 pt-3">
+		<p>
+			Preview:
+		</p>
+		<img class="imageUploadInputPreview" style="width:350px; height:350px;" alt="Image upload Preview" />
+	</div>
+</div>

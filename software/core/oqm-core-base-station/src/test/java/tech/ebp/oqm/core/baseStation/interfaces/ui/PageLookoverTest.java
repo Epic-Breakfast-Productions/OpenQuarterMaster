@@ -8,7 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import tech.ebp.oqm.lib.core.api.quarkus.testSupport.CoreApiLibTestDbManager;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Stream;
@@ -54,8 +56,18 @@ public class PageLookoverTest extends WebUiTest {
 		String pageEndpoint,
 		TestUser testUser,
 		boolean dataPresent
-	) {
+	) throws IOException {
 		log.info("Testing {} page can load with test user {} and data present={}", pageEndpoint, testUser, dataPresent);
+
+		if(dataPresent) {
+			this.getLoggedInPage(testUser, "/overview").close();
+
+			CoreApiLibTestDbManager.populateDb(
+				"Bearer " + testUser.getJwt(),
+				TEST_DB,
+				CoreApiLibTestDbManager.PopulateOptions.builder().build()
+			);
+		}
 
 		this.getLoggedInPage(testUser, pageEndpoint);
 	}

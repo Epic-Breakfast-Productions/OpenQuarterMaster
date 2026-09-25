@@ -134,3 +134,22 @@ Overtype tweaks
 .codeScannerDiv {
 	background-color: rgb(152, 152, 152);
 }
+
+.imgViewClickableImgButton {
+	all: unset;
+	cursor: pointer;
+	line-height: 0;
+}
+.imgViewClickableImgButton:focus-visible {
+	outline: 1px solid;
+}
+
+.imgViewClickableImg {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+.searchResultImageTd {
+	line-height: 0;
+	padding: 0 !important;
+}

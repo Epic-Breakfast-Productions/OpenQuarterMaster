@@ -55,9 +55,9 @@
 {#for result in searchResults.get("results")}
 {#let id = result.get("id").asText() name = result.get("name").asText()}
 <tr class="itemResultRow align-middle">
-	<td>
+	<td class="searchResultImageTd">
 		{#if ! result.get("imageIds").isEmpty()}
-			<img src="{rootPrefix}/api/passthrough/media/image/for/item/{id}" class="searchResultImage" alt="{result.get("name").asText()} image">
+		{#imgView src=str:concat(rootPrefix,"/api/passthrough/media/image/for/item/",id) css="searchResultImage" alt=str:concat(result.get("name").asText(), " image") /}
 		{/if}
 	</td>
 	<td class="itemResultsName user-select-all">{name}</td>
