@@ -406,13 +406,10 @@ class ConfigManager:
 		configKeyToSet: str,
 		configValToSet: str,
 		configFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
-		mainConfigFile: str = CONFIG_MNGR_MAIN_CONFIG_FILE,
 		additionalConfigDir: str = ScriptInfo.CONFIG_VALUES_DIR,
 		defaultAddendumFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
 	) -> str:
-		if configFile == ".":
-			configFile = mainConfigFile
-		elif configFile == "":
+		if configFile == "":
 			configFile = defaultAddendumFile
 		else:
 			configFile = additionalConfigDir + "/" + configFile
