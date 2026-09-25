@@ -1,6 +1,7 @@
 package tech.ebp.oqm.plugin.alertMessenger.preferences;
 
 import io.quarkus.mongodb.panache.PanacheMongoRepository;
+import io.quarkus.mongodb.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 
@@ -14,5 +15,9 @@ public class UserPreferencesRepository implements PanacheMongoRepository<UserPre
             return Optional.empty();
         }
         return findByIdOptional(new ObjectId(id));
+    }
+
+    public PanacheQuery<UserPreferences> findAllPaged(int pageIndex, int pageSize) {
+        return findAll().page(io.quarkus.panache.common.Page.of(pageIndex, pageSize));
     }
 }
