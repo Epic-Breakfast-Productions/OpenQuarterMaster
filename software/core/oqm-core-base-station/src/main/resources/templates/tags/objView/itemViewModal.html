@@ -11,7 +11,7 @@
         <div class="col" id="itemViewMessages"></div>
     </div>
 <div class="row">
-    {#carousel id='itemViewCarousel' carouselCss='col-md-12 col-sm-12 col-lg-6 col-xl-4'}{/carousel}
+    {#carousel id='itemViewCarousel' carouselCss='col-md-12 col-sm-12 col-lg-6 col-xl-4' /}
     <div class="col">
         <div class="row">
             <div class="card col-sm-12 col-md-6">
@@ -156,8 +156,8 @@
     </div>
 </div>
 <div class="row">
-    {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
-    {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
+    {#objView/objKeywordsView id='viewKeywordsSection' classes='col' /}
+    {#objView/objAttsView id='viewAttsSection' classes='col' /}
 </div>
 
 <ul class="nav nav-tabs mt-4" id="itemViewMainPane" role="tablist">
@@ -200,7 +200,7 @@
         </div>
         <div id="itemViewStoredMultiContainer">
             <h4>
-                {#icons/storageBlocks}{/icons/storageBlocks} <span id="itemViewStoredMultiNumStoredDisplay"></span> stored across <span id="itemViewStoredMultiBlockNum"></span> storage blocks:
+                {#icons/storageBlocks /} <span id="itemViewStoredMultiNumStoredDisplay"></span> stored across <span id="itemViewStoredMultiBlockNum"></span> storage blocks:
             </h4>
             <div class="mb-2">
                 <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" id="itemViewStoredMultiAddStoredButton">
@@ -263,7 +263,7 @@
         </div>
         <div id="itemViewStoredBulkContainer">
             <h4>
-                {#icons/storageBlocks}{/icons/storageBlocks} <span id="itemViewStoredBulkNumStoredDisplay"></span> stored across <span id="itemViewStoredBulkBlockNum"></span> storage blocks:
+                {#icons/storageBlocks /} <span id="itemViewStoredBulkNumStoredDisplay"></span> stored across <span id="itemViewStoredBulkBlockNum"></span> storage blocks:
             </h4>
             <p id="itemViewStoredBulkNonePresentBlocksList">
             </p>
@@ -283,7 +283,7 @@
                                     <button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse"
                                         data-bs-target="#itemViewCheckoutSearchAccordionFieldsCollapse" aria-expanded="false"
                                         aria-controls="itemViewCheckoutSearchAccordionFieldsCollapse">
-                                        {#icons/search}{/icons/search} Search Fields
+                                        {#icons/search /} Search Fields
                                     </button>
                                     </h2>
                                     <div id="itemViewCheckoutSearchAccordionFieldsCollapse" class="accordion-collapse collapse"
