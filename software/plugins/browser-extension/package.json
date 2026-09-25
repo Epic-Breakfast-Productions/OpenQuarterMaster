@@ -1,0 +1,18 @@
+{
+  "name": "browser-extension",
+  "version": "1.0.0",
+  "description": "An Amazon-first Chrome/Chromium Manifest V3 extension written in TypeScript. It turns completed purchases into **incoming purchase records attached to OpenQuarterMaster items**. It does not place orders, charge payment methods, or count an unpurchased cart as inventory.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "esbuild": "^0.28.2"
+  }
+}
