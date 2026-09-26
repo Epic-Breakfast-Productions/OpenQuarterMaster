@@ -1,10 +1,10 @@
-package tech.ebp.oqm.plugin.alertMessenger.repositories;
+package tech.ebp.oqm.plugin.alertMessengerLegacy.repositories;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.persistence.EntityManager;
-import tech.ebp.oqm.plugin.alertMessenger.model.UserInfo;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.model.UserInfo;
 import java.util.UUID;
 
 @ApplicationScoped

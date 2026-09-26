@@ -1,17 +1,12 @@
-package tech.ebp.oqm.plugin.alertMessenger.livecycle;
+package tech.ebp.oqm.plugin.alertMessengerLegacy.livecycle;
 
 import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.event.Observes;
-import jakarta.inject.Inject;
 import jakarta.inject.Singleton;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.ConfigProvider;
 
-import java.nio.file.Paths;
-import java.time.Duration;
-import java.time.ZonedDateTime;
 import java.util.NoSuchElementException;
-import java.util.Optional;
 import java.util.TreeMap;
 
 @Singleton

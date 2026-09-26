@@ -38,13 +38,8 @@ quarkus:
 #    password: "${SMTP_PASSWORD}"
 #    mock: false
 
-  # Database configuration below (for user credentials and preferences).
-  # Configures the PostgreSQL database for storing user information and preferences.
-  datasource:
-    db-kind: postgresql
-  hibernate-orm:
-    database:
-      generation: update
+  mongodb:
+    database: openQuarterMaster
 
 mp:
   messaging:
@@ -72,3 +67,8 @@ smallrye:
       client-id: oqm-app
       credentials:
         secret: "**********"
+    mongodb:
+      connection-string: mongodb://${MONGO_ROOT_USERNAME:oqmadmin}:${MONGO_ROOT_PASSWORD:superSecretPassword}@localhost:27017
+      database: ${MONGO_DATABASE:oqm}
+      devservices:
+        enabled: false

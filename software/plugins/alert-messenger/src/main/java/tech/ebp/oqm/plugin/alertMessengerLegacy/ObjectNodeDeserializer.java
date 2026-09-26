@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.alertMessenger;
+package tech.ebp.oqm.plugin.alertMessengerLegacy;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.kafka.client.serialization.ObjectMapperDeserializer;

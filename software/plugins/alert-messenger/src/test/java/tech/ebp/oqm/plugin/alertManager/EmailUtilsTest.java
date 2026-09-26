@@ -5,7 +5,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
-import tech.ebp.oqm.plugin.alertMessenger.utils.EmailUtils;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.utils.EmailUtils;
 import io.quarkus.mailer.Mailer;
 import io.quarkus.mailer.Mail;
 

@@ -1,10 +1,10 @@
-package tech.ebp.oqm.plugin.alertMessenger.utils;
+package tech.ebp.oqm.plugin.alertMessengerLegacy.utils;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import tech.ebp.oqm.plugin.alertMessenger.model.UserInfo;
-import tech.ebp.oqm.plugin.alertMessenger.repositories.UserRepository;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.model.UserInfo;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.repositories.UserRepository;
 
 import java.util.Optional;
 import java.util.Set;

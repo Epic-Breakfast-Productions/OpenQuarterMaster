@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.alertMessenger.interfaces.ui;
+package tech.ebp.oqm.plugin.alertMessengerLegacy.interfaces.ui;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import io.quarkus.oidc.IdToken;
@@ -14,8 +14,8 @@ import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.dataHelpers.OqmDatabaseService;
-import tech.ebp.oqm.plugin.alertMessenger.model.UserInfo;
-import tech.ebp.oqm.plugin.alertMessenger.utils.JwtUtils;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.model.UserInfo;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.utils.JwtUtilz;
 
 @Slf4j
 public abstract class UiInterface {
@@ -94,7 +94,7 @@ public abstract class UiInterface {
 		}
 
 		this.oqmDatabases = this.oqmDatabaseService.getDatabases();
-		this.userInfo = JwtUtils.getUserInfo(this.getUserToken());
+		this.userInfo = JwtUtilz.getUserInfo(this.getUserToken());
 
 		log.info("User roles: {}", this.userInfo.getRoles());
 	}

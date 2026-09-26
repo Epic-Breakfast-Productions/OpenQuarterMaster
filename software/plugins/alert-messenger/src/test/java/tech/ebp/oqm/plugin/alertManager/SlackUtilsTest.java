@@ -1,7 +1,7 @@
 /* You have to have a user (with a slack webhook configured) in your database with the environment variable TEST_USER_ID set to that user's slack channel to test this. */
 import io.quarkus.test.junit.QuarkusTest;
 import org.junit.jupiter.api.Test;
-import tech.ebp.oqm.plugin.alertMessenger.utils.SlackUtils;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.utils.SlackUtils;
 import jakarta.inject.Inject;
 import java.util.UUID;
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;

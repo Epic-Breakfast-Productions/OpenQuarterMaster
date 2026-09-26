@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.alertMessenger.utils;
+package tech.ebp.oqm.plugin.alertMessengerLegacy.utils;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -7,8 +7,8 @@ import jakarta.ws.rs.client.ClientBuilder;
 import jakarta.ws.rs.client.Entity;
 import jakarta.ws.rs.core.MediaType;
 import org.jboss.logging.Logger;
-import tech.ebp.oqm.plugin.alertMessenger.repositories.UserPreferencesRepository;
-import tech.ebp.oqm.plugin.alertMessenger.model.UserPreferences;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.repositories.UserPreferencesRepository;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.model.UserPreferences;
 
 import java.util.Optional;
 import java.util.UUID;

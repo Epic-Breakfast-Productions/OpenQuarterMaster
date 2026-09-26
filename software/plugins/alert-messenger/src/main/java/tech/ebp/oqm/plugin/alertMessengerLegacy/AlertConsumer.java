@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.alertMessenger;
+package tech.ebp.oqm.plugin.alertMessengerLegacy;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import jakarta.annotation.PostConstruct;
@@ -7,11 +7,11 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.reactive.messaging.Incoming;
 import org.eclipse.microprofile.reactive.messaging.Message;
-import tech.ebp.oqm.plugin.alertMessenger.model.UserPreferences;
-import tech.ebp.oqm.plugin.alertMessenger.repositories.UserPreferencesRepository;
-import tech.ebp.oqm.plugin.alertMessenger.repositories.UserRepository;
-import tech.ebp.oqm.plugin.alertMessenger.utils.EmailUtils;
-import tech.ebp.oqm.plugin.alertMessenger.utils.SlackUtils;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.model.UserPreferences;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.repositories.UserPreferencesRepository;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.repositories.UserRepository;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.utils.EmailUtils;
+import tech.ebp.oqm.plugin.alertMessengerLegacy.utils.SlackUtils;
 
 import java.util.Optional;
 import java.util.UUID;
