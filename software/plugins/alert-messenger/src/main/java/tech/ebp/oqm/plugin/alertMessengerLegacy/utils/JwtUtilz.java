@@ -8,7 +8,7 @@ import tech.ebp.oqm.plugin.alertMessengerLegacy.model.UserInfo;
 import java.util.Set;
 
 // Utility class for extracting user information (e.g., ID, email, roles) from JWT tokens.
-public class JwtUtils {
+public class JwtUtilz {
 
 	public static UUID getId(JsonWebToken jwt) {
 		return UUID.fromString(jwt.getClaim(Claims.sub));

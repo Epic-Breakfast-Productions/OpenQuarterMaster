@@ -6,6 +6,7 @@ import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -13,7 +14,9 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
-import jakarta.ws.rs.core.Response;
+import org.eclipse.microprofile.jwt.JsonWebToken;
+
+import java.util.List;
 
 @Path("/api/user-preferences")
 @Produces(MediaType.APPLICATION_JSON)
@@ -24,34 +27,30 @@ public class UserPreferencesInterface {
     UserPreferencesService service;
 
     @GET
-    public Response get(
+    public List<UserPreferences> get(
         @QueryParam("page") @DefaultValue("0") int page,
         @QueryParam("size") @DefaultValue("20") int size) {
-        return Response.ok(service.get(page, size)).build();
+        return service.get(page, size);
     }
 
     @GET
     @Path("/{id}")
-    public Response get(@PathParam("id") String id) {
-        return Response.ok(service.get(id)).build();
+    public UserPreferences get(@PathParam("id") String id) {
+        return service.get(id);
     }
 
     @POST
-    public Response create(@Valid UserPreferences request) {
-        UserPreferences created = service.create(request);
-        return Response.status(Response.Status.CREATED).entity(created).build();
-    } //TODO: get userId from token without passing it in the request body
+    public UserPreferences create(@Valid UserPreferences request, @HeaderParam("Authorization") JsonWebToken jwt) {
+        return service.create(request, jwt);
+    }
 
     @PUT
-    @Path("/{id}")
-    public Response update(@PathParam("id") String id, @Valid UserPreferences request) {
-        return Response.ok(service.update(id, request)).build();
-    } //TODO: get userId from token without passing it in the request body
+    public UserPreferences update(@Valid UserPreferences request, @HeaderParam("Authorization") JsonWebToken jwt) {
+        return service.update(request, jwt);
+    }
 
     @DELETE
-    @Path("/{id}")
-    public Response delete(@PathParam("id") String id) {
-        service.delete(id);
-        return Response.noContent().build();
-    } //TODO: get userId from token without passing it in the request body
+    public void delete(@HeaderParam("Authorization") JsonWebToken jwt) {
+        service.delete(jwt);
+    }
 }
