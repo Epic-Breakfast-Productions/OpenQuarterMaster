@@ -34,12 +34,12 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
      kafka: # If using kafka, set these values. Can be any port
        devservices:
          enabled: true
-         port: 9192 
+         port: 9192
    oqm:
      core:
        api:
          devservices:
-           
+
    ```
 
 ## TODOs:
@@ -48,6 +48,12 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
 - Add method to supply import data for devservice
 
 ## Deployment
+
+Set the version:
+
+```bash
+mvn versions:set -DnewVersion=
+```
 
 https://central.sonatype.org/publish/publish-portal-maven/
 
@@ -59,4 +65,4 @@ https://central.sonatype.com/publishing/deployments
 
 ## Tips n Tricks
 
- - Connect to kafka with UI: `docker run --network=host -e KAFKA_BROKERS=localhost:9192 -e SERVER_LISTENPORT=8081 docker.redpanda.com/redpandadata/console:latest`
+- Connect to kafka with UI: `docker run --network=host -e KAFKA_BROKERS=localhost:9192 -e SERVER_LISTENPORT=8081 docker.redpanda.com/redpandadata/console:latest`

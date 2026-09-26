@@ -85,7 +85,7 @@ public class TestUserService {
 	}
 
 	public TestUser getTestUser() {
-		return this.getTestUser(TestUserType.REGULAR);
+		return this.getTestUser(TestUserType.ADMIN);
 	}
 
 	public List<TestUser> getAllTestUsers(){

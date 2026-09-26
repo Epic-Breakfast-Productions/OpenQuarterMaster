@@ -72,6 +72,7 @@ public abstract class WebUiTest extends RunningServerTest {
 
 	@AfterEach
 	public void afterEachUi(TestInfo testInfo) throws InterruptedException, IOException {
+		log.info("Saving off browser related info.");
 
 		for (int i = 0; i < this.getContext().pages().size(); i++) {
 			Page curPage = this.getContext().pages().get(i);

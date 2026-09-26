@@ -19,6 +19,7 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.jboss.resteasy.reactive.ClientWebApplicationException;
+import org.jboss.resteasy.reactive.client.handlers.VertxClientInputStream;
 import org.jboss.resteasy.reactive.client.impl.ClientResponseImpl;
 import tech.ebp.oqm.core.baseStation.interfaces.rest.ApiProvider;
 
@@ -32,16 +33,16 @@ import java.util.concurrent.ConcurrentHashMap;
 @Slf4j
 @Tags({@Tag(name = "Passthrough")})
 public abstract class PassthroughProvider extends ApiProvider {
-	
+
 	public static final String PASSTHROUGH_API_ROOT = API_ROOT + "/passthrough";
 	public static final String PASSTHROUGH_API_PLUGIN_ROOT = PASSTHROUGH_API_ROOT + "/plugin";
-	
-	
+
+
 	@Getter
 	@Inject
 	@Location("tags/objView/history/searchResults")
 	Template historyTemplate;
-	
+
 	protected Uni<Response> processHistoryResults(
 		Uni<ObjectNode> searchUni,
 		String acceptType,
@@ -58,18 +59,18 @@ public abstract class PassthroughProvider extends ApiProvider {
 						//						MediaType.TEXT_HTML
 						//					).build();
 					}
-					
+
 					Map<String, Optional<ObjectNode>> entityRefMap = new ConcurrentHashMap<>();
 					for (JsonNode curResult : (ArrayNode) results.get("results")) {
 						entityRefMap.put(curResult.get("entity").asText(), Optional.empty());
 					}
-					
+
 					UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
-					
+
 					for (String curEntityId : entityRefMap.keySet()) {
 						uniJoinBuilder.add(getOqmCoreApiClient().interactingEntityGetReference(getBearerHeaderStr(), curEntityId));
 					}
-					
+
 					//returns a uni, not a response
 					return uniJoinBuilder.joinAll()
 							   .andCollectFailures()
@@ -77,12 +78,12 @@ public abstract class PassthroughProvider extends ApiProvider {
 								   for (ObjectNode curEntityRef : resultList) {
 									   entityRefMap.put(curEntityRef.get("id").asText(), Optional.of(curEntityRef));
 								   }
-								   
+
 								   for (JsonNode curResult : (ArrayNode) results.get("results")) {
 									   ((ObjectNode) curResult).set("entityRef", entityRefMap.get(curResult.get("entity").asText()).get());
 								   }
 								   return results;
-								   
+
 							   });
 				})
 					   .map((ObjectNode endResults)->{
@@ -101,9 +102,9 @@ public abstract class PassthroughProvider extends ApiProvider {
 				return Response.ok(output).build();
 			});
 		}
-		
+
 	}
-	
+
 	protected Uni<Response> processSearchResults(
 		Uni<ObjectNode> searchUni,
 		TemplateInstance searchResultTemplate,
@@ -134,9 +135,9 @@ public abstract class PassthroughProvider extends ApiProvider {
 				return Response.ok(output).build();
 			});
 		}
-		
+
 	}
-	
+
 	protected Uni<Response> processSearchResults(
 		Uni<ObjectNode> searchUni,
 		Template searchResultTemplate,
@@ -156,7 +157,7 @@ public abstract class PassthroughProvider extends ApiProvider {
 			actionType
 		);
 	}
-	
+
 	protected Uni<Response> handleCall(Uni<?> uni) {
 		return uni
 				   .map(response -> {
@@ -176,25 +177,25 @@ public abstract class PassthroughProvider extends ApiProvider {
 				   )
 				   .onFailure().recoverWithItem(this::handleApiError);
 	}
-	
-	
+
+
 	protected Response handleApiError(Throwable e) {
 		log.debug("Handling API error: ", e);
-		
+
 		Response.ResponseBuilder output = Response.serverError();
-		
+
 		try {
 			if (e instanceof ClientWebApplicationException) {
 				Response response = ((ClientWebApplicationException) e).getResponse();
 				String errorBody = new String(((ClientResponseImpl) ((ClientWebApplicationException) e).getResponse()).getEntityStream().readAllBytes(), StandardCharsets.UTF_8);
-				
+
 				output = Response.status(response.getStatus())
 							 .entity(errorBody);
 			}
 		} catch(Throwable e2) {
 			log.error("Error handling API error: {}", e, e2);
 		}
-		
+
 		return output.build();
 	}
 }
