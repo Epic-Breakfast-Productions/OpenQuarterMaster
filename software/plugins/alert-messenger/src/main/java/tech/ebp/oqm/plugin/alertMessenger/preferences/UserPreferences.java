@@ -11,6 +11,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventType;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.ObjectType;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 
+import java.util.Map;
 import java.util.Set;
 
 @Getter
@@ -28,5 +29,5 @@ public class UserPreferences extends PanacheMongoEntity {
     public Set<EventType> eventTypes;
 
     @NotNull
-    public Set<MessageChannels> messageChannels;
+    public Map<MessageChannels, String> messageChannels;
 }
