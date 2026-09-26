@@ -1,5 +1,8 @@
 package tech.ebp.oqm.core.baseStation.testResources.testClasses;
 
+import com.deque.html.axecore.playwright.AxeBuilder;
+import com.deque.html.axecore.results.AxeResults;
+import com.deque.html.axecore.results.Rule;
 import com.microsoft.playwright.options.HarMode;
 import com.microsoft.playwright.options.RecordVideoSize;
 import com.microsoft.playwright.options.ScreenSize;
@@ -12,18 +15,23 @@ import io.quarkus.test.common.http.TestHTTPResource;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.*;
+import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.AccessibilityUtilities;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.NavUtils;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.StorageBlockUiUtils;
+import tech.ebp.oqm.core.baseStation.utils.ObjectUtils;
 
 import javax.swing.text.View;
 import java.io.*;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @Tag("ui")
@@ -54,6 +62,9 @@ public abstract class WebUiTest extends RunningServerTest {
 
 	Map<Integer, OutputStream> consoleOutputs = new HashMap<>();
 
+	@Getter
+	List<Rule> accessibilityViolations = new ArrayList<>();
+
 	@BeforeEach
 	public void beforeEachUi(TestInfo testInfo) {
 		StorageBlockUiUtils.resetBlockNames();
@@ -76,6 +87,7 @@ public abstract class WebUiTest extends RunningServerTest {
 
 		for (int i = 0; i < this.getContext().pages().size(); i++) {
 			Page curPage = this.getContext().pages().get(i);
+			this.scanAccessibility(curPage);
 			Path curPageFinalScreenshot = this.curTestUiResultDir.resolve("page-" + (i + 1) + "-final.png");
 			Path curPageHtmlFile = this.curTestUiResultDir.resolve("page-" + (i + 1) + "-final-code.html");
 			Path curPageInfoFile = this.curTestUiResultDir.resolve("page-" + (i + 1) + "-final-info.txt");
@@ -98,7 +110,20 @@ public abstract class WebUiTest extends RunningServerTest {
 		for (OutputStream outputStream : this.consoleOutputs.values()) {
 			outputStream.close();
 		}
+
+		log.info("Saving off accessibility violations.");
+		{
+			Path accessibilityViolationsFile = this.curTestUiResultDir.resolve("accessibilityViolations.json");
+
+			ObjectUtils.OBJECT_MAPPER.writeValue(
+				accessibilityViolationsFile.toFile(),
+				this.getAccessibilityViolations()
+			);
+
+		}
 		this.context.close();
+
+//		assertTrue(this.getAccessibilityViolations().isEmpty(), "Tests found " + this.getAccessibilityViolations().size() + " accessibility violations.");
 	}
 
 	protected Page getPage() {
@@ -207,5 +232,15 @@ public abstract class WebUiTest extends RunningServerTest {
 		}
 
 		return output;
+	}
+
+	protected void scanAccessibility(Page page){
+		AxeResults results = AccessibilityUtilities.getAxeBuilder(page).analyze();
+
+		List<Rule> violations = results.getViolations();
+
+		log.info("Found {} new accessibility violations.", violations);
+
+		this.getAccessibilityViolations().addAll(violations);
 	}
 }
