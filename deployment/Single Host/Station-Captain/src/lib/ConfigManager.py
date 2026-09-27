@@ -464,14 +464,16 @@ class ConfigManager:
 		configKeyToSet: str,
 		configValToSet: str,
 		configFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
-		mainConfigFile: str = CONFIG_MNGR_MAIN_CONFIG_FILE,
 		additionalConfigDir: str = ScriptInfo.CONFIG_VALUES_DIR,
 		defaultAddendumFile: str = CONFIG_MNGR_DEFAULT_ADDENDUM_FILE,
 	) -> str:
 		self.getSecretManager().setSecret(configKeyToSet, configValToSet)
 		output = ConfigManager.setConfigValInFile(
-			configKeyToSet, SECRET_MNGR_SECRET_PLACEHOLDER, configFile, mainConfigFile, additionalConfigDir,
-			defaultAddendumFile
+			configKeyToSet=configKeyToSet,
+			configValToSet=SECRET_MNGR_SECRET_PLACEHOLDER,
+			configFile=configFile,
+			additionalConfigDir=additionalConfigDir,
+			defaultAddendumFile=defaultAddendumFile
 		)
 		return output
 
