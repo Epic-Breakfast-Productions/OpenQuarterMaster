@@ -312,7 +312,7 @@ export class ItemAddEdit extends PageUtility {
 						</div>
 						<div class="card-header card-footer" style="display: flex; justify-content: space-between;">
 							<div>
-								<button class="btn btn-sm btn-outline-danger" type="button" onclick="ItemAddEdit.storageInput.removeStorage(this);">${Icons.remove}</button>
+								<button class="btn btn-sm btn-outline-danger" type="button" aria-label="Remove this storage association." onclick="ItemAddEdit.storageInput.removeStorage(this);">${Icons.remove}</button>
 							</div>
 							<div class="form-check form-switch form-check-reverse">
 								<input class="form-check-input storageBlockInputAdvancedSettingsToggle" type="checkbox" role="switch" id="storedSettingAdvancedToggle-${inputNum}" onchange="ItemAddEdit.storageInput.updateStorageInputAdvancedVisibility($(this).closest('.blockSelection'));">
