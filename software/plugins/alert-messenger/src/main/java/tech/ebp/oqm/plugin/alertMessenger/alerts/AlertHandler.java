@@ -34,7 +34,7 @@ public class AlertHandler {
                     MessageChannels channel = entry.getKey();
                     if(strategies.containsKey(channel)) {
                         AlertStrategy strategy = strategies.get(channel);
-                        strategy.sendAlert(message);
+                        strategy.sendAlert(message, entry.getValue());
                     } else {
                         log.warn("No strategy found for channel: {}", channel);
                     }
