@@ -17,17 +17,27 @@ quarkus:
     logout:
       path: /logout
   
-  keycloak:
-    devservices:
-      port: 9328
-      realm-path: "dev/oqm-realm.json"
-      realm-name: oqm
-  
-  
+  mailer:
+    from: "noreply@axgiri.tech"
+    host: "smtppro.zoho.eu"
+    port: 587
+    username: "noreply@axgiri.tech"
+    password: "srv7CEZNmtZP"
+    start-tls: REQUIRED
+
+  rest-client:
+    "oqm.core.api":
+      url: "http://localhost:8080"
+    "oqm.core.api-oidc":
+      url: "${quarkus.oidc.auth-server-url}"
+oqm:
+  core:
+    api:
+      baseUri: "http://localhost:8080"
 
   # Mailer configuration for Gmail SMTP server.
   # Configures the SMTP server for sending email notifications.
-  mailer:
+#  mailer:
 #    auth-methods: "DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN"
 #    from: "oqm.alert.messenger@gmail.com"
 #    host: "smtp.gmail.com"
@@ -60,15 +70,23 @@ smallrye:
 
 "%dev":
   quarkus:
+    devservices:
+      enabled: false
     http:
-      port: 8080
+      port: 5010
       ssl-port: 8443
     oidc:
       client-id: oqm-app
       credentials:
         secret: "**********"
+      auth-server-url: "${KEYCLOAK_AUTH_SERVER_URL:http://localhost:8100/realms/oqm}"
     mongodb:
       connection-string: mongodb://${MONGO_ROOT_USERNAME:oqmadmin}:${MONGO_ROOT_PASSWORD:superSecretPassword}@localhost:27017
       database: ${MONGO_DATABASE:oqm}
       devservices:
         enabled: false
+    messaging:
+      incoming:
+        oqm-core-all-events:
+          bootstrap:
+            servers: localhost:19092

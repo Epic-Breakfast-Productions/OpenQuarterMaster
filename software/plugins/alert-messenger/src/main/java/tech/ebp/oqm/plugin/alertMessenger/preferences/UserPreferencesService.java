@@ -24,9 +24,14 @@ public class UserPreferencesService {
         return this.repository.findAll().stream().iterator();
     }
 
-    public UserPreferences get(String id) {
-        return repository.findByObjectId(id)
-            .orElseThrow(() -> new RuntimeException("User preferences not found for id: " + id));
+    public UserPreferences get(String userId) {
+        return repository.findByObjectId(userId)
+            .orElseThrow(() -> new RuntimeException("User preferences not found for userId: " + userId));
+    }
+
+    public UserPreferences getByUserId(String userId) {
+        return repository.findByUserId(userId)
+            .orElseThrow(() -> new RuntimeException("User preferences not found for userId: " + userId));
     }
 
     public UserPreferences create(UserPreferences entity, JsonWebToken jwt) {
@@ -36,7 +41,7 @@ public class UserPreferencesService {
     }
 
     public UserPreferences update(UserPreferences request, JsonWebToken jwt) {
-        UserPreferences entity = this.get(JwtUtils.getId(jwt));
+        UserPreferences entity = this.getByUserId(JwtUtils.getId(jwt));
         entity.objectTypes = request.objectTypes;
         entity.eventTypes = request.eventTypes;
         entity.messageChannels = request.messageChannels;
@@ -46,6 +51,6 @@ public class UserPreferencesService {
 
     public void delete(JsonWebToken jwt) {
         String id = JwtUtils.getId(jwt);
-        this.repository.delete(this.get(id));
+        this.repository.delete(this.getByUserId(id));
     }
 }

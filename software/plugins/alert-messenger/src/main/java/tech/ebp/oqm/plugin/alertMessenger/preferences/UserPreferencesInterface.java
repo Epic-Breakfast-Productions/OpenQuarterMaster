@@ -1,12 +1,12 @@
 package tech.ebp.oqm.plugin.alertMessenger.preferences;
 
+import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
@@ -21,10 +21,14 @@ import java.util.List;
 @Path("/api/user-preferences")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Authenticated
 public class UserPreferencesInterface {
 
     @Inject
     UserPreferencesService service;
+
+    @Inject
+    JsonWebToken jwt;
 
     @GET
     public List<UserPreferences> get(
@@ -39,18 +43,24 @@ public class UserPreferencesInterface {
         return service.get(id);
     }
 
+    @GET
+    @Path("/user/{id}")
+    public UserPreferences getByUserId(@PathParam("id") String id) {
+        return service.getByUserId(id);
+    }
+
     @POST
-    public UserPreferences create(@Valid UserPreferences request, @HeaderParam("Authorization") JsonWebToken jwt) {
+    public UserPreferences create(@Valid UserPreferences request) {
         return service.create(request, jwt);
     }
 
     @PUT
-    public UserPreferences update(@Valid UserPreferences request, @HeaderParam("Authorization") JsonWebToken jwt) {
+    public UserPreferences update(@Valid UserPreferences request) {
         return service.update(request, jwt);
     }
 
     @DELETE
-    public void delete(@HeaderParam("Authorization") JsonWebToken jwt) {
+    public void delete() {
         service.delete(jwt);
     }
 }
