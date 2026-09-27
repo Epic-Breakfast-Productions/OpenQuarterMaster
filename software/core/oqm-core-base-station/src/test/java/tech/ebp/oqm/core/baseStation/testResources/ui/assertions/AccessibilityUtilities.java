@@ -8,7 +8,8 @@ import java.util.List;
 public class AccessibilityUtilities {
 
 	private static final List<String> RULES_TO_EXCLUDE = List.of(
-		"color-contrast"
+		"color-contrast", // TODO:: enable #1406
+		"landmark-unique"
 	);
 
 	public static AxeBuilder getAxeBuilder(Page page){

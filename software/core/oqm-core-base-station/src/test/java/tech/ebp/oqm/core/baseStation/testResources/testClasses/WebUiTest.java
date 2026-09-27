@@ -123,7 +123,7 @@ public abstract class WebUiTest extends RunningServerTest {
 		}
 		this.context.close();
 
-//		assertTrue(this.getAccessibilityViolations().isEmpty(), "Tests found " + this.getAccessibilityViolations().size() + " accessibility violations.");
+		assertTrue(this.getAccessibilityViolations().isEmpty(), "Tests found " + this.getAccessibilityViolations().size() + " accessibility violations.");
 	}
 
 	protected Page getPage() {

@@ -58,13 +58,13 @@ export class ItemCheckoutView extends PageUtility {
 					</div>
 					<div class="card col-sm-12 col-md-6">
 						<div class="card-body">
-							<h5 class="card-title d-inline">Id:</h5>
+							<p class="card-title d-inline h5">Id:</p>
 							<p class="card-text d-inline">
 								<small>
 									<span class="itemCheckoutViewId"></span>
 	<!--								TODO-->
 	<!--								{#copyTextButton textContainerId='itemCheckoutViewId'}{/copyTextButton}-->
-									
+
 								</small>
 							</p>
 						</div>
@@ -78,53 +78,53 @@ export class ItemCheckoutView extends PageUtility {
 					</div>
 					<div class="card col-sm-12 col-md-6">
 						<div class="card-body">
-							<h5 class="card-title">` + Icons.storageBlock + ` Checked out from:</h5>
+							<p class="card-title h5">` + Icons.storageBlock + ` Checked out from:</p>
 							<p class="itemCheckoutViewCheckedOutFromLabel">
 							</p>
 						</div>
 					</div>
 					<div class="card col-sm-12 col-md-6">
 						<div class="card-body">
-							<h5 class="card-title">Checked out by:</h5>
+							<p class="card-title h5">Checked out by:</p>
 							<p class="itemCheckoutViewCheckedOutByLabel">
 							</p>
 						</div>
 					</div>
 					<div class="card col-sm-12 col-md-6">
 						<div class="card-body">
-							<h5 class="card-title">Checked out For:</h5>
+							<p class="card-title h5">Checked out For:</p>
 							<div class="itemCheckoutViewCheckedOutForLabel">
 							</div>
 						</div>
 					</div>
 					<div class="card col-sm-12 col-md-6">
 						<div class="card-body">
-							<h5 class="card-title">Checked out on:</h5>
+							<p class="card-title h5">Checked out on:</p>
 							<p class="itemCheckoutViewCheckedOutOn">
 							</p>
 						</div>
 					</div>
 					<div class="card col-sm-12 col-md-6 itemCheckoutViewDueBackOnContainer">
 						<div class="card-body">
-							<h5 class="card-title">Due back:</h5>
+							<p class="card-title h5">Due back:</p>
 							<p class="itemCheckoutViewDueBackOn">
 							</p>
 						</div>
 					</div>
 					<div class="card col-sm-12 col-md-6">
 						<div class="card-body">
-							<h5 class="card-title">Checked out:</h5>
+							<p class="card-title h5">Checked out:</p>
 							<div class="itemCheckoutViewCheckedOut">
 							</div>
 						</div>
 					</div>
-					
+
 					<div class="col itemCheckoutViewKeywords">
-					
-					
+
+
 					</div>
 					<div class="col itemCheckoutViewCheckinDetailsAttsSection">
-					
+
 					</div>
 				</div>
 			</div>
@@ -132,14 +132,14 @@ export class ItemCheckoutView extends PageUtility {
 		<div class="row">
 			<div class="card col-12 itemCheckoutViewReasonContainer">
 				<div class="card-body">
-					<h5 class="card-title">Reason:</h5>
+					<p class="card-title h5">Reason:</p>
 					<p class="itemCheckoutViewReason">
 					</p>
 				</div>
 			</div>
 			<div class="card col-12 itemCheckoutViewNotesContainer">
 				<div class="card-body">
-					<h5 class="card-title">Notes:</h5>
+					<p class="card-title h5">Notes:</p>
 					<p class="itemCheckoutViewNotes">
 					</p>
 				</div>
@@ -207,10 +207,10 @@ export class ItemCheckoutView extends PageUtility {
 					</div>
 					<div class="row">
 						<div class="col itemCheckoutViewCheckinDetailsKeywordsSection">
-						
+
 						</div>
 						<div class="col itemCheckoutViewCheckinDetailsAttsSection">
-						
+
 						</div>
 					</div>
 				</div>
