@@ -196,7 +196,7 @@ export class ExtItemSearch extends PageUtility {
 
 		let newAlert = $('<div class="alert alert-danger" role="alert"></div>');
 
-		newAlert.append($('<h4 class="alert-heading">Service:</h4>').text("Service: " + result.service));
+		newAlert.append($('<p class="alert-heading h4">Service:</p>').text("Service: " + result.service));
 		newAlert.append($('<p></p>').text(result.displayMessage));
 
 		ExtItemSearch.searchResultsErrContent.append(newAlert);

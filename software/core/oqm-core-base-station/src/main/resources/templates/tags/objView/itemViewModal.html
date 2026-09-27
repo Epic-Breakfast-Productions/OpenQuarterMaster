@@ -16,14 +16,14 @@
         <div class="row">
             <div class="card col-sm-12 col-md-6">
                 <div class="card-body">
-                    <h5 class="card-title d-inline">Storage Type:</h5>
+                    <p class="card-title d-inline h5">Storage Type:</p>
                     <p id="itemViewStorageType" class="d-inline">
                     </p>
                 </div>
             </div>
             <div class="card col-sm-12 col-md-6">
                 <div class="card-body">
-                    <h5 class="card-title d-inline">Id:</h5>
+                    <p class="card-title d-inline h5">Id:</p>
                     <p class="card-text d-inline">
                         <small>
                             <span id="itemViewId"></span>{#copyTextButton /}
@@ -33,21 +33,21 @@
             </div>
             <div class="card col-12" id="itemViewDescriptionContainer">
                 <div class="card-body">
-                    <h5 class="card-title">Description:</h5>
+                    <p class="card-title h5">Description:</p>
                     <div id="itemViewDescription">
                     </div>
                 </div>
             </div>
             <div class="card col-sm-12 col-md-12 col-lg-6" id="itemViewCategoriesContainer">
                 <div class="card-body">
-                    <h5 class="card-title">Categories:</h5>
+                    <p class="card-title h5">Categories:</p>
                     <p id="itemViewCategories">
                     </p>
                 </div>
             </div>
             <div class="card col-sm-12 col-md-6 col-lg-4">
                 <div class="card-body">
-                    <h5 class="card-title d-inline">Total Held:</h5>
+                    <p class="card-title d-inline h5">Total Held:</p>
                     <p id="itemViewTotal" class="d-inline">
                     </p>
                     <div id="itemViewTotalLowStockThresholdContainer" class="text-muted">
@@ -58,14 +58,14 @@
             </div>
             <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewExpiryWarnThresholdContainer">
                 <div class="card-body">
-                    <h5 class="card-title d-inline">Expiry Warning Threshold:</h5>
+                    <p class="card-title d-inline h5">Expiry Warning Threshold:</p>
                     <p id="itemViewExpiryWarnThreshold" class="d-inline">
                     </p>
                 </div>
             </div>
             <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewIdentifyingAttContainer">{!TODO:: remove? !}
                 <div class="card-body">
-                    <h5 class="card-title d-inline">Identifying Attribute:</h5>
+                    <p class="card-title d-inline h5">Identifying Attribute:</p>
                     <p id="itemViewIdentifyingAtt" class="d-inline">
                     </p>
                 </div>
@@ -185,10 +185,10 @@
 <div class="tab-content" id="itemViewMainPaneContent">
   <div class="tab-pane fade show active pt-2" id="itemViewMainPaneStorageTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneStorageTab" tabindex="0">
   	<div id="itemViewStoredNonePresentContainer">
-            <h4>Nothing Stored</h4>
+            <p class="h4">Nothing Stored</p>
             <div id="itemViewStoredNonePresentHasStorageContainer">
                 <button class="btn btn-primary" id="itemViewStoredNonePresentHasStorageAddStoredButton" data-bs-target="#itemStoredTransactionAddModal" data-bs-toggle="modal" onclick="ItemStoredTransaction.Add.setupForm(ItemView.itemViewId.text(), null, this);">+ Add Stored</button>
-                <h5>Available storage blocks:</h5>
+                <p class="h4">Available storage blocks:</p>
                 <p id="itemViewStoredNonePresentBlocksList">
                 </p>
             </div>
@@ -199,9 +199,9 @@
             </div>
         </div>
         <div id="itemViewStoredMultiContainer">
-            <h4>
+            <p class="h4">
                 {#icons/storageBlocks /} <span id="itemViewStoredMultiNumStoredDisplay"></span> stored across <span id="itemViewStoredMultiBlockNum"></span> storage blocks:
-            </h4>
+            </p>
             <div class="mb-2">
                 <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" id="itemViewStoredMultiAddStoredButton">
                     + Add Stored Item
@@ -262,9 +262,9 @@
             </div>
         </div>
         <div id="itemViewStoredBulkContainer">
-            <h4>
+            <p class="h4">
                 {#icons/storageBlocks /} <span id="itemViewStoredBulkNumStoredDisplay"></span> stored across <span id="itemViewStoredBulkBlockNum"></span> storage blocks:
-            </h4>
+            </p>
             <p id="itemViewStoredBulkNonePresentBlocksList">
             </p>
             <div class="accordion" id="itemViewStoredBulkAccordion">
