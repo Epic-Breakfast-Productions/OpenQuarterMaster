@@ -1,30 +1,61 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Hello {name ?: "Qute"}</title>
-    <style>
-        body {
-            background-color: #000;
-            color: #fff;
-        }
-        h1 {
-            color: #4695EB;
-            font-size: 6vw;
-        }
+	<meta charset="UTF-8">
+	<title>Hello {name ?: "Qute"}</title>
+	<style>
+		body {
+			background-color: #000;
+			color: #fff;
+		}
 
-        h1 b {
-            color: #be9100;
-        }
+		h1 {
+			color: #4695EB;
+			font-size: 6vw;
+		}
 
-        p {
-            font-size: 2vw;
-        }
-    </style>
+		h1 b {
+			color: #be9100;
+		}
+
+		p {
+			font-size: 2vw;
+		}
+	</style>
+
+	<link rel="manifest" href="/manifest.json">
 </head>
 <body>
 <h1>Hello <b>{name ?: "Qute"}</b></h1>
 
 <p>Create your web page using Quarkus RESTEasy & Qute</p>
+<p id="status">Loading…</p>
+<p id="greeting"></p>
+
+<script>
+	const status = document.getElementById("status");
+	const greeting = document.getElementById("greeting");
+	greeting.textContent = "This is a Progressive Web App.";
+
+	// Register service worker (must be served over http/https)
+	if ("serviceWorker" in navigator) {
+		window.addEventListener("load", () => {
+			navigator.serviceWorker
+				.register("sw.js")
+				.then(() => (status.textContent = "PWA ready — offline capable ✓"))
+				.catch((err) => (status.textContent = "SW failed: " + err));
+		})
+		;
+	} else {
+		status.textContent = "Service workers not supported here.";
+	}
+
+	// Optional: prompt for install if the browser fires beforeinstallprompt
+	window.addEventListener("beforeinstallprompt", (e) => {
+		e.preventDefault();
+		status.textContent = "Tap 'Install' in your browser menu to add this app.";
+	});
+</script>
+
 </body>
 </html>

@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin;
+package tech.ebp.oqm.plugin.pda;
 
 import io.quarkus.qute.Template;
 import io.quarkus.qute.TemplateInstance;
@@ -14,16 +14,16 @@ import static java.util.Objects.requireNonNull;
 @Path("/some-page")
 public class SomePage {
 
-    private final Template page;
+	private final Template page;
 
-    public SomePage(Template page) {
-        this.page = requireNonNull(page, "page is required");
-    }
+	public SomePage(Template page) {
+		this.page = requireNonNull(page, "page is required");
+	}
 
-    @GET
-    @Produces(MediaType.TEXT_HTML)
-    public TemplateInstance get(@QueryParam("name") String name) {
-        return page.data("name", name);
-    }
+	@GET
+	@Produces(MediaType.TEXT_HTML)
+	public TemplateInstance get(@QueryParam("name") String name) {
+		return page.data("name", name);
+	}
 
 }

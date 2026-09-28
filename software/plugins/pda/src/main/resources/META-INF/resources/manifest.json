@@ -1,0 +1,12 @@
+{
+	"name": "Hello PWA",
+	"short_name": "Hello",
+	"start_url": "/some-page",
+	"display": "standalone",
+	"background_color": "#111827",
+	"theme_color": "#111827",
+	"description": "A tiny Hello World Progressive Web App.",
+	"icons": [
+		{ "src": "logo.svg", "sizes": "any", "type": "image/svg+xml", "purpose": "any maskable" }
+	]
+}
