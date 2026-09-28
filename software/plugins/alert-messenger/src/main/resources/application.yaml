@@ -19,11 +19,12 @@ quarkus:
   
   mailer:
     from: "noreply@axgiri.tech"
-    host: "smtppro.zoho.eu"
+    host: "smtp.zoho.eu"
     port: 587
     username: "noreply@axgiri.tech"
-    password: "srv7CEZNmtZP"
+    password: "TFCRm5wmEikt"
     start-tls: REQUIRED
+    mock: false
 
   rest-client:
     "oqm.core.api":
@@ -90,3 +91,9 @@ smallrye:
         oqm-core-all-events:
           bootstrap:
             servers: localhost:19092
+      log:
+        category:
+          "io.quarkus.mailer":
+            level: DEBUG
+          "io.vertx.ext.mail":
+            level: DEBUG
