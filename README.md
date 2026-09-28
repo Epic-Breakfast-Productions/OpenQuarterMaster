@@ -37,6 +37,7 @@
 </details>
 
 
+
 Open Quartermaster is an open source inventory management system, designed to be simple to use yet powerful and extendable. The last inventory management system you will ever need!
 
 We are very much in active development, so check back often! We are also accepting any and all assistance, so feel free to report issues or feature requests, as well as pull requests! Additionally, feel free to ask questions in
@@ -126,3 +127,13 @@ Thanks goes to these wonderful people ([emoji key](https://allcontributors.org/d
 <!-- ALL-CONTRIBUTORS-LIST:END -->
 
 This project follows the [all-contributors](https://github.com/all-contributors/all-contributors) specification. Contributions of any kind welcome!
+
+## Star History
+
+<a href="https://www.star-history.com/?repos=epic-breakfast-productions%2Fopenquartermaster&type=date&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=epic-breakfast-productions/openquartermaster&type=date&theme=dark&legend=bottom-right" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=epic-breakfast-productions/openquartermaster&type=date&legend=bottom-right" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=epic-breakfast-productions/openquartermaster&type=date&legend=bottom-right" />
+ </picture>
+</a>

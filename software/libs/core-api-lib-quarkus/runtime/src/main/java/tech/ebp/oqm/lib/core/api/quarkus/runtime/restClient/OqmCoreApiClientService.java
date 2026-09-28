@@ -595,7 +595,7 @@ public interface OqmCoreApiClientService {
 	@Path(IMAGE_ROOT_ENDPOINT + "/{id}/revision/{rev}/data")
 	@GET
 	@Produces("*/*")
-	Uni<InputStream> imageGetRevisionData(
+	Uni<Response> imageGetRevisionData(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("id")
@@ -630,7 +630,7 @@ public interface OqmCoreApiClientService {
 		"image/*",
 		"text/plain"
 	})
-	Uni<InputStream> imageForObject(
+	Uni<Response> imageForObject(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("type") String type,
@@ -705,7 +705,7 @@ public interface OqmCoreApiClientService {
 	@GET
 	@Path(FILE_ATTACHMENT_ROOT_ENDPOINT + "/{id}/revision/{rev}/data")
 	@Produces("*/*")
-	Uni<InputStream> fileAttachmentGetRevisionData(
+	Uni<Response> fileAttachmentGetRevisionData(
 		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
 		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
 		@PathParam("id")

@@ -293,7 +293,7 @@ export class ItemView extends PageUtility {
 
 		let dataRow = $('<div class="d-flex mb-5"></div>');
 		output.append(dataRow);
-		dataRow.append($('<div class="card"></div>').append($('<div class="card-body"></div>').append($('<h5 class="card-title d-inline">Num Stored:</h5>')).append($('<p class="card-text d-inline"></p>').text(itemData.stats.storageBlockStats[blockId].numStored))));
+		dataRow.append($('<div class="card"></div>').append($('<div class="card-body"></div>').append($('<p class="card-title d-inline h5">Num Stored:</p>')).append($('<p class="card-text d-inline"></p>').text(itemData.stats.storageBlockStats[blockId].numStored))));
 		dataRow.append(
 			$('<div class="card"></div>')
 				.append(

@@ -10,7 +10,7 @@
     <div class="col-6 d-grid gap-2 text-center">
         <button type="button" class="btn btn-success" data-bs-toggle="modal"
                 data-bs-target="#addEditModal" onclick="setupAddEditForAdd();">
-            {#icons/add}{/icons/add} Add Image
+            {#icons/add /} Add Image
         </button>
     </div>
 </div>
@@ -21,23 +21,21 @@
                 <button class="accordion-button {#if !showSearch}collapsed{/if}" type="button" data-bs-toggle="collapse"
                         data-bs-target="#searchCollapse" aria-expanded="{#if showSearch}true{#else}false{/if}"
                         aria-controls="searchCollapse">
-                    {#icons/search}{/icons/search}
+                    {#icons/search /}
                     Search Fields
                 </button>
             </h2>
             <div id="searchCollapse" class="accordion-collapse collapse {#if showSearch}show{/if}"
                  aria-labelledby="searchHeader" data-bs-parent="#searchAccordion">
                 <div class="accordion-body">
-                    {#search/image/imageSearchForm id='mainImageSearch' rootPrefix=rootPrefix}
-                    {/search/image/imageSearchForm}
+                    {#search/image/imageSearchForm id='mainImageSearch' rootPrefix=rootPrefix /}
                 </div>
             </div>
         </div>
     </div>
 </div>
 <div id="imageSearchresults">
-    {#search/image/imageSearchResults searchResults=searchResults actionType='full' searchFormId='mainImageSearch' rootPrefix=rootPrefix}
-    {/search/image/imageSearchResults}
+    {#search/image/imageSearchResults searchResults=searchResults actionType='full' searchFormId='mainImageSearch' rootPrefix=rootPrefix /}
 </div>
 
 {/pageContent}
@@ -49,18 +47,8 @@
 <form id="addEditImageForm">
     <input type="hidden" id="addEditFormMode" value="">
     <input type="hidden" id="addEditFormId" value="">
-    {!<div class="mb-3 row">!}
-        {!<label for="addEditTitleInput" class="col-sm-3 col-form-label">Title</label>!}
-        {!<div class="col-sm-9">!}
-            {!<input type="text" class="form-control" id="addEditTitleInput" placeholder="Title" required>!}
-        {!</div>!}
-    {!</div>!}
     <div class="mb-3">
-        <label for="imageUploadInput" class="form-label">Image File</label>
-        <input class="form-control" type="file" id="imageUploadInput" accept="image/*" required>
-        <div class="col-md-4 text-center pt-3">
-            <div id="imageUploadCroppieDiv" class="border" style="width:350px;"></div>
-        </div>
+        {#inputs/imageInput id="imageAddFileInput" /}
     </div>
 	<div class="mb-3 row">
 		<label for="addEditDescriptionInput" class="col-sm-3 col-form-label">Description</label>
@@ -81,7 +69,7 @@
 {/modal}
 
 {#modal id='view' title='View' size='xl'}
-{#titleIcon}{#icons/image}{/icons/image}{/titleIcon}
+{#titleIcon}{#icons/image /}{/titleIcon}
 <div class="row">
     <div class="col-lg-7 text-center">
         <img class="imageViewImage img-thumbnail" src="">
@@ -106,8 +94,8 @@
     </div>
 </div>
 <div class="row">
-    {#objView/objKeywordsView id='viewKeywordsSection' classes='col'}{/objView/objKeywordsView}
-    {#objView/objAttsView id='viewAttsSection' classes='col'}{/objView/objAttsView}
+    {#objView/objKeywordsView id='viewKeywordsSection' classes='col' /}
+    {#objView/objAttsView id='viewAttsSection' classes='col' /}
 </div>
 <div class="row">
     {#objView/history/objHistoryView containerId='imageHistory' objectUrl=(rootPrefix + '/api/passthrough/media/image/') accordion=true /}
@@ -163,7 +151,7 @@ let addEditFormMode = $("#addEditFormMode");
 let addEditFormId = $("#addEditFormId");
 // let addEditTitleInput = $("#addEditTitleInput");
 let addEditDescriptionInput = $("#addEditDescriptionInput");
-let addEditFileInput = $("#imageUploadInput");
+let addEditFileInput = $("#imageAddFileInput");
 
 //TODO:: figure out proper sizing on small screens
 
@@ -173,7 +161,7 @@ function resetAddEdit(){
     addEditFormMessages.text("");
     keywordInputDiv.html("");
     attInputDiv.html("");
-    ImageAdd.resetCroppie();
+	ImageAdd.reset(addEditFileInput);
 }
 
 function setupAddEditForAdd(){
@@ -182,7 +170,7 @@ function setupAddEditForAdd(){
     addEditModalLabelIcon.html(Icons.add);
     addEditFormMode.val("add");
     addEditModalLabel.text("Add Image");
-    addEditFormSubmitButton.html('{#icons/add}{/icons/add} Add Image');
+    addEditFormSubmitButton.html('{#icons/add /} Add Image');
 }
 function setupAddEditForEdit(id){
     console.log("Setting up add/edit form for edit.");
@@ -190,7 +178,7 @@ function setupAddEditForEdit(id){
     addEditModalLabelIcon.html(Icons.edit);
     addEditFormMode.val("edit");
     addEditModalLabel.text("Edit Image");
-    addEditFormSubmitButton.html('{#icons/edit}{/icons/edit} Edit Image');
+    addEditFormSubmitButton.html('{#icons/edit /} Edit Image');
 
     addEditFormId.val(id);
 
@@ -214,14 +202,12 @@ function setupAddEditForEdit(id){
 addEditImageForm.submit(function (ev) {
     ev.preventDefault();
 
-    ImageAdd.uploadCrop.croppie('result', {
-		type: 'blob',
-		size: 'original'
-	}).then(async function (imageDataBlob) {
+	ImageAdd.getImageData(addEditFileInput)
+	.then(async function (imageDataBlob) {
 		console.log("Got image data.");
 		let addEditData = new FormData();
 
-		addEditData.append("fileName", addEditFileInput[0].files[0].name);
+		addEditData.append("fileName", ImageAdd.Input.getFileName(addEditFileInput));
 		addEditData.append("description", addEditDescriptionInput.val());
 		addEditData.append("source", "user");
 		addEditData.append("file", imageDataBlob);//imageDataBlob);
