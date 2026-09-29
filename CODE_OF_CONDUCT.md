@@ -61,6 +61,7 @@ Acceptable uses:
 * Code comments
 * Reviews (code rabbit, etc) as addendum to human review
 * Clearly marked snippets in an issue
+* Finding issues and bugs or other improvements to make
 
 Unacceptable uses:
 
@@ -68,6 +69,7 @@ Unacceptable uses:
 * Generating security advisories
 * Generated discussions/responses to
 * Reviews as the entire review process
+* Reporting issues/bugs/etc found with AI tooling using AI tooling
 
 ## Enforcement Responsibilities
 
