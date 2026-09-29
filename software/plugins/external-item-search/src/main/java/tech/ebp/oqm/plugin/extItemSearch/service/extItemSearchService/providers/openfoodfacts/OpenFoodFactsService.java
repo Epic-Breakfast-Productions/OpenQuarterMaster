@@ -91,7 +91,7 @@ public class OpenFoodFactsService extends ItemSearchService {
 
     private LookupResult partJsonToResult(LookupSource source, LookupMethod method, ObjectNode results) {
         log.debug("Data from OpenFoodFacts: {}", results.toPrettyString());
-        ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
+        ExtItemLookupResult.ExtItemLookupResultBuilder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
 
         if (results.get("product") != null && results.get("product").isObject()) {
             results = (ObjectNode) results.get("product");
