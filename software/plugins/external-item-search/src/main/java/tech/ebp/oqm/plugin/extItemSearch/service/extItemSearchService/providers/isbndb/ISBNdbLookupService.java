@@ -96,7 +96,7 @@ public class ISBNdbLookupService extends ItemSearchService {
     }
 
 	private LookupResult mapToResult(LookupSource source, LookupMethod method, ObjectNode curResult){
-		ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
+		ExtItemLookupResult.ExtItemLookupResultBuilder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
 
 		List<String> images = new ArrayList<>();
 		Map<String, String> links = new HashMap<>();
