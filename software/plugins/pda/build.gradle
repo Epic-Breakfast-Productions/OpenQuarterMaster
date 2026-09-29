@@ -1,41 +1,42 @@
 plugins {
-    id 'java'
-    id 'io.quarkus'
+	id 'java'
+	id 'io.quarkus'
+	id "io.freefair.lombok" version "9.5.0"
 }
 
 repositories {
-    mavenCentral()
-    mavenLocal()
+	mavenCentral()
+	mavenLocal()
 }
 
 dependencies {
-    implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
-    implementation 'io.quarkus:quarkus-rest-client-jackson'
-    implementation 'io.quarkus:quarkus-config-yaml'
-    implementation 'io.quarkus:quarkus-qute'
-    implementation 'io.quarkus:quarkus-rest-qute'
-    implementation 'io.quarkus:quarkus-rest-jackson'
-    implementation 'io.quarkus:quarkus-oidc'
-    implementation 'io.quarkus:quarkus-smallrye-health'
-    implementation 'io.quarkus:quarkus-arc'
-    implementation 'io.quarkus:quarkus-rest'
-    testImplementation 'io.quarkus:quarkus-junit'
-    testImplementation 'io.rest-assured:rest-assured'
+	implementation enforcedPlatform("${quarkusPlatformGroupId}:${quarkusPlatformArtifactId}:${quarkusPlatformVersion}")
+	implementation 'io.quarkus:quarkus-rest-client-jackson'
+	implementation 'io.quarkus:quarkus-config-yaml'
+	implementation 'io.quarkus:quarkus-qute'
+	implementation 'io.quarkus:quarkus-rest-qute'
+	implementation 'io.quarkus:quarkus-rest-jackson'
+	implementation 'io.quarkus:quarkus-oidc'
+	implementation 'io.quarkus:quarkus-smallrye-health'
+	implementation 'io.quarkus:quarkus-arc'
+	implementation 'io.quarkus:quarkus-rest'
+	testImplementation 'io.quarkus:quarkus-junit'
+	testImplementation 'io.rest-assured:rest-assured'
 }
 
 group = 'tech.ebp.oqm.plugin'
 version = '1.0.0-SNAPSHOT'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_25
-    targetCompatibility = JavaVersion.VERSION_25
+	sourceCompatibility = JavaVersion.VERSION_25
+	targetCompatibility = JavaVersion.VERSION_25
 }
 
 compileJava {
-    options.encoding = 'UTF-8'
-    options.compilerArgs << '-parameters'
+	options.encoding = 'UTF-8'
+	options.compilerArgs << '-parameters'
 }
 
 compileTestJava {
-    options.encoding = 'UTF-8'
+	options.encoding = 'UTF-8'
 }

@@ -1,7 +1,7 @@
 {
-	"name": "Hello PWA",
-	"short_name": "Hello",
-	"start_url": "/some-page",
+	"name": "Open QuaerterMaster PDA",
+	"short_name": "OQM PDA",
+	"start_url": "/",
 	"display": "standalone",
 	"background_color": "#111827",
 	"theme_color": "#111827",
