@@ -83,7 +83,7 @@ public class OpenLibraryService extends ItemSearchService {
                 continue;
             }
 
-            ExtItemLookupResult.Builder<?, ?> builder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
+            ExtItemLookupResult.ExtItemLookupResultBuilder<?, ?> builder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
 
             String title = doc.has("title") && !doc.get("title").isNull() ? doc.get("title").asText() : "name is not specified";
 
