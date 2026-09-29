@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.api.quarkus.deployment;
 
+import com.github.dockerjava.api.model.HostConfig;
 import io.quarkus.deployment.IsLocalDevelopment;
 import io.quarkus.deployment.IsNormal;
 import io.quarkus.deployment.annotations.BuildProducer;
@@ -41,7 +42,7 @@ class CoreApiLibQuarkusProcessor {
 	private static final String FEATURE = "core-api-lib-quarkus";
 	private static final String MONGODB_DEVSERVICE_HOSTNAME = "oqm-core-api-mongodb";
 	private static final String HOST = "host.testcontainers.internal";
-	private static final String KEYCLOAK_DEVSERVICE_HOSTNAME = "localhost"; //TODO: #1287 should not use this in non-host netowrking
+	private static final String KEYCLOAK_DEVSERVICE_HOSTNAME = HOST; //TODO: #1287 should not use this in non-host netowrking
 	private static final String KAFKA_DEVSERVICE_HOSTNAME = "localhost"; //TODO: #1287 should not use this in non-host netowrking
 
 	private static volatile boolean firstSetup = true;
@@ -72,9 +73,9 @@ class CoreApiLibQuarkusProcessor {
 		DockerImageName mongoImageName = DockerImageName.parse("mongo:7");
 
 		MongoDBContainer mongoDBContainer = new MongoDBContainer(mongoImageName);
-		mongoDBContainer.addExposedPorts();
+		//		mongoDBContainer.addExposedPorts();
 
-		ConfigureUtil.configureSharedNetwork(mongoDBContainer, "oqm-core-api-mongodb");
+		ConfigureUtil.configureSharedNetwork(mongoDBContainer, MONGODB_DEVSERVICE_HOSTNAME);
 
 		mongoDBContainer.withNetworkAliases(MONGODB_DEVSERVICE_HOSTNAME);
 		mongoDBContainer.start();
@@ -94,6 +95,19 @@ class CoreApiLibQuarkusProcessor {
 			//				.withAccessToHost(true)
 			//				.withNetwork(Network.SHARED)
 			;
+
+		//configure network
+
+		//TODO:: #1287 these lines are related to not host netowrking
+		ConfigureUtil.configureSharedNetwork(container, "oqm-core-api");
+		container.withExposedPorts(8080);
+		container.withAccessToHost(true);
+
+
+		//TODO:: #1287 don't do this
+		//		container.withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
+		//			new HostConfig().withNetworkMode("host")
+		//		));
 
 		container.withEnv(
 			"smallrye.jwt.verify.key.location",
@@ -116,10 +130,10 @@ class CoreApiLibQuarkusProcessor {
 		log.info("Setting up OQM Core API related dev services.");
 
 		//TODO:: #1287 these lines are related to not host netowrking
-//		Testcontainers.exposeHostPorts(
-//			config.devservices().keycloak().port(),
-//			config.devservices().kafka().port()
-//		);
+		//		Testcontainers.exposeHostPorts(
+		//			config.devservices().keycloak().port(),
+		//			config.devservices().kafka().port()
+		//		);
 
 		//TODO:: handle needing to restart services?
 		List<DevServicesResultBuildItem> output = new ArrayList<>();
@@ -136,9 +150,10 @@ class CoreApiLibQuarkusProcessor {
 
 				Map<String, String> props = Map.of(
 					"host",
-					"localhost", //mongoDBContainer.getNetworkAliases().get(0), //TODO:: #1287
+					mongoDBContainer.getNetworkAliases().get(0),
+
 					"port",
-					String.valueOf(mongoDBContainer.getMappedPort(27017))//TODO:: #1287
+					"27017" //String.valueOf(mongoDBContainer.getMappedPort(27017))//TODO:: #1287
 				);
 
 				log.info("MongoDB dev service properties: {}" + props);

@@ -36,19 +36,6 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 
 	@Override
 	protected void configure() {
-		//configure network
-
-		//TODO:: #1287 these lines are related to not host netowrking
-//		ConfigureUtil.configureSharedNetwork(this, "oqm-core-api");
-//		this.addFixedExposedPort(devserviceConfig.port(), 8080);
-//		this.withAccessToHost(true);
-
-		//TODO:: #1287 don't do this
-		withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
-			new HostConfig().withNetworkMode("host")
-		));
-		this.withEnv("QUARKUS_HTTP_PORT", String.valueOf(this.devserviceConfig.port()));
-
 
 		//configure env
 		this.withEnv(mongoConnectionInfo);
@@ -75,6 +62,6 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 	 * @return the port that the dev service is listening on.
 	 */
 	public Integer getPort() {
-		return this.devserviceConfig.port();
+		return this.getMappedPort(8080);
 	}
 }
