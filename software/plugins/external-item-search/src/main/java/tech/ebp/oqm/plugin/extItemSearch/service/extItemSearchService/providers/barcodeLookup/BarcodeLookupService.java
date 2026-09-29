@@ -30,10 +30,10 @@ import java.util.*;
 @ApplicationScoped
 @Slf4j
 public class BarcodeLookupService extends ItemSearchService {
-	
+
 	private BarcodeLookupClient barcodeLookupClient;
 	private String apiKey;
-	
+
 	@Inject
 	public BarcodeLookupService(
 		@RestClient
@@ -50,7 +50,7 @@ public class BarcodeLookupService extends ItemSearchService {
 		} else {
 			this.apiKey = apiKey;
 		}
-		
+
 		super(
 			enabled,
 			LookupService.BARCODE_LOOKUP,
@@ -63,12 +63,12 @@ public class BarcodeLookupService extends ItemSearchService {
 				.cost("Paid")
 		);
 	}
-	
+
 	@Override
 	public boolean isEnabled() {
 		return super.isEnabled() && this.apiKey != null && !this.apiKey.isBlank();
 	}
-	
+
 	/**
 	 * https://www.barcodelookup.com/api
 	 *
@@ -78,30 +78,29 @@ public class BarcodeLookupService extends ItemSearchService {
 	 */
 	public Collection<LookupResult> jsonNodeToSearchResults(LookupSource source, LookupMethod method, JsonNode results) {
 		log.debug("Data from BarcodeLookup: {}", results.toPrettyString());
-		
+
 		ArrayNode resultsAsArr = (ArrayNode) results.get("products");
 		List<LookupResult> resultList = new ArrayList<>(resultsAsArr.size());
-		
+
 		for (JsonNode result : resultsAsArr) {
 			ObjectNode curResultJson = (ObjectNode) result;
-			ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
-			
+			ExtItemLookupResult.ExtItemLookupResultBuilder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
 			
 			Map<String, String> attributes = new HashMap<>();
 			Map<String, String> identifiers = new HashMap<>();
 			Map<String, String> links = new HashMap<>();
 			List<String> images = new ArrayList<>();
-			
+
 			for (Iterator<Map.Entry<String, JsonNode>> iter = curResultJson.fields(); iter.hasNext(); ) {
 				Map.Entry<String, JsonNode> curField = iter.next();
-				
+
 				String curFieldName = curField.getKey();
 				JsonNode curFieldVal = curField.getValue();
-				
+
 				if(ResultMappingUtils.isFieldEmpty(curFieldVal)){
 					continue;
 				}
-				
+
 				switch (curFieldName) {
 					case "brand":
 					case "asin":
@@ -139,7 +138,7 @@ public class BarcodeLookupService extends ItemSearchService {
 						}
 				}
 			}
-			
+
 			resultList.add(
 				resultBuilder
 					.attributes(attributes)
@@ -149,10 +148,10 @@ public class BarcodeLookupService extends ItemSearchService {
 					.build()
 			);
 		}
-		
+
 		return resultList;
 	}
-	
+
 	@Override
 	protected Multi<LookupResult> performSearch(LookupSource source, LookupMethod method, String term) {
 		return switch (source) {
@@ -161,14 +160,14 @@ public class BarcodeLookupService extends ItemSearchService {
 					case BARCODE -> this.barcodeLookupClient.searchBarcode(this.apiKey, term)
 										.map(results->this.jsonNodeToSearchResults(source, method, results))
 										.onFailure().recoverWithItem(e->this.handleErrorRetCollection(source, method, e))
-										
+
 										.onItem().transformToMulti(collection->
 																	   Multi.createFrom().iterable(collection)
 						);
 					case TEXT -> this.barcodeLookupClient.searchQuery(this.apiKey, term)
 									 .map(results->this.jsonNodeToSearchResults(source, method, results))
 									 .onFailure().recoverWithItem(e->this.handleErrorRetCollection(source, method, e))
-									 
+
 									 .onItem().transformToMulti(collection->
 																	Multi.createFrom().iterable(collection)
 						);
@@ -177,7 +176,7 @@ public class BarcodeLookupService extends ItemSearchService {
 			default -> throw new IllegalArgumentException("Invalid lookup source: " + source);
 		};
 	}
-	
+
 	@Override
 	protected Optional<LookupResult> handleClientError(LookupSource source, LookupMethod method, ClientWebApplicationException e) {
 		if (e.getResponse().getStatus() == 404) {
