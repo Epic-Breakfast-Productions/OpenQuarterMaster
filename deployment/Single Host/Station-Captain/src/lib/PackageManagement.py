@@ -69,7 +69,7 @@ class PackageManagement:
         if result.returncode != 0:
             PackageManagement.log.error("Failed to run install packages command: %s", result.stderr)
             return False, result.stderr
-        return True
+        return True, None
 
     @staticmethod
     def removePackages(packages:list) -> (bool, str):
@@ -83,12 +83,10 @@ class PackageManagement:
         if result.returncode != 0:
             PackageManagement.log.error("Failed to run remove packages command: %s", result.stderr)
             return False, result.stderr
-        return True
+        return True, None
 
     @staticmethod
-    def installCore():
-        # TODO:: update to use new install, package get features
-        # TODO:: update with error handling, return
+    def installCore() -> tuple[bool, str]:
         PackageManagement.log.info("Installing core components.")
         # TODO:: will likely need updated for yum
         result = PackageManagement.runPackageCommand("update")
@@ -96,6 +94,8 @@ class PackageManagement:
         PackageManagement.log.debug("Result of install: " + result.stdout)
         if result.returncode != 0:
             PackageManagement.log.error("FAILED to install core components: %s", result.stderr)
+            return False, result.stderr
+        return True, None
 
     @staticmethod
     def updateSystem() -> (bool, str):
