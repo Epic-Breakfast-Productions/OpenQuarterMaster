@@ -10,7 +10,7 @@ import org.cyclonedx.Version
 import org.cyclonedx.model.Component
 
 group = 'com.ebp.openQuarterMaster'
-version = '6.5.0'
+version = '6.5.1-SNAPSHOT'
 
 repositories {
 	mavenCentral()
