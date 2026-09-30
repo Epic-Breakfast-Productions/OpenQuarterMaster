@@ -103,12 +103,6 @@ class CoreApiLibQuarkusProcessor {
 		container.withExposedPorts(8080);
 		container.withAccessToHost(true);
 
-
-		//TODO:: #1287 don't do this
-		//		container.withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
-		//			new HostConfig().withNetworkMode("host")
-		//		));
-
 		container.withEnv(
 			"smallrye.jwt.verify.key.location",
 			String.format(
@@ -128,12 +122,6 @@ class CoreApiLibQuarkusProcessor {
 	@BuildStep(onlyIfNot = IsNormal.class, onlyIf = DevServicesConfig.Enabled.class)
 	public List<DevServicesResultBuildItem> createContainer(LaunchModeBuildItem launchMode, CoreApiLibBuildTimeConfig config, CuratedApplicationShutdownBuildItem closeBuildItem) {
 		log.info("Setting up OQM Core API related dev services.");
-
-		//TODO:: #1287 these lines are related to not host netowrking
-		//		Testcontainers.exposeHostPorts(
-		//			config.devservices().keycloak().port(),
-		//			config.devservices().kafka().port()
-		//		);
 
 		//TODO:: handle needing to restart services?
 		List<DevServicesResultBuildItem> output = new ArrayList<>();
