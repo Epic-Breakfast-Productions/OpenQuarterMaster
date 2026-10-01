@@ -193,12 +193,13 @@ class CoreApiLibQuarkusProcessor {
 												container.withEnv(
 													"smallrye.jwt.verify.key.location",
 													String.format(
-														"http://%s/realms/%s/protocol/openid-connect/certs",
+														"%s/realms/%s/protocol/openid-connect/certs",
 														host,
 														config.devservices().keycloak().realm()
 													)
 												);
-											}
+											},
+											true
 										)
 										.configProvider(Map.of(
 											//main config value
