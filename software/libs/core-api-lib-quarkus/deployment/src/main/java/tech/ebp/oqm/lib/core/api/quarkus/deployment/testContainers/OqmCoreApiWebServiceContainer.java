@@ -6,6 +6,7 @@ import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
+import io.quarkus.deployment.builditem.Startable;
 import tech.ebp.oqm.lib.core.api.quarkus.deployment.config.CoreApiLibBuildTimeConfig;
 
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
 /**
  * Container for the Open QuarterMaster Core API web service.
  */
-public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServiceContainer> {
+public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServiceContainer> implements Startable {
 
 	private final CoreApiLibBuildTimeConfig.DevserviceConfig devserviceConfig;
 	private final Map<String, String> mongoConnectionInfo;
@@ -63,5 +64,15 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 	 */
 	public Integer getPort() {
 		return this.getMappedPort(8080);
+	}
+
+	@Override
+	public void close() {
+		super.close();
+	}
+
+	@Override
+	public String getConnectionInfo() {
+		return getHost() + ":" + getPort();
 	}
 }

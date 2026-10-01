@@ -10,6 +10,7 @@ import io.quarkus.deployment.builditem.DevServicesResultBuildItem;
 import io.quarkus.deployment.builditem.FeatureBuildItem;
 import io.quarkus.deployment.builditem.LaunchModeBuildItem;
 import io.quarkus.deployment.builditem.RunTimeConfigurationDefaultBuildItem;
+import io.quarkus.deployment.builditem.Startable;
 import io.quarkus.deployment.dev.devservices.DevServicesConfig;
 import io.quarkus.devservices.common.ConfigureUtil;
 import io.quarkus.devui.spi.JsonRPCProvidersBuildItem;
@@ -47,7 +48,7 @@ class CoreApiLibQuarkusProcessor {
 
 	private static volatile boolean firstSetup = true;
 
-	private static volatile Map<String, DevServicesResultBuildItem.RunningDevService> DEVSERVICES = new HashMap<>();
+	private static volatile Map<String, DevServicesResultBuildItem> DEVSERVICES = new HashMap<>();
 
 
 	@BuildStep
@@ -88,7 +89,7 @@ class CoreApiLibQuarkusProcessor {
 		Map<String, String> mongoConnectionInfo,
 		Map<String, String> kafkaConnectionInfo
 	) {
-		log.info("Starting new OQM Core API dev container");
+		log.info("Building new OQM Core API dev container");
 		OqmCoreApiWebServiceContainer
 			container =
 			new OqmCoreApiWebServiceContainer(config.devservices(), mongoConnectionInfo, kafkaConnectionInfo)
@@ -103,17 +104,17 @@ class CoreApiLibQuarkusProcessor {
 		container.withExposedPorts(8080);
 		container.withAccessToHost(true);
 
-		container.withEnv(
-			"smallrye.jwt.verify.key.location",
-			String.format(
-				"http://%s:%s/realms/%s/protocol/openid-connect/certs",
-				KEYCLOAK_DEVSERVICE_HOSTNAME,
-				config.devservices().keycloak().port(),
-				config.devservices().keycloak().realm()
-			)
-		);
+		//set _something_ to satisfy startup for testing
+		//		container.withEnv(
+		//			"smallrye.jwt.verify.key.location",
+		//			String.format(
+		//				"http://%s/realms/%s/protocol/openid-connect/certs",
+		//				"foo:8080",
+		//				"oqm-app"
+		//			)
+		//		);
 
-		container.start();
+		//		container.start();
 
 		return container;
 	}
@@ -129,7 +130,7 @@ class CoreApiLibQuarkusProcessor {
 		Map<String, String> kafkaConnectionInfo = new HashMap<>();
 		{//mongodb
 
-			DevServicesResultBuildItem.RunningDevService mongoDevService = DEVSERVICES.get("mongodb");
+			DevServicesResultBuildItem mongoDevService = DEVSERVICES.get("mongodb");
 
 			if (mongoDevService == null) {
 				MongoDBContainer mongoDBContainer = newMongoDbContainer();
@@ -146,12 +147,11 @@ class CoreApiLibQuarkusProcessor {
 
 				log.info("MongoDB dev service properties: {}" + props);
 
-				mongoDevService = new DevServicesResultBuildItem.RunningDevService(
-					FEATURE,
-					mongoDBContainer.getContainerId(),
-					mongoDBContainer::close,
-					props
-				);
+				mongoDevService = DevServicesResultBuildItem.discovered()
+									  .feature(FEATURE+"-mongo")
+									  .containerId(mongoDBContainer.getContainerId())
+									  .config(props)
+									  .build();
 
 				DEVSERVICES.put("mongodb", mongoDevService);
 			}
@@ -161,8 +161,10 @@ class CoreApiLibQuarkusProcessor {
 				"mongodb://" + mongoDevService.getConfig().get("host") + ":" + mongoDevService.getConfig().get("port")
 			);
 
-			output.add(mongoDevService.toBuildItem());
+			output.add(mongoDevService);
 		}
+
+		//TODO:: move this to other means
 		if (config.devservices().kafka().enabled()) {//connect to existent
 			log.info("Connecting to existing kafka dev service.");
 			kafkaConnectionInfo.putAll(Map.of(
@@ -175,43 +177,64 @@ class CoreApiLibQuarkusProcessor {
 				"mp.messaging.outgoing.events-outgoing.enabled", "false"
 			));
 		}
+
 		{//Core API
-			DevServicesResultBuildItem.RunningDevService coreApiDevService = DEVSERVICES.get("coreApi");
+			DevServicesResultBuildItem coreApiDevService = DEVSERVICES.get("coreApi");
 
 			if (coreApiDevService == null) {
-				OqmCoreApiWebServiceContainer container = this.newCoreApiContainer(config, mongoConnectionInfo, kafkaConnectionInfo);
+				coreApiDevService = DevServicesResultBuildItem.owned()
+										.feature(FEATURE)
+										.startable(()->{
+											return this.newCoreApiContainer(config, mongoConnectionInfo, kafkaConnectionInfo);
+										})
+										.dependsOnConfig(
+											"keycloak.auth-server-internal-url",
+											(container, host)->{
+												container.withEnv(
+													"smallrye.jwt.verify.key.location",
+													String.format(
+														"http://%s/realms/%s/protocol/openid-connect/certs",
+														host,
+														config.devservices().keycloak().realm()
+													)
+												);
+											}
+										)
+										.configProvider(Map.of(
+											//main config value
+											Constants.CONFIG_ROOT_NAME + ".baseUri", (container)->"http://" + container.getHost() + ":" + container.getPort(),
+											//ensuring rest client is set properly
+											"quarkus.rest-client.\"" + Constants.CORE_API_CLIENT_NAME + "\".url", (container)->"${" + Constants.CONFIG_ROOT_NAME + ".baseUri}"
+										))
+										.build()
+				;
 
-				Map<String, String> props = new HashMap<>();
-				props.put(Constants.CONFIG_ROOT_NAME + ".baseUri", "http://" + container.getHost() + ":" + container.getPort());
-				props.put("quarkus.rest-client.\"" + Constants.CORE_API_CLIENT_NAME + "\".url", "${" + Constants.CONFIG_ROOT_NAME + ".baseUri}");
-
-				log.info("Core API devservice properties: " + props);
-
-				coreApiDevService = new DevServicesResultBuildItem.RunningDevService(FEATURE, container.getContainerId(), container::close, props);
 				DEVSERVICES.put("coreApi", coreApiDevService);
+				log.info("Built new core api devservice / " + Constants.CONFIG_ROOT_NAME + ".baseUri");
 			}
 
-			output.add(coreApiDevService.toBuildItem());
+			output.add(coreApiDevService);
 		}
 
 		if (firstSetup) {
 			firstSetup = false;
-			closeBuildItem.addCloseTask(
-				()->{
-					while (!DEVSERVICES.isEmpty()) {
-						String curDevservice = DEVSERVICES.keySet().stream().findFirst().get();
-						try (
-							Closeable cur = DEVSERVICES.remove(curDevservice)
-						) {
-							log.info("Closing devservice " + curDevservice + ": " + cur);
-						} catch(IOException e) {
-							log.error("Failed to close devservice: " + curDevservice.toString(), e);
-						}
-					}
-
-					firstSetup = true;
-				}, true
-			);
+			//TODO:: determine if necessary
+			//			closeBuildItem.addCloseTask(
+			//				()->{
+			//					while (!DEVSERVICES.isEmpty()) {
+			//						String curDevservice = DEVSERVICES.keySet().stream().findFirst().get();
+			//						try (
+			//							DevServicesResultBuildItem cur = DEVSERVICES.remove(curDevservice)
+			//						) {
+			//							log.info("Closing devservice " + curDevservice + ": " + cur);
+			//						} catch(IOException e) {
+			//							log.error("Failed to close devservice: " + curDevservice.toString(), e);
+			//						}
+			//					}
+			//
+			//					firstSetup = true;
+			//				}, true
+			//			);
 		}
 
 		return output;
