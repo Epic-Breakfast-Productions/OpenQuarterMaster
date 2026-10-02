@@ -22,17 +22,11 @@ To get a JWT from Keycloak, you need a couple things:
 - Service Account Name
 - Service Account Secret
 
-To get the jwt, make the following REST call:
-
-.. code-block:: none
-
-    http://<>host>/infra/keycloak/...
-
-Example Curl command:
+To get the jwt, make the following REST call (example in bash/curl command):
 
 .. code-block:: bash
 
-    curl
+    curl -X POST -H "Content-Type: application/x-www-form-urlencoded" -u <client id>:<client secret> -d "grant_type=client_credentials" https://<host/ip of snh instance>/infra/keycloak/realms/oqm/protocol/openid-connect/token
 
 This will get you a JWT to use. HOWEVER, note the expiration. it will be necessary to retrieve a new token before that expiration
 comes around.
@@ -46,3 +40,8 @@ click "copy token".
 Using the JWT
 -------------
 
+Example of the usage of the token:
+
+.. code-block:: bash
+
+	curl -X 'GET' 'https://<host/port>/core/api/api/v1/interacting-entity/self' -H 'accept: application/json' -H 'Authorization: Bearer <token>'

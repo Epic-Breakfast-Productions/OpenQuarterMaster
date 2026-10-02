@@ -1,7 +1,7 @@
 plugins {
 	id 'java'
 	id 'io.quarkus'
-	id "io.freefair.lombok" version "9.5.0"
+	id "io.freefair.lombok" version "9.7.0"
 	id 'jacoco'
 	id 'org.cyclonedx.bom' version '3.4.1'
 	id "org.spdx.sbom" version "0.12.0"
@@ -10,7 +10,7 @@ import org.cyclonedx.Version
 import org.cyclonedx.model.Component
 
 group = 'com.ebp.openQuarterMaster'
-version = '6.5.0'
+version = '6.5.1-SNAPSHOT'
 
 repositories {
 	mavenCentral()
@@ -77,6 +77,15 @@ java {
 	}
 }
 
+javadoc {
+//	options.tags = [ "requirement:a:Requirements:" ]
+//	options {
+//		tags = [
+//			[ "requirement:a:Requirements:" ]
+//		]
+//	}
+}
+
 compileJava {
 	options.encoding = 'UTF-8'
 	options.compilerArgs << '-parameters'
@@ -95,7 +104,8 @@ test {
 		"--add-opens", "java.base/java.util=ALL-UNNAMED",
 		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
 	)
-	testLogging.showStandardStreams = System.getenv("CI") == null
+//	testLogging.showStandardStreams = System.getenv("CI") == null
+//	systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
 	finalizedBy jacocoTestReport
 	jacoco {
 		excludeClassLoaders = ["*QuarkusClassLoader"]
