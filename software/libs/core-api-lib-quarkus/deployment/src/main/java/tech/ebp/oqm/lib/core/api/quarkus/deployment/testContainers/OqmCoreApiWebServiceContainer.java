@@ -6,6 +6,7 @@ import org.testcontainers.Testcontainers;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.Network;
 import org.testcontainers.containers.wait.strategy.Wait;
+import io.quarkus.deployment.builditem.Startable;
 import tech.ebp.oqm.lib.core.api.quarkus.deployment.config.CoreApiLibBuildTimeConfig;
 
 import java.util.Map;
@@ -13,7 +14,7 @@ import java.util.Map;
 /**
  * Container for the Open QuarterMaster Core API web service.
  */
-public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServiceContainer> {
+public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWebServiceContainer> implements Startable {
 
 	private final CoreApiLibBuildTimeConfig.DevserviceConfig devserviceConfig;
 	private final Map<String, String> mongoConnectionInfo;
@@ -36,19 +37,6 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 
 	@Override
 	protected void configure() {
-		//configure network
-
-		//TODO:: #1287 these lines are related to not host netowrking
-//		ConfigureUtil.configureSharedNetwork(this, "oqm-core-api");
-//		this.addFixedExposedPort(devserviceConfig.port(), 8080);
-//		this.withAccessToHost(true);
-
-		//TODO:: #1287 don't do this
-		withCreateContainerCmdModifier(cmd -> cmd.withHostConfig(
-			new HostConfig().withNetworkMode("host")
-		));
-		this.withEnv("QUARKUS_HTTP_PORT", String.valueOf(this.devserviceConfig.port()));
-
 
 		//configure env
 		this.withEnv(mongoConnectionInfo);
@@ -75,6 +63,16 @@ public class OqmCoreApiWebServiceContainer extends GenericContainer<OqmCoreApiWe
 	 * @return the port that the dev service is listening on.
 	 */
 	public Integer getPort() {
-		return this.devserviceConfig.port();
+		return this.getMappedPort(8080);
+	}
+
+	@Override
+	public void close() {
+		super.close();
+	}
+
+	@Override
+	public String getConnectionInfo() {
+		return getHost() + ":" + getPort();
 	}
 }
