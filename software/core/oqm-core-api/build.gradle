@@ -77,6 +77,15 @@ java {
 	}
 }
 
+javadoc {
+//	options.tags = [ "requirement:a:Requirements:" ]
+//	options {
+//		tags = [
+//			[ "requirement:a:Requirements:" ]
+//		]
+//	}
+}
+
 compileJava {
 	options.encoding = 'UTF-8'
 	options.compilerArgs << '-parameters'
@@ -95,7 +104,8 @@ test {
 		"--add-opens", "java.base/java.util=ALL-UNNAMED",
 		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
 	)
-	testLogging.showStandardStreams = System.getenv("CI") == null
+//	testLogging.showStandardStreams = System.getenv("CI") == null
+//	systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
 	finalizedBy jacocoTestReport
 	jacoco {
 		excludeClassLoaders = ["*QuarkusClassLoader"]
