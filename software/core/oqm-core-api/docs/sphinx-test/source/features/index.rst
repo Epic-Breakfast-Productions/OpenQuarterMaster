@@ -8,6 +8,12 @@ Intended as a traceable, authoritative itemization of requirements to trace func
 Is NOT a low level implementation detailed document, rather a higher level set of generalized capabilities, requirements, and features.
 This means that things like specific data models, implementation details, and similar low level information is not here.
 
+.. note::
+
+	When referencing these requirements in code/issues/etc, refer to them with ``OQMCA-<number>``, for easy identification.
+
+	For example, ``OQMCA-1.1``
+
 .. toctree::
    :numbered:
    :maxdepth: 2
