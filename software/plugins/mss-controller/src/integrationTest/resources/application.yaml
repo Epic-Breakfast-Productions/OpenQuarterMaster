@@ -1,0 +1,5 @@
+quarkus:
+    test:
+        container:
+            volume-mounts:
+              "/absolute/path/to/local/dir": /app/mounted-dir

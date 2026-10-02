@@ -1,0 +1,69 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/HighlightBlocksCommand.json",
+	"title": "Highlight Blocks Command",
+	"description": "Command to highlight a set of blocks to the user. Can be called repeatedly, supplying new blocks to show at one time with multiple calls. If Bulk ops are turned off, recommended a small number of items in blocks array with any one call.",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/command/Command.json"
+		}
+	],
+	"properties": {
+		"command": {
+			"description": "The command.",
+			"type": "string",
+			"const": "HIGHLIGHT_BLOCKS"
+		},
+		"duration": {
+			"description": "The number of seconds to highlight for. If not specified, defaults to 30 seconds. Any negative value for indefinitely.",
+			"type": "integer",
+			"minimum": -1
+		},
+		"carry": {
+			"description": "If this request is a continuation of a previous call. If `false`, resets currently highlighted blocks. Defaults to 'false'",
+			"type": "boolean"
+		},
+		"beep": {
+			"description": "If you want this to beep when highlighted. Defaults to 'false'",
+			"type": "boolean"
+		},
+		"storageBlocks": {
+			"description": "The array of storage blocks to be highlighted.",
+			"type": "array",
+			"items": {
+				"type": "object",
+				"properties": {
+					"blockNum": {
+						"description": "The block these settings are for",
+						"type": "integer",
+						"minimum": 1
+					},
+					"powerState": {
+						"description": "The power state of the lights. Defaults to 'ON' if omitted.",
+						"type": "string",
+						"enum": [ "ON", "FLASHING" ]
+					},
+					"color": {
+						"description": "The color of the lights. Must be valid hex color string, or 'RAND' (for random color). I.e, '#FFFFFF'. Ignored if disabled in capabilities. Exclude to keep current setting if used in setting command.",
+						"type": "string",
+						"pattern": "^#(([a-fA-F0-9]{6}|[a-fA-F0-9]{3})|(RAND))$"
+					},
+					"brightness": {
+						"description": "The brightness setting of this light. Ignored if disabled in capabilities. Exclude to keep current setting if used in setting command.",
+						"type": "integer",
+						"minimum": 0,
+						"maximum": 255
+					}
+				},
+				"required": [
+					"blockNum"
+				]
+			}
+		}
+	},
+	"required": [
+		"command",
+		"storageBlocks"
+	]
+}
