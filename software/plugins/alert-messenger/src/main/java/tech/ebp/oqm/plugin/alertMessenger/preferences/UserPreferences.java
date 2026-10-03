@@ -8,7 +8,7 @@ import lombok.Getter;
 import lombok.Setter;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventType;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.ObjectType;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannelRecipient;
+import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
 
 import java.util.List;
 import java.util.Set;
@@ -27,5 +27,5 @@ public class UserPreferences extends PanacheMongoEntity {
     public Set<EventType> eventTypes;
 
     @NotNull
-    public List<MessageChannelRecipient> messageChannels;
+    public List<ConnectionDetails> connectionDetails;
 }

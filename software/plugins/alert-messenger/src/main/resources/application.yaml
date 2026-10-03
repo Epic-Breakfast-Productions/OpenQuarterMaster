@@ -22,7 +22,7 @@ quarkus:
     host: "smtp.zoho.eu"
     port: 587
     username: "noreply@axgiri.tech"
-    password: "TFCRm5wmEikt"
+    password: ""
     start-tls: REQUIRED
     mock: false
 
@@ -31,6 +31,10 @@ quarkus:
       url: "http://localhost:8080"
     "oqm.core.api-oidc":
       url: "${quarkus.oidc.auth-server-url}"
+    "webhook-client":
+#      url:
+      connect-timeout: 5000
+      read-timeout: 10000
 oqm:
   core:
     api:

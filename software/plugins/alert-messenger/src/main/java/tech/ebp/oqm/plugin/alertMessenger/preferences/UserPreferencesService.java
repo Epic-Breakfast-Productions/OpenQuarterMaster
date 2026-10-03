@@ -44,7 +44,7 @@ public class UserPreferencesService {
         UserPreferences entity = this.getByUserId(JwtUtils.getId(jwt));
         entity.objectTypes = request.objectTypes;
         entity.eventTypes = request.eventTypes;
-        entity.messageChannels = request.messageChannels;
+        entity.connectionDetails = request.connectionDetails;
         this.repository.update(entity);
         return entity;
     }

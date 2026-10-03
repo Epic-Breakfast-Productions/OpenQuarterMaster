@@ -1,50 +1,60 @@
 package tech.ebp.oqm.plugin.alertMessenger.alerts;
 
-import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import jakarta.annotation.PostConstruct;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferences;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferencesService;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannelRecipient;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
+import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
 
 import java.util.Iterator;
 import java.util.Map;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Slf4j
 @ApplicationScoped
 public class AlertHandler {
-    private Map<MessageChannels, AlertStrategy> strategies;
+
+    @Inject
+    Instance<AlertSender> senderInstances;
 
     @Inject
     UserPreferencesService userPreferencesService;
 
-    @Inject
-    EmailAlertStrategy emailAlertStrategy;
+    private Map<MessageChannels, AlertSender> alertSenders;
 
     @PostConstruct
-    void initializeStrategies() {
-        this.strategies = Map.of(
-            MessageChannels.EMAIL, emailAlertStrategy
-        );
+    void initializeSenders() {
+        alertSenders = StreamSupport
+            .stream(senderInstances.spliterator(), false)
+            .collect(Collectors.toUnmodifiableMap(
+                AlertSender::messageChannel,
+                Function.identity()
+            ));
     }
+
 
     public void handleAlert(EventNotificationWrapper message) {
         Iterator<UserPreferences> iterator = userPreferencesService.getIterator();
         while (iterator.hasNext()) {
             UserPreferences preferences = iterator.next();
-            if(preferences.objectTypes.contains(message.getObjectType()) || preferences.eventTypes.contains(message.getEventType())) {
-                for(MessageChannelRecipient recipient : preferences.messageChannels) {
-                    if(strategies.containsKey(recipient.channel())) {
+            if (preferences.objectTypes.contains(message.getObjectType()) || preferences.eventTypes.contains(message.getEventType())) {
+                for (ConnectionDetails connectionDetails : preferences.getConnectionDetails()) {
+                    AlertSender sender = alertSenders.get(connectionDetails.getMessageChannel());
+                    if (sender != null) {
                         try {
-                            strategies.get(recipient.channel()).sendAlert(message, recipient.destination());
+                            sender.send(connectionDetails, message);
                         } catch (Exception e) {
-                            log.error("Error sending alert to {} via {}. Due to {}", recipient.destination(), recipient.channel(), e.getMessage());
+                            log.error("Error sending alert via {}", connectionDetails.getMessageChannel(), e);
                         }
                     } else {
-                        log.warn("No strategy found for channel: {}", recipient.channel());
+                        log.warn("No sender found for message channel: {}", connectionDetails.getMessageChannel());
                     }
                 }
             }
