@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.InTransit;
 
 @Data
 @SuperBuilder(toBuilder = true)

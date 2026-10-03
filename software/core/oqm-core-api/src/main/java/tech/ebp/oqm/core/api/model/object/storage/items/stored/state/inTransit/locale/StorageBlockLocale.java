@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.stored.state;
+package tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.locale;
 
 
 import jakarta.validation.constraints.NotNull;
@@ -11,8 +11,6 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import tech.ebp.oqm.core.api.model.object.AttKeywordContaining;
-import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -20,12 +18,16 @@ import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 @SuperBuilder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(title = "InTransit", description = "The state to specify this stored is not yet stored, but in transit to another location.")
-public class InTransit extends StoredState {
+@Schema(title = "StorageBlockLocale", description = "A Location dealing with a storage block.")
+public class StorageBlockLocale extends InTransitLocale {
+
+	@NotNull
+	@NonNull
+	private ObjectId storageBlock;
 
 	@Override
-	public StoredStateType getType() {
-		return StoredStateType.IN_TRANSIT;
+	@Schema(constValue = "STORAGE_BLOCK", readOnly = true, required = true, examples = "STORAGE_BLOCK")
+	public LocaleType getType() {
+		return LocaleType.STORAGE_BLOCK;
 	}
-
 }

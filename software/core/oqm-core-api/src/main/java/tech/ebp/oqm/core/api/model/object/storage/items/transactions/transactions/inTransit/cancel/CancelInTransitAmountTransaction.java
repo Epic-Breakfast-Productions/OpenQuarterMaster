@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.add;
+package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.cancel;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -14,9 +14,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 import javax.measure.Quantity;
 
 /**
- * Transaction to add an amount.
- * <p>
- * Either adding an amount that gets converted to a new stored object, or to an existing stored object.
+ * Transaction to subtract entire stored item objects.
  */
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -24,20 +22,20 @@ import javax.measure.Quantity;
 @SuperBuilder(toBuilder = true)
 @AllArgsConstructor
 @NoArgsConstructor
-@Schema(title = "AddAmountInTransitTransaction", description = "A transaction to add an amount to a stored object.")
-public class AddAmountInTransitTransaction extends AddInTransitTransaction {
+@Schema(title = "CancelInTransitAmountTransaction", description = "A transaction to cancel an amount of an in-transit stored.")
+public class CancelInTransitAmountTransaction extends CancelInTransitTransaction {
 
 	/**
-	 * The amount we are adding.
+	 * The amount we are canceling from this in transit stored.
 	 */
 	@NonNull
 	@NotNull
 	private Quantity<?> amount;
 
 	@Override
-	@Schema(constValue = "ADD_AMOUNT_IN_TRANSIT", readOnly = true, required = true, examples = "ADD_AMOUNT_IN_TRANSIT")
+	@Schema(constValue = "CANCEL_IN_TRANSIT_AMOUNT", readOnly = true, required = true, examples = "CANCEL_IN_TRANSIT_AMOUNT")
 	public TransactionType getType() {
-		return TransactionType.ADD_AMOUNT_IN_TRANSIT;
+		return TransactionType.CANCEL_IN_TRANSIT_AMOUNT;
 	}
 
 	@Override

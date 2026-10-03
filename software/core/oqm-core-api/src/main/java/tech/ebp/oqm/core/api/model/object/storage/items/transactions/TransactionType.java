@@ -1,6 +1,12 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions;
 
 public enum TransactionType {
+	/*
+	 *
+	 * "General" transactions; standard inventory things
+	 *
+	 */
+
 	ADD_AMOUNT,
 	ADD_WHOLE,
 
@@ -18,13 +24,20 @@ public enum TransactionType {
 	TRANSFER_AMOUNT,
 	TRANSFER_WHOLE,
 
+
+	/*
+	 * In-transit related
+	 */
+
 	ADD_AMOUNT_IN_TRANSIT,
 	ADD_WHOLE_IN_TRANSIT,
-	RECEIVE_ALL_IN_TRANSIT,
-	RECEIVE_PART_IN_TRANSIT,
+	CANCEL_IN_TRANSIT_WHOLE,
+	CANCEL_IN_TRANSIT_AMOUNT,
+	RECEIVE_WHOLE_IN_TRANSIT,
+	RECEIVE_AMOUNT_IN_TRANSIT,
+	STORED_TO_IN_TRANSIT_AMOUNT,
+	STORED_TO_IN_TRANSIT_WHOLE,
 	UPDATE_IN_TRANSIT,
-	CANCEL_IN_TRANSIT,
-
 
 	;
 }
