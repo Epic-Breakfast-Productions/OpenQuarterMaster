@@ -18,6 +18,8 @@ import java.util.List;
 @Slf4j
 public class DiscordAlertSender implements AlertSender<DiscordConnection> {
 
+    private static final String ICON = "https://media.licdn.com/dms/image/v2/D4E0BAQEhoks7gzObxg/company-logo_200_200/company-logo_200_200/0/1724644030028/open_quartermaster_logo?e=1792627200&v=beta&t=UtzCaRMgxO25D9jmmipqWTsyFpS3wlV5iuMIECjR2UA";
+
     @Inject
     @RestClient
     WebhookClient webhookClient;
@@ -51,7 +53,7 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
                 new DiscordField("Database", String.valueOf(event.getDatabase()), true),
                 new DiscordField("Event data", event.getEvent() == null ? "{}" : event.getEvent().toPrettyString(), false)));
 
-        return new DiscordWebhookMessage("OpenQuarterMaster", "https://www.linkedin.com/showcase/open-quartermaster/", null, List.of(embed));
+        return new DiscordWebhookMessage("OpenQuarterMaster", ICON, null, List.of(embed));
     }
 
     private int getColor(EventNotificationWrapper event) {

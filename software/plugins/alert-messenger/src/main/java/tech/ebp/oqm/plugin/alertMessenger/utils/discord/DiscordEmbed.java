@@ -7,5 +7,4 @@ public record DiscordEmbed(
     String description,
     int color,
     List<DiscordField> fields
-) {
-}
+) {}

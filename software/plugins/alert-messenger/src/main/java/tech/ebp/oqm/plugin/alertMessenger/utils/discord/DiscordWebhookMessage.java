@@ -7,5 +7,4 @@ public record DiscordWebhookMessage(
     String avatar_url,
     String content,
     List<DiscordEmbed> embeds
-) {
-}
+) {}
