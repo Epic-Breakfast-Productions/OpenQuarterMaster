@@ -1,5 +1,7 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.storedToInTransit;
 
+import jakarta.annotation.Nonnull;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -24,6 +26,8 @@ public class StoredToInTransitWholeTransaction extends StoredToInTransitTransact
 	/**
 	 * The specific stored object to subtract
 	 */
+	@NotNull
+	@Nonnull
 	private ObjectId toTransit;
 
 	@Override

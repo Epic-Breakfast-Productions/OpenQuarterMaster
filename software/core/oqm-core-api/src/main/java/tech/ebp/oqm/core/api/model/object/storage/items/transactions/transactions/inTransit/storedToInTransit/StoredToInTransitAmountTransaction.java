@@ -8,7 +8,8 @@ import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.InTransitStoredTransaction;
+
+import javax.measure.Quantity;
 
 /**
  * Transaction to subtract entire stored item objects.
@@ -22,9 +23,14 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 public class StoredToInTransitAmountTransaction extends StoredToInTransitTransaction {
 
 	/**
-	 * The specific stored object to subtract
+	 * Flag to specify to transfer all of what is in the source to the destination.
 	 */
-	private ObjectId toSubtract;
+	@lombok.Builder.Default
+	private boolean all = false;
+
+	private Quantity<?> amount;
+
+	private ObjectId subtractFromStored;
 
 	private ObjectId toInTransitStored;
 

@@ -22,7 +22,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 @NoArgsConstructor
 @SuperBuilder(toBuilder = true)
 @Schema(title = "AddWholeInTransitTransaction", description = "A transaction to add a stored that is in transit.")
-public class AddWholeInTransitTransaction extends InTransitTransaction {
+public class AddWholeInTransitTransaction extends AddInTransitTransaction {
 
 	/**
 	 * The new stored object to add.

@@ -22,9 +22,10 @@ import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
 )
 @JsonSubTypes({
 	@JsonSubTypes.Type(value = GenericLocale.class, name = "GENERIC"),
-	@JsonSubTypes.Type(value = StorageBlockLocale.class, name = "STORAGE_BLOCK")
+	@JsonSubTypes.Type(value = StorageBlockLocale.class, name = "STORAGE_BLOCK"),
+	@JsonSubTypes.Type(value = StoredLocale.class, name = "STORED")
 })
-@Schema(oneOf = {GenericLocale.class, StorageBlockLocale.class})
+@Schema(oneOf = {GenericLocale.class, StorageBlockLocale.class, StoredLocale.class})
 public abstract class InTransitLocale {
 
 	public abstract LocaleType getType();

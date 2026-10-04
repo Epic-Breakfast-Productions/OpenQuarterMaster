@@ -12,6 +12,7 @@ import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.InTransitStoredTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubAmountTransaction;
 
 import javax.measure.Quantity;
 
@@ -26,8 +27,12 @@ import javax.measure.Quantity;
 @Schema(title = "ReceiveAmountInTransitTransaction", description = "A transaction to subtract a stored object.")
 public class ReceiveAmountInTransitTransaction extends ReceiveInTransitTransaction {
 
-	@NonNull
-	@NotNull
+	/**
+	 * Flag to specify to transfer all of what is in the source to the destination.
+	 */
+	@lombok.Builder.Default
+	private boolean all = false;
+
 	private Quantity<?> amount;
 
 	@Nullable
