@@ -32,9 +32,9 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
     @Override
     public void send(DiscordConnection connection, EventNotificationWrapper eventNotificationWrapper) {
         try {
-            webhookClient.send(connection.getDestination(), toDiscordMessage(eventNotificationWrapper));
+            webhookClient.send(connection.getWebhookUrl(), toDiscordMessage(eventNotificationWrapper));
         } catch (Exception e) {
-            log.error("Error sending alert via Webhook to {}: {}", connection.getDestination(), e.getMessage(), e);
+            log.error("Error sending alert via Webhook to {}: {}", connection.getWebhookUrl(), e.getMessage(), e);
         }
     }
 

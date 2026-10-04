@@ -1,15 +1,13 @@
 package tech.ebp.oqm.plugin.alertMessenger.utils;
 
+import lombok.NoArgsConstructor;
 import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 
 import java.util.Set;
 
+@NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class JwtUtils {
-
-    private JwtUtils() {
-        /* This utility class should not be instantiated */
-    }
 
     public static String getId(JsonWebToken jwt) {
         return jwt.getClaim(Claims.sub).toString();
