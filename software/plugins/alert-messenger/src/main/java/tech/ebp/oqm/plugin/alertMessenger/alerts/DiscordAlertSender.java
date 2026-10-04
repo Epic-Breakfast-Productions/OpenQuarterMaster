@@ -6,7 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.plugin.alertMessenger.WebhookClient;
-import tech.ebp.oqm.plugin.alertMessenger.connections.DiscordConnection;
+import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 import tech.ebp.oqm.plugin.alertMessenger.utils.discord.DiscordEmbed;
 import tech.ebp.oqm.plugin.alertMessenger.utils.discord.DiscordField;
@@ -16,7 +16,7 @@ import java.util.List;
 
 @ApplicationScoped
 @Slf4j
-public class DiscordAlertSender implements AlertSender<DiscordConnection> {
+public class DiscordAlertSender implements AlertSender {
 
     private static final String ICON = "https://media.licdn.com/dms/image/v2/D4E0BAQEhoks7gzObxg/company-logo_200_200/company-logo_200_200/0/1724644030028/open_quartermaster_logo?e=1792627200&v=beta&t=UtzCaRMgxO25D9jmmipqWTsyFpS3wlV5iuMIECjR2UA";
 
@@ -30,8 +30,9 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
     }
 
     @Override
-    public void send(DiscordConnection connection, EventNotificationWrapper eventNotificationWrapper) {
+    public void send(ConnectionDetails connection, EventNotificationWrapper eventNotificationWrapper) {
         try {
+            log.debug("Sending alert via Discord Webhook to {}: {}", connection.getWebhookUrl(), eventNotificationWrapper);
             webhookClient.send(connection.getWebhookUrl(), toDiscordMessage(eventNotificationWrapper));
         } catch (Exception e) {
             log.error("Error sending alert via Webhook to {}: {}", connection.getWebhookUrl(), e.getMessage(), e);
