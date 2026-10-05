@@ -40,6 +40,25 @@ import java.util.stream.Stream;
 
 /**
  * Describes a type of inventory item.
+ * <p>
+ * An {@link InventoryItem} defines a category of item that is tracked and stored (for example, "Soap"), while the exact physical units of it are
+ * tracked as {@link Stored} instances. It specifies how the item is stored, how it is identified and labelled, how it is priced, and what
+ * notifications to raise about its stored stock.
+ * <p>
+ * Items may be placed in {@link StorageBlock}s via {@link #storageBlocks}, where each entry maps a storage block to its
+ * {@link StorageBlockSettings} for this item.
+ * <p>
+ * Example:
+ * <pre>{@code
+ * InventoryItem item = InventoryItem.builder()
+ *     .name("Soap")
+ *     .storageType(StorageType.BULK)
+ *     .unit(OqmProvidedUnits.UNIT)
+ *     .build();
+ * }</pre>
+ *
+ * @see Stored
+ * @see StorageBlock
  */
 @Data
 @NoArgsConstructor
@@ -51,6 +70,11 @@ import java.util.stream.Stream;
 @Schema(description = "A type of item that is stored. Does not describe the exact items stored, but their type. Exact items stored are described by storeds.")
 public class InventoryItem extends ImagedMainObject implements FileAttachmentContaining {
 
+	/**
+	 * The current schema version of the serialized form of this item.
+	 * <p>
+	 * Bumped whenever the persisted shape of {@link InventoryItem} changes in a way that requires existing data to be migrated.
+	 */
 	public static final int CUR_SCHEMA_VERSION = 5;
 
 	/**
@@ -156,6 +180,9 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@ValidStoredLabelFormat
 	private String defaultLabelFormat = null;
 
+	/**
+	 * The state of notifications sent about this item's stored state (low stock, expiry).
+	 */
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
@@ -206,18 +233,34 @@ public class InventoryItem extends ImagedMainObject implements FileAttachmentCon
 	@Schema(required = false, readOnly = true, description = "Stats about this item's stored instances.")
 	private ItemStoredStats stats = null;
 
+	/**
+	 * Get the IDs of all the storage blocks this item is stored in.
+	 *
+	 * @return A stream of the storage block IDs referenced by {@link #storageBlocks}
+	 */
 	@BsonIgnore
 	@JsonIgnore
 	public Stream<ObjectId> getStorageBlockIds() {
 		return this.storageBlocks.stream().map(StorageBlockSettings::getStorageBlock);
 	}
 
+	/**
+	 * Check whether this item is stored in the given storage block.
+	 *
+	 * @param storageBlockId The ID of the storage block to check
+	 * @return {@code true} if this item is stored in the block, {@code false} otherwise
+	 */
 	@BsonIgnore
 	@JsonIgnore
 	public boolean usesStorageBlock(ObjectId storageBlockId) {
 		return this.getStorageBlockIds().anyMatch(curId -> curId.equals(storageBlockId));
 	}
 
+	/**
+	 * Get the current schema version of the serialized form of this item.
+	 *
+	 * @return {@link #CUR_SCHEMA_VERSION}
+	 */
 	@Schema(defaultValue = InventoryItem.CUR_SCHEMA_VERSION+"")
 	@Override
 	public int getSchemaVersion() {
