@@ -9,13 +9,13 @@ import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.Versionable;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddAmountTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddWholeTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinFullTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinLossTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinPartTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutAmountTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.add.AddAmountTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.add.AddWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.checkin.CheckinFullTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.checkin.CheckinLossTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.checkin.CheckinPartTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.checkout.CheckoutAmountTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.checkout.CheckoutWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.add.AddAmountInTransitTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.add.AddWholeInTransitTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.cancel.CancelInTransitAmountTransaction;
@@ -25,11 +25,11 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.storedToInTransit.StoredToInTransitAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.storedToInTransit.StoredToInTransitWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.update.UpdateInTransitTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.set.SetAmountTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubAmountTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubWholeTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferAmountTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.transfer.TransferWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.set.SetAmountTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.subtract.SubAmountTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.subtract.SubWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.transfer.TransferAmountTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.transfer.TransferWholeTransaction;
 
 /**
  * This class is the superclass for all transaction objects.
