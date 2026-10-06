@@ -6,15 +6,8 @@ public enum TransactionType {
 	 * "General" transactions; standard inventory things
 	 *
 	 */
-
 	ADD_AMOUNT,
 	ADD_WHOLE,
-
-	CHECKIN_FULL,
-	CHECKIN_LOSS,
-	CHECKIN_PART,
-	CHECKOUT_AMOUNT,
-	CHECKOUT_WHOLE,
 
 	SET_AMOUNT,
 
@@ -24,6 +17,16 @@ public enum TransactionType {
 	TRANSFER_AMOUNT,
 	TRANSFER_WHOLE,
 
+	/*
+	 *
+	 * checkouts
+	 *
+	 */
+	CHECKIN_FULL,
+	CHECKIN_LOSS,
+	CHECKIN_PART,
+	CHECKOUT_AMOUNT,
+	CHECKOUT_WHOLE,
 
 	/*
 	 * In-transit related
