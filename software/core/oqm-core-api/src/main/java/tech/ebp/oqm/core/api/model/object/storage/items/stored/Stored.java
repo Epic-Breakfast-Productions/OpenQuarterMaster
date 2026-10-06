@@ -110,7 +110,18 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 * Other directives:
 	 * <ul>
 	 *     <li>
-	 *         ifa: {@code {ifa;<attribute>}...{/if}- Renders inside the if statement if the attribute is present
+	 *         if: {@code {if;<type>;<args>}...{/if}}- Renders inside the if statement, if the statement is truthy.
+	 *         <p>
+	 *         Types:
+	 *         <ul>
+	 *             <li>
+	 *                 If keyword exists: {@code {if;k;<keyword>}...{/if}}
+	 *             </li>
+	 *             <li>
+	 *                 If Attribute/value exists: {@code {if;a;<att key>;<attVal>}...{/if}}
+	 *                 Attribute value is optional. If provided, value must match. If not, just testing that attribute key exists.
+	 *             </li>
+	 *         </ul>
 	 *     </li>
 	 *     <li>
 	 *         ifk: {@code {ifa;<keyword>}...{/if}- Renders inside the if statement if the keyword is present
@@ -129,8 +140,8 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 *
 	 * @return
 	 */
-	public static String parseLabel(Stored stored, String format) {
-		if (format == null || format.isBlank()) {
+	public static String parseLabel(@NonNull Stored stored, @NonNull String format) {
+		if (format.isBlank()) {
 			throw new IllegalArgumentException("Format cannot be null, blank, or empty.");
 		}
 
@@ -142,6 +153,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		AtomicBoolean inIf = new AtomicBoolean(false);
 		AtomicBoolean ifPass = new AtomicBoolean(false);
 		AtomicInteger numPlaceholders = new AtomicInteger(0);
+		AtomicInteger numPlaceholdersOutsideIfs = new AtomicInteger(0);
 		AtomicInteger curStart = new AtomicInteger(0);
 		AtomicInteger lastEnd = new AtomicInteger(0);
 
@@ -184,6 +196,15 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 					ifPass.set(false);
 					return;
 				}
+				if(!"if".equals(placeholderType)){
+					if (!inIf.get()) {
+						numPlaceholdersOutsideIfs.incrementAndGet();
+					}
+				} else {
+					if(inIf.get()){//check if outer if not passed
+						throw new IllegalArgumentException("We do not currently support nested if's.");
+					}
+				}
 
 				if (inIf.get()) {
 					if(!ifPass.get()){
@@ -219,7 +240,11 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 						DateTimeFormatter formatter = LABEL_DT_DEFAULT_FORMATTER;
 
 						if (args.length > 0) {
-							formatter = DateTimeFormatter.ofPattern(args[0]);
+							try {
+								formatter = DateTimeFormatter.ofPattern(args[0]);
+							} catch(IllegalArgumentException e){
+								throw new IllegalArgumentException("Bad datetime format specified for expiry date: " + e.getMessage());
+							}
 						}
 
 						sb.append(
@@ -301,10 +326,13 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		if (numPlaceholders.intValue() == 0) {
 			throw new IllegalArgumentException("No placeholders found in format.");
 		}
+		if (numPlaceholdersOutsideIfs.intValue() <= 0) {
+			throw new IllegalArgumentException("Must have placeholders outside 'if' statements.");
+		}
 
 		sb.append(format, lastEnd.get(), format.length());
 
-		String newIdentifier = sb.toString();
+		String newIdentifier = sb.toString().strip();
 
 		return newIdentifier;
 	}

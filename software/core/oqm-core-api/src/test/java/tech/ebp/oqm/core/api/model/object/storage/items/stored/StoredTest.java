@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @Slf4j
 public class StoredTest extends BasicTest {
@@ -48,8 +49,6 @@ public class StoredTest extends BasicTest {
 		Integer condition = 20;
 
 		ZonedDateTime expires = ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]");
-
-
 
 		AmountStored fullAmountStored = AmountStored.builder()
 											.id(ObjectId.get())
@@ -94,23 +93,26 @@ public class StoredTest extends BasicTest {
 			Arguments.of(fullAmountStored, "{att;foo}", "#E#"),
 
 			//if-a (just has att)
-			Arguments.of(fullAmountStored, "{if;a;"+att+"}{att;"+att+"}{/if}", atts.get(att)),
-			Arguments.of(fullAmountStored, "{if;a;foo}{att;"+att+"}{/if}", ""),
+			Arguments.of(fullAmountStored, "{id}{if;a;"+att+"}{att;"+att+"}{/if}", fullAmountStored.getId().toHexString() + atts.get(att)),
+			Arguments.of(fullAmountStored, "{id}{if;a;foo}{att;"+att+"}{/if}", fullAmountStored.getId().toHexString()),
 			//if-a (with att + value)
-			Arguments.of(fullAmountStored, "{if;a;"+att+";"+atts.get(att)+"}{att;"+att+"}{/if}", atts.get(att)),
-			Arguments.of(fullAmountStored, "{if;a;"+att+";foo}{att;"+att+"}{/if}", ""),
+			Arguments.of(fullAmountStored, "{id}{if;a;"+att+";"+atts.get(att)+"}{att;"+att+"}{/if}", fullAmountStored.getId().toHexString() + atts.get(att)),
+			Arguments.of(fullAmountStored, "{id}{if;a;"+att+";foo}{att;"+att+"}{/if}", fullAmountStored.getId().toHexString()),
 
 			//if-k
-			Arguments.of(fullAmountStored, "{if;k;"+keyword+"}{att;"+att+"}{/if}", atts.get(att)),
-			Arguments.of(fullAmountStored, "{if;k;foo}{att;"+att+"}{/if}", ""),
+			Arguments.of(fullAmountStored, "{id}{if;k;"+keyword+"}{att;"+att+"}{/if}", fullAmountStored.getId().toHexString() + atts.get(att)),
+			Arguments.of(fullAmountStored, "{id}{if;k;foo}{att;"+att+"}{/if}", fullAmountStored.getId().toHexString()),
 
 			//additional if tests
-			Arguments.of(fullAmountStored, "/{if;k;"+keyword+"}{att;"+att+"}{/if}\\", "/"+atts.get(att) + "\\"),
-			Arguments.of(fullAmountStored, "/{if;k;"+keyword+"}-{att;"+att+"}-{/if}\\", "/-"+atts.get(att) + "-\\"),
-			Arguments.of(fullAmountStored, "/{if;k;foo}{att;"+att+"}{/if}\\", "/\\"),
-			Arguments.of(fullAmountStored, "/{if;k;foo}-{att;"+att+"}-{/if}\\", "/\\"),
-			Arguments.of(fullAmountStored, "{if;k;"+keyword+"}{att;"+att+"}{/if}{if;k;"+keyword+"}{att;"+att+"}{/if}", atts.get(att)+atts.get(att)),
-			Arguments.of(fullAmountStored, "{if;k;"+keyword+"}{att;"+att+"}{/if}-{if;k;"+keyword+"}{att;"+att+"}{/if}", atts.get(att)+"-"+atts.get(att)),
+			Arguments.of(fullAmountStored, "{id}{if;k;"+keyword+"}{att;"+att+"}{/if}\\", fullAmountStored.getId().toHexString()+atts.get(att) + "\\"),
+			Arguments.of(fullAmountStored, "{id}{if;k;"+keyword+"}-{att;"+att+"}-{/if}\\", fullAmountStored.getId().toHexString()+"-"+atts.get(att) + "-\\"),
+			Arguments.of(fullAmountStored, "{if;k;foo}{att;"+att+"}{/if}{id}", fullAmountStored.getId().toHexString()),
+			Arguments.of(fullAmountStored, "{id}{if;k;foo}-{att;"+att+"}-{/if}", fullAmountStored.getId().toHexString()),
+			Arguments.of(fullAmountStored, "{id}{if;k;"+keyword+"}{att;"+att+"}{/if}{if;k;"+keyword+"}{att;"+att+"}{/if}", fullAmountStored.getId().toHexString() + atts.get(att)+atts.get(att)),
+			Arguments.of(fullAmountStored, "{id}{if;k;"+keyword+"}{att;"+att+"}{/if}-{if;k;"+keyword+"}{att;"+att+"}{/if}", fullAmountStored.getId().toHexString() + atts.get(att)+"-"+atts.get(att)),
+
+			//misc
+			Arguments.of(fullAmountStored, "{id}\uD83D\uDE80", fullAmountStored.getId().toHexString()+"\uD83D\uDE80"),
 
 			//combined
 			Arguments.of(
@@ -129,7 +131,7 @@ public class StoredTest extends BasicTest {
 	@ParameterizedTest
 	@MethodSource("getParseLabelTests")
 	public void testParseLabel(Stored stored, String format, String expected){
-		log.info("Testing formatting label '{}' for: {}, format, stored", format, stored);
+		log.info("Testing formatting label '{}' for: {}", format, stored);
 
 		String result = Stored.parseLabel(stored, format);
 
@@ -137,7 +139,101 @@ public class StoredTest extends BasicTest {
 		assertEquals(expected, result);
 	}
 
-	//TODO:: tests for bad arguments/length
+	public static Stream<Arguments> getParseLabelFailTests(){
+		Identifier gid = GenericIdentifier.builder()
+							 .label(FAKER.name().name())
+							 .value(FAKER.idNumber().valid())
+							 .build();
+		LinkedHashSet<Identifier> identifiers = new LinkedHashSet<>(){{
+			add(gid);
+		}};
+		CalculatedPricing pricing = CalculatedPricing.builder()
+										.label(FAKER.name().name())
+										.flatPrice(Monetary.getDefaultAmountFactory().setCurrency("USD").setNumber(1).create())
+										.build();
+		LinkedHashSet<CalculatedPricing> pricingSet = new LinkedHashSet<>(){{
+			add(pricing);
+		}};
+		String att = FAKER.name().name();
+		Map<String, String> atts = Map.of(att, FAKER.idNumber().valid());
+
+		String keyword = FAKER.name().name();
+		List<String> keywords = List.of(keyword);
+
+		Integer condition = 20;
+
+		ZonedDateTime expires = ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]");
 
 
+
+		AmountStored fullAmountStored = AmountStored.builder()
+											.id(ObjectId.get())
+											.item(ObjectId.get())
+											.state(StoredInBlock.builder().storageBlock(ObjectId.get()).build())
+											.amount(UnitUtils.Quantities.UNIT_ONE)
+											.identifiers(identifiers)
+											.calculatedPrices(pricingSet)
+											.attributes(atts)
+											.keywords(keywords)
+											.condition(condition)
+											.expires(expires)
+											.build();
+		UniqueStored fullUniqueStored = UniqueStored.builder()
+											.id(ObjectId.get())
+											.item(ObjectId.get())
+											.state(StoredInBlock.builder().storageBlock(ObjectId.get()).build())
+											.identifiers(identifiers)
+											.build();
+
+		return Stream.of(
+			Arguments.of(null, "{id}", new NullPointerException("stored is marked non-null but is null")),
+			Arguments.of(fullAmountStored, null, new NullPointerException("format is marked non-null but is null")),
+
+			//empty, blank
+			Arguments.of(fullAmountStored, "", new IllegalArgumentException("Format cannot be null, blank, or empty.")),
+			Arguments.of(fullAmountStored, " \t\n", new IllegalArgumentException("Format cannot be null, blank, or empty.")),
+
+			//trailing,leading whitespace
+			Arguments.of(fullAmountStored, " {id} ", new IllegalArgumentException("Format cannot contain leading or trailing whitespace.")),
+
+			//just a value
+			Arguments.of(fullAmountStored, "foo", new IllegalArgumentException("No placeholders found in format.")),
+
+			//just a value
+			Arguments.of(fullAmountStored, "{foo}", new IllegalArgumentException("Unknown placeholder type: 'foo'")),
+
+			//closing if
+			Arguments.of(fullAmountStored, "{/if}", new IllegalArgumentException("Got to if closing statement without being in if statement.")),
+
+			//expires
+			Arguments.of(fullAmountStored, "{exp;foo}", new IllegalArgumentException("Bad datetime format specified for expiry date: Unknown pattern letter: f")),
+
+			//general Ids
+			Arguments.of(fullAmountStored, "{ident;"+gid.getLabel()+";foo}", new IllegalArgumentException("Must specify exactly one argument for 'ident', and 'price'.")),
+			//Pricing
+			Arguments.of(fullAmountStored, "{price;"+pricing.getLabel()+";foo}", new IllegalArgumentException("Must specify exactly one argument for 'ident', and 'price'.")),
+
+			//Atts
+			Arguments.of(fullAmountStored, "{att;"+att+";foo}", new IllegalArgumentException("Must specify exactly one argument for 'att'.")),
+
+			//ifs
+			Arguments.of(fullAmountStored, "{if;a;foo}{if;a;foo}{att;"+att+"}{/if}{/if}", new IllegalArgumentException("We do not currently support nested if's.")),
+			Arguments.of(fullAmountStored, "{if;a;"+att+"}{if;a;"+att+"}{att;"+att+"}{/if}{/if}", new IllegalArgumentException("We do not currently support nested if's.")),
+			Arguments.of(fullAmountStored, "{if}-{/if}", new IllegalArgumentException("Must specify a type and at least one value for 'if'.")),
+			Arguments.of(fullAmountStored, "{if;a}-{/if}", new IllegalArgumentException("Must specify a type and at least one value for 'if'.")),
+			Arguments.of(fullAmountStored, "{if;z;foo}-{/if}", new IllegalArgumentException("Unrecognized if comparison type: z")),
+			Arguments.of(fullAmountStored, "{if;a;"+att+"}{att;"+att+"}{/if}", new IllegalArgumentException("Must have placeholders outside 'if' statements."))
+		);
+	}
+
+	@ParameterizedTest
+	@MethodSource("getParseLabelFailTests")
+	public void testParseLabelFail(Stored stored, String format, Exception expected){
+		log.info("Testing bad formatting label '{}' for: {}", format, stored);
+
+		Exception result = assertThrows(expected.getClass(), ()->Stored.parseLabel(stored, format));
+
+		log.info("Got result error message: {}", result.getMessage());
+		assertEquals(expected.getMessage(), result.getMessage());
+	}
 }
