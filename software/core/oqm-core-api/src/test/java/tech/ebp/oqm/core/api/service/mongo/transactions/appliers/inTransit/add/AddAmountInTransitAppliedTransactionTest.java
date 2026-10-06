@@ -70,7 +70,7 @@ public class AddAmountInTransitAppliedTransactionTest extends InTransitAppliedTr
 
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()).setStoredState(StoredStateType.IN_TRANSIT));
-		assertEquals(storedSearchResult.getNumResults(), 1);
+		assertEquals(1, storedSearchResult.getNumResults());
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 
 		AmountStored stored = (AmountStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().stream().findFirst().get());
@@ -116,7 +116,7 @@ public class AddAmountInTransitAppliedTransactionTest extends InTransitAppliedTr
 
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()).setStoredState(StoredStateType.IN_TRANSIT));
-		assertEquals(storedSearchResult.getNumResults(), 1);
+		assertEquals( 1, storedSearchResult.getNumResults());
 		AmountStored storedFromSearch = (AmountStored) storedSearchResult.getResults().getFirst();
 
 		AmountStored stored = (AmountStored) this.storedService.get(DEFAULT_TEST_DB_NAME, appliedTransaction.getAffectedStored().stream().findFirst().get());
