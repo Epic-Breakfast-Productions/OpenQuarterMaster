@@ -42,6 +42,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
@@ -106,6 +107,16 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 *     </li>
 	 * </ul>
 	 * <p>
+	 * Other directives:
+	 * <ul>
+	 *     <li>
+	 *         ifa: {@code {ifa;<attribute>}...{/if}- Renders inside the if statement if the attribute is present
+	 *     </li>
+	 *     <li>
+	 *         ifk: {@code {ifa;<keyword>}...{/if}- Renders inside the if statement if the keyword is present
+	 *     </li>
+	 * </ul>
+	 * <p>
 	 * Examples:
 	 * <ul>
 	 *     <li>
@@ -128,14 +139,30 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		}
 
 		StringBuilder sb = new StringBuilder();
-		AtomicInteger numPlaceholders = new AtomicInteger();
-		AtomicInteger curStart = new AtomicInteger();
-		AtomicInteger lastEnd = new AtomicInteger();
+		AtomicBoolean inIf = new AtomicBoolean(false);
+		AtomicBoolean ifPass = new AtomicBoolean(false);
+		AtomicInteger numPlaceholders = new AtomicInteger(0);
+		AtomicInteger curStart = new AtomicInteger(0);
+		AtomicInteger lastEnd = new AtomicInteger(0);
 
 		LABEL_PARTS_PATTERN.matcher(format).results()
 			.forEach((MatchResult result)->{
 				numPlaceholders.getAndIncrement();
-				sb.append(format, curStart.get(), result.start());
+
+				{
+					boolean append = true;
+					if (inIf.get()) {
+						if(!ifPass.get()){
+							append = false;
+						}
+					}
+
+					if (append) {
+						sb.append(format, curStart.get(), result.start());
+					}
+				}
+
+
 				curStart.set(result.end());
 				lastEnd.set(result.end());
 
@@ -147,6 +174,22 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 				String[] args = parts.length > 1 ? parts[1].split(LABEL_PLACEHOLDER_ARG_DELIM) : new String[0];
 
 				//				log.debug("placeholderType: {}, args: {}", placeholderType, args);
+
+				//specifically handled here to not get skipped
+				if("/if".equals(placeholderType)){
+					if (!inIf.get()) {
+						throw new IllegalArgumentException("Got to if closing statement without being in if statement.");
+					}
+					inIf.set(false);
+					ifPass.set(false);
+					return;
+				}
+
+				if (inIf.get()) {
+					if(!ifPass.get()){
+						return;
+					}
+				}
 
 				switch (placeholderType) {
 					case "id":
@@ -180,9 +223,9 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 						}
 
 						sb.append(
-							stored.getExpires() == null?
+							stored.getExpires() == null ?
 								'-' :
-							stored.getExpires().format(formatter)
+								stored.getExpires().format(formatter)
 						);
 						break;
 					case "ident":
@@ -220,6 +263,35 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 
 						sb.append(stored.getAttributes().getOrDefault(args[0], LABEL_ERROR));
 
+						break;
+					case "if":
+						if (inIf.get()) {
+							throw new IllegalArgumentException("We do not currently support nested if's.");
+						}
+						if (args.length < 2) {
+							throw new IllegalArgumentException("Must specify a type and at least one value for 'if'.");
+						}
+
+						inIf.set(true);
+						String type = args[0];
+						String value = args[1];
+
+						switch (type) {
+							case "k":
+								ifPass.set(stored.getKeywords().contains(value));
+								break;
+							case "a":
+								boolean containsKey = stored.getAttributes().containsKey(value);
+								if (args.length >= 3) {
+									String testValue = args[2];
+									ifPass.set(containsKey && stored.getAttributes().get(value).equals(testValue));
+								} else {
+									ifPass.set(containsKey);
+								}
+								break;
+							default:
+								throw new IllegalArgumentException("Unrecognized if comparison type: " + type);
+						}
 						break;
 					default:
 						throw new IllegalArgumentException("Unknown placeholder type: '" + placeholderType + "'");

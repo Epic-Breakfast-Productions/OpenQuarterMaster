@@ -105,7 +105,7 @@ test {
 		"--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED"
 	)
 //	testLogging.showStandardStreams = System.getenv("CI") == null
-//	systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+	systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
 	finalizedBy jacocoTestReport
 	jacoco {
 		excludeClassLoaders = ["*QuarkusClassLoader"]

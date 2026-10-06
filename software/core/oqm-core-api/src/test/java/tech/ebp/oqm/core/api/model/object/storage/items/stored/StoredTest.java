@@ -15,6 +15,7 @@ import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import javax.money.Monetary;
 import java.time.ZonedDateTime;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.stream.Stream;
 
@@ -40,13 +41,16 @@ public class StoredTest extends BasicTest {
 		}};
 		String att = FAKER.name().name();
 		Map<String, String> atts = Map.of(att, FAKER.idNumber().valid());
-		
+
+		String keyword = FAKER.name().name();
+		List<String> keywords = List.of(keyword);
+
 		Integer condition = 20;
-		
+
 		ZonedDateTime expires = ZonedDateTime.parse("2007-12-03T10:15:30+01:00[Europe/Paris]");
-		
-		
-		
+
+
+
 		AmountStored fullAmountStored = AmountStored.builder()
 											.id(ObjectId.get())
 											.item(ObjectId.get())
@@ -55,6 +59,7 @@ public class StoredTest extends BasicTest {
 											.identifiers(identifiers)
 											.calculatedPrices(pricingSet)
 											.attributes(atts)
+											.keywords(keywords)
 											.condition(condition)
 											.expires(expires)
 											.build();
@@ -64,7 +69,7 @@ public class StoredTest extends BasicTest {
 											.state(StoredInBlock.builder().storageBlock(ObjectId.get()).build())
 											.identifiers(identifiers)
 											.build();
-		
+
 		return Stream.of(
 			//id
 			Arguments.of(fullAmountStored, "{id}", fullAmountStored.getId().toHexString()),
@@ -87,6 +92,26 @@ public class StoredTest extends BasicTest {
 			//Atts
 			Arguments.of(fullAmountStored, "{att;"+att+"}", atts.get(att)),
 			Arguments.of(fullAmountStored, "{att;foo}", "#E#"),
+
+			//if-a (just has att)
+			Arguments.of(fullAmountStored, "{if;a;"+att+"}{att;"+att+"}{/if}", atts.get(att)),
+			Arguments.of(fullAmountStored, "{if;a;foo}{att;"+att+"}{/if}", ""),
+			//if-a (with att + value)
+			Arguments.of(fullAmountStored, "{if;a;"+att+";"+atts.get(att)+"}{att;"+att+"}{/if}", atts.get(att)),
+			Arguments.of(fullAmountStored, "{if;a;"+att+";foo}{att;"+att+"}{/if}", ""),
+
+			//if-k
+			Arguments.of(fullAmountStored, "{if;k;"+keyword+"}{att;"+att+"}{/if}", atts.get(att)),
+			Arguments.of(fullAmountStored, "{if;k;foo}{att;"+att+"}{/if}", ""),
+
+			//additional if tests
+			Arguments.of(fullAmountStored, "/{if;k;"+keyword+"}{att;"+att+"}{/if}\\", "/"+atts.get(att) + "\\"),
+			Arguments.of(fullAmountStored, "/{if;k;"+keyword+"}-{att;"+att+"}-{/if}\\", "/-"+atts.get(att) + "-\\"),
+			Arguments.of(fullAmountStored, "/{if;k;foo}{att;"+att+"}{/if}\\", "/\\"),
+			Arguments.of(fullAmountStored, "/{if;k;foo}-{att;"+att+"}-{/if}\\", "/\\"),
+			Arguments.of(fullAmountStored, "{if;k;"+keyword+"}{att;"+att+"}{/if}{if;k;"+keyword+"}{att;"+att+"}{/if}", atts.get(att)+atts.get(att)),
+			Arguments.of(fullAmountStored, "{if;k;"+keyword+"}{att;"+att+"}{/if}-{if;k;"+keyword+"}{att;"+att+"}{/if}", atts.get(att)+"-"+atts.get(att)),
+
 			//combined
 			Arguments.of(
 				fullAmountStored,
@@ -100,16 +125,19 @@ public class StoredTest extends BasicTest {
 			)
 		);
 	}
-	
 
 	@ParameterizedTest
 	@MethodSource("getParseLabelTests")
 	public void testParseLabel(Stored stored, String format, String expected){
 		log.info("Testing formatting label '{}' for: {}, format, stored", format, stored);
-		
+
 		String result = Stored.parseLabel(stored, format);
-		
+
+		log.info("Got result: {}", result);
 		assertEquals(expected, result);
 	}
-	
+
+	//TODO:: tests for bad arguments/length
+
+
 }
