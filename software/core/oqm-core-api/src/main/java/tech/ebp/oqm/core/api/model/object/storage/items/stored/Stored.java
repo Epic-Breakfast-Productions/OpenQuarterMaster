@@ -123,9 +123,6 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 *             </li>
 	 *         </ul>
 	 *     </li>
-	 *     <li>
-	 *         ifk: {@code {ifa;<keyword>}...{/if}- Renders inside the if statement if the keyword is present
-	 *     </li>
 	 * </ul>
 	 * <p>
 	 * Examples:
@@ -206,15 +203,10 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 					}
 				}
 
-				if (inIf.get()) {
-					if(!ifPass.get()){
-						return;
-					}
-				}
-
+				StringBuilder cur = new StringBuilder();
 				switch (placeholderType) {
 					case "id":
-						sb.append(stored.getId());
+						cur.append(stored.getId());
 						break;
 					case "amt":
 						Quantity<?> amount;
@@ -224,17 +216,17 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 							amount = UnitUtils.Quantities.UNIT_ONE;
 						}
 
-						sb.append(amount.toString());
+						cur.append(amount.toString());
 						break;
 					case "cnd":
 						Integer condition = stored.getCondition();
 
-						sb.append(
+						cur.append(
 							condition == null ?
 								"-" :
 								condition.toString()
 						);
-						sb.append('%');
+						cur.append('%');
 						break;
 					case "exp":
 						DateTimeFormatter formatter = LABEL_DT_DEFAULT_FORMATTER;
@@ -247,7 +239,7 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 							}
 						}
 
-						sb.append(
+						cur.append(
 							stored.getExpires() == null ?
 								'-' :
 								stored.getExpires().format(formatter)
@@ -270,15 +262,15 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 						);
 
 						if (foundLabel.isPresent()) {
-							Labeled cur = foundLabel.get();
+							Labeled curLabel = foundLabel.get();
 
-							if (cur instanceof Identifier) {
-								sb.append(((Identifier) cur).getValue());
-							} else if (cur instanceof CalculatedPricing) {
-								sb.append(((CalculatedPricing) cur).getTotalPriceString());
+							if (curLabel instanceof Identifier) {
+								cur.append(((Identifier) curLabel).getValue());
+							} else if (curLabel instanceof CalculatedPricing) {
+								cur.append(((CalculatedPricing) curLabel).getTotalPriceString());
 							}
 						} else {
-							sb.append(LABEL_ERROR);
+							cur.append(LABEL_ERROR);
 						}
 						break;
 					case "att":
@@ -286,30 +278,39 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 							throw new IllegalArgumentException("Must specify exactly one argument for 'att'.");
 						}
 
-						sb.append(stored.getAttributes().getOrDefault(args[0], LABEL_ERROR));
+						cur.append(stored.getAttributes().getOrDefault(args[0], LABEL_ERROR));
 
 						break;
 					case "if":
 						if (inIf.get()) {
 							throw new IllegalArgumentException("We do not currently support nested if's.");
 						}
-						if (args.length < 2) {
-							throw new IllegalArgumentException("Must specify a type and at least one value for 'if'.");
+						if (args.length < 1) {
+							throw new IllegalArgumentException("Must specify a type for 'if' statements.");
 						}
 
 						inIf.set(true);
 						String type = args[0];
-						String value = args[1];
 
 						switch (type) {
 							case "k":
-								ifPass.set(stored.getKeywords().contains(value));
+								if (args.length != 2) {
+									throw new IllegalArgumentException("Must specify exactly one keyword for if of type keyword.");
+								}
+								String keyword = args[1];
+
+								ifPass.set(stored.getKeywords().contains(keyword));
 								break;
 							case "a":
-								boolean containsKey = stored.getAttributes().containsKey(value);
+								if (args.length != 2 && args.length != 3) {
+									throw new IllegalArgumentException("Must specify an attribute or attribute and value for if of type attribute.");
+								}
+								String attribute = args[1];
+
+								boolean containsKey = stored.getAttributes().containsKey(attribute);
 								if (args.length >= 3) {
-									String testValue = args[2];
-									ifPass.set(containsKey && stored.getAttributes().get(value).equals(testValue));
+									String value = args[2];
+									ifPass.set(containsKey && stored.getAttributes().get(attribute).equals(value));
 								} else {
 									ifPass.set(containsKey);
 								}
@@ -321,6 +322,10 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 					default:
 						throw new IllegalArgumentException("Unknown placeholder type: '" + placeholderType + "'");
 				}
+
+				if(!inIf.get() || ifPass.get()){
+					sb.append(cur);
+				}
 			});
 
 		if (numPlaceholders.intValue() == 0) {
@@ -328,6 +333,9 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		}
 		if (numPlaceholdersOutsideIfs.intValue() <= 0) {
 			throw new IllegalArgumentException("Must have placeholders outside 'if' statements.");
+		}
+		if(inIf.get()){
+			throw new IllegalArgumentException("Must close if statement.");
 		}
 
 		sb.append(format, lastEnd.get(), format.length());

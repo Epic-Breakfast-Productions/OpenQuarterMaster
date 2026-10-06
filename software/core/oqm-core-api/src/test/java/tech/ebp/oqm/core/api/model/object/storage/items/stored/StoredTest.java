@@ -217,12 +217,18 @@ public class StoredTest extends BasicTest {
 			Arguments.of(fullAmountStored, "{att;"+att+";foo}", new IllegalArgumentException("Must specify exactly one argument for 'att'.")),
 
 			//ifs
+			Arguments.of(fullAmountStored, "{id}{if;a;foo}{foo}{/if}", new IllegalArgumentException("Unknown placeholder type: 'foo'")),
 			Arguments.of(fullAmountStored, "{if;a;foo}{if;a;foo}{att;"+att+"}{/if}{/if}", new IllegalArgumentException("We do not currently support nested if's.")),
 			Arguments.of(fullAmountStored, "{if;a;"+att+"}{if;a;"+att+"}{att;"+att+"}{/if}{/if}", new IllegalArgumentException("We do not currently support nested if's.")),
-			Arguments.of(fullAmountStored, "{if}-{/if}", new IllegalArgumentException("Must specify a type and at least one value for 'if'.")),
-			Arguments.of(fullAmountStored, "{if;a}-{/if}", new IllegalArgumentException("Must specify a type and at least one value for 'if'.")),
 			Arguments.of(fullAmountStored, "{if;z;foo}-{/if}", new IllegalArgumentException("Unrecognized if comparison type: z")),
-			Arguments.of(fullAmountStored, "{if;a;"+att+"}{att;"+att+"}{/if}", new IllegalArgumentException("Must have placeholders outside 'if' statements."))
+			Arguments.of(fullAmountStored, "{if;a;"+att+"}{att;"+att+"}{/if}", new IllegalArgumentException("Must have placeholders outside 'if' statements.")),
+			Arguments.of(fullAmountStored, "{id}{if}{att;"+att+"}{/if}\\", new IllegalArgumentException("Must specify a type for 'if' statements.")),
+			Arguments.of(fullAmountStored, "{id}{if;k}{att;"+att+"}{/if}\\", new IllegalArgumentException("Must specify exactly one keyword for if of type keyword.")),
+			Arguments.of(fullAmountStored, "{id}{if;k;foo;bar}{att;"+att+"}{/if}\\", new IllegalArgumentException("Must specify exactly one keyword for if of type keyword.")),
+			Arguments.of(fullAmountStored, "{id}{if;a}{att;"+att+"}{/if}\\", new IllegalArgumentException("Must specify an attribute or attribute and value for if of type attribute.")),
+			Arguments.of(fullAmountStored, "{id}{if;a;foo;bar;baz}{att;"+att+"}{/if}\\", new IllegalArgumentException("Must specify an attribute or attribute and value for if of type attribute.")),
+			Arguments.of(fullAmountStored, "{id}{if;a;"+att+"}{att;"+att+"}", new IllegalArgumentException("Must close if statement.")),
+			Arguments.of(fullAmountStored, "{id}{if;a;foo}{att;"+att+"}", new IllegalArgumentException("Must close if statement."))
 		);
 	}
 
