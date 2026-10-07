@@ -41,7 +41,7 @@
 							{/for}
 						</select>
 					</div>
-					
+
 					<div class="mb-3">
 						<label for="addEditProductSearchTermInput" class="form-label">Search Term</label>
 						{#inputs/barcodeInput id='addEditProductSearchTermInput' name='q' type='text' searchSubmit=true required=true /}
@@ -86,7 +86,7 @@
 					</div>
 				</div>
 			</div>
-			
+
         </div>
 		{/if}
         <div class="col">
@@ -187,7 +187,7 @@
                     </div>
                 </div>
                 <hr />
-                
+
                 <div class="mb-3 row" id="addEditItemExpiryWarningThresholdRow">
                     <label for="addEditItemExpiryWarningThresholdInput" class="col-sm-2 col-form-label">
                     	Expiry Warning Threshold:
@@ -274,13 +274,16 @@
 								  <li>
 									  <code class="user-select-all">Expires: \{exp;LLL/yyyy}</code> {#icons/arrowRight /} <code>Expires: Jul/2024</code> (for a stored item with an expiration date in July 2024)
 								  </li>
+								  <li>
+									  <code class="user-select-all">\{att;make}\{if;a;nickname} "\{att;nickname}"\{/if}</code> {#icons/arrowRight /} <code>Fender "Ole Blue"</code> or <code>Dean</code> (for a stored item that has a make of <code>fender</code> and a nickname, or just a make and no nickname)
+								  </li>
 							  </ul>
 							  <h5>
 							    Format placeholders:
 							  </h5>
 							  <ul>
 							      <li>
-							          Id: <code class="user-select-all">\{id;number of digits, startting from the end (optional)}</code> - The ID of the stored object. Parameter to specify the number of characters to actually
+							          Id: <code class="user-select-all">\{id;number of digits, starting from the end (optional)}</code> - The ID of the stored object. Parameter to specify the number of characters to actually
 							          display. Defaults to full Id.
 							      </li>
 							      <li>
@@ -302,12 +305,32 @@
 							          Attribute: <code class="user-select-all">\{att;key for attribute}</code> - Use an attribute value.
 							      </li>
 							  </ul>
+								<h5>
+									Other directives:
+								</h5>
+
+								<ul>
+									<li>
+										If: <code class="user-select-all">\{if;type;arg}...\{/if}</code>- Renders inside the if statement, if the statement is truthy.
+										<br />
+										Types:
+										<ul>
+											<li>
+												If keyword exists: <code class="user-select-all">\{if;k;keyword}...\{/if}</code>
+											</li>
+											<li>
+												If Attribute/value exists: <code class="user-select-all">\{if;a;att key;attVal}...\{/if}</code>
+												Attribute value is optional. If provided, value must match. If not, just testing that attribute key exists.
+											</li>
+										</ul>
+									</li>
+								</ul>
 							</div>
                         </div>
                     </div>
                 </div>
-				
-                
+
+
                 {!<div class="mb-3 row">!} {!TODO:: 460 !}
                     {!<label class="col-sm-2 col-form-label">Not Stored</label>!}
                     {!<div class="col-sm-10">!}
