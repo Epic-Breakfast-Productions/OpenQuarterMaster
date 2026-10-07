@@ -19,7 +19,7 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @AllArgsConstructor
 @NoArgsConstructor
 @Schema(title = "StorageBlockLocale", description = "A Location dealing with a storage block.")
-public class StorageBlockLocale extends InTransitLocale {
+public class StorageBlockLocale extends ReturnableLocale {
 
 	@NotNull
 	@NonNull

@@ -10,6 +10,9 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.locale.ReturnableLocale;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.locale.StorageBlockLocale;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.locale.StoredLocale;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.InTransitStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.InTransitTransaction;
@@ -28,4 +31,6 @@ public abstract class CancelInTransitTransaction extends InTransitStoredTransact
 	@NonNull
 	@NotNull
 	private CancelType cancelType;
+
+	private ReturnableLocale returnTo;
 }

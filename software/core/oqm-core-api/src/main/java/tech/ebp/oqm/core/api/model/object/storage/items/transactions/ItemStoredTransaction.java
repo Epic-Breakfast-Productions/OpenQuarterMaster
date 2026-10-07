@@ -18,7 +18,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.checkout.CheckoutWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.add.AddAmountInTransitTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.add.AddWholeInTransitTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.cancel.CancelInTransitAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.cancel.CancelInTransitWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.receive.ReceiveAmountInTransitTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.receive.ReceiveWholeInTransitTransaction;
@@ -58,7 +57,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 	@JsonSubTypes.Type(value = AddAmountInTransitTransaction.class, name = "ADD_AMOUNT_IN_TRANSIT"),
 	@JsonSubTypes.Type(value = AddWholeInTransitTransaction.class, name = "ADD_WHOLE_IN_TRANSIT"),
 	@JsonSubTypes.Type(value = CancelInTransitWholeTransaction.class, name = "CANCEL_IN_TRANSIT_WHOLE"),
-	@JsonSubTypes.Type(value = CancelInTransitAmountTransaction.class, name = "CANCEL_IN_TRANSIT_AMOUNT"),
 	@JsonSubTypes.Type(value = ReceiveWholeInTransitTransaction.class, name = "RECEIVE_WHOLE_IN_TRANSIT"),
 	@JsonSubTypes.Type(value = ReceiveAmountInTransitTransaction.class, name = "RECEIVE_AMOUNT_IN_TRANSIT"),
 	@JsonSubTypes.Type(value = StoredToInTransitAmountTransaction.class, name = "STORED_TO_IN_TRANSIT_AMOUNT"),
@@ -85,7 +83,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 	AddAmountInTransitTransaction.class,
 	AddWholeInTransitTransaction.class,
 	CancelInTransitWholeTransaction.class,
-	CancelInTransitAmountTransaction.class,
 	ReceiveWholeInTransitTransaction.class,
 	ReceiveAmountInTransitTransaction.class,
 	StoredToInTransitAmountTransaction.class,
