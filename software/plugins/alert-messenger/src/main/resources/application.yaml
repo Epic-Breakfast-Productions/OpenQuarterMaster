@@ -32,7 +32,7 @@ quarkus:
     "oqm.core.api-oidc":
       url: "${quarkus.oidc.auth-server-url}"
     "webhook-client":
-#      url:
+      url: ""
       connect-timeout: 5000
       read-timeout: 10000
 oqm:
@@ -101,3 +101,4 @@ smallrye:
             level: DEBUG
           "io.vertx.ext.mail":
             level: DEBUG
+        level: DEBUG
