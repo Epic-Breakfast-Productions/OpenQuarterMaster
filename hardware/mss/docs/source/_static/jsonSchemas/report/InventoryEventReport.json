@@ -1,0 +1,51 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/report/InventoryEventReport.json",
+	"title": "Inventory Event Report",
+	"description": "A report of changes to the stored inventory of this module.",
+	"type": "object",
+	"allOf": [
+		{
+			"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/ModuleMessage.json"
+		}
+	],
+	"properties": {
+		"msgType": {
+			"description": "The type of message this is.",
+			"type": "string",
+			"const": "INV_EVENT_REPORT"
+		},
+
+		"weightStateChanges": {
+			"description": "A set of block weight state changes to report on.",
+			"type": "array",
+			"items": {
+				"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/report/BlockWeightReport.json"
+			}
+		},
+		"uniqueItemChanges": {
+			"description": "A set of unique items that were added or removed from the inventory.",
+			"type": "array",
+			"items": {
+				"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/report/UniqueItemReport.json"
+			}
+		},
+		"amountItemChanges": {
+			"description": "A set of amount items that were added or removed from the inventory.",
+			"type": "array",
+			"items": {
+				"$ref": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/report/AmountItemReport.json"
+			}
+		}
+	},
+	"anyOf": [
+		{"required": ["weightStateChanges"]},
+		{"required": ["uniqueItemChanges"]},
+		{"required": ["amountItemChanges"]}
+	],
+	"required": [
+		"msgType",
+		"weightValue",
+		"weightUnit"
+	]
+}
