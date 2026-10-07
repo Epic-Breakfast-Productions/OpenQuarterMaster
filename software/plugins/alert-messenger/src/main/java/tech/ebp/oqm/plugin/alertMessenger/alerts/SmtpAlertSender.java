@@ -7,11 +7,11 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
-import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
+import tech.ebp.oqm.plugin.alertMessenger.connections.SmtpConnection;
 
 @ApplicationScoped
 @Slf4j
-public class SmtpAlertSender implements AlertSender {
+public class SmtpAlertSender implements AlertSender<SmtpConnection> {
 
     @Override
     public MessageChannels messageChannel() {
@@ -22,11 +22,11 @@ public class SmtpAlertSender implements AlertSender {
     Mailer mailer;
 
     @Override
-    public void send(ConnectionDetails connection, EventNotificationWrapper eventNotificationWrapper) {
-        log.info("Sending alert to {} via SMTP", connection.getEmailDestination());
+    public void send(SmtpConnection connection, EventNotificationWrapper eventNotificationWrapper) {
+        log.info("Sending alert to {} via SMTP", connection.getDestination());
         String subject = "OQM Alert: " + eventNotificationWrapper.getEventType();
 
-        mailer.send(Mail.withText(connection.getEmailDestination(), subject, formatEventNotification(eventNotificationWrapper)));
+        mailer.send(Mail.withText(connection.getDestination(), subject, formatEventNotification(eventNotificationWrapper)));
     }
 
     private static String formatEventNotification(EventNotificationWrapper eventNotificationWrapper) {

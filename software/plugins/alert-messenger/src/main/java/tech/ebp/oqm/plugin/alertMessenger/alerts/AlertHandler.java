@@ -1,28 +1,29 @@
 package tech.ebp.oqm.plugin.alertMessenger.alerts;
 
+import io.quarkus.arc.All;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.enterprise.inject.Instance;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
+import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferences;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferencesService;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
-import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 @Slf4j
 @ApplicationScoped
 public class AlertHandler {
 
     @Inject
-    Instance<AlertSender> senderInstances;
+    @All
+    List<AlertSender<? extends ConnectionDetails>> senderInstances;
 
     @Inject
     UserPreferencesService userPreferencesService;
@@ -31,14 +32,13 @@ public class AlertHandler {
 
     @PostConstruct
     void initializeSenders() {
-        alertSenders = StreamSupport
-            .stream(senderInstances.spliterator(), false)
+        alertSenders = senderInstances.stream()
             .collect(Collectors.toUnmodifiableMap(
                 AlertSender::messageChannel,
                 Function.identity()
             ));
+        log.debug("Initialized alert senders: {}", alertSenders.keySet());
     }
-
 
     public void handleAlert(EventNotificationWrapper message) {
         Iterator<UserPreferences> iterator = userPreferencesService.getIterator();
@@ -46,15 +46,16 @@ public class AlertHandler {
             UserPreferences preferences = iterator.next();
             if (preferences.objectTypes.contains(message.getObjectType()) || preferences.eventTypes.contains(message.getEventType())) {
                 for (ConnectionDetails connectionDetails : preferences.getConnectionDetails()) {
-                    AlertSender sender = alertSenders.get(connectionDetails.getMessageChannel());
+                    log.debug("Connection details: {}", connectionDetails);
+                    AlertSender sender = alertSenders.get(connectionDetails.getType());
                     if (sender != null) {
                         try {
                             sender.send(connectionDetails, message);
                         } catch (Exception e) {
-                            log.error("Error sending alert via {}", connectionDetails.getMessageChannel(), e);
+                            log.error("Error sending alert via {}", connectionDetails.getType(), e);
                         }
                     } else {
-                        log.warn("No sender found for message channel: {}", connectionDetails.getMessageChannel());
+                        log.warn("No sender found for message channel: {}", connectionDetails.getType());
                     }
                 }
             }
