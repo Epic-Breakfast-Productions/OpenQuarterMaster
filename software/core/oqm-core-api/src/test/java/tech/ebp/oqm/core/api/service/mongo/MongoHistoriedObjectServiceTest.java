@@ -9,8 +9,10 @@ import io.smallrye.reactive.messaging.kafka.companion.ConsumerTask;
 import io.smallrye.reactive.messaging.kafka.companion.KafkaCompanion;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.api.exception.db.DbDeletedException;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.core.api.model.object.history.EventType;
@@ -243,6 +245,24 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest implements Kafka
 		assertEquals(events.getResults().get(0).getType(), EventType.UPDATE);
 	}
 
+	@Test
+	public void testGetNonexistent() {
+		User testUser = this.getTestUserService().getTestUser();
+
+		TestMainObject testObject = this.testMongoService.add(
+			DEFAULT_TEST_DB_NAME,
+			new TestMainObject(FAKER.lorem().paragraph()),
+			testUser
+		);
+
+		assertThrowsExactly(
+			DbNotFoundException.class,
+			()->this.testMongoService.get(
+				DEFAULT_TEST_DB_NAME,
+				ObjectId.get()
+			)
+		);
+	}
 
 	@Test
 	public void testHistoryDeleteNoEntity() {

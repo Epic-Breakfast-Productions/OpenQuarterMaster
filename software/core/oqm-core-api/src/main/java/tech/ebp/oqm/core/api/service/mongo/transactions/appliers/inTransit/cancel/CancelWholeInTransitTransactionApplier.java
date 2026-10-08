@@ -60,17 +60,6 @@ public class CancelWholeInTransitTransactionApplier extends InTransitTransaction
 		((AmountStored)toStored).add(((AmountStored)inTransit).getAmount());
 
 		this.getStoredService().update(oqmDbIdOrName, cs, toStored, interactingEntity, historyDetails);
-
-
-
-
-
-
-
-
-
-
-
 	}
 
 	@Override
@@ -120,7 +109,6 @@ public class CancelWholeInTransitTransactionApplier extends InTransitTransaction
 
 						switch(inventoryItem.getStorageType()){
 							case BULK:
-
 								Stored bulkExisting = this.getStoredService().listIterator(
 									oqmDbIdOrName,
 									cs,
