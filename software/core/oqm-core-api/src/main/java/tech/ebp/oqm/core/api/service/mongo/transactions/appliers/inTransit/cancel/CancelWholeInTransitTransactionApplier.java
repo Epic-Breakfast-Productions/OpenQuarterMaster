@@ -96,7 +96,7 @@ public class CancelWholeInTransitTransactionApplier extends InTransitTransaction
 		boolean remove = false;
 		switch(transaction.getCancelType()){
 			case CANCEL -> {
-				//nothing to do
+				remove = true;
 			}
 			case RETURN -> {//return back to "from"
 				ReturnableLocale locale = transaction.getReturnTo();

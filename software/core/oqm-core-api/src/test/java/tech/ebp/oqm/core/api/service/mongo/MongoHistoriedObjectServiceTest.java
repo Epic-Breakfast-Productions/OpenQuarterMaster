@@ -10,6 +10,7 @@ import io.smallrye.reactive.messaging.kafka.companion.KafkaCompanion;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.core.api.exception.db.DbDeletedException;
 import tech.ebp.oqm.core.api.model.object.ObjectUtils;
 import tech.ebp.oqm.core.api.model.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.core.api.model.object.history.EventType;
@@ -29,9 +30,7 @@ import jakarta.inject.Inject;
 import java.time.ZonedDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 import static tech.ebp.oqm.core.api.testResources.TestConstants.DEFAULT_TEST_DB_NAME;
 
 @Slf4j
@@ -47,7 +46,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest implements Kafka
 	KafkaCompanion kafkaCompanion;
 
 	@Test
-	public void testEmptyHistory(){
+	public void testEmptyHistory() {
 		assertEquals(0, testMongoService.getHistoryService().count(DEFAULT_TEST_DB_NAME));
 	}
 
@@ -94,20 +93,20 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest implements Kafka
 		assertEquals(createEvent, createEventFromMessage.getEvent());
 
 		// TODO: more when we want to #1080
-//		ConsumerTask<String, String> createFromAllInDb = this.kafkaCompanion.consumeStrings().fromTopics(
-//			HistoryEventNotificationService.TOPIC_PREPEND + this.oqmDatabaseService.getDatabaseCache().getFromName(DEFAULT_TEST_DB_NAME).get().getDbId().toHexString() + "-" + HistoryEventNotificationService.ALL_EVENT_TOPIC_LABEL,
-//			1
-//		);
-//		createFromAllInDb.awaitCompletion();
-//		assertEquals(1, createFromAllInDb.count());
-//		createEventFromMessage = ObjectUtils.OBJECT_MAPPER.readValue(createFromAllInDb.getFirstRecord().value(), EventNotificationWrapper.class);
-//		assertEquals(createEvent, createEventFromMessage.getEvent());
+		//		ConsumerTask<String, String> createFromAllInDb = this.kafkaCompanion.consumeStrings().fromTopics(
+		//			HistoryEventNotificationService.TOPIC_PREPEND + this.oqmDatabaseService.getDatabaseCache().getFromName(DEFAULT_TEST_DB_NAME).get().getDbId().toHexString() + "-" + HistoryEventNotificationService.ALL_EVENT_TOPIC_LABEL,
+		//			1
+		//		);
+		//		createFromAllInDb.awaitCompletion();
+		//		assertEquals(1, createFromAllInDb.count());
+		//		createEventFromMessage = ObjectUtils.OBJECT_MAPPER.readValue(createFromAllInDb.getFirstRecord().value(), EventNotificationWrapper.class);
+		//		assertEquals(createEvent, createEventFromMessage.getEvent());
 
 		//TODO:: cover last type?
 	}
 
 	@Test
-	public void testHistorySearchAfter(){
+	public void testHistorySearchAfter() {
 		User testUser = this.getTestUserService().getTestUser();
 
 		ZonedDateTime beforeCreate = ZonedDateTime.now();
@@ -153,7 +152,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest implements Kafka
 	}
 
 	@Test
-	public void testHistorySearchBefore(){
+	public void testHistorySearchBefore() {
 		User testUser = this.getTestUserService().getTestUser();
 
 		ZonedDateTime beforeCreate = ZonedDateTime.now();
@@ -199,7 +198,7 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest implements Kafka
 	}
 
 	@Test
-	public void testHistorySearchBeforeAndAfter(){
+	public void testHistorySearchBeforeAndAfter() {
 		User testUser = this.getTestUserService().getTestUser();
 
 		ZonedDateTime beforeCreate = ZonedDateTime.now();
@@ -245,6 +244,48 @@ class MongoHistoriedObjectServiceTest extends RunningServerTest implements Kafka
 	}
 
 
+	@Test
+	public void testHistoryDeleteNoEntity() {
+		User testUser = this.getTestUserService().getTestUser();
+
+		TestMainObject testObject = this.testMongoService.add(
+			DEFAULT_TEST_DB_NAME,
+			new TestMainObject(FAKER.lorem().paragraph()),
+			testUser
+		);
+
+		assertThrows(
+			IllegalArgumentException.class,
+			()->this.testMongoService.remove(
+				DEFAULT_TEST_DB_NAME,
+				testObject.getId()
+			)
+		);
+	}
+
+	@Test
+	public void testHistoryDelete() {
+		User testUser = this.getTestUserService().getTestUser();
+
+		TestMainObject testObject = this.testMongoService.add(
+			DEFAULT_TEST_DB_NAME,
+			new TestMainObject(FAKER.lorem().paragraph()),
+			testUser
+		);
+
+		TestMainObject returned = this.testMongoService.remove(
+			DEFAULT_TEST_DB_NAME,
+			testObject.getId(),
+			testUser
+		);
+
+		assertEquals(testObject, returned);
+
+		assertThrows(
+			DbDeletedException.class,
+			()->this.testMongoService.get(DEFAULT_TEST_DB_NAME, testObject.getId())
+		);
+	}
 
 
 	//TODO:: test rest
