@@ -24,7 +24,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.checkout.CheckoutWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.add.AddAmountInTransitTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.add.AddWholeInTransitTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.cancel.CancelInTransitAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.cancel.CancelInTransitWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.cancel.CancelType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.receive.ReceiveAmountInTransitTransaction;
@@ -180,13 +179,6 @@ class ItemStoredTransactionSerializationTest extends ObjectSerializationTest<Ite
 			Arguments.of(AddWholeInTransitTransaction.builder()
 							 .toAdd(stored)
 							 .details(inTransit)
-							 .build()),
-
-			//cancel amount in transit transaction
-			Arguments.of(CancelInTransitAmountTransaction.builder()
-							 .amount(UnitUtils.Quantities.UNIT_ONE)
-							 .cancelType(CancelType.CANCEL)
-							 .inTransitStored(ObjectId.get())
 							 .build()),
 
 			//cancel whole in transit transaction
