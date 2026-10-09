@@ -8,6 +8,12 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.InTransit;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.locale.InTransitLocale;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.locale.LocaleType;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.locale.StorageBlockLocale;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.add.AddWholeInTransitTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.receive.ReceiveWholeInTransitTransaction;
@@ -24,7 +30,7 @@ public class ReceiveWholeInTransitTransactionApplier extends InTransitTransactio
 
 	@Override
 	public TransactionType getTransactionType() {
-		return TransactionType.RECEIVE_AMOUNT_IN_TRANSIT;
+		return TransactionType.RECEIVE_WHOLE_IN_TRANSIT;
 	}
 
 	@Override
@@ -44,27 +50,35 @@ public class ReceiveWholeInTransitTransactionApplier extends InTransitTransactio
 			transaction.getInTransitStored()
 		);
 
-		//TODO:: do
+		if (!inventoryItem.getId().equals(inTransit.getItem())) {
+			throw new IllegalArgumentException("Stored must be of item type");
+		}
 
+		if (inTransit.getState().getType() != StoredStateType.IN_TRANSIT) {
+			throw new IllegalArgumentException("Stored must be in transit in order to receive.");
+		}
 
+		{
+			ObjectId toBlock = transaction.getToBlock();
 
+			if (toBlock == null) {
+				InTransitLocale to = ((InTransit) inTransit.getState()).getTo();
 
+				if (to.getType() != LocaleType.STORAGE_BLOCK) {
+					throw new IllegalArgumentException("Cannot use 'to' in in-transit details, not specified to go to storage block");
+				}
 
+				toBlock = ((StorageBlockLocale) to).getStorageBlock();
+			}
 
-//		if (inventoryItem.getStorageType().storedType != StoredType.AMOUNT) {
-//			throw new IllegalArgumentException("Item is not an amount holding type.");
-//		}
-//		this.assertInTransitValid(cs, oqmDbIdOrName, inventoryItem, transaction.getDetails());
-//
-//		Stored stored = transaction.getToAdd();
-//
-//		if (!inventoryItem.getId().equals(stored.getItem())) {
-//			throw new IllegalArgumentException("Stored item's associated item must match concerning item.");
-//		}
-//
-//		stored.setState(transaction.getDetails());
-//
-//		affectedStored.add(stored);
-//		this.getStoredService().add(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
+			inTransit.setState(
+				StoredInBlock.builder()
+					.storageBlock(toBlock)
+					.build()
+			);
+		}
+
+		affectedStored.add(inTransit);
+		this.getStoredService().update(oqmDbIdOrName, cs, inTransit, interactingEntity, historyDetails);
 	}
 }
