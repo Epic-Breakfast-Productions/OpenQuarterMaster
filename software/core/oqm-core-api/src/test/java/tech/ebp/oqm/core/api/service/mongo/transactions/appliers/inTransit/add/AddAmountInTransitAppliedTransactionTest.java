@@ -64,10 +64,12 @@ public class AddAmountInTransitAppliedTransactionTest extends InTransitAppliedTr
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		//TODO:: stats don't include in transit stored yet
-		//		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
-		//		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
 
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
+
+		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getInTransitStoredStats().getNumStored());
+		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getInTransitStoredStats().getTotal());
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()).setStoredState(StoredStateType.IN_TRANSIT));
 		assertEquals(1, storedSearchResult.getNumResults());

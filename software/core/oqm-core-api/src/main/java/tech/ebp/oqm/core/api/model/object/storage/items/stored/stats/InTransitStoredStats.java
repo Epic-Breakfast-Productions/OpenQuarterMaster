@@ -15,7 +15,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.pricing.TotalPricing;
 
 import javax.measure.Unit;
 import javax.money.Monetary;
-import javax.money.MonetaryAmount;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.Map;
@@ -23,16 +22,15 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Data
-@AllArgsConstructor
+//@AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder
-public class ItemStoredStats extends StatsWithTotalContaining {
+public class InTransitStoredStats extends StatsWithTotalContaining {
 
-	public ItemStoredStats(Unit<?> unit, Set<StoredPricing> defaultPrices) {
+	public InTransitStoredStats(Unit<?> unit, Set<StoredPricing> defaultPrices) {
 		super(unit);
-		this.storageBlockStats = new LinkedHashMap<>();
 
 		this.setPrices(
 			defaultPrices.stream().map(
@@ -45,27 +43,6 @@ public class ItemStoredStats extends StatsWithTotalContaining {
 											   .build()
 			).collect(Collectors.toCollection(LinkedHashSet::new))
 		);
-
-		this.inTransitStoredStats = new InTransitStoredStats(unit, defaultPrices);
 	}
 
-	@NonNull
-	@NotNull
-	@lombok.Builder.Default
-	private Map<ObjectId, StoredInBlockStats> storageBlockStats = new LinkedHashMap<>();
-
-	private InTransitStoredStats inTransitStoredStats;
-
-	@lombok.Builder.Default
-	private boolean lowStock = false;
-
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	public boolean isHasLowStockInBlock() {
-		return this.storageBlockStats.values().stream().anyMatch(StoredInBlockStats::isLowStock);
-	}
-
-	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
-	public boolean isAnyLowStock() {
-		return this.lowStock || this.isHasLowStockStored() || this.isHasLowStockInBlock();
-	}
 }

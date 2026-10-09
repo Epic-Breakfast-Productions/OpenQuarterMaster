@@ -76,9 +76,11 @@ public class CancelWholeInTransitAppliedTransactionTest extends InTransitApplied
 		assertEquals(preApplyTransaction, appliedTransaction.getTransaction());
 		assertTrue(appliedTransaction.getTimestamp().isBefore(ZonedDateTime.now()));
 
-		//TODO:: stats don't include in transit stored yet
-		//		assertEquals(1, appliedTransaction.getPostApplyResults().getStats().getNumStored());
-		//		assertEquals(Quantities.getQuantity(5, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
+		assertEquals(0, appliedTransaction.getPostApplyResults().getStats().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getTotal());
+
+		assertEquals(0, appliedTransaction.getPostApplyResults().getStats().getInTransitStoredStats().getNumStored());
+		assertEquals(Quantities.getQuantity(0, item.getUnit()), appliedTransaction.getPostApplyResults().getStats().getInTransitStoredStats().getTotal());
 
 
 		SearchResult<Stored> storedSearchResult = this.storedService.search(DEFAULT_TEST_DB_NAME, new StoredSearch().setInventoryItemId(item.getId()).setStoredState(StoredStateType.IN_TRANSIT));
@@ -99,31 +101,31 @@ public class CancelWholeInTransitAppliedTransactionTest extends InTransitApplied
 	//TODO:: add unique
 
 
-//	@Test
-//	public void applyAddAmountInTransitFailStoredLocaleOtherItem() {
-//		InteractingEntity entity = this.getTestUserService().getTestUser();
-//		InventoryItem item = setupItem(StorageType.BULK, entity);
-//		InventoryItem otherItem = setupItem(StorageType.BULK, entity);
-//
-//		AmountStored otherItemStored = AmountStored.builder()
-//										   .item(otherItem.getId())
-//										   .state(StoredInBlock.builder().storageBlock(otherItem.getStorageBlocks().getFirst().getStorageBlock()).build())
-//										   .amount(Quantities.getQuantity(5, otherItem.getUnit()))
-//										   .build();
-//		this.storedService.add(DEFAULT_TEST_DB_NAME, otherItemStored, entity);
-//
-//		InTransit inTransitDetails = InTransit.builder()
-//										 .from(StoredLocale.builder().stored(otherItemStored.getId()).build())
-//										 .build();
-//
-//		ItemStoredTransaction preApplyTransaction = AddAmountInTransitTransaction.builder()
-//														.amount(Quantities.getQuantity(5, item.getUnit()))
-//														.details(inTransitDetails)
-//														.build();
-//
-//		IllegalArgumentException
-//			e =
-//			assertThrows(IllegalArgumentException.class, ()->this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
-//		assertEquals("Stored locale must specify stored associated with item in transaction.", e.getMessage());
-//	}
+	//	@Test
+	//	public void applyAddAmountInTransitFailStoredLocaleOtherItem() {
+	//		InteractingEntity entity = this.getTestUserService().getTestUser();
+	//		InventoryItem item = setupItem(StorageType.BULK, entity);
+	//		InventoryItem otherItem = setupItem(StorageType.BULK, entity);
+	//
+	//		AmountStored otherItemStored = AmountStored.builder()
+	//										   .item(otherItem.getId())
+	//										   .state(StoredInBlock.builder().storageBlock(otherItem.getStorageBlocks().getFirst().getStorageBlock()).build())
+	//										   .amount(Quantities.getQuantity(5, otherItem.getUnit()))
+	//										   .build();
+	//		this.storedService.add(DEFAULT_TEST_DB_NAME, otherItemStored, entity);
+	//
+	//		InTransit inTransitDetails = InTransit.builder()
+	//										 .from(StoredLocale.builder().stored(otherItemStored.getId()).build())
+	//										 .build();
+	//
+	//		ItemStoredTransaction preApplyTransaction = AddAmountInTransitTransaction.builder()
+	//														.amount(Quantities.getQuantity(5, item.getUnit()))
+	//														.details(inTransitDetails)
+	//														.build();
+	//
+	//		IllegalArgumentException
+	//			e =
+	//			assertThrows(IllegalArgumentException.class, ()->this.appliedTransactionService.apply(DEFAULT_TEST_DB_NAME, null, item, preApplyTransaction, entity));
+	//		assertEquals("Stored locale must specify stored associated with item in transaction.", e.getMessage());
+	//	}
 }
