@@ -203,4 +203,9 @@ public final class UnitUtils {
 	public static boolean atOrUnderThreshold(@Nullable Quantity<?> threshold, Quantity<?> amount) {
 		return threshold != null && (((Comparable<Quantity<?>>) amount).compareTo(threshold) <= 0);
 	}
+
+	public static boolean isZero(Quantity<?> quantity){
+		Number value = quantity.getValue();
+		return value.doubleValue() == 0.0;
+	}
 }
