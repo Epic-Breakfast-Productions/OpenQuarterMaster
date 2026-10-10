@@ -15,6 +15,7 @@ import org.bson.conversions.Bson;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
+import tech.ebp.oqm.core.api.model.object.ImageAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.ImagedMainObject;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.upgrade.CollectionUpgradeResult;
@@ -51,7 +52,7 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	@Getter
 	@Inject
 	FileAttachmentService fileAttachmentService;
-	
+
 	/**
 	 * The name of the collection this service is in charge of
 	 */
@@ -60,8 +61,8 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 
 
 	private Map<ObjectId, MongoCollection<T>> collections = new HashMap<>();
-	
-	
+
+
 	protected MongoDbAwareService(
 		String collectionName,
 		Class<T> clazz
@@ -69,11 +70,11 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 		super(clazz);
 		this.collectionName = collectionName;
 	}
-	
+
 	protected MongoDbAwareService(Class<T> clazz){
 		this(getCollectionNameFromClass(clazz), clazz);
 	}
-	
+
 	protected MongoDbAwareService(
 		ObjectMapper objectMapper,
 		MongoClient mongoClient,
@@ -88,7 +89,7 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 		this.databasePrefix = databasePrefix;
 		this.oqmDatabaseService = oqmDatabaseService;
 	}
-	
+
 	/**
 	 * Gets the collection for this service.
 	 * <p>
@@ -102,7 +103,7 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 //		}
 //		return this.collection;
 //	}
-	
+
 	protected MongoCollection<T> getTypedCollection(DbCacheEntry db) {
 		log.trace("Getting collection for cache entry {}", db);
 		if(!this.collections.containsKey(db.getDbId())){
@@ -112,13 +113,13 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 				db.getMongoDatabase().getCollection(this.collectionName, this.clazz)
 			);
 		}
-		
+
 		MongoCollection<T> output =  this.collections.get(db.getDbId());
-		
+
 		if(output == null){
 			log.warn("Collection gotten was null. This is an error. DB Cache entry: {}", db);
 		}
-		
+
 		return output;
 	}
 
@@ -132,7 +133,27 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 		DbCacheEntry dbCacheEntry = this.getOqmDatabaseService().getOqmDatabase(oqmDbIdOrName);
 		return dbCacheEntry.getMongoDatabase().getCollection(this.collectionName);
 	}
-	
+
+	protected void assertImageList(String oqmDbIdOrName, ClientSession clientSession, ImageAttachmentContaining object){
+		for(ObjectId curImageId : object.getImageIds()){
+			try{
+				this.imageService.getObj(oqmDbIdOrName, curImageId);
+			} catch (DbNotFoundException e){
+				throw new ValidationException("Image given not present in images: " + curImageId.toHexString(), e);
+			}
+		}
+	}
+
+	protected void assertFileAttachmentList(String oqmDbIdOrName, ClientSession clientSession, FileAttachmentContaining object){
+		for(ObjectId curImageId : object.getAttachedFiles()){
+			try{
+				this.fileAttachmentService.getObj(oqmDbIdOrName, curImageId);
+			} catch (DbNotFoundException e){
+				throw new ValidationException("File Attachment given not present in file attachments: " + curImageId.toHexString(), e);
+			}
+		}
+	}
+
 	/**
 	 * Method to check that an object is [still] valid before applying creation or update.
 	 * <p>
@@ -143,36 +164,24 @@ public abstract class MongoDbAwareService<T extends MainObject, S extends Search
 	 */
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, @Valid T newOrChangedObject, ClientSession clientSession) throws ValidationException {
 		if(this.getClazz().isAssignableFrom(ImagedMainObject.class)){
-			for(ObjectId curImageId : ((ImagedMainObject)newOrChangedObject).getImageIds()){
-				try{
-					this.imageService.getObj(oqmDbIdOrName, curImageId);
-				} catch (DbNotFoundException e){
-					throw new ValidationException("Image given not present in images: " + curImageId.toHexString(), e);
-				}
-			}
+			this.assertImageList(oqmDbIdOrName, clientSession, (ImageAttachmentContaining)newOrChangedObject);
 		}
 		if(this.getClazz().isAssignableFrom(FileAttachmentContaining.class)){
-			for(ObjectId curImageId : ((FileAttachmentContaining)newOrChangedObject).getAttachedFiles()){
-				try{
-					this.fileAttachmentService.getObj(oqmDbIdOrName, curImageId);
-				} catch (DbNotFoundException e){
-					throw new ValidationException("File Attachment given not present in file attachments: " + curImageId.toHexString(), e);
-				}
-			}
+			this.assertFileAttachmentList(oqmDbIdOrName, clientSession, (FileAttachmentContaining) newOrChangedObject);
 		}
 	}
-	
+
 	protected <X extends CollectionStats.CollectionStatsBuilder<?,?>> X addBaseStats(String oqmDbIdOrName, X builder){
 		return (X) builder.size(this.getTypedCollection(oqmDbIdOrName).countDocuments());
 	}
-	
+
 	/**
 	 * Todo:: extend this per service, subtypes, etc.
 	 */
 	public abstract V getStats(String oqmDbIdOrName);
-	
+
 	public abstract CollectionClearResult clear(String oqmDbIdOrName, @NonNull ClientSession session);
-	
+
 	public void runPostUpgrade(String oqmDbIdOrName, ClientSession cs, CollectionUpgradeResult upgradeResult) {
 		//nothing to do.
 	}

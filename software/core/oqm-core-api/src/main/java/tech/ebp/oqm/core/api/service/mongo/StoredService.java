@@ -14,11 +14,20 @@ import org.bson.types.ObjectId;
 import org.jetbrains.annotations.NotNull;
 import tech.ebp.oqm.core.api.config.CoreApiInteractingEntity;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
+import tech.ebp.oqm.core.api.model.object.FileAttachmentContaining;
+import tech.ebp.oqm.core.api.model.object.ImageAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
+import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.*;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.InTransit;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.locale.InTransitLocale;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.locale.StorageBlockLocale;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.locale.StoredLocale;
+import tech.ebp.oqm.core.api.model.rest.search.ItemCheckoutSearch;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.service.mongo.search.ItemAwareSearchResult;
@@ -77,6 +86,29 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		super(Stored.class, false);
 	}
 
+	private void assertInTransitLocale(ClientSession cs, String oqmDbNameOrId, InventoryItem item, InTransitLocale locale){
+		switch(locale.getType()){
+			case STORAGE_BLOCK -> {
+				if(item.usesStorageBlock(((StorageBlockLocale)locale).getStorageBlock())){
+					throw new IllegalArgumentException("Storage Block Locale must have a storage block associated with item.");
+				}
+			}
+			case STORED -> {
+				Stored concerningStored = this.get(
+					oqmDbNameOrId,
+					cs,
+					((StoredLocale)locale).getStored()
+				);
+				if(!item.getId().equals(concerningStored.getItem())){
+					throw new IllegalArgumentException("Stored locale must specify stored associated with item in transaction.");
+				}
+				if(!concerningStored.isState(StoredStateType.STORED)){
+					throw new IllegalArgumentException("Stored locale mus specify stored stored.");
+				}
+			}
+		}
+	}
+
 	@Override
 	public void ensureObjectValid(String oqmDbIdOrName, boolean newObject, Stored newOrChangedObject, ClientSession clientSession) {
 		super.ensureObjectValid(oqmDbIdOrName, newObject, newOrChangedObject, clientSession);
@@ -93,8 +125,8 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 
 		switch (newOrChangedObject.getState().getType()){
-			case STORED:
-				ObjectId inBlock = ((StoredInBlock)(newOrChangedObject.getState())).getStorageBlock();
+			case STORED: {
+				ObjectId inBlock = ((StoredInBlock) (newOrChangedObject.getState())).getStorageBlock();
 				if (!item.usesStorageBlock(inBlock)) {
 					throw new ValidationException("Storage block " + inBlock.toHexString() + " not used to hold this item (" + item.getId() + ").");
 				}
@@ -120,6 +152,32 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 
 
 				break;
+			}
+			case IN_TRANSIT: {
+				InTransit inTransit = (InTransit) newOrChangedObject.getState();
+
+				this.assertImageList(oqmDbIdOrName, clientSession, inTransit);
+				this.assertFileAttachmentList(oqmDbIdOrName, clientSession, inTransit);
+
+				this.assertInTransitLocale(clientSession, oqmDbIdOrName, item, inTransit.getFrom());
+				if(inTransit.getTo() != null){
+					this.assertInTransitLocale(clientSession, oqmDbIdOrName, item, inTransit.getTo());
+				}
+
+				//TODO:: anything to do here?
+//				switch(item.getStorageType()){
+//					case BULK -> {
+//						//TODO:: no whole for populated bulk?
+//					}
+//					case AMOUNT_LIST -> {
+//					}
+//					case UNIQUE_MULTI -> {
+//					}
+//					case UNIQUE_SINGLE -> {
+//					}
+//				}
+			}
+
 		}
 
 
@@ -140,15 +198,24 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		}
 
 		if (item.getStorageType() == UNIQUE_SINGLE) {
-			SearchResult<Stored> inItem = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId()));
-			if (!inItem.isEmpty()) {
-				if (inItem.getNumResults() != 1) {
-					throw new ValidationException("More than one globally unique stored held");
-				}
+			{//stored exist
+				SearchResult<Stored> inItem = this.search(oqmDbIdOrName, new StoredSearch().setInventoryItemId(item.getId()));
+				if (!inItem.isEmpty()) {
+					if (inItem.getNumResults() != 1) {
+						throw new ValidationException("More than one globally unique stored held");
+					}
 
-				Stored stored = inItem.getResults().get(0);
-				if (newObject || !stored.getId().equals(newOrChangedObject.getId())) {
-					throw new ValidationException("Cannot store more than one globally unique stored item.");
+					Stored stored = inItem.getResults().get(0);
+					if (newObject || !stored.getId().equals(newOrChangedObject.getId())) {
+						throw new ValidationException("Cannot store more than one globally unique stored item.");
+					}
+				}
+			}
+			{//any checkouts exist
+				SearchResult<ItemCheckout> checkouts = this.itemCheckoutService.search(oqmDbIdOrName, clientSession, new ItemCheckoutSearch().setStillCheckedOut(true).setItemCheckedOut(item.getId()));
+
+				if (!checkouts.isEmpty()) {
+					throw new ValidationException("Cannot have more than one unique stored. Already exists as checked out.");
 				}
 			}
 		}
