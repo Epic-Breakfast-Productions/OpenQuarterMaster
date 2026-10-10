@@ -29,10 +29,14 @@ public class ReceiveAmountInTransitTransaction extends ReceiveInTransitTransacti
 	@lombok.Builder.Default
 	private boolean all = false;
 
+	@Nullable
 	private Quantity<?> amount;
 
 	@Nullable
 	private ObjectId toStored;
+
+	@Nullable
+	private ObjectId toBlock;
 
 	@Override
 	@Schema(constValue = "RECEIVE_AMOUNT_IN_TRANSIT", readOnly = true, required = true, examples = "RECEIVE_AMOUNT_IN_TRANSIT")
