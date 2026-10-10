@@ -73,14 +73,7 @@ public class CancelWholeInTransitTransactionApplier extends InTransitTransaction
 		HistoryDetail[] historyDetails,
 		ClientSession cs
 	) {
-		Stored stored = this.getStoredService().get(oqmDbIdOrName, cs, transaction.getInTransitStored());
-
-		if (!inventoryItem.getId().equals(stored.getItem())) {
-			throw new IllegalArgumentException("Stored item's associated item must match concerning item.");
-		}
-		if(stored.getState().getType() != StoredStateType.IN_TRANSIT){
-			throw new IllegalArgumentException("Stored item is not in transit.");
-		}
+		Stored stored = this.getAndAssertInTransitStored(oqmDbIdOrName, cs, inventoryItem, transaction.getInTransitStored());
 
 		boolean remove = false;
 		switch(transaction.getCancelType()){

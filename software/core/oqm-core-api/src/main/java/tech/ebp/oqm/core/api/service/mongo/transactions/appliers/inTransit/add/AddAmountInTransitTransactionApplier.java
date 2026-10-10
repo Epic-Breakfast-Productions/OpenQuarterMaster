@@ -11,6 +11,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.StoredType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.add.AddAmountInTransitTransaction;
+import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.mongo.transactions.appliers.inTransit.InTransitTransactionApplier;
 
 import java.util.Set;
@@ -42,6 +43,10 @@ public class AddAmountInTransitTransactionApplier extends InTransitTransactionAp
 			throw new IllegalArgumentException("Item is not an amount holding type.");
 		}
 		this.assertInTransitValid(cs, oqmDbIdOrName, inventoryItem, transaction.getDetails());
+
+		if(UnitUtils.isZero(transaction.getAmount())){
+			throw new IllegalArgumentException("Cannot add a zero amount.");
+		}
 
 		AmountStored stored = AmountStored.builder()
 								  .item(inventoryItem.getId())

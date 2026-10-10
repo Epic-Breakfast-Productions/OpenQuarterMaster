@@ -44,19 +44,7 @@ public class ReceiveWholeInTransitTransactionApplier extends InTransitTransactio
 		HistoryDetail[] historyDetails,
 		ClientSession cs
 	) {
-		Stored inTransit = this.getStoredService().get(
-			oqmDbIdOrName,
-			cs,
-			transaction.getInTransitStored()
-		);
-
-		if (!inventoryItem.getId().equals(inTransit.getItem())) {
-			throw new IllegalArgumentException("Stored must be of item type");
-		}
-
-		if (inTransit.getState().getType() != StoredStateType.IN_TRANSIT) {
-			throw new IllegalArgumentException("Stored must be in transit in order to receive.");
-		}
+		Stored inTransit = this.getAndAssertInTransitStored(oqmDbIdOrName, cs, inventoryItem, transaction.getInTransitStored());
 
 		{
 			ObjectId toBlock = transaction.getToBlock();
