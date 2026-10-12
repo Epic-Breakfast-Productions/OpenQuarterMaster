@@ -8,12 +8,17 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrap
 import tech.ebp.oqm.plugin.alertMessenger.WebhookClient;
 import tech.ebp.oqm.plugin.alertMessenger.connections.DiscordConnection;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
-import tech.ebp.oqm.plugin.alertMessenger.utils.discord.DiscordEmbed;
-import tech.ebp.oqm.plugin.alertMessenger.utils.discord.DiscordField;
-import tech.ebp.oqm.plugin.alertMessenger.utils.discord.DiscordWebhookMessage;
+import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordEmbed;
+import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordField;
+import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordWebhookMessage;
 
+import java.awt.image.BufferedImage;
 import java.util.List;
 
+/**
+ * Sends alerts to Discord using webhooks.
+ * `docs`: https://docs.discord.com/developers/resources/webhook
+*/
 @ApplicationScoped
 @Slf4j
 public class DiscordAlertSender implements AlertSender<DiscordConnection> {
@@ -39,8 +44,8 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
     }
 
     private DiscordWebhookMessage toDiscordMessage(EventNotificationWrapper event) {
-        String eventType = String.valueOf(event.getEventType());
-        String objectType = String.valueOf(event.getObjectType());
+        String eventType = event.getEventType().name();
+        String objectType = event.getObjectType().name();
 
         DiscordEmbed embed = new DiscordEmbed(
             eventType,

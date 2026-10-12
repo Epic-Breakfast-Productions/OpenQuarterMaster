@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.alertMessenger.utils.discord;
+package tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord;
 
 public record DiscordField(
     String name,

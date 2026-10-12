@@ -32,7 +32,7 @@ quarkus:
     "oqm.core.api-oidc":
       url: "${quarkus.oidc.auth-server-url}"
     "webhook-client":
-      url: ""
+      url: "openquartermaster.com"
       connect-timeout: 5000
       read-timeout: 10000
 oqm:
@@ -54,7 +54,7 @@ oqm:
 #    mock: false
 
   mongodb:
-    database: openQuarterMaster
+    database: oqm-plugin-alert-messenger
 
 mp:
   messaging:

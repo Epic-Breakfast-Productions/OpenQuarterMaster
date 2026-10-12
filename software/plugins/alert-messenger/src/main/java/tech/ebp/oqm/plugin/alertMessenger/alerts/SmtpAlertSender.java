@@ -25,8 +25,8 @@ public class SmtpAlertSender implements AlertSender<SmtpConnection> {
     public void send(SmtpConnection connection, EventNotificationWrapper eventNotificationWrapper) {
         log.info("Sending alert to {} via SMTP", connection.getDestination());
         String subject = "OQM Alert: " + eventNotificationWrapper.getEventType();
-
-        mailer.send(Mail.withText(connection.getDestination(), subject, formatEventNotification(eventNotificationWrapper)));
+        String text = formatEventNotification(eventNotificationWrapper);
+        mailer.send(Mail.withText(connection.getDestination(), subject, text));
     }
 
     private static String formatEventNotification(EventNotificationWrapper eventNotificationWrapper) {

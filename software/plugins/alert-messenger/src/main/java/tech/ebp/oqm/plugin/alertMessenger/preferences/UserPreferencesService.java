@@ -3,8 +3,6 @@ package tech.ebp.oqm.plugin.alertMessenger.preferences;
 import io.quarkus.mongodb.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.jwt.JsonWebToken;
-import tech.ebp.oqm.plugin.alertMessenger.utils.JwtUtils;
 
 import java.util.Iterator;
 import java.util.List;
@@ -34,14 +32,14 @@ public class UserPreferencesService {
             .orElseThrow(() -> new RuntimeException("User preferences not found for userId: " + userId));
     }
 
-    public UserPreferences create(UserPreferences entity, JsonWebToken jwt) {
-        entity.userId = JwtUtils.getId(jwt);
+    public UserPreferences create(UserPreferences entity, String id) {
+        entity.userId = id;
         this.repository.persist(entity);
         return entity;
     }
 
-    public UserPreferences update(UserPreferences request, JsonWebToken jwt) {
-        UserPreferences entity = this.getByUserId(JwtUtils.getId(jwt));
+    public UserPreferences update(UserPreferences request, String id) {
+        UserPreferences entity = this.getByUserId(id);
         entity.objectTypes = request.objectTypes;
         entity.eventTypes = request.eventTypes;
         entity.connectionDetails = request.connectionDetails;
@@ -49,8 +47,7 @@ public class UserPreferencesService {
         return entity;
     }
 
-    public void delete(JsonWebToken jwt) {
-        String id = JwtUtils.getId(jwt);
+    public void delete(String id) {
         this.repository.delete(this.getByUserId(id));
     }
 }

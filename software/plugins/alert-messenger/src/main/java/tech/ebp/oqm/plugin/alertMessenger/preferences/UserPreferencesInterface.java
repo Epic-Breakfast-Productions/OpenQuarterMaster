@@ -15,6 +15,7 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import tech.ebp.oqm.plugin.alertMessenger.utils.JwtUtils;
 
 import java.util.List;
 
@@ -51,16 +52,16 @@ public class UserPreferencesInterface {
 
     @POST
     public UserPreferences create(@Valid UserPreferences request) {
-        return service.create(request, jwt);
+        return service.create(request, JwtUtils.getId(jwt));
     }
 
     @PUT
     public UserPreferences update(@Valid UserPreferences request) {
-        return service.update(request, jwt);
+        return service.update(request, JwtUtils.getId(jwt));
     }
 
     @DELETE
     public void delete() {
-        service.delete(jwt);
+        service.delete(JwtUtils.getId(jwt));
     }
 }
