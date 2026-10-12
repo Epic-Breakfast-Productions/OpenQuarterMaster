@@ -40,6 +40,7 @@ public class AlertHandler {
         log.debug("Initialized alert senders: {}", alertSenders.keySet());
     }
 
+    //make it non-blocking
     public void handleAlert(EventNotificationWrapper message) {
         Iterator<UserPreferences> iterator = userPreferencesService.getIterator();
         while (iterator.hasNext()) {

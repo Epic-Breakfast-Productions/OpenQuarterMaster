@@ -13,7 +13,8 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 @JsonSubTypes({
     @JsonSubTypes.Type(value = SmtpConnection.class, name = "EMAIL"),
-    @JsonSubTypes.Type(value = DiscordConnection.class, name = "DISCORD")
+    @JsonSubTypes.Type(value = DiscordConnection.class, name = "DISCORD"),
+    @JsonSubTypes.Type(value = SlackConnection.class, name = "SLACK")
 })
 public abstract class ConnectionDetails {
     private final MessageChannels type;
