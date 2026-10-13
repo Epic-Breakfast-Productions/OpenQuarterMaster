@@ -86,7 +86,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 		super(Stored.class, false);
 	}
 
-	private void assertInTransitLocale(ClientSession cs, String oqmDbNameOrId, InventoryItem item, InTransitLocale locale){
+	private void assertInTransitLocale(ClientSession cs, String oqmDbNameOrId, InventoryItem item, Stored inTransit, InTransitLocale locale){
 		switch(locale.getType()){
 			case STORAGE_BLOCK -> {
 				if(item.usesStorageBlock(((StorageBlockLocale)locale).getStorageBlock())){
@@ -94,16 +94,21 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 				}
 			}
 			case STORED -> {
+				ObjectId storedId = ((StoredLocale)locale).getStored();
+				if(storedId.equals(inTransit.getId())){
+					throw new IllegalArgumentException("Cannot specify to/from same in transit stored.");
+				}
+
 				Stored concerningStored = this.get(
 					oqmDbNameOrId,
 					cs,
-					((StoredLocale)locale).getStored()
+					storedId
 				);
 				if(!item.getId().equals(concerningStored.getItem())){
 					throw new IllegalArgumentException("Stored locale must specify stored associated with item in transaction.");
 				}
 				if(!concerningStored.isState(StoredStateType.STORED)){
-					throw new IllegalArgumentException("Stored locale mus specify stored stored.");
+					throw new IllegalArgumentException("Stored locale must specify stored stored.");
 				}
 			}
 		}
@@ -159,9 +164,9 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 				this.assertImageList(oqmDbIdOrName, clientSession, inTransit);
 				this.assertFileAttachmentList(oqmDbIdOrName, clientSession, inTransit);
 
-				this.assertInTransitLocale(clientSession, oqmDbIdOrName, item, inTransit.getFrom());
+				this.assertInTransitLocale(clientSession, oqmDbIdOrName, item, newOrChangedObject, inTransit.getFrom());
 				if(inTransit.getTo() != null){
-					this.assertInTransitLocale(clientSession, oqmDbIdOrName, item, inTransit.getTo());
+					this.assertInTransitLocale(clientSession, oqmDbIdOrName, item, newOrChangedObject, inTransit.getTo());
 				}
 
 				//TODO:: anything to do here?
@@ -290,6 +295,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 
 	public <T extends Stored> SearchResult<T> getStoredForItemBlock(String oqmDbIdOrName, ClientSession cs, ObjectId itemId, ObjectId storageBlockId, Class<T> type) {
 		StoredSearch search = new StoredSearch()
+								  .setStoredState(StoredStateType.STORED)
 								  .setInventoryItemId(itemId)
 								  .setStorageBlockId(storageBlockId);
 
