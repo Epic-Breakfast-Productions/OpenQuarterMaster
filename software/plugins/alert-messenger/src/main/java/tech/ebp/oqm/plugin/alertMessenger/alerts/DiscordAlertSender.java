@@ -3,6 +3,7 @@ package tech.ebp.oqm.plugin.alertMessenger.alerts;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.plugin.alertMessenger.WebhookClient;
@@ -12,7 +13,6 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordEmbed;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordField;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordWebhookMessage;
 
-import java.awt.image.BufferedImage;
 import java.util.List;
 
 /**
@@ -23,7 +23,8 @@ import java.util.List;
 @Slf4j
 public class DiscordAlertSender implements AlertSender<DiscordConnection> {
 
-    private static final String ICON = "https://media.licdn.com/dms/image/v2/D4E0BAQEhoks7gzObxg/company-logo_200_200/company-logo_200_200/0/1724644030028/open_quartermaster_logo?e=1792627200&v=beta&t=UtzCaRMgxO25D9jmmipqWTsyFpS3wlV5iuMIECjR2UA";
+    @ConfigProperty(name = "oqm.alert-messenger.favicon-url")
+    String icon;
 
     @Inject
     @RestClient
@@ -58,7 +59,11 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
                 new DiscordField("Database", String.valueOf(event.getDatabase()), true),
                 new DiscordField("Event data", event.getEvent() == null ? "{}" : event.getEvent().toPrettyString(), false)));
 
-        return new DiscordWebhookMessage("OpenQuarterMaster", ICON, null, List.of(embed));
+        return new DiscordWebhookMessage(
+            "OpenQuarterMaster",
+            icon,
+            null,
+            List.of(embed));
     }
 
     private int getColor(EventNotificationWrapper event) {

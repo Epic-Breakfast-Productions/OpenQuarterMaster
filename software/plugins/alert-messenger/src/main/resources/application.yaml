@@ -39,6 +39,9 @@ oqm:
   core:
     api:
       baseUri: "http://localhost:8080"
+  alert-messenger:
+    url: "http://localhost:5010"
+    favicon-url: "${oqm.alert-messenger.url}/favicon.ico"
 
   # Mailer configuration for Gmail SMTP server.
   # Configures the SMTP server for sending email notifications.
