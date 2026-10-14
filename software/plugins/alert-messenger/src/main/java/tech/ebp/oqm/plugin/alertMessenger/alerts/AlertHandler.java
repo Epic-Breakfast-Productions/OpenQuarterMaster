@@ -46,7 +46,7 @@ public class AlertHandler {
         while (iterator.hasNext()) {
             UserPreferences preferences = iterator.next();
             if (preferences.objectTypes.contains(message.getObjectType()) || preferences.eventTypes.contains(message.getEventType())) {
-                for (ConnectionDetails connectionDetails : preferences.getConnectionDetails()) {
+                for (ConnectionDetails connectionDetails : userPreferencesService.getConnectionDetails(preferences)) {
                     log.debug("Connection details: {}", connectionDetails);
                     AlertSender sender = alertSenders.get(connectionDetails.getType());
                     if (sender != null) {

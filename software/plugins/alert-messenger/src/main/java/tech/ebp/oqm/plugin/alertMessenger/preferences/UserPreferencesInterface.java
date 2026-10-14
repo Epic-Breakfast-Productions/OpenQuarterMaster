@@ -56,12 +56,14 @@ public class UserPreferencesInterface {
     }
 
     @PUT
-    public UserPreferences update(@Valid UserPreferences request) {
-        return service.update(request, JwtUtils.getId(jwt));
+    @Path("/{id}")
+    public UserPreferences update(@PathParam("id") String id, @Valid UserPreferences request) {
+        return service.update(request, id);
     }
 
     @DELETE
-    public void delete() {
-        service.delete(JwtUtils.getId(jwt));
+    @Path("/{id}")
+    public void delete(@PathParam("id") String id) {
+        service.deleteById(id);
     }
 }
