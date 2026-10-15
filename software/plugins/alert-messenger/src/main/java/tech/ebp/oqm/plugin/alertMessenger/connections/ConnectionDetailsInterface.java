@@ -34,13 +34,13 @@ public class ConnectionDetailsInterface {
     public List<ConnectionDetails> getAll(
         @QueryParam("page") @DefaultValue("0") int page,
         @QueryParam("size") @DefaultValue("20") int size) {
-        return service.getAll(page, size);
+        return service.getAll(JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt), page, size);
     }
 
     @GET
     @Path("/{id}")
     public ConnectionDetails get(@PathParam("id") String id) {
-        return service.get(id);
+        return service.get(id, JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt));
     }
 
     @POST
@@ -51,12 +51,12 @@ public class ConnectionDetailsInterface {
     @PUT
     @Path("/{id}")
     public ConnectionDetails update(@PathParam("id") String id, ConnectionDetails details) {
-        return service.update(id, details);
+        return service.update(id, details, JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt));
     }
 
     @DELETE
     @Path("/{id}")
     public void delete(@PathParam("id") String id) {
-        service.delete(id);
+        service.delete(id, JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt));
     }
 }

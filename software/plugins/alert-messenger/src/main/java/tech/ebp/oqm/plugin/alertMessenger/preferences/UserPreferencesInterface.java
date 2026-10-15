@@ -35,19 +35,19 @@ public class UserPreferencesInterface {
     public List<UserPreferences> get(
         @QueryParam("page") @DefaultValue("0") int page,
         @QueryParam("size") @DefaultValue("20") int size) {
-        return service.get(page, size);
+        return service.get(JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt), page, size);
     }
 
     @GET
     @Path("/{id}")
     public UserPreferences get(@PathParam("id") String id) {
-        return service.get(id);
+        return service.get(id, JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt));
     }
 
     @GET
     @Path("/user/{id}")
     public UserPreferences getByUserId(@PathParam("id") String id) {
-        return service.getByUserId(id);
+        return service.getByUserId(id, JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt));
     }
 
     @POST
@@ -58,12 +58,12 @@ public class UserPreferencesInterface {
     @PUT
     @Path("/{id}")
     public UserPreferences update(@PathParam("id") String id, @Valid UserPreferences request) {
-        return service.update(request, id);
+        return service.update(request, id, JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt));
     }
 
     @DELETE
     @Path("/{id}")
     public void delete(@PathParam("id") String id) {
-        service.deleteById(id);
+        service.deleteById(id, JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt));
     }
 }

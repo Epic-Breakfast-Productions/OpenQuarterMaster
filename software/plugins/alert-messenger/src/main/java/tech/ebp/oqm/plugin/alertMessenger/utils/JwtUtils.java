@@ -28,4 +28,8 @@ public class JwtUtils {
     public static Set<String> getRoles(JsonWebToken jwt) {
         return jwt.getGroups();
     }
+
+    public static boolean isAdmin(JsonWebToken jwt) {
+        return getRoles(jwt).contains("admins") || getRoles(jwt).contains("realm-admin");
+    }
 }

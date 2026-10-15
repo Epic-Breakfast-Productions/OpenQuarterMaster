@@ -13,8 +13,10 @@ public class ConnectionDetailsService {
     @Inject
     ConnectionDetailsRepository repository;
 
-    public List<ConnectionDetails> getAll(int pageIndex, int pageSize) {
-        PanacheQuery<ConnectionDetails> result = repository.findAllPaged(pageIndex, pageSize);
+    public List<ConnectionDetails> getAll(String userId, boolean admin, int pageIndex, int pageSize) {
+        PanacheQuery<ConnectionDetails> result = admin
+            ? repository.findAllPaged(pageIndex, pageSize)
+            : repository.findAllPaged(userId, pageIndex, pageSize);
         return result.list();
     }
 
@@ -22,8 +24,9 @@ public class ConnectionDetailsService {
         return repository.findAllByIds(ids);
     }
 
-    public ConnectionDetails get(String id) {
+    public ConnectionDetails get(String id, String userId, boolean admin) {
         return repository.findByObjectId(id)
+            .filter(details -> admin || userId.equals(details.getUserId()))
             .orElseThrow(() -> new RuntimeException("Connection details not found: " + id));
     }
 
@@ -33,16 +36,16 @@ public class ConnectionDetailsService {
         return details;
     }
 
-    public ConnectionDetails update(String id, ConnectionDetails details) {
-        ConnectionDetails existing = get(id);
+    public ConnectionDetails update(String id, ConnectionDetails details, String userId, boolean admin) {
+        ConnectionDetails existing = get(id, userId, admin);
         details.id = existing.id;
         details.setUserId(existing.getUserId());
         repository.update(details);
         return details;
     }
 
-    public void delete(String id) {
-        repository.delete(get(id));
+    public void delete(String id, String userId, boolean admin) {
+        repository.delete(get(id, userId, admin));
     }
 
     public void updateLastError(ConnectionDetails details, String lastError) {

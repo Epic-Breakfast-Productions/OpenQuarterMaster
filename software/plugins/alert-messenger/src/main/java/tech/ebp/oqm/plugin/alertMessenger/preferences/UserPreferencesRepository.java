@@ -22,6 +22,10 @@ public class UserPreferencesRepository implements PanacheMongoRepository<UserPre
         return find("userId", userId).firstResultOptional();
     }
 
+    public PanacheQuery<UserPreferences> findAllPaged(String userId, int pageIndex, int pageSize) {
+        return find("userId", userId).page(Page.of(pageIndex, pageSize));
+    }
+
     public PanacheQuery<UserPreferences> findAllPaged(int pageIndex, int pageSize) {
         return findAll().page(Page.of(pageIndex, pageSize));
     }
