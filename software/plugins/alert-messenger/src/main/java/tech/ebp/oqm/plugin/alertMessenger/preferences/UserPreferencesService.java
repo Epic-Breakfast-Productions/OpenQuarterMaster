@@ -36,9 +36,9 @@ public class UserPreferencesService {
             .orElseThrow(() -> new RuntimeException("User preferences not found"));
     }
 
-    public UserPreferences getByUserId(String userId, String requesterId, boolean admin) {
+    public List<UserPreferences> getByUserId(String userId, String requesterId, boolean admin) {
         String ownerId = admin ? userId : requesterId;
-        return repository.findByUserId(ownerId).orElseThrow(() -> new RuntimeException("User preferences not found"));
+        return repository.findByUserId(ownerId);
     }
 
     public UserPreferences create(UserPreferences entity, String id) {

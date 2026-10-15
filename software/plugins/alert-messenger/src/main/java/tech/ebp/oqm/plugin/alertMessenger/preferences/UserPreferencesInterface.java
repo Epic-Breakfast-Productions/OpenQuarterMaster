@@ -46,7 +46,7 @@ public class UserPreferencesInterface {
 
     @GET
     @Path("/user/{id}")
-    public UserPreferences getByUserId(@PathParam("id") String id) {
+    public List<UserPreferences> getByUserId(@PathParam("id") String id) {
         return service.getByUserId(id, JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt));
     }
 

@@ -6,6 +6,7 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 
+import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -18,8 +19,8 @@ public class UserPreferencesRepository implements PanacheMongoRepository<UserPre
         return findByIdOptional(new ObjectId(id));
     }
 
-    public Optional<UserPreferences> findByUserId(String userId) {
-        return find("userId", userId).firstResultOptional();
+    public List<UserPreferences> findByUserId(String userId) {
+        return find("userId", userId).list();
     }
 
     public PanacheQuery<UserPreferences> findAllPaged(String userId, int pageIndex, int pageSize) {
