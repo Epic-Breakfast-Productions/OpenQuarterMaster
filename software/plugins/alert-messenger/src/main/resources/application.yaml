@@ -18,11 +18,11 @@ quarkus:
       path: /logout
   
   mailer:
-    from: "noreply@axgiri.tech"
-    host: "smtp.zoho.eu"
+    from: "your-email@example.com"
+    host: "your-smtp-server.com"
     port: 587
-    username: "noreply@axgiri.tech"
-    password: ""
+    username: "your-username"
+    password: "********"
     start-tls: REQUIRED
     mock: false
 
@@ -31,6 +31,10 @@ quarkus:
       url: "http://localhost:8080"
     "oqm.core.api-oidc":
       url: "${quarkus.oidc.auth-server-url}"
+
+  mongodb:
+    database: oqm-plugin-alert-messenger
+
 oqm:
   core:
     api:
@@ -51,9 +55,6 @@ oqm:
 #    username: "${SMTP_USERNAME}"
 #    password: "${SMTP_PASSWORD}"
 #    mock: false
-
-  mongodb:
-    database: oqm-plugin-alert-messenger
 
 mp:
   messaging:

@@ -44,7 +44,7 @@ public class UserPreferencesService {
     public UserPreferences create(UserPreferences entity, String id) {
         entity.userId = id;
         if (entity.connectionDetailIds == null) {
-            entity.connectionDetailIds = List.of();
+            throw new IllegalArgumentException("Connection detail IDs cannot be null");
         }
         validateConnectionOwnership(entity.connectionDetailIds, id, false);
         this.repository.persist(entity);
@@ -55,6 +55,11 @@ public class UserPreferencesService {
         UserPreferences entity = this.get(id, userId, admin);
         entity.objectTypes = request.objectTypes;
         entity.eventTypes = request.eventTypes;
+
+        if (request.connectionDetailIds == null) {
+            throw new IllegalArgumentException("Connection detail IDs cannot be null");
+        }
+
         entity.connectionDetailIds = request.connectionDetailIds == null ? List.of() : request.connectionDetailIds;
         validateConnectionOwnership(entity.connectionDetailIds, userId, admin);
         this.repository.update(entity);

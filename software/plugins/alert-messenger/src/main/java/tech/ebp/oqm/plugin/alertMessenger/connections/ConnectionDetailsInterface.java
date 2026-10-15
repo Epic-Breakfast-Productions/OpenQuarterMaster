@@ -2,6 +2,8 @@ package tech.ebp.oqm.plugin.alertMessenger.connections;
 
 import io.quarkus.security.Authenticated;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.core.Context;
+import jakarta.ws.rs.core.HttpHeaders;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
@@ -14,6 +16,8 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.jwt.JsonWebToken;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.plugin.alertMessenger.utils.JwtUtils;
 
 import java.util.List;
@@ -30,33 +34,42 @@ public class ConnectionDetailsInterface {
     @Inject
     JsonWebToken jwt;
 
+    @Inject
+    @RestClient
+    OqmCoreApiClientService coreApiClient;
+
     @GET
     public List<ConnectionDetails> getAll(
         @QueryParam("page") @DefaultValue("0") int page,
-        @QueryParam("size") @DefaultValue("20") int size) {
-        return service.getAll(JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt), page, size);
+        @QueryParam("size") @DefaultValue("20") int size, @Context HttpHeaders headers) {
+        return service.getAll(currentUserId(headers), JwtUtils.isAdmin(jwt), page, size);
     }
 
     @GET
     @Path("/{id}")
-    public ConnectionDetails get(@PathParam("id") String id) {
-        return service.get(id, JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt));
+    public ConnectionDetails get(@PathParam("id") String id, @Context HttpHeaders headers) {
+        return service.get(id, currentUserId(headers), JwtUtils.isAdmin(jwt));
     }
 
     @POST
-    public ConnectionDetails create(ConnectionDetails details) {
-        return service.create(details, JwtUtils.getId(jwt));
+    public ConnectionDetails create(ConnectionDetails details, @Context HttpHeaders headers) {
+        return service.create(details, currentUserId(headers));
     }
 
     @PUT
     @Path("/{id}")
-    public ConnectionDetails update(@PathParam("id") String id, ConnectionDetails details) {
-        return service.update(id, details, JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt));
+    public ConnectionDetails update(@PathParam("id") String id, ConnectionDetails details, @Context HttpHeaders headers) {
+        return service.update(id, details, currentUserId(headers), JwtUtils.isAdmin(jwt));
     }
 
     @DELETE
     @Path("/{id}")
-    public void delete(@PathParam("id") String id) {
-        service.delete(id, JwtUtils.getId(jwt), JwtUtils.isAdmin(jwt));
+    public void delete(@PathParam("id") String id, @Context HttpHeaders headers) {
+        service.delete(id, currentUserId(headers), JwtUtils.isAdmin(jwt));
+    }
+
+    private String currentUserId(HttpHeaders headers) {
+        return coreApiClient.interactingEntityGetSelf(headers.getHeaderString(HttpHeaders.AUTHORIZATION))
+            .await().indefinitely().getId();
     }
 }

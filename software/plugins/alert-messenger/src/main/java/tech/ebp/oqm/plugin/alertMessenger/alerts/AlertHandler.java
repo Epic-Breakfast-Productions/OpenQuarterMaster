@@ -11,6 +11,7 @@ import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetailsService;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferences;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferencesService;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.HistoryEventFilter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -50,7 +51,10 @@ public class AlertHandler {
         Iterator<UserPreferences> iterator = userPreferencesService.getIterator();
         while (iterator.hasNext()) {
             UserPreferences preferences = iterator.next();
-            if ((preferences.objectTypes != null && preferences.objectTypes.contains(message.getObjectType())) || (preferences.eventTypes != null && preferences.eventTypes.contains(message.getEventType()))) {
+            if (HistoryEventFilter.filter(message, HistoryEventFilter.FilterOptions.builder()
+                    .objectType(preferences.objectTypes)
+                    .eventType(preferences.eventTypes)
+                    .build())) {
                 for (ConnectionDetails connectionDetails : userPreferencesService.getConnectionDetails(preferences)) {
                     log.debug("Connection details: {}", connectionDetails);
                     AlertSender sender = alertSenders.get(connectionDetails.getType());

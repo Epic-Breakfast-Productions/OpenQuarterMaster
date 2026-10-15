@@ -1,11 +1,13 @@
-package tech.ebp.oqm.plugin.alertMessenger.alerts;
+package tech.ebp.oqm.plugin.alertMessenger.alerts.senders;
 
 import io.quarkus.rest.client.reactive.QuarkusRestClientBuilder;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.HistoryEventFilter;
 import tech.ebp.oqm.plugin.alertMessenger.WebhookClient;
+import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
 import tech.ebp.oqm.plugin.alertMessenger.connections.DiscordConnection;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordEmbed;
@@ -22,6 +24,8 @@ import java.util.List;
 @ApplicationScoped
 @Slf4j
 public class DiscordAlertSender implements AlertSender<DiscordConnection> {
+    private static final int DISCORD_FIELD_LIMIT = 1_000;
+    private static final String TRUNCATION_SUFFIX = "\n...[truncated]";
 
     @ConfigProperty(name = "oqm.alert-messenger.favicon-url")
     String icon;
@@ -56,13 +60,22 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
                 new DiscordField("Event type", eventType, true),
                 new DiscordField("Object ID", String.valueOf(event.getObjectId()), true),
                 new DiscordField("Database", String.valueOf(event.getDatabase()), true),
-                new DiscordField("Event data", event.getEvent() == null ? "{}" : event.getEvent().toPrettyString(), false)));
+                new DiscordField("Event data", this.boundedEventData(event), false)));
 
         return new DiscordWebhookMessage(
             "OpenQuarterMaster",
             icon,
             null,
             List.of(embed));
+    }
+
+    private String boundedEventData(EventNotificationWrapper event) {
+        String eventData = event.getEvent().toPrettyString();
+        if (eventData.length() <= DISCORD_FIELD_LIMIT) {
+            return eventData;
+        }
+
+        return eventData.substring(0, DISCORD_FIELD_LIMIT - TRUNCATION_SUFFIX.length()) + TRUNCATION_SUFFIX;
     }
 
     private int getColor(EventNotificationWrapper event) {
