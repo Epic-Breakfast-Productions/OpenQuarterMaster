@@ -143,6 +143,26 @@ public abstract class MongoHistoriedObjectService<T extends MainObject, S extend
 		}
 	}
 
+
+	@Override
+	public T get(String oqmDbIdOrName, ClientSession cs, ObjectId objectId) throws DbNotFoundException, DbDeletedException {
+		try {
+			return super.get(oqmDbIdOrName, cs, objectId);
+		} catch(DbNotFoundException e) {
+			try {
+				DeleteEvent deletedEvent = this.getHistoryService().isDeleted(oqmDbIdOrName, cs, objectId);
+
+				throw new DbDeletedException(this.clazz, deletedEvent);
+			} catch(DbNotFoundException e2) {
+				//nothing to do. If no history, we never had it.
+				if(e2 instanceof DbDeletedException){
+					throw e2;
+				}
+			}
+			throw e;
+		}
+	}
+
 	public T update(String oqmDbIdOrName, ClientSession cs, T object, InteractingEntity entity, boolean deriveApplied, HistoryDetail ... details) throws DbNotFoundException {
 		object = this.update(oqmDbIdOrName, cs, object, deriveApplied);
 		this.addHistoryFor(oqmDbIdOrName, cs, object, entity,

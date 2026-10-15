@@ -3,6 +3,7 @@ package tech.ebp.oqm.core.api.service.mongo.transactions.appliers.inTransit.rece
 import com.mongodb.client.ClientSession;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
@@ -49,10 +50,11 @@ public class ReceiveAmountInTransitTransactionApplier extends InTransitTransacti
 		Stored output = null;
 
 		if(inventoryItem.getStorageType() == StorageType.BULK){
-			SearchResult<Stored> blockSearch = this.getStoredService().getStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), storageBlock);
-
-			if(!blockSearch.isEmpty()){
+			try {
+				SearchResult<Stored> blockSearch = this.getStoredService().getStoredForItemBlock(oqmDbIdOrName, cs, inventoryItem.getId(), storageBlock);
 				output = blockSearch.getResults().getFirst();
+			} catch(DbNotFoundException e) {
+				//nothing to do
 			}
 		}
 
@@ -177,6 +179,7 @@ public class ReceiveAmountInTransitTransactionApplier extends InTransitTransacti
 		}
 
 		affectedStored.add(inTransit);
+		affectedStored.add(receiving);
 
 		this.getStoredService().update(oqmDbIdOrName, cs, receiving, interactingEntity, historyDetails);
 		if(all){
