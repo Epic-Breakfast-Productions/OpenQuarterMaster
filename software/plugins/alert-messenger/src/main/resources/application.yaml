@@ -31,10 +31,6 @@ quarkus:
       url: "http://localhost:8080"
     "oqm.core.api-oidc":
       url: "${quarkus.oidc.auth-server-url}"
-    "webhook-client":
-      url: "openquartermaster.com"
-      connect-timeout: 5000
-      read-timeout: 10000
 oqm:
   core:
     api:
