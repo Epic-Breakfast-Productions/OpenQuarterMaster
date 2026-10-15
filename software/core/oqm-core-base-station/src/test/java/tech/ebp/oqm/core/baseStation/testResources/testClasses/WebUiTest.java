@@ -164,7 +164,7 @@ public abstract class WebUiTest extends RunningServerTest {
 					try {
 						message.append(curHandle.jsonValue().toString().strip()).append("\n");
 					} catch(Throwable e){
-						log.warn("Failed to get json value for handle: {}", curHandle, e);
+						log.warn("Failed to get json value for handle: {} / {}", curHandle, e.getMessage());
 						break;
 					}
 				}

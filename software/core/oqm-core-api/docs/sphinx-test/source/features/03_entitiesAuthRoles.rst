@@ -36,6 +36,19 @@ Keep track of entities interacting with the system
 
 All entities that interact with the system are to be registered in the system, and available for reference in other areas.
 
+Data to be Gathered
+^^^^^^^^^^^^^^^^^^^
+
+The following data is to be gathered by the system:
+
+- Name
+- Email
+- ID from auth provider
+- Roles assigned
+- The auth provider used to interact
+- Type (User, or Service)
+- OQM ID (generated on registration)
+
 Registration
 ^^^^^^^^^^^^
 
@@ -55,8 +68,18 @@ Entities are allowed to retrieve their own data held on them.
 Allow information to be retrieved on other entities
 ---------------------------------------------------
 
+Generally speaking, an instance of OQM is not considered public. The intent is for an instance to be used within an organization or group who would
+already be cognizant of one another. Additionally, for transparency, one would want to know who is doing what to their inventory.
+
+Search Interacting Entities
+^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Any user with the ``<role>`` role is allowed to search the registered interacting entities.
+
 Others' full data
 ^^^^^^^^^^^^^^^^^
+
+Any user or entity with the ``<role>`` role is allowed to view all data gathered on any other entity that has interacted with the system.
 
 Others' Reference
 ^^^^^^^^^^^^^^^^^
@@ -64,8 +87,7 @@ Others' Reference
 Entities should be able to retrieve a reference object for any other entity, containing a bare minimum of data about the other entity.
 Used to make sure UI's can properly display basic entity information in context.
 
+This includes the entity's:
 
-
-
-
-
+- OQM ID
+- Name
