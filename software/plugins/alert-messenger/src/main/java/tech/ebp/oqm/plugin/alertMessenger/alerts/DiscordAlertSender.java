@@ -38,7 +38,8 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
                 .build(WebhookClient.class)) {
             client.send(toDiscordMessage(eventNotificationWrapper));
         } catch (Exception e) {
-            log.error("Error sending alert via Webhook to {}: {}", connection.getWebhookUrl(), e.getMessage(), e);
+            log.error("Failed to send Discord alert for event: for user {}. exception: {}", eventNotificationWrapper, connection.getUserId(), e);
+            throw new IllegalStateException("Discord delivery failed", e);
         }
     }
 

@@ -44,4 +44,9 @@ public class ConnectionDetailsService {
     public void delete(String id) {
         repository.delete(get(id));
     }
+
+    public void updateLastError(ConnectionDetails details, String lastError) {
+        details.setLastError(lastError);
+        repository.update(details);
+    }
 }

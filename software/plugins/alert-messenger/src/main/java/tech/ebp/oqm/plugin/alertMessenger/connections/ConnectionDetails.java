@@ -21,6 +21,7 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 })
 public abstract class ConnectionDetails extends PanacheMongoEntity {
     private String userId;
+    private String lastError;
     private final MessageChannels type;
 
     ConnectionDetails(MessageChannels type) {

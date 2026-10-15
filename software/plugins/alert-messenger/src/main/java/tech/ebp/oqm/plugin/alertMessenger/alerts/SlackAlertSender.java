@@ -33,7 +33,8 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
                 .build(WebhookClient.class)) {
             client.send(new SlackWebhookMessage(eventNotificationWrapper.toString()));
         } catch (Exception e) {
-            log.error("Failed to send alert via Slack", e);
+            log.error("Failed to send Slack alert for event: for user {}. exception: {}", eventNotificationWrapper, connection.getUserId(), e);
+            throw new IllegalStateException("Slack delivery failed", e);
         }
     }
 }

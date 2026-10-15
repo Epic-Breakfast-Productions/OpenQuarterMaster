@@ -7,6 +7,7 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
+import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetailsService;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferences;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferencesService;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
@@ -28,6 +29,9 @@ public class AlertHandler {
     @Inject
     UserPreferencesService userPreferencesService;
 
+    @Inject
+    ConnectionDetailsService connectionDetailsService;
+
     private Map<MessageChannels, AlertSender> alertSenders;
 
     @PostConstruct
@@ -42,18 +46,25 @@ public class AlertHandler {
 
     //make it non-blocking
     public void handleAlert(EventNotificationWrapper message) {
+        RuntimeException deliveryFailure = null;
         Iterator<UserPreferences> iterator = userPreferencesService.getIterator();
         while (iterator.hasNext()) {
             UserPreferences preferences = iterator.next();
-            if (preferences.objectTypes.contains(message.getObjectType()) || preferences.eventTypes.contains(message.getEventType())) {
+            if ((preferences.objectTypes != null && preferences.objectTypes.contains(message.getObjectType())) || (preferences.eventTypes != null && preferences.eventTypes.contains(message.getEventType()))) {
                 for (ConnectionDetails connectionDetails : userPreferencesService.getConnectionDetails(preferences)) {
                     log.debug("Connection details: {}", connectionDetails);
                     AlertSender sender = alertSenders.get(connectionDetails.getType());
                     if (sender != null) {
                         try {
                             sender.send(connectionDetails, message);
+                            connectionDetailsService.updateLastError(connectionDetails, null);
                         } catch (Exception e) {
-                            log.error("Error sending alert via {}", connectionDetails.getType(), e);
+                            String error = sanitizeError(e);
+                            connectionDetailsService.updateLastError(connectionDetails, error);
+                            log.error("Error sending alert via {}: {}", connectionDetails.getType(), error);
+                            if (deliveryFailure == null) {
+                                deliveryFailure = new IllegalStateException("One or more alert deliveries failed");
+                            }
                         }
                     } else {
                         log.warn("No sender found for message channel: {}", connectionDetails.getType());
@@ -61,5 +72,13 @@ public class AlertHandler {
                 }
             }
         }
+        if (deliveryFailure != null) {
+            throw deliveryFailure;
+        }
+    }
+
+    private String sanitizeError(Exception exception) {
+        String message = exception.getMessage();
+        return message == null || message.isBlank() ? exception.getClass().getSimpleName() : message;
     }
 }
