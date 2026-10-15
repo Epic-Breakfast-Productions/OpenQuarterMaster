@@ -48,10 +48,11 @@ ExecStart=/bin/bash -c "/usr/bin/docker run \
                                  --env-file $ENV_CONFIG_FILE \
                                  -v $(oqm-config g 'system.dataDir')$DATA_DIR:/var/lib/postgresql/data/ \
                                  --health-cmd=\"pg_isready\" \
-                                 --health-interval=10s \
+                                 --health-interval=30s \
                                  --health-timeout=10s \
                                  --health-retries=5 \
                                  --health-start-period=20s \
+                                 --health-start-interval=5s \
                                  --memory \"$(oqm-captain u calcRamLimit --min infra.postgres.resourceLimits.mem.min --max infra.postgres.resourceLimits.mem.max)\" \
                                  $IMAGE_NAME:$IMAGE_VERSION"
 # Ensure is up, healthy
