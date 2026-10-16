@@ -20,7 +20,7 @@ public abstract class InTransitTransactionApplier<T extends ItemStoredTransactio
 	}
 
 	protected Stored getAndAssertInTransitStored(String oqmDbIdOrName, ClientSession cs, InventoryItem inventoryItem, ObjectId storedId) {
-		Stored stored = this.getAndAssertInTransitStored(oqmDbIdOrName, cs, inventoryItem, storedId);
+		Stored stored = this.getAndAssertStored(oqmDbIdOrName, cs, inventoryItem, storedId);
 
 		this.assertInTransit(stored);
 
