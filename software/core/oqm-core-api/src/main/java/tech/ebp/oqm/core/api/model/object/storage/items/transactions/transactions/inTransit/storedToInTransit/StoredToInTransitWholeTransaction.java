@@ -9,6 +9,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.InTransit;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.InTransitStoredTransaction;
 
@@ -29,6 +30,10 @@ public class StoredToInTransitWholeTransaction extends StoredToInTransitTransact
 	@NotNull
 	@Nonnull
 	private ObjectId toTransit;
+
+	@NotNull
+	@Nonnull
+	private ToTransitState state;
 
 	@Override
 	@Schema(constValue = "STORED_TO_IN_TRANSIT_WHOLE", readOnly = true, required = true, examples = "STORED_TO_IN_TRANSIT_WHOLE")

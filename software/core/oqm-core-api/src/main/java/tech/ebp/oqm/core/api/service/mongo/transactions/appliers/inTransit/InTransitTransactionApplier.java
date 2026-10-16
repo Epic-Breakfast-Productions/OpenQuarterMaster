@@ -15,36 +15,16 @@ import tech.ebp.oqm.core.api.service.mongo.transactions.appliers.TransactionAppl
 public abstract class InTransitTransactionApplier<T extends ItemStoredTransaction> extends TransactionApplier<T> {
 
 
-	protected void assertInTransitValid(
-		ClientSession cs,
-		String oqmDbNameOrId,
-		InventoryItem item,
-		InTransit inTransit
-	) {
+	protected void assertInTransitValid(ClientSession cs, String oqmDbNameOrId, InventoryItem item, InTransit inTransit) {
 		//TODO:: think of something not covered in stored service ensure valid
 	}
 
-	protected Stored getAndAssertInTransitStored(
-		String oqmDbIdOrName,
-		ClientSession cs,
-		InventoryItem inventoryItem,
-		ObjectId storedId
-	) {
-		Stored stored = this.getStoredService().get(oqmDbIdOrName, cs, storedId);
+	protected Stored getAndAssertInTransitStored(String oqmDbIdOrName, ClientSession cs, InventoryItem inventoryItem, ObjectId storedId) {
+		Stored stored = this.getAndAssertInTransitStored(oqmDbIdOrName, cs, inventoryItem, storedId);
 
-		this.assertSameItem(inventoryItem, stored);
 		this.assertInTransit(stored);
 
 		return stored;
-	}
-
-	protected void assertSameItem(
-		InventoryItem inventoryItem,
-		Stored inTransit
-	) {
-		if (!inventoryItem.getId().equals(inTransit.getItem())) {
-			throw new IllegalArgumentException("Stored item's associated item must match concerning item.");
-		}
 	}
 
 	protected void assertInTransit(Stored stored) {

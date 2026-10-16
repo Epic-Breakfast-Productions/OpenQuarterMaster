@@ -89,7 +89,7 @@ public class StoredService extends MongoHistoriedObjectService<Stored, StoredSea
 	private void assertInTransitLocale(ClientSession cs, String oqmDbNameOrId, InventoryItem item, Stored inTransit, InTransitLocale locale){
 		switch(locale.getType()){
 			case STORAGE_BLOCK -> {
-				if(item.usesStorageBlock(((StorageBlockLocale)locale).getStorageBlock())){
+				if(!item.usesStorageBlock(((StorageBlockLocale)locale).getStorageBlock())){
 					throw new IllegalArgumentException("Storage Block Locale must have a storage block associated with item.");
 				}
 			}
