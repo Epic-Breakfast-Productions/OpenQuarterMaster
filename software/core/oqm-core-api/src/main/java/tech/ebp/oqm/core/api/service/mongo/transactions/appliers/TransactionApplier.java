@@ -21,13 +21,13 @@ import java.util.Set;
  * @param <T> The type of transaction being applied.
  */
 public abstract class TransactionApplier<T extends ItemStoredTransaction> {
-	
+
 	@Inject
 	@Getter
 	StoredService storedService;
 
 	public abstract TransactionType getTransactionType();
-	
+
 	@WithSpan
 	public abstract void apply(
 		String oqmDbIdOrName,
@@ -39,4 +39,29 @@ public abstract class TransactionApplier<T extends ItemStoredTransaction> {
 		HistoryDetail[] historyDetails,
 		ClientSession cs
 	);
+
+
+	protected void assertSameItem(
+		InventoryItem inventoryItem,
+		Stored inTransit
+	) {
+		if (!inventoryItem.getId().equals(inTransit.getItem())) {
+			throw new IllegalArgumentException("Stored item's associated item must match concerning item.");
+		}
+	}
+
+	protected Stored getAndAssertStored(
+		String oqmDbIdOrName,
+		ClientSession cs,
+		InventoryItem inventoryItem,
+		ObjectId storedId
+	) {
+		Stored stored = this.getStoredService().get(oqmDbIdOrName, cs, storedId);
+
+		this.assertSameItem(inventoryItem, stored);
+
+		return stored;
+	}
+
+
 }
