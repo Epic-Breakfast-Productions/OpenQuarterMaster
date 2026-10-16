@@ -1,6 +1,5 @@
 package tech.ebp.oqm.plugin.alertMessenger.connections;
 
-import io.quarkus.mongodb.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
@@ -13,20 +12,21 @@ public class ConnectionDetailsService {
     @Inject
     ConnectionDetailsRepository repository;
 
-    public List<ConnectionDetails> getAll(String userId, boolean admin, int pageIndex, int pageSize) {
-        PanacheQuery<ConnectionDetails> result = admin
-            ? repository.findAllPaged(pageIndex, pageSize)
-            : repository.findAllPaged(userId, pageIndex, pageSize);
-        return result.list();
+    public List<ConnectionDetails> getForUser(String userId, int pageIndex, int pageSize) {
+        return repository.findAllPaged(userId, pageIndex, pageSize).list();
+    }
+
+    public List<ConnectionDetails> getAll(int pageIndex, int pageSize) {
+        return repository.findAllPaged(pageIndex, pageSize).list();
     }
 
     public List<ConnectionDetails> getByIds(List<ObjectId> ids) {
         return repository.findAllByIds(ids);
     }
 
-    public ConnectionDetails get(String id, String userId, boolean admin) {
+    public ConnectionDetails get(String id, String userId) {
         return repository.findByObjectId(id)
-            .filter(details -> admin || userId.equals(details.getUserId()))
+            .filter(details -> userId.equals(details.getUserId()))
             .orElseThrow(() -> new RuntimeException("Connection details not found: " + id));
     }
 
@@ -36,16 +36,16 @@ public class ConnectionDetailsService {
         return details;
     }
 
-    public ConnectionDetails update(String id, ConnectionDetails details, String userId, boolean admin) {
-        ConnectionDetails existing = get(id, userId, admin);
+    public ConnectionDetails update(String id, ConnectionDetails details, String userId) {
+        ConnectionDetails existing = get(id, userId);
         details.id = existing.id;
         details.setUserId(existing.getUserId());
         repository.update(details);
         return details;
     }
 
-    public void delete(String id, String userId, boolean admin) {
-        repository.delete(get(id, userId, admin));
+    public void delete(String id, String userId) {
+        repository.delete(get(id, userId));
     }
 
     public void updateLastError(ConnectionDetails details, String lastError) {

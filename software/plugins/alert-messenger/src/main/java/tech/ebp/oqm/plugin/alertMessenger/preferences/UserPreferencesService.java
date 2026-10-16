@@ -1,8 +1,8 @@
 package tech.ebp.oqm.plugin.alertMessenger.preferences;
 
-import io.quarkus.mongodb.panache.PanacheQuery;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetailsService;
 
@@ -19,26 +19,22 @@ public class UserPreferencesService {
     @Inject
     ConnectionDetailsService connectionDetailsService;
 
-    public List<UserPreferences> get(String userId, boolean admin, int pageIndex, int pageSize) {
-        PanacheQuery<UserPreferences> result = admin
-            ? this.repository.findAllPaged(pageIndex, pageSize)
-            : this.repository.findAllPaged(userId, pageIndex, pageSize);
-        return result.list();
+    public List<UserPreferences> getForUser(String userId, int pageIndex, int pageSize) {
+        return this.repository.findAllPaged(userId, pageIndex, pageSize).list();
+    }
+
+    public List<UserPreferences> getAll(int pageIndex, int pageSize) {
+        return this.repository.findAllPaged(pageIndex, pageSize).list();
     }
 
     public Iterator<UserPreferences> getIterator() {
         return this.repository.findAll().stream().iterator();
     }
 
-    public UserPreferences get(String id, String userId, boolean admin) {
+    public UserPreferences get(String id, String userId) {
         return repository.findByObjectId(id)
-            .filter(preferences -> admin || userId.equals(preferences.userId))
+            .filter(preferences -> userId.equals(preferences.userId))
             .orElseThrow(() -> new RuntimeException("User preferences not found"));
-    }
-
-    public List<UserPreferences> getByUserId(String userId, String requesterId, boolean admin) {
-        String ownerId = admin ? userId : requesterId;
-        return repository.findByUserId(ownerId);
     }
 
     public UserPreferences create(UserPreferences entity, String id) {
@@ -46,13 +42,13 @@ public class UserPreferencesService {
         if (entity.connectionDetailIds == null) {
             throw new IllegalArgumentException("Connection detail IDs cannot be null");
         }
-        validateConnectionOwnership(entity.connectionDetailIds, id, false);
+        validateConnectionOwnership(entity.connectionDetailIds, id);
         this.repository.persist(entity);
         return entity;
     }
 
-    public UserPreferences update(UserPreferences request, String id, String userId, boolean admin) {
-        UserPreferences entity = this.get(id, userId, admin);
+    public UserPreferences update(UserPreferences request, String id, String userId) {
+        UserPreferences entity = this.get(id, userId);
         entity.objectTypes = request.objectTypes;
         entity.eventTypes = request.eventTypes;
 
@@ -60,8 +56,8 @@ public class UserPreferencesService {
             throw new IllegalArgumentException("Connection detail IDs cannot be null");
         }
 
-        entity.connectionDetailIds = request.connectionDetailIds == null ? List.of() : request.connectionDetailIds;
-        validateConnectionOwnership(entity.connectionDetailIds, userId, admin);
+        entity.connectionDetailIds = request.connectionDetailIds;
+        validateConnectionOwnership(entity.connectionDetailIds, userId);
         this.repository.update(entity);
         return entity;
     }
@@ -70,12 +66,12 @@ public class UserPreferencesService {
         return connectionDetailsService.getByIds(preferences.connectionDetailIds == null ? List.of() : preferences.connectionDetailIds);
     }
 
-    public void deleteById(String id, String userId, boolean admin) {
-        this.repository.delete(this.get(id, userId, admin));
+    public void deleteById(String id, String userId) {
+        this.repository.delete(this.get(id, userId));
     }
 
-    private void validateConnectionOwnership(List<org.bson.types.ObjectId> connectionIds, String userId, boolean admin) {
-        if (admin || connectionIds.isEmpty()) {
+    private void validateConnectionOwnership(List<ObjectId> connectionIds, String userId) {
+        if (connectionIds.isEmpty()) {
             return;
         }
         List<ConnectionDetails> connections = connectionDetailsService.getByIds(connectionIds);

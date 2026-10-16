@@ -5,7 +5,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.HistoryEventFilter;
 import tech.ebp.oqm.plugin.alertMessenger.WebhookClient;
 import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
 import tech.ebp.oqm.plugin.alertMessenger.connections.DiscordConnection;
