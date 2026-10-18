@@ -1,6 +1,7 @@
 package tech.ebp.oqm.plugin.alertMessenger.connections;
 
 import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
@@ -14,7 +15,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
@@ -43,10 +43,10 @@ public class ConnectionDetailsInterface {
 
     @GET
     @Path("/admin")
+    @RolesAllowed({"admins", "inventoryAdmin", "realm-admin"})
     public List<ConnectionDetails> getAllForAdmin(
         @QueryParam("page") @DefaultValue("0") int page,
-        @QueryParam("size") @DefaultValue("20") int size, @Context HttpHeaders headers) {
-        requireAdmin(headers);
+        @QueryParam("size") @DefaultValue("20") int size) {
         return service.getAll(page, size);
     }
 
@@ -76,13 +76,5 @@ public class ConnectionDetailsInterface {
     private String currentUserId(HttpHeaders headers) {
         return coreApiClient.interactingEntityGetSelf(headers.getHeaderString(HttpHeaders.AUTHORIZATION))
             .await().indefinitely().getId();
-    }
-
-    private void requireAdmin(HttpHeaders headers) {
-        if (coreApiClient.interactingEntityGetSelf(headers.getHeaderString(HttpHeaders.AUTHORIZATION))
-                .await().indefinitely().getRoles().stream()
-                .noneMatch(role -> role.equals("admins") || role.equals("realm-admin"))) {
-            throw new ForbiddenException();
-        }
     }
 }

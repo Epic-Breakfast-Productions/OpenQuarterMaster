@@ -6,12 +6,12 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.HistoryEventFilter;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetailsService;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferences;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferencesService;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.HistoryEventFilter;
 
 import java.util.Iterator;
 import java.util.List;
@@ -45,16 +45,24 @@ public class AlertHandler {
         log.debug("Initialized alert senders: {}", alertSenders.keySet());
     }
 
-    //make it non-blocking
+    private static boolean filterEvent(EventNotificationWrapper message, UserPreferences preferences) {
+        return HistoryEventFilter.filter(message, HistoryEventFilter.FilterOptions.builder()
+            .objectType(preferences.objectTypes)
+            .eventType(preferences.eventTypes)
+            .build()) && preferences.enabled;
+    }
+
+    private static boolean filterDatabaseId(String messageDatabaseId, String preferencesDatabaseId) {
+        return preferencesDatabaseId == null || preferencesDatabaseId.isBlank() || preferencesDatabaseId.equals(messageDatabaseId);
+    }
+
+    // make it non-blocking
     public void handleAlert(EventNotificationWrapper message) {
         RuntimeException deliveryFailure = null;
         Iterator<UserPreferences> iterator = userPreferencesService.getIterator();
         while (iterator.hasNext()) {
             UserPreferences preferences = iterator.next();
-            if (HistoryEventFilter.filter(message, HistoryEventFilter.FilterOptions.builder()
-                    .objectType(preferences.objectTypes)
-                    .eventType(preferences.eventTypes)
-                    .build())) {
+            if (filterEvent(message, preferences) && preferences.enabled && filterDatabaseId(message.getDatabase(), preferences.databaseId)) {
                 for (ConnectionDetails connectionDetails : userPreferencesService.getConnectionDetails(preferences)) {
                     log.debug("Connection details: {}", connectionDetails);
                     AlertSender sender = alertSenders.get(connectionDetails.getType());

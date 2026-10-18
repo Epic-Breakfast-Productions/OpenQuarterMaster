@@ -15,7 +15,7 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 @BsonDiscriminator
 @JsonTypeInfo(use = JsonTypeInfo.Id.NAME, include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type")
 @JsonSubTypes({
-    @JsonSubTypes.Type(value = SmtpConnection.class, name = "EMAIL"),
+    @JsonSubTypes.Type(value = EmailConnection.class, name = "EMAIL"),
     @JsonSubTypes.Type(value = DiscordConnection.class, name = "DISCORD"),
     @JsonSubTypes.Type(value = SlackConnection.class, name = "SLACK")
 })

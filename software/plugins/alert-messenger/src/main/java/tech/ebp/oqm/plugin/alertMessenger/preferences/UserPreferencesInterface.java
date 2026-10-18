@@ -1,6 +1,7 @@
 package tech.ebp.oqm.plugin.alertMessenger.preferences;
 
 import io.quarkus.security.Authenticated;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
@@ -15,7 +16,6 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Context;
 import jakarta.ws.rs.core.HttpHeaders;
-import jakarta.ws.rs.ForbiddenException;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -45,10 +45,10 @@ public class UserPreferencesInterface {
 
     @GET
     @Path("/admin")
+    @RolesAllowed({"admins", "inventoryAdmin", "realm-admin"})
     public List<UserPreferences> getAllForAdmin(
         @QueryParam("page") @DefaultValue("0") int page,
-        @QueryParam("size") @DefaultValue("20") int size, @Context HttpHeaders headers) {
-        requireAdmin(headers);
+        @QueryParam("size") @DefaultValue("20") int size) {
         return service.getAll(page, size);
     }
 
@@ -80,11 +80,4 @@ public class UserPreferencesInterface {
             .await().indefinitely().getId();
     }
 
-    private void requireAdmin(HttpHeaders headers) {
-        if (coreApiClient.interactingEntityGetSelf(headers.getHeaderString(HttpHeaders.AUTHORIZATION))
-                .await().indefinitely().getRoles().stream()
-                .noneMatch(role -> role.equals("admins") || role.equals("realm-admin"))) {
-            throw new ForbiddenException("User does not have admin privileges");
-        }
-    }
 }
