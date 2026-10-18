@@ -703,7 +703,7 @@ public class ReceiveAmountInTransitAppliedTransactionTest extends InTransitAppli
 
 
 	@Test
-	public void applyAddAmountInTransitSuccessAmountListAddAllFlagToStoredExist() throws Exception {
+	public void applyAddAmountInTransitSuccessAmountListToStoredExist() throws Exception {
 		InteractingEntity entity = this.getTestUserService().getTestUser();
 		InventoryItem item = setupItem(StorageType.AMOUNT_LIST, entity);
 

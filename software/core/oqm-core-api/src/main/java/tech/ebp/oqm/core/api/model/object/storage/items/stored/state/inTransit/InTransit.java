@@ -18,6 +18,7 @@ import tech.ebp.oqm.core.api.model.object.ImageAttachmentContaining;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredState;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.locale.InTransitLocale;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.storedToInTransit.ToTransitState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -85,4 +86,8 @@ public class InTransit extends StoredState implements AttKeywordContaining, File
 	@lombok.Builder.Default
 	@Schema(required = false, description = "Files to attach to the item.", examples = {"[]"})
 	private Set<@NotNull ObjectId> attachedFiles = new LinkedHashSet<>();
+
+	public void updateFromToTransitState(ToTransitState toTransitState) {
+		//TODO:: this
+	}
 }

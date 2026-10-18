@@ -21,6 +21,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.storedToInTransit.StoredToInTransitWholeTransaction;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
 import tech.ebp.oqm.core.api.service.mongo.transactions.appliers.inTransit.InTransitTransactionApplier;
+import tech.units.indriya.quantity.Quantities;
 
 import javax.measure.Quantity;
 import java.util.Set;
@@ -105,12 +106,13 @@ public class StoredToInTransitAmountTransactionApplier extends InTransitTransact
 
 
 		ObjectId receivingId = null;
-
 		{
 			if(transaction.getToInTransitStored() != null){
 				receivingId = transaction.getToInTransitStored();
 			} else {
 				AmountStored newInTransit = fromStored.toBuilder()
+												.id(null)
+												.amount(Quantities.getQuantity(0, fromStored.getAmount().getUnit()))
 												.state(InTransit.builder()
 														   .from(StoredLocale.builder()
 																	 .stored(fromStored.getId())
@@ -136,6 +138,11 @@ public class StoredToInTransitAmountTransactionApplier extends InTransitTransact
 		if(receiving.getState().getType() != StoredStateType.IN_TRANSIT){
 			throw new IllegalArgumentException("Cannot move amount to non-in transit stored.");
 		}
+//		if(//TODO:: assert from same location from in transit
+//			((InTransit)receiving.getState()).getFrom().
+//		){
+//
+//		}
 
 		receiving.add(toTransit);
 		fromStored.subtract(toTransit);
@@ -143,6 +150,8 @@ public class StoredToInTransitAmountTransactionApplier extends InTransitTransact
 		if(fromStored.getAmount().getValue().doubleValue() < 0){
 			throw new IllegalArgumentException("Cannot move to in-transit more than was stored.");
 		}
+
+		((InTransit)receiving.getState()).updateFromToTransitState(transaction.getState());
 
 		affectedStored.add(fromStored);
 		affectedStored.add(receiving);

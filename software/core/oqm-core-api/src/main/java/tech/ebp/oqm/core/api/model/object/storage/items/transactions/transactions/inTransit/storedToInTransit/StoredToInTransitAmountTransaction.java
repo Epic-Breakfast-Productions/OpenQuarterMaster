@@ -1,6 +1,8 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.storedToInTransit;
 
+import jakarta.annotation.Nonnull;
 import jakarta.validation.constraints.NotNull;
+import lombok.Builder;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -36,6 +38,11 @@ public class StoredToInTransitAmountTransaction extends StoredToInTransitTransac
 	private ObjectId subtractFromBlock;
 
 	private ObjectId toInTransitStored;
+
+	@NotNull
+	@Nonnull
+	@Builder.Default
+	private ToTransitState state = ToTransitState.builder().build();
 
 	@Override
 	@Schema(constValue = "STORED_TO_IN_TRANSIT_AMOUNT", readOnly = true, required = true, examples = "STORED_TO_IN_TRANSIT_AMOUNT")
