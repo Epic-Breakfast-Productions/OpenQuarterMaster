@@ -44,7 +44,7 @@ public class ReceiveWholeInTransitTransactionApplier extends InTransitTransactio
 		HistoryDetail[] historyDetails,
 		ClientSession cs
 	) {
-		Stored inTransit = this.getAndAssertInTransitStored(oqmDbIdOrName, cs, inventoryItem, transaction.getInTransitStored());
+		Stored inTransit = this.getAndAssertStored(oqmDbIdOrName, cs, inventoryItem, transaction.getInTransitStored(), StoredStateType.IN_TRANSIT);
 
 		{
 			ObjectId toBlock = transaction.getToBlock();

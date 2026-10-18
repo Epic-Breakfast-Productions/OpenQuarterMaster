@@ -5,11 +5,13 @@ import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.inject.Inject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NonNull;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.history.details.HistoryDetail;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.service.mongo.StoredService;
@@ -63,5 +65,23 @@ public abstract class TransactionApplier<T extends ItemStoredTransaction> {
 		return stored;
 	}
 
+	protected void assertStoredState(@NonNull Stored stored, @NonNull StoredStateType type) {
+		if (stored.getState().getType() != type) {
+			throw new IllegalArgumentException("Stored item is not in transit.");
+		}
+	}
 
+	protected Stored getAndAssertStored(
+		String oqmDbIdOrName,
+		ClientSession cs,
+		InventoryItem inventoryItem,
+		ObjectId storedId,
+		StoredStateType stateType
+	) {
+		Stored stored = this.getAndAssertStored(oqmDbIdOrName, cs, inventoryItem, storedId);
+
+		this.assertStoredState(stored, stateType);
+
+		return stored;
+	}
 }

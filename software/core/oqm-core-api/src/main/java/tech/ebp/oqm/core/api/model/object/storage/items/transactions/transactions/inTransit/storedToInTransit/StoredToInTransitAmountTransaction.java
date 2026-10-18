@@ -1,8 +1,10 @@
 package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.storedToInTransit;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
@@ -31,6 +33,7 @@ public class StoredToInTransitAmountTransaction extends StoredToInTransitTransac
 	private Quantity<?> amount;
 
 	private ObjectId subtractFromStored;
+	private ObjectId subtractFromBlock;
 
 	private ObjectId toInTransitStored;
 

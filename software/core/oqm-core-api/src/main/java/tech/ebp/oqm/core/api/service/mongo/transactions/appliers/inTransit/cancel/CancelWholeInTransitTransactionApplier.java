@@ -73,7 +73,7 @@ public class CancelWholeInTransitTransactionApplier extends InTransitTransaction
 		HistoryDetail[] historyDetails,
 		ClientSession cs
 	) {
-		Stored stored = this.getAndAssertInTransitStored(oqmDbIdOrName, cs, inventoryItem, transaction.getInTransitStored());
+		Stored stored = this.getAndAssertStored(oqmDbIdOrName, cs, inventoryItem, transaction.getInTransitStored(), StoredStateType.IN_TRANSIT);
 
 		boolean remove = false;
 		switch(transaction.getCancelType()){

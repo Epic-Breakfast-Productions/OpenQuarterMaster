@@ -81,7 +81,7 @@ public class ReceiveAmountInTransitTransactionApplier extends InTransitTransacti
 		HistoryDetail[] historyDetails,
 		ClientSession cs
 	) {
-		Stored inTransit = this.getAndAssertInTransitStored(oqmDbIdOrName, cs, inventoryItem, transaction.getInTransitStored());
+		Stored inTransit = this.getAndAssertStored(oqmDbIdOrName, cs, inventoryItem, transaction.getInTransitStored(), StoredStateType.IN_TRANSIT);
 
 		if (inTransit.getType() != StoredType.AMOUNT) {
 			throw new IllegalArgumentException("In transit stored must be an amount type to receive an amount of it.");
@@ -98,7 +98,7 @@ public class ReceiveAmountInTransitTransactionApplier extends InTransitTransacti
 			all = true;
 			toReceive = inTransitAmount;
 		} else {
-			toReceive = transaction.getAmount();
+			toReceive = transactionAmount;
 			if(
 				inTransitAmount.isEquivalentTo(transactionAmount)
 			){

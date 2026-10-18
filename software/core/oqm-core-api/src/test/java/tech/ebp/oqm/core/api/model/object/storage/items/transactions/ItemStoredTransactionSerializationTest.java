@@ -30,6 +30,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.receive.ReceiveWholeInTransitTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.storedToInTransit.StoredToInTransitAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.storedToInTransit.StoredToInTransitWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.storedToInTransit.ToTransitState;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.update.UpdateInTransitTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.set.SetAmountTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.subtract.SubAmountTransaction;
@@ -226,6 +227,7 @@ class ItemStoredTransactionSerializationTest extends ObjectSerializationTest<Ite
 			//stored to in transit whole transaction
 			Arguments.of(StoredToInTransitWholeTransaction.builder()
 							 .toTransit(ObjectId.get())
+							 .state(ToTransitState.builder().build())
 							 .build()),
 
 			//update in transit whole transaction
