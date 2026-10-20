@@ -37,7 +37,7 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
     @Override
     public void send(DiscordConnection connection, EventNotificationWrapper eventNotificationWrapper) {
         try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
-                .baseUri(URI.create(connection.getWebhookUrl()))
+                .baseUri(URI.create(connection.getWebhookUrl().value()))
                 .build(WebhookClient.class)) {
             client.send(toDiscordMessage(eventNotificationWrapper));
         } catch (Exception e) {

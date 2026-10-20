@@ -30,4 +30,9 @@ public class ConnectionDetailsRepository implements PanacheMongoRepository<Conne
     public PanacheQuery<ConnectionDetails> findAllPaged(int pageIndex, int pageSize) {
         return findAll().page(Page.of(pageIndex, pageSize));
     }
+
+    public void updateLastError(ObjectId id, String lastError) {
+        update("lastError", lastError)
+            .where("_id", id);
+    }
 }

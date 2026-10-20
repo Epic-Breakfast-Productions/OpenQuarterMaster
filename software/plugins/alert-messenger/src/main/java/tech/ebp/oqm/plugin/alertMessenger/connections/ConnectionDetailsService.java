@@ -49,7 +49,6 @@ public class ConnectionDetailsService {
     }
 
     public void updateLastError(ConnectionDetails details, String lastError) {
-        details.setLastError(lastError);
-        repository.update(details);
+        repository.updateLastError(details.id, lastError);
     }
 }

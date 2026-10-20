@@ -5,12 +5,14 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.HistoryEventFilter;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetailsService;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferences;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferencesService;
+import tech.ebp.oqm.plugin.alertMessenger.throttle.ThrottleService;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 
 import java.util.Iterator;
@@ -22,7 +24,7 @@ import java.util.stream.Collectors;
 @Slf4j
 @ApplicationScoped
 public class AlertHandler {
-
+    // TODO: make it non-blocking (or project loom?)
     @Inject
     @All
     List<AlertSender<? extends ConnectionDetails>> senderInstances;
@@ -34,6 +36,9 @@ public class AlertHandler {
     ConnectionDetailsService connectionDetailsService;
 
     private Map<MessageChannels, AlertSender> alertSenders;
+
+    @Inject
+    ThrottleService throttleFacade;
 
     @PostConstruct
     void initializeSenders() {
@@ -56,36 +61,37 @@ public class AlertHandler {
         return preferencesDatabaseId == null || preferencesDatabaseId.isBlank() || preferencesDatabaseId.equals(messageDatabaseId);
     }
 
-    // make it non-blocking
     public void handleAlert(EventNotificationWrapper message) {
-        RuntimeException deliveryFailure = null;
+        ObjectId alertEventId = throttleFacade.saveAlertEvent(message);
         Iterator<UserPreferences> iterator = userPreferencesService.getIterator();
         while (iterator.hasNext()) {
             UserPreferences preferences = iterator.next();
             if (filterEvent(message, preferences) && preferences.enabled && filterDatabaseId(message.getDatabase(), preferences.databaseId)) {
-                for (ConnectionDetails connectionDetails : userPreferencesService.getConnectionDetails(preferences)) {
-                    log.debug("Connection details: {}", connectionDetails);
-                    AlertSender sender = alertSenders.get(connectionDetails.getType());
-                    if (sender != null) {
-                        try {
-                            sender.send(connectionDetails, message);
-                            connectionDetailsService.updateLastError(connectionDetails, null);
-                        } catch (Exception e) {
-                            String error = sanitizeError(e);
-                            connectionDetailsService.updateLastError(connectionDetails, error);
-                            log.error("Error sending alert via {}: {}", connectionDetails.getType(), error);
-                            if (deliveryFailure == null) {
-                                deliveryFailure = new IllegalStateException("One or more alert deliveries failed");
-                            }
-                        }
-                    } else {
-                        log.warn("No sender found for message channel: {}", connectionDetails.getType());
+                if (preferences.throttleTimeInMinutes == null || preferences.throttleTimeInMinutes == 0) {
+                    for (ConnectionDetails connectionDetails : userPreferencesService.getConnectionDetails(preferences)) {
+                        log.debug("Connection details: {}", connectionDetails);
+                        this.handleAlert(connectionDetails, message);
                     }
+                } else {
+                    throttleFacade.throttle(preferences, alertEventId);
+                        log.debug("Throttled connection details: {}", preferences);
                 }
             }
         }
-        if (deliveryFailure != null) {
-            throw deliveryFailure;
+    }
+
+    private void handleAlert(ConnectionDetails connectionDetails, EventNotificationWrapper message) {
+        AlertSender sender = alertSenders.get(connectionDetails.getType());
+        if (sender != null) {
+            try {
+                sender.send(connectionDetails, message);
+            } catch (Exception e) {
+                String error = this.sanitizeError(e);
+                connectionDetailsService.updateLastError(connectionDetails, error);
+                log.error("Error sending alert via {}: {}", connectionDetails.getType(), error);
+            }
+        } else {
+            log.warn("No sender found for message channel: {}", connectionDetails.getType());
         }
     }
 

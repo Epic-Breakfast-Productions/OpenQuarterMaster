@@ -30,7 +30,7 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
     public void send(SlackConnection connection, EventNotificationWrapper eventNotificationWrapper) {
         log.info("Sending alert via Slack");
         try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
-                .baseUri(URI.create(connection.getWebhookUrl()))
+                .baseUri(URI.create(connection.getWebhookUrl().value()))
                 .build(WebhookClient.class)) {
             client.send(new SlackWebhookMessage(eventNotificationWrapper.toString()));
         } catch (Exception e) {

@@ -16,15 +16,6 @@ quarkus:
       split-tokens: true
     logout:
       path: /logout
-  
-  mailer:
-    from: "your-email@example.com"
-    host: "your-smtp-server.com"
-    port: 587
-    username: "your-username"
-    password: "********"
-    start-tls: REQUIRED
-    mock: false
 
   rest-client:
     "oqm.core.api":
