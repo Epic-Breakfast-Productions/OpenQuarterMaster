@@ -75,7 +75,7 @@ public class UpdateInTransitTransactionApplier extends InTransitTransactionAppli
 		if(!updated){
 			throw new IllegalArgumentException("Nothing given to update with.");
 		}
-		
+
 		affectedStored.add(stored);
 		this.getStoredService().update(oqmDbIdOrName, cs, stored, interactingEntity, historyDetails);
 	}

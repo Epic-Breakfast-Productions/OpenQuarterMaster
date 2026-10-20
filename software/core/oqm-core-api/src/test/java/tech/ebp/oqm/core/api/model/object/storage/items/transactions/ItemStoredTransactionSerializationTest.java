@@ -233,7 +233,7 @@ class ItemStoredTransactionSerializationTest extends ObjectSerializationTest<Ite
 			//update in transit whole transaction
 			Arguments.of(UpdateInTransitTransaction.builder()
 							 .inTransitStored(ObjectId.get())
-							 .inTransitUpdates(inTransit)
+							 .inTransitUpdates(ToTransitState.builder().build())
 							 .build()),
 
 			//in transit / details tests
