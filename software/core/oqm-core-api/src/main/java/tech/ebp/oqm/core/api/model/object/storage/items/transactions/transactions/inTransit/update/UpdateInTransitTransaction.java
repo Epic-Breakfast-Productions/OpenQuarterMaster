@@ -13,6 +13,9 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.InTransit;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.InTransitStoredTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.inTransit.storedToInTransit.ToTransitState;
+
+import javax.measure.Quantity;
 
 /**
  * Transaction to subtract entire stored item objects.
@@ -26,13 +29,17 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 public class UpdateInTransitTransaction extends InTransitStoredTransaction {
 
 	/**
+	 * If changing quantity,
+	 */
+	private Quantity amount;
+
+
+	/**
 	 * The specific stored object to subtract
 	 *
 	 * TODO:: ObjectNode? don't allow "from" updates
 	 */
-	@NotNull
-	@NonNull
-	private InTransit inTransitUpdates;
+	private ToTransitState inTransitUpdates;
 
 	@Override
 	@Schema(constValue = "UPDATE_IN_TRANSIT", readOnly = true, required = true, examples = "UPDATE_IN_TRANSIT")

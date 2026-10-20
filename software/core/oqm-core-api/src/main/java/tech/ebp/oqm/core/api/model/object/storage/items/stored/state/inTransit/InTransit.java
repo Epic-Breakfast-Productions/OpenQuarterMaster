@@ -48,13 +48,11 @@ public class InTransit extends StoredState implements AttKeywordContaining, File
 	@Nullable
 	private InTransitLocale to;
 
-
 	/**
 	 * Attributes this object might have, usable for any purpose.
 	 */
 	@NotNull
 	@NonNull
-	//	@JsonMerge TODO:: #1261 figure out how to merge these; without, the whole map gets written on merge. With, partial updates are possible, but can't remove entries.
 	@lombok.Builder.Default
 	@Schema(required = false, description = "Attribute key/value (string) pairs to associate with the object.", examples = {"{}", "{\"key\": \"value\"}"})
 	private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
@@ -87,7 +85,41 @@ public class InTransit extends StoredState implements AttKeywordContaining, File
 	@Schema(required = false, description = "Files to attach to the item.", examples = {"[]"})
 	private Set<@NotNull ObjectId> attachedFiles = new LinkedHashSet<>();
 
-	public void updateFromToTransitState(ToTransitState toTransitState) {
-		//TODO:: this
+	public boolean updateFromToTransitState(ToTransitState toTransitState) {
+		if(toTransitState == null){
+			return false;
+		}
+		boolean updated = false;
+		if(toTransitState.getTo() != null){
+			if(!toTransitState.getTo().equals(this.getTo())){
+				this.setTo(toTransitState.getTo());
+				updated = true;
+			}
+		}
+		if(toTransitState.getAttributes() != null){
+			if(!toTransitState.getAttributes().equals(this.getAttributes())){
+				this.setAttributes(toTransitState.getAttributes());
+				updated = true;
+			}
+		}
+		if(toTransitState.getKeywords() != null){
+			if(!toTransitState.getKeywords().equals(this.getKeywords())){
+				this.setKeywords(toTransitState.getKeywords());
+				updated = true;
+			}
+		}
+		if(toTransitState.getImageIds() != null){
+			if(!toTransitState.getImageIds().equals(this.getImageIds())){
+				this.setImageIds(toTransitState.getImageIds());
+				updated = true;
+			}
+		}
+		if(toTransitState.getAttachedFiles() != null){
+			if(!toTransitState.getAttachedFiles().equals(this.getAttachedFiles())){
+				this.setAttachedFiles(toTransitState.getAttachedFiles());
+				updated = true;
+			}
+		}
+		return updated;
 	}
 }
