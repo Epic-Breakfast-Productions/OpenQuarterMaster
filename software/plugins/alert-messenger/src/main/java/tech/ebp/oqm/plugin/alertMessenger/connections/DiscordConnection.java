@@ -1,9 +1,11 @@
 package tech.ebp.oqm.plugin.alertMessenger.connections;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import tech.ebp.oqm.plugin.alertMessenger.utils.EncryptedString;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 
 @Getter
@@ -12,13 +14,14 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 @JsonTypeName("DISCORD")
 public class DiscordConnection extends ConnectionDetails {
 
-    private String webhookUrl;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private EncryptedString webhookUrl;
 
     public DiscordConnection() {
         super(MessageChannels.DISCORD);
     }
 
-    public DiscordConnection(String webhookUrl) {
+    public DiscordConnection(EncryptedString webhookUrl) {
         this();
         this.webhookUrl = webhookUrl;
     }

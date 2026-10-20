@@ -9,7 +9,6 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventType;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.ObjectType;
 
-import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 

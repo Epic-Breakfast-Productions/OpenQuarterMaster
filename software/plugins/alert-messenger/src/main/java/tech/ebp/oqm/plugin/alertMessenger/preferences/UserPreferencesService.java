@@ -49,6 +49,10 @@ public class UserPreferencesService {
 
     public UserPreferences update(UserPreferences request, String id, String userId) {
         UserPreferences entity = this.get(id, userId);
+        entity.name = request.name;
+        entity.description = request.description;
+        entity.enabled = request.enabled;
+        entity.databaseId = request.databaseId;
         entity.objectTypes = request.objectTypes;
         entity.eventTypes = request.eventTypes;
 
