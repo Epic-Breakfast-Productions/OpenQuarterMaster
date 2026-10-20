@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.add;
+package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.Data;

@@ -20,7 +20,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlo
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.ItemStoredStats;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.stats.StoredInBlockStats;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.add.AddWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;

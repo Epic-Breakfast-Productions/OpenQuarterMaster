@@ -9,7 +9,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.checkin.CheckinPartTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkin.CheckinPartTransaction;
 
 import java.util.Set;
 

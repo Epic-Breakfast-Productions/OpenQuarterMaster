@@ -1,12 +1,11 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.set;
+package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.set;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.GeneralTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.GeneralTransaction;
 
 /**
  * Transaction to set specific amounts to.

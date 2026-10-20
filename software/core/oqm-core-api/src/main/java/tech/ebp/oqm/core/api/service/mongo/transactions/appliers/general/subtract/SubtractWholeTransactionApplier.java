@@ -8,7 +8,7 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntity;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.subtract.SubWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.subtract.SubWholeTransaction;
 import tech.ebp.oqm.core.api.service.mongo.transactions.appliers.TransactionApplier;
 
 import java.util.Set;

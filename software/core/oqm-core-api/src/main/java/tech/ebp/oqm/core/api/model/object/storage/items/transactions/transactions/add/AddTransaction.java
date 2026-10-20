@@ -1,12 +1,11 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.add;
+package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.GeneralTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.GeneralTransaction;
 
 /**
  * Superclass for adding transactions.

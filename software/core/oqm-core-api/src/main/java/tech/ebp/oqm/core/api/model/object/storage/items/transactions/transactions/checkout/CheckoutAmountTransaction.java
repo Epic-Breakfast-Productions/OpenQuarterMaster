@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.checkout;
+package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

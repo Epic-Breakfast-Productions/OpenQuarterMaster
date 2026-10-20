@@ -17,7 +17,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.pricing.unit.PricePerUni
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.add.AddWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.add.AddWholeTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;

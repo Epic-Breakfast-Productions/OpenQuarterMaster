@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.checkout;
+package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -9,7 +9,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.CheckoutDetails;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.CheckoutsTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.CheckoutsTransaction;
 
 /**
  * Transaction to checkout items stored.

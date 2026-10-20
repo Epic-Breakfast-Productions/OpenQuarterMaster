@@ -14,7 +14,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredInBlock;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.StoredStateType;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.checkout.CheckoutAmountTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutAmountTransaction;
 import tech.ebp.oqm.core.api.service.mongo.transactions.appliers.checkouts.checkin.CheckinOutTransactionApplier;
 
 import javax.measure.Quantity;

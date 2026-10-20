@@ -1,4 +1,4 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts;
+package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;

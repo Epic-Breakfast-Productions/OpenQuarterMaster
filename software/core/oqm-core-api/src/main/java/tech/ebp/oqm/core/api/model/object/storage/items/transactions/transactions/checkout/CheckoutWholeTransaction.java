@@ -1,6 +1,7 @@
-package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.general.add;
+package tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
@@ -9,38 +10,31 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
-import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
 
 /**
- * Transaction to add a whole new stored object.
+ * Transaction to checkout an entire stored item.
  */
+@Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-@Data
 @NoArgsConstructor
+@AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-@Schema(title = "AddWholeTransaction", description = "A transaction to add a stored object.")
-public class AddWholeTransaction extends AddTransaction {
+@Schema(title = "CheckoutWholeTransaction", description = "A transaction to checkout a whole stored object.")
+public class CheckoutWholeTransaction extends CheckoutTransaction {
 
 	/**
-	 * The storage block we are adding under.
-	 */
-	@NotNull
-	@NonNull
-	private ObjectId toBlock;
-
-	/**
-	 * The new stored object to add.
+	 * The specific stored object to check out.
 	 */
 	@NonNull
 	@NotNull
-	private Stored toAdd;
+	private ObjectId toCheckout;
 
 	@Override
-	@Schema(constValue = "ADD_WHOLE", readOnly = true, required = true, examples = "ADD_WHOLE")
+	@Schema(constValue = "CHECKOUT_WHOLE", readOnly = true, required = true, examples = "CHECKOUT_WHOLE")
 	public TransactionType getType() {
-		return TransactionType.ADD_WHOLE;
+		return TransactionType.CHECKOUT_WHOLE;
 	}
 
 	@Override

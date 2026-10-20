@@ -10,7 +10,7 @@ import tech.ebp.oqm.core.api.model.object.storage.checkout.ItemWholeCheckout;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkouts.checkout.CheckoutWholeTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.checkout.CheckoutWholeTransaction;
 import tech.ebp.oqm.core.api.service.mongo.transactions.appliers.checkouts.checkin.CheckinOutTransactionApplier;
 
 import java.util.Set;
