@@ -53,7 +53,7 @@ dependencies {
 	testImplementation 'net.datafaker:datafaker:2.7.0'
 
 	testImplementation 'com.microsoft.playwright:playwright:1.63.0'
-	testImplementation 'com.deque.html.axe-core:playwright:4.13.0'
+	testImplementation 'com.deque.html.axe-core:playwright:4.14.0'
 	testImplementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus-test-support:6.6.0-SNAPSHOT'
 }
 
