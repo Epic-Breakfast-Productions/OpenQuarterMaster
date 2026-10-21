@@ -499,6 +499,16 @@ public interface OqmCoreApiClientService {
 	);
 
 	@GET
+	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}/transaction")
+	@Produces(MediaType.APPLICATION_JSON)
+	Uni<ObjectNode> invItemStoredSearchTransactionsForStored(
+		@HeaderParam(Constants.AUTH_HEADER_NAME) String token,
+		@PathParam("oqmDbIdOrName") String oqmDbIdOrName,
+		@PathParam("storedId") String storedId,
+		AppliedTransactionSearch search
+	);
+
+	@GET
 	@Path(INV_ITEM_STORED_ROOT_ENDPOINT + "/{storedId}/history")
 	@Produces(MediaType.APPLICATION_JSON)
 	Uni<ObjectNode> invItemStoredSearchHistory(
