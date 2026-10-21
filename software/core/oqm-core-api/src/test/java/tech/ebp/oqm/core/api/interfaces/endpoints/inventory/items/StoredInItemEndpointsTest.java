@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.interfaces.endpoints.inventory.items;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.http.ContentType;
@@ -21,6 +22,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transaction
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.units.OqmProvidedUnits;
 import tech.ebp.oqm.core.api.model.units.UnitUtils;
+import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 import tech.ebp.oqm.core.api.testResources.data.InventoryItemTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.StorageBlockTestObjectCreator;
 import tech.ebp.oqm.core.api.testResources.data.TestUserService;
@@ -302,6 +304,91 @@ public class StoredInItemEndpointsTest extends RunningServerTest {
 		AmountStored result = OBJECT_MAPPER.readValue(response.extract().asString(), AmountStored.class);
 		//TODO:: assertions
 //		assertNotNull(result.getCalculatedPrices());
+	}
+
+
+	@Test
+	public void testSearchStoredTransactions() throws JsonProcessingException {
+		User testUser = this.getTestUserService().getTestUser();
+
+		StorageBlock block =
+			OBJECT_MAPPER.readValue(
+				setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+					.body(OBJECT_MAPPER.writeValueAsString(StorageBlockTestObjectCreator.getNewStorageBlock()))
+					.contentType(ContentType.JSON)
+					.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/storage-block")
+					.then().statusCode(200)
+					.extract().body().asString(),
+				StorageBlock.class
+			);
+
+
+		InventoryItem item =
+			OBJECT_MAPPER.readValue(
+				setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+					.body(
+						OBJECT_MAPPER.writeValueAsString(
+							InventoryItemTestObjectCreator.getNewInvItem()
+								.setStorageType(StorageType.AMOUNT_LIST)
+								.setStorageBlocks(new LinkedList<>() {{
+													  add(StorageBlockSettings.builder().storageBlock(block.getId()).build());
+												  }}
+								)
+						)
+					)
+					.contentType(ContentType.JSON)
+					.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item")
+					.then().statusCode(200)
+					.extract().body().asString(),
+				InventoryItem.class
+			);
+
+		AmountStored stored = AmountStored.builder()
+								  .amount(UnitUtils.Quantities.UNIT_ONE)
+								  .item(item.getId())
+								  .state(StoredInBlock.builder().storageBlock(block.getId()).build())
+								  .build();
+
+		AppliedTransaction transaction =
+			OBJECT_MAPPER.readValue(
+				setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+					.body(
+						OBJECT_MAPPER.writeValueAsString(
+							AddWholeTransaction.builder()
+								.toAdd(stored)
+								.toBlock(block.getId())
+								.build()
+						)
+					)
+					.contentType(ContentType.JSON)
+					.post("/api/v1/db/" + DEFAULT_TEST_DB_NAME + "/inventory/item/"+item.getId()+"/stored/transaction")
+					.then().statusCode(200)
+					.extract().body().asString(),
+				AppliedTransaction.class
+			);
+
+
+		ValidatableResponse response = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+										   .when()
+										   .get("/api/v1/db/"+DEFAULT_TEST_DB_NAME+"/inventory/item/"+item.getId()+"/stored/" + transaction.getAffectedStored().stream().findFirst().get().toHexString())
+										   .then()
+										   .statusCode(200);
+
+		log.info("result: {}", response.extract().asString());
+
+		AmountStored result = OBJECT_MAPPER.readValue(response.extract().asString(), AmountStored.class);
+
+		response = setupJwtCall(given(), testUser.getAttributes().get(TestUserService.TEST_JWT_ATT_KEY))
+					   .when()
+					   .get("/api/v1/db/"+DEFAULT_TEST_DB_NAME+"/inventory/item/"+item.getId()+"/stored/" + transaction.getAffectedStored().stream().findFirst().get().toHexString()+"/transaction")
+					   .then()
+					   .statusCode(200);
+
+		log.info("transaction search response: {}", response.extract().body().asString());
+
+		ObjectNode transactionSearchResults = (ObjectNode) OBJECT_MAPPER.readTree(response.extract().body().asString());
+
+		assertEquals(1, transactionSearchResults.get("results").size());
 	}
 
 }
