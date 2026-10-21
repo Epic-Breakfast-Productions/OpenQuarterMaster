@@ -30,4 +30,8 @@ public class UserPreferencesRepository implements PanacheMongoRepository<UserPre
     public PanacheQuery<UserPreferences> findAllPaged(int pageIndex, int pageSize) {
         return findAll().page(Page.of(pageIndex, pageSize));
     }
+
+    public List<UserPreferences> findAllByUserId(String userId) {
+        return find("userId", userId).list();
+    }
 }

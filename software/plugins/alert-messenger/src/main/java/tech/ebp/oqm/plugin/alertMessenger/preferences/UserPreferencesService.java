@@ -27,6 +27,10 @@ public class UserPreferencesService {
         return this.repository.findAllPaged(pageIndex, pageSize).list();
     }
 
+    public Iterator<UserPreferences> getForUser(String userId) {
+        return this.repository.findAllByUserId(userId).stream().iterator();
+    }
+
     public Iterator<UserPreferences> getIterator() {
         return this.repository.findAll().stream().iterator();
     }

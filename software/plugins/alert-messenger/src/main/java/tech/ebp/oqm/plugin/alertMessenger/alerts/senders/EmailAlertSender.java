@@ -11,7 +11,9 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 import tech.ebp.oqm.plugin.alertMessenger.connections.EmailConnection;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 @Slf4j
@@ -26,10 +28,14 @@ public class EmailAlertSender implements AlertSender<EmailConnection> {
     Mailer mailer;
 
     @Override
-    public void send(EmailConnection connection, EventNotificationWrapper eventNotificationWrapper) {
+    public void send(EmailConnection connection, List<EventNotificationWrapper> events) {
         log.info("Sending alert to {} via SMTP", connection.getDestination());
-        String subject = "OQM Alert: " + eventNotificationWrapper.getEventType();
-        String text = formatEventNotification(eventNotificationWrapper);
+        String subject = events.size() == 1
+            ? "OQM Alert: " + events.get(0).getEventType()
+            : "OQM Alerts: " + events.size() + " events";
+        String text = events.stream()
+            .map(EmailAlertSender::formatEventNotification)
+            .collect(Collectors.joining("\n\n"));
 
         Mail mail = Mail.withText(connection.getDestination(), subject, text);
         addRecipients(connection.getCc(), mail::addCc);

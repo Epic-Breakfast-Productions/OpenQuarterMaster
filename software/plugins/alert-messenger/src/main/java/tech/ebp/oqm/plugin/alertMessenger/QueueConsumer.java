@@ -17,6 +17,6 @@ public class QueueConsumer {
     @Incoming("oqm-core-all-events")
     public void receive(EventNotificationWrapper message) {
         log.debug("Received message: {}", message);
-        alertHandler.handleAlert(message);
+        alertHandler.sendAlert(message);
     }
 }

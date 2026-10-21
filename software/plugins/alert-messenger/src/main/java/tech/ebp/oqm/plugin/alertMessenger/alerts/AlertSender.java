@@ -4,7 +4,14 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrap
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
 
+import java.util.List;
+
 public interface AlertSender<C extends ConnectionDetails> {
     MessageChannels messageChannel();
-    void send(C connection, EventNotificationWrapper eventNotificationWrapper);
+
+    void send(C connection, List<EventNotificationWrapper> events);
+
+    default void send(C connection, EventNotificationWrapper event) {
+        this.send(connection, List.of(event));
+    }
 }

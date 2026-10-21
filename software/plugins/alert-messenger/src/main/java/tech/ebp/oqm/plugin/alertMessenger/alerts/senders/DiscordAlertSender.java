@@ -35,18 +35,26 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
     }
 
     @Override
-    public void send(DiscordConnection connection, EventNotificationWrapper eventNotificationWrapper) {
+    public void send(DiscordConnection connection, List<EventNotificationWrapper> events) {
         try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
                 .baseUri(URI.create(connection.getWebhookUrl().value()))
                 .build(WebhookClient.class)) {
-            client.send(toDiscordMessage(eventNotificationWrapper));
+            client.send(toDiscordMessage(events));
         } catch (Exception e) {
-            log.error("Failed to send Discord alert for event: for user {}. exception: {}", eventNotificationWrapper, connection.getUserId(), e);
+            log.error("Failed to send Discord alert batch for user {}. exception: {}", connection.getUserId(), e);
             throw new IllegalStateException("Discord delivery failed", e);
         }
     }
 
-    private DiscordWebhookMessage toDiscordMessage(EventNotificationWrapper event) {
+    private DiscordWebhookMessage toDiscordMessage(List<EventNotificationWrapper> events) {
+        return new DiscordWebhookMessage(
+            "OpenQuarterMaster",
+            icon,
+            events.size() == 1 ? null : "OpenQuarterMaster alerts (" + events.size() + ")",
+            events.stream().map(this::toDiscordEmbed).toList());
+    }
+
+    private DiscordEmbed toDiscordEmbed(EventNotificationWrapper event) {
         String eventType = event.getEventType().name();
         String objectType = event.getObjectType().name();
 
@@ -61,11 +69,7 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
                 new DiscordField("Database", String.valueOf(event.getDatabase()), true),
                 new DiscordField("Event data", this.boundedEventData(event), false)));
 
-        return new DiscordWebhookMessage(
-            "OpenQuarterMaster",
-            icon,
-            null,
-            List.of(embed));
+        return embed;
     }
 
     private String boundedEventData(EventNotificationWrapper event) {

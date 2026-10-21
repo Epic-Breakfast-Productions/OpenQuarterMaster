@@ -7,11 +7,12 @@ import org.bson.types.ObjectId;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.ArrayList;
 
 @Getter
 @Setter
 public class AlertUserBucket extends PanacheMongoEntity {
     private String userId;
-    private List<ObjectId> alertEventId;
+    private List<ObjectId> alertEventId = new ArrayList<>();
     private Instant sendAfter;
 }

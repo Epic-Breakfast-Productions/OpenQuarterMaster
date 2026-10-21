@@ -11,6 +11,8 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.slack.SlackWebhookMessage;
 
 import java.net.URI;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Sends alerts to Slack using webhooks.
@@ -27,14 +29,17 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
     }
 
     @Override
-    public void send(SlackConnection connection, EventNotificationWrapper eventNotificationWrapper) {
+    public void send(SlackConnection connection, List<EventNotificationWrapper> events) {
         log.info("Sending alert via Slack");
         try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
                 .baseUri(URI.create(connection.getWebhookUrl().value()))
                 .build(WebhookClient.class)) {
-            client.send(new SlackWebhookMessage(eventNotificationWrapper.toString()));
+            String text = events.stream()
+                .map(EventNotificationWrapper::toString)
+                .collect(Collectors.joining("\n\n"));
+            client.send(new SlackWebhookMessage(text));
         } catch (Exception e) {
-            log.error("Failed to send Slack alert for event: for user {}. exception: {}", eventNotificationWrapper, connection.getUserId(), e);
+            log.error("Failed to send Slack alert batch for user {}. exception: {}", connection.getUserId(), e);
             throw new IllegalStateException("Slack delivery failed", e);
         }
     }

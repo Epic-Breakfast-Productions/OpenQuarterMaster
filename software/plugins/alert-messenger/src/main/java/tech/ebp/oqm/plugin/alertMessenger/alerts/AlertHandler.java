@@ -61,7 +61,7 @@ public class AlertHandler {
         return preferencesDatabaseId == null || preferencesDatabaseId.isBlank() || preferencesDatabaseId.equals(messageDatabaseId);
     }
 
-    public void handleAlert(EventNotificationWrapper message) {
+    public void sendAlert(EventNotificationWrapper message) {
         ObjectId alertEventId = throttleFacade.saveAlertEvent(message);
         Iterator<UserPreferences> iterator = userPreferencesService.getIterator();
         while (iterator.hasNext()) {
@@ -70,7 +70,7 @@ public class AlertHandler {
                 if (preferences.throttleTimeInMinutes == null || preferences.throttleTimeInMinutes == 0) {
                     for (ConnectionDetails connectionDetails : userPreferencesService.getConnectionDetails(preferences)) {
                         log.debug("Connection details: {}", connectionDetails);
-                        this.handleAlert(connectionDetails, message);
+                        this.sendAlert(connectionDetails, message);
                     }
                 } else {
                     throttleFacade.throttle(preferences, alertEventId);
@@ -80,11 +80,11 @@ public class AlertHandler {
         }
     }
 
-    private void handleAlert(ConnectionDetails connectionDetails, EventNotificationWrapper message) {
+    public void sendAlert(ConnectionDetails connectionDetails, List<EventNotificationWrapper> events) {
         AlertSender sender = alertSenders.get(connectionDetails.getType());
         if (sender != null) {
             try {
-                sender.send(connectionDetails, message);
+                sender.send(connectionDetails, events);
             } catch (Exception e) {
                 String error = this.sanitizeError(e);
                 connectionDetailsService.updateLastError(connectionDetails, error);
@@ -93,6 +93,10 @@ public class AlertHandler {
         } else {
             log.warn("No sender found for message channel: {}", connectionDetails.getType());
         }
+    }
+
+    private void sendAlert(ConnectionDetails connectionDetails, EventNotificationWrapper event) {
+        this.sendAlert(connectionDetails, List.of(event));
     }
 
     private String sanitizeError(Exception exception) {
