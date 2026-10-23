@@ -57,6 +57,7 @@ public class UserPreferencesService {
         entity.description = request.description;
         entity.enabled = request.enabled;
         entity.databaseId = request.databaseId;
+        entity.throttleTimeInMinutes = request.throttleTimeInMinutes;
         entity.objectTypes = request.objectTypes;
         entity.eventTypes = request.eventTypes;
 
