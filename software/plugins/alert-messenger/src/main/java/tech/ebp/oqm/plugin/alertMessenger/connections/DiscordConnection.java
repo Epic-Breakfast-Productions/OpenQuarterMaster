@@ -17,6 +17,8 @@ public class DiscordConnection extends ConnectionDetails {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private EncryptedString webhookUrl;
 
+    private String name;
+
     public DiscordConnection() {
         super(MessageChannels.DISCORD);
     }

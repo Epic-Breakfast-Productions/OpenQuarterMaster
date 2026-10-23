@@ -17,6 +17,8 @@ public class SlackConnection extends ConnectionDetails {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private EncryptedString webhookUrl;
 
+    private String name;
+
     public SlackConnection() {
         super(MessageChannels.SLACK);
     }

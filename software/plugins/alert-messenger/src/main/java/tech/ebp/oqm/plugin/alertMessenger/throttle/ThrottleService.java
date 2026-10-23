@@ -68,7 +68,7 @@ public class ThrottleService {
     void processReadyBuckets() {
         for (AlertUserBucket bucket : alertUserBucketRepository.findReady(Instant.now())) {
             try {
-                process(bucket);
+                this.process(bucket);
             } catch (Exception e) {
                 log.error("Failed to process alert bucket {}", bucket.id, e);
             }

@@ -24,7 +24,6 @@ import java.util.stream.Collectors;
 @Slf4j
 @ApplicationScoped
 public class AlertHandler {
-    // TODO: make it non-blocking (or project loom?)
     @Inject
     @All
     List<AlertSender<? extends ConnectionDetails>> senderInstances;
@@ -69,7 +68,7 @@ public class AlertHandler {
             if (filterEvent(message, preferences) && preferences.enabled && filterDatabaseId(message.getDatabase(), preferences.databaseId)) {
                 if (preferences.throttleTimeInMinutes == null || preferences.throttleTimeInMinutes == 0) {
                     for (ConnectionDetails connectionDetails : userPreferencesService.getConnectionDetails(preferences)) {
-                        log.debug("Connection details: {}", connectionDetails);
+                        log.debug("Connection details type: {}", connectionDetails.getType());
                         this.sendAlert(connectionDetails, message);
                     }
                 } else {
