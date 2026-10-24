@@ -4,8 +4,8 @@ plugins {
 	id "io.freefair.lombok" version "9.8.2"
 }
 
-group 'com.ebp.openQuarterMaster'
-version '1.21.3'
+group = 'com.ebp.openQuarterMaster'
+version = '1.21.3'
 
 repositories {
 	mavenCentral()
