@@ -3573,10 +3573,10 @@ Architecture: all
 Maintainer: EBP <greg@epic-breakfast-productions.tech>
 Depends: curl, jq, docker.io, oqm-manager-station+captain (>= 2.13.0), oqm-infra-keycloak (>= 2.0.0), oqm-infra-traefik (>= 1.0.0), oqm-core-api (>= 4.1.0)
 Filename: ./oqm-plugin-storagotchi_1.0.3_all.deb
-Size: 6676
-MD5sum: 87c27efc420da016161984aff471b5b1
-SHA1: bfb708ce2d481a6b22e33da8b4ead5a1ff669c4a
-SHA256: 70c444d8fa0218da5254afb95bf9f416ed8c93fa070edf0bec3e4f0ddcacc33c
+Size: 6672
+MD5sum: db16037552f6c338037290a345457dd0
+SHA1: 6ed286c3eb4f2b1a890dae19684fde830efe4a72
+SHA256: 03683a7557483eb7bd807a63bdeaa7d5efa9bf77da728f5ef9dafaaaffbff812
 Section: Open QuarterMaster
 Homepage: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/
 Description: An inventory themed digital pet.
