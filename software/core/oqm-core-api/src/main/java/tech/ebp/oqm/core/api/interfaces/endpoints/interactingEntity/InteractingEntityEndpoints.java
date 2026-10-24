@@ -9,6 +9,7 @@ import jakarta.ws.rs.core.Response;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.Operation;
+import org.eclipse.microprofile.openapi.annotations.extensions.Extension;
 import org.eclipse.microprofile.openapi.annotations.media.Content;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
@@ -29,13 +30,14 @@ import tech.ebp.oqm.core.api.service.mongo.search.SearchResult;
 public class InteractingEntityEndpoints extends EndpointProvider {
 
 	//TODO:: add search, get, history endpoints
-	
+
 	@Inject
 	InteractingEntityService interactingEntityService;
 
 	@GET
 	@Operation(
-		summary = "Searches the interacting entities."
+		summary = "Searches the interacting entities.",
+		extensions = @Extension(name = "x-oqm-requirement", value = "OQMCA-3.5.1")
 	)
 	@APIResponse(
 		responseCode = "200",
@@ -46,6 +48,7 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 		description = "No item found to get.",
 		content = @Content(mediaType = "text/plain")
 	)
+
 	@Authenticated
 	@Produces(MediaType.APPLICATION_JSON)
 	public SearchResult<InteractingEntity> search(
@@ -73,7 +76,7 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 	public InteractingEntity getSelf() {
 		return this.getInteractingEntity();
 	}
-	
+
 	@GET
 	@Path("{entityId}")
 	@Operation(
@@ -129,7 +132,7 @@ public class InteractingEntityEndpoints extends EndpointProvider {
 	) {
 		InteractingEntity entity = this.interactingEntityService.get(entityId);
 
-		if(entity == null){
+		if (entity == null) {
 			return Response.status(Response.Status.NOT_FOUND).build();
 		}
 

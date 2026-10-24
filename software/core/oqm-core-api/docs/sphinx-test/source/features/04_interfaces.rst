@@ -24,3 +24,9 @@ Messaging
 
 Messaging is a secondary interface through which the service operates, in order to provide asynchronous functionalities
 to the system as a whole.
+
+Messaging Service
+^^^^^^^^^^^^^^^^^
+
+This service is to send messages to/ receive from `Apache Kafka <https://kafka.apache.org/>`_.
+

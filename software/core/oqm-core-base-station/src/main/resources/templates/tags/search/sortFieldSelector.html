@@ -1,10 +1,12 @@
-<button type="button" class="sortByFieldInput btn btn-link btn-sm ps-0 pt-0 pb-0 border-0" onclick="SearchUtils.sortFieldClicked(this, '{form}', '{field}')">
+<button type="button" class="sortByFieldInput btn btn-link btn-sm ps-0 pt-0 pb-0 border-0" onclick="SearchUtils.sortFieldClicked(this, '{form}', '{field}')"
+	aria-label="Sort toggle for {field}"
+>
 	{#let sortField=searchResults.get("searchObject").path("sortField").asText("") sortType=searchResults.get("searchObject").path("sortType").asText("")}
 		{#if sortField == field}
 			{#if sortType == 'ASCENDING'}
-				<span class="sortByFieldAscending" title="Currently Ascending">{#icons/sortAscending /}</span>
+				<span class="sortByFieldAscending" title="Currently Ascending by {field}">{#icons/sortAscending /}</span>
 			{#else}
-				<span class="sortByFieldDescending" title="Currently Descending">{#icons/sortDescending /}</span>
+				<span class="sortByFieldDescending" title="Currently Descending by {field}">{#icons/sortDescending /}</span>
 			{/if}
 		{#else}
 			<span class="sortByFieldNotSelected"  title="Click to sort by {field}.">{#icons/sortNotSelected /}</span>

@@ -70,7 +70,7 @@ public class UpcItemDbService extends ItemSearchService {
 	}
 
 	private ExtItemLookupResult jsonToResult(LookupSource source, LookupMethod method, ObjectNode json) {
-		ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
+		ExtItemLookupResult.ExtItemLookupResultBuilder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
 
 		Map<String, String> attributes = new HashMap<>();
 		Map<String, String> identifiers = new HashMap<>();

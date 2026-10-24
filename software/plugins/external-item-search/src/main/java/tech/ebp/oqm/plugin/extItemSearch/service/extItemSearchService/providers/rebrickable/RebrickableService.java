@@ -38,13 +38,13 @@ import java.util.Optional;
 @ApplicationScoped
 @Slf4j
 public class RebrickableService extends ItemSearchService {
-	
+
 	private static final String BRAND = "LEGO";
-	
+
 	private RebrickableLookupClient rebrickableLookupClient;
 	private String apiKey;
 	private ObjectMapper objectMapper;
-	
+
 	@Inject
 	public RebrickableService(
 		@RestClient
@@ -76,31 +76,31 @@ public class RebrickableService extends ItemSearchService {
 				.cost("Free")
 		);
 	}
-	
+
 	@Override
 	public boolean isEnabled() {
 		return super.isEnabled() && this.apiKey != null && !this.apiKey.isBlank();
 	}
-	
+
 	public LookupResult partJsonToResult(LookupSource source, LookupMethod method, ObjectNode results) {
 		log.info("Search result: {}", results);
-		ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
+		ExtItemLookupResult.ExtItemLookupResultBuilder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
 
 		List<String> images = new ArrayList<>();
 		Map<String, String> links = new HashMap<>();
 		Map<String, String> identifiers = new HashMap<>();
 		Map<String, String> attributes = new HashMap<>();
-		
+
 		attributes.put("brand", BRAND);
-		
+
 		for (Map.Entry<String, JsonNode> curField : results.properties()) {
 			String curFieldName = curField.getKey();
 			JsonNode curFieldVal = curField.getValue();
-			
+
 			if(ResultMappingUtils.isFieldEmpty(curFieldVal)){
 				continue;
 			}
-			
+
 			switch (curFieldName) {
 				case "name":
 					resultBuilder.name(curFieldVal.asText());
@@ -138,53 +138,53 @@ public class RebrickableService extends ItemSearchService {
 					}
 			}
 		}
-		
+
 		resultBuilder.identifiers(identifiers);
 		resultBuilder.images(images);
 		resultBuilder.links(links);
 		resultBuilder.attributes(attributes);
-		
+
 		return resultBuilder.build();
 	}
-	
+
 	public Collection<LookupResult> partSearchJsonToResults(LookupSource source, LookupMethod method, ObjectNode results) {
 		long count = results.get("count").asLong();
-		
+
 		if(count == 0){
 			return List.of(this.setupResponseBuilder(LookupResultNoResults.builder(), source, method)
 							   .detail("No results found.")
 							   .build());
 		}
-		
+
 		ArrayNode resultsAsArr = (ArrayNode) results.get("results");
 		List<LookupResult> resultList = new ArrayList<>(resultsAsArr.size());
-		
+
 		for (JsonNode result : resultsAsArr) {
 			resultList.add(this.partJsonToResult(source, method, (ObjectNode) result));
 		}
-		
+
 		return resultList;
 	}
-	
+
 	public LookupResult setJsonToResult(LookupSource source, LookupMethod method, ObjectNode results) {
 		log.info("Search result: {}", results);
-		ExtItemLookupResult.Builder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
-		
+		ExtItemLookupResult.ExtItemLookupResultBuilder<?, ?> resultBuilder = this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method);
+
 		List<String> images = new ArrayList<>();
 		Map<String, String> links = new HashMap<>();
 		Map<String, String> identifiers = new HashMap<>();
 		Map<String, String> attributes = new HashMap<>();
-		
+
 		attributes.put("brand", BRAND);
-		
+
 		for (Map.Entry<String, JsonNode> curField : results.properties()) {
 			String curFieldName = curField.getKey();
 			JsonNode curFieldVal = curField.getValue();
-			
+
 			if(ResultMappingUtils.isFieldEmpty(curFieldVal)){
 				continue;
 			}
-			
+
 			switch (curFieldName) {
 				case "name":
 					resultBuilder.name(curFieldVal.asText());
@@ -205,38 +205,38 @@ public class RebrickableService extends ItemSearchService {
 					}
 			}
 		}
-		
+
 		resultBuilder.identifiers(identifiers);
 		resultBuilder.images(images);
 		resultBuilder.links(links);
 		resultBuilder.attributes(attributes);
-		
+
 		return resultBuilder.build();
 	}
-	
+
 	public Collection<LookupResult> setSearchJsonToResults(LookupSource source, LookupMethod method, ObjectNode results) {
 		long count = results.get("count").asLong();
-		
+
 		if(count == 0){
 			return List.of(this.setupResponseBuilder(LookupResultNoResults.builder(), source, method)
 							   .detail("No results found.")
 							   .build());
 		}
-		
+
 		ArrayNode resultsAsArr = (ArrayNode) results.get("results");
 		List<LookupResult> resultList = new ArrayList<>(resultsAsArr.size());
-		
+
 		for (JsonNode result : resultsAsArr) {
 			resultList.add(this.setJsonToResult(source, method, (ObjectNode) result));
 		}
-		
+
 		return resultList;
 	}
-	
+
 	protected String getApiKey() {
 		return "key " + this.apiKey;
 	}
-	
+
 	@Override
 	protected Multi<LookupResult> performSearch(LookupSource source, LookupMethod method, String term) {
 		return switch (source) {
@@ -246,7 +246,7 @@ public class RebrickableService extends ItemSearchService {
 										 .map(result->this.partJsonToResult(source, method, result))
 										 .onFailure().recoverWithItem(e->this.handleError(source, method, e))
 										 .toMulti();
-					
+
 					case SET_NUM -> this.rebrickableLookupClient.setFromNum(this.getApiKey(), term)
 										.map(result->this.partJsonToResult(source, method, result))
 										.onFailure().recoverWithItem(e->this.handleError(source, method, e))
@@ -266,13 +266,13 @@ public class RebrickableService extends ItemSearchService {
 			default -> throw new IllegalArgumentException("Invalid lookup source: " + source);
 		};
 	}
-	
+
 	@Override
 	protected Optional<LookupResult> handleClientError(LookupSource source, LookupMethod method, ClientWebApplicationException e) {
 		if (e.getResponse().getStatus() == 404) {
 			try {
 				ObjectNode errorDeets = (ObjectNode) this.objectMapper.readTree((InputStream) e.getResponse().getEntity());
-				
+
 				if (errorDeets.get("detail").asText().equals("No Part matches the given query.")) {
 					return Optional.of(
 						this.setupResponseBuilder(LookupResultNoResults.builder(), source, method)

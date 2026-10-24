@@ -19,7 +19,7 @@ Before deleting an object, the following conditions must be met:
 
 OR
 
-- All referencing objects must me deleted along with the object
+- All referencing objects must be deleted along with the object
 
 Data Changes
 ------------

@@ -21,7 +21,7 @@ export class StoredView {
 
 	static getBlockViewCell(name, ...valueJqs) {
 		let output = $('<div class="col-sm-3 col-3 col-xs-6">' +
-			'<h5 class="storedDataTitle"></h5>' +
+			'<p class="storedDataTitle h5"></p>' +
 			'<div class="storedDataContainer"></div>' +
 			'</div>');
 		output.find(".storedDataTitle").text(name);
