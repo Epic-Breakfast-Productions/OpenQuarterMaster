@@ -9,7 +9,7 @@ import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.CheckoutDetails;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.CheckoutsTransaction;
 
 /**
  * Transaction to checkout items stored.
@@ -20,8 +20,8 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredT
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public abstract class CheckoutTransaction extends ItemStoredTransaction {
-	
+public abstract class CheckoutTransaction extends CheckoutsTransaction {
+
 	/**
 	 * The details to help inform the checkout procedure.
 	 */

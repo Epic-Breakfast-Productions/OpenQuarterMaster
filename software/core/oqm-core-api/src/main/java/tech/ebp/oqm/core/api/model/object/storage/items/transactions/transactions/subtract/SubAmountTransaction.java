@@ -21,24 +21,24 @@ import javax.measure.Quantity;
 @NoArgsConstructor
 @Schema(title = "SubAmountTransaction", description = "A transaction to subtract an amount from a stored object.")
 public class SubAmountTransaction extends SubtractTransaction {
-	
+
 	/**
 	 * The storage block we are subtracting from
 	 */
 	private ObjectId fromBlock;
-	
+
 	/**
 	 * If the specific storage block we are adding to.
 	 */
 	private ObjectId fromStored;
-	
+
 	/**
 	 * The amount we are subtracting from.
 	 * <p>
 	 * Only specify when {@link SubAmountTransaction#all} is `false`.
 	 */
 	private Quantity<?> amount;
-	
+
 	/**
 	 * Flag to specify to transfer all of what is in the source to the destination.
 	 * <p>
@@ -46,13 +46,13 @@ public class SubAmountTransaction extends SubtractTransaction {
 	 */
 	@lombok.Builder.Default
 	private boolean all = false;
-	
+
 	@Override
 	@Schema(constValue = "SUBTRACT_AMOUNT", readOnly = true, required = true, examples = "SUBTRACT_AMOUNT")
 	public TransactionType getType() {
 		return TransactionType.SUBTRACT_AMOUNT;
 	}
-	
+
 	@Override
 	public int getSchemaVersion() {
 		return 1;

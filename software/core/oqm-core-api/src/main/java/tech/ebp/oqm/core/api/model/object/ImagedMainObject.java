@@ -23,8 +23,8 @@ import java.util.List;
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
-public abstract class ImagedMainObject extends AttKeywordMainObject {
-	
+public abstract class ImagedMainObject extends AttKeywordMainObject implements ImageAttachmentContaining {
+
 	/**
 	 * List of images related to the object.
 	 */

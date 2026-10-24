@@ -27,15 +27,15 @@ import java.util.Map;
 @SuperBuilder(toBuilder = true)
 public abstract class AttKeywordMainObject
 	extends MainObject
-	//	implements AttKeywordContaining
+	implements AttKeywordContaining
 {
-	
+
 	public AttKeywordMainObject(ObjectId id, Map<@NotBlank @NotNull String, String> attributes, List<@NotBlank String> keywords) {
 		super(id);
 		this.setAttributes(attributes);
 		this.setKeywords(keywords);
 	}
-	
+
 	/**
 	 * Attributes this object might have, usable for any purpose.
 	 */
@@ -45,7 +45,7 @@ public abstract class AttKeywordMainObject
 	@lombok.Builder.Default
 	@Schema(required = false, description = "Attribute key/value (string) pairs to associate with the object.", examples = {"{}", "{\"key\": \"value\"}"})
 	private Map<@NotBlank @NotNull String, String> attributes = new HashMap<>();
-	
+
 	/**
 	 * Keywords for the object
 	 */
@@ -54,5 +54,5 @@ public abstract class AttKeywordMainObject
 	@lombok.Builder.Default
 	@Schema(required = false, description = "Keywords to associate with the object.", examples = {"[]", "[\"keyword\"]"})
 	private List<@NotBlank String> keywords = new ArrayList<>();
-	
+
 }
