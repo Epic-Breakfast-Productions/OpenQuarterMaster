@@ -3,8 +3,8 @@ runningInfo:
 
 quarkus:
   http:
-    port: 80
-    ssl-port: 443
+    port: 8080
+    ssl-port: 8443
     auth:
       proactive: false
       permission:
@@ -16,7 +16,7 @@ quarkus:
     group: ebprod
   datasource:
     db-kind: postgresql
-  
+
   oidc:
     application-type: hybrid
     token-state-manager:
