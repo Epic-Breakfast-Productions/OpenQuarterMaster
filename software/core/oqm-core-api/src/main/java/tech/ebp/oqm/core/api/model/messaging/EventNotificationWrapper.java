@@ -6,6 +6,8 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.history.EventType;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 
+import java.time.ZonedDateTime;
+
 /**
  * The event wrapper that gets put around an event before it is sent as a message on the event outbound queue.
  */
@@ -44,5 +46,14 @@ public class EventNotificationWrapper {
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public ObjectId getObjectId() {
 		return this.getEvent().getObjectId();
+	}
+
+	/**
+	 * Convenience wrapper to get the event's timestamp.
+	 * @return
+	 */
+	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
+	public ZonedDateTime getTimestamp() {
+		return this.getEvent().getTimestamp();
 	}
 }
