@@ -41,23 +41,23 @@ import java.util.concurrent.ExecutorService;
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class OverviewUi extends UiProvider {
-	
+
 	@Getter
 	@Inject
 	@Location("webui/pages/overview")
 	Template pageTemplate;
-	
+
 	@RestClient
 	OqmCoreApiClientService coreApiClient;
-	
+
 	@Getter
 	@ConfigProperty(name="ui.overview.storageTree.defaultPageSize")
 	int storageTreeDefaultPageSize;
-	
+
 	@Getter
 	@ConfigProperty(name="ui.overview.lowStockItems.defaultPageSize")
 	int lowStockItemsDefaultPageSize;
-	
+
 	@Getter
 	@ConfigProperty(name="ui.overview.expiringItems.defaultPageSize")
 	int expiringDefaultPageSize;
@@ -66,10 +66,10 @@ public class OverviewUi extends UiProvider {
 	int expiredDefaultPageSize;
 	@Inject
 	SearchResultTweak searchResultTweak;
-	
+
 	@ConfigProperty(name = "quarkus.rest-client.externalItemSearch.url", defaultValue = " ")
 	String extSearchUrl;
-	
+
 	@GET
 	@Path("overview")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -96,7 +96,7 @@ public class OverviewUi extends UiProvider {
 												 .pageSize(this.getExpiredDefaultPageSize())
 												 .pageNum(expiredPage.orElse(1))
 												 .build();
-		
+
 		return this.getUni(
 			Map.of(
 				"itemCollectionStats", this.coreApiClient.invItemCollectionStats(this.getBearerHeaderStr(), this.getSelectedDb()),
@@ -105,11 +105,11 @@ public class OverviewUi extends UiProvider {
 				"expiredResults", this.coreApiClient.invItemStoredSearch(this.getBearerHeaderStr(), this.getSelectedDb(), expiredSearch)
 									  .call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr(), "state",
 										  "storageBlock"))
-									  .call(results->searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr())),
+									  .call(results->searchResultTweak.addItemDetailsToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr())),
 				"expiryWarnResults", this.coreApiClient.invItemStoredSearch(this.getBearerHeaderStr(), this.getSelectedDb(), expiringSearch)
 										 .call(results->searchResultTweak.addStorageBlockLabelToSearchResult(results, this.getSelectedDb(), this.getBearerHeaderStr(), "state",
 											 "storageBlock"))
-										 .call(results->searchResultTweak.addItemNameToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr())),
+										 .call(results->searchResultTweak.addItemDetailsToSearchResult(results, this.getSelectedDb(), "item", this.getBearerHeaderStr())),
 				"lowStockResults", this.coreApiClient.invItemSearch(this.getBearerHeaderStr(), this.getSelectedDb(), lowStockSearch),
 				"currency", this.coreApiClient.getCurrency(this.getBearerHeaderStr()),
 				"allUnitMap", this.coreApiClient.unitGetAll(this.getBearerHeaderStr()),
@@ -122,5 +122,5 @@ public class OverviewUi extends UiProvider {
 				)
 		);
 	}
-	
+
 }
