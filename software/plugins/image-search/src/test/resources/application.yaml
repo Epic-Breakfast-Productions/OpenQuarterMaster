@@ -1,0 +1,10 @@
+quarkus:
+  log:
+    level: DEBUG
+  oidc:
+    client-id: oqm-app
+    credentials:
+      secret: "**********"
+  keycloak:
+    devservices:
+      realm-path: "dev/oqm-realm.json"

@@ -1,0 +1,10 @@
+{
+	"type": "Plugin",
+	"order": 0,
+	"id": "plugin-image_search",
+	"name": "Image Search",
+	"description": "A search interface for OQM that searches based on image.",
+	"urlConfigKey": "plugin.imageSearch.externalBaseUri",
+	"icon": "/plugin/imageSearch/imageSearch.svg",
+	"monitorEndpoint": "/q/health"
+}
