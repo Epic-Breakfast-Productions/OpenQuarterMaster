@@ -81,10 +81,11 @@ ExecStart=/bin/bash -c "/usr/bin/docker run --rm \
                                  -v /etc/oqm/serviceConfig/infra/keycloak/files:/etc/oqm/serviceConfig/infra/keycloak/files:ro \
                                  -v /etc/oqm/static/keycloak/import:/opt/keycloak/data/import:ro \
                                  --health-cmd=\"{ printf 'HEAD /health HTTP/1.0\r\n\r\n' >&0; } 0<>/dev/tcp/localhost/9000\" \
-                                 --health-interval=15s \
+                                 --health-interval=30s \
                                  --health-timeout=10s \
                                  --health-retries=10 \
                                  --health-start-period=1m \
+                                 --health-start-interval=5s \
                                  --memory \"$(oqm-captain u calcRamLimit --min infra.keycloak.resourceLimits.mem.min --max infra.keycloak.resourceLimits.mem.max)\" \
                                  $IMAGE_NAME:$IMAGE_VERSION start --import-realm"
 

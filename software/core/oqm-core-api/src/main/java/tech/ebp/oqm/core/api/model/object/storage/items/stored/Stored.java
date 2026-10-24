@@ -42,6 +42,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.MatchResult;
 import java.util.regex.Pattern;
@@ -106,6 +107,24 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 *     </li>
 	 * </ul>
 	 * <p>
+	 * Other directives:
+	 * <ul>
+	 *     <li>
+	 *         if: {@code {if;<type>;<args>}...{/if}}- Renders inside the if statement, if the statement is truthy.
+	 *         <p>
+	 *         Types:
+	 *         <ul>
+	 *             <li>
+	 *                 If keyword exists: {@code {if;k;<keyword>}...{/if}}
+	 *             </li>
+	 *             <li>
+	 *                 If Attribute/value exists: {@code {if;a;<att key>;<attVal>}...{/if}}
+	 *                 Attribute value is optional. If provided, value must match. If not, just testing that attribute key exists.
+	 *             </li>
+	 *         </ul>
+	 *     </li>
+	 * </ul>
+	 * <p>
 	 * Examples:
 	 * <ul>
 	 *     <li>
@@ -118,8 +137,8 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 *
 	 * @return
 	 */
-	public static String parseLabel(Stored stored, String format) {
-		if (format == null || format.isBlank()) {
+	public static String parseLabel(@NonNull Stored stored, @NonNull String format) {
+		if (format.isBlank()) {
 			throw new IllegalArgumentException("Format cannot be null, blank, or empty.");
 		}
 
@@ -128,14 +147,31 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		}
 
 		StringBuilder sb = new StringBuilder();
-		AtomicInteger numPlaceholders = new AtomicInteger();
-		AtomicInteger curStart = new AtomicInteger();
-		AtomicInteger lastEnd = new AtomicInteger();
+		AtomicBoolean inIf = new AtomicBoolean(false);
+		AtomicBoolean ifPass = new AtomicBoolean(false);
+		AtomicInteger numPlaceholders = new AtomicInteger(0);
+		AtomicInteger numPlaceholdersOutsideIfs = new AtomicInteger(0);
+		AtomicInteger curStart = new AtomicInteger(0);
+		AtomicInteger lastEnd = new AtomicInteger(0);
 
 		LABEL_PARTS_PATTERN.matcher(format).results()
 			.forEach((MatchResult result)->{
 				numPlaceholders.getAndIncrement();
-				sb.append(format, curStart.get(), result.start());
+
+				{
+					boolean append = true;
+					if (inIf.get()) {
+						if(!ifPass.get()){
+							append = false;
+						}
+					}
+
+					if (append) {
+						sb.append(format, curStart.get(), result.start());
+					}
+				}
+
+
 				curStart.set(result.end());
 				lastEnd.set(result.end());
 
@@ -148,9 +184,29 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 
 				//				log.debug("placeholderType: {}, args: {}", placeholderType, args);
 
+				//specifically handled here to not get skipped
+				if("/if".equals(placeholderType)){
+					if (!inIf.get()) {
+						throw new IllegalArgumentException("Got to if closing statement without being in if statement.");
+					}
+					inIf.set(false);
+					ifPass.set(false);
+					return;
+				}
+				if(!"if".equals(placeholderType)){
+					if (!inIf.get()) {
+						numPlaceholdersOutsideIfs.incrementAndGet();
+					}
+				} else {
+					if(inIf.get()){//check if outer if not passed
+						throw new IllegalArgumentException("We do not currently support nested if's.");
+					}
+				}
+
+				StringBuilder cur = new StringBuilder();
 				switch (placeholderType) {
 					case "id":
-						sb.append(stored.getId());
+						cur.append(stored.getId());
 						break;
 					case "amt":
 						Quantity<?> amount;
@@ -160,29 +216,33 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 							amount = UnitUtils.Quantities.UNIT_ONE;
 						}
 
-						sb.append(amount.toString());
+						cur.append(amount.toString());
 						break;
 					case "cnd":
 						Integer condition = stored.getCondition();
 
-						sb.append(
+						cur.append(
 							condition == null ?
 								"-" :
 								condition.toString()
 						);
-						sb.append('%');
+						cur.append('%');
 						break;
 					case "exp":
 						DateTimeFormatter formatter = LABEL_DT_DEFAULT_FORMATTER;
 
 						if (args.length > 0) {
-							formatter = DateTimeFormatter.ofPattern(args[0]);
+							try {
+								formatter = DateTimeFormatter.ofPattern(args[0]);
+							} catch(IllegalArgumentException e){
+								throw new IllegalArgumentException("Bad datetime format specified for expiry date: " + e.getMessage());
+							}
 						}
 
-						sb.append(
-							stored.getExpires() == null?
+						cur.append(
+							stored.getExpires() == null ?
 								'-' :
-							stored.getExpires().format(formatter)
+								stored.getExpires().format(formatter)
 						);
 						break;
 					case "ident":
@@ -202,15 +262,15 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 						);
 
 						if (foundLabel.isPresent()) {
-							Labeled cur = foundLabel.get();
+							Labeled curLabel = foundLabel.get();
 
-							if (cur instanceof Identifier) {
-								sb.append(((Identifier) cur).getValue());
-							} else if (cur instanceof CalculatedPricing) {
-								sb.append(((CalculatedPricing) cur).getTotalPriceString());
+							if (curLabel instanceof Identifier) {
+								cur.append(((Identifier) curLabel).getValue());
+							} else if (curLabel instanceof CalculatedPricing) {
+								cur.append(((CalculatedPricing) curLabel).getTotalPriceString());
 							}
 						} else {
-							sb.append(LABEL_ERROR);
+							cur.append(LABEL_ERROR);
 						}
 						break;
 					case "att":
@@ -218,21 +278,69 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 							throw new IllegalArgumentException("Must specify exactly one argument for 'att'.");
 						}
 
-						sb.append(stored.getAttributes().getOrDefault(args[0], LABEL_ERROR));
+						cur.append(stored.getAttributes().getOrDefault(args[0], LABEL_ERROR));
 
+						break;
+					case "if":
+						if (inIf.get()) {
+							throw new IllegalArgumentException("We do not currently support nested if's.");
+						}
+						if (args.length < 1) {
+							throw new IllegalArgumentException("Must specify a type for 'if' statements.");
+						}
+
+						inIf.set(true);
+						String type = args[0];
+
+						switch (type) {
+							case "k":
+								if (args.length != 2) {
+									throw new IllegalArgumentException("Must specify exactly one keyword for if of type keyword.");
+								}
+								String keyword = args[1];
+
+								ifPass.set(stored.getKeywords().contains(keyword));
+								break;
+							case "a":
+								if (args.length != 2 && args.length != 3) {
+									throw new IllegalArgumentException("Must specify an attribute or attribute and value for if of type attribute.");
+								}
+								String attribute = args[1];
+
+								boolean containsKey = stored.getAttributes().containsKey(attribute);
+								if (args.length >= 3) {
+									String value = args[2];
+									ifPass.set(containsKey && stored.getAttributes().get(attribute).equals(value));
+								} else {
+									ifPass.set(containsKey);
+								}
+								break;
+							default:
+								throw new IllegalArgumentException("Unrecognized if comparison type: " + type);
+						}
 						break;
 					default:
 						throw new IllegalArgumentException("Unknown placeholder type: '" + placeholderType + "'");
+				}
+
+				if(!inIf.get() || ifPass.get()){
+					sb.append(cur);
 				}
 			});
 
 		if (numPlaceholders.intValue() == 0) {
 			throw new IllegalArgumentException("No placeholders found in format.");
 		}
+		if (numPlaceholdersOutsideIfs.intValue() <= 0) {
+			throw new IllegalArgumentException("Must have placeholders outside 'if' statements.");
+		}
+		if(inIf.get()){
+			throw new IllegalArgumentException("Must close if statement.");
+		}
 
 		sb.append(format, lastEnd.get(), format.length());
 
-		String newIdentifier = sb.toString();
+		String newIdentifier = sb.toString().strip();
 
 		return newIdentifier;
 	}
