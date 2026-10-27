@@ -8,7 +8,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrap
 import tech.ebp.oqm.plugin.alertMessenger.WebhookClient;
 import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
 import tech.ebp.oqm.plugin.alertMessenger.connections.DiscordConnection;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
+import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordEmbed;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordField;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordWebhookMessage;
@@ -30,8 +30,8 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
     String icon;
 
     @Override
-    public MessageChannels messageChannel() {
-        return MessageChannels.DISCORD;
+    public MessageChannel messageChannel() {
+        return MessageChannel.DISCORD;
     }
 
     @Override
@@ -41,7 +41,7 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
                 .build(WebhookClient.class)) {
             client.send(toDiscordMessage(events));
         } catch (Exception e) {
-            log.error("Failed to send Discord alert batch for user {}. exception: {}", connection.getUserId(), e);
+            log.error("Failed to send Discord alert batch for user {}", connection.getUserId(), e);
             throw new IllegalStateException("Discord delivery failed", e);
         }
     }

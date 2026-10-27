@@ -7,7 +7,7 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
+import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
 import tech.ebp.oqm.plugin.alertMessenger.connections.EmailConnection;
 
 import java.util.Collection;
@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 public class EmailAlertSender implements AlertSender<EmailConnection> {
 
     @Override
-    public MessageChannels messageChannel() {
-        return MessageChannels.EMAIL;
+    public MessageChannel messageChannel() {
+        return MessageChannel.EMAIL;
     }
 
     @Inject

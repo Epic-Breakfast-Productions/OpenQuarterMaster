@@ -40,8 +40,6 @@ dependencies {
     // MongoDB dependencies for database operations
     implementation 'io.quarkus:quarkus-mongodb-panache'
 
-    // Source: https://mvnrepository.com/artifact/org.wildfly.security/wildfly-elytron-encryption
-    //test
     implementation 'org.wildfly.security:wildfly-elytron-encryption:2.9.4.Final'
 }
 

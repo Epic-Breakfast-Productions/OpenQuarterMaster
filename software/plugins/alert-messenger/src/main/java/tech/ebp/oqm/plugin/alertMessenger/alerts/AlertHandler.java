@@ -13,13 +13,20 @@ import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetailsService;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferences;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferencesService;
 import tech.ebp.oqm.plugin.alertMessenger.throttle.ThrottleService;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
+import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
 
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+/**
+ * The AlertHandler class is responsible for managing the sending of alerts based on user preferences.
+ * Filters events according to user-defined criteria.
+ * Able to send batch and individual alerts.
+ * Channels are defined in MessageChannel enum and implemented in AlertSender interface.
+ */
 
 @Slf4j
 @ApplicationScoped
@@ -34,7 +41,7 @@ public class AlertHandler {
     @Inject
     ConnectionDetailsService connectionDetailsService;
 
-    private Map<MessageChannels, AlertSender> alertSenders;
+    private Map<MessageChannel, AlertSender> alertSenders;
 
     @Inject
     ThrottleService throttleFacade;
@@ -53,11 +60,8 @@ public class AlertHandler {
         return HistoryEventFilter.filter(message, HistoryEventFilter.FilterOptions.builder()
             .objectType(preferences.objectTypes)
             .eventType(preferences.eventTypes)
+            .databaseId(preferences.databaseId)
             .build()) && preferences.enabled;
-    }
-
-    private static boolean filterDatabaseId(String messageDatabaseId, String preferencesDatabaseId) {
-        return preferencesDatabaseId == null || preferencesDatabaseId.isBlank() || preferencesDatabaseId.equals(messageDatabaseId);
     }
 
     public void sendAlert(EventNotificationWrapper message) {
@@ -65,8 +69,8 @@ public class AlertHandler {
         Iterator<UserPreferences> iterator = userPreferencesService.getIterator();
         while (iterator.hasNext()) {
             UserPreferences preferences = iterator.next();
-            if (filterEvent(message, preferences) && preferences.enabled && filterDatabaseId(message.getDatabase(), preferences.databaseId)) {
-                if (preferences.throttleTimeInMinutes == null || preferences.throttleTimeInMinutes == 0) {
+            if (filterEvent(message, preferences)) {
+                if (preferences.throttleTime == null || preferences.throttleTime.isZero()) {
                     for (ConnectionDetails connectionDetails : userPreferencesService.getConnectionDetails(preferences)) {
                         log.debug("Connection details type: {}", connectionDetails.getType());
                         this.sendAlert(connectionDetails, message);

@@ -7,7 +7,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrap
 import tech.ebp.oqm.plugin.alertMessenger.WebhookClient;
 import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
 import tech.ebp.oqm.plugin.alertMessenger.connections.SlackConnection;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
+import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.slack.SlackWebhookMessage;
 
 import java.net.URI;
@@ -24,8 +24,8 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
 
 
     @Override
-    public MessageChannels messageChannel() {
-        return MessageChannels.SLACK;
+    public MessageChannel messageChannel() {
+        return MessageChannel.SLACK;
     }
 
     @Override
