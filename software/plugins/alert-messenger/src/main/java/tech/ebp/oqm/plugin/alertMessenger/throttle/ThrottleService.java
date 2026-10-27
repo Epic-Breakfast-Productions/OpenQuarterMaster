@@ -12,6 +12,7 @@ import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetailsService;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferences;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferencesService;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.List;
@@ -53,18 +54,18 @@ public class ThrottleService {
         if (bucket == null) {
             bucket = new AlertUserBucket();
             bucket.setUserId(userPreferences.userId);
-            bucket.setSendAfter(this.calculateSendAfter(userPreferences.throttleTimeInMinutes));
+            bucket.setSendAfter(this.calculateSendAfter(userPreferences.throttleTime));
             alertUserBucketRepository.persist(bucket);
         }
         return bucket;
     }
 
-    private Instant calculateSendAfter(int throttleTimeInMinutes) {
-        return Instant.now().plusSeconds(throttleTimeInMinutes * 60L);
+    private Instant calculateSendAfter(Duration throttleTime) {
+        return Instant.now().plus(throttleTime);
     }
 
-
-    @Scheduled(every = "60s", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+    //TODO: get time from config
+    @Scheduled(every = "15s", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     void processReadyBuckets() {
         for (AlertUserBucket bucket : alertUserBucketRepository.findReady(Instant.now())) {
             try {

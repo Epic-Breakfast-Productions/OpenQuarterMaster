@@ -44,7 +44,7 @@ public class UserPreferencesInterface {
 
     @GET
     @Path("/admin")
-    @RolesAllowed({"admins", "inventoryAdmin", "realm-admin"})
+    @RolesAllowed({"inventoryAdmin"})
     public List<UserPreferences> getAllForAdmin(
         @QueryParam("page") @DefaultValue("0") int page,
         @QueryParam("size") @DefaultValue("20") int size) {

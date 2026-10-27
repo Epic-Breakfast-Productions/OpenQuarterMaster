@@ -7,7 +7,7 @@ import io.quarkus.mongodb.panache.common.MongoEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
+import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
 
 @Getter
 @Setter
@@ -22,9 +22,9 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
 public abstract class ConnectionDetails extends PanacheMongoEntity {
     private String userId;
     private String lastError;
-    private final MessageChannels type;
+    private final MessageChannel type;
 
-    ConnectionDetails(MessageChannels type) {
+    ConnectionDetails(MessageChannel type) {
         this.type = type;
     }
 }

@@ -1,12 +1,12 @@
 package tech.ebp.oqm.plugin.alertMessenger.connections;
 
-import com.fasterxml.jackson.annotation.JsonTypeName;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.plugin.alertMessenger.utils.EncryptedString;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
+import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
 
 @Getter
 @Setter
@@ -20,7 +20,7 @@ public class SlackConnection extends ConnectionDetails {
     private String name;
 
     public SlackConnection() {
-        super(MessageChannels.SLACK);
+        super(MessageChannel.SLACK);
     }
 
     public SlackConnection(EncryptedString webhookUrl) {

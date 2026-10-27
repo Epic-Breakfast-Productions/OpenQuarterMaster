@@ -43,7 +43,7 @@ public class ConnectionDetailsInterface {
 
     @GET
     @Path("/admin")
-    @RolesAllowed({"admins", "inventoryAdmin", "realm-admin"})
+    @RolesAllowed({"inventoryAdmin"})
     public List<ConnectionDetails> getAllForAdmin(
         @QueryParam("page") @DefaultValue("0") int page,
         @QueryParam("size") @DefaultValue("20") int size) {

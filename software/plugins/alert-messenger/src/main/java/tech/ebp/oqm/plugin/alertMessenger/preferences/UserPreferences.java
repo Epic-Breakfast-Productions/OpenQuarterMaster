@@ -2,8 +2,6 @@ package tech.ebp.oqm.plugin.alertMessenger.preferences;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -11,6 +9,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventType;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.ObjectType;
 
+import java.time.Duration;
 import java.util.List;
 import java.util.Set;
 
@@ -29,9 +28,8 @@ public class UserPreferences extends PanacheMongoEntity {
 
     public String databaseId;
 
-    @Min(0) // no throttle
-    @Max(10_080) // week
-    public Integer throttleTimeInMinutes;
+    //TODO: codec
+    public Duration throttleTime;
 
     @NotNull
     public Set<ObjectType> objectTypes;

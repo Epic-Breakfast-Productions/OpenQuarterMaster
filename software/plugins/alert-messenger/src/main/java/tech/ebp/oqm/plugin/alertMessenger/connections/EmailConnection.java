@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonTypeName;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannels;
+import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
 
 import java.util.Set;
 
@@ -21,7 +21,7 @@ public class EmailConnection extends ConnectionDetails {
     private Set<String> bcc;
 
     public EmailConnection() {
-        super(MessageChannels.EMAIL);
+        super(MessageChannel.EMAIL);
     }
 
     public EmailConnection(String destination) {

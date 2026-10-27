@@ -6,6 +6,7 @@ import org.bson.types.ObjectId;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetailsService;
 
+import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
@@ -46,18 +47,22 @@ public class UserPreferencesService {
         if (entity.connectionDetailIds == null) {
             throw new IllegalArgumentException("Connection detail IDs cannot be null");
         }
+        this.validateThrottleTime(entity.throttleTime);
+
         validateConnectionOwnership(entity.connectionDetailIds, id);
         this.repository.persist(entity);
         return entity;
     }
 
     public UserPreferences update(UserPreferences request, String id, String userId) {
+        this.validateThrottleTime(request.throttleTime);
+
         UserPreferences entity = this.get(id, userId);
         entity.name = request.name;
         entity.description = request.description;
         entity.enabled = request.enabled;
         entity.databaseId = request.databaseId;
-        entity.throttleTimeInMinutes = request.throttleTimeInMinutes;
+        entity.throttleTime = request.throttleTime;
         entity.objectTypes = request.objectTypes;
         entity.eventTypes = request.eventTypes;
 
@@ -87,6 +92,12 @@ public class UserPreferencesService {
         if (connections.size() != connectionIds.size()
             || connections.stream().anyMatch(connection -> !Objects.equals(userId, connection.getUserId()))) {
             throw new IllegalArgumentException("Connection details must belong to the current user");
+        }
+    }
+
+    private void validateThrottleTime(Duration throttleTime) {
+        if(!throttleTime.isNegative() && throttleTime.compareTo(Duration.ofDays(30)) <= 0) {
+            throw new IllegalArgumentException("Throttle time must be between 0 and 30 days");
         }
     }
 }
