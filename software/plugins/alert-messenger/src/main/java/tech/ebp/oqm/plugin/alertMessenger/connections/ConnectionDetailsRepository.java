@@ -23,7 +23,7 @@ public class ConnectionDetailsRepository implements PanacheMongoRepository<Conne
         return findByIdOptional(new ObjectId(id));
     }
 
-    public PanacheQuery<ConnectionDetails> findAllPaged(String userId, int pageIndex, int pageSize) {
+    public PanacheQuery<ConnectionDetails> findAllPagedByUserId(String userId, int pageIndex, int pageSize) {
         return find("userId", userId).page(Page.of(pageIndex, pageSize));
     }
 

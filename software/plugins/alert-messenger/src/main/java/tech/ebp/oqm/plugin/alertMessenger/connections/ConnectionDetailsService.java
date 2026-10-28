@@ -16,7 +16,7 @@ public class ConnectionDetailsService {
     ConnectionDetailsRepository repository;
 
     public List<ConnectionDetails> getForUser(String userId, int pageIndex, int pageSize) {
-        return repository.findAllPaged(userId, pageIndex, pageSize).list();
+        return repository.findAllPagedByUserId(userId, pageIndex, pageSize).list();
     }
 
     public List<ConnectionDetails> getAll(int pageIndex, int pageSize) {

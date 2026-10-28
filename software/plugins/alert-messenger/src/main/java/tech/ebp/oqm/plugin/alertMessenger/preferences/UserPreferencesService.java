@@ -21,7 +21,7 @@ public class UserPreferencesService {
     ConnectionDetailsService connectionDetailsService;
 
     public List<UserPreferences> getForUser(String userId, int pageIndex, int pageSize) {
-        return this.repository.findAllPaged(userId, pageIndex, pageSize).list();
+        return this.repository.findAllPagedByUserId(userId, pageIndex, pageSize).list();
     }
 
     public List<UserPreferences> getAll(int pageIndex, int pageSize) {
