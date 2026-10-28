@@ -43,7 +43,13 @@ public class ConnectionDetailsService {
     public ConnectionDetails update(String id, ConnectionDetails details, String userId) {
         ConnectionDetails existing = get(id, userId);
         details.id = existing.id;
-        this.verifyEncryptedCredentials(details);
+        if (details instanceof EncryptedCredentials incoming && existing instanceof EncryptedCredentials stored) {
+            if (incoming.getWebhookUrl() == null || incoming.getWebhookUrl().isBlank()) {
+                incoming.setWebhookUrl(stored.getWebhookUrl());
+            } else {
+                incoming.encryptCredentials();
+            }
+        }
         details.setUserId(existing.getUserId());
         repository.update(details);
         return details;
@@ -58,8 +64,8 @@ public class ConnectionDetailsService {
     }
 
     private void verifyEncryptedCredentials(ConnectionDetails details) {
-        if(details instanceof EncryptedCredentials encryptedCredentialsFlag) {
-            encryptedCredentialsFlag.encryptCredentials();
+        if(details instanceof EncryptedCredentials encryptedCredentials) {
+            encryptedCredentials.encryptCredentials();
             log.debug("Encrypted credentials for connection details: {}", details.id);
         }
     }
