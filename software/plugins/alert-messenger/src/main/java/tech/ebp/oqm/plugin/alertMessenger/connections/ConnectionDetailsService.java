@@ -2,10 +2,13 @@ package tech.ebp.oqm.plugin.alertMessenger.connections;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptedCredentials;
 
 import java.util.List;
 
+@Slf4j
 @ApplicationScoped
 public class ConnectionDetailsService {
 
@@ -31,6 +34,7 @@ public class ConnectionDetailsService {
     }
 
     public ConnectionDetails create(ConnectionDetails details, String userId) {
+        this.verifyEncryptedCredentials(details);
         details.setUserId(userId);
         repository.persist(details);
         return details;
@@ -39,6 +43,7 @@ public class ConnectionDetailsService {
     public ConnectionDetails update(String id, ConnectionDetails details, String userId) {
         ConnectionDetails existing = get(id, userId);
         details.id = existing.id;
+        this.verifyEncryptedCredentials(details);
         details.setUserId(existing.getUserId());
         repository.update(details);
         return details;
@@ -50,5 +55,12 @@ public class ConnectionDetailsService {
 
     public void updateLastError(ConnectionDetails details, String lastError) {
         repository.updateLastError(details.id, lastError);
+    }
+
+    private void verifyEncryptedCredentials(ConnectionDetails details) {
+        if(details instanceof EncryptedCredentials encryptedCredentialsFlag) {
+            encryptedCredentialsFlag.encryptCredentials();
+            log.debug("Encrypted credentials for connection details: {}", details.id);
+        }
     }
 }

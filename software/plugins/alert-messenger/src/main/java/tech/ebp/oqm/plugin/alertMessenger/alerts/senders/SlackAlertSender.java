@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SlackAlertSender implements AlertSender<SlackConnection> {
 
-
     @Override
     public MessageChannel messageChannel() {
         return MessageChannel.SLACK;
@@ -32,15 +31,20 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
     public void send(SlackConnection connection, List<EventNotificationWrapper> events) {
         log.info("Sending alert via Slack");
         try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
-                .baseUri(URI.create(connection.getWebhookUrl().value()))
+                .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
                 .build(WebhookClient.class)) {
             String text = events.stream()
                 .map(EventNotificationWrapper::toString)
                 .collect(Collectors.joining("\n\n"));
             client.send(new SlackWebhookMessage(text));
         } catch (Exception e) {
-            log.error("Failed to send Slack alert batch for user {}. exception: {}", connection.getUserId(), e);
+            log.error("Failed to send Slack alert batch for user {}", connection.getUserId(), e);
             throw new IllegalStateException("Slack delivery failed", e);
         }
+    }
+
+    private String getDecryptedWebhookUrl(SlackConnection connection) {
+        connection.decryptCredentials();
+        return connection.getWebhookUrl();
     }
 }

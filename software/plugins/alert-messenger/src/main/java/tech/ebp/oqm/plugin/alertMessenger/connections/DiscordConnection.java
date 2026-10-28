@@ -2,20 +2,26 @@ package tech.ebp.oqm.plugin.alertMessenger.connections;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import jakarta.inject.Inject;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import tech.ebp.oqm.plugin.alertMessenger.utils.EncryptedString;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
+import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptionService;
+import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptedCredentials;
 
 @Getter
 @Setter
 @BsonDiscriminator(value = "DISCORD")
 @JsonTypeName("DISCORD")
-public class DiscordConnection extends ConnectionDetails {
+public class DiscordConnection extends ConnectionDetails implements EncryptedCredentials {
+
+    @Inject
+    EncryptionService encryptionService;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private EncryptedString webhookUrl;
+    //TODO: do not add this field to the response. and do not forget to handle `update` and `create`
+    private String webhookUrl;
 
     private String name;
 
@@ -23,8 +29,22 @@ public class DiscordConnection extends ConnectionDetails {
         super(MessageChannel.DISCORD);
     }
 
-    public DiscordConnection(EncryptedString webhookUrl) {
+    public DiscordConnection(String webhookUrl) {
         this();
         this.webhookUrl = webhookUrl;
+    }
+
+    @Override
+    public void encryptCredentials() {
+        if (webhookUrl != null && !webhookUrl.isBlank()) {
+            webhookUrl = encryptionService.encrypt(webhookUrl);
+        }
+    }
+
+    @Override
+    public void decryptCredentials() {
+        if (webhookUrl != null && !webhookUrl.isBlank()) {
+            webhookUrl = encryptionService.decrypt(webhookUrl);
+        }
     }
 }

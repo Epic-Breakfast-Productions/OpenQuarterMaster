@@ -37,7 +37,7 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
     @Override
     public void send(DiscordConnection connection, List<EventNotificationWrapper> events) {
         try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
-                .baseUri(URI.create(connection.getWebhookUrl().value()))
+                .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
                 .build(WebhookClient.class)) {
             client.send(toDiscordMessage(events));
         } catch (Exception e) {
@@ -84,5 +84,10 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
     private int getColor(EventNotificationWrapper event) {
         String key = event.getObjectType() + ":" + event.getEventType();
         return key.hashCode() & 0xFFFFFF;
+    }
+
+    private String getDecryptedWebhookUrl(DiscordConnection connection) {
+        connection.decryptCredentials();
+        return connection.getWebhookUrl();
     }
 }
