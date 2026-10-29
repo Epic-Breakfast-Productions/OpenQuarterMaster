@@ -58,5 +58,43 @@
 			</li>
 			{/if}
 		{/if}
+		{#if inTransitSection.or(true) || inTransitAdd.or(true)}
+			<li><hr class="dropdown-divider transactDropdownInTransitDivider"></li>
+			{#if inTransitAdd.or(true)}
+			<li>
+				<button class="dropdown-item transactDropdownTransfer" type="button" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionTransferModal" onclick="ItemStoredTransaction.Transfer.setupForm({#if itemId}'{itemId}'{#else}null{/if}, {#if storedId}'{storedId}'{#else}null{/if}, this);">
+					{#icons/transactionInTransitAdd /} Add In Transit
+				</button>
+			</li>
+			{/if}
+			{#if inTransitCancel.or(true)}
+			<li>
+				<button class="dropdown-item transactDropdownTransfer" type="button" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionTransferModal" onclick="ItemStoredTransaction.Transfer.setupForm({#if itemId}'{itemId}'{#else}null{/if}, {#if storedId}'{storedId}'{#else}null{/if}, this);">
+					{#icons/transactionInTransitCancel /} Cancel In Transit
+				</button>
+			</li>
+			{/if}
+			{#if inTransitReceive.or(true)}
+			<li>
+				<button class="dropdown-item transactDropdownTransfer" type="button" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionTransferModal" onclick="ItemStoredTransaction.Transfer.setupForm({#if itemId}'{itemId}'{#else}null{/if}, {#if storedId}'{storedId}'{#else}null{/if}, this);">
+					{#icons/transactionInTransitReceive /} Receive In Transit
+				</button>
+			</li>
+			{/if}
+			{#if inTransitStoredToInTransit.or(true)}
+			<li>
+				<button class="dropdown-item transactDropdownTransfer" type="button" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionTransferModal" onclick="ItemStoredTransaction.Transfer.setupForm({#if itemId}'{itemId}'{#else}null{/if}, {#if storedId}'{storedId}'{#else}null{/if}, this);">
+					{#icons/transactionInTransitStoredToInTransit /} Stored to In Transit
+				</button>
+			</li>
+			{/if}
+		{#if inTransitStoredUpdate.or(true)}
+		<li>
+			<button class="dropdown-item transactDropdownTransfer" type="button" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionTransferModal" onclick="ItemStoredTransaction.Transfer.setupForm({#if itemId}'{itemId}'{#else}null{/if}, {#if storedId}'{storedId}'{#else}null{/if}, this);">
+				{#icons/transactionInTransitUpdate /} Update In Transit
+			</button>
+		</li>
+		{/if}
+		{/if}
 	</ul>
 </div>
