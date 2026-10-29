@@ -224,7 +224,47 @@ export class StoredView {
 			showSetTransaction = true,
 		}) {
 		console.log("Getting stored view html for: ", stored)
-		let newContent = $('<div class="storedView"><div class="row storedInfo"></div><hr /><div class="storedButtons d-flex"</div></div>');
+		let newContent = $(`
+		<div class="storedView">
+			<div class="row storedInfo"></div>
+			<hr class="storedInfoSeparator mt-1 mb-2 ms-4 me-4" />
+			<div class="storedButtons d-flex"></div>
+			<div class="accordion mt-1" id="accordionExample">
+				<div class="accordion-item">
+					<h2 class="accordion-header">
+						<button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+							`+Icons.history+`Stored History & &nbsp;`+Icons.transaction+` Transactions
+						</button>
+					</h2>
+					<div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+						<div class="accordion-body p-1 pt-2">
+
+							<ul class="nav nav-tabs" id="myTab" role="tablist">
+								<li class="nav-item" role="presentation">
+									<button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+										`+Icons.history+` History
+									</button>
+								</li>
+								<li class="nav-item" role="presentation">
+									<button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
+										`+Icons.transaction+` Transactions
+									</button>
+								</li>
+							</ul>
+							<div class="tab-content" id="myTabContent">
+								<div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+									TODO:: history search
+								</div>
+								<div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+									TODO:: transaction search
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		`);
 		let newContentInfo = newContent.find(".storedInfo");
 		let newContentButtons = newContent.find(".storedButtons");
 
@@ -267,6 +307,10 @@ export class StoredView {
 			newContentButtons.append($('<button class="btn btn-warning"  title="Edit This Stored Item" data-bs-toggle="modal" data-bs-target="#itemStoredEditModal" onclick="ItemStoredEdit.setupEditForm(this, \'' + stored.item + '\', \'' + stored.id + '\');">' +
 				Icons.iconWithSub(Icons.stored, Icons.edit) + ' Edit' +
 				'</button>'));
+		}
+
+		if(!newContentInfo.children().length) {
+			newContent.find(".storedInfoSeparator").remove();
 		}
 
 		//TODO:: history, applied transactions
