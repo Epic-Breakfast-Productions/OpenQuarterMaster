@@ -12,6 +12,7 @@ import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetailsService;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferences;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferencesService;
+import tech.ebp.oqm.plugin.alertMessenger.throttle.EventMetrics;
 import tech.ebp.oqm.plugin.alertMessenger.throttle.ThrottleService;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
 
@@ -44,7 +45,7 @@ public class AlertHandler {
     private Map<MessageChannel, AlertSender> alertSenders;
 
     @Inject
-    ThrottleService throttleFacade;
+    ThrottleService throttleService;
 
     @PostConstruct
     void initializeSenders() {
@@ -65,7 +66,6 @@ public class AlertHandler {
     }
 
     public void sendAlert(EventNotificationWrapper message) {
-        ObjectId alertEventId = throttleFacade.saveAlertEvent(message);
         Iterator<UserPreferences> iterator = userPreferencesService.getIterator();
         while (iterator.hasNext()) {
             UserPreferences preferences = iterator.next();
@@ -76,18 +76,18 @@ public class AlertHandler {
                         this.sendAlert(connectionDetails, message);
                     }
                 } else {
-                    throttleFacade.throttle(preferences, alertEventId);
+                    throttleService.throttle(preferences, message);
                         log.debug("Throttled connection details: {}", preferences);
                 }
             }
         }
     }
 
-    public void sendAlert(ConnectionDetails connectionDetails, List<EventNotificationWrapper> events) {
+    public void sendAlert(ConnectionDetails connectionDetails, EventNotificationWrapper event) {
         AlertSender sender = alertSenders.get(connectionDetails.getType());
         if (sender != null) {
             try {
-                sender.send(connectionDetails, events);
+                sender.send(connectionDetails, event);
             } catch (Exception e) {
                 String error = this.sanitizeError(e);
                 connectionDetailsService.updateLastError(connectionDetails, error);
@@ -98,8 +98,19 @@ public class AlertHandler {
         }
     }
 
-    private void sendAlert(ConnectionDetails connectionDetails, EventNotificationWrapper event) {
-        this.sendAlert(connectionDetails, List.of(event));
+    public void sendBulkAlert(ConnectionDetails connectionDetails, EventMetrics eventmetrics) {
+        AlertSender sender = alertSenders.get(connectionDetails.getType());
+        if (sender != null) {
+            try {
+                sender.sendMetrics(connectionDetails, eventmetrics);
+            } catch (Exception e) {
+                String error = this.sanitizeError(e);
+                connectionDetailsService.updateLastError(connectionDetails, error);
+                log.error("Error sending alert via {}: {}", connectionDetails.getType(), error);
+            }
+        } else {
+            log.warn("No sender found for message channel: {}", connectionDetails.getType());
+        }
     }
 
     private String sanitizeError(Exception exception) {

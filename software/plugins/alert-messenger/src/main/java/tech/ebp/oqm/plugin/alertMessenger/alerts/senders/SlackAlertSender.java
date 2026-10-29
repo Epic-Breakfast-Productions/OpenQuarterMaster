@@ -7,6 +7,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrap
 import tech.ebp.oqm.plugin.alertMessenger.WebhookClient;
 import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
 import tech.ebp.oqm.plugin.alertMessenger.connections.SlackConnection;
+import tech.ebp.oqm.plugin.alertMessenger.throttle.EventMetrics;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.slack.SlackWebhookMessage;
 
@@ -28,14 +29,26 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
     }
 
     @Override
-    public void send(SlackConnection connection, List<EventNotificationWrapper> events) {
+    public void send(SlackConnection connection, EventNotificationWrapper event) {
         log.info("Sending alert via Slack");
         try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
                 .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
                 .build(WebhookClient.class)) {
-            String text = events.stream()
-                .map(EventNotificationWrapper::toString)
-                .collect(Collectors.joining("\n\n"));
+            String text = event.toString();
+            client.send(new SlackWebhookMessage(text));
+        } catch (Exception e) {
+            log.error("Failed to send Slack alert batch for user {}", connection.getUserId(), e);
+            throw new IllegalStateException("Slack delivery failed", e);
+        }
+    }
+
+    @Override
+    public void sendMetrics(SlackConnection connection, EventMetrics eventMetrics) {
+        log.info("Sending alert via Slack");
+        try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
+            .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
+            .build(WebhookClient.class)) {
+            String text = eventMetrics.toString();
             client.send(new SlackWebhookMessage(text));
         } catch (Exception e) {
             log.error("Failed to send Slack alert batch for user {}", connection.getUserId(), e);

@@ -37,8 +37,12 @@ public class UserPreferencesService {
     }
 
     public UserPreferences get(String id, String userId) {
+        return repository.findByObjectIdAndUserId(id, userId)
+            .orElseThrow(() -> new RuntimeException("User preferences not found"));
+    }
+
+    public UserPreferences get(String id) {
         return repository.findByObjectId(id)
-            .filter(preferences -> userId.equals(preferences.userId))
             .orElseThrow(() -> new RuntimeException("User preferences not found"));
     }
 

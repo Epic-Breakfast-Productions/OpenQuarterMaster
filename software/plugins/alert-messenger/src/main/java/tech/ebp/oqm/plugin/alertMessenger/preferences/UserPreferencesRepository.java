@@ -12,6 +12,13 @@ import java.util.Optional;
 @ApplicationScoped
 public class UserPreferencesRepository implements PanacheMongoRepository<UserPreferences> {
 
+    public Optional<UserPreferences> findByObjectIdAndUserId(String id, String userId) {
+        if (!ObjectId.isValid(id)) {
+            return Optional.empty();
+        }
+        return findByIdOptional(new ObjectId(id)).filter(preferences -> userId.equals(preferences.userId));
+    }
+
     public Optional<UserPreferences> findByObjectId(String id) {
         if (!ObjectId.isValid(id)) {
             return Optional.empty();

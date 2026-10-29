@@ -3,6 +3,7 @@ package tech.ebp.oqm.plugin.alertMessenger.throttle;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
@@ -16,16 +17,15 @@ import java.time.Duration;
 import java.time.Instant;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @Slf4j
 @ApplicationScoped
 public class ThrottleService {
 
     @Inject
-    AlertEventRepository alertEventRepository;
-
-    @Inject
-    AlertUserBucketRepository alertUserBucketRepository;
+    EventMetricsRepository eventMetricsRepository;
 
     @Inject
     UserPreferencesService userPreferencesService;
@@ -36,64 +36,56 @@ public class ThrottleService {
     @Inject
     AlertHandler alertHandler;
 
-    public ObjectId saveAlertEvent(EventNotificationWrapper notification) {
-        AlertEvent alertEvent = new AlertEvent(notification);
-        alertEventRepository.persist(alertEvent);
-        return alertEvent.id;
+
+    public void throttle(UserPreferences userPreferences, EventNotificationWrapper message) {
+        log.debug("Throttling alert for user {} with preference {}", userPreferences.userId, userPreferences.id);
+        EventMetrics bucket = this.getOrCreateUserBucket(userPreferences);
+        bucket.getEventCountsByDatabaseId().computeIfAbsent(
+            message.getDatabase(),
+            _ -> Map.of()).merge(
+            message.getEventType(), 1, Integer::sum);
+
+        eventMetricsRepository.persist(bucket);
     }
 
-    public void throttle(UserPreferences userPreferences, ObjectId alertEventId) {
-        log.debug("Throttling alert for user {} with event ID {}", userPreferences.userId, alertEventId);
-        AlertUserBucket bucket = this.getOrCreateUserBucket(userPreferences);
-        bucket.getAlertEventId().add(alertEventId);
-        alertUserBucketRepository.persist(bucket);
-    }
-
-    private AlertUserBucket getOrCreateUserBucket(UserPreferences userPreferences) {
-        AlertUserBucket bucket = alertUserBucketRepository.findByUserId(userPreferences.userId);
-        if (bucket == null) {
-            bucket = new AlertUserBucket();
-            bucket.setUserId(userPreferences.userId);
-            bucket.setSendAfter(this.calculateSendAfter(userPreferences.throttleTime));
-            alertUserBucketRepository.persist(bucket);
-        }
-        return bucket;
+    private EventMetrics getOrCreateUserBucket(UserPreferences userPreferences) {
+        Optional<EventMetrics> bucket = eventMetricsRepository.findByPreferenceId(userPreferences.id.toHexString());
+        return bucket.orElseGet(() -> {
+            EventMetrics newBucket = new EventMetrics();
+            newBucket.setPreferenceId(userPreferences.id.toHexString());
+            newBucket.setSentTime(calculateSendAfter(userPreferences.throttleTime));
+            return newBucket;
+        });
     }
 
     private Instant calculateSendAfter(Duration throttleTime) {
         return Instant.now().plus(throttleTime);
     }
 
-    //TODO: get time from config
+    // TODO: get time from config
     @Scheduled(every = "15s", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     void processReadyBuckets() {
-        for (AlertUserBucket bucket : alertUserBucketRepository.findReady(Instant.now())) {
+        for (EventMetrics eventMetrics : eventMetricsRepository.findReady(Instant.now())) {
             try {
-                this.process(bucket);
+                this.process(eventMetrics);
             } catch (Exception e) {
-                log.error("Failed to process alert bucket {}", bucket.id, e);
+                log.error("Failed to process alert bucket {}", eventMetrics.id, e);
             }
         }
     }
 
-    private void process(AlertUserBucket bucket) {
-        Iterator<UserPreferences> preferences = userPreferencesService.getForUser(bucket.getUserId());
-        List<EventNotificationWrapper> events = bucket.getAlertEventId().stream()
-            .map(alertEventRepository::findById)
-            .map(AlertEvent::getEventNotificationWrapper).toList();
-
-        while (preferences.hasNext()) {
-            UserPreferences preference = preferences.next();
-            List<ObjectId> connectionIds = preference.connectionDetailIds;
-            for (ConnectionDetails connectionDetails : connectionDetailsService.getByIds(connectionIds)) {
-                alertHandler.sendAlert(connectionDetails, events);
-            }
+    // TODO: check if tansactional works here
+    @Transactional
+    private void process(EventMetrics eventMetrics) {
+        UserPreferences userPreferences = userPreferencesService.get(eventMetrics.getPreferenceId());
+        List<ObjectId> connectionDetailIds = userPreferences.connectionDetailIds;
+        for (ConnectionDetails connectionDetails : connectionDetailsService.getByIds(connectionDetailIds)) {
+            alertHandler.sendBulkAlert(connectionDetails, eventMetrics);
         }
-        this.delete(bucket);
+        this.delete(eventMetrics);
     }
 
-    private void delete(AlertUserBucket bucket) {
-        alertUserBucketRepository.delete(bucket);
-        bucket.getAlertEventId().forEach(alertEventRepository::deleteById);
+    private void delete(EventMetrics eventMetrics) {
+        eventMetricsRepository.delete(eventMetrics);
     }
 }
