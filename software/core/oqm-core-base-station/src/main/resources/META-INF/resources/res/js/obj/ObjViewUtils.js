@@ -3,13 +3,14 @@ import {PageUtility} from "../utilClasses/PageUtility.js";
 
 export class KeywordAttUtils extends PageUtility {
 	static #lengthMax = 25;
+	static #ellipsis = '...';
 
 	static #addTextToElement(
 		elementJq, text
 	){
 		if(text.length > KeywordAttUtils.#lengthMax){
 			let abbr = $('<abbr></abbr>');
-			abbr.text(text.slice(0, KeywordAttUtils.#lengthMax - 3) + '...');
+			abbr.text(text.slice(0, KeywordAttUtils.#lengthMax - KeywordAttUtils.#ellipsis.length) + KeywordAttUtils.#ellipsis);
 			abbr.attr("title", text);
 			elementJq.append(abbr);
 		} else {
