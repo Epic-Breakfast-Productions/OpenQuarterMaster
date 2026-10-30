@@ -1,0 +1,26 @@
+{
+	"$schema": "https://json-schema.org/draft/2020-12/schema",
+	"$id": "https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/hardware/mss/docs/source/_static/jsonSchemas/state/BlockWeightState.json",
+	"title": "Block Weight State",
+	"description": "The state of the current weight of what is stored in the block.",
+	"type": "object",
+	"properties": {
+		"weightStr": {
+			"description": "A Human readable string of the weight that was measured.",
+			"type": "string"
+		},
+		"weightValue": {
+			"description": "The value of the weight that was measured.",
+			"type": "number",
+			"minimum": 0
+		},
+		"weightUnit": {
+			"description": "The unit used to measure the weight. Examples: g, kg, oz, lbs",
+			"type": "string"
+		}
+	},
+	"required": [
+		"weightValue",
+		"weightUnit"
+	]
+}
