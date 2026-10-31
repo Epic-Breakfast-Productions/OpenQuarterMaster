@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
@@ -20,6 +21,7 @@ import javax.measure.Quantity;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @Schema(title = "TransferAmountTransaction", description = "A transaction to transfer an amount between stored objects.")
+@BsonDiscriminator
 public class TransferAmountTransaction extends TransferTransaction {
 	
 	/**
