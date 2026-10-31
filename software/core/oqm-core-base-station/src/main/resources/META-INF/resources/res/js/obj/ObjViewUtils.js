@@ -2,12 +2,29 @@ import {Rest} from "../Rest.js";
 import {PageUtility} from "../utilClasses/PageUtility.js";
 
 export class KeywordAttUtils extends PageUtility {
+	static #lengthMax = 25;
+	static #ellipsis = '...';
+
+	static #addTextToElement(
+		elementJq, text
+	){
+		if(text.length > KeywordAttUtils.#lengthMax){
+			let abbr = $('<abbr></abbr>');
+			abbr.text(text.slice(0, KeywordAttUtils.#lengthMax - KeywordAttUtils.#ellipsis.length) + KeywordAttUtils.#ellipsis);
+			abbr.attr("title", text);
+			elementJq.append(abbr);
+		} else {
+			elementJq.text(text);
+		}
+	}
 
 	static displayKeywordsIn(container, keywords) {
 		keywords.forEach(function (keyword) {
-			console.log("Keyword: " + keyword);
+			console.log("Keyword: ", keyword);
+
 			let newspan = $('<span class="badge bg-secondary m-2 user-select-all"></span>');
-			newspan.text(keyword);
+			KeywordAttUtils.#addTextToElement(newspan, keyword);
+
 			container.append(newspan);
 		});
 	}
@@ -31,17 +48,8 @@ export class KeywordAttUtils extends PageUtility {
 	static getAttDisplay(key, val) {
 		let output = $('<span class="badge bg-secondary m-2"><span class="attKey user-select-all"></span> = <code class="attVal user-select-all"></code></span>');
 
-		output.find(".attKey").text(key);
-
-		if(val.length > 50){
-			let abbr = $('<abbr></abbr>');
-			abbr.text(val.slice(0, 47) + '...');
-			abbr.attr("title", val);
-			output.find(".attVal").append(abbr);
-		} else {
-			output.find(".attVal").text(val);
-		}
-
+		KeywordAttUtils.#addTextToElement(output.find(".attKey"), key);
+		KeywordAttUtils.#addTextToElement(output.find(".attVal"), val);
 
 		return output;
 	}
