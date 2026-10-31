@@ -15,6 +15,7 @@ import tech.units.indriya.unit.Units;
 
 import javax.measure.Quantity;
 import javax.measure.Unit;
+import java.math.BigDecimal;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
@@ -30,20 +31,20 @@ import static org.junit.jupiter.api.Assertions.fail;
  */
 @Slf4j
 class UnitUtilsTest extends BasicTest {
-	
+
 	private static Stream<Arguments> unitsAsArgs() {
 		return UnitUtils.UNIT_LIST.stream().map(Arguments::of);
 	}
-	
+
 	private static Stream<Arguments> invalidUnits() {
 		return Stream.of(
 			Units.BECQUEREL,
 			Units.DAY
 		).map(Arguments::of);
 	}
-	
+
 	private final UnitValidator unitValidator = new UnitValidator();
-	
+
 	@ParameterizedTest
 	@MethodSource("unitsAsArgs")
 	public void testStringMethods(Unit<?> unit) {
@@ -54,16 +55,16 @@ class UnitUtilsTest extends BasicTest {
 			unit.getSymbol(),
 			unit.getDimension()
 		);
-		
+
 		String unitStr = UnitUtils.stringFromUnit(unit);
-		
+
 		log.info("Unit String:\"{}\"", unitStr);
-		
+
 		Unit<?> unitBack = UnitUtils.unitFromString(unitStr);
-		
+
 		assertEquals(unit, unitBack);
 	}
-	
+
 	@ParameterizedTest
 	@MethodSource("unitsAsArgs")
 	public void testNoDuplicates(Unit<?> unit) {
@@ -74,7 +75,7 @@ class UnitUtilsTest extends BasicTest {
 			unit.getSymbol(),
 			unit.getDimension()
 		);
-		
+
 		boolean found = false;
 		for (Unit<?> curUnit : UnitUtils.UNIT_LIST) {
 			if (unit.equals(curUnit)) {
@@ -86,7 +87,7 @@ class UnitUtilsTest extends BasicTest {
 			}
 		}
 	}
-	
+
 	@ParameterizedTest
 	@MethodSource("unitsAsArgs")
 	public void testUnitSerialization(Unit<?> unit) throws JsonProcessingException {
@@ -97,11 +98,11 @@ class UnitUtilsTest extends BasicTest {
 			unit.getSymbol(),
 			unit.getDimension()
 		);
-		
+
 		String serialized = ObjectUtils.OBJECT_MAPPER.writeValueAsString(unit);
 		log.info("Serialized unit: \"{}\"", serialized);
 		Unit<?> deserialized = ObjectUtils.OBJECT_MAPPER.readValue(serialized, Unit.class);
-		
+
 		log.info(
 			"Deserialized unit: {}, name=\"{}\", symbol=\"{}\", dimension=\"{}\"",
 			deserialized,
@@ -109,17 +110,17 @@ class UnitUtilsTest extends BasicTest {
 			deserialized.getSymbol(),
 			deserialized.getDimension()
 		);
-		
+
 		assertEquals(unit, deserialized);
 		assertTrue(this.unitValidator.isValid(deserialized, null));
 	}
-	
+
 	@Test
 	public void testUnitCompatibilityMap() {
 		log.info("Map: {}", UnitUtils.UNIT_COMPATIBILITY_MAP);
 		//TODO:: do something here
 	}
-	
+
 	@ParameterizedTest
 	@MethodSource("unitsAsArgs")
 	public void testUnitHasNameSymbol(Unit<?> unit) {
@@ -133,7 +134,7 @@ class UnitUtilsTest extends BasicTest {
 		assertNotNull(unit.getName(), "Unit had no name");
 		assertNotNull(unit.getSymbol(), "Unit had no symbol");
 	}
-	
+
 	@Test
 	public void testTimeForReinit() {
 		StopWatch sw = StopWatch.createStarted();
@@ -141,27 +142,27 @@ class UnitUtilsTest extends BasicTest {
 		sw.stop();
 		log.info("Took {} to reinit units.", sw);
 	}
-	
+
 	@Test
 	public void testUnitOrder() {
 		UnitCategory firstCat = (UnitCategory) ((LinkedHashMap) UnitUtils.UNIT_CATEGORY_MAP).keySet().stream().findFirst().get();
-		
+
 		assertEquals(UnitCategory.Number, firstCat);
-		
+
 		assertEquals(OqmProvidedUnits.UNIT, UnitUtils.UNIT_CATEGORY_MAP.get(firstCat).stream().findFirst().get());
 	}
-	
+
 	@Test
 	public void testUnitCompatabilityOrder() {
 		for (Map.Entry<Unit<?>, Set<Unit<?>>> curEntry : UnitUtils.UNIT_COMPATIBILITY_MAP.entrySet()) {
-			
+
 			assertEquals(
 				curEntry.getKey(),
 				curEntry.getValue().stream().findFirst().get()
 			);
 		}
 	}
-	
+
 	private static Stream<Arguments> quantityCompareArgs(){
 		return Stream.of(
 			Arguments.of(null, null, false),
@@ -171,13 +172,30 @@ class UnitUtilsTest extends BasicTest {
 			Arguments.of(Quantities.getQuantity(1, LibUnits.UnitProxies.KILOGRAM), Quantities.getQuantity(1000, LibUnits.UnitProxies.GRAM), true)
 		);
 	}
-	
+
 	@ParameterizedTest
 	@MethodSource("quantityCompareArgs")
 	public <T extends Quantity<T>> void testAtOrUnderThreshold(Quantity<T> threshold, Quantity<T> amount, boolean expected) {
 		assertEquals(expected, UnitUtils.atOrUnderThreshold(threshold, amount));
 	}
-	
+
+	private static Stream<Arguments> isZeroArgs(){
+		return Stream.of(
+			Arguments.of(Quantities.getQuantity(Integer.valueOf(1), OqmProvidedUnits.UNIT), false),
+			Arguments.of(Quantities.getQuantity(Double.valueOf(1), OqmProvidedUnits.UNIT), false),
+			Arguments.of(Quantities.getQuantity(Double.valueOf(0.0000001), OqmProvidedUnits.UNIT), false),
+			Arguments.of(Quantities.getQuantity(Double.valueOf(0), OqmProvidedUnits.UNIT), true),
+			Arguments.of(Quantities.getQuantity(Double.valueOf(0.0), OqmProvidedUnits.UNIT), true),
+			Arguments.of(Quantities.getQuantity(BigDecimal.valueOf(0.0), OqmProvidedUnits.UNIT), true)
+		);
+	}
+
+	@ParameterizedTest
+	@MethodSource("isZeroArgs")
+	public <T extends Quantity<T>> void testIsZero(Quantity<T> quant, boolean expected) {
+		assertEquals(expected, UnitUtils.isZero(quant));
+	}
+
 	//	@ParameterizedTest
 	//	@MethodSource("unitsAsArgs")
 	//	public void testFormat(Unit<?> unit) {
@@ -187,7 +205,7 @@ class UnitUtilsTest extends BasicTest {
 	//			SimpleUnitFormat.getInstance().format(unit)
 	//		);
 	//	}
-	
+
 	//TODO:: figure out how to serialize invalid units
 	//    @ParameterizedTest(name = "invalidUnitSerialization[{index}]({0})")
 	//    @MethodSource("invalidUnits")

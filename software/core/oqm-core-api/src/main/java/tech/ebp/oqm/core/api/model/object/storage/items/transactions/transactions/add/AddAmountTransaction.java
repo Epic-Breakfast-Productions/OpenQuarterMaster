@@ -25,30 +25,30 @@ import javax.measure.Quantity;
 @NoArgsConstructor
 @Schema(title = "AddAmountTransaction", description = "A transaction to add an amount to a stored object.")
 public class AddAmountTransaction extends AddTransaction {
-	
+
 	/**
 	 * If applicable, the storage block we are adding to.
 	 */
 	private ObjectId toBlock;
-	
+
 	/**
 	 * If applicable, the specific existing stored object we are adding to.
 	 */
 	private ObjectId toStored;
-	
+
 	/**
 	 * The amount we are adding.
 	 */
 	@NonNull
 	@NotNull
 	private Quantity<?> amount;
-	
+
 	@Override
 	@Schema(constValue = "ADD_AMOUNT", readOnly = true, required = true, examples = "ADD_AMOUNT")
 	public TransactionType getType() {
 		return TransactionType.ADD_AMOUNT;
 	}
-	
+
 	@Override
 	public int getSchemaVersion() {
 		return 1;

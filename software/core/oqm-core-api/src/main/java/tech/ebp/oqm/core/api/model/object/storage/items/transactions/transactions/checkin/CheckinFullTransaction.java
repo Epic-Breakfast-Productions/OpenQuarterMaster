@@ -28,7 +28,7 @@ public class CheckinFullTransaction extends CheckinTransaction<ReturnFullCheckin
 	 * The block we are checking into
 	 */
 	private ObjectId toBlock;
-	
+
 	/**
 	 * The stored item to put the amount into, if applicable.
 	 */

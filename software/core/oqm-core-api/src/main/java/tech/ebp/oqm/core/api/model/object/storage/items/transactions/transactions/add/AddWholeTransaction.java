@@ -29,7 +29,7 @@ public class AddWholeTransaction extends AddTransaction {
 	@NotNull
 	@NonNull
 	private ObjectId toBlock;
-	
+
 	/**
 	 * The new stored object to add.
 	 */

@@ -21,30 +21,30 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @NoArgsConstructor
 @Schema(title = "TransferWholeTransaction", description = "A transaction to transfer a stored object between storage blocks.")
 public class TransferWholeTransaction extends TransferTransaction {
-	
+
 	/**
 	 * Where we are placing the stored item.
 	 */
 	@NotNull
 	@NonNull
 	private ObjectId toBlock;
-	
+
 	/**
 	 * The block we are pulling the whole stored from. Item must be either "BULK" or "AMOUNT UNIQUE".
 	 */
 	private ObjectId fromBlock;
-	
+
 	/**
 	 * The specific stored object to move. Item must be either "AMOUNT_LIST" or "UNIQUE_MULTI".
 	 */
 	private ObjectId storedToTransfer;
-	
+
 	@Override
 	@Schema(constValue = "TRANSFER_WHOLE", readOnly = true, required = true, examples = "TRANSFER_WHOLE")
 	public TransactionType getType() {
 		return TransactionType.TRANSFER_WHOLE;
 	}
-	
+
 	@Override
 	public int getSchemaVersion() {
 		return 1;

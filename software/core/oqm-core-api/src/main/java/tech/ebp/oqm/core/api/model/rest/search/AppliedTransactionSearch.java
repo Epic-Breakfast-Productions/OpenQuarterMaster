@@ -17,6 +17,7 @@ import java.util.List;
 
 import static com.mongodb.client.model.Filters.eq;
 import static com.mongodb.client.model.Filters.gte;
+import static com.mongodb.client.model.Filters.in;
 import static com.mongodb.client.model.Filters.lte;
 
 @ToString(callSuper = true)
@@ -29,10 +30,18 @@ public class AppliedTransactionSearch extends SearchKeyAttObject<AppliedTransact
 	@PathParam("itemId")
 	ObjectId inventoryItemId;
 
+	@PathParam("storedItemId")
+	ObjectId itemStoredId;
+
+
+	@Parameter(description = "Affected stored id's.")
+	@QueryParam("affectedStored")
+	private List<ObjectId> affectedStored;
 
 	@Parameter(description = "The date range to search for.")
 	@QueryParam("startDateTime")
 	private ZonedDateTime startDateTime;
+
 
 	@Parameter(description = "The date range to search for.")
 	@QueryParam("endDateTime")
@@ -49,6 +58,17 @@ public class AppliedTransactionSearch extends SearchKeyAttObject<AppliedTransact
 			filters.add(
 				eq("inventoryItem", this.getInventoryItemId())
 			);
+		}
+		if (hasValue(this.getItemStoredId())) {
+			filters.add(
+				in("affectedStored", this.getItemStoredId())
+			);
+		} else {
+			if(hasValue(this.getAffectedStored())){
+				filters.add(
+					in("affectedStored", this.getAffectedStored())
+				);
+			}
 		}
 
 		if(hasValue(this.getStartDateTime())){

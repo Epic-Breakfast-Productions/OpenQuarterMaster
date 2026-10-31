@@ -21,7 +21,7 @@
 			</li>
 			<li class="nav-item" role="presentation">
 				<button class="nav-link" id="lowStockTab" data-bs-toggle="tab" data-bs-target="#lowStockTabContent" type="button" role="tab" aria-controls="lowStockTabContent" aria-selected="false">
-					{#icons/lowStock}{/icons/lowStock} Low Stock
+					{#icons/lowStock /} Low Stock
 					{#let totalLowStock=lowStockResults.get("numResultsForEntireQuery").asInt()}
 						{#if totalLowStock > 0}<sup class="badge rounded-pill bg-danger" title="Expired">{str:format("%,d",totalLowStock)}</sup>{/if}
 					{/let}
