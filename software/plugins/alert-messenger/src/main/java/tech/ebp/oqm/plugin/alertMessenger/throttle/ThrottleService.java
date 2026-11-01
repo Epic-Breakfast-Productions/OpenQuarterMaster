@@ -88,8 +88,6 @@ public class ThrottleService {
         }
     }
 
-    // TODO: check if tansactional works here
-    @Transactional
     public void process(EventMetrics eventMetrics) {
         log.debug("Processing alert bucket {}", eventMetrics.id);
         UserPreferences userPreferences = userPreferencesService.get(eventMetrics.getPreferenceId());

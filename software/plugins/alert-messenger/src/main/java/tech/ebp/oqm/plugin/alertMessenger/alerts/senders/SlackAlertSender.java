@@ -14,6 +14,7 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.slack.SlackWebhookMessage;
 
 import java.net.URI;
+import java.util.stream.Collectors;
 
 /**
  * Sends alerts to Slack using webhooks.
@@ -51,7 +52,7 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
         try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
             .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
             .build(WebhookClient.class)) {
-            String text = eventMetrics.toString();
+            String text = formatEventMetrics(eventMetrics);
             client.send(new SlackWebhookMessage(text));
         } catch (Exception e) {
             log.error("Failed to send Slack alert batch for user {}", connection.getUserId(), e);
@@ -62,5 +63,11 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
     private String getDecryptedWebhookUrl(SlackConnection connection) {
         connection.decryptCredentials(encryptionService);
         return connection.getWebhookUrl();
+    }
+
+    private static String formatEventMetrics(EventMetrics eventMetrics) {
+        return "Event Counts by Database ID:\n" + eventMetrics.getEventCountsByDatabaseId().entrySet().stream()
+            .map(entry -> "    " + entry.getKey() + ": " + entry.getValue())
+            .collect(Collectors.joining("\n"));
     }
 }

@@ -69,7 +69,7 @@ public class EmailAlertSender implements AlertSender<EmailConnection> {
 
     private static String formatEventMetrics(EventMetrics eventMetrics) {
         return "Event Counts by Database ID:\n" + eventMetrics.getEventCountsByDatabaseId().entrySet().stream()
-            .map(entry -> "  " + entry.getKey() + ": " + entry.getValue())
+            .map(entry -> "    " + entry.getKey() + ": " + entry.getValue())
             .collect(Collectors.joining("\n"));
     }
 }
