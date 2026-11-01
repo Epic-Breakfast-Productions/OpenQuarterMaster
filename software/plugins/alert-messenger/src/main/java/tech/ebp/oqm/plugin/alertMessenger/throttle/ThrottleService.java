@@ -49,24 +49,28 @@ public class ThrottleService {
             eventMetricsRepository.persist(newBucket);
         } else {
             EventMetrics existingBucket = bucket.get();
-            if (existingBucket.getEventCountsByDatabaseId() == null) {
-                existingBucket.setEventCountsByDatabaseId(new HashMap<>());
-            }
-            existingBucket.getEventCountsByDatabaseId()
-                .computeIfAbsent(message.getDatabase(), _ -> new HashMap<>())
-                .merge(message.getEventType().name(), 1, Integer::sum);
+			incrementCount(existingBucket, message);
             eventMetricsRepository.update(existingBucket);
         }
     }
 
+	private static void incrementCount (EventMetrics existingBucket, EventNotificationWrapper message) {
+		if (existingBucket.getEventCountsByDatabaseId() == null) {
+			existingBucket.setEventCountsByDatabaseId(new HashMap<>());
+		}
+
+		existingBucket.getEventCountsByDatabaseId()
+			.computeIfAbsent(message.getDatabase(), _ -> new HashMap<>())
+			.merge(message.getEventType().name(), 1, Integer::sum);
+	}
+
     private EventMetrics fillNewBucket(UserPreferences userPreferences, EventNotificationWrapper message) {
-        EventMetrics bucket = new EventMetrics();
-        bucket.setPreferenceId(userPreferences.id);
-        bucket.setSendTime(calculateSendAfter(userPreferences.throttleTime));
-        bucket.setEventCountsByDatabaseId(new HashMap<>());
-        bucket.getEventCountsByDatabaseId()
-            .computeIfAbsent(message.getDatabase(), _ -> new HashMap<>())
-            .put(message.getEventType().name(), 1);
+        EventMetrics bucket = EventMetrics.builder()
+			.preferenceId(userPreferences.id)
+			.sendTime(calculateSendAfter(userPreferences.throttleTime))
+			.eventCountsByDatabaseId(new HashMap<>())
+			.build();
+        incrementCount(bucket, message);
         return bucket;
     }
 
@@ -74,8 +78,7 @@ public class ThrottleService {
         return Instant.now().plus(throttleTime);
     }
 
-    // TODO: get time from config
-    @Scheduled(every = "15s", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+    @Scheduled(every = "${oqm.alert-messenger.throttle-interval:15s}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     void processReadyBuckets() {
         log.debug("Processing ready alert buckets");
         for (EventMetrics eventMetrics : eventMetricsRepository.findReady(Instant.now())) {
@@ -95,10 +98,6 @@ public class ThrottleService {
         for (ConnectionDetails connectionDetails : connectionDetailsService.getByIds(connectionDetailIds)) {
             alertHandler.sendMetrics(connectionDetails, eventMetrics);
         }
-        this.delete(eventMetrics);
-    }
-
-    private void delete(EventMetrics eventMetrics) {
-        eventMetricsRepository.delete(eventMetrics);
+		eventMetricsRepository.delete(eventMetrics);
     }
 }

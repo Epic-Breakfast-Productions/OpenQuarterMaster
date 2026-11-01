@@ -1,42 +1,42 @@
-
 quarkus:
-  container-image:
-    name: oqm-plugin-alert_messenger
-    group: ebprod
+    container-image:
+        name: oqm-plugin-alert_messenger
+        group: ebprod
 
-  log:
-    console:
-      format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t]():: %s%e%n"
-    category:
-      "io.quarkus.mailer":
-        level: DEBUG
-  oidc:
-    application-type: hybrid
-    token-state-manager:
-      split-tokens: true
-    logout:
-      path: /logout
+    log:
+        console:
+            format: "%d{HH:mm:ss} [%-5p][%-16X{traceId}|%-2X{parentId}|%-16X{spanId}|%-5X{sampled}][%-40c{2.}|%-26t]():: %s%e%n"
+        category:
+            "io.quarkus.mailer":
+                level: DEBUG
+    oidc:
+        application-type: hybrid
+        token-state-manager:
+            split-tokens: true
+        logout:
+            path: /logout
 
-  rest-client:
-    "oqm.core.api":
-      url: "http://localhost:8080"
-    "oqm.core.api-oidc":
-      url: "${quarkus.oidc.auth-server-url}"
+    rest-client:
+        "oqm.core.api":
+            url: "http://localhost:8080"
+        "oqm.core.api-oidc":
+            url: "${quarkus.oidc.auth-server-url}"
 
-  mongodb:
-    database: oqm-plugin-alert-messenger
+    mongodb:
+        database: oqm-plugin-alert-messenger
 
 oqm:
-  core:
-    api:
-      baseUri: "http://localhost:8080"
-  alert-messenger:
-    url: "http://localhost:5010"
-    favicon-url: "${oqm.alert-messenger.url}/favicon.ico"
-    encrypted-secret: "****************"
+    core:
+        api:
+            baseUri: "http://localhost:8080"
+    alert-messenger:
+        url: "http://localhost:5010"
+        favicon-url: "${oqm.alert-messenger.url}/favicon.ico"
+        encrypted-secret: "****************"
+        throttle-interval: 15s
 
-  # Mailer configuration for Gmail SMTP server.
-  # Configures the SMTP server for sending email notifications.
+    # Mailer configuration for Gmail SMTP server.
+    # Configures the SMTP server for sending email notifications.
 #  mailer:
 #    auth-methods: "DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN"
 #    from: "oqm.alert.messenger@gmail.com"
@@ -49,50 +49,50 @@ oqm:
 #    mock: false
 
 mp:
-  messaging:
-    incoming:
-      oqm-core-all-events:
-        connector: smallrye-kafka
-        auto:
-          offset:
-            reset: earliest
+    messaging:
+        incoming:
+            oqm-core-all-events:
+                connector: smallrye-kafka
+                auto:
+                    offset:
+                        reset: earliest
 #        value:
 #          deserializer: tech.ebp.oqm.plugin.alertMessenger.ObjectNodeDeserializer
 
 smallrye:
-  jwt:
-    always-check-authorization: true
-    require-scope: false
+    jwt:
+        always-check-authorization: true
+        require-scope: false
 
 
 "%dev":
-  quarkus:
-    devservices:
-      enabled: false
-    http:
-      port: 5010
-      ssl-port: 8443
-    oidc:
-      client-id: oqm-app
-      credentials:
-        secret: "**********"
-      auth-server-url: "${KEYCLOAK_AUTH_SERVER_URL:http://localhost:8100/realms/oqm}"
-    mongodb:
-      connection-string: mongodb://${MONGO_ROOT_USERNAME:oqmadmin}:${MONGO_ROOT_PASSWORD:superSecretPassword}@localhost:27017
-      database: ${MONGO_DATABASE:oqm}
-      devservices:
-        enabled: false
-    messaging:
-      incoming:
-        oqm-core-all-events:
-          bootstrap:
-            servers: localhost:19092
-      log:
-        category:
-          "io.quarkus.mailer":
+    quarkus:
+        devservices:
+            enabled: false
+        http:
+            port: 5010
+            ssl-port: 8443
+        oidc:
+            client-id: oqm-app
+            credentials:
+                secret: "**********"
+            auth-server-url: "${KEYCLOAK_AUTH_SERVER_URL:http://localhost:8100/realms/oqm}"
+        mongodb:
+            connection-string: mongodb://${MONGO_ROOT_USERNAME:oqmadmin}:${MONGO_ROOT_PASSWORD:superSecretPassword}@localhost:27017
+            database: ${MONGO_DATABASE:oqm}
+            devservices:
+                enabled: false
+        messaging:
+            incoming:
+                oqm-core-all-events:
+                    bootstrap:
+                        servers: localhost:19092
+            log:
+                category:
+                    "io.quarkus.mailer":
+                        level: DEBUG
+                    "io.vertx.ext.mail":
+                        level: DEBUG
+                level: DEBUG
+        log:
             level: DEBUG
-          "io.vertx.ext.mail":
-            level: DEBUG
-        level: DEBUG
-    log:
-      level: DEBUG

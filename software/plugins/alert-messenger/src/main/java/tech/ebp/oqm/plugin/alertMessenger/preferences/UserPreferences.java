@@ -28,7 +28,6 @@ public class UserPreferences extends PanacheMongoEntity {
 
     public String databaseId;
 
-    //TODO: codec
     public Duration throttleTime;
 
     @NotNull

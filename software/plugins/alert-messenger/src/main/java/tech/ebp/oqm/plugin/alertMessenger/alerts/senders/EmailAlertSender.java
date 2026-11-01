@@ -11,6 +11,7 @@ import tech.ebp.oqm.plugin.alertMessenger.connections.EmailConnection;
 import tech.ebp.oqm.plugin.alertMessenger.throttle.EventMetrics;
 import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
@@ -29,35 +30,30 @@ public class EmailAlertSender implements AlertSender<EmailConnection> {
 
     @Override
     public void send(EmailConnection connection, EventNotificationWrapper event) {
-        log.debug("Sending alert to {} via SMTP", connection.getDestination());
+        log.debug("Sending alert to {} via SMTP", connection.getDestinations());
         String subject = "OpenQuarterMaster Alert: " + event.getEventType() + " - " + event.getObjectType();
         String text = formatEventNotification(event);
-
-        Mail mail = Mail.withText(connection.getDestination(), subject, text);
-        addRecipients(connection.getCc(), mail::addCc);
-        addRecipients(connection.getBcc(), mail::addBcc);
-
+        Mail mail = createMail(connection, subject, text);
         mailer.send(mail);
     }
 
     @Override
     public void sendMetrics(EmailConnection connection, EventMetrics eventMetrics) {
-        log.debug("Sending alert to {} via SMTP", connection.getDestination());
+        log.debug("Sending alert to {} via SMTP", connection.getDestinations());
         String subject = "OpenQuarterMaster Alert summary for " + eventMetrics.getEventCountsByDatabaseId().size() + " databases";
         String text = formatEventMetrics(eventMetrics);
-
-        Mail mail = Mail.withText(connection.getDestination(), subject, text);
-        addRecipients(connection.getCc(), mail::addCc);
-        addRecipients(connection.getBcc(), mail::addBcc);
-
+		Mail mail = createMail(connection, subject, text);
         mailer.send(mail);
     }
 
-    private static void addRecipients(Collection<String> recipients, Consumer<String[]> addRecipients) {
-        if (recipients != null && !recipients.isEmpty()) {
-            addRecipients.accept(recipients.toArray(String[]::new));
-        }
-    }
+	private static Mail createMail(EmailConnection connection, String subject, String text) {
+		return new Mail()
+			.setTo(new ArrayList<>(connection.getDestinations()))
+			.setSubject(subject)
+			.setText(text)
+			.setCc(new ArrayList<>(connection.getCc()))
+			.setBcc(new ArrayList<>(connection.getBcc()));
+	}
 
     private static String formatEventNotification(EventNotificationWrapper eventNotificationWrapper) {
         return "Database: " + eventNotificationWrapper.getDatabase() + "\n" +

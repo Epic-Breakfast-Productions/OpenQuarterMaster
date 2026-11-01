@@ -18,7 +18,7 @@ import java.util.Set;
 public class EmailConnection extends ConnectionDetails {
 
 	@Email
-    private String destination;
+    private Set<String> destinations;
 
 	@Email
     private Set<String> cc;
@@ -30,8 +30,8 @@ public class EmailConnection extends ConnectionDetails {
         super(ConnectionType.EMAIL);
     }
 
-    public EmailConnection(String destination) {
+    public EmailConnection(Set<String> destination) {
         this();
-        this.destination = destination;
+        this.destinations = destination;
     }
 }
