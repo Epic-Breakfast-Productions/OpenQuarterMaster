@@ -37,16 +37,24 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Tag("ui")
 public abstract class WebUiTest extends RunningServerTest {
 
+	private static String sanitizeString(String str){
+		return str.replaceAll("\"", "'")
+				   .replaceAll(":", "-")
+				   .replaceAll("\\|", " ")
+				   .replaceAll("\\*", "")
+				   .replaceAll("\\?", "");
+	}
+
 	private static Path getCurTestDir(TestInfo testInfo) {
 		log.debug("Display name: {}", testInfo.getDisplayName());
 
 		Path output = PlaywrightSetup.RECORDINGS_DIR.resolve(testInfo.getTestClass().get().getName());
 
 		if (testInfo.getDisplayName().startsWith("[")) {
-			return output.resolve(testInfo.getTestMethod().get().getName())
-				.resolve(testInfo.getDisplayName().replaceAll("/", ""));
+			return output.resolve(sanitizeString(testInfo.getTestMethod().get().getName()))
+				.resolve(sanitizeString(testInfo.getDisplayName().replaceAll("/", "")));
 		} else {
-			return output.resolve(testInfo.getDisplayName().replaceAll("\\(\\)", ""));
+			return output.resolve(sanitizeString(testInfo.getDisplayName().replaceAll("\\(\\)", "")));
 		}
 	}
 

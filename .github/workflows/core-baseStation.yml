@@ -23,6 +23,7 @@ jobs:
     CI-Pipeline:
         uses: Epic-Breakfast-Productions/ebp-ci/.github/workflows/quarkus-ci-pipeline.yml@main
         with:
+            project-name: Core - Base Station
             path: "software/core/oqm-core-base-station"
             java-version: "25"
             run-int-tests: true
