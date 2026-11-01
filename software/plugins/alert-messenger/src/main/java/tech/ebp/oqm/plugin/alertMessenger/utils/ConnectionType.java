@@ -1,6 +1,6 @@
 package tech.ebp.oqm.plugin.alertMessenger.utils;
 
-public enum MessageChannel {
+public enum ConnectionType {
     EMAIL,
     SLACK,
     ZULIP,

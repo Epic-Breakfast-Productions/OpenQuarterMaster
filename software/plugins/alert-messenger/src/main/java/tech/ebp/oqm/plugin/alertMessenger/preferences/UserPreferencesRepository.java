@@ -19,11 +19,11 @@ public class UserPreferencesRepository implements PanacheMongoRepository<UserPre
         return findByIdOptional(new ObjectId(id)).filter(preferences -> userId.equals(preferences.userId));
     }
 
-    public Optional<UserPreferences> findByObjectId(String id) {
-        if (!ObjectId.isValid(id)) {
+    public Optional<UserPreferences> findByObjectId(ObjectId id) {
+        if (!ObjectId.isValid(id.toHexString())) {
             return Optional.empty();
         }
-        return findByIdOptional(new ObjectId(id));
+        return findByIdOptional(id);
     }
 
     public PanacheQuery<UserPreferences> findAllPagedByUserId(String userId, int pageIndex, int pageSize) {

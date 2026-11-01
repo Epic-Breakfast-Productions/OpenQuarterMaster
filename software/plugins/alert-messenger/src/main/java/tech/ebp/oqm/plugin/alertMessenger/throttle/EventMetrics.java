@@ -5,6 +5,7 @@ import io.quarkus.mongodb.panache.common.MongoEntity;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
+import org.bson.types.ObjectId;
 
 import java.time.Instant;
 import java.util.Map;
@@ -14,9 +15,8 @@ import java.util.Map;
 @ToString
 @MongoEntity(collection = "eventMetrics")
 public class EventMetrics extends PanacheMongoEntity {
-    private String preferenceId;
-
-    private Instant sentTime;
+    private ObjectId preferenceId;
+    private Instant sendTime;
 
     /*
      * Map of databaseId to a map of EventType to count of events for that type.

@@ -13,7 +13,7 @@ import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferences;
 import tech.ebp.oqm.plugin.alertMessenger.preferences.UserPreferencesService;
 import tech.ebp.oqm.plugin.alertMessenger.throttle.EventMetrics;
 import tech.ebp.oqm.plugin.alertMessenger.throttle.ThrottleService;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
+import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 
 import java.util.Iterator;
 import java.util.List;
@@ -25,7 +25,7 @@ import java.util.stream.Collectors;
  * The AlertHandler class is responsible for managing the sending of alerts based on user preferences.
  * Filters events according to user-defined criteria.
  * Able to send batch and individual alerts.
- * Channels are defined in MessageChannel enum and implemented in AlertSender interface.
+ * Channels are defined in ConnectionType enum and implemented in AlertSender interface.
  */
 
 @Slf4j
@@ -41,7 +41,7 @@ public class AlertHandler {
     @Inject
     ConnectionDetailsService connectionDetailsService;
 
-    private Map<MessageChannel, AlertSender> alertSenders;
+    private Map<ConnectionType, AlertSender> alertSenders;
 
     @Inject
     ThrottleService throttleService;

@@ -6,7 +6,7 @@ import io.quarkus.mongodb.panache.common.MongoEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
+import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptionService;
 import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptedCredentials;
 
@@ -18,13 +18,10 @@ import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptedCreden
 public class DiscordConnection extends ConnectionDetails implements EncryptedCredentials {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    //TODO: do not add this field to the response. and do not forget to handle `update` and `create`
     private String webhookUrl;
 
-    private String name;
-
     public DiscordConnection() {
-        super(MessageChannel.DISCORD);
+        super(ConnectionType.DISCORD);
     }
 
     public DiscordConnection(String webhookUrl) {

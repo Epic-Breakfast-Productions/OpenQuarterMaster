@@ -9,7 +9,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrap
 import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
 import tech.ebp.oqm.plugin.alertMessenger.connections.EmailConnection;
 import tech.ebp.oqm.plugin.alertMessenger.throttle.EventMetrics;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
+import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 
 import java.util.Collection;
 import java.util.function.Consumer;
@@ -20,8 +20,8 @@ import java.util.stream.Collectors;
 public class EmailAlertSender implements AlertSender<EmailConnection> {
 
     @Override
-    public MessageChannel messageChannel() {
-        return MessageChannel.EMAIL;
+    public ConnectionType messageChannel() {
+        return ConnectionType.EMAIL;
     }
 
     @Inject

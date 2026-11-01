@@ -3,7 +3,6 @@ package tech.ebp.oqm.plugin.alertMessenger.throttle;
 import io.quarkus.scheduler.Scheduled;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import jakarta.transaction.Transactional;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
@@ -62,8 +61,8 @@ public class ThrottleService {
 
     private EventMetrics fillNewBucket(UserPreferences userPreferences, EventNotificationWrapper message) {
         EventMetrics bucket = new EventMetrics();
-        bucket.setPreferenceId(userPreferences.id.toHexString());
-        bucket.setSentTime(calculateSendAfter(userPreferences.throttleTime));
+        bucket.setPreferenceId(userPreferences.id);
+        bucket.setSendTime(calculateSendAfter(userPreferences.throttleTime));
         bucket.setEventCountsByDatabaseId(new HashMap<>());
         bucket.getEventCountsByDatabaseId()
             .computeIfAbsent(message.getDatabase(), _ -> new HashMap<>())

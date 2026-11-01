@@ -11,7 +11,7 @@ import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
 import tech.ebp.oqm.plugin.alertMessenger.connections.DiscordConnection;
 import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptionService;
 import tech.ebp.oqm.plugin.alertMessenger.throttle.EventMetrics;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
+import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordEmbed;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordField;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordWebhookMessage;
@@ -37,8 +37,8 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
     String icon;
 
     @Override
-    public MessageChannel messageChannel() {
-        return MessageChannel.DISCORD;
+    public ConnectionType messageChannel() {
+        return ConnectionType.DISCORD;
     }
 
     @Override
@@ -117,7 +117,7 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
         return new DiscordEmbed(
             "Event summary",
             "Event counts by database",
-            this.getColor(eventMetrics.getPreferenceId()),
+            this.getColor(eventMetrics.getPreferenceId().toHexString()),
             fields);
     }
 

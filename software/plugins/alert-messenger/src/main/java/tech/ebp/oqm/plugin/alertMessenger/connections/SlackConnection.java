@@ -8,7 +8,7 @@ import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptedCredentials;
 import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptionService;
-import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
+import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 
 @Getter
 @Setter
@@ -20,10 +20,8 @@ public class SlackConnection extends ConnectionDetails implements EncryptedCrede
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String webhookUrl;
 
-    private String name;
-
     public SlackConnection() {
-        super(MessageChannel.SLACK);
+        super(ConnectionType.SLACK);
     }
 
     public SlackConnection(String webhookUrl) {

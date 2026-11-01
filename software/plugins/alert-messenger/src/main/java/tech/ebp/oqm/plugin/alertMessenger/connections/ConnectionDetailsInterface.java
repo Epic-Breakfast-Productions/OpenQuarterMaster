@@ -3,6 +3,7 @@ package tech.ebp.oqm.plugin.alertMessenger.connections;
 import io.quarkus.security.Authenticated;
 import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
+import jakarta.validation.Valid;
 import jakarta.ws.rs.Consumes;
 import jakarta.ws.rs.DELETE;
 import jakarta.ws.rs.DefaultValue;
@@ -57,13 +58,13 @@ public class ConnectionDetailsInterface {
     }
 
     @POST
-    public ConnectionDetails create(ConnectionDetails details, @Context HttpHeaders headers) {
+    public ConnectionDetails create(@Valid ConnectionDetails details, @Context HttpHeaders headers) {
         return service.create(details, currentUserId(headers));
     }
 
     @PUT
     @Path("/{id}")
-    public ConnectionDetails update(@PathParam("id") String id, ConnectionDetails details, @Context HttpHeaders headers) {
+    public ConnectionDetails update(@PathParam("id") String id, @Valid ConnectionDetails details, @Context HttpHeaders headers) {
         return service.update(id, details, currentUserId(headers));
     }
 

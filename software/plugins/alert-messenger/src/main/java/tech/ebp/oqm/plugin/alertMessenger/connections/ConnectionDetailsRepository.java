@@ -6,6 +6,7 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,7 +33,7 @@ public class ConnectionDetailsRepository implements PanacheMongoRepository<Conne
     }
 
     public void updateLastError(ObjectId id, String lastError) {
-        update("lastError", lastError)
+        update("lastError", lastError, "lastErrorTime", Instant.now())
             .where("_id", id);
     }
 }
