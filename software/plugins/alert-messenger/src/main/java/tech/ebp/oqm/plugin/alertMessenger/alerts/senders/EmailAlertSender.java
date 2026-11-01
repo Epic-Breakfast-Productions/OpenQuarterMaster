@@ -29,7 +29,7 @@ public class EmailAlertSender implements AlertSender<EmailConnection> {
 
     @Override
     public void send(EmailConnection connection, EventNotificationWrapper event) {
-        log.info("Sending alert to {} via SMTP", connection.getDestination());
+        log.debug("Sending alert to {} via SMTP", connection.getDestination());
         String subject = "OpenQuarterMaster Alert: " + event.getEventType() + " - " + event.getObjectType();
         String text = formatEventNotification(event);
 
@@ -42,7 +42,7 @@ public class EmailAlertSender implements AlertSender<EmailConnection> {
 
     @Override
     public void sendMetrics(EmailConnection connection, EventMetrics eventMetrics) {
-        log.info("Sending alert to {} via SMTP", connection.getDestination());
+        log.debug("Sending alert to {} via SMTP", connection.getDestination());
         String subject = "OpenQuarterMaster Alert summary for " + eventMetrics.getEventCountsByDatabaseId().size() + " databases";
         String text = formatEventMetrics(eventMetrics);
 

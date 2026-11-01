@@ -33,7 +33,7 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
 
     @Override
     public void send(SlackConnection connection, EventNotificationWrapper event) {
-        log.info("Sending alert via Slack");
+        log.debug("Sending alert via Slack");
         try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
             .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
             .build(WebhookClient.class)) {
@@ -47,7 +47,7 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
 
     @Override
     public void sendMetrics(SlackConnection connection, EventMetrics eventMetrics) {
-        log.info("Sending alert via Slack");
+        log.debug("Sending alert via Slack");
         try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
             .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
             .build(WebhookClient.class)) {
