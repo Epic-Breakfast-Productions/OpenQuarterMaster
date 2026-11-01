@@ -12,7 +12,7 @@ import java.nio.file.Path;
 @Slf4j
 public class PlaywrightSetup implements Closeable {
 
-	public static final Path RECORDINGS_DIR = Path.of("build/test-results/"+ ConfigProvider.getConfig().getValue("quarkus.profile", String.class) +"/ui/");
+	public static final Path RECORDINGS_DIR = Path.of("build/test-results/addendum/ui/"+ ConfigProvider.getConfig().getValue("quarkus.profile", String.class) + "/");
 	private static PlaywrightSetup INSTANCE = null;
 
 	public static synchronized PlaywrightSetup getInstance() {

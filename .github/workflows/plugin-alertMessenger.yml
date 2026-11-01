@@ -23,6 +23,7 @@ jobs:
     CI-Pipeline:
         uses: Epic-Breakfast-Productions/ebp-ci/.github/workflows/quarkus-ci-pipeline.yml@main
         with:
+            project-name: Plugin - Alert Messenger
             path: "software/plugins/alert-messenger"
             java-version: "25"
             run-int-tests: true
