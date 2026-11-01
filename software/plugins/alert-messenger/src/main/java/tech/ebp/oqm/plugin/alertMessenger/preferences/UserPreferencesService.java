@@ -100,7 +100,7 @@ public class UserPreferencesService {
     }
 
     private void validateThrottleTime(Duration throttleTime) {
-        if(!throttleTime.isNegative() && throttleTime.compareTo(Duration.ofDays(30)) <= 0) {
+        if (throttleTime == null || throttleTime.isNegative() || throttleTime.compareTo(Duration.ofDays(30)) > 0) {
             throw new IllegalArgumentException("Throttle time must be between 0 and 30 days");
         }
     }

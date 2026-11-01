@@ -7,12 +7,11 @@ import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
+import tech.ebp.oqm.plugin.alertMessenger.connections.EmailConnection;
 import tech.ebp.oqm.plugin.alertMessenger.throttle.EventMetrics;
 import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
-import tech.ebp.oqm.plugin.alertMessenger.connections.EmailConnection;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
@@ -62,10 +61,10 @@ public class EmailAlertSender implements AlertSender<EmailConnection> {
 
     private static String formatEventNotification(EventNotificationWrapper eventNotificationWrapper) {
         return "Database: " + eventNotificationWrapper.getDatabase() + "\n" +
-                "Event Type: " + eventNotificationWrapper.getEventType() + "\n" +
-                "Object Type: " + eventNotificationWrapper.getObjectType() + "\n" +
-                "Object ID: " + eventNotificationWrapper.getObjectId() + "\n" +
-                "Event Data: " + (eventNotificationWrapper.getEvent() == null ? "{}" : eventNotificationWrapper.getEvent().toPrettyString());
+            "Event Type: " + eventNotificationWrapper.getEventType() + "\n" +
+            "Object Type: " + eventNotificationWrapper.getObjectType() + "\n" +
+            "Object ID: " + eventNotificationWrapper.getObjectId() + "\n" +
+            "Event Data: " + (eventNotificationWrapper.getEvent() == null ? "{}" : eventNotificationWrapper.getEvent().toPrettyString());
     }
 
     private static String formatEventMetrics(EventMetrics eventMetrics) {

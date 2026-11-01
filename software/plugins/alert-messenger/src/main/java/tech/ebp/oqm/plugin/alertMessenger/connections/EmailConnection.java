@@ -1,6 +1,7 @@
 package tech.ebp.oqm.plugin.alertMessenger.connections;
 
 import com.fasterxml.jackson.annotation.JsonTypeName;
+import io.quarkus.mongodb.panache.common.MongoEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
@@ -12,6 +13,7 @@ import java.util.Set;
 @Setter
 @BsonDiscriminator(value = "EMAIL")
 @JsonTypeName("EMAIL")
+@MongoEntity(collection = "connectionDetails")
 public class EmailConnection extends ConnectionDetails {
 
     private String destination;

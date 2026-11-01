@@ -14,8 +14,6 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.MessageChannel;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.slack.SlackWebhookMessage;
 
 import java.net.URI;
-import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Sends alerts to Slack using webhooks.
@@ -37,8 +35,8 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
     public void send(SlackConnection connection, EventNotificationWrapper event) {
         log.info("Sending alert via Slack");
         try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
-                .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
-                .build(WebhookClient.class)) {
+            .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
+            .build(WebhookClient.class)) {
             String text = event.toString();
             client.send(new SlackWebhookMessage(text));
         } catch (Exception e) {

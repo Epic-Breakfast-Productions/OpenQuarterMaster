@@ -5,7 +5,6 @@ import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.HistoryEventFilter;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
@@ -77,7 +76,7 @@ public class AlertHandler {
                     }
                 } else {
                     throttleService.throttle(preferences, message);
-                        log.debug("Throttled connection details: {}", preferences);
+                    log.debug("Throttled connection details: {}", preferences);
                 }
             }
         }
@@ -98,7 +97,8 @@ public class AlertHandler {
         }
     }
 
-    public void sendBulkAlert(ConnectionDetails connectionDetails, EventMetrics eventmetrics) {
+    public void sendMetrics(ConnectionDetails connectionDetails, EventMetrics eventmetrics) {
+        log.debug("Sending metrics for connection details: {}", connectionDetails.id);
         AlertSender sender = alertSenders.get(connectionDetails.getType());
         if (sender != null) {
             try {

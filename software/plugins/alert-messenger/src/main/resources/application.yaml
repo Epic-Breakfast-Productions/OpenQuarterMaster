@@ -94,3 +94,5 @@ smallrye:
           "io.vertx.ext.mail":
             level: DEBUG
         level: DEBUG
+    log:
+      level: DEBUG
