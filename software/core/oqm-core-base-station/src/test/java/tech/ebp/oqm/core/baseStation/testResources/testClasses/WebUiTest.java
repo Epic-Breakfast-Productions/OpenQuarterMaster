@@ -7,8 +7,12 @@ import com.microsoft.playwright.options.HarMode;
 import com.microsoft.playwright.options.RecordVideoSize;
 import com.microsoft.playwright.options.ScreenSize;
 import com.microsoft.playwright.options.ViewportSize;
+import org.junit.jupiter.params.Parameter;
+import org.junit.jupiter.params.ParameterizedClass;
+import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUser;
 import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUserService;
+import tech.ebp.oqm.core.baseStation.testResources.ui.PlaywrightOptions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.PlaywrightSetup;
 import com.microsoft.playwright.*;
 import io.quarkus.test.common.http.TestHTTPResource;
@@ -35,6 +39,8 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Slf4j
 @Tag("ui")
+@ParameterizedClass
+@MethodSource("tech.ebp.oqm.core.baseStation.testResources.ui.PlaywrightSetup#getBrowserOps")
 public abstract class WebUiTest extends RunningServerTest {
 
 	private static String sanitizeString(String str){
@@ -45,22 +51,32 @@ public abstract class WebUiTest extends RunningServerTest {
 				   .replaceAll("\\?", "");
 	}
 
-	private static Path getCurTestDir(TestInfo testInfo) {
+	private Path getCurTestDir(TestInfo testInfo) {
+
 		log.debug("Display name: {}", testInfo.getDisplayName());
 
 		Path output = PlaywrightSetup.RECORDINGS_DIR.resolve(testInfo.getTestClass().get().getName());
 
 		if (testInfo.getDisplayName().startsWith("[")) {
-			return output.resolve(sanitizeString(testInfo.getTestMethod().get().getName()))
+			output = output.resolve(sanitizeString(testInfo.getTestMethod().get().getName()))
 				.resolve(sanitizeString(testInfo.getDisplayName().replaceAll("/", "")));
 		} else {
-			return output.resolve(sanitizeString(testInfo.getDisplayName().replaceAll("\\(\\)", "")));
+			output = output.resolve(sanitizeString(testInfo.getDisplayName().replaceAll("\\(\\)", "")));
 		}
+
+		output = output.resolve(sanitizeString(playwrightOptions.toString()));
+
+		log.info("Addendum test results dir: {}", output);
+		return output;
 	}
 
 	protected static Page.ScreenshotOptions getScreenshotOptions() {
 		return new Page.ScreenshotOptions().setFullPage(true);
 	}
+
+	@Getter
+	@Parameter
+	PlaywrightOptions playwrightOptions;
 
 	@Getter
 	private BrowserContext context;
@@ -77,16 +93,8 @@ public abstract class WebUiTest extends RunningServerTest {
 	public void beforeEachUi(TestInfo testInfo) {
 		StorageBlockUiUtils.resetBlockNames();
 		this.curTestUiResultDir = getCurTestDir(testInfo);
-		ScreenSize screenSize = new ScreenSize(1920, 1080);
 
-		Browser.NewContextOptions newContextOptions = new Browser.NewContextOptions()
-			.setRecordVideoDir(this.curTestUiResultDir)
-			.setRecordHarPath(this.curTestUiResultDir.resolve("har.json"))
-			.setScreenSize(screenSize)
-			.setRecordVideoSize(new RecordVideoSize(screenSize.width, screenSize.height))
-			.setViewportSize(new ViewportSize(screenSize.width, screenSize.height));
-
-		this.context = PlaywrightSetup.getInstance().getBrowser().newContext(newContextOptions);
+		this.context = PlaywrightSetup.getInstance().getBrowser().newContext(this.playwrightOptions.newContextOptions(this.curTestUiResultDir));
 	}
 
 	@AfterEach
@@ -114,7 +122,7 @@ public abstract class WebUiTest extends RunningServerTest {
 				pw.println();
 			}
 		}
-		Thread.sleep(250);
+		Thread.sleep(100);//sleep to make sure resulting recording has pause to look at end state
 		for (OutputStream outputStream : this.consoleOutputs.values()) {
 			outputStream.close();
 		}
