@@ -2,8 +2,10 @@ package tech.ebp.oqm.plugin.alertMessenger.throttle;
 
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.common.MongoEntity;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.bson.types.ObjectId;
@@ -15,6 +17,8 @@ import java.util.Map;
 @Setter
 @ToString
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @MongoEntity(collection = "eventMetrics")
 public class EventMetrics extends PanacheMongoEntity {
     private ObjectId preferenceId;

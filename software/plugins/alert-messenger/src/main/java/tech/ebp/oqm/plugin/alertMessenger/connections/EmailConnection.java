@@ -17,14 +17,11 @@ import java.util.Set;
 @MongoEntity(collection = "connectionDetails")
 public class EmailConnection extends ConnectionDetails {
 
-	@Email
-    private Set<String> destinations;
+    private Set<@Email String> destinations;
 
-	@Email
-    private Set<String> cc;
+    private Set<@Email String> cc;
 
-	@Email
-    private Set<String> bcc;
+    private Set<@Email String> bcc;
 
     public EmailConnection() {
         super(ConnectionType.EMAIL);

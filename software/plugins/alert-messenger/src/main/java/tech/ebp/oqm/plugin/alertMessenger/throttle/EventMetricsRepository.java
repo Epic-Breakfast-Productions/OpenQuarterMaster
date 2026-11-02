@@ -9,7 +9,7 @@ import java.util.Optional;
 @ApplicationScoped
 public class EventMetricsRepository implements PanacheMongoRepository<EventMetrics> {
     List<EventMetrics> findReady(Instant time) {
-        return find("sentTime <= ?1", time).list();
+        return find("sendTime <= ?1", time).list();
     }
 
     Optional<EventMetrics> findByPreferenceId(String preferenceId) {

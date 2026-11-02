@@ -61,8 +61,7 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
     }
 
     private String getDecryptedWebhookUrl(SlackConnection connection) {
-        connection.decryptCredentials(encryptionService);
-        return connection.getWebhookUrl();
+        return encryptionService.decrypt(connection.getWebhookUrl());
     }
 
     private static String formatEventMetrics(EventMetrics eventMetrics) {

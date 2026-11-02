@@ -39,7 +39,7 @@ public class ThrottleService {
      * Throttles the sending of alerts based on user preferences and event metrics.
      * if there is no existing bucket for the user preference, a new bucket is created and persisted.
      * if there is an existing bucket, the event count for the specific database and event type is incremented and the bucket is updated.
-     * The sentTime of the bucket is set to the current time plus the throttle time specified in the user preferences.
+     * The sendTime of the bucket is set to the current time plus the throttle time specified in the user preferences.
      */
     public void throttle(UserPreferences userPreferences, EventNotificationWrapper message) {
         log.debug("Throttling alert for user {} with preference {}", userPreferences.userId, userPreferences.id);

@@ -10,6 +10,7 @@ import tech.ebp.oqm.plugin.alertMessenger.WebhookClient;
 import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
 import tech.ebp.oqm.plugin.alertMessenger.connections.DiscordConnection;
 import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptionService;
+import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.WebhookConnection;
 import tech.ebp.oqm.plugin.alertMessenger.throttle.EventMetrics;
 import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordEmbed;
@@ -140,7 +141,6 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
     }
 
     private String getDecryptedWebhookUrl(DiscordConnection connection) {
-        connection.decryptCredentials(encryptionService);
-        return connection.getWebhookUrl();
+        return encryptionService.decrypt(connection.getWebhookUrl());
     }
 }

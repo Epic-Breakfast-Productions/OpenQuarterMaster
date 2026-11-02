@@ -6,8 +6,7 @@ import io.quarkus.mongodb.panache.common.MongoEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
-import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptedCredentials;
-import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptionService;
+import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.WebhookConnection;
 import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 
 @Getter
@@ -15,7 +14,7 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 @BsonDiscriminator(value = "SLACK")
 @JsonTypeName("SLACK")
 @MongoEntity(collection = "connectionDetails")
-public class SlackConnection extends ConnectionDetails implements EncryptedCredentials {
+public class SlackConnection extends WebhookConnection {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String webhookUrl;
@@ -27,19 +26,5 @@ public class SlackConnection extends ConnectionDetails implements EncryptedCrede
     public SlackConnection(String webhookUrl) {
         this();
         this.webhookUrl = webhookUrl;
-    }
-
-    @Override
-    public void encryptCredentials(EncryptionService encryptionService) {
-        if(webhookUrl != null && !webhookUrl.isBlank()) {
-            webhookUrl = encryptionService.encrypt(webhookUrl);
-        }
-    }
-
-    @Override
-    public void decryptCredentials(EncryptionService encryptionService) {
-        if(webhookUrl != null && !webhookUrl.isBlank()) {
-            webhookUrl = encryptionService.decrypt(webhookUrl);
-        }
     }
 }

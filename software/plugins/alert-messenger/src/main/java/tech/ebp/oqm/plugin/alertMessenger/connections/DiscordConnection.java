@@ -6,16 +6,15 @@ import io.quarkus.mongodb.panache.common.MongoEntity;
 import lombok.Getter;
 import lombok.Setter;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
+import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.WebhookConnection;
 import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
-import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptionService;
-import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptedCredentials;
 
 @Getter
 @Setter
 @BsonDiscriminator(value = "DISCORD")
 @JsonTypeName("DISCORD")
 @MongoEntity(collection = "connectionDetails")
-public class DiscordConnection extends ConnectionDetails implements EncryptedCredentials {
+public class DiscordConnection extends WebhookConnection {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String webhookUrl;
@@ -27,19 +26,5 @@ public class DiscordConnection extends ConnectionDetails implements EncryptedCre
     public DiscordConnection(String webhookUrl) {
         this();
         this.webhookUrl = webhookUrl;
-    }
-
-    @Override
-    public void encryptCredentials(EncryptionService encryptionService) {
-        if (webhookUrl != null && !webhookUrl.isBlank()) {
-            webhookUrl = encryptionService.encrypt(webhookUrl);
-        }
-    }
-
-    @Override
-    public void decryptCredentials(EncryptionService encryptionService) {
-        if (webhookUrl != null && !webhookUrl.isBlank()) {
-            webhookUrl = encryptionService.decrypt(webhookUrl);
-        }
     }
 }

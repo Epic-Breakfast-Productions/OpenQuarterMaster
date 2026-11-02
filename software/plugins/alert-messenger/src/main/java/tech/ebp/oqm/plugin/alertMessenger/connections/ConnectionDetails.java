@@ -29,7 +29,7 @@ public abstract class ConnectionDetails extends PanacheMongoEntity {
 	private String name;
 	private String description;
 
-    ConnectionDetails(ConnectionType type) {
+    protected ConnectionDetails(ConnectionType type) {
         this.type = type;
     }
 }
