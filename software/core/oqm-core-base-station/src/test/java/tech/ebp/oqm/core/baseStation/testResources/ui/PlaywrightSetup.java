@@ -64,12 +64,13 @@ public class PlaywrightSetup implements Closeable {
 
 
 	private static final List<ColorScheme> COLOR_SCHEMES = List.of(ColorScheme.LIGHT, ColorScheme.DARK);
-	private static final List<BrowserType> BROWSER_TYPES = Arrays.stream(BrowserChoice.values()).map(
-		(c)->switch (c){
-			case FIREFOX -> getInstance().getPlaywright().firefox();
-			case CHROME -> getInstance().getPlaywright().chromium();
-		}
-	).toList();
+	private static final List<BrowserType> BROWSER_TYPES = List.of(getInstance().getPlaywright().firefox());
+//		Arrays.stream(BrowserChoice.values()).map(
+//		(c)->switch (c){
+//			case FIREFOX -> getInstance().getPlaywright().firefox();
+//			case CHROME -> getInstance().getPlaywright().chromium();
+//		}
+//	).toList();
 
 	public static Stream<PlaywrightOptions> getBrowserOps(){
 		Stream.Builder<PlaywrightOptions> builder = Stream.builder();

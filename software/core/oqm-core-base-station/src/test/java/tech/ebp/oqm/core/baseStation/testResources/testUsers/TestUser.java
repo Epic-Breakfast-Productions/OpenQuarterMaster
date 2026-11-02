@@ -35,4 +35,8 @@ public class TestUser {
 	public void setJwt(Page page){
 		this.jwt = page.locator(AllPages.JWT_COPY_BUTTON).getAttribute("data-token");
 	}
+
+	public String getAuthString(){
+		return "Bearer " + this.getJwt();
+	}
 }

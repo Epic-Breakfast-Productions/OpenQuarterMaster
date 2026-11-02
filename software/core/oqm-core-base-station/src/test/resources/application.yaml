@@ -23,11 +23,3 @@ oqm.core.api:
     caching:
         oqmDatabase:
             refreshFrequencyEvery: "5m"
-
-service:
-    runBy:
-        name: The Developers
-        email: dev@devlopment.dev
-        phone: 111-222-3333
-        website: http://devlopment.dev
-        logo: ../../../../dev/developers.jpeg
