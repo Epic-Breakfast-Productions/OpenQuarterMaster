@@ -252,8 +252,8 @@ export class StoredView {
 								</li>
 							</ul>
 							<div class="tab-content" id="myTabContent">
-								<div class="tab-pane fade show active" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
-									TODO:: history search
+								<div class="tab-pane fade show active storedHistoryContainer" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+
 								</div>
 								<div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
 									TODO:: transaction search
@@ -267,6 +267,16 @@ export class StoredView {
 		`);
 		let newContentInfo = newContent.find(".storedInfo");
 		let newContentButtons = newContent.find(".storedButtons");
+
+		PageComponents.Search.History.newHistorySearch(
+			stored.id,
+			Rest.passRoot + "/inventory/item/" + stored.item + "/stored/",
+			false
+		).then(function (historySearch) {
+			let newSearch = $(historySearch);
+			newContent.find(".storedHistoryContainer").append($(newSearch));
+			newSearch.find(".historySearchForm").trigger("submit");
+		});
 
 		if (includeBlockLink) {
 			newContentButtons.append(
@@ -313,7 +323,7 @@ export class StoredView {
 			newContent.find(".storedInfoSeparator").remove();
 		}
 
-		//TODO:: history, applied transactions
+		//TODO:: applied transactions
 		return newContent;
 	}
 	static resetViewModal() {

@@ -1,3 +1,5 @@
+import { Rest } from "./Rest.js";
+
 export class PageComponents {
 	static Inputs = class {
 		static attribute = `{#inputs/attInput /}`;
@@ -27,5 +29,23 @@ export class PageComponents {
 	static View = class {
 		static itemCatBadge = `{#objView/itemCatBadge /}`;
 		static attachedFileList = `{#fileAttachment/FileAttachmentObjectView /}`;
+	}
+
+	static Search = class {
+		static History = class {
+			static newHistorySearch = function (id, objectUrl, accordion = false) {
+
+				let params = new URLSearchParams();
+				params.set("id", id);
+				params.set("objectUrl", objectUrl);
+				params.set("accordion", accordion);
+
+				return Rest.call({
+					spinnerContainer: null,
+					url: Rest.componentRoot + "/search/history?"+params.toString(),
+					returnType: "html"
+				});
+			}
+		}
 	}
 }
