@@ -3,17 +3,11 @@ service:
   version: ${quarkus.application.version}
   apiVersion: 1.0.0
   nameShort: oqm-core-base-station
-  nameFull: Open Quarter Master Base Station
+  nameFull: Open QuarterMaster Base Station
   gitLink: https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster
-  # TODO:: move data that doesn't need to be here
   auth:
     userSettingsUrl: ${quarkus.oidc.auth-server-url}/account/
-  item:
-    expiryCheck:
-      cron: 0 0 * ? * * # Every Hour
   tempDir: "/tmp/oqm-baseStation"
-  dateTimeFormat:
-    default: "MM/dd/YYYY hh:mm:ss a (z)"
 
 # TODO:: move this into `service` config
 runningInfo:
@@ -22,13 +16,13 @@ runningInfo:
   port: ${quarkus.http.port}
   hostnamePort: ${runningInfo.hostname}:${runningInfo.port}
   baseUrl: ${runningInfo.protocol}://${runningInfo.hostnamePort}
-  fromEmail: no-reply@${runningInfo.hostname}
 
 ui:
   defaults:
     indexRedirect: /overview
     search:
       defaultPageSize: 25
+    dateTimeFormat: "MM/dd/YYYY hh:mm:ss a (z)"
   pagination:
     breakToInput: 20
   overview:
@@ -220,13 +214,6 @@ smallrye:
                 haveBannerImg: true
                 haveLogoImg: true
 
-  service:
-    runBy:
-      name: The Developers
-      email: dev@devlopment.dev
-      phone: 111-222-3333
-      website: http://devlopment.dev
-      logo: ../../../../dev/developers.jpeg
 #  ui:
 #    overview:
 #      lowStockItems:
