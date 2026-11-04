@@ -12,7 +12,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import tech.ebp.oqm.plugin.extItemSearch.model.SearchType;
 import tech.ebp.oqm.plugin.extItemSearch.model.lookupResult.ResultType;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils.LookupMethod;
 import tech.ebp.oqm.plugin.extItemSearch.testResources.RunningServerTest;
@@ -64,7 +63,7 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 		return Stream.of(
 			Arguments.of(
 				Map.of(
-					"lookupMethod", SearchType.BARCODE,
+					"lookupMethod", LookupMethod.BARCODE,
 					"q", "foo"
 				),
 				List.of(
@@ -80,7 +79,7 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 			),
 			Arguments.of(
 				Map.of(
-					"lookupMethod", SearchType.BARCODE,
+					"lookupMethod", LookupMethod.BARCODE,
 					"q", "00888109010058"
 				),
 				List.of(
@@ -89,7 +88,7 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 			),
 			Arguments.of(
 				Map.of(
-					"lookupMethod", SearchType.BARCODE,
+					"lookupMethod", LookupMethod.BARCODE,
 					"q", "886736874135"
 				),
 				List.of(
@@ -98,7 +97,7 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 			),
 			Arguments.of(
 				Map.of(
-					"lookupMethod", SearchType.TEXT,
+					"lookupMethod", LookupMethod.TEXT,
 					"q", "GPS"
 				),
 				new ArrayList<>(10){{
@@ -107,7 +106,7 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 			),
 			Arguments.of(
 				Map.of(
-					"lookupMethod", SearchType.BARCODE,
+					"lookupMethod", LookupMethod.BARCODE,
 					"q", "3046920029759"
 				),
 				List.of(
@@ -116,7 +115,7 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 			),
 			Arguments.of(
 				Map.of(
-					"lookupMethod", SearchType.TEXT,
+					"lookupMethod", LookupMethod.TEXT,
 					"q", "beshbarmak"
 				),
 				List.of(
@@ -125,7 +124,7 @@ public class ItemLookupRestInterfaceTest extends RunningServerTest {
 			),
 			Arguments.of(
 				Map.of(
-					"lookupMethod", SearchType.BARCODE,
+					"lookupMethod", LookupMethod.BARCODE,
 					"q", "017078987621"
 				),
 				List.of(

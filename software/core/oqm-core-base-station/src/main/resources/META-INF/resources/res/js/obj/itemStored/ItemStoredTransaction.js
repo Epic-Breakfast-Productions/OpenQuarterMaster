@@ -327,7 +327,7 @@ export class ItemStoredTransaction extends PageUtility {
 			//determine "to" value
 			if (this.toStoredRadio.is(":checked")) {
 				console.debug("Going to stored.");
-				data.toStored = "";//TODO:: when we have the input implemented
+				data.toStored = this.toStoredInput.val();
 			}
 			if (this.toBlockRadio.is(":checked")) {
 				console.debug("Going to block.");
