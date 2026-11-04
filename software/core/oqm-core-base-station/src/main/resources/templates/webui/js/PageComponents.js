@@ -46,6 +46,20 @@ export class PageComponents {
 					returnType: "html"
 				});
 			}
+			static newStoredTransactionSearch = function (id, item=null, stored=null, accordion = false) {
+
+				let params = new URLSearchParams();
+				params.set("id", id);
+				params.set("item", item);
+				params.set("storedItem", stored);
+				params.set("accordion", accordion);
+
+				return Rest.call({
+					spinnerContainer: null,
+					url: Rest.componentRoot + "/search/storedTransaction?"+params.toString(),
+					returnType: "html"
+				});
+			}
 		}
 	}
 }

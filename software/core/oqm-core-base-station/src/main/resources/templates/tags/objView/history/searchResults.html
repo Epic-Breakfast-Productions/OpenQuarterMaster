@@ -5,9 +5,9 @@
 	</td>
 </tr>
 <tr>
-	<th>Time</th>
-	<th>User</th>
 	<th>Type</th>
+	<th>User</th>
+	<th>Time</th>
 	<th>Description</th>
 </tr>
 </thead>
@@ -23,14 +23,14 @@
 {#else}
 {#for event in searchResults.get("results")}
 <tr class="itemResultRow align-middle">
+	<td class="event-type">
+		{event.get("type").asText()}
+	</td>
+	<td>
+		{#interactingEntityRef rootPrefix=rootPrefix entityRef=event.get("entityRef") /}
+	</td>
 	<td>
 		{cdi:DateTimeService.formatForUi(event.get("timestamp").asText())}
-	</td>
-	<td>
-		{#interactingEntityRef rootPrefix=rootPrefix entityRef=event.get("entityRef")}{/interactingEntityRef}
-	</td>
-	<td class="event-type">
-	{event.get("type").asText()}
 	</td>
 	<td>
 		{! TODO:: other infos !}

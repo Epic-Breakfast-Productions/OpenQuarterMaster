@@ -61,6 +61,9 @@ ui:
   itemsStored:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+  itemStoredTransaction:
+    search:
+      defaultPageSize: ${ui.defaults.search.defaultPageSize}
   idGenerator:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}

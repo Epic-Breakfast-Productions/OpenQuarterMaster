@@ -53,7 +53,7 @@ export class HistorySearchUtils extends PageUtility {
 			new URLSearchParams(formData).toString();
 
 		return Rest.call({
-			spinnerContainer: false, //historySearchContainer.get(0),
+			spinnerContainer: historySearchContainer.get(0),
 			url: historyUrl,
 			method: 'GET',
 			failNoResponse: null,

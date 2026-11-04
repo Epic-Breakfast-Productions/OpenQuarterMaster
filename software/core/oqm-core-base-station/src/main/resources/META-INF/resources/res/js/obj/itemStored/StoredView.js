@@ -253,10 +253,8 @@ export class StoredView {
 							</ul>
 							<div class="tab-content" id="myTabContent">
 								<div class="tab-pane fade show active storedHistoryContainer" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
-
 								</div>
-								<div class="tab-pane fade" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
-									TODO:: transaction search
+								<div class="tab-pane fade storedTransactionSearchContainer" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
 								</div>
 							</div>
 						</div>
@@ -276,6 +274,17 @@ export class StoredView {
 			let newSearch = $(historySearch);
 			newContent.find(".storedHistoryContainer").append($(newSearch));
 			newSearch.find(".historySearchForm").trigger("submit");
+		});
+		PageComponents.Search.History.newStoredTransactionSearch(
+			stored.id,
+			stored.item,
+			stored.id,
+			false
+		).then(function (historySearch) {
+			let newSearch = $(historySearch);
+			newContent.find(".storedTransactionSearchContainer").append($(newSearch));
+			newSearch.find("input[name='affectedStored']").val(stored.id);
+			newSearch.find(".itemStoredTransactionSearchForm").trigger("submit");
 		});
 
 		if (includeBlockLink) {
@@ -323,7 +332,6 @@ export class StoredView {
 			newContent.find(".storedInfoSeparator").remove();
 		}
 
-		//TODO:: applied transactions
 		return newContent;
 	}
 	static resetViewModal() {

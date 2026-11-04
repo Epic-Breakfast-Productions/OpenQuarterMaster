@@ -20,6 +20,7 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tags;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.core.baseStation.model.searchObjects.HistorySearchComponentQuery;
 import tech.ebp.oqm.core.baseStation.model.searchObjects.ItemStoredTransactionDropdownQuery;
+import tech.ebp.oqm.core.baseStation.model.searchObjects.StoredTransactionSearchComponentQuery;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 
@@ -36,6 +37,10 @@ public class SearchComponents extends PageComponentProvider {
 	@Location("tags/objView/history/objHistoryView")
 	Template historyViewTemplate;
 
+	@Inject
+	@Location("tags/search/storedTransaction/search")
+	Template storedTransactionSearch;
+
 	@GET
 	@Path("history")
 	@RolesAllowed(Roles.INVENTORY_VIEW)
@@ -47,6 +52,23 @@ public class SearchComponents extends PageComponentProvider {
 				.data("containerId", query.getId())
 				.data("objectId", query.getId())
 				.data("objectUrl", query.getObjectUrl())
+				.data("accordion", query.isAccordion()),
+			MediaType.TEXT_HTML_TYPE
+		).build();
+	}
+
+	@GET
+	@Path("storedTransaction")
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	public Response storedTransaction(
+		@BeanParam StoredTransactionSearchComponentQuery query
+	) {
+		return Response.ok(
+			this.storedTransactionSearch
+				.data("rootPrefix", this.getRootPrefix())
+				.data("containerId", query.getId())
+				.data("itemId", query.getItem())
+				.data("storedId", query.getStoredItem())
 				.data("accordion", query.isAccordion()),
 			MediaType.TEXT_HTML_TYPE
 		).build();
