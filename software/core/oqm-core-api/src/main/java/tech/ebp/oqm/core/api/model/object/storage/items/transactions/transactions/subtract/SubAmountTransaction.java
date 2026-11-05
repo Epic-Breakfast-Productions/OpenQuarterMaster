@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
@@ -14,6 +15,7 @@ import javax.measure.Quantity;
 /**
  * Transaction to subtract an amount from an item stored.
  */
+@BsonDiscriminator
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @Data

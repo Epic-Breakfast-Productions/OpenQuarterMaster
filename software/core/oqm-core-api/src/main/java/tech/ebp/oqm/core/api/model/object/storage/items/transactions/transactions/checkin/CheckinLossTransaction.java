@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.ReturnPartCheckinDetails;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
@@ -18,6 +19,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @Schema(title = "CheckinLossTransaction", description = "A transaction to checkin a transaction as a loss.")
+@BsonDiscriminator
 public class CheckinLossTransaction extends CheckinTransaction<ReturnPartCheckinDetails> {
 	
 	@Override

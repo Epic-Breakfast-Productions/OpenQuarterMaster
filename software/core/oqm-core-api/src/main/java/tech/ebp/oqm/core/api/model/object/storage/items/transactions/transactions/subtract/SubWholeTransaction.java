@@ -5,6 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
+import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
@@ -18,6 +19,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @Schema(title = "SubWholeTransaction", description = "A transaction to subtract a stored object.")
+@BsonDiscriminator
 public class SubWholeTransaction extends SubtractTransaction {
 
 	/**
