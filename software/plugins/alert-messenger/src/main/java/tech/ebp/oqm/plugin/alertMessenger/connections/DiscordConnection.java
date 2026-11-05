@@ -1,6 +1,5 @@
 package tech.ebp.oqm.plugin.alertMessenger.connections;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonTypeName;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import lombok.Getter;
@@ -16,15 +15,12 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 @MongoEntity(collection = "connectionDetails")
 public class DiscordConnection extends WebhookConnection {
 
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    private String webhookUrl;
-
     public DiscordConnection() {
         super(ConnectionType.DISCORD);
     }
 
-    public DiscordConnection(String webhookUrl) {
-        this();
-        this.webhookUrl = webhookUrl;
-    }
+	public DiscordConnection(String webhookUrl) {
+		this();
+		setWebhookUrl(webhookUrl);
+	}
 }

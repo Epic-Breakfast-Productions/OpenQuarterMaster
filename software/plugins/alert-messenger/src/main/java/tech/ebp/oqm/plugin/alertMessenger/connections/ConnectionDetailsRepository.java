@@ -8,7 +8,10 @@ import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptionService;
 import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.WebhookConnection;
+import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
@@ -66,10 +69,31 @@ public class ConnectionDetailsRepository implements PanacheMongoRepository<Conne
 	private void encryptIfNeeded(ConnectionDetails entity) {
 		if (entity instanceof WebhookConnection webhook) {
 			String url = webhook.getWebhookUrl();
-			boolean isEncrypted = !url.startsWith(WEBHOOK_PREFIX);
-			if (!url.isBlank() && !isEncrypted) {
+			boolean isEncrypted = !url.regionMatches(true, 0, WEBHOOK_PREFIX, 0, WEBHOOK_PREFIX.length());
+			if (url.contains("://")) {
+				validateWebhookUrl(url, webhook.getType());
+			}
+			if (!isEncrypted) {
+				validateWebhookUrl(url, webhook.getType());
 				webhook.setWebhookUrl(encryptionService.encrypt(url));
 			}
+		}
+	}
+
+	private void validateWebhookUrl(String url, ConnectionType type) {
+		URI uri;
+		try {
+			uri = new URI(url).parseServerAuthority();
+		} catch (URISyntaxException e) {
+			throw new IllegalArgumentException("Invalid webhook URL", e);
+		}
+
+		if (!"https".equalsIgnoreCase(uri.getScheme())
+			|| !uri.isAbsolute()
+			|| uri.getHost() == null
+			|| uri.getUserInfo() != null
+			|| !type.isAllowedWebhookHost(uri.getHost())) {
+			throw new IllegalArgumentException("Webhook URL must use HTTPS and an expected host for " + type);
 		}
 	}
 }

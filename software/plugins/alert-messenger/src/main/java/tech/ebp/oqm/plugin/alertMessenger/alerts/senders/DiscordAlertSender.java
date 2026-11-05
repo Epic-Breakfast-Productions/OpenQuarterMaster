@@ -10,7 +10,6 @@ import tech.ebp.oqm.plugin.alertMessenger.WebhookClient;
 import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
 import tech.ebp.oqm.plugin.alertMessenger.connections.DiscordConnection;
 import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptionService;
-import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.WebhookConnection;
 import tech.ebp.oqm.plugin.alertMessenger.throttle.EventMetrics;
 import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordEmbed;
@@ -44,9 +43,7 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
 
     @Override
     public void send(DiscordConnection connection, EventNotificationWrapper event) {
-        try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
-                .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
-                .build(WebhookClient.class)) {
+        try (WebhookClient client = this.buildClient(connection)) {
             client.send(toDiscordMessage(event));
         } catch (Exception e) {
             log.error("Failed to send Discord alert batch for user {}", connection.getUserId(), e);
@@ -56,15 +53,19 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
 
     @Override
     public void sendMetrics(DiscordConnection connection, EventMetrics eventMetrics) {
-        try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
-            .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
-            .build(WebhookClient.class)) {
+        try (WebhookClient client = this.buildClient(connection)) {
             client.send(toDiscordMetrics(eventMetrics));
         } catch (Exception e) {
             log.error("Failed to send Discord alert batch for user {}", connection.getUserId(), e);
             throw new IllegalStateException("Discord delivery failed", e);
         }
     }
+
+	private WebhookClient buildClient(DiscordConnection connection) {
+		return QuarkusRestClientBuilder.newBuilder()
+			.baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
+			.build(WebhookClient.class);
+	}
 
     private DiscordWebhookMessage toDiscordMessage(EventNotificationWrapper event) {
         return new DiscordWebhookMessage(

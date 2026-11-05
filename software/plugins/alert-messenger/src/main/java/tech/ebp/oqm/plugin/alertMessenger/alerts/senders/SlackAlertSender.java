@@ -35,9 +35,7 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
     @Override
     public void send(SlackConnection connection, EventNotificationWrapper event) {
         log.debug("Sending alert via Slack");
-        try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
-            .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
-            .build(WebhookClient.class)) {
+        try (WebhookClient client = buildClient(connection)) {
             String text = event.toString();
             client.send(new SlackWebhookMessage(text));
         } catch (Exception e) {
@@ -49,9 +47,7 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
     @Override
     public void sendMetrics(SlackConnection connection, EventMetrics eventMetrics) {
         log.debug("Sending alert via Slack");
-        try (WebhookClient client = QuarkusRestClientBuilder.newBuilder()
-            .baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
-            .build(WebhookClient.class)) {
+        try (WebhookClient client = buildClient(connection)) {
             String text = formatEventMetrics(eventMetrics);
             client.send(new SlackWebhookMessage(text));
         } catch (Exception e) {
@@ -69,4 +65,10 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
             .map(entry -> "    " + entry.getKey() + ": " + entry.getValue())
             .collect(Collectors.joining("\n"));
     }
+
+	private WebhookClient buildClient(SlackConnection connection) {
+		return QuarkusRestClientBuilder.newBuilder()
+			.baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
+			.build(WebhookClient.class);
+	}
 }
