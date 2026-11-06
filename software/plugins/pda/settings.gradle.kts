@@ -1,4 +1,4 @@
-rootProject.name = "pda"
+rootProject.name = "oqm-plugin-pda"
 
 pluginManagement {
 	repositories {
