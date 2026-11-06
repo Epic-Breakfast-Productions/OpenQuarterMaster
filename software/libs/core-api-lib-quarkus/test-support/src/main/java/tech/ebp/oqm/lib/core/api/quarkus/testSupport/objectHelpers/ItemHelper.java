@@ -61,14 +61,16 @@ public final class ItemHelper extends CoreApiLibClientHelper {
 		return getItemTemplate(storageType, null);
 	}
 
+	public static ObjectNode storageIdsToStorageSetting(String blockId) {
+		return getObjectMapper().createObjectNode()
+				   .put("storageBlock", blockId);
+	}
+
 	public static ArrayNode storageIdsToStorageSettings(String... blockIds){
 		ArrayNode output = getObjectMapper().createArrayNode();
 
 		for(String curId : blockIds){
-			output.add(
-				getObjectMapper().createObjectNode()
-					.put("storageBlock", curId)
-			);
+			output.add(storageIdsToStorageSetting(curId));
 		}
 
 		return output;
