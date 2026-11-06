@@ -1,82 +1,35 @@
-# oqm-plugin-pda
+This is a Kotlin Multiplatform project targeting Android, iOS, Desktop (JVM).
 
-This project uses Quarkus, the Supersonic Subatomic Java Framework.
+* [/iosApp](./iosApp/iosApp) contains an iOS application. Even if you’re sharing your UI with Compose Multiplatform,
+  you need this entry point for your iOS app. This is also where you should add SwiftUI code for your project.
 
-If you want to learn more about Quarkus, please visit its website: <https://quarkus.io/>.
+* [/shared](./shared/src) is for code that will be shared across your Compose Multiplatform applications.
+  It contains several subfolders:
+    - [commonMain](./shared/src/commonMain/kotlin) is for code that’s common for all targets.
+    - Other folders are for Kotlin code that will be compiled for only the platform indicated in the folder name.
+      For example, if you want to use Apple’s CoreCrypto for the iOS part of your Kotlin app,
+      the [iosMain](./shared/src/iosMain/kotlin) folder would be the right place for such calls.
+      Similarly, if you want to edit the Desktop (JVM) specific part, the [jvmMain](./shared/src/jvmMain/kotlin)
+      folder is the appropriate location.
 
-## Running the application in dev mode
+### Running the apps
 
-You can run your application in dev mode that enables live coding using:
+Use the run configurations provided by the run widget in your IDE's toolbar. You can also use these commands and options:
 
-```shell script
-./gradlew quarkusDev
-```
+- Android app: `./gradlew :androidApp:assembleDebug`
+- Desktop app:
+    - Hot reload: `./gradlew :desktopApp:hotRun --auto`
+    - Standard run: `./gradlew :desktopApp:run`
+- iOS app: open the [/iosApp](./iosApp) directory in Xcode and run it from there.
 
-> **_NOTE:_**  Quarkus now ships with a Dev UI, which is available in dev mode only at <http://localhost:8080/q/dev/>.
+### Running tests
 
-## Packaging and running the application
+Use the run button in your IDE's editor gutter, or run tests using Gradle tasks:
 
-The application can be packaged using:
+- Android tests: `./gradlew :shared:testAndroidHostTest`
+- Desktop tests: `./gradlew :shared:jvmTest`
+- iOS tests: `./gradlew :shared:iosSimulatorArm64Test`
 
-```shell script
-./gradlew build
-```
+---
 
-It produces the `quarkus-run.jar` file in the `build/quarkus-app/` directory.
-Be aware that it’s not an _über-jar_ as the dependencies are copied into the `build/quarkus-app/lib/` directory.
-
-The application is now runnable using `java -jar build/quarkus-app/quarkus-run.jar`.
-
-If you want to build an _über-jar_, execute the following command:
-
-```shell script
-./gradlew build -Dquarkus.package.jar.type=uber-jar
-```
-
-The application, packaged as an _über-jar_, is now runnable using `java -jar build/*-runner.jar`.
-
-## Creating a native executable
-
-You can create a native executable using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true
-```
-
-Or, if you don't have GraalVM installed, you can run the native executable build in a container using:
-
-```shell script
-./gradlew build -Dquarkus.native.enabled=true -Dquarkus.native.container-build=true
-```
-
-You can then execute your native executable with: `./build/oqm-plugin-pda-1.0.0-SNAPSHOT-runner`
-
-If you want to learn more about building native executables, please consult <https://quarkus.io/guides/gradle-tooling>.
-
-## Related Guides
-
-- Qute ([guide](https://quarkus.io/guides/qute)): Offer templating support for web, email, etc in a build time, type-safe way
-- REST Qute ([guide](https://quarkus.io/guides/qute-reference#rest_integration)): Qute integration for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it.
-- REST Jackson ([guide](https://quarkus.io/guides/rest#json-serialisation)): Jackson serialization support for Quarkus REST. This extension is not compatible with the quarkus-resteasy extension, or any of the extensions that depend on it
-- OpenID Connect ([guide](https://quarkus.io/guides/security-openid-connect)): Secure applications with OpenID Connect and OAuth 2.0 using bearer tokens and authorization code flow
-- SmallRye Health ([guide](https://quarkus.io/guides/smallrye-health)): Monitor service health
-
-## Provided Code
-
-### REST
-
-Easily start your REST Web Services
-
-[Related guide section...](https://quarkus.io/guides/getting-started-reactive#reactive-jax-rs-resources)
-
-### REST Qute
-
-Create your web page using Quarkus REST and Qute
-
-[Related guide section...](https://quarkus.io/guides/qute#type-safe-templates)
-
-### SmallRye Health
-
-Monitor your application's health using SmallRye Health
-
-[Related guide section...](https://quarkus.io/guides/smallrye-health)
+Learn more about [Kotlin Multiplatform](https://www.jetbrains.com/help/kotlin-multiplatform-dev/get-started.html)…
