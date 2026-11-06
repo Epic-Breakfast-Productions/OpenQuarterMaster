@@ -1,9 +1,11 @@
 <thead>
-<tr>
-	<td colspan="4" class="text-center searchResultsContainer">
-		{#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
-	</td>
-</tr>
+{#if searchResults.get("numResults").asInt() >= config:['ui.itemStoredTransaction.search.topPaginationThreshold'] }
+	<tr>
+		<td colspan="100" class="text-center">
+				{#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
+		</td>
+	</tr>
+{/if}
 <tr>
 	<th>Type</th>
 	<th>User</th>

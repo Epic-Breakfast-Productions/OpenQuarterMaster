@@ -22,6 +22,8 @@ ui:
     indexRedirect: /overview
     search:
       defaultPageSize: 25
+      topPaginationThreshold: 5
+
     dateTimeFormat: "MM/dd/YYYY hh:mm:ss a (z)"
   pagination:
     breakToInput: 20
@@ -30,43 +32,57 @@ ui:
       defaultPageSize: 500
     lowStockItems:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
     expiringItems:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
     expiredItems:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
   storage:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
   image:
     search:
       defaultPageSize: 16
+      topPaginationThreshold: 4
   history:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
   interactingEntity:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
   itemCategory:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
   inventoryItem:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
   fileAttachment:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
   itemCheckout:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
   itemsStored:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
   itemStoredTransaction:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
   idGenerator:
     search:
       defaultPageSize: ${ui.defaults.search.defaultPageSize}
+      topPaginationThreshold: ${ui.defaults.search.topPaginationThreshold}
 
 oqm:
   core:

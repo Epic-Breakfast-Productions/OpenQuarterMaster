@@ -14,11 +14,13 @@
   if `actionType` is "select", callback will be "selectItem('<item name>', '<item id>', '<inputIdPrepend>')" on the select button
 !}
 <thead>
-<tr>
-	<td colspan="9" class="text-center searchResultsContainer">
-		{#paginationButtons searchFormId = searchFormId searchResults = searchResults /}
-	</td>
-</tr>
+{#if searchResults.get("numResults").asInt() >= config:['ui.inventoryItem.search.topPaginationThreshold'] }
+	<tr>
+		<td colspan="9" class="text-center">
+				{#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
+		</td>
+	</tr>
+{/if}
 <tr>
 	<th scope="col" class="searchResultImageCol text-center"><abbr title="Image">{#icons/image /}</abbr></th>
 	<th scope="col">

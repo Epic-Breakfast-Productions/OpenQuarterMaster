@@ -1,9 +1,12 @@
 <thead>
+
+{#if searchResults.get("numResults").asInt() >= config:['ui.history.search.topPaginationThreshold'] }
 <tr>
 	<td colspan="4" class="text-center searchResultsContainer">
 		{#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
 	</td>
 </tr>
+{/if}
 <tr>
 	<th>Type</th>
 	<th>User</th>
