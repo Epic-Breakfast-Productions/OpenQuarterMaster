@@ -308,8 +308,29 @@
   	<img src="" id="itemViewMainPaneStatsItemTransactionsAmountGraph" class="mt-2" style="max-width:100%">
 	</div>
   <div class="tab-pane fade" id="itemViewMainPaneHistoryTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneHistoryTab" tabindex="0">
-  	{#objView/history/objHistoryView containerId='itemHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item/') accordion=false /}
+
+  	<ul class="nav nav-tabs mt-2" id="itemViewMainPaneHistoryTabNav" role="tablist">
+		<li class="nav-item" role="presentation">
+			<button class="nav-link active" id="itemViewMainPaneHistoryTabNavHistoryTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneHistoryTabNavHistoryTab-pane" type="button" role="tab" aria-controls="itemViewMainPaneHistoryTabNavHistoryTab-pane" aria-selected="true">
+				{#icons/history /} History
+			</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="itemViewMainPaneHistoryTabNavTransactionsTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneHistoryTabNavTransactionsTab-pane" type="button" role="tab" aria-controls="itemViewMainPaneHistoryTabNavTransactionsTab-pane" aria-selected="false">
+				{#icons/transaction /} Transactions
+			</button>
+		</li>
+	</ul>
+	<div class="tab-content" id="itemViewMainPaneHistoryTabNavContent">
+		<div class="tab-pane fade show active" id="itemViewMainPaneHistoryTabNavHistoryTab-pane" role="tabpanel" aria-labelledby="itemViewMainPaneHistoryTabNavHistoryTab" tabindex="0">
+			{#objView/history/objHistoryView containerId='itemHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item/') accordion=false /}
+		</div>
+		<div class="tab-pane fade" id="itemViewMainPaneHistoryTabNavTransactionsTab-pane" role="tabpanel" aria-labelledby="itemViewMainPaneHistoryTabNavTransactionsTab" tabindex="0">
+			{#search/storedTransaction/search rootPrefix=rootPrefix containerId='itemViewMainPaneHistoryTabNavTransactionsTab-search' itemId='' storedId='' accordion=false /}
+		</div>
 	</div>
+
+  </div>
 </div>
 
 {/modal}

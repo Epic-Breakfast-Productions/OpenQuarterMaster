@@ -96,6 +96,8 @@ export class ItemView extends PageUtility {
 	static itemViewId = $("#itemViewId");
 	static itemViewEditButton = $('#itemViewEditButton');
 	static itemHistoryAccordionCollapse = $("#itemViewMainPaneHistoryTabContent");
+	static itemHistoryTabTab = $("#itemViewMainPaneHistoryTabNavHistoryTab");
+	static transactionsSearchForm = $("#itemViewMainPaneHistoryTabNavTransactionsTab-searchForm")
 	static itemViewCheckedOutResultsContainer = $("#itemViewCheckedOutResultsContainer");
 	static checkoutSearchForm = $("#itemViewCheckoutSearchForm");
 	static checkoutSearchResults = $("#itemViewCheckoutSearchResults");
@@ -182,6 +184,7 @@ export class ItemView extends PageUtility {
 		ItemView.allStoredSearchForm.trigger("reset");
 
 		HistorySearchUtils.resetHistorySearch(ItemView.itemHistoryAccordionCollapse);
+		ItemView.itemHistoryTabTab.click();
 
 		Carousel.clearCarousel(ItemView.itemViewCarousel);
 		KeywordAttUtils.clearHideKeywordDisplay(ItemView.viewKeywordsSection);
@@ -723,9 +726,14 @@ export class ItemView extends PageUtility {
 		//TODO:: adjust html to match history
 		//ItemCheckoutSearch.setupSearchForItem(ItemView.itemViewCheckedOutResultsContainer, itemId);
 		HistorySearchUtils.setupHistorySearch(ItemView.itemHistoryAccordionCollapse, itemId);
+
+		ItemView.transactionsSearchForm.attr("action", ItemView.transactionsSearchForm.attr("data-action-template").replaceAll("//", "/" + itemId + "/"));
+		ItemView.transactionsSearchForm.trigger("submit");
 	}
 	static {
 		window.ItemView = this;
+
+		ItemView.transactionsSearchForm.attr("data-action-template", ItemView.transactionsSearchForm.attr("action"));
 
 		ItemView.itemViewModal[0].addEventListener("hidden.bs.modal", function () {
 			UriUtils.removeParam("view");

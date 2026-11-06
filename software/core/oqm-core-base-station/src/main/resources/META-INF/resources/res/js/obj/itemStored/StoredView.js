@@ -229,14 +229,14 @@ export class StoredView {
 			<div class="row storedInfo"></div>
 			<hr class="storedInfoSeparator mt-1 mb-2 ms-4 me-4" />
 			<div class="storedButtons d-flex"></div>
-			<div class="accordion mt-1" id="accordionExample">
+			<div class="accordion mt-1" id="">
 				<div class="accordion-item">
 					<h2 class="accordion-header">
 						<button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
 							`+Icons.history+`Stored History & &nbsp;`+Icons.transaction+` Transactions
 						</button>
 					</h2>
-					<div id="collapseOne" class="accordion-collapse collapse" data-bs-parent="#accordionExample">
+					<div id="" class="accordion-collapse collapse" data-bs-parent="#">
 						<div class="accordion-body p-1 pt-2">
 
 							<ul class="nav nav-tabs" id="myTab" role="tablist">
@@ -263,6 +263,16 @@ export class StoredView {
 			</div>
 		</div>
 		`);
+		{//fix history/transaction view accord
+			let accordId = "storedViewHistoryTransactionsAccord-" + stored.id;
+			let accordCollapseId = "storedViewHistoryTransactionsAccordCollapse-" + stored.id;
+			newContent.find(".accordion").attr("id", accordId);
+			newContent.find(".accordion-button").attr("data-bs-target", "#" + accordCollapseId).attr("aria-controls", accordCollapseId);
+			newContent.find(".accordion-collapse").attr("id", accordCollapseId).attr("data-bs-parent", accordId);
+			newContent.find(".accordion").attr("id", "storedViewHistoryTransactionsAccord-" + stored.id);
+		}
+
+
 		let newContentInfo = newContent.find(".storedInfo");
 		let newContentButtons = newContent.find(".storedButtons");
 
