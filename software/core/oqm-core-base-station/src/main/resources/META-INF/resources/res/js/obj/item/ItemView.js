@@ -27,7 +27,14 @@ export class ItemView extends PageUtility {
 	static viewBsModal = new bootstrap.Modal($("#itemViewModal"), {});
 	static itemViewMessages = $("#itemViewMessages");
 	static itemViewModalLabel = $("#itemViewModalLabel");
-	static storageTab = $("#itemViewMainPaneStorageTab");
+
+
+	static storageTabDropdown = $("#itemViewMainPaneStorageTabDropdownButton");
+	static storageTabDropdownBs = new bootstrap.Dropdown("#itemViewMainPaneStorageTabDropdown");
+	static storageTab = $("#itemViewMainPaneStorageTabStored");
+	static checkedOutTab = $("#itemViewMainPaneStorageTabCheckedOut");
+	static inTransitTab = $("#itemViewMainPaneStorageTabInTransit");
+	static storageTabBsTab = new bootstrap.Tab('#itemViewMainPaneStorageTabStored');
 	static statsTab = $("#itemViewMainPaneStatsTab");
 
 	static itemTransactionButtonContainer = $("#itemViewTransactButtonContainer");
@@ -121,7 +128,13 @@ export class ItemView extends PageUtility {
 	static resetView() {
 		ItemView.statsTransactionsAmountGraphImg.attr("src", "");
 		ItemView.statsShown = false;
-		ItemView.storageTab.click();
+
+		ItemView.storageTabBsTab.show();
+		ItemView.storageTabDropdownBs.hide();
+
+		// ItemView.storageTabDropdown.click();
+		// ItemView.storageTabDropdown.click();
+
 		ItemView.itemViewModalLabel.text("");
 		ItemView.itemTransactionButtonContainer.text("");
 		ItemView.storedMultiContainer.hide();
@@ -730,6 +743,11 @@ export class ItemView extends PageUtility {
 		ItemView.transactionsSearchForm.attr("action", ItemView.transactionsSearchForm.attr("data-action-template").replaceAll("//", "/" + itemId + "/"));
 		ItemView.transactionsSearchForm.trigger("submit");
 	}
+	static handleStoredTabChange(event){
+		console.log("shown!", event);
+		let newText = $(event.target).html();
+		ItemView.storageTabDropdown.html(newText);
+	}
 	static {
 		window.ItemView = this;
 
@@ -796,6 +814,10 @@ export class ItemView extends PageUtility {
 
 			ItemView.statsShown = true;
 		});
+
+		ItemView.storageTab.on('show.bs.tab', ItemView.handleStoredTabChange);
+		ItemView.checkedOutTab.on('show.bs.tab', ItemView.handleStoredTabChange);
+		ItemView.inTransitTab.on('show.bs.tab', ItemView.handleStoredTabChange);
 
 		$(document).ready(function () {
 			if (UriUtils.getParams.has("view")

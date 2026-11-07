@@ -150,16 +150,29 @@
 	</div>
 
 	<ul class="nav nav-tabs mt-4" id="itemViewMainPane" role="tablist">
-		<li class="nav-item" role="presentation">
-			<button class="nav-link active" id="itemViewMainPaneStorageTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneStorageTabContent" type="button" role="tab" aria-controls="itemViewMainPaneStorageTabContent" aria-selected="true">
+		<li class="nav-item dropdown" role="presentation" id="itemViewMainPaneStorageTabDropdown">
+			<a class="nav-link dropdown-toggle" id="itemViewMainPaneStorageTabDropdownButton" data-bs-toggle="dropdown" href="#" role="button" aria-expanded="false">
 				{#icons/stored /} Stored
-			</button>
+			</a>
+			<ul class="dropdown-menu">
+				<li>
+					<button class="dropdown-item" id="itemViewMainPaneStorageTabStored" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneStorageTabContent" type="button" role="tab" aria-controls="itemViewMainPaneStorageTabContent" aria-selected="true">
+						{#icons/stored /} Stored
+					</button>
+				</li>
+				<li>
+					<button class="dropdown-item" id="itemViewMainPaneStorageTabCheckedOut" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneCheckedOutTabContent" type="button" role="tab" aria-controls="itemViewMainPaneCheckedOutTabContent" aria-selected="false">
+						{#icons/transactionCheckout /} Checked Out
+					</button>
+				</li>
+				<li>
+					<button class="dropdown-item" id="itemViewMainPaneStorageTabInTransit" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneInTransitTabContent" type="button" role="tab" aria-controls="itemViewMainPaneInTransitTabContent" aria-selected="false">
+						{#icons/inTransit /} In Transit
+					</button>
+				</li>
+			</ul>
 		</li>
- 		<li class="nav-item" role="presentation">
-			<button class="nav-link" id="itemViewMainPaneCheckedOutTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneCheckedOutTabContent" type="button" role="tab" aria-controls="itemViewMainPaneCheckedOutTabContent" aria-selected="false">
-				{#icons/transactionCheckout /} Checked Out
-			</button>
-		</li>
+
 		<li class="nav-item" role="presentation">
 			<button class="nav-link" id="itemViewMainPaneStatsTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneStatsTabContent" type="button" role="tab" aria-controls="itemViewMainPaneStatsTabContent" aria-selected="false">
 				{#icons/stats /} Stats
@@ -173,14 +186,7 @@
 	</ul>
 	<div class="tab-content" id="itemViewMainPaneContent">
 
-
-
-	<!-- TODO:: add things here -->
-
-
-
-
-		<div class="tab-pane fade show active pt-2" id="itemViewMainPaneStorageTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneStorageTab" tabindex="0">
+		<div class="tab-pane fade show active pt-2" id="itemViewMainPaneStorageTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneStorageTabStored" tabindex="0">
 			<div id="itemViewStoredNonePresentContainer">
 				<p class="h4">Nothing Stored</p>
 				<div id="itemViewStoredNonePresentHasStorageContainer">
@@ -268,7 +274,40 @@
 				<div class="accordion" id="itemViewStoredSingleAccordion"></div>
 			</div>
 		</div>
-		<div class="tab-pane fade" id="itemViewMainPaneCheckedOutTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneCheckedOutTab" tabindex="0">
+		<div class="tab-pane fade" id="itemViewMainPaneCheckedOutTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneStorageTabCheckedOut" tabindex="0">
+			<div class="row">
+				<div class="col accordion" id="itemViewCheckoutSearchAccordion">
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="itemViewCheckoutSearchAccordionFieldsHeader">
+							<button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse"
+								data-bs-target="#itemViewCheckoutSearchAccordionFieldsCollapse" aria-expanded="false"
+								aria-controls="itemViewCheckoutSearchAccordionFieldsCollapse"
+							>
+								{#icons/search /} Search Fields
+							</button>
+						</h2>
+						<div id="itemViewCheckoutSearchAccordionFieldsCollapse" class="accordion-collapse collapse"
+							aria-labelledby="itemViewCheckoutSearchAccordionFieldsHeader" data-bs-parent="#itemViewCheckoutSearchAccordion"
+						>
+							<div class="accordion-body">
+								{#search/itemCheckout/searchForm id='itemViewCheckoutSearchForm' rootPrefix=rootPrefix /}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<table class=" table table-bordered table-striped table-hover table-sm" id="itemViewCheckoutSearchResults">
+						{!{#search/itemCheckout/searchResults searchResults=searchResult actionType='full' showItem=false searchFormId='itemViewCheckoutSearchForm' showStillCheckedOut=false}!}
+						{!{/search/itemCheckout/searchResults}!}
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="tab-pane fade" id="itemViewMainPaneInTransitTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneStorageTabInTransit" tabindex="0">
+			In Transit TODO
+
 			<div class="row">
 				<div class="col accordion" id="itemViewCheckoutSearchAccordion">
 					<div class="accordion-item">
