@@ -63,7 +63,7 @@ public class PageLookoverTest extends WebUiTest {
 			this.getLoggedInPage(testUser, "/overview").close();
 
 			CoreApiLibTestDbManager.populateDb(
-				"Bearer " + testUser.getJwt(),
+				testUser.getAuthString(),
 				TEST_DB,
 				CoreApiLibTestDbManager.PopulateOptions.builder().build()
 			);

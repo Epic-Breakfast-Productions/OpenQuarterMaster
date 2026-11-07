@@ -1,0 +1,8 @@
+{!{@tech.ebp.oqm.baseStation.rest.search.HistorySearch historySearchObject}!}
+{#include tags/search/searchForm id=id action=str:concat(rootPrefix, '/api/passthrough/inventory/item/', itemId, '/stored/transaction') showKeywords=true showAttributes=true searchFormClasses="itemStoredTransactionSearchForm" onSubmit="ItemStoredTransactionView.Search.runSearch(this, event);"  defaultPageSize=config:['ui.itemStoredTransaction.search.defaultPageSize']}
+	{#inputs}
+		{!TODO:: turn into interactable selectable!}
+		<input type="hidden" name="affectedStored" />
+
+	{/inputs}
+{/include}

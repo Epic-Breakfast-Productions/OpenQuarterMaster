@@ -224,9 +224,78 @@ export class StoredView {
 			showSetTransaction = true,
 		}) {
 		console.log("Getting stored view html for: ", stored)
-		let newContent = $('<div class="storedView"><div class="row storedInfo"></div><hr /><div class="storedButtons d-flex"</div></div>');
+		let newContent = $(`
+		<div class="storedView">
+			<div class="row storedInfo"></div>
+			<hr class="storedInfoSeparator mt-1 mb-2 ms-4 me-4" />
+			<div class="storedButtons d-flex"></div>
+			<div class="accordion mt-1" id="">
+				<div class="accordion-item">
+					<h2 class="accordion-header">
+						<button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse" data-bs-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+							`+Icons.history+`Stored History & &nbsp;`+Icons.transaction+` Transactions
+						</button>
+					</h2>
+					<div id="" class="accordion-collapse collapse" data-bs-parent="#">
+						<div class="accordion-body p-1 pt-2">
+
+							<ul class="nav nav-tabs" id="myTab" role="tablist">
+								<li class="nav-item" role="presentation">
+									<button class="nav-link active" id="home-tab" data-bs-toggle="tab" data-bs-target="#home-tab-pane" type="button" role="tab" aria-controls="home-tab-pane" aria-selected="true">
+										`+Icons.history+` History
+									</button>
+								</li>
+								<li class="nav-item" role="presentation">
+									<button class="nav-link" id="profile-tab" data-bs-toggle="tab" data-bs-target="#profile-tab-pane" type="button" role="tab" aria-controls="profile-tab-pane" aria-selected="false">
+										`+Icons.transaction+` Transactions
+									</button>
+								</li>
+							</ul>
+							<div class="tab-content" id="myTabContent">
+								<div class="tab-pane fade show active storedHistoryContainer" id="home-tab-pane" role="tabpanel" aria-labelledby="home-tab" tabindex="0">
+								</div>
+								<div class="tab-pane fade storedTransactionSearchContainer" id="profile-tab-pane" role="tabpanel" aria-labelledby="profile-tab" tabindex="0">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		`);
+		{//fix history/transaction view accord
+			let accordId = "storedViewHistoryTransactionsAccord-" + stored.id;
+			let accordCollapseId = "storedViewHistoryTransactionsAccordCollapse-" + stored.id;
+			newContent.find(".accordion").attr("id", accordId);
+			newContent.find(".accordion-button").attr("data-bs-target", "#" + accordCollapseId).attr("aria-controls", accordCollapseId);
+			newContent.find(".accordion-collapse").attr("id", accordCollapseId).attr("data-bs-parent", accordId);
+			newContent.find(".accordion").attr("id", "storedViewHistoryTransactionsAccord-" + stored.id);
+		}
+
+
 		let newContentInfo = newContent.find(".storedInfo");
 		let newContentButtons = newContent.find(".storedButtons");
+
+		PageComponents.Search.History.newHistorySearch(
+			stored.id,
+			Rest.passRoot + "/inventory/item/" + stored.item + "/stored/",
+			false
+		).then(function (historySearch) {
+			let newSearch = $(historySearch);
+			newContent.find(".storedHistoryContainer").append($(newSearch));
+			newSearch.find(".historySearchForm").trigger("submit");
+		});
+		PageComponents.Search.History.newStoredTransactionSearch(
+			stored.id,
+			stored.item,
+			stored.id,
+			false
+		).then(function (historySearch) {
+			let newSearch = $(historySearch);
+			newContent.find(".storedTransactionSearchContainer").append($(newSearch));
+			newSearch.find("input[name='affectedStored']").val(stored.id);
+			newSearch.find(".itemStoredTransactionSearchForm").trigger("submit");
+		});
 
 		if (includeBlockLink) {
 			newContentButtons.append(
@@ -269,7 +338,10 @@ export class StoredView {
 				'</button>'));
 		}
 
-		//TODO:: history, applied transactions
+		if(!newContentInfo.children().length) {
+			newContent.find(".storedInfoSeparator").remove();
+		}
+
 		return newContent;
 	}
 	static resetViewModal() {

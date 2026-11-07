@@ -10,7 +10,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.core.api.model.object.storage.checkout.checkinDetails.CheckInDetails;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.CheckoutsTransaction;
 
 /**
  * Transaction to checkin a checked out item stored.
@@ -22,7 +22,7 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredT
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder(toBuilder = true)
-public abstract class CheckinTransaction <T extends CheckInDetails> extends ItemStoredTransaction {
+public abstract class CheckinTransaction <T extends CheckInDetails> extends CheckoutsTransaction {
 
 	/**
 	 * The id of the checkout to checkin
