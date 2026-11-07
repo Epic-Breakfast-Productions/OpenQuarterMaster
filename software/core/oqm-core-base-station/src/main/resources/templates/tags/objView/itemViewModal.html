@@ -1,336 +1,328 @@
 {#modal id='itemView' size='xl' title='Item View'}
-    {#titleIcon}{#icons/item /}{/titleIcon}
-    {#footerButtons}
-    	<span id="itemViewTransactButtonContainer"></span>
-
-    	<button type="button" class="btn btn-warning" id="itemViewEditButton" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal">
+	{#titleIcon}{#icons/item /}{/titleIcon}
+	{#footerButtons}
+		<span id="itemViewTransactButtonContainer"></span>
+		<button type="button" class="btn btn-warning" id="itemViewEditButton" title="Edit" data-bs-toggle="modal" data-bs-target="#addEditItemModal">
 			{#icons/edit /} Edit Item
 		</button>
-    {/footerButtons}
-    <div class="row">
-        <div class="col" id="itemViewMessages"></div>
-    </div>
-<div class="row">
-    {#carousel id='itemViewCarousel' carouselCss='col-md-12 col-sm-12 col-lg-6 col-xl-4' /}
-    <div class="col">
-        <div class="row">
-            <div class="card col-sm-12 col-md-6">
-                <div class="card-body">
-                    <p class="card-title d-inline h5">Storage Type:</p>
-                    <p id="itemViewStorageType" class="d-inline">
-                    </p>
-                </div>
-            </div>
-            <div class="card col-sm-12 col-md-6">
-                <div class="card-body">
-                    <p class="card-title d-inline h5">Id:</p>
-                    <p class="card-text d-inline">
-                        <small>
-                            <span id="itemViewId"></span>{#copyTextButton /}
-                        </small>
-                    </p>
-                </div>
-            </div>
-            <div class="card col-12" id="itemViewDescriptionContainer">
-                <div class="card-body">
-                    <p class="card-title h5">Description:</p>
-                    <div id="itemViewDescription">
-                    </div>
-                </div>
-            </div>
-            <div class="card col-sm-12 col-md-12 col-lg-6" id="itemViewCategoriesContainer">
-                <div class="card-body">
-                    <p class="card-title h5">Categories:</p>
-                    <p id="itemViewCategories">
-                    </p>
-                </div>
-            </div>
-            <div class="card col-sm-12 col-md-6 col-lg-4">
-                <div class="card-body">
-                    <p class="card-title d-inline h5">Total Held:</p>
-                    <p id="itemViewTotal" class="d-inline">
-                    </p>
-                    <div id="itemViewTotalLowStockThresholdContainer" class="text-muted">
-						<p class="d-inline">Low Stock Threshold:</p>
-						<p id="itemViewTotalLowStockThreshold" class="d-inline"></p>
+	{/footerButtons}
+	<div class="row">
+		<div class="col" id="itemViewMessages"></div>
+	</div>
+	<div class="row">
+		{#carousel id='itemViewCarousel' carouselCss='col-md-12 col-sm-12 col-lg-6 col-xl-4' /}
+		<div class="col">
+			<div class="row">
+				<div class="card col-sm-12 col-md-6">
+					<div class="card-body">
+						<p class="card-title d-inline h5">Storage Type:</p>
+						<p id="itemViewStorageType" class="d-inline"></p>
 					</div>
-                </div>
-            </div>
-            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewExpiryWarnThresholdContainer">
-                <div class="card-body">
-                    <p class="card-title d-inline h5">Expiry Warning Threshold:</p>
-                    <p id="itemViewExpiryWarnThreshold" class="d-inline">
-                    </p>
-                </div>
-            </div>
-            <div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewIdentifyingAttContainer">{!TODO:: remove? !}
-                <div class="card-body">
-                    <p class="card-title d-inline h5">Identifying Attribute:</p>
-                    <p id="itemViewIdentifyingAtt" class="d-inline">
-                    </p>
-                </div>
-            </div>
-            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewIdsContainer">
-                <div class="card-body">
-					<div class="accordion" id="itemViewIdsAccord">
-					  <div class="accordion-item" id="itemViewIdentifiersAccord">
-						<h2 class="accordion-header">
-						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewGeneralIdentifiersAccordCollapse" aria-expanded="false" aria-controls="itemViewGeneralIdentifiersAccordCollapse">
-							{#icons/identifiers /}
-							Identifiers (<span id="itemViewIdentifiersNumIdsLabel"></span>)
-						  </button>
-						</h2>
-						<div id="itemViewGeneralIdentifiersAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
-						  <div class="accordion-body">
-						  	<div class="row" id="itemViewGeneralIdentifiersAccordContent">
-						  	</div>
-						  </div>
-						</div>
-					  </div>
-					  <div class="accordion-item" id="itemViewIdGeneratorsAccord">
-						<h2 class="accordion-header">
-						  <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewIdGeneratorsAccordCollapse" aria-expanded="false" aria-controls="itemViewIdGeneratorsAccordCollapse">
-							{#icons/idGenerators /}
-							ID Generators (<span id="itemViewIdGeneratorsNumIdsLabel"></span>)
-						  </button>
-						</h2>
-						<div id="itemViewIdGeneratorsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
-						  <div class="accordion-body">
-						  	<div class="row">
-						  		<ul id="itemViewIdGeneratorsAccordContent">
-								</ul>
-						  	</div>
-						  </div>
-						</div>
-					  </div>
+				</div>
+				<div class="card col-sm-12 col-md-6">
+					<div class="card-body">
+						<p class="card-title d-inline h5">Id:</p>
+						<p class="card-text d-inline">
+							<small>
+								<span id="itemViewId"></span>{#copyTextButton /}
+							</small>
+						</p>
 					</div>
-                </div>
-            </div>
-            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewPriceTotalsContainer">
-                <div class="card-body" id="">
-					<div class="accordion" id="itemViewPriceTotalsAccord">
-						<div class="accordion-item" id="itemViewPriceTotalsAccordItem">
-							<h2 class="accordion-header">
-								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewPriceTotalsAccordCollapse" aria-expanded="false" aria-controls="itemViewPriceTotalsAccordCollapse">
-									{#icons/pricing /}
-									Price Totals (<span id="itemViewPriceTotalsNumLabel"></span>)
-								</button>
-							</h2>
-							<div id="itemViewPriceTotalsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewPriceTotalsAccord">
-								<div class="accordion-body">
-									<div class="row" id="itemViewPriceTotalsContent">
+				</div>
+				<div class="card col-12" id="itemViewDescriptionContainer">
+					<div class="card-body">
+						<p class="card-title h5">Description:</p>
+						<div id="itemViewDescription"></div>
+					</div>
+				</div>
+				<div class="card col-sm-12 col-md-12 col-lg-6" id="itemViewCategoriesContainer">
+					<div class="card-body">
+						<p class="card-title h5">Categories:</p>
+						<p id="itemViewCategories"></p>
+					</div>
+				</div>
+				<div class="card col-sm-12 col-md-6 col-lg-4">
+					<div class="card-body">
+						<p class="card-title d-inline h5">Total Held:</p>
+						<p id="itemViewTotal" class="d-inline"></p>
+						<div id="itemViewTotalLowStockThresholdContainer" class="text-muted">
+							<p class="d-inline">Low Stock Threshold:</p>
+							<p id="itemViewTotalLowStockThreshold" class="d-inline"></p>
+						</div>
+					</div>
+				</div>
+				<div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewExpiryWarnThresholdContainer">
+					<div class="card-body">
+						<p class="card-title d-inline h5">Expiry Warning Threshold:</p>
+						<p id="itemViewExpiryWarnThreshold" class="d-inline"></p>
+					</div>
+				</div>
+				<div class="card col-sm-12 col-md-6 col-lg-4" id="itemViewIdentifyingAttContainer">{!TODO:: remove? !}
+					<div class="card-body">
+						<p class="card-title d-inline h5">Identifying Attribute:</p>
+						<p id="itemViewIdentifyingAtt" class="d-inline"></p>
+					</div>
+				</div>
+				<div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewIdsContainer">
+					<div class="card-body">
+						<div class="accordion" id="itemViewIdsAccord">
+							<div class="accordion-item" id="itemViewIdentifiersAccord">
+								<h2 class="accordion-header">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewGeneralIdentifiersAccordCollapse" aria-expanded="false" aria-controls="itemViewGeneralIdentifiersAccordCollapse">
+										{#icons/identifiers /}
+										Identifiers (<span id="itemViewIdentifiersNumIdsLabel"></span>)
+									</button>
+								</h2>
+								<div id="itemViewGeneralIdentifiersAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
+									<div class="accordion-body">
+										<div class="row" id="itemViewGeneralIdentifiersAccordContent"></div>
+									</div>
+								</div>
+							</div>
+							<div class="accordion-item" id="itemViewIdGeneratorsAccord">
+								<h2 class="accordion-header">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewIdGeneratorsAccordCollapse" aria-expanded="false" aria-controls="itemViewIdGeneratorsAccordCollapse">
+										{#icons/idGenerators /}
+										ID Generators (<span id="itemViewIdGeneratorsNumIdsLabel"></span>)
+									</button>
+								</h2>
+								<div id="itemViewIdGeneratorsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewIdsAccord">
+									<div class="accordion-body">
+										<div class="row">
+											<ul id="itemViewIdGeneratorsAccordContent"></ul>
+										</div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-                </div>
-            </div>
-            <div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewLinksContainer">
-                <div class="card-body" id="">
-					<div class="accordion" id="itemViewLinksAccord">
-						<div class="accordion-item" id="itemViewLinksAccordItem">
-							<h2 class="accordion-header">
-								<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewLinkAccordCollapse" aria-expanded="false" aria-controls="itemViewLinksAccordCollapse">
-									{#icons/link /}
-									Links (<span id="itemViewLinksNumLabel"></span>)
-								</button>
-							</h2>
-							<div id="itemViewLinkAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewLinkAccord">
-								<div class="accordion-body">
-									<div class="row" id="itemViewLinkContent">
+				</div>
+				<div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewPriceTotalsContainer">
+					<div class="card-body" id="">
+						<div class="accordion" id="itemViewPriceTotalsAccord">
+							<div class="accordion-item" id="itemViewPriceTotalsAccordItem">
+								<h2 class="accordion-header">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewPriceTotalsAccordCollapse" aria-expanded="false" aria-controls="itemViewPriceTotalsAccordCollapse">
+										{#icons/pricing /}
+										Price Totals (<span id="itemViewPriceTotalsNumLabel"></span>)
+									</button>
+								</h2>
+								<div id="itemViewPriceTotalsAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewPriceTotalsAccord">
+									<div class="accordion-body">
+										<div class="row" id="itemViewPriceTotalsContent"></div>
 									</div>
 								</div>
 							</div>
 						</div>
 					</div>
-                </div>
-            </div>
-			<div class="card col-sm-12 col-md-6" id="itemViewFilesContainer">
-				<div class="card-body" style="padding: 2px 0;">
-					{#fileAttachment/FileAttachmentObjectView id='itemViewFiles' /}
+				</div>
+				<div class="card col-sm-12 col-md-12 col-lg-12 col-xl-6" id="itemViewLinksContainer">
+					<div class="card-body" id="">
+						<div class="accordion" id="itemViewLinksAccord">
+							<div class="accordion-item" id="itemViewLinksAccordItem">
+								<h2 class="accordion-header">
+									<button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#itemViewLinkAccordCollapse" aria-expanded="false" aria-controls="itemViewLinksAccordCollapse">
+										{#icons/link /}
+										Links (<span id="itemViewLinksNumLabel"></span>)
+									</button>
+								</h2>
+								<div id="itemViewLinkAccordCollapse" class="accordion-collapse collapse" data-bs-parent="#itemViewLinkAccord">
+									<div class="accordion-body">
+										<div class="row" id="itemViewLinkContent"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="card col-sm-12 col-md-6" id="itemViewFilesContainer">
+					<div class="card-body" style="padding: 2px 0;">
+						{#fileAttachment/FileAttachmentObjectView id='itemViewFiles' /}
+					</div>
 				</div>
 			</div>
-        </div>
-        <!-- TODO:: add expiry warning duration -->
-    </div>
-</div>
-<div class="row">
-    {#objView/objKeywordsView id='viewKeywordsSection' classes='col' /}
-    {#objView/objAttsView id='viewAttsSection' classes='col' /}
-</div>
-
-<ul class="nav nav-tabs mt-4" id="itemViewMainPane" role="tablist">
-  <li class="nav-item" role="presentation">
-    <button class="nav-link active" id="itemViewMainPaneStorageTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneStorageTabContent" type="button" role="tab" aria-controls="itemViewMainPaneStorageTabContent" aria-selected="true">
-    	{#icons/stored /} Stored
-	</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="itemViewMainPaneCheckedOutTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneCheckedOutTabContent" type="button" role="tab" aria-controls="itemViewMainPaneCheckedOutTabContent" aria-selected="false">
-    {#icons/transactionCheckout /} Checked Out
-</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link" id="itemViewMainPaneStatsTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneStatsTabContent" type="button" role="tab" aria-controls="itemViewMainPaneStatsTabContent" aria-selected="false">
-    {#icons/stats /} Stats
-</button>
-  </li>
-  <li class="nav-item" role="presentation">
-    <button class="nav-link historyViewAccordionHeader" id="itemViewMainPaneHistoryTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneHistoryTabContent" type="button" role="tab" aria-controls="itemViewMainPaneHistoryTabContent" aria-selected="false">
-    {#icons/history /} History
-</button>
-  </li>
-</ul>
-<div class="tab-content" id="itemViewMainPaneContent">
-  <div class="tab-pane fade show active pt-2" id="itemViewMainPaneStorageTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneStorageTab" tabindex="0">
-  	<div id="itemViewStoredNonePresentContainer">
-            <p class="h4">Nothing Stored</p>
-            <div id="itemViewStoredNonePresentHasStorageContainer">
-                <button class="btn btn-primary" id="itemViewStoredNonePresentHasStorageAddStoredButton" data-bs-target="#itemStoredTransactionAddModal" data-bs-toggle="modal" onclick="ItemStoredTransaction.Add.setupForm(ItemView.itemViewId.text(), null, this);">+ Add Stored</button>
-                <p class="h4">Available storage blocks:</p>
-                <p id="itemViewStoredNonePresentBlocksList">
-                </p>
-            </div>
-            <div id="itemViewStoredNonePresentNoStorageContainer">
-                <p>
-                    No storage blocks associated with this item! Add storage by editing this item!
-                </p>
-            </div>
-        </div>
-        <div id="itemViewStoredMultiContainer">
-            <p class="h4">
-                {#icons/storageBlocks /} <span id="itemViewStoredMultiNumStoredDisplay"></span> stored across <span id="itemViewStoredMultiBlockNum"></span> storage blocks:
-            </p>
-            <div class="mb-2">
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" id="itemViewStoredMultiAddStoredButton">
-                    + Add Stored Item
-                </button>
-            </div>
-            <ul class="nav nav-tabs" id="itemViewStoredViewTab" role="tablist">
-              <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="itemViewStoredViewTabByBlock" data-bs-toggle="tab" data-bs-target="#itemViewStoredViewTabByBlockPane" type="button" role="tab" aria-controls="itemViewStoredViewTabByBlockPane" aria-selected="true">
-                    {#icons/storageBlock /}
-					By Block
-                </button>
-              </li>
-              <li class="nav-item" role="presentation">
-                <button class="nav-link" id="itemViewStoredViewTabAllStored" data-bs-toggle="tab" data-bs-target="#itemViewStoredViewTabAllStoredPane" type="button" role="tab" aria-controls="itemViewStoredViewTabAllStoredPane" aria-selected="false">
-                    {#icons/storageBlocks /}
-                    All Stored
-                </button>
-              </li>
-            </ul>
-            <div class="tab-content" id="itemViewStoredViewTabContent">
-              <div class="tab-pane fade show active" id="itemViewStoredViewTabByBlockPane" role="tabpanel" aria-labelledby="itemViewStoredViewTabByBlock" tabindex="0">
-                <p id="itemViewStoredMultiNonePresentBlocksList">
-                </p>
-                <div class="accordion" id="itemViewStoredMultiByBlockAccordion">
-                </div>
-              </div>
-              <div class="tab-pane fade" id="itemViewStoredViewTabAllStoredPane" role="tabpanel" aria-labelledby="itemViewStoredViewTabAllStored" tabindex="0">
-                <div class="accordion-body p-0 pt-1" id="itemViewStoredViewTabAllStoredContainer">
-                    <div class="row">
-                        <div class="col accordion" id="itemViewAllStoredSearchAccordion">
-                            <div class="accordion-item">
-                                <h2 class="accordion-header" id="itemViewAllStoredSearchAccordionFieldsHeader">
-                                    <button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#itemViewAllStoredSearchAccordionFieldsCollapse" aria-expanded="false"
-                                        aria-controls="itemViewAllStoredSearchAccordionFieldsCollapse">
-                                        {#icons/search /} Search Fields
-                                    </button>
-                                    </h2>
-                                <div id="itemViewAllStoredSearchAccordionFieldsCollapse" class="accordion-collapse collapse"
-                                     aria-labelledby="itemViewAllStoredSearchAccordionFieldsHeader" data-bs-parent="#itemViewAllStoredSearchAccordion">
-                                    <div class="accordion-body">
-                                        {#search/itemStored/searchForm id='itemViewAllStoredSearchForm' /}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col">
-                            <table class=" table table-bordered table-striped table-hover table-sm" id="itemViewAllStoredSearchResults">
-                                {!{#search/itemCheckout/searchResults searchResults=searchResult actionType='full' showItem=false searchFormId='itemViewCheckoutSearchForm' showStillCheckedOut=false}!}
-                                {!{/search/itemCheckout/searchResults}!}
-                            </table>
-                        </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-        </div>
-        <div id="itemViewStoredBulkContainer">
-            <p class="h4">
-                {#icons/storageBlocks /} <span id="itemViewStoredBulkNumStoredDisplay"></span> stored across <span id="itemViewStoredBulkBlockNum"></span> storage blocks:
-            </p>
-            <p id="itemViewStoredBulkNonePresentBlocksList">
-            </p>
-            <div class="accordion" id="itemViewStoredBulkAccordion">
-            </div>
-        </div>
-        <div id="itemViewStoredSingleContainer">
-            <div class="accordion" id="itemViewStoredSingleAccordion">
-            </div>
-        </div>
-</div>
-  <div class="tab-pane fade" id="itemViewMainPaneCheckedOutTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneCheckedOutTab" tabindex="0">
-  	<div class="row">
-                            <div class="col accordion" id="itemViewCheckoutSearchAccordion">
-                                <div class="accordion-item">
-                                    <h2 class="accordion-header" id="itemViewCheckoutSearchAccordionFieldsHeader">
-                                    <button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse"
-                                        data-bs-target="#itemViewCheckoutSearchAccordionFieldsCollapse" aria-expanded="false"
-                                        aria-controls="itemViewCheckoutSearchAccordionFieldsCollapse">
-                                        {#icons/search /} Search Fields
-                                    </button>
-                                    </h2>
-                                    <div id="itemViewCheckoutSearchAccordionFieldsCollapse" class="accordion-collapse collapse"
-                                                 aria-labelledby="itemViewCheckoutSearchAccordionFieldsHeader" data-bs-parent="#itemViewCheckoutSearchAccordion">
-                                        <div class="accordion-body">
-                                            {#search/itemCheckout/searchForm id='itemViewCheckoutSearchForm' rootPrefix=rootPrefix /}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col">
-                                <table class=" table table-bordered table-striped table-hover table-sm" id="itemViewCheckoutSearchResults">
-                                    {!{#search/itemCheckout/searchResults searchResults=searchResult actionType='full' showItem=false searchFormId='itemViewCheckoutSearchForm' showStillCheckedOut=false}!}
-                                    {!{/search/itemCheckout/searchResults}!}
-                                </table>
-                            </div>
-                        </div>
-</div>
-  <div class="tab-pane fade" id="itemViewMainPaneStatsTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneStatsTab" tabindex="0">
-  	<img src="" id="itemViewMainPaneStatsItemTransactionsAmountGraph" class="mt-2" style="max-width:100%">
+			<!-- TODO:: add expiry warning duration -->
+		</div>
 	</div>
-  <div class="tab-pane fade" id="itemViewMainPaneHistoryTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneHistoryTab" tabindex="0">
+	<div class="row">
+		{#objView/objKeywordsView id='viewKeywordsSection' classes='col' /}
+		{#objView/objAttsView id='viewAttsSection' classes='col' /}
+	</div>
 
-  	<ul class="nav nav-tabs mt-2" id="itemViewMainPaneHistoryTabNav" role="tablist">
+	<ul class="nav nav-tabs mt-4" id="itemViewMainPane" role="tablist">
 		<li class="nav-item" role="presentation">
-			<button class="nav-link active" id="itemViewMainPaneHistoryTabNavHistoryTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneHistoryTabNavHistoryTab-pane" type="button" role="tab" aria-controls="itemViewMainPaneHistoryTabNavHistoryTab-pane" aria-selected="true">
+			<button class="nav-link active" id="itemViewMainPaneStorageTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneStorageTabContent" type="button" role="tab" aria-controls="itemViewMainPaneStorageTabContent" aria-selected="true">
+				{#icons/stored /} Stored
+			</button>
+		</li>
+ 		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="itemViewMainPaneCheckedOutTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneCheckedOutTabContent" type="button" role="tab" aria-controls="itemViewMainPaneCheckedOutTabContent" aria-selected="false">
+				{#icons/transactionCheckout /} Checked Out
+			</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link" id="itemViewMainPaneStatsTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneStatsTabContent" type="button" role="tab" aria-controls="itemViewMainPaneStatsTabContent" aria-selected="false">
+				{#icons/stats /} Stats
+			</button>
+		</li>
+		<li class="nav-item" role="presentation">
+			<button class="nav-link historyViewAccordionHeader" id="itemViewMainPaneHistoryTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneHistoryTabContent" type="button" role="tab" aria-controls="itemViewMainPaneHistoryTabContent" aria-selected="false">
 				{#icons/history /} History
 			</button>
 		</li>
-		<li class="nav-item" role="presentation">
-			<button class="nav-link" id="itemViewMainPaneHistoryTabNavTransactionsTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneHistoryTabNavTransactionsTab-pane" type="button" role="tab" aria-controls="itemViewMainPaneHistoryTabNavTransactionsTab-pane" aria-selected="false">
-				{#icons/transaction /} Transactions
-			</button>
-		</li>
 	</ul>
-	<div class="tab-content" id="itemViewMainPaneHistoryTabNavContent">
-		<div class="tab-pane fade show active" id="itemViewMainPaneHistoryTabNavHistoryTab-pane" role="tabpanel" aria-labelledby="itemViewMainPaneHistoryTabNavHistoryTab" tabindex="0">
-			{#objView/history/objHistoryView containerId='itemHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item/') accordion=false /}
+	<div class="tab-content" id="itemViewMainPaneContent">
+
+
+
+	<!-- TODO:: add things here -->
+
+
+
+
+		<div class="tab-pane fade show active pt-2" id="itemViewMainPaneStorageTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneStorageTab" tabindex="0">
+			<div id="itemViewStoredNonePresentContainer">
+				<p class="h4">Nothing Stored</p>
+				<div id="itemViewStoredNonePresentHasStorageContainer">
+					<button class="btn btn-primary" id="itemViewStoredNonePresentHasStorageAddStoredButton" data-bs-target="#itemStoredTransactionAddModal" data-bs-toggle="modal" onclick="ItemStoredTransaction.Add.setupForm(ItemView.itemViewId.text(), null, this);">
+						+ Add Stored
+					</button>
+					<p class="h4">Available storage blocks:</p>
+					<p id="itemViewStoredNonePresentBlocksList"></p>
+				</div>
+				<div id="itemViewStoredNonePresentNoStorageContainer">
+					<p>No storage blocks associated with this item! Add storage by editing this item!</p>
+				</div>
+			</div>
+			<div id="itemViewStoredMultiContainer">
+				<p class="h4">
+					{#icons/storageBlocks /} <span id="itemViewStoredMultiNumStoredDisplay"></span> stored across <span id="itemViewStoredMultiBlockNum"></span> storage blocks:
+				</p>
+				<div class="mb-2">
+					<button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#itemStoredTransactionAddModal" id="itemViewStoredMultiAddStoredButton">
+						+ Add Stored Item
+					</button>
+				</div>
+				<ul class="nav nav-tabs" id="itemViewStoredViewTab" role="tablist">
+					<li class="nav-item" role="presentation">
+						<button class="nav-link active" id="itemViewStoredViewTabByBlock" data-bs-toggle="tab" data-bs-target="#itemViewStoredViewTabByBlockPane" type="button" role="tab" aria-controls="itemViewStoredViewTabByBlockPane" aria-selected="true">
+							{#icons/storageBlock /}
+							By Block
+						</button>
+					</li>
+					<li class="nav-item" role="presentation">
+						<button class="nav-link" id="itemViewStoredViewTabAllStored" data-bs-toggle="tab" data-bs-target="#itemViewStoredViewTabAllStoredPane" type="button" role="tab" aria-controls="itemViewStoredViewTabAllStoredPane" aria-selected="false">
+							{#icons/storageBlocks /}
+							All Stored
+						</button>
+					</li>
+				</ul>
+				<div class="tab-content" id="itemViewStoredViewTabContent">
+					<div class="tab-pane fade show active" id="itemViewStoredViewTabByBlockPane" role="tabpanel" aria-labelledby="itemViewStoredViewTabByBlock" tabindex="0">
+						<p id="itemViewStoredMultiNonePresentBlocksList"></p>
+						<div class="accordion" id="itemViewStoredMultiByBlockAccordion"></div>
+					</div>
+					<div class="tab-pane fade" id="itemViewStoredViewTabAllStoredPane" role="tabpanel" aria-labelledby="itemViewStoredViewTabAllStored" tabindex="0">
+						<div class="accordion-body p-0 pt-1" id="itemViewStoredViewTabAllStoredContainer">
+							<div class="row">
+								<div class="col accordion" id="itemViewAllStoredSearchAccordion">
+									<div class="accordion-item">
+										<h2 class="accordion-header" id="itemViewAllStoredSearchAccordionFieldsHeader">
+											<button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse"
+												data-bs-target="#itemViewAllStoredSearchAccordionFieldsCollapse" aria-expanded="false"
+												aria-controls="itemViewAllStoredSearchAccordionFieldsCollapse"
+											>
+												{#icons/search /} Search Fields
+											</button>
+										</h2>
+										<div id="itemViewAllStoredSearchAccordionFieldsCollapse" class="accordion-collapse collapse"
+											aria-labelledby="itemViewAllStoredSearchAccordionFieldsHeader" data-bs-parent="#itemViewAllStoredSearchAccordion"
+										>
+											<div class="accordion-body">
+												{#search/itemStored/searchForm id='itemViewAllStoredSearchForm' /}
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col">
+									<table class=" table table-bordered table-striped table-hover table-sm" id="itemViewAllStoredSearchResults">
+										{!{#search/itemCheckout/searchResults searchResults=searchResult actionType='full' showItem=false searchFormId='itemViewCheckoutSearchForm' showStillCheckedOut=false}!}
+										{!{/search/itemCheckout/searchResults}!}
+									</table>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div id="itemViewStoredBulkContainer">
+				<p class="h4">
+					{#icons/storageBlocks /} <span id="itemViewStoredBulkNumStoredDisplay"></span> stored across <span id="itemViewStoredBulkBlockNum"></span> storage blocks:
+				</p>
+				<p id="itemViewStoredBulkNonePresentBlocksList"></p>
+				<div class="accordion" id="itemViewStoredBulkAccordion"></div>
+			</div>
+			<div id="itemViewStoredSingleContainer">
+				<div class="accordion" id="itemViewStoredSingleAccordion"></div>
+			</div>
 		</div>
-		<div class="tab-pane fade" id="itemViewMainPaneHistoryTabNavTransactionsTab-pane" role="tabpanel" aria-labelledby="itemViewMainPaneHistoryTabNavTransactionsTab" tabindex="0">
-			{#search/storedTransaction/search rootPrefix=rootPrefix containerId='itemViewMainPaneHistoryTabNavTransactionsTab-search' itemId='' storedId='' accordion=false /}
+		<div class="tab-pane fade" id="itemViewMainPaneCheckedOutTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneCheckedOutTab" tabindex="0">
+			<div class="row">
+				<div class="col accordion" id="itemViewCheckoutSearchAccordion">
+					<div class="accordion-item">
+						<h2 class="accordion-header" id="itemViewCheckoutSearchAccordionFieldsHeader">
+							<button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse"
+								data-bs-target="#itemViewCheckoutSearchAccordionFieldsCollapse" aria-expanded="false"
+								aria-controls="itemViewCheckoutSearchAccordionFieldsCollapse"
+							>
+								{#icons/search /} Search Fields
+							</button>
+						</h2>
+						<div id="itemViewCheckoutSearchAccordionFieldsCollapse" class="accordion-collapse collapse"
+							aria-labelledby="itemViewCheckoutSearchAccordionFieldsHeader" data-bs-parent="#itemViewCheckoutSearchAccordion"
+						>
+							<div class="accordion-body">
+								{#search/itemCheckout/searchForm id='itemViewCheckoutSearchForm' rootPrefix=rootPrefix /}
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<table class=" table table-bordered table-striped table-hover table-sm" id="itemViewCheckoutSearchResults">
+						{!{#search/itemCheckout/searchResults searchResults=searchResult actionType='full' showItem=false searchFormId='itemViewCheckoutSearchForm' showStillCheckedOut=false}!}
+						{!{/search/itemCheckout/searchResults}!}
+					</table>
+				</div>
+			</div>
+		</div>
+		<div class="tab-pane fade" id="itemViewMainPaneStatsTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneStatsTab" tabindex="0">
+			<img src="" id="itemViewMainPaneStatsItemTransactionsAmountGraph" class="mt-2" style="max-width:100%">
+		</div>
+		<div class="tab-pane fade" id="itemViewMainPaneHistoryTabContent" role="tabpanel" aria-labelledby="itemViewMainPaneHistoryTab" tabindex="0">
+			<ul class="nav nav-tabs mt-2" id="itemViewMainPaneHistoryTabNav" role="tablist">
+				<li class="nav-item" role="presentation">
+					<button class="nav-link active" id="itemViewMainPaneHistoryTabNavHistoryTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneHistoryTabNavHistoryTab-pane" type="button" role="tab" aria-controls="itemViewMainPaneHistoryTabNavHistoryTab-pane" aria-selected="true">
+						{#icons/history /} History
+					</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button class="nav-link" id="itemViewMainPaneHistoryTabNavTransactionsTab" data-bs-toggle="tab" data-bs-target="#itemViewMainPaneHistoryTabNavTransactionsTab-pane" type="button" role="tab" aria-controls="itemViewMainPaneHistoryTabNavTransactionsTab-pane" aria-selected="false">
+						{#icons/transaction /} Transactions
+					</button>
+				</li>
+			</ul>
+			<div class="tab-content" id="itemViewMainPaneHistoryTabNavContent">
+				<div class="tab-pane fade show active" id="itemViewMainPaneHistoryTabNavHistoryTab-pane" role="tabpanel" aria-labelledby="itemViewMainPaneHistoryTabNavHistoryTab" tabindex="0">
+					{#objView/history/objHistoryView containerId='itemHistory' objectUrl=(rootPrefix + '/api/passthrough/inventory/item/') accordion=false /}
+				</div>
+				<div class="tab-pane fade" id="itemViewMainPaneHistoryTabNavTransactionsTab-pane" role="tabpanel" aria-labelledby="itemViewMainPaneHistoryTabNavTransactionsTab" tabindex="0">
+					{#search/storedTransaction/search rootPrefix=rootPrefix containerId='itemViewMainPaneHistoryTabNavTransactionsTab-search' itemId='' storedId='' accordion=false /}
+				</div>
+			</div>
 		</div>
 	</div>
-
-  </div>
-</div>
-
 {/modal}
