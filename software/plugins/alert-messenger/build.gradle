@@ -30,6 +30,7 @@ dependencies {
     implementation 'io.quarkus:quarkus-rest-client'
 
     implementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus:6.6.0'
+	testImplementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus-test-support:6.6.0'
     implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
     testImplementation 'io.quarkus:quarkus-junit5'
     testImplementation 'io.rest-assured:rest-assured'
