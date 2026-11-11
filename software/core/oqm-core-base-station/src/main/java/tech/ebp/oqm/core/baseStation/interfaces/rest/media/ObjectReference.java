@@ -47,10 +47,16 @@ public class ObjectReference extends ApiProvider {
 		@Valid @BeanParam ObjRefOptions ops
 	) {
 		log.info("Getting object reference: {}.", ops);
-		return Response.status(Response.Status.OK)
-				   .entity(this.objReferenceService.getObjRef(ops))
-				   .type(MediaType.TEXT_PLAIN_TYPE)
-				   .build();
+
+		try {
+			return Response.status(Response.Status.OK)
+					   .entity(this.objReferenceService.getObjRef(ops))
+					   .type(MediaType.TEXT_PLAIN_TYPE)
+					   .build();
+		} catch(IllegalArgumentException e){
+			return Response.status(Response.Status.BAD_REQUEST)
+					   .build();
+		}
 	}
 
 	@GET

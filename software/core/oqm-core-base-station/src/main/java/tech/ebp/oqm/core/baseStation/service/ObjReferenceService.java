@@ -27,10 +27,11 @@ public class ObjReferenceService {
 
 	private static final Pattern REF_PATTERN = Pattern.compile("^(oqm:|OQM:)?[a-zA-Z]+:[a-zA-Z0-9]+(:[a-zA-Z0-9]+)?$");
 
-	private void validateId(String id){
+	private String validateId(String id){
 		if(id == null || id.isBlank()){
 			throw new IllegalArgumentException("ID given null or blank.");
 		}
+		return id;
 	}
 
 	public String getRefValidationPattern(){
@@ -75,7 +76,7 @@ public class ObjReferenceService {
 
 		output.append(options.getObjType().shortForm);
 		output.append(":");
-		output.append(options.getId());
+		output.append(validateId(options.getId()));
 
 		options.getId2().ifPresentOrElse(
 			(id2)->{
@@ -84,7 +85,7 @@ public class ObjReferenceService {
 				}
 
 				output.append(":");
-				output.append(id2);
+				output.append(validateId(id2));
 			},
 			()->{
 				if(options.getObjType().hasSecondId){
