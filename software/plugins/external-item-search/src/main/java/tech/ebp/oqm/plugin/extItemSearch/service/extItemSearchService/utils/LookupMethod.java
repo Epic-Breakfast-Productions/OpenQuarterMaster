@@ -5,5 +5,6 @@ public enum LookupMethod {
 	BARCODE,
 	PART_NUM,
 	SET_NUM,
-	WEBPAGE;
+	WEBPAGE,
+	ALBUM
 }

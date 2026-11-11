@@ -3,6 +3,7 @@ package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.utils;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.ItemSearchService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.barcodeLookup.BarcodeLookupService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.dataKick.DatakickService;
+import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.deezer.DeezerLookupService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.isbndb.ISBNdbLookupService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.openfoodfacts.OpenFoodFactsService;
 import tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers.openlibrary.OpenLibraryService;
@@ -47,7 +48,12 @@ public enum LookupService {
         ISBNdbLookupService.class,
         List.of(LookupSource.ISBNDB),
         List.of(LookupMethod.BARCODE, LookupMethod.TEXT)
-    );
+    ),
+	DEEZER(
+		DeezerLookupService.class,
+		List.of(LookupSource.DEEZER),
+		List.of(LookupMethod.ALBUM)
+	);
 
 	public final Class<? extends ItemSearchService> searchClass;
 	public final Collection<LookupSource> supportedSources;
