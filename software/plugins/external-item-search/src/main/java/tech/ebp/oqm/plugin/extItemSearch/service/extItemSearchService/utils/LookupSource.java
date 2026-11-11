@@ -7,5 +7,6 @@ public enum LookupSource {
 	UPC_ITEM_DB,
     OPENFOODFACTS,
     OPENLIBRARY,
-    ISBNDB
+    ISBNDB,
+	DEEZER
 }
