@@ -84,7 +84,6 @@
 	{#itemStored/itemStoredViewModal rootPrefix=rootPrefix /}
 	{#itemStored/itemStoredEditModal rootPrefix=rootPrefix /}
 	{#itemStored/transaction/allTransactionModals /}
-	{#CodeScannerModal /}
 	{#fileAttachment/FileAttachmentSearchSelectModal otherModalId="addEditItemModal" /}
 	{#fileAttachment/FileAttachmentViewModal otherModalId='itemViewModal' /}
 	{#object/idGenerator/searchSelectModal rootPrefix=rootPrefix /}
@@ -121,7 +120,6 @@
 	import { StoredView } from '{rootPrefix}/res/js/obj/itemStored/StoredView.js';
 	import { ItemCheckoutSearchSelect } from '{rootPrefix}/res/js/obj/itemCheckout/ItemCheckoutSearchSelect.js';
 	import { ExtItemSearch } from '{rootPrefix}/res/js/item/ExtItemSearch.js';
-	import { CodeScanner } from '{rootPrefix}/res/js/CodeScanner.js';
 	import { ItemCategoryInput } from '{rootPrefix}/res/js/obj/itemCategory/ItemCategoryInput.js';
 
 	SearchUtils.init();
@@ -141,7 +139,6 @@
 	ItemStoredTransaction.init();
 	ItemStoredSearchSelect.init();
 	ExtItemSearch.init();
-	CodeScanner.init();
 	ItemCategoryInput.init();
 	HistorySearchUtils.init();
 

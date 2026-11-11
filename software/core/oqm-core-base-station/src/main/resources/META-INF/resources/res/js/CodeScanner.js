@@ -36,6 +36,7 @@ export class CodeScanner extends PageUtility {
 
 		if(CodeScanner.codeDestInput){
 			CodeScanner.codeDestInput.val(decodedText);
+			CodeScanner.codeDestInput.trigger('change');
 		} else {
 			console.warn("No destination input!");
 		}
@@ -51,7 +52,7 @@ export class CodeScanner extends PageUtility {
 		CodeScanner.scanningModal.on('show.bs.modal', event => {
 			console.log("Opening Barcode Scanning Modal");
 			CodeScanner.codeScanner.render(CodeScanner.onScanSuccess, CodeScanner.onScanFailure);
-			CodeScanner.codeDestInput = $(event.relatedTarget.nextElementSibling);
+			CodeScanner.codeDestInput = $(event.relatedTarget).siblings(".barcodeDestination");
 
 			let inputModal = CodeScanner.codeDestInput.closest(".modal");
 			if(inputModal.length){
