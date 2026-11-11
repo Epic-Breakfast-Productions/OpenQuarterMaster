@@ -179,13 +179,14 @@ Ingests:
 
 			<form class="d-flex me-auto" method="get" action="{rootPrefix}/items" id="navSearchForm">
 				<div class="input-group">
-					<input class="form-control" id="navSearchInput" type="text" placeholder="Search" name="name" style="max-width:150px;">
-					<button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchTypeSelect">{#icons/items}{/icons/items}</button>
+					<button class="btn btn-secondary" type="button" data-bs-toggle="modal" data-bs-target="#codeScannerModal" title="Click to open a scan window">{#icons/barcode /}</button>
+					<input class="form-control barcodeDestination" id="navSearchInput" type="text" placeholder="Search" name="name" style="max-width:150px;">
+					<button class="btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false" id="navSearchTypeSelect">{#icons/items /}</button>
 					<ul class="dropdown-menu dropdown-menu-end">
-						<li><a class="dropdown-item" href="#" onclick="updateNavSearchDestination('{rootPrefix}/items', Icons.items, 'name')">{#icons/items}{/icons/items} Items</a></li>
-						<li><a class="dropdown-item" href="#" onclick="updateNavSearchDestination('{rootPrefix}/storage', Icons.storageBlocks, 'labelOrNickname')">{#icons/storageBlocks}{/icons/storageBlocks} Storage Blocks</a></li>
+						<li><a class="dropdown-item" href="#" onclick="NavSearch.updateNavSearchDestination('{rootPrefix}/items', Icons.items, 'name')">{#icons/items /} Items</a></li>
+						<li><a class="dropdown-item" href="#" onclick="NavSearch.updateNavSearchDestination('{rootPrefix}/storage', Icons.storageBlocks, 'labelOrNickname')">{#icons/storageBlocks /} Storage Blocks</a></li>
 					</ul>
-					<button class="btn btn-outline-dark" type="submit">{#icons/search}{/icons/search}</button>
+					<button class="btn btn-outline-dark" type="submit">{#icons/search /}</button>
 				</div>
 			</form>
 			<ul class="navbar-nav mb-auto">
@@ -324,11 +325,11 @@ Ingests:
 		<div class="col-sm-4">
 			<span class="h5">Open QuarterMaster Base Station</span><br/>
 
-			Version <b>{config:['service.version']}</b>,
+			Version <b>{config:['service.version']}</b>
 			<a href="{config:['service.gitLink']}" target="_blank">{#icons/github /} Github</a>
 			<br/>
 
-			&copy; 2026 <a href="https://epic-breakfast-productions.tech/" title="Epic Breakfast Productions" target="_blank">EBP <img src="{rootPrefix}/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a>,
+			&copy; 2026 <a href="https://epic-breakfast-productions.tech/" title="Epic Breakfast Productions" target="_blank">EBP <img src="{rootPrefix}/media/EBP-logo-icon.svg" style="max-height:1.2em;" alt="EBP Logo"/></a>
 			Released under the <a href="https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/blob/main/LICENSE" target="_blank">GPL v3.0 License</a>
 			<br/>
 
@@ -466,6 +467,7 @@ Ingests:
 
 <!-- Modals -->
 {#insert modals}{/}
+{#CodeScannerModal /}
 {#modal id='imgView' size='lg' title=''}
 <img src="" alt="Full View" class="imgViewImg" style="width: 100%;" />
 {/modal}
@@ -478,6 +480,7 @@ Ingests:
 <script src="{rootPrefix}/lib/luxon/3.3.0/luxon.min.js"></script>
 <script src="{rootPrefix}/lib/spin.js/spin.umd.js"></script>
 <script src="{rootPrefix}/lib/dselect/1.0.4/dist/js/dselect.js"></script><!-- Not usable as a module -->
+<script src="{rootPrefix}/lib/html5-qrcode/2.3.8/html5-qrcode.min.js"></script><!-- doesn't play nice with import -->
 
 <!-- needed globally and assured loaded synchronously as non-modules -->
 <script src="{rootPrefix}/res/js/constants.js"></script>
@@ -493,6 +496,9 @@ Ingests:
 	import { TimeUtils } from '{rootPrefix}/res/js/TimeUtils.js';
 	import { TextCopyUtils } from "{rootPrefix}/res/js/TextCopyUtils.js";
 	import { ImgView } from "{rootPrefix}/res/js/ImgView.js";
+	import { CodeScanner } from '{rootPrefix}/res/js/CodeScanner.js';
+	import { ObjReference, ObjReferenceUtils } from "{rootPrefix}/res/js/obj/ObjReference.js";
+	import { NavSearch } from '{rootPrefix}/res/js/NavSearch.js';
 
 	// init necessary modules
 	PageMessageUtils.init();
@@ -502,6 +508,9 @@ Ingests:
 	TimeUtils.init();
 	TextCopyUtils.init();
 	ImgView.init();
+	CodeScanner.init();
+	ObjReferenceUtils.init();
+	NavSearch.init();
 
 	Main.processStop("Main page modules load");
 </script>
