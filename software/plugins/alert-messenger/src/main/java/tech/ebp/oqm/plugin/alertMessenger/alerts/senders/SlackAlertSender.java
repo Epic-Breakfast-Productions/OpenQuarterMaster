@@ -1,19 +1,15 @@
 package tech.ebp.oqm.plugin.alertMessenger.alerts.senders;
 
-import io.quarkus.rest.client.reactive.QuarkusRestClientBuilder;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.plugin.alertMessenger.WebhookClient;
 import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
 import tech.ebp.oqm.plugin.alertMessenger.connections.SlackConnection;
-import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptionService;
 import tech.ebp.oqm.plugin.alertMessenger.throttle.EventMetrics;
 import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.slack.SlackWebhookMessage;
 
-import java.net.URI;
 import java.util.stream.Collectors;
 
 /**
@@ -22,10 +18,7 @@ import java.util.stream.Collectors;
  */
 @ApplicationScoped
 @Slf4j
-public class SlackAlertSender implements AlertSender<SlackConnection> {
-    @Inject
-    EncryptionService encryptionService;
-
+public class SlackAlertSender extends WebhookSender implements AlertSender<SlackConnection> {
 
     @Override
     public ConnectionType messageChannel() {
@@ -56,19 +49,10 @@ public class SlackAlertSender implements AlertSender<SlackConnection> {
         }
     }
 
-    private String getDecryptedWebhookUrl(SlackConnection connection) {
-        return encryptionService.decrypt(connection.getWebhookUrl());
-    }
-
     private static String formatEventMetrics(EventMetrics eventMetrics) {
         return "Event Counts by Database ID:\n" + eventMetrics.getEventCountsByDatabaseId().entrySet().stream()
             .map(entry -> "    " + entry.getKey() + ": " + entry.getValue())
             .collect(Collectors.joining("\n"));
     }
 
-	private WebhookClient buildClient(SlackConnection connection) {
-		return QuarkusRestClientBuilder.newBuilder()
-			.baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
-			.build(WebhookClient.class);
-	}
 }

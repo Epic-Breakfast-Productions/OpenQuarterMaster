@@ -1,22 +1,18 @@
 package tech.ebp.oqm.plugin.alertMessenger.alerts.senders;
 
-import io.quarkus.rest.client.reactive.QuarkusRestClientBuilder;
 import jakarta.enterprise.context.ApplicationScoped;
-import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrapper;
 import tech.ebp.oqm.plugin.alertMessenger.WebhookClient;
 import tech.ebp.oqm.plugin.alertMessenger.alerts.AlertSender;
 import tech.ebp.oqm.plugin.alertMessenger.connections.DiscordConnection;
-import tech.ebp.oqm.plugin.alertMessenger.connections.encryption.EncryptionService;
 import tech.ebp.oqm.plugin.alertMessenger.throttle.EventMetrics;
 import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordEmbed;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordField;
 import tech.ebp.oqm.plugin.alertMessenger.utils.webhooks.discord.DiscordWebhookMessage;
 
-import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -26,9 +22,7 @@ import java.util.stream.Collectors;
  */
 @ApplicationScoped
 @Slf4j
-public class DiscordAlertSender implements AlertSender<DiscordConnection> {
-    @Inject
-    EncryptionService encryptionService;
+public class DiscordAlertSender extends WebhookSender implements AlertSender<DiscordConnection> {
 
     private static final int DISCORD_FIELD_LIMIT = 1_000;
     private static final String TRUNCATION_SUFFIX = "\n...[truncated]";
@@ -60,12 +54,6 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
             throw new IllegalStateException("Discord delivery failed", e);
         }
     }
-
-	private WebhookClient buildClient(DiscordConnection connection) {
-		return QuarkusRestClientBuilder.newBuilder()
-			.baseUri(URI.create(this.getDecryptedWebhookUrl(connection)))
-			.build(WebhookClient.class);
-	}
 
     private DiscordWebhookMessage toDiscordMessage(EventNotificationWrapper event) {
         return new DiscordWebhookMessage(
@@ -139,9 +127,5 @@ public class DiscordAlertSender implements AlertSender<DiscordConnection> {
 
     private int getColor(String preferenceId) {
         return preferenceId.hashCode() & 0xFFFFFF;
-    }
-
-    private String getDecryptedWebhookUrl(DiscordConnection connection) {
-        return encryptionService.decrypt(connection.getWebhookUrl());
     }
 }

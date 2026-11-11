@@ -6,6 +6,7 @@ import io.quarkus.panache.common.Page;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -37,4 +38,8 @@ public class UserPreferencesRepository implements PanacheMongoRepository<UserPre
     public PanacheQuery<UserPreferences> findAllPaged(int pageIndex, int pageSize) {
         return findAll().page(Page.of(pageIndex, pageSize));
     }
+
+	public Iterator<UserPreferences> getEnabled() {
+		return find("enabled", true).stream().iterator();
+	}
 }

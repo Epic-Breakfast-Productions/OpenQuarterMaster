@@ -28,8 +28,8 @@ public class UserPreferencesService {
         return this.repository.findAllPaged(pageIndex, pageSize).list();
     }
 
-    public Iterator<UserPreferences> getIterator() {
-        return this.repository.findAll().stream().iterator();
+    public Iterator<UserPreferences> getEnabled() {
+        return this.repository.getEnabled();
     }
 
     public UserPreferences get(String id, String userId) {

@@ -70,9 +70,6 @@ public class ConnectionDetailsRepository implements PanacheMongoRepository<Conne
 		if (entity instanceof WebhookConnection webhook) {
 			String url = webhook.getWebhookUrl();
 			boolean isEncrypted = !url.regionMatches(true, 0, WEBHOOK_PREFIX, 0, WEBHOOK_PREFIX.length());
-			if (url.contains("://")) {
-				validateWebhookUrl(url, webhook.getType());
-			}
 			if (!isEncrypted) {
 				validateWebhookUrl(url, webhook.getType());
 				webhook.setWebhookUrl(encryptionService.encrypt(url));
