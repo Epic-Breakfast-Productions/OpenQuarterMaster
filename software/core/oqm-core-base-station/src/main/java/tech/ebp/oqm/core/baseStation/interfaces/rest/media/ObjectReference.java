@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import jakarta.ws.rs.BeanParam;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
+import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
@@ -22,7 +23,6 @@ import tech.ebp.oqm.core.baseStation.service.ObjReferenceService;
 import tech.ebp.oqm.core.baseStation.utils.Roles;
 
 /**
- * TODO:: review produces
  */
 @Slf4j
 @Path("/api/media/objRef")
@@ -42,7 +42,7 @@ public class ObjectReference extends ApiProvider {
 		responseCode = "200",
 		description = "Got the currency."
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces(MediaType.TEXT_PLAIN)
 	public Response getObjRefString(
 		@Valid @BeanParam ObjRefOptions ops
 	) {
@@ -54,6 +54,31 @@ public class ObjectReference extends ApiProvider {
 	}
 
 	@GET
+	@Path("parse/{ref}")
+	@Operation(
+		summary = "Gets an object reference string given the options."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Got the currency."
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	public Response parseObjRefString(
+		@PathParam("ref") String objRef
+	) {
+		log.info("Parsing object reference: {}.", objRef);
+		try {
+			return Response.status(Response.Status.OK)
+					   .entity(this.objReferenceService.parseObjReference(objRef))
+					   .type(MediaType.APPLICATION_JSON)
+					   .build();
+		} catch(IllegalArgumentException e){
+			return Response.status(Response.Status.BAD_REQUEST)
+					   .build();
+		}
+	}
+
+	@GET
 	@Path("image")
 	@Operation(
 		summary = "Gets an object reference image string given the options."
@@ -62,7 +87,7 @@ public class ObjectReference extends ApiProvider {
 		responseCode = "200",
 		description = "Got the currency."
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces("image/svg+xml")
 	public Response getImage(
 		@Valid @BeanParam ObjRefImgOptions ops
 	) {

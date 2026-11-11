@@ -1,9 +1,9 @@
 package tech.ebp.oqm.core.baseStation.model.objReference;
 
 public enum ObjRefObjType {
-	STORAGE_BLOCK("StorageBlock", "B", false),
-	INVENTORY_ITEM("InventoryItem", "I", false),
-	STORED("ItemStored", "S", true)
+	StorageBlock("StorageBlock", "B", false),
+	InventoryItem("InventoryItem", "I", false),
+	ItemStored("ItemStored", "S", true)
 	;
 
 	public final String longForm;
@@ -14,5 +14,17 @@ public enum ObjRefObjType {
 		this.longForm = longForm;
 		this.shortForm = shortForm;
 		this.hasSecondId = hasSecondId;
+	}
+
+	public static ObjRefObjType toRef(String typeString){
+		for(ObjRefObjType cur : ObjRefObjType.values()){
+			if(
+				cur.longForm.equalsIgnoreCase(typeString) ||
+				cur.shortForm.equalsIgnoreCase(typeString)
+			){
+				return cur;
+			}
+		}
+		throw new IllegalArgumentException("Invalid obj ref object type: " + typeString);
 	}
 }

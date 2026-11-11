@@ -1,4 +1,5 @@
-import {PageUtility} from "../utilClasses/PageUtility.js";
+import { PageUtility } from "../utilClasses/PageUtility.js";
+import { Rest } from "../Rest.js";
 
 export class ObjReference {
 	type;
@@ -14,14 +15,23 @@ export class ObjReference {
 
 export class ObjReferenceUtils extends PageUtility {
 
-	static parsing = class {
+	static Parsing = class {
+		static refStringCheckPattern = /^(oqm:|OQM:)?[a-zA-Z]+:[a-zA-Z0-9]+(:[a-zA-Z0-9]+)?$/;
+		static isRefString(string){
+			return ObjReferenceUtils.Parsing.refStringCheckPattern.test(string);
+		}
 		static parseReference(refString){
-			//TODO
-			return new ObjReference(null, null);
+			return Rest.call({
+				url: Rest.apiRoot + "/media/objRef/parse/" + refString,
+				done: function (data){
+					console.log("Got parsed obj ref: ", data);
+					return new ObjReference(data.type, data.id, data.id2);
+				}
+			});
 		}
 	}
 
-	static generation = class {
+	static Generation = class {
 
 		static #getUrlParamsWithRef(ref){
 			let params = new URLSearchParams();
@@ -39,7 +49,7 @@ export class ObjReferenceUtils extends PageUtility {
 		static getRefStringUrl = function(objRef){
 			console.log("Building url for object reference code image: ", objRef, type);
 
-			let params = ObjReferenceUtils.generation.#getUrlParamsWithRef(objRef);
+			let params = ObjReferenceUtils.Generation.#getUrlParamsWithRef(objRef);
 
 			return Rest.apiRoot + "/media/objRef?" + params.toString();
 		}
@@ -58,7 +68,7 @@ export class ObjReferenceUtils extends PageUtility {
 		}){
 			console.log("Building url for object reference code image: ", objRef, type);
 
-			let params = ObjReferenceUtils.generation.#getUrlParamsWithRef(objRef);
+			let params = ObjReferenceUtils.Generation.#getUrlParamsWithRef(objRef);
 
 			params.set("includeOqm", includeOqm);
 			params.set("imageType", type);

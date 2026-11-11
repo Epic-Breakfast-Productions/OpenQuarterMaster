@@ -67,7 +67,7 @@
 								</h2>
 								<div id="objRefAccordionBlock" class="accordion-collapse collapse show" data-bs-parent="#objRefAccordion">
 									<div class="accordion-body">
-										{#inputs/storageBlock/storageBlockSelectInput id='objRefBlockSelectInput' onchange="generateObjRef('STORAGE_BLOCK', $(this).val());" /}
+										{#inputs/storageBlock/storageBlockSelectInput id='objRefBlockSelectInput' onchange="generateObjRef('StorageBlock', $(this).val());" /}
 									</div>
 								</div>
 							</div>
@@ -79,7 +79,7 @@
 								</h2>
 								<div id="objRefAccordionItem" class="accordion-collapse collapse" data-bs-parent="#objRefAccordion">
 									<div class="accordion-body">
-										{#inputs/item/itemSelectInput id='objRefItemSelectInput' onchange="generateObjRef('INVENTORY_ITEM', $(this).val());" /}
+										{#inputs/item/itemSelectInput id='objRefItemSelectInput' onchange="generateObjRef('InventoryItem', $(this).val());" /}
 									</div>
 								</div>
 							</div>
@@ -92,7 +92,7 @@
 								<div id="objRefAccordionStored" class="accordion-collapse collapse" data-bs-parent="#objRefAccordion">
 									<div class="accordion-body">
 										{#inputs/item/itemSelectInput id='objRefItemSelectInputForStored' onchange="ItemStoredSearchSelect.setupInputs($('#objRefItemStoredSelectInput-inputGroup'), $(this).val());" /}
-										{#inputs/itemStored/itemStoredSelectInput id='objRefItemStoredSelectInput' onchange="generateObjRef('STORED', $(this).val(), $('#objRefItemStoredSelectInput-itemStoredInputItemId').val());" /}
+										{#inputs/itemStored/itemStoredSelectInput id='objRefItemStoredSelectInput' onchange="generateObjRef('ItemStored', $(this).val(), $('#objRefItemStoredSelectInput-itemStoredInputItemId').val());" /}
 									</div>
 								</div>
 							</div>
@@ -287,7 +287,7 @@
 		}
 
 		function generateObjRef(type, id, id2 = null){
-			let url = ObjReferenceUtils.generation.getCodeUrl({
+			let url = ObjReferenceUtils.Generation.getCodeUrl({
 				objRef: new ObjReference(type, id, id2),
 				type: codeTypeInput.val()
 			});

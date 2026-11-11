@@ -1,9 +1,14 @@
 package tech.ebp.oqm.core.baseStation.service;
 
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 import jakarta.validation.Valid;
+import lombok.NonNull;
+import lombok.extern.slf4j.Slf4j;
 import tech.ebp.oqm.core.baseStation.model.objReference.ObjRefImgOptions;
+import tech.ebp.oqm.core.baseStation.model.objReference.ObjRefObjType;
 import tech.ebp.oqm.core.baseStation.model.objReference.ObjRefOptions;
+import tech.ebp.oqm.core.baseStation.model.objReference.ObjectReference;
 import uk.org.okapibarcode.backend.Code128;
 import uk.org.okapibarcode.backend.HumanReadableLocation;
 import uk.org.okapibarcode.backend.QrCode;
@@ -13,9 +18,57 @@ import uk.org.okapibarcode.output.SvgRenderer;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.regex.Pattern;
 
+@Named("ObjReferenceService")
+@Slf4j
 @ApplicationScoped
 public class ObjReferenceService {
+
+	private static final Pattern REF_PATTERN = Pattern.compile("^(oqm:|OQM:)?[a-zA-Z]+:[a-zA-Z0-9]+(:[a-zA-Z0-9]+)?$");
+
+	private void validateId(String id){
+		if(id == null || id.isBlank()){
+			throw new IllegalArgumentException("ID given null or blank.");
+		}
+	}
+
+	public String getRefValidationPattern(){
+		return REF_PATTERN.pattern();
+	}
+
+	public ObjectReference parseObjReference(@NonNull String refString){
+		if(!REF_PATTERN.matcher(refString).matches()){
+			throw new IllegalArgumentException("Reference string does not match expected format.");
+		}
+
+		refString = refString.replaceFirst("(?i)OQM:", "");
+
+		String[] parts = refString.split(":");
+
+		if(parts.length != 2 && parts.length != 3){
+			throw new IllegalArgumentException("Malformed Reference String.");
+		}
+
+		ObjectReference.ObjectReferenceBuilder builder = ObjectReference.builder();
+
+		ObjRefObjType type = ObjRefObjType.toRef(parts[0]);
+		builder.type(type);
+
+		this.validateId(parts[1]);
+		builder.id(parts[1]);
+
+		if(type.hasSecondId){
+			if(parts.length != 3){
+				throw new IllegalArgumentException("Must supply second id for object of type " + type);
+			}
+
+			this.validateId(parts[2]);
+			builder.id2(parts[2]);
+		}
+
+		return builder.build();
+	}
 
 	public String getObjRef(@Valid ObjRefOptions options) {
 		StringBuilder output = new StringBuilder(options.getIncludeOqm() ? "OQM:" : "");
