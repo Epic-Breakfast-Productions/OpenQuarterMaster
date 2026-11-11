@@ -92,7 +92,7 @@
 								<div id="objRefAccordionStored" class="accordion-collapse collapse" data-bs-parent="#objRefAccordion">
 									<div class="accordion-body">
 										{#inputs/item/itemSelectInput id='objRefItemSelectInputForStored' onchange="ItemStoredSearchSelect.setupInputs($('#objRefItemStoredSelectInput-inputGroup'), $(this).val());" /}
-										{#inputs/itemStored/itemStoredSelectInput id='objRefItemStoredSelectInput' onchange="generateObjRef('ItemStored', $(this).val(), $('#objRefItemStoredSelectInput-itemStoredInputItemId').val());" /}
+										{#inputs/itemStored/itemStoredSelectInput id='objRefItemStoredSelectInput' onchange="generateObjRef('Stored', $('#objRefItemStoredSelectInput-itemStoredInputItemId').val(), $(this).val());" /}
 									</div>
 								</div>
 							</div>
@@ -114,11 +114,11 @@
 								<div class="accordion" id="qrGenerateAccord">
 									<div class="accordion-item">
 										<h2 class="accordion-header" id="otherAccordionForObj">
-											<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#objRefAccordionItem" aria-expanded="true" aria-controls="objRefAccordionItem">
+											<button class="accordion-button" type="button" data-bs-toggle="collapse" data-bs-target="#objAccordionItem" aria-expanded="true" aria-controls="objAccordionItem">
 												Data for an Object
 											</button>
 										</h2>
-										<div id="objRefAccordionItem" class="accordion-collapse collapse show" aria-labelledby="otherAccordionForObj" data-bs-parent="#qrGenerateAccord">
+										<div id="objAccordionItem" class="accordion-collapse collapse show" aria-labelledby="otherAccordionForObj" data-bs-parent="#qrGenerateAccord">
 											<div class="accordion-body">
 												<div class="row mb-2">
 													<div class="col">

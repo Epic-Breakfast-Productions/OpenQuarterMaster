@@ -3,7 +3,7 @@ package tech.ebp.oqm.core.baseStation.model.objReference;
 public enum ObjRefObjType {
 	StorageBlock("StorageBlock", "B", false),
 	InventoryItem("InventoryItem", "I", false),
-	ItemStored("ItemStored", "S", true)
+	Stored("Stored", "S", true)
 	;
 
 	public final String longForm;

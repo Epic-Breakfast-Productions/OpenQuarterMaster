@@ -47,7 +47,7 @@ export class ObjReferenceUtils extends PageUtility {
 		}
 
 		static getRefStringUrl = function(objRef){
-			console.log("Building url for object reference code image: ", objRef, type);
+			console.log("Building url for object reference code image: ", objRef);
 
 			let params = ObjReferenceUtils.Generation.#getUrlParamsWithRef(objRef);
 
