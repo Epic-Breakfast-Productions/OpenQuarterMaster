@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.NonNull;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.storage.items.transactions.TransactionType;
@@ -25,7 +24,6 @@ import javax.measure.Quantity;
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
 @Schema(title = "AddAmountTransaction", description = "A transaction to add an amount to a stored object.")
-@BsonDiscriminator
 public class AddAmountTransaction extends AddTransaction {
 	
 	/**

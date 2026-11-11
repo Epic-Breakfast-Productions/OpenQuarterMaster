@@ -6,7 +6,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityType;
@@ -14,7 +13,6 @@ import tech.ebp.oqm.core.api.model.object.interactingEntity.InteractingEntityTyp
 @Data
 @NoArgsConstructor
 //@AllArgsConstructor
-@BsonDiscriminator
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
