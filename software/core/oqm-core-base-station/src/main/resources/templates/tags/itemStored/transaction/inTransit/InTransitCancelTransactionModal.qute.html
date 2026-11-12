@@ -1,0 +1,36 @@
+{#modal id='itemStoredTransactionInTransitCancel' size='xl' title='Add Item In-Transit'}
+	{#titleIcon}
+		{#icons/transactionInTransitCancel /}
+	{/titleIcon}
+	{#footerButtons}
+	<button type="submit" id="itemStoredTransactionInTransitCancelFormSubmitButton" class="btn btn-success" form="itemStoredTransactionInTransitCancelForm">
+		{#icons/add /} Cancel Item In Transit
+	</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col messages" id="itemStoredTransactionInTransitCancelMessages"></div>
+	</div>
+
+	<form id='itemStoredTransactionInTransitCancelForm'>
+		<input type="hidden" name="itemId" id="itemStoredTransactionInTransitCancelFormItemIdInput" value=""/>
+		<div class="row">
+			<div class="col">
+				<div class="mb-3" id="itemStoredTransactionInTransitCancelFormItemInputContainer">
+					<label for=itemStoredTransactionInTransitCancelFormItem-itemInputSearchButton" class="form-label h3">{#icons/item}{/icons/item} Item:</label>
+					{#inputs/item/itemSelectInput id="itemStoredTransactionInTransitCancelFormItem" /}
+				</div>
+				<div class="mb-3" id="itemStoredTransactionInTransitCancelFormItemDisplayContainer">
+					<h3>
+						{#icons/item /} Item: <span id="itemStoredTransactionInTransitCancelFormItemDisplayName"></span>
+					</h3>
+				</div>
+
+
+
+
+				<div id="itemStoredTransactionInTransitCancelFormInputsContainer">
+				</div>
+			</div>
+		</div>
+	</form>
+{/modal}
