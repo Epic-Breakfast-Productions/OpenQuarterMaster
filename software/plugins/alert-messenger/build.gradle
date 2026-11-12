@@ -33,6 +33,8 @@ dependencies {
 	testImplementation 'tech.epic-breakfast-productions.openquartermaster.lib.core:core-api-lib-quarkus-test-support:6.6.0'
     implementation 'org.jboss.slf4j:slf4j-jboss-logmanager'
     testImplementation 'io.quarkus:quarkus-junit5'
+    testImplementation 'io.quarkus:quarkus-junit5-mockito'
+    testImplementation 'io.quarkus:quarkus-test-security'
     testImplementation 'io.rest-assured:rest-assured'
 
     // Added Mockito for mocking in unit tests.
