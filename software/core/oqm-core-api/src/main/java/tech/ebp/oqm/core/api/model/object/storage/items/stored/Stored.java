@@ -50,6 +50,31 @@ import java.util.stream.Collectors;
 
 /**
  * Describes an item stored in the system.
+ * <p>
+ * A {@code Stored} object represents a specific physical instance or quantity of an
+ * {@link InventoryItem} that is held by the system, tracking details such as its
+ * current {@link StoredState}, {@link Identifier}s, pricing, expiration, and
+ * condition. It is the concrete, per-instance counterpart to the generic
+ * {@link InventoryItem} definition.
+ * <p>
+ * This is an abstract class; use one of its subtypes via the builder:
+ * <ul>
+ *     <li>{@link AmountStored} - a quantity of an item (e.g., 5 meters of pipe)</li>
+ *     <li>{@link UniqueStored} - a single unique item (e.g., one serial-numbered unit)</li>
+ * </ul>
+ * <p>
+ * Example - creating a stored object and applying item defaults:
+ * <pre>{@code
+ * Stored stored = AmountStored.builder()
+ *     .item(itemId)
+ *     .amount(UnitUtils.Quantities.ONE)
+ *     .build();
+ * stored.applyDefaultsFromItem(inventoryItem); // computes prices and label
+ * }</pre>
+ * <p>
+ * Serialization: subclasses are discriminated by the {@code type} property
+ * ({@code AMOUNT}/{@code UNIQUE}) and extend {@link ImagedMainObject}, giving
+ * them an ID, history, images, and the ability to hold file attachments.
  */
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
@@ -70,12 +95,24 @@ import java.util.stream.Collectors;
 @Schema(oneOf = {AmountStored.class, UniqueStored.class})
 public abstract class Stored extends ImagedMainObject implements FileAttachmentContaining {
 
+	/**
+	 * The current schema version of this object, used for data migration.
+	 */
 	public static final int CUR_SCHEMA_VERSION = 5;
 
+	/** Matches {@code {placeholder}} tokens within a label format string. */
 	private static final Pattern LABEL_PARTS_PATTERN = Pattern.compile("\\{[^}]*}");
+
+	/** Delimiter separating the placeholder name from its arguments. */
 	private static final String LABEL_PLACEHOLDER_PART_DELIM = ";";
+
+	/** Delimiter separating multiple arguments within a placeholder. */
 	private static final String LABEL_PLACEHOLDER_ARG_DELIM = LABEL_PLACEHOLDER_PART_DELIM;
+
+	/** Marker emitted in place of an unresolvable placeholder value. */
 	private static final String LABEL_ERROR = "#E#";
+
+	/** Format used for {@code exp} placeholders when no explicit format is given. */
 	private static final DateTimeFormatter LABEL_DT_DEFAULT_FORMATTER = DateTimeFormatter.ofPattern("MM/dd/yyyy");
 
 
@@ -132,10 +169,12 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	 *     </li>
 	 * </ul>
 	 *
-	 * @param stored
-	 * @param format
-	 *
-	 * @return
+	 * @param stored the stored object to draw values from.
+	 * @param format the label format string containing at least one {@code {placeholder}}.
+	 *              Must not be null, blank, or contain leading/trailing whitespace.
+	 * @return the rendered label text with all placeholders substituted.
+	 * @throws IllegalArgumentException if the format is invalid, contains an unknown
+	 *                                  placeholder, or if no placeholders are present.
 	 */
 	public static String parseLabel(@NonNull Stored stored, @NonNull String format) {
 		if (format.isBlank()) {
@@ -345,6 +384,9 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		return newIdentifier;
 	}
 
+	/**
+	 * The subtype discriminator for this stored object ({@code AMOUNT} or {@code UNIQUE}).
+	 */
 	@Schema(required = true, description = "The type of stored object.")
 	public abstract StoredType getType();
 
@@ -362,12 +404,19 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@Schema(description = "The state describing how this item is stored. Example, stored in a storage block, or installed in another item.")
 	private StoredState state;
 
+	/**
+	 * Checks whether this stored object is currently in the given {@link StoredStateType}.
+	 *
+	 * @param type the state type to check against (e.g., {@code STORED}, {@code IN_TRANSIT}).
+	 * @return {@code true} if the current state matches, or if no state is set.
+	 */
 	public boolean isState(StoredStateType type) {
 		return this.getState() != null && this.getState().getType().equals(type);
 	}
 
 	/**
-	 * The general ids that apply to this stored, but not to all stored (as specified in the associated item)
+	 * Identifiers that apply to this specific stored instance, but not to all
+	 * stored of the associated item (e.g., a serial number on one of many).
 	 */
 	@NonNull
 	@NotNull
@@ -391,11 +440,22 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@UniqueLabeledCollection
 	private LinkedHashSet<@NotNull StoredPricing> prices = new LinkedHashSet<>();
 
+	/**
+	 * Prices for this stored item, derived from the stored's own prices plus
+	 * defaults not already present. Read-only; recomputed via {@link #calculatePrices(InventoryItem)}.
+	 */
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PRIVATE)
 	@lombok.Builder.Default
 	private LinkedHashSet<@NotNull CalculatedPricing> calculatedPrices = null;
 
+	/**
+	 * Recalculates this stored's {@link CalculatedPricing} set from its own prices
+	 * merged with the item's default prices.
+	 *
+	 * @param item the associated item, whose default prices may be carried over.
+	 * @return {@code true} if the calculated prices changed, {@code false} otherwise.
+	 */
 	protected boolean calculatePrices(InventoryItem item) {
 		LinkedHashSet<CalculatedPricing> storedPrices = this.getPrices().stream()
 															.map((p)->p.calculatePrice(this)).collect(Collectors.toCollection(LinkedHashSet::new));
@@ -452,6 +512,9 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	@lombok.Builder.Default
 	List<@NotNull ObjectId> imageIds = new ArrayList<>();
 
+	/**
+	 * IDs of files attached to this stored object. Populated by {@link #applyDefaultsFromItem(InventoryItem)}.
+	 */
 	@lombok.Builder.Default
 	private Set<@NotNull ObjectId> attachedFiles = new HashSet<>();
 
@@ -467,19 +530,30 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 	private String labelFormat = null;
 
 	/**
-	 * Label format to use if there is not one specified in this stored, or one in the item.
+	 * The fallback label format used when neither this stored nor the associated
+	 * item specifies one.
 	 *
-	 * @return
+	 * @return the default label format string.
 	 */
 	@JsonIgnore
 	protected abstract String getDefaultLabelFormat();
 
+	/**
+	 * The rendered label text, generated by {@link #processLabel(InventoryItem)}
+	 * from the resolved label format. Read-only.
+	 */
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Setter(AccessLevel.PRIVATE)
 	@lombok.Builder.Default
 	@Schema(required = false, description = "A generated label text.")
 	private String labelText = null;
 
+	/**
+	 * Resolves the label format (stored, then item, then default) and renders it
+	 * into {@link #labelText}.
+	 *
+	 * @param item the associated item, consulted for its default label format.
+	 */
 	private void processLabel(InventoryItem item) {
 		String labelFormat = this.getLabelFormat();
 		if (labelFormat == null) {
@@ -492,6 +566,19 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		this.labelText = parseLabel(this, labelFormat);
 	}
 
+	/**
+	 * Applies item-derived defaults to this stored: recalculates prices from the
+	 * item's defaults and renders the label text.
+	 * <p>
+	 * Example:
+	 * <pre>{@code
+	 * stored.applyDefaultsFromItem(inventoryItem);
+	 * System.out.println(stored.getLabelText());
+	 * }</pre>
+	 *
+	 * @param item the associated item; its ID must match this stored's item.
+	 * @throws IllegalArgumentException if the item IDs do not match.
+	 */
 	public void applyDefaultsFromItem(InventoryItem item) {
 		if (!this.getItem().equals(item.getId())) {
 			throw new IllegalArgumentException("Item ID's do not match");
@@ -500,6 +587,9 @@ public abstract class Stored extends ImagedMainObject implements FileAttachmentC
 		this.processLabel(item);
 	}
 
+	/**
+	 * @return {@value #CUR_SCHEMA_VERSION}
+	 */
 	@Override
 	public int getSchemaVersion() {
 		return CUR_SCHEMA_VERSION;

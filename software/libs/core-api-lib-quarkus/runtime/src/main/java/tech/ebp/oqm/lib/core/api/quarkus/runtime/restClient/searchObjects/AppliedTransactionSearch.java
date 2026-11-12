@@ -9,6 +9,7 @@ import lombok.ToString;
 import lombok.experimental.SuperBuilder;
 
 import java.time.ZonedDateTime;
+import java.util.List;
 
 /**
  * Search for applied transactions.
@@ -20,11 +21,15 @@ import java.time.ZonedDateTime;
 @SuperBuilder(toBuilder = true)
 public class AppliedTransactionSearch extends SearchKeyAttObject {
 
-	@PathParam("itemId") String inventoryItemId;
+//	@PathParam("itemId") String inventoryItemId;
 
 	@QueryParam("startDateTime")
 	ZonedDateTime startDateTime;
 
 	@QueryParam("endDateTime")
 	ZonedDateTime endDateTime;
+
+	@QueryParam("affectedStored")
+	private List<String> affectedStored;
+
 }

@@ -1,10 +1,12 @@
   {#let showAmount=cdi:ItemStoredResultsQuteFunctions.showAmount(inventoryItem.or(null))}
   <thead>
-  <tr>
-    <td colspan="100" class="text-center searchResultsContainer">
-      {#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
-    </td>
-  </tr>
+  {#if searchResults.get("numResults").asInt() >= config:['ui.itemsStored.search.topPaginationThreshold'] }
+	  <tr>
+		  <td colspan="100" class="text-center">
+				  {#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
+		  </td>
+	  </tr>
+  {/if}
   <tr>
     <th scope="col" class="searchResultImageCol">Image</th>
 	  {#if showType??}<th scope="col" class="text-center" style="width: 45px;">Type</th>{/if}

@@ -129,7 +129,7 @@ class ItemCategoriesCrudTest extends RunningServerTest {
 										.extract().response().as(ErrorMessage.class);
 
 		assertNotNull(errorMessage.getDisplayMessage());
-		assertTrue(errorMessage.getDisplayMessage().contains("Could not find history for ItemCategory with id"), "Error message should indicate not found");
+		assertTrue(errorMessage.getDisplayMessage().contains("Could not find ItemCategory with id"), "Error message should indicate not found. Actually got: " + errorMessage.getDisplayMessage());
 		assertTrue(errorMessage.getDisplayMessage().contains("ItemCategory"), "Error message should indicate ItemCategory");
 	}
 
@@ -155,7 +155,7 @@ class ItemCategoriesCrudTest extends RunningServerTest {
 			.pathParam("oqmDbIdOrName", DEFAULT_TEST_DB_NAME)
 			.pathParam("id", created.getId().toHexString())
 			.get("/{id}")
-			.then().statusCode(404);
+			.then().statusCode(410);
 	}
 
 	@Test
@@ -184,6 +184,7 @@ class ItemCategoriesCrudTest extends RunningServerTest {
 										.then().statusCode(404)
 										.extract().response().as(ErrorMessage.class);
 		assertNotNull(errorMessage.getDisplayMessage());
-		assertTrue(errorMessage.getDisplayMessage().contains("Could not find history for ItemCategory with id"), "Error message should indicate not found");
+		assertTrue(errorMessage.getDisplayMessage().contains("Could not find ItemCategory with id"), "Error message should indicate not found. Actually got: " + errorMessage.getDisplayMessage());
 	}
+
 }

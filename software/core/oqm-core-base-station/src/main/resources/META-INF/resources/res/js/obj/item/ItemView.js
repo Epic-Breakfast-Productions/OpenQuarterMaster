@@ -27,7 +27,14 @@ export class ItemView extends PageUtility {
 	static viewBsModal = new bootstrap.Modal($("#itemViewModal"), {});
 	static itemViewMessages = $("#itemViewMessages");
 	static itemViewModalLabel = $("#itemViewModalLabel");
-	static storageTab = $("#itemViewMainPaneStorageTab");
+
+
+	static storageTabDropdown = $("#itemViewMainPaneStorageTabDropdownButton");
+	static storageTabDropdownBs = new bootstrap.Dropdown("#itemViewMainPaneStorageTabDropdown");
+	static storageTab = $("#itemViewMainPaneStorageTabStored");
+	static checkedOutTab = $("#itemViewMainPaneStorageTabCheckedOut");
+	static inTransitTab = $("#itemViewMainPaneStorageTabInTransit");
+	static storageTabBsTab = new bootstrap.Tab('#itemViewMainPaneStorageTabStored');
 	static statsTab = $("#itemViewMainPaneStatsTab");
 
 	static itemTransactionButtonContainer = $("#itemViewTransactButtonContainer");
@@ -96,6 +103,8 @@ export class ItemView extends PageUtility {
 	static itemViewId = $("#itemViewId");
 	static itemViewEditButton = $('#itemViewEditButton');
 	static itemHistoryAccordionCollapse = $("#itemViewMainPaneHistoryTabContent");
+	static itemHistoryTabTab = $("#itemViewMainPaneHistoryTabNavHistoryTab");
+	static transactionsSearchForm = $("#itemViewMainPaneHistoryTabNavTransactionsTab-searchForm")
 	static itemViewCheckedOutResultsContainer = $("#itemViewCheckedOutResultsContainer");
 	static checkoutSearchForm = $("#itemViewCheckoutSearchForm");
 	static checkoutSearchResults = $("#itemViewCheckoutSearchResults");
@@ -119,7 +128,13 @@ export class ItemView extends PageUtility {
 	static resetView() {
 		ItemView.statsTransactionsAmountGraphImg.attr("src", "");
 		ItemView.statsShown = false;
-		ItemView.storageTab.click();
+
+		ItemView.storageTabBsTab.show();
+		ItemView.storageTabDropdownBs.hide();
+
+		// ItemView.storageTabDropdown.click();
+		// ItemView.storageTabDropdown.click();
+
 		ItemView.itemViewModalLabel.text("");
 		ItemView.itemTransactionButtonContainer.text("");
 		ItemView.storedMultiContainer.hide();
@@ -182,6 +197,7 @@ export class ItemView extends PageUtility {
 		ItemView.allStoredSearchForm.trigger("reset");
 
 		HistorySearchUtils.resetHistorySearch(ItemView.itemHistoryAccordionCollapse);
+		ItemView.itemHistoryTabTab.click();
 
 		Carousel.clearCarousel(ItemView.itemViewCarousel);
 		KeywordAttUtils.clearHideKeywordDisplay(ItemView.viewKeywordsSection);
@@ -723,9 +739,19 @@ export class ItemView extends PageUtility {
 		//TODO:: adjust html to match history
 		//ItemCheckoutSearch.setupSearchForItem(ItemView.itemViewCheckedOutResultsContainer, itemId);
 		HistorySearchUtils.setupHistorySearch(ItemView.itemHistoryAccordionCollapse, itemId);
+
+		ItemView.transactionsSearchForm.attr("action", ItemView.transactionsSearchForm.attr("data-action-template").replaceAll("//", "/" + itemId + "/"));
+		ItemView.transactionsSearchForm.trigger("submit");
+	}
+	static handleStoredTabChange(event){
+		console.log("shown!", event);
+		let newText = $(event.target).html();
+		ItemView.storageTabDropdown.html(newText);
 	}
 	static {
 		window.ItemView = this;
+
+		ItemView.transactionsSearchForm.attr("data-action-template", ItemView.transactionsSearchForm.attr("action"));
 
 		ItemView.itemViewModal[0].addEventListener("hidden.bs.modal", function () {
 			UriUtils.removeParam("view");
@@ -788,6 +814,10 @@ export class ItemView extends PageUtility {
 
 			ItemView.statsShown = true;
 		});
+
+		ItemView.storageTab.on('show.bs.tab', ItemView.handleStoredTabChange);
+		ItemView.checkedOutTab.on('show.bs.tab', ItemView.handleStoredTabChange);
+		ItemView.inTransitTab.on('show.bs.tab', ItemView.handleStoredTabChange);
 
 		$(document).ready(function () {
 			if (UriUtils.getParams.has("view")

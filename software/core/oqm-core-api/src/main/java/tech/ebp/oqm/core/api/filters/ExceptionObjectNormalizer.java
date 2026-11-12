@@ -13,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jboss.resteasy.reactive.RestResponse;
 import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 import tech.ebp.oqm.core.api.exception.db.DbDeleteRelationalException;
+import tech.ebp.oqm.core.api.exception.db.DbDeletedException;
 import tech.ebp.oqm.core.api.model.rest.ErrorMessage;
 import tech.ebp.oqm.core.api.exception.db.DbModValidationException;
 import tech.ebp.oqm.core.api.exception.db.DbNotFoundException;
@@ -24,15 +25,15 @@ import java.util.Iterator;
 @Slf4j
 @Provider
 public class ExceptionObjectNormalizer implements ContainerResponseFilter {
-	
+
 	@Context
 	UriInfo uriInfo;
-	
+
 	private ErrorMessage.ErrorMessageBuilder<?, ?> buildOutputForHibViolation(ViolationReport report) {
 		log.debug("Violation Report type. Mapping to standard error object.");
-		
+
 		StringBuilder sb = new StringBuilder("Data validation errors (" + report.getViolations().size() + "): ");
-		
+
 		Iterator<io.quarkus.hibernate.validator.runtime.jaxrs.ViolationReport.Violation> it = report.getViolations().iterator();
 		while (it.hasNext()) {
 			io.quarkus.hibernate.validator.runtime.jaxrs.ViolationReport.Violation violation = it.next();
@@ -43,18 +44,18 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 				field = fieldParts[fieldParts.length - 1];
 			}
 			sb.append(field + "- " + violation.getMessage());
-			
+
 			if (it.hasNext()) {
 				sb.append(", ");
 			}
 		}
-		
+
 		//TODO:: add original obj?
 		return ErrorMessage.builder()
 							.displayMessage(sb.toString())
 							.cause(report);
 	}
-	
+
 	private int getStatusCodeForException(Throwable e) {
 		return switch (e){
 			case DbModValidationException ignored -> 400;
@@ -62,7 +63,7 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 			default -> 500;
 		};
 	}
-	
+
 	/**
 	 *
 	 * @param requestContext request context.
@@ -85,21 +86,21 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 			log.debug("Response was already an Error Message: {}",  responseContext.getEntity());
 			return;
 		}
-		
+
 		ErrorMessage.ErrorMessageBuilder<?, ?> outputBuilder = null;
 		log.debug("Type of response object: {}", responseContext.getEntityType());
-		
+
 		if (responseContext.getEntity() instanceof ViolationReport) {
 			outputBuilder = buildOutputForHibViolation((ViolationReport) responseContext.getEntity());
 		} else if (responseContext.getEntity() instanceof Throwable) { // sometimes (or maybe never?) present
 			Throwable e = (Throwable) responseContext.getEntity();
-			
+
 			outputBuilder = ErrorMessage.builder()
 								.displayMessage(e.getMessage());
 			responseContext.setStatus(getStatusCodeForException(e));
 		} else { // nothing left to go on, entity or exception-wise
 			log.warn("Unknown response type: {} / {} / {}", responseContext.getEntityType(), responseContext.getEntity(), responseContext.getStatusInfo().getReasonPhrase());
-			
+
 			outputBuilder = ErrorMessage.builder()
 								.generic(true);
 			if(responseFam == Response.Status.Family.CLIENT_ERROR){
@@ -117,23 +118,23 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 							.displayMessage("Unknown client error occurred: "+responseContext.getStatusInfo().getReasonPhrase()+" This might be caused by bad data read by the server.");
 						break;
 				}
-				
+
 			} else if(responseFam == Response.Status.Family.SERVER_ERROR) {
 				outputBuilder
 					.displayMessage("Unknown server error occurred.");
 			}
 		}
-		
+
 		if (outputBuilder != null) {
 			ErrorMessage message = outputBuilder.build();
 			log.debug("Error message: {}", message);
-			
+
 			responseContext.setEntity(message);
 		} else {
 			log.warn("No error message builder found for error response: {}", responseContext);
 		}
 	}
-	
+
 	@ServerExceptionMapper
 	public RestResponse<ErrorMessage> mapException(DbModValidationException x) {
 		return RestResponse.status(
@@ -143,7 +144,7 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 				.build()
 		);
 	}
-	
+
 	@ServerExceptionMapper
 	public RestResponse<ErrorMessage> mapException(DbDeleteRelationalException x) {
 		return RestResponse.status(
@@ -153,15 +154,15 @@ public class ExceptionObjectNormalizer implements ContainerResponseFilter {
 				.build()
 		);
 	}
-	
+
 	@ServerExceptionMapper
 	public RestResponse<ErrorMessage> mapException(DbNotFoundException x) {
 		return RestResponse.status(
-			Response.Status.NOT_FOUND,
+			x instanceof DbDeletedException ? Response.Status.GONE : Response.Status.NOT_FOUND,
 			ErrorMessage.builder()
 				.displayMessage(x.getMessage())
 				.build()
 		);
 	}
-	
+
 }

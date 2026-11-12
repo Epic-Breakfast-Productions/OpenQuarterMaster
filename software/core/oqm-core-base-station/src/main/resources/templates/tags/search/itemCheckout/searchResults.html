@@ -14,11 +14,13 @@
   if `actionType` is "select", callback will be "selectStorageBlock('<block name>', '<block id>', '<inputIdPrepend>')" on the select button
 !}
 <thead>
-<tr>
-	<td colspan="8" class="text-center">
-		{#paginationButtons searchFormId = searchFormId searchResults = searchResults}{/paginationButtons}
-	</td>
-</tr>
+{#if searchResults.get("numResults").asInt() >= config:['ui.itemCheckout.search.topPaginationThreshold'] }
+	<tr>
+		<td colspan="8" class="text-center">
+				{#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
+		</td>
+	</tr>
+{/if}
 <tr>
 	{#if showItem}
 	<th scope="col">{#icons/item /} Item</th>{/if}

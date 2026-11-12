@@ -36,19 +36,24 @@ import java.util.Optional;
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class ItemTransactionPassthrough extends PassthroughProvider {
-	
+
 	@Getter
 	@Inject
 	@Location("tags/search/itemStored/searchResults")
 	Template searchResultTemplate;
-	
+
+	@Getter
+	@Inject
+	@Location("tags/search/storedTransaction/searchResults")
+	Template transactionSearchResultTemplate;
+
 	@Getter
 	@PathParam("itemId")
 	String itemId;
-	
+
 	@Inject
 	SearchResultTweak searchResultTweak;
-	
+
 	@PUT
 	@Path("/transact")
 	@Operation(
@@ -73,7 +78,7 @@ public class ItemTransactionPassthrough extends PassthroughProvider {
 			this.getOqmCoreApiClient().invItemStoredTransact(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, transaction)
 		);
 	}
-	
+
 	@GET
 	@Path("/transaction")
 	@Operation(
@@ -87,20 +92,34 @@ public class ItemTransactionPassthrough extends PassthroughProvider {
 				mediaType = "application/json"
 			)
 		},
-		headers = {
+		headers = { //TODO:: handle rendering search results in html
 			@Header(name = "num-elements", description = "Gives the number of elements returned in the body."),
 			@Header(name = "query-num-results", description = "Gives the number of results in the query given.")
 		}
 	)
-	@Produces(MediaType.APPLICATION_JSON)
+	@Produces({MediaType.APPLICATION_JSON, MediaType.TEXT_HTML})
 	public Uni<Response> searchTransactions(
-		AppliedTransactionSearch appliedTransactionSearch
+		AppliedTransactionSearch appliedTransactionSearch,
+		@HeaderParam("Accept") String acceptType,
+		@HeaderParam("searchFormId") String searchFormId,
+		@HeaderParam("otherModalId") String otherModalId,
+		@HeaderParam("inputIdPrepend") String inputIdPrepend,
+		@HeaderParam("actionType") String actionType
 	) {
 		return this.handleCall(
-			this.getOqmCoreApiClient().invItemStoredTransactionSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, appliedTransactionSearch)
+			this.processSearchResults(
+				this.getOqmCoreApiClient().invItemStoredTransactionSearch(this.getBearerHeaderStr(), this.getSelectedDb(), itemId, appliedTransactionSearch)
+					.call(results->searchResultTweak.addInteractingEntityRefToSearchResult(results, "entity", this.getBearerHeaderStr())),
+				this.transactionSearchResultTemplate,
+				acceptType,
+				searchFormId,
+				otherModalId,
+				inputIdPrepend,
+				actionType
+			)
 		);
 	}
-	
+
 	@GET
 	@Path("/transaction/{transactionId}")
 	@Operation(

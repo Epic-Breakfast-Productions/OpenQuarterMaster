@@ -2007,6 +2007,25 @@ export class ItemStoredTransaction extends PageUtility {
 			);
 		}
 	}
+
+	static InTransit = class {
+		static Add = class{
+
+		}
+		static Cancel = class{
+
+		}
+		static Receive = class{
+
+		}
+		static StoredToInTransit = class{
+
+		}
+		static Update = class{
+
+		}
+	}
+
 	static {
 		window.ItemStoredTransaction = this;
 

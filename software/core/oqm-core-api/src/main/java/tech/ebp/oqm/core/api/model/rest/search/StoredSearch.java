@@ -23,7 +23,7 @@ import static com.mongodb.client.model.Filters.*;
 @Getter
 @Setter
 public class StoredSearch extends SearchKeyAttObject<Stored> {
-	
+
 	@QueryParam("storedState")
 	@DefaultValue("STORED")
 	StoredStateType storedState = StoredStateType.STORED;
@@ -38,17 +38,17 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 
 	@QueryParam("hasExpiryDate") Boolean hasExpiryDate;
 	@QueryParam("hasLowStockThreshold") Boolean hasLowStockThreshold;
-	
+
 	@QueryParam("identifier") List<String> identifiers;
 
 	//TODO:: are these outdated?
 	@QueryParam("expired") Boolean hasExpired;
 	@QueryParam("expiryWarn") Boolean hasExpiryWarn;
 	@QueryParam("lowStock") Boolean hasLowStock;
-	
+
 	//TODO:: object specific fields, add to bson filter list
-	
-	
+
+
 	public StoredSearch setInventoryItemId(ObjectId itemId){
 		this.inventoryItemIdFromPath = itemId;
 		return this;
@@ -57,7 +57,7 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 		this.storageBlockIdFromPath = blockId;
 		return this;
 	}
-	
+
 	public ObjectId getInventoryItemId(){
 		if(hasValue(this.getInventoryItemIdFromPath())){
 			return this.getInventoryItemIdFromPath();
@@ -66,19 +66,21 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public List<Bson> getSearchFilters() {
 		List<Bson> filters = super.getSearchFilters();
-		
-		filters.add(eq("state.type", this.getStoredState()));
+
+		if(hasValue(this.getStoredState())) {
+			filters.add(eq("state.type", this.getStoredState()));
+		}
 
 		if(hasValue(this.getInventoryItemIdFromPath())){
 			filters.add(eq("item", this.getInventoryItemIdFromPath()));
 		} else if(hasValue(this.getInventoryItemIdFromQuery())){
 			filters.add(eq("item", this.getInventoryItemIdFromQuery()));
 		}
-		
+
 		//TODO:: redo these
 //		if (this.hasValue(this.getItemBarcode())) {
 //			filters.add(
@@ -106,7 +108,7 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 				}
 			}
 		}
-		
+
 		if(hasValue(this.getHasExpiryDate())){
 			filters.add(
 				ne("expires", null)
@@ -119,11 +121,11 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 		if(hasValue(this.getHasExpiryWarn())){
 			filters.add(eq("notificationStatus.expiredWarning", this.getHasExpiryWarn()));
 		}
-		
+
 		if(hasValue(this.getHasLowStock())){
 			filters.add(eq("notificationStatus.lowStock", this.getHasExpired()));
 		}
-		
+
 		if (hasValue(this.getIdentifiers())) {
 			List<Bson> typeFilterList = new ArrayList<>(this.getIdentifiers().size());
 			for (String curIdentifier : this.getIdentifiers()) {
@@ -133,7 +135,7 @@ public class StoredSearch extends SearchKeyAttObject<Stored> {
 			}
 			filters.add(Filters.or(typeFilterList));
 		}
-		
+
 		return filters;
 	}
 }

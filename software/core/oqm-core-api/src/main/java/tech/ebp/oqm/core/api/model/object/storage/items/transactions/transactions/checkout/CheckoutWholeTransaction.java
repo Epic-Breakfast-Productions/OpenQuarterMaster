@@ -30,7 +30,7 @@ public class CheckoutWholeTransaction extends CheckoutTransaction {
 	@NonNull
 	@NotNull
 	private ObjectId toCheckout;
-	
+
 	@Override
 	@Schema(constValue = "CHECKOUT_WHOLE", readOnly = true, required = true, examples = "CHECKOUT_WHOLE")
 	public TransactionType getType() {

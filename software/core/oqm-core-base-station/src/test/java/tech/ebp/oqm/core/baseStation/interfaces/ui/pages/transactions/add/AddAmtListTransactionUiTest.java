@@ -7,6 +7,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
+import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUser;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MessageAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.ItemsPage;
@@ -14,6 +15,8 @@ import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.ItemsUiUtils;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.StorageBlockUiUtils;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.transaction.AddTransactionUtils;
 import tech.ebp.oqm.core.baseStation.utils.ObjectUtils;
+import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.ItemHelper;
+import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.StorageHelper;
 
 import java.util.List;
 
@@ -24,33 +27,37 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Slf4j
 @QuarkusTest
 public class AddAmtListTransactionUiTest extends WebUiTest {
-	
+
 	@Test
 	public void newAmount() {
+		TestUser testUser = this.getTestUserService().getTestUser();
 		Page oqm = this.getLoggedInPage(this.getTestUserService().getTestUser(), ItemsPage.ITEMS_PAGE);
-		
+
 		List<ObjectNode> storageBlocks = List.of(
-			StorageBlockUiUtils.newStorageBlock(oqm),
-			StorageBlockUiUtils.newStorageBlock(oqm)
+			StorageHelper.addStorageBlock(testUser.getAuthString(), TEST_DB, StorageHelper.getStorageBlockTemplate()),
+			StorageHelper.addStorageBlock(testUser.getAuthString(), TEST_DB, StorageHelper.getStorageBlockTemplate())
 		);
-		
-		ObjectNode item = ItemsUiUtils.newItem(
-			oqm,
-			ObjectUtils.OBJECT_MAPPER.createObjectNode().put(ItemsUiUtils.OBJ_KEY_TYPE, "AMOUNT_LIST"),
-			storageBlocks
+
+		ObjectNode item = ItemHelper.addItem(
+			testUser.getAuthString(),
+			TEST_DB,
+			ItemHelper.getItemTemplate(
+				"AMOUNT_LIST",
+				ItemHelper.storageIdsToStorageSettings(storageBlocks)
+			)
 		);
-		
+
 		ItemsUiUtils.viewItem(oqm, item);
-		
+
 		oqm.locator(ItemsPage.VIEW_NONE_PRESENT_NO_STORAGE_ADD_STORED_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
-		
+
 		oqm.locator(AddTransactionUtils.TYPE_INPUT).selectOption("ADD_AMOUNT");
 		MainAssertions.assertDoneProcessing(oqm);
-		
+
 		Locator attTransactionModal = oqm.locator(AddTransactionUtils.MODAL);
 		Locator addStoredInputs = attTransactionModal.locator(AddTransactionUtils.INPUTS_CONTAINER);
-		
+
 		assertTrue(
 			addStoredInputs
 				.locator(AddTransactionUtils.AMOUNT_INPUTS_CONTAINER)
@@ -66,45 +73,49 @@ public class AddAmtListTransactionUiTest extends WebUiTest {
 				.locator(AddTransactionUtils.UNIQUE_INPUTS_CONTAINER)
 				.isVisible()
 		);
-		
+
 		oqm.locator(AddTransactionUtils.TO_BLOCK_SELECT).selectOption(storageBlocks.getFirst().get("id").asText());
-		
+
 		addStoredInputs.locator(AddTransactionUtils.AMOUNT_VALUE_INPUT).fill("5");
-		
+
 		oqm.locator(AddTransactionUtils.SUBMIT_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
-		
+
 		MessageAssertions.assertMessage(oqm, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Transaction Successful!");
-		
+
 		//TODO:: assert added stored matches
 	}
-	
+
 	@Test
 	public void newWhole() {
+		TestUser testUser = this.getTestUserService().getTestUser();
 		Page oqm = this.getLoggedInPage(this.getTestUserService().getTestUser(), ItemsPage.ITEMS_PAGE);
-		
+
 		List<ObjectNode> storageBlocks = List.of(
-			StorageBlockUiUtils.newStorageBlock(oqm),
-			StorageBlockUiUtils.newStorageBlock(oqm)
+			StorageHelper.addStorageBlock(testUser.getAuthString(), TEST_DB, StorageHelper.getStorageBlockTemplate()),
+			StorageHelper.addStorageBlock(testUser.getAuthString(), TEST_DB, StorageHelper.getStorageBlockTemplate())
 		);
-		
-		ObjectNode item = ItemsUiUtils.newItem(
-			oqm,
-			ObjectUtils.OBJECT_MAPPER.createObjectNode().put(ItemsUiUtils.OBJ_KEY_TYPE, "AMOUNT_LIST"),
-			storageBlocks
+
+		ObjectNode item = ItemHelper.addItem(
+			testUser.getAuthString(),
+			TEST_DB,
+			ItemHelper.getItemTemplate(
+				"AMOUNT_LIST",
+				ItemHelper.storageIdsToStorageSettings(storageBlocks)
+			)
 		);
-		
+
 		ItemsUiUtils.viewItem(oqm, item);
-		
+
 		oqm.locator(ItemsPage.VIEW_NONE_PRESENT_NO_STORAGE_ADD_STORED_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
-		
+
 		oqm.locator(AddTransactionUtils.TYPE_INPUT).selectOption("ADD_WHOLE");
 		MainAssertions.assertDoneProcessing(oqm);
-		
+
 		Locator attTransactionModal = oqm.locator(AddTransactionUtils.MODAL);
 		Locator addStoredInputs = attTransactionModal.locator(AddTransactionUtils.INPUTS_CONTAINER);
-		
+
 		assertTrue(
 			addStoredInputs
 				.locator(AddTransactionUtils.AMOUNT_INPUTS_CONTAINER)
@@ -120,22 +131,22 @@ public class AddAmtListTransactionUiTest extends WebUiTest {
 				.locator(AddTransactionUtils.UNIQUE_INPUTS_CONTAINER)
 				.isVisible()
 		);
-		
+
 		oqm.locator(AddTransactionUtils.TO_BLOCK_SELECT).selectOption(storageBlocks.getFirst().get("id").asText());
-		
+
 		addStoredInputs.locator(AddTransactionUtils.AMOUNT_VALUE_INPUT).fill("5");
-		
+
 		oqm.locator(AddTransactionUtils.SUBMIT_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
-		
+
 		MessageAssertions.assertMessage(oqm, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Transaction Successful!");
-		
+
 		//TODO:: assert added stored matches
 	}
-	
-	
+
+
 	//TODO:: existing amount list, amount
 	//TODO:: existing amount list, amount to existing
 	//TODO:: existing amount list, whole
-	
+
 }
