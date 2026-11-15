@@ -19,8 +19,6 @@ productLookup:
     isbndb:
       url: http://localhost:${quarkus.wiremock.devservices.port}/isbndb/
       apiKey: devKey
-    deezer:
-        url: http://localhost:${quarkus.wiremock.devservices.port}/deezer/
 quarkus:
   http:
 #    port: 8081
