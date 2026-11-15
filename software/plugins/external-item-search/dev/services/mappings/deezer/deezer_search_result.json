@@ -1,0 +1,56 @@
+{
+  "request": {
+    "urlPath": "/deezer/search/album",
+    "method": "GET",
+    "queryParameters": {
+      "q": {
+        "equalTo": "twenty one pilots more than we ever imagined"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 3000,
+      "sigma": 0.4
+    },
+    "jsonBody": {
+      "data": [
+        {
+          "id": 1048622292,
+          "title": "More Than We Ever Imagined (Live in Mexico City)",
+          "link": "https://www.deezer.com/album/1048622292",
+          "cover": "https://api.deezer.com/album/1048622292/image",
+          "cover_small": "https://cdn-images.dzcdn.net/images/cover/3c2ef82faa2e3c96b22dafc9cf83b477/56x56-000000-80-0-0.jpg",
+          "cover_medium": "https://cdn-images.dzcdn.net/images/cover/3c2ef82faa2e3c96b22dafc9cf83b477/250x250-000000-80-0-0.jpg",
+          "cover_big": "https://cdn-images.dzcdn.net/images/cover/3c2ef82faa2e3c96b22dafc9cf83b477/500x500-000000-80-0-0.jpg",
+          "cover_xl": "https://cdn-images.dzcdn.net/images/cover/3c2ef82faa2e3c96b22dafc9cf83b477/1000x1000-000000-80-0-0.jpg",
+          "md5_image": "3c2ef82faa2e3c96b22dafc9cf83b477",
+          "genre_id": 85,
+          "nb_tracks": 21,
+          "record_type": "album",
+          "tracklist": "https://api.deezer.com/album/1048622292/tracks",
+          "explicit_lyrics": false,
+          "artist": {
+            "id": 647650,
+            "name": "Twenty One Pilots",
+            "link": "https://www.deezer.com/artist/647650",
+            "picture": "https://api.deezer.com/artist/647650/image",
+            "picture_small": "https://cdn-images.dzcdn.net/images/artist/2e6d4d494a7b7b2c4bea2ccefad368f5/56x56-000000-80-0-0.jpg",
+            "picture_medium": "https://cdn-images.dzcdn.net/images/artist/2e6d4d494a7b7b2c4bea2ccefad368f5/250x250-000000-80-0-0.jpg",
+            "picture_big": "https://cdn-images.dzcdn.net/images/artist/2e6d4d494a7b7b2c4bea2ccefad368f5/500x500-000000-80-0-0.jpg",
+            "picture_xl": "https://cdn-images.dzcdn.net/images/artist/2e6d4d494a7b7b2c4bea2ccefad368f5/1000x1000-000000-80-0-0.jpg",
+            "tracklist": "https://api.deezer.com/artist/647650/top?limit=50",
+            "type": "artist"
+          },
+          "type": "album"
+        }
+      ],
+      "total": 1
+    }
+  }
+}

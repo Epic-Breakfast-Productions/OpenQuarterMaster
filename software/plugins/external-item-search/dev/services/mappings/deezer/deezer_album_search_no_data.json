@@ -1,0 +1,24 @@
+{
+  "request": {
+    "urlPath": "/deezer/album/999999",
+    "method": "GET"
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 3000,
+      "sigma": 0.4
+    },
+    "jsonBody": {
+      "error": {
+        "type": "DataException",
+        "message": "no data",
+        "code": 800
+      }
+    }
+  }
+}
