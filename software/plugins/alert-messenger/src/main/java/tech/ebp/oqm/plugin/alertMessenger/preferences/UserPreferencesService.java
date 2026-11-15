@@ -2,6 +2,7 @@ package tech.ebp.oqm.plugin.alertMessenger.preferences;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
 import org.bson.types.ObjectId;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetails;
 import tech.ebp.oqm.plugin.alertMessenger.connections.ConnectionDetailsService;
@@ -39,7 +40,7 @@ public class UserPreferencesService {
 
     public UserPreferences get(ObjectId id) {
         return repository.findByObjectId(id)
-            .orElseThrow(() -> new RuntimeException("User preferences not found"));
+            .orElseThrow(() -> new NotFoundException("User preferences not found"));
     }
 
     public UserPreferences create(UserPreferences entity, String id) {

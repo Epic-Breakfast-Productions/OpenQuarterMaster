@@ -25,6 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -110,6 +111,40 @@ class ConnectionDetailsInterfaceTest {
 	}
 
 	@Test
+	void createIgnoresUserIdFromRequest() {
+		this.mockCurrentUser();
+		doAnswer(invocation -> {
+			ConnectionDetails saved = invocation.getArgument(0);
+			saved.id = new ObjectId();
+			return null;
+		}).when(repository).persist(any(ConnectionDetails.class));
+
+		given()
+			.header("Authorization", authHeader())
+			.contentType(ContentType.JSON)
+			.body("""
+				{
+					"userId": "random-string",
+					"type": "EMAIL",
+					"name": "some email",
+					"description": "Receives inventory alerts",
+					"destinations": ["test@oqm.com"],
+					"cc": [],
+					"bcc": []
+				}
+				""")
+			.when()
+			.post("/api/connection-details")
+			.then()
+			.statusCode(200)
+			.body("type", equalTo("EMAIL"))
+			.body("name", equalTo("some email"))
+			.body("userId", equalTo(USER_ID));
+
+		verify(repository).persist(any(ConnectionDetails.class));
+	}
+
+	@Test
 	void getById() {
 		this.mockCurrentUser();
 		String id = new ObjectId().toHexString();
@@ -169,6 +204,37 @@ class ConnectionDetailsInterfaceTest {
 	}
 
 	@Test
+	void updateConnectionOwnedByAnotherUser() {
+		this.mockDifferentUser();
+		String id = new ObjectId().toHexString();
+		EmailConnection existing = emailConnection("Old name");
+		existing.id = new ObjectId(id);
+		when(repository.findByObjectId(id)).thenReturn(Optional.of(existing));
+
+		given()
+			.header("Authorization", authHeader())
+			.contentType(ContentType.JSON)
+			.pathParam("id", id)
+			.body("""
+				{
+				  "type": "EMAIL",
+				  "name": "New name",
+				  "description": "Updated description",
+				  "destinations": ["new-test@oqm.com"],
+				  "cc": [],
+				  "bcc": []
+				}
+				""")
+			.when()
+			.put("/api/connection-details/{id}")
+			.then()
+			.statusCode(404);
+
+		verify(repository).findByObjectId(id);
+		verify(repository, never()).update(any(ConnectionDetails.class));
+	}
+
+	@Test
 	void delete() {
 		this.mockCurrentUser();
 		String id = new ObjectId().toHexString();
@@ -190,6 +256,13 @@ class ConnectionDetailsInterfaceTest {
 	private void mockCurrentUser() {
 		InteractingEntity entity = new InteractingEntity();
 		entity.setId(USER_ID);
+		when(coreApiClient.interactingEntityGetSelf(authHeader()))
+			.thenReturn(Uni.createFrom().item(entity));
+	}
+
+	private void mockDifferentUser() {
+		InteractingEntity entity = new InteractingEntity();
+		entity.setId("different-user");
 		when(coreApiClient.interactingEntityGetSelf(authHeader()))
 			.thenReturn(Uni.createFrom().item(entity));
 	}

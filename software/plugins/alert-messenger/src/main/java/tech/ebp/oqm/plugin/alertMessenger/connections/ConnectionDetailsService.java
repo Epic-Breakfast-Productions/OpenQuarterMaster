@@ -2,6 +2,7 @@ package tech.ebp.oqm.plugin.alertMessenger.connections;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import jakarta.ws.rs.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
 
@@ -29,7 +30,7 @@ public class ConnectionDetailsService {
     public ConnectionDetails get(String id, String userId) {
         return repository.findByObjectId(id)
             .filter(details -> userId.equals(details.getUserId()))
-            .orElseThrow(() -> new RuntimeException("Connection details not found: " + id));
+            .orElseThrow(() -> new NotFoundException("Connection details not found: " + id));
     }
 
     public ConnectionDetails create(ConnectionDetails details, String userId) {
