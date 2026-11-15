@@ -3,13 +3,15 @@ package tech.ebp.oqm.plugin.alertMessenger.connections;
 import io.quarkus.mongodb.panache.PanacheQuery;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import io.smallrye.mutiny.Uni;
+import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.hamcrest.Matchers;
+import org.mockito.ArgumentCaptor;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.models.InteractingEntity;
 
@@ -19,6 +21,7 @@ import java.util.Set;
 
 import static io.restassured.RestAssured.given;
 import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.ArgumentMatchers.any;
@@ -28,8 +31,10 @@ import static org.mockito.Mockito.when;
 @QuarkusTest
 class ConnectionDetailsInterfaceTest {
 
-	private static final String TOKEN = "Bearer test-token";
 	private static final String USER_ID = "test-user";
+
+	@Inject
+	KcClientAuthService keycloakAuthService;
 
 	@InjectMock
 	ConnectionDetailsRepository repository;
@@ -39,7 +44,6 @@ class ConnectionDetailsInterfaceTest {
 	OqmCoreApiClientService coreApiClient;
 
 	@Test
-	@TestSecurity(user = "test-user")
 	void getAll() {
 		this.mockCurrentUser();
 		PanacheQuery query = mock(PanacheQuery.class);
@@ -48,7 +52,7 @@ class ConnectionDetailsInterfaceTest {
 		when(query.list()).thenReturn(List.of());
 
 		given()
-			.header("Authorization", TOKEN)
+			.header("Authorization", authHeader())
 			.accept(ContentType.JSON)
 			.when()
 			.get("/api/connection-details")
@@ -57,22 +61,22 @@ class ConnectionDetailsInterfaceTest {
 			.contentType(ContentType.JSON)
 			.body("size()", Matchers.is(0));
 
-		verify(coreApiClient).interactingEntityGetSelf(TOKEN);
+		verify(coreApiClient).interactingEntityGetSelf(authHeader());
 		verify(repository).findAllPagedByUserId(USER_ID, 0, 20);
 	}
 
 	@Test
 	void getAllWithoutAuth() {
 		given()
+			.redirects().follow(false)
 			.accept(ContentType.JSON)
 			.when()
 			.get("/api/connection-details")
 			.then()
-			.statusCode(401);
+			.statusCode(302);
 	}
 
 	@Test
-	@TestSecurity(user = "test-user")
 	void create() {
 		this.mockCurrentUser();
 		doAnswer(invocation -> {
@@ -82,7 +86,7 @@ class ConnectionDetailsInterfaceTest {
 		}).when(repository).persist(any(ConnectionDetails.class));
 
 		given()
-			.header("Authorization", TOKEN)
+			.header("Authorization", authHeader())
 			.contentType(ContentType.JSON)
 			.body("""
 				{
@@ -106,7 +110,6 @@ class ConnectionDetailsInterfaceTest {
 	}
 
 	@Test
-	@TestSecurity(user = "test-user")
 	void getById() {
 		this.mockCurrentUser();
 		String id = new ObjectId().toHexString();
@@ -114,7 +117,7 @@ class ConnectionDetailsInterfaceTest {
 		when(repository.findByObjectId(id)).thenReturn(Optional.of(connection));
 
 		given()
-			.header("Authorization", TOKEN)
+			.header("Authorization", authHeader())
 			.accept(ContentType.JSON)
 			.pathParam("id", id)
 		.when()
@@ -129,7 +132,6 @@ class ConnectionDetailsInterfaceTest {
 	}
 
 	@Test
-	@TestSecurity(user = "test-user")
 	void update() {
 		this.mockCurrentUser();
 		String id = new ObjectId().toHexString();
@@ -138,7 +140,7 @@ class ConnectionDetailsInterfaceTest {
 		when(repository.findByObjectId(id)).thenReturn(Optional.of(existing));
 
 		given()
-			.header("Authorization", TOKEN)
+			.header("Authorization", authHeader())
 			.contentType(ContentType.JSON)
 			.pathParam("id", id)
 			.body("""
@@ -159,11 +161,14 @@ class ConnectionDetailsInterfaceTest {
 			.body("name", equalTo("New name"))
 			.body("userId", equalTo(USER_ID));
 
-		verify(repository).update(existing);
+		ArgumentCaptor<ConnectionDetails> updatedCaptor = ArgumentCaptor.forClass(ConnectionDetails.class);
+		verify(repository).update(updatedCaptor.capture());
+		assertEquals(existing.id, updatedCaptor.getValue().id);
+		assertEquals(USER_ID, updatedCaptor.getValue().getUserId());
+		assertEquals("New name", updatedCaptor.getValue().getName());
 	}
 
 	@Test
-	@TestSecurity(user = "test-user")
 	void delete() {
 		this.mockCurrentUser();
 		String id = new ObjectId().toHexString();
@@ -172,7 +177,7 @@ class ConnectionDetailsInterfaceTest {
 		when(repository.findByObjectId(id)).thenReturn(Optional.of(existing));
 
 		given()
-			.header("Authorization", TOKEN)
+			.header("Authorization", authHeader())
 			.pathParam("id", id)
 		.when()
 			.delete("/api/connection-details/{id}")
@@ -185,8 +190,12 @@ class ConnectionDetailsInterfaceTest {
 	private void mockCurrentUser() {
 		InteractingEntity entity = new InteractingEntity();
 		entity.setId(USER_ID);
-		when(coreApiClient.interactingEntityGetSelf(TOKEN))
+		when(coreApiClient.interactingEntityGetSelf(authHeader()))
 			.thenReturn(Uni.createFrom().item(entity));
+	}
+
+	private String authHeader() {
+		return keycloakAuthService.getAuthString();
 	}
 
 	// how to create any ConnectionDetails subclass instance for testing?

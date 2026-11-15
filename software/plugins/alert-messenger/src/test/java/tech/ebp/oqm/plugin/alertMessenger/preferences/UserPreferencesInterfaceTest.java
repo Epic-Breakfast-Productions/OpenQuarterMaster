@@ -1,13 +1,15 @@
 package tech.ebp.oqm.plugin.alertMessenger.preferences;
 
+import io.quarkus.mongodb.panache.PanacheQuery;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.security.TestSecurity;
 import io.restassured.http.ContentType;
 import io.smallrye.mutiny.Uni;
+import jakarta.inject.Inject;
 import org.bson.types.ObjectId;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.Test;
+import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.models.InteractingEntity;
 
@@ -27,8 +29,10 @@ import static org.mockito.Mockito.when;
 @QuarkusTest
 class UserPreferencesInterfaceTest {
 
-	private static final String TOKEN = "Bearer test-token";
 	private static final String USER_ID = "test-user";
+
+	@Inject
+	KcClientAuthService keycloakAuthService;
 
 	@InjectMock
 	UserPreferencesRepository repository;
@@ -38,14 +42,14 @@ class UserPreferencesInterfaceTest {
 	OqmCoreApiClientService coreApiClient;
 
 	@Test
-	@TestSecurity(user = "test-user")
 	void getReturnsPreferencesForAuthenticatedUser() {
 		mockCurrentUser();
+		PanacheQuery<UserPreferences> query = queryReturning(List.of(preference("Weekly alerts")));
 		when(repository.findAllPagedByUserId(USER_ID, 0, 20))
-			.thenReturn(queryReturning(List.of(preference("Weekly alerts"))));
+			.thenReturn(query);
 
 		given()
-			.header("Authorization", TOKEN)
+			.header("Authorization", authHeader())
 			.accept(ContentType.JSON)
 			.when()
 			.get("/api/user-preferences")
@@ -59,7 +63,6 @@ class UserPreferencesInterfaceTest {
 	}
 
 	@Test
-	@TestSecurity(user = "test-user")
 	void createAssignsAuthenticatedUserToPreference() {
 		mockCurrentUser();
 		doAnswer(invocation -> {
@@ -69,7 +72,7 @@ class UserPreferencesInterfaceTest {
 		}).when(repository).persist(any(UserPreferences.class));
 
 		given()
-			.header("Authorization", TOKEN)
+			.header("Authorization", authHeader())
 			.contentType(ContentType.JSON)
 			.body("""
 				{
@@ -95,7 +98,6 @@ class UserPreferencesInterfaceTest {
 	}
 
 	@Test
-	@TestSecurity(user = "test-user")
 	void getByIdReturnsPreferenceOwnedByAuthenticatedUser() {
 		mockCurrentUser();
 		String id = new ObjectId().toHexString();
@@ -104,7 +106,7 @@ class UserPreferencesInterfaceTest {
 			.thenReturn(Optional.of(preference));
 
 		given()
-			.header("Authorization", TOKEN)
+			.header("Authorization", authHeader())
 			.accept(ContentType.JSON)
 			.pathParam("id", id)
 			.when()
@@ -118,7 +120,6 @@ class UserPreferencesInterfaceTest {
 	}
 
 	@Test
-	@TestSecurity(user = "test-user")
 	void updateChangesPreferenceOwnedByAuthenticatedUser() {
 		mockCurrentUser();
 		String id = new ObjectId().toHexString();
@@ -128,7 +129,7 @@ class UserPreferencesInterfaceTest {
 			.thenReturn(Optional.of(existing));
 
 		given()
-			.header("Authorization", TOKEN)
+			.header("Authorization", authHeader())
 			.contentType(ContentType.JSON)
 			.pathParam("id", id)
 			.body("""
@@ -155,7 +156,6 @@ class UserPreferencesInterfaceTest {
 	}
 
 	@Test
-	@TestSecurity(user = "test-user")
 	void deleteRemovesPreferenceOwnedByAuthenticatedUser() {
 		mockCurrentUser();
 		String id = new ObjectId().toHexString();
@@ -165,7 +165,7 @@ class UserPreferencesInterfaceTest {
 			.thenReturn(Optional.of(existing));
 
 		given()
-			.header("Authorization", TOKEN)
+			.header("Authorization", authHeader())
 			.pathParam("id", id)
 			.when()
 			.delete("/api/user-preferences/{id}")
@@ -178,8 +178,12 @@ class UserPreferencesInterfaceTest {
 	private void mockCurrentUser() {
 		InteractingEntity entity = new InteractingEntity();
 		entity.setId(USER_ID);
-		when(coreApiClient.interactingEntityGetSelf(TOKEN))
+		when(coreApiClient.interactingEntityGetSelf(authHeader()))
 			.thenReturn(Uni.createFrom().item(entity));
+	}
+
+	private String authHeader() {
+		return keycloakAuthService.getAuthString();
 	}
 
 	private UserPreferences preference(String name) {
@@ -193,12 +197,8 @@ class UserPreferencesInterfaceTest {
 	}
 
 	@SuppressWarnings("unchecked")
-	private io.quarkus.mongodb.panache.PanacheQuery<UserPreferences> queryReturning(
-		List<UserPreferences> results
-	) {
-		io.quarkus.mongodb.panache.PanacheQuery<UserPreferences> query = mock(
-			io.quarkus.mongodb.panache.PanacheQuery.class
-		);
+	private PanacheQuery<UserPreferences> queryReturning(List<UserPreferences> results) {
+		PanacheQuery<UserPreferences> query = mock(PanacheQuery.class);
 		when(query.list()).thenReturn(results);
 		return query;
 	}
