@@ -50,6 +50,13 @@ public abstract class ItemSearchService {
 
 	protected abstract Multi<LookupResult> performSearch(LookupSource source, LookupMethod lookupMethod, String term);
 
+	/**
+	 *
+	 * @param lookupMethod
+	 * @param source
+	 * @param term
+	 * @return
+	 */
 	public final Multi<LookupResult> search(
 		LookupMethod lookupMethod,
 		LookupSource source,

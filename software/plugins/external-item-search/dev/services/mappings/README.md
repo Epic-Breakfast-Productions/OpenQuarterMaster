@@ -4,8 +4,8 @@ The json documents in this directory outline the responses given from the variou
 
 ## Conventions
 
- - API Keys
-   - `devKey` is always used as a valid API key, if applicable
-   - `devKeyBad` is always used as an INvalid API key, in turn
+- API Keys
+    - `devKey` is always used as a valid API key, if applicable
+    - `devKeyBad` is always used as an INvalid API key, in turn
 
 
