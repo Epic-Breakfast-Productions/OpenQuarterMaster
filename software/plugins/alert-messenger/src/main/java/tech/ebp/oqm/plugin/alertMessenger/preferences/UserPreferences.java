@@ -38,4 +38,8 @@ public class UserPreferences extends PanacheMongoEntity {
 
     @NotNull
     public List<ObjectId> connectionDetailIds;
+
+	public boolean isThrottleSet() {
+        return throttleTime != null && !throttleTime.isZero();
+    }
 }

@@ -78,7 +78,7 @@ public class ThrottleService {
         return Instant.now().plus(throttleTime);
     }
 
-    @Scheduled(every = "${oqm.alert-messenger.throttle-interval:15s}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
+    @Scheduled(every = "${service.throttle-interval:15s}", concurrentExecution = Scheduled.ConcurrentExecution.SKIP)
     void processReadyBuckets() {
         log.debug("Processing ready alert buckets");
         for (EventMetrics eventMetrics : eventMetricsRepository.findReady(Instant.now())) {

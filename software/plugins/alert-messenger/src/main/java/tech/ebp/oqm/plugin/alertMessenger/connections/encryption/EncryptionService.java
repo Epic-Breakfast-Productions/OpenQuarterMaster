@@ -24,7 +24,7 @@ public class EncryptionService {
 
     private final SecretKey secretKey;
 
-    public EncryptionService(@ConfigProperty(name = "oqm.alert-messenger.encrypted-secret") String secret) {
+    public EncryptionService(@ConfigProperty(name = "service.encrypted-secret") String secret) {
         this.secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "AES");
     }
 

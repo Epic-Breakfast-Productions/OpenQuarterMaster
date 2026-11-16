@@ -18,7 +18,7 @@ quarkus:
 
     rest-client:
         "oqm.core.api":
-            url: "http://localhost:8080"
+            url: "${oqm.core.api.baseUri}"
         "oqm.core.api-oidc":
             url: "${quarkus.oidc.auth-server-url}"
 
@@ -42,11 +42,12 @@ oqm:
     core:
         api:
             baseUri: "http://localhost:8080"
-    alert-messenger:
-        url: "http://localhost:5010"
-        favicon-url: "${oqm.alert-messenger.url}/favicon.ico"
-        encrypted-secret: "****************"
-        throttle-interval: 15s
+
+service:
+    url: "http://localhost:5010"
+    favicon-url: "${service.url}/favicon.ico"
+    encrypted-secret: "****************"
+    throttle-interval: 15s
 
 mp:
     messaging:

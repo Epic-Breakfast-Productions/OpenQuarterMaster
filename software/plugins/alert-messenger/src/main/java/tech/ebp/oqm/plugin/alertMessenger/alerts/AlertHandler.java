@@ -69,7 +69,7 @@ public class AlertHandler {
         while (iterator.hasNext()) {
             UserPreferences preferences = iterator.next();
             if (filterEvent(message, preferences)) {
-                if (!this.isThrottleSet(preferences)) {
+                if (!preferences.isThrottleSet()) {
                     for (ConnectionDetails connectionDetails : userPreferencesService.getConnectionDetails(preferences)) {
                         log.debug("Connection details type: {}", connectionDetails.getType());
                         this.sendAlert(connectionDetails, message);
@@ -117,8 +117,4 @@ public class AlertHandler {
         String message = exception.getMessage();
         return message == null || message.isBlank() ? exception.getClass().getSimpleName() : message;
     }
-
-	private boolean isThrottleSet(UserPreferences userPreferences) {
-		return userPreferences.throttleTime != null && !userPreferences.throttleTime.isZero();
-	}
 }

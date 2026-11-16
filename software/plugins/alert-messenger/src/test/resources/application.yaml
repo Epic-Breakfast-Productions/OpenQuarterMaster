@@ -22,7 +22,7 @@ quarkus:
       image-name: docker.io/redpandadata/redpanda:v26.2.7
   rest-client:
     "oqm.core.api":
-      url: http://localhost:8080
+      url: "${oqm.core.api.baseUri}"
   # Mailer configuration for Gmail SMTP server.
   mailer:
     auth-methods: "DIGEST-MD5 CRAM-SHA256 CRAM-SHA1 CRAM-MD5 PLAIN LOGIN"

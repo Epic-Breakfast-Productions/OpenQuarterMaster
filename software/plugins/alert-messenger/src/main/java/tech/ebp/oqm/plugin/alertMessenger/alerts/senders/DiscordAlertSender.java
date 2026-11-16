@@ -27,7 +27,7 @@ public class DiscordAlertSender extends WebhookSender implements AlertSender<Dis
     private static final int DISCORD_FIELD_LIMIT = 1_000;
     private static final String TRUNCATION_SUFFIX = "\n...[truncated]";
 
-    @ConfigProperty(name = "oqm.alert-messenger.favicon-url")
+    @ConfigProperty(name = "service.favicon-url")
     String icon;
 
     @Override
