@@ -97,7 +97,7 @@ public class RebrickableService extends ItemSearchService {
 			String curFieldName = curField.getKey();
 			JsonNode curFieldVal = curField.getValue();
 
-			if(ResultMappingUtils.isFieldEmpty(curFieldVal)){
+			if (ResultMappingUtils.isFieldEmpty(curFieldVal)) {
 				continue;
 			}
 
@@ -150,10 +150,10 @@ public class RebrickableService extends ItemSearchService {
 	public Collection<LookupResult> partSearchJsonToResults(LookupSource source, LookupMethod method, ObjectNode results) {
 		long count = results.get("count").asLong();
 
-		if(count == 0){
+		if (count == 0) {
 			return List.of(this.setupResponseBuilder(LookupResultNoResults.builder(), source, method)
-							   .detail("No results found.")
-							   .build());
+				.detail("No results found.")
+				.build());
 		}
 
 		ArrayNode resultsAsArr = (ArrayNode) results.get("results");
@@ -181,7 +181,7 @@ public class RebrickableService extends ItemSearchService {
 			String curFieldName = curField.getKey();
 			JsonNode curFieldVal = curField.getValue();
 
-			if(ResultMappingUtils.isFieldEmpty(curFieldVal)){
+			if (ResultMappingUtils.isFieldEmpty(curFieldVal)) {
 				continue;
 			}
 
@@ -217,10 +217,10 @@ public class RebrickableService extends ItemSearchService {
 	public Collection<LookupResult> setSearchJsonToResults(LookupSource source, LookupMethod method, ObjectNode results) {
 		long count = results.get("count").asLong();
 
-		if(count == 0){
+		if (count == 0) {
 			return List.of(this.setupResponseBuilder(LookupResultNoResults.builder(), source, method)
-							   .detail("No results found.")
-							   .build());
+				.detail("No results found.")
+				.build());
 		}
 
 		ArrayNode resultsAsArr = (ArrayNode) results.get("results");
@@ -240,29 +240,28 @@ public class RebrickableService extends ItemSearchService {
 	@Override
 	protected Multi<LookupResult> performSearch(LookupSource source, LookupMethod method, String term) {
 		return switch (source) {
-			case REBRICKABLE ->
-				switch (method) {
-					case PART_NUM -> this.rebrickableLookupClient.partFromNum(this.getApiKey(), term)
-										 .map(result->this.partJsonToResult(source, method, result))
-										 .onFailure().recoverWithItem(e->this.handleError(source, method, e))
-										 .toMulti();
+			case REBRICKABLE -> switch (method) {
+				case PART_NUM -> this.rebrickableLookupClient.partFromNum(this.getApiKey(), term)
+					.map(result -> this.partJsonToResult(source, method, result))
+					.onFailure().recoverWithItem(e -> this.handleError(source, method, e))
+					.toMulti();
 
-					case SET_NUM -> this.rebrickableLookupClient.setFromNum(this.getApiKey(), term)
-										.map(result->this.partJsonToResult(source, method, result))
-										.onFailure().recoverWithItem(e->this.handleError(source, method, e))
-										.toMulti();
-					case TEXT -> Multi.createBy().merging().streams(
-						this.rebrickableLookupClient.partsSearch(this.getApiKey(), term)
-							.map(result->this.partSearchJsonToResults(source, method, result))
-							.onFailure().recoverWithItem(e->this.handleErrorRetCollection(source, method, e))
-							.onItem().transformToMulti(collection-> Multi.createFrom().iterable(collection)),
-						this.rebrickableLookupClient.setsSearch(this.getApiKey(), term)
-							.map(result->this.setSearchJsonToResults(source, method, result))
-							.onFailure().recoverWithItem(e->this.handleErrorRetCollection(source, method, e))
-							.onItem().transformToMulti(collection-> Multi.createFrom().iterable(collection))
-					);
-					default -> throw new IllegalArgumentException("Invalid lookup method: " + method);
-				};
+				case SET_NUM -> this.rebrickableLookupClient.setFromNum(this.getApiKey(), term)
+					.map(result -> this.partJsonToResult(source, method, result))
+					.onFailure().recoverWithItem(e -> this.handleError(source, method, e))
+					.toMulti();
+				case TEXT -> Multi.createBy().merging().streams(
+					this.rebrickableLookupClient.partsSearch(this.getApiKey(), term)
+						.map(result -> this.partSearchJsonToResults(source, method, result))
+						.onFailure().recoverWithItem(e -> this.handleErrorRetCollection(source, method, e))
+						.onItem().transformToMulti(collection -> Multi.createFrom().iterable(collection)),
+					this.rebrickableLookupClient.setsSearch(this.getApiKey(), term)
+						.map(result -> this.setSearchJsonToResults(source, method, result))
+						.onFailure().recoverWithItem(e -> this.handleErrorRetCollection(source, method, e))
+						.onItem().transformToMulti(collection -> Multi.createFrom().iterable(collection))
+				);
+				default -> throw new IllegalArgumentException("Invalid lookup method: " + method);
+			};
 			default -> throw new IllegalArgumentException("Invalid lookup source: " + source);
 		};
 	}
@@ -273,14 +272,19 @@ public class RebrickableService extends ItemSearchService {
 			try {
 				ObjectNode errorDeets = (ObjectNode) this.objectMapper.readTree((InputStream) e.getResponse().getEntity());
 
-				if (errorDeets.get("detail").asText().equals("No Part matches the given query.")) {
+				if (
+					List.of(
+						"No Part matches the given query.",
+						"No Set matches the given query."
+					).contains(errorDeets.get("detail").asText())
+				) {
 					return Optional.of(
 						this.setupResponseBuilder(LookupResultNoResults.builder(), source, method)
 							.detail("No Part matches the given query.")
 							.build()
 					);
 				}
-			} catch(Throwable e2) {
+			} catch (Throwable e2) {
 				log.warn("Error parsing error response from Rebrickable: {}", e2.getMessage(), e2);
 			}
 		}

@@ -9,11 +9,13 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
+import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUser;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MessageAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.ItemsPage;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.StorageBlockPage;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.*;
+import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.StorageHelper;
 
 import java.util.List;
 import java.util.Map;
@@ -100,9 +102,10 @@ public class ItemsUiTest extends WebUiTest {
 	@ParameterizedTest
 	@MethodSource("tech.ebp.oqm.core.baseStation.testResources.ui.utilities.ItemsUiUtils#itemTypeArgs")
 	public void testAddItemWithBlock(String itemType) {
-		Page oqm = this.getLoggedInPage(this.getTestUserService().getTestUser(), ItemsPage.ITEMS_PAGE);
+		TestUser testUser = this.getTestUserService().getTestUser();
+		Page oqm = this.getLoggedInPage(testUser, ItemsPage.ITEMS_PAGE);
 
-		ObjectNode storageBlock = StorageBlockUiUtils.newStorageBlock(oqm);
+		ObjectNode storageBlock = StorageHelper.addStorageBlock(testUser.getAuthString(), TEST_DB, StorageHelper.getStorageBlockTemplate());
 
 		ItemsPage.assertNoItems(oqm);
 
@@ -156,7 +159,8 @@ public class ItemsUiTest extends WebUiTest {
 
 		assertEquals(
 			storageBlock.get("label").asText(),
-			storageBlocksInItemLinks.getFirst().locator("span").textContent().strip()
+			storageBlocksInItemLinks.getFirst().locator("span").textContent().strip(),
+			"Could not find label for storage block in list of blocks without stored: " + storageBlock.get("label").asText()
 		);
 	}
 

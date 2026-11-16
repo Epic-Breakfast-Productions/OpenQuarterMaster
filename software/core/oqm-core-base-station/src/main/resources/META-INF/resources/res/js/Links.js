@@ -1,7 +1,7 @@
 import { Icons } from "./Icons.js";
 
 export class Links {
-	static storage = '<a href="{rootPrefix}/storage">' + Icons.storageBlock + ' Storage</a>'
+	static storage = '<a href="'+Constants.rootPrefix+'/storage">' + Icons.storageBlock + ' Storage</a>'
 
 	static getStorageViewLink(id, text = "") {
 		let newLink = $(Links.storage);
@@ -30,7 +30,7 @@ export class Links {
 	}
 
 
-	static items = '<a href="{rootPrefix}/items">' + Icons.items + ' Items</a>';
+	static items = '<a href="'+Constants.rootPrefix+'/items">' + Icons.items + ' Items</a>';
 
 	static getItemViewLink(id, text = "") {
 		let newLink = $(Links.items);
