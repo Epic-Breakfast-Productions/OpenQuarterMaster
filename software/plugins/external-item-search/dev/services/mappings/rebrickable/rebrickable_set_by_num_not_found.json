@@ -1,6 +1,13 @@
 {
 	"request": {
-		"urlPathPattern": "/rebrickable/api/v3/lego/sets/(?!21309-1(?=/|$))([^/]+)/$",
+		"urlPathTemplate": "/rebrickable/api/v3/lego/sets/{setNum}/",
+		"pathParameters": {
+			"setNum": {
+				"not": {
+					"equalTo": "21309-1"
+				}
+			}
+		},
 		"method": "GET",
 		"headers": {
 			"Authorization": {

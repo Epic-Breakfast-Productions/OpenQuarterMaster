@@ -147,6 +147,14 @@ public class UpcItemDbService extends ItemSearchService {
 	public Collection<LookupResult> jsonNodeToSearchResults(LookupSource source, LookupMethod type, ObjectNode results) {
 		log.debug("Data from upcitemdb: {}", results.toPrettyString());
 
+		if(results.get("total").asInt() == 0){
+			return List.of(
+				this.setupResponseBuilder(LookupResultNoResults.builder(), source, type)
+					.detail("No items found.")
+					.build()
+			);
+		}
+
 		ArrayNode resultsAsArr = (ArrayNode) results.get("items");
 		List<LookupResult> resultList = new ArrayList<>(resultsAsArr.size());
 
