@@ -13,8 +13,10 @@ import tech.ebp.oqm.plugin.alertMessenger.utils.ConnectionType;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.time.Instant;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @ApplicationScoped
 public class ConnectionDetailsRepository implements PanacheMongoRepository<ConnectionDetails> {
@@ -66,6 +68,20 @@ public class ConnectionDetailsRepository implements PanacheMongoRepository<Conne
 		PanacheMongoRepository.super.persistOrUpdate(entity);
 	}
 
+	/**
+	 * Gets the last webhook URL.
+	 * @return The last webhook URL, or empty if none exists.
+	 */
+	Optional<String> getLastWebhookUrl() {
+		return find("webhookUrl exists", true)
+			.page(Page.of(0, 1))
+			.firstResultOptional()
+			.filter(WebhookConnection.class::isInstance)
+			.map(WebhookConnection.class::cast)
+			.map(WebhookConnection::getWebhookUrl)
+			.map(encryptionService::decrypt);
+	}
+
 	private void encryptIfNeeded(ConnectionDetails entity) {
 		if (entity instanceof WebhookConnection webhook) {
 			String url = webhook.getWebhookUrl();
@@ -92,5 +108,12 @@ public class ConnectionDetailsRepository implements PanacheMongoRepository<Conne
 			|| !type.isAllowedWebhookHost(uri.getHost())) {
 			throw new IllegalArgumentException("Webhook URL must use HTTPS and an expected host for " + type);
 		}
+	}
+
+	public Iterator<WebhookConnection> findAllWebhooks() {
+		return find("webhookUrl exists", true).stream()
+			.filter(WebhookConnection.class::isInstance)
+			.map(WebhookConnection.class::cast)
+			.iterator();
 	}
 }

@@ -11,6 +11,7 @@ import java.time.Duration;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 @ApplicationScoped
 public class UserPreferencesService {
@@ -101,4 +102,14 @@ public class UserPreferencesService {
             throw new IllegalArgumentException("Throttle time must be between 0 and 30 days");
         }
     }
+
+	public void removeConnectionDetailIds(Set<ObjectId> deletedIds) {
+		for (ObjectId deletedId : deletedIds) {
+			repository.findByConnectionDetailId(deletedId).ifPresent(preferences -> {
+				preferences.connectionDetailIds.remove(deletedId);
+				deletedIds.remove(deletedId);
+				repository.update(preferences);
+			});
+		}
+	}
 }

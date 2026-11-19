@@ -45,4 +45,13 @@ public class EncryptionService {
             throw new RuntimeException(e);
         }
     }
+
+	public String migrate(String encrypted, SecretKey oldSecretKey) {
+        try {
+            String value = CipherUtil.decrypt(encrypted, oldSecretKey);
+			return CipherUtil.encrypt(value, secretKey);
+        } catch (GeneralSecurityException e) {
+            throw new RuntimeException(e);
+        }
+	}
 }

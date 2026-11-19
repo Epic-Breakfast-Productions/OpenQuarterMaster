@@ -31,15 +31,15 @@ public class UserPreferencesRepository implements PanacheMongoRepository<UserPre
         return find("userId", userId).page(Page.of(pageIndex, pageSize));
     }
 
-    public List<UserPreferences> findAllByUserId(String userId) {
-        return find("userId", userId).list();
-    }
-
     public PanacheQuery<UserPreferences> findAllPaged(int pageIndex, int pageSize) {
         return findAll().page(Page.of(pageIndex, pageSize));
     }
 
 	public Iterator<UserPreferences> getEnabled() {
 		return find("enabled", true).stream().iterator();
+	}
+
+	public Optional<UserPreferences> findByConnectionDetailId(ObjectId connectionDetailId) {
+		return find("connectionDetailIds", connectionDetailId).firstResultOptional();
 	}
 }
