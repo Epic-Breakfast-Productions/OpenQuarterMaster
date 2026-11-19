@@ -24,8 +24,10 @@ import tech.ebp.oqm.core.api.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.core.api.model.collectionStats.CollectionStats;
 import tech.ebp.oqm.core.api.model.object.MainObject;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.object.storage.storageBlock.StorageBlock;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.core.api.model.rest.search.AppliedTransactionSearch;
 import tech.ebp.oqm.core.api.model.rest.tree.storageBlock.StorageBlockTree;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.StorageBlockSearch;
@@ -40,14 +42,14 @@ import java.util.List;
 @Tags({@Tag(name = "Storage Blocks", description = "Endpoints for managing Storage Blocks.")})
 @RequestScoped
 public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSearch> {
-	
+
 	@Inject
 	@Getter
 	StorageBlockService objectService;
-	
+
 	@Getter
 	Class<StorageBlock> objectClass =  StorageBlock.class;
-	
+
 	@POST
 	@Operation(
 		summary = "Adds a new Storage Block."
@@ -70,7 +72,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	) {
 		return super.create(storageBlock);
 	}
-	
+
 	@POST
 	@Path("bulk")
 	@Operation(
@@ -94,7 +96,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	) {
 		return super.createBulk(storageBlocks);
 	}
-	
+
 	@GET
 	@Operation(
 		summary = "Gets a list of storage blocks, using search parameters."
@@ -111,7 +113,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	) {
 		return super.search(blockSearch);
 	}
-	
+
 	@Override
 	@Path("stats")
 	@GET
@@ -128,7 +130,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	) {
 		return super.getCollectionStats();
 	}
-	
+
 	@Path("{id}")
 	@GET
 	@Operation(
@@ -161,7 +163,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	) {
 		return super.get(id);
 	}
-	
+
 	@PUT
 	@Path("{id}")
 	@Operation(
@@ -197,7 +199,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	) {
 		return super.update(id, updates);
 	}
-	
+
 	@DELETE
 	@Path("{id}")
 	@Operation(
@@ -225,7 +227,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	) {
 		return super.delete(id);
 	}
-	
+
 	@GET
 	@Path("tree")
 	@Operation(
@@ -248,8 +250,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	) {
 		return (StorageBlockTree) ((StorageBlockService) this.getObjectService()).getTree(this.getOqmDbIdOrName(), onlyInclude);
 	}
-	
-	
+
 	//<editor-fold desc="History">
 	@GET
 	@Path("{id}/history")
@@ -278,7 +279,7 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	) {
 		return super.getHistoryForObject(id, searchObject);
 	}
-	
+
 	@GET
 	@Path("history")
 	@Operation(
@@ -295,9 +296,9 @@ public class StorageCrud extends MainObjectProvider<StorageBlock, StorageBlockSe
 	) {
 		return super.searchHistory(searchObject);
 	}
-	
+
 	//</editor-fold>
-	
+
 //	@GET
 //	@Path("{id}/children")
 //	@Operation(

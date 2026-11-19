@@ -7,11 +7,14 @@ import io.quarkus.test.junit.QuarkusTest;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.core.baseStation.testResources.testClasses.WebUiTest;
+import tech.ebp.oqm.core.baseStation.testResources.testUsers.TestUser;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MainAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.assertions.MessageAssertions;
 import tech.ebp.oqm.core.baseStation.testResources.ui.pages.ItemsPage;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.*;
 import tech.ebp.oqm.core.baseStation.testResources.ui.utilities.transaction.AddTransactionUtils;
+import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.ItemHelper;
+import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.StorageHelper;
 
 import java.util.List;
 
@@ -26,14 +29,22 @@ public class AddBulkTransactionUiTest extends WebUiTest {
 	 */
 	@Test
 	public void testAddAmountToNewBulk() {
+		TestUser testUser = this.getTestUserService().getTestUser();
 		Page oqm = this.getLoggedInPage(this.getTestUserService().getTestUser(), ItemsPage.ITEMS_PAGE);
 
 		List<ObjectNode> storageBlocks = List.of(
-			StorageBlockUiUtils.newStorageBlock(oqm),
-			StorageBlockUiUtils.newStorageBlock(oqm)
+			StorageHelper.addStorageBlock(testUser.getAuthString(), TEST_DB, StorageHelper.getStorageBlockTemplate()),
+			StorageHelper.addStorageBlock(testUser.getAuthString(), TEST_DB, StorageHelper.getStorageBlockTemplate())
 		);
 
-		ObjectNode item = ItemsUiUtils.newItem(oqm, storageBlocks);
+		ObjectNode item = ItemHelper.addItem(
+			testUser.getAuthString(),
+			TEST_DB,
+			ItemHelper.getItemTemplate(
+				"BULK",
+				ItemHelper.storageIdsToStorageSettings(storageBlocks)
+			)
+		);
 
 		ItemsUiUtils.viewItem(oqm, item);
 
@@ -77,8 +88,8 @@ public class AddBulkTransactionUiTest extends WebUiTest {
 		attTransactionModal.locator(AddTransactionUtils.SUBMIT_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
 		MessageAssertions.assertMessage(oqm, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Transaction Successful!");
-		
-		
+
+
 		ItemsUiUtils.viewItem(oqm, item);
 
 		assertEquals(
@@ -100,8 +111,11 @@ public class AddBulkTransactionUiTest extends WebUiTest {
 		Locator storedAccord = oqm.locator(ItemsPage.VIEW_STORED_BULK_ACCORDION);
 		assertTrue(storedAccord.isVisible());
 
-		List<Locator> storedAccordItems = storedAccord.locator("div.accordion-item").all();
-		assertEquals(1, storedAccordItems.size());
+		List<Locator> storedAccordItems = storedAccord.locator(":scope > div.accordion-item").all();
+		assertEquals(
+			1, storedAccordItems.size(),
+			"Expected 1 but got " + storedAccordItems.size() + "; " + storedAccordItems
+		);
 
 		Locator storedAccordItem = storedAccordItems.getFirst();
 
@@ -116,62 +130,73 @@ public class AddBulkTransactionUiTest extends WebUiTest {
 
 	@Test
 	public void testAddAmountToExistingBulk() throws InterruptedException {
+		TestUser testUser = this.getTestUserService().getTestUser();
 		Page oqm = this.getLoggedInPage(this.getTestUserService().getTestUser(), ItemsPage.ITEMS_PAGE);
-		
+
 		List<ObjectNode> storageBlocks = List.of(
-			StorageBlockUiUtils.newStorageBlock(oqm),
-			StorageBlockUiUtils.newStorageBlock(oqm)
+			StorageHelper.addStorageBlock(testUser.getAuthString(), TEST_DB, StorageHelper.getStorageBlockTemplate()),
+			StorageHelper.addStorageBlock(testUser.getAuthString(), TEST_DB, StorageHelper.getStorageBlockTemplate())
 		);
-		
-		ObjectNode item = ItemsUiUtils.newItem(oqm, storageBlocks);
+
+		ObjectNode item = ItemHelper.addItem(
+			testUser.getAuthString(),
+			TEST_DB,
+			ItemHelper.getItemTemplate(
+				"BULK",
+				ItemHelper.storageIdsToStorageSettings(storageBlocks)
+			)
+		);
+
 		ObjectNode concerningBlock = storageBlocks.getFirst();
+		log.info("Concerning block: {}", concerningBlock);
 		String concerningBlockId = concerningBlock.get("id").asText();
-		
+
 		AddTransactionUtils.doAddAmountTransaction(oqm, item, concerningBlock, 5);
-		
+
 		ItemsUiUtils.viewItem(oqm, item);
-		
+
 		Locator storedAccord = oqm.locator(ItemsPage.VIEW_STORED_BULK_ACCORDION);
-		
-		Locator concerningAccordItem = storedAccord.locator("div.accordion-item").all()
+
+		Locator concerningAccordItem = storedAccord.locator(":scope > div.accordion-item").all()
 										   .stream().filter(
 											   curItem->{
 												   return concerningBlockId.equals(curItem.getAttribute("data-block-id"));
 											   })
 										   .findFirst().get();
-		concerningAccordItem.locator("button.accordion-button").click();
+
+		concerningAccordItem.locator(":scope > .accordion-header > button.accordion-button").click();
 		MainAssertions.assertDoneProcessing(oqm);
-		
+
 		Locator blockAccordContent = concerningAccordItem.locator("div.accordion-body");
-		
+
 		Locator transactDropdown = blockAccordContent.locator("div.transact-dropdown");
 		transactDropdown.locator("button.transactDropdown").click();
 		transactDropdown.locator("button.transactDropdownAdd").click();
 		MainAssertions.assertDoneProcessing(oqm);
-		
+
 		oqm.locator(AddTransactionUtils.TO_BLOCK_SELECT).selectOption(concerningBlockId);
 		oqm.locator(AddTransactionUtils.MODAL).locator(AddTransactionUtils.AMOUNT_VALUE_INPUT).fill("5");
 		oqm.locator(AddTransactionUtils.SUBMIT_BUTTON).click();
 		MainAssertions.assertDoneProcessing(oqm);
 		MessageAssertions.assertMessage(oqm, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Transaction Successful!");
-		
+
 		ItemsUiUtils.viewItem(oqm, item);
-		
+
 		assertEquals(
 			"10units",
 			oqm.locator(ItemsPage.VIEW_TOTAL).textContent().strip()
 		);
 	}
-	
+
 	//TODO:: new amount list, amount
 	//TODO:: new amount list, whole
-	
+
 	//TODO:: existing amount list, amount
 	//TODO:: existing amount list, amount to existing
 	//TODO:: existing amount list, whole
-	
+
 	//TODO:: new unique list
 	//TODO:: existing unique list
-	
+
 	//TODO:: new single unique
 }

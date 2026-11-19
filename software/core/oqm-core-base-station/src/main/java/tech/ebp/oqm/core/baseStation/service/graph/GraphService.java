@@ -45,7 +45,6 @@ public class GraphService {
             ).await().indefinitely();
 
             AppliedTransactionSearch search = new AppliedTransactionSearch();
-            search.setInventoryItemId(itemId);
             search.setStartDateTime(graphRequest.getStartDateTime());
             search.setEndDateTime(graphRequest.getEndDateTime());
             search.setPageSize(this.defaultPageSize);

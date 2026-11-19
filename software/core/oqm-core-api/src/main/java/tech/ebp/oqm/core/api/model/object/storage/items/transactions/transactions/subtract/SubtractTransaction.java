@@ -5,7 +5,7 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 import lombok.experimental.SuperBuilder;
-import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredTransaction;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.transactions.GeneralTransaction;
 
 /**
  * Transaction to subtract items stored.
@@ -15,6 +15,6 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.ItemStoredT
 @ToString(callSuper = true)
 @SuperBuilder(toBuilder = true)
 @NoArgsConstructor
-public abstract class SubtractTransaction extends ItemStoredTransaction {
+public abstract class SubtractTransaction extends GeneralTransaction {
 
 }

@@ -16,6 +16,7 @@
 */
 package tech.ebp.oqm.lib.core.api.quarkus.testSupport;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
@@ -35,6 +36,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.StorageHelper
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -126,8 +128,16 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 					img.ifPresent(s->template.putArray("imageIds").add(s));
 				}
 
-				//TODO::: storage blocks
+				ArrayNode storageBlockList = getObjectMapper().createArrayNode();
+				template.set("storageBlocks", storageBlockList);
 
+				List<String> randBlocks = new ArrayList<>(storageBlocks);
+				Collections.shuffle(randBlocks);
+				randBlocks.subList(0, rand.nextInt(0, 3))
+					.stream()
+					.forEach((b)->{
+						storageBlockList.add(ItemHelper.storageIdsToStorageSetting(b));
+					});
 
 				ObjectNode curItem = ItemHelper.addItem(
 					auth,

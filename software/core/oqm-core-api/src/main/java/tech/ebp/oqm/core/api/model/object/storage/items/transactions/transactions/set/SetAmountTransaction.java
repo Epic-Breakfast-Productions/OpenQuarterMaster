@@ -23,32 +23,32 @@ import javax.measure.Quantity;
 @NoArgsConstructor
 @Schema(title = "SetAmountTransaction", description = "A transaction to set an amount in a stored object.")
 public class SetAmountTransaction extends SetTransaction {
-	
+
 	/**
 	 * The stored we are concerned with. Must be an amount stored.
 	 * <p>
 	 * In the case of a bulk item, can specify this or block.
 	 */
 	private ObjectId stored;
-	
+
 	/**
 	 * In the case of a bulk item, the block we are concerned with.
 	 */
 	private ObjectId block;
-	
+
 	/**
 	 * The amount to set the stored to.
 	 */
 	@NonNull
 	@NotNull
 	private Quantity<?> amount;
-	
+
 	@Override
 	@Schema(constValue = "SET_AMOUNT", readOnly = true, required = true, examples = "SET_AMOUNT")
 	public TransactionType getType() {
 		return TransactionType.SET_AMOUNT;
 	}
-	
+
 	@Override
 	public int getSchemaVersion() {
 		return 1;

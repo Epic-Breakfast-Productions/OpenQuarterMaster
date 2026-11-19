@@ -30,7 +30,9 @@ import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.AmountStored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.UniqueStored;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.core.api.model.rest.search.AppliedTransactionSearch;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
@@ -61,9 +63,9 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 
 	@Getter
 	Class<Stored> objectClass = Stored.class;
-	
+
 	Map<ObjectId, InventoryItem> itemCache = new HashMap<>();
-	
+
 	private InventoryItem getItem(ObjectId itemId) {
 		if(!this.itemCache.containsKey(itemId)) {
 			this.itemCache.put(
@@ -73,13 +75,13 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 		}
 		return this.itemCache.get(itemId);
 	}
-	
+
 	private Stored applyDefaults(Stored stored){
 		stored.applyDefaultsFromItem(this.getItem(stored.getItem()));
-		
+
 		return stored;
 	}
-	
+
 	private SearchResult<Stored> applyDefaults(SearchResult<Stored> searchResult){
 		searchResult.getResults().forEach(this::applyDefaults);
 		return searchResult;
@@ -100,7 +102,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	) {
 		return this.applyDefaults(super.search(storedSearch));
 	}
-	
+
 	@Path("{storedItemId}")
 	@GET
 	@Operation(
@@ -130,7 +132,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	public Stored get(@PathParam("storedItemId") ObjectId id) {
 		return this.applyDefaults(super.get(id));
 	}
-	
+
 	@GET
 	@Path("{storedItemId}/history")
 	@Operation(
@@ -158,7 +160,7 @@ public class StoredEndpoints extends MainObjectProvider<Stored, StoredSearch> {
 	) {
 		return super.getHistoryForObject(id, searchObject);
 	}
-	
+
 	@GET
 	@Path("history")
 	@Operation(

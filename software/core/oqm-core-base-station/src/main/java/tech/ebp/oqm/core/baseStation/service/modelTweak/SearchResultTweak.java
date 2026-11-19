@@ -235,6 +235,45 @@ public class SearchResultTweak {
 				   });
 	}
 
+
+	public Uni<ObjectNode> addInteractingEntityRefToSearchResult(ObjectNode searchResults, String key, String apiToken) {
+		if (searchResults.get("empty").asBoolean()) {
+			return Uni.createFrom().item(searchResults);
+		}
+
+		Map<String, List<ObjectNode>> resultIdMap = new HashMap<>();
+		for (JsonNode curResult : searchResults.get("results")) {
+			resultIdMap.merge(
+				curResult.get(key).asText(),
+				List.of((ObjectNode) curResult),
+				(objectNodes, collection)->Stream.concat(objectNodes.stream(), collection.stream()).toList()
+			);
+		}
+
+		if (resultIdMap.isEmpty()) {
+			return Uni.createFrom().item(searchResults);
+		}
+
+		UniJoin.Builder<ObjectNode> uniJoinBuilder = Uni.join().builder();
+
+		for (String entityIds : resultIdMap.keySet()) {
+			uniJoinBuilder.add(getOqmCoreApiClient().interactingEntityGetReference(apiToken, entityIds));
+		}
+
+		//returns a uni, not a response
+		return uniJoinBuilder.joinAll()
+				   .andCollectFailures()
+				   .map((List<ObjectNode> resultList)->{
+					   String newFieldName = key+"Ref";
+					   for (ObjectNode curEntityRef : resultList) {
+						   for (ObjectNode curCheckoutFor : resultIdMap.get(curEntityRef.get("id").asText())) {
+							   curCheckoutFor.set(newFieldName, curEntityRef);
+						   }
+					   }
+					   return searchResults;
+				   });
+	}
+
 	public Uni<ObjectNode> addStoredDetailToSearchResult(ObjectNode searchResults, String oqmDb, String key, String apiToken) {
 		if (searchResults.get("empty").asBoolean()) {
 			return Uni.createFrom().item(searchResults);

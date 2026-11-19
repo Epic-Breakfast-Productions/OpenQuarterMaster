@@ -45,12 +45,16 @@ public class ItemStoredStats extends StatsWithTotalContaining {
 											   .build()
 			).collect(Collectors.toCollection(LinkedHashSet::new))
 		);
+
+		this.inTransitStoredStats = new InTransitStoredStats(unit, defaultPrices);
 	}
 
 	@NonNull
 	@NotNull
 	@lombok.Builder.Default
 	private Map<ObjectId, StoredInBlockStats> storageBlockStats = new LinkedHashMap<>();
+
+	private InTransitStoredStats inTransitStoredStats;
 
 	@lombok.Builder.Default
 	private boolean lowStock = false;

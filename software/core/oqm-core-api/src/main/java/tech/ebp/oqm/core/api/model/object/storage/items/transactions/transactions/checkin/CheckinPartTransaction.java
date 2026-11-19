@@ -19,13 +19,13 @@ import tech.ebp.oqm.core.api.model.object.storage.items.transactions.Transaction
 @SuperBuilder(toBuilder = true)
 @Schema(title = "CheckinPartTransaction", description = "A transaction to checkin a part of the amount checked out.")
 public class CheckinPartTransaction extends CheckinTransaction<ReturnPartCheckinDetails> {
-	
+
 	@Override
 	@Schema(constValue = "CHECKIN_PART", readOnly = true, required = true, examples = "CHECKIN_PART")
 	public TransactionType getType() {
 		return TransactionType.CHECKIN_PART;
 	}
-	
+
 	@Override
 	public int getSchemaVersion() {
 		return 1;
