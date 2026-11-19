@@ -1,0 +1,21 @@
+quarkus:
+    log:
+        level: INFO
+        category:
+            "tech.ebp.oqm.plugin.mssController":
+                level: DEBUG
+    #    opentelemetry:
+    #      enabled: true
+    #      tracer:
+    #        exporter:
+    #          otlp:
+    #            endpoint: http://localhost:8096
+    http:
+        port: 8081
+        ssl-port: 8443
+    oidc:
+        # TODO:: remove when https://github.com/quarkusio/quarkus/issues/47581
+        client-id: oqm-app
+        credentials:
+            secret: "**********"
+    #      auth-server-url: http://localhost:8115/realms/oqm
