@@ -1,7 +1,14 @@
 {
   "request": {
-    "urlPath": "/deezer/album/999999",
-    "method": "GET"
+    "urlPathTemplate": "/deezer/album/{albumId}",
+    "method": "GET",
+    "pathParameters": {
+      "albumId": {
+        "not": {
+          "equalTo": "1048622292"
+        }
+      }
+    }
   },
   "response": {
     "status": 200,

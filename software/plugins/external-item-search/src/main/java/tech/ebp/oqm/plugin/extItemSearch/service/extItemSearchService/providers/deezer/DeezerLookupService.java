@@ -3,6 +3,7 @@ package tech.ebp.oqm.plugin.extItemSearch.service.extItemSearchService.providers
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.smallrye.mutiny.Multi;
+import jakarta.enterprise.context.ApplicationScoped;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import tech.ebp.oqm.plugin.extItemSearch.model.ExtItemLookupProviderInfo;
@@ -20,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@ApplicationScoped
 public class DeezerLookupService extends ItemSearchService {
 
 	private final DeezerLookupClient deezerLookupClient;
@@ -28,7 +30,7 @@ public class DeezerLookupService extends ItemSearchService {
 		@RestClient
 		DeezerLookupClient deezerLookupClient,
 		@ConfigProperty
-			(name = "productLookup.providers.openlibrary.enabled", defaultValue = "true") boolean enabled) {
+			(name = "productLookup.providers.deezer.enabled", defaultValue = "true") boolean enabled) {
 		super(
 			enabled,
 			LookupService.DEEZER,
@@ -46,7 +48,7 @@ public class DeezerLookupService extends ItemSearchService {
 	protected Multi<LookupResult> performSearch(LookupSource source, LookupMethod lookupMethod, String term) {
 		return switch (source) {
 			case DEEZER -> switch (lookupMethod) {
-				case ALBUM -> this.deezerLookupClient.search(term)
+				case MUSIC_ALBUM -> this.deezerLookupClient.search(term)
 					.onItem().transformToMulti(result -> {
 						if (result.has("error")) {
 							throw new IllegalStateException(getErrorMessage(result));
@@ -86,7 +88,12 @@ public class DeezerLookupService extends ItemSearchService {
 		attributes.put("duration", result.get("duration").asText());
 		attributes.put("release_date", result.get("release_date").asText());
 		links.put("deezer_link", result.get("link").asText());
-		images.add(result.get("picture").asText());
+		if (artist.hasNonNull("picture")) {
+			images.add(artist.get("picture").asText());
+		}
+		if(result.hasNonNull("cover")) {
+			images.add(result.get("cover").asText());
+		}
 
 		return resultBuilder
 			.name(name)

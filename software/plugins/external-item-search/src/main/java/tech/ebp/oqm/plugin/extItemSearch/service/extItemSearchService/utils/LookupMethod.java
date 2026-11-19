@@ -6,5 +6,5 @@ public enum LookupMethod {
 	PART_NUM,
 	SET_NUM,
 	WEBPAGE,
-	ALBUM
+	MUSIC_ALBUM
 }

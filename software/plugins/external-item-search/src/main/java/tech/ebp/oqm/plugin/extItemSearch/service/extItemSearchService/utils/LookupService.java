@@ -52,7 +52,7 @@ public enum LookupService {
 	DEEZER(
 		DeezerLookupService.class,
 		List.of(LookupSource.DEEZER),
-		List.of(LookupMethod.ALBUM)
+		List.of(LookupMethod.MUSIC_ALBUM)
 	);
 
 	public final Class<? extends ItemSearchService> searchClass;
