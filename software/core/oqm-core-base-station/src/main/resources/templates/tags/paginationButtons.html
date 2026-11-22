@@ -9,7 +9,7 @@
 		<li class="page-item {#if isOnFirstPage}disabled{/if}">
 			<button type="button" class="btn-link page-link" title="Previous page" onclick="SearchUtils.paginationClick('{searchFormId}', {pagingCalculations.get("previousPage").asLong()});" {#if isOnFirstPage}disabled{/if}>{#icons/left /}</button>
 		</li>
-		
+
 		{#if numPages <= config:['ui.pagination.breakToInput']}
 			{#for page in numPages}
 			<li class="page-item {#if page is currentPage}active{/if}">
@@ -20,15 +20,15 @@
 			<li class="page-item">
 				<div class="input-group input-group-sm">
 					<span class="input-group-text">Page</span>
-					<input type="number" class="form-control" aria-label="Page Number" value="{currentPage}" style="width: 100px;">
+					<input type="number" class="form-control" aria-label="Page Number" value="{currentPage}" style="width: 100px;" onchange="$(this).addClass('border-warning').addClass('border')">
 					<span class="input-group-text" >of {numPages}</span>
-					<button class="btn btn-outline-secondary" type="button" title="Go to Page" onclick="SearchUtils.paginationClick('{searchFormId}', $(this).prev().val());">
+					<button class="btn btn-outline-secondary" type="button" title="Go to Page" onclick="SearchUtils.paginationClick('{searchFormId}', $(this).prev().prev().val());">
 						{#icons/icon icon='book-half' /}
 					</button>
 				</div>
 			</li>
 		{/if}
-		
+
 		<li class="page-item {#if isOnLastPage}disabled{/if}">
 			<button type="button" class="btn-link page-link" title="Next page" onclick="SearchUtils.paginationClick('{searchFormId}', {pagingCalculations.get("nextPage").asLong()});" {#if isOnLastPage}disabled{/if}>{#icons/right /}</button>
 		</li>
