@@ -163,13 +163,13 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 					}
 				}
 
-        
+
 				ArrayNode storageBlockList = getObjectMapper().createArrayNode();
 				template.set("storageBlocks", storageBlockList);
 
 				List<String> randBlocks = new ArrayList<>(storageBlocks);
 				Collections.shuffle(randBlocks);
-				randBlocks.subList(0, rand.nextInt(0, 3))
+				randBlocks.subList(0, getRand().nextInt(0, 3))
 					.stream()
 					.forEach((b)->{
 						storageBlockList.add(ItemHelper.storageIdsToStorageSetting(b));
