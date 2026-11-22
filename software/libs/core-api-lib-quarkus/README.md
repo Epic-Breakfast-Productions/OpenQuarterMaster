@@ -52,7 +52,7 @@ This library is made for utilization in a Quarkus app. It provides a devservice 
 Set the version:
 
 ```bash
-mvn versions:set -DnewVersion=
+./mvnw versions:set -DnewVersion=
 ```
 
 https://central.sonatype.org/publish/publish-portal-maven/
