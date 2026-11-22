@@ -34,8 +34,9 @@ export class ItemStoredTransaction extends PageUtility {
 			}
 		});
 	}
+
 	static ModalButtons = class {
-		static async getTransactionSelectDropdown (
+		static async getTransactionSelectDropdown(
 			item = null,
 			stored = null,
 			{
@@ -195,6 +196,7 @@ export class ItemStoredTransaction extends PageUtility {
 			console.debug("Done updating inputs.");
 			Main.processStop("Update add transaction inputs.");
 		}
+
 		static resetForm(changeItemRelated = true) {
 			console.log("Resetting item stored add transaction form.");
 			this.form.trigger("reset");
@@ -222,6 +224,7 @@ export class ItemStoredTransaction extends PageUtility {
 			this.toStoredInput.html("");
 			this.toBlockInput.html("");
 		}
+
 		static async setupFormForItem(itemId) {
 			Main.processStart();
 			console.log("Setting up item stored add form for item ", itemId);
@@ -297,6 +300,7 @@ export class ItemStoredTransaction extends PageUtility {
 			console.log("Finished setting up add transaction form .");
 			Main.processStop();
 		}
+
 		static async setupForm(itemId = null, preselectedStoredId = null, buttonElement = null) {
 			//TODO:: do something wiht preselected stored
 			console.log("Setting up item stored add transaction form for item", itemId);
@@ -317,6 +321,7 @@ export class ItemStoredTransaction extends PageUtility {
 				//TODO:: setup form for stored
 			}
 		}
+
 		static async submitForm() {
 			console.log("Submitting Add Transaction form");
 
@@ -352,6 +357,7 @@ export class ItemStoredTransaction extends PageUtility {
 				this.modal
 			);
 		}
+
 		/**
 		 * Handler for submitting the add transaction form.
 		 * Wrapper for submitForm, in order to enable the use of "this" in that method.
@@ -380,7 +386,7 @@ export class ItemStoredTransaction extends PageUtility {
 		static byOriginalContainer = $("#itemStoredTransactionCheckinFormByOriginalContainer");
 		static byOriginalContent = $("#itemStoredTransactionCheckinFormByOriginalContent");
 		static byUserContainer = $("#itemStoredTransactionCheckinFormByUserContainer");
-		static 	byUserInput = $("#itemStoredTransactionCheckinFormByUserInput");
+		static byUserInput = $("#itemStoredTransactionCheckinFormByUserInput");
 		static byExtContainer = $("#itemStoredTransactionCheckinFormByExtUserContainer");
 		static byExtNameInput = $("#itemStoredTransactionCheckinFormByExtUserNameInput");
 		static byExtIdInput = $("#itemStoredTransactionCheckinFormByExtUserIdInput");
@@ -446,6 +452,7 @@ export class ItemStoredTransaction extends PageUtility {
 			ItemStoredTransaction.Checkin.attInputs.text("");
 
 		}
+
 		static async setupForm(checkout, buttonElement) {
 			console.log("Setting up item stored checkin transaction form for checkin ", checkout);
 			ModalUtils.setReturnModal(this.modal, buttonElement);
@@ -574,6 +581,7 @@ export class ItemStoredTransaction extends PageUtility {
 			ItemStoredTransaction.Checkin.intoChanged();
 			ItemStoredTransaction.Checkin.checkoutDetailsContainer.show();
 		}
+
 		static updateCheckedInBy() {
 			let checkedInBySelectVal = ItemStoredTransaction.Checkin.byWhoSelect.val();
 
@@ -604,6 +612,7 @@ export class ItemStoredTransaction extends PageUtility {
 					break;
 			}
 		}
+
 		static intoChanged() {
 			ItemStoredTransaction.Checkin.toOrigDescContainer.hide();
 			ItemStoredTransaction.Checkin.toBlockContainer.hide();
@@ -621,6 +630,7 @@ export class ItemStoredTransaction extends PageUtility {
 					break;
 			}
 		}
+
 		static async submitFormHandler(e) {
 			e.preventDefault();
 			console.log("Submitting Checkin form");
@@ -806,6 +816,7 @@ export class ItemStoredTransaction extends PageUtility {
 
 			ItemStoredTransaction.Checkout.forExternalContainer.hide();
 		}
+
 		static async setupForm(item, stored, buttonElement) {
 			Main.processStart();
 			ItemStoredTransaction.Checkout.resetForm();
@@ -928,6 +939,7 @@ export class ItemStoredTransaction extends PageUtility {
 
 			Main.processStop();
 		}
+
 		static typeUpdated(force = false) {
 			if (force || ItemStoredTransaction.Checkout.typeInput.is(":visible")) {
 				console.log("Updating inputs based on selected subtract type.");
@@ -948,6 +960,7 @@ export class ItemStoredTransaction extends PageUtility {
 				}
 			}
 		}
+
 		static async updateAmount(item = null, stored = null, storageBlockId = null, force = false) {
 			if (force || ItemStoredTransaction.Checkout.amountInputs.is(":visible")) {
 				console.log("Updating amounts");
@@ -1025,6 +1038,7 @@ export class ItemStoredTransaction extends PageUtility {
 				console.debug("Amounts not visible; not updating.");
 			}
 		}
+
 		static updateAllAmount() {
 			let inputs = ItemStoredTransaction.Checkout.amountInputs.find("input, select");
 			if (ItemStoredTransaction.Checkout.amountAllInput.is(":checked")) {
@@ -1033,6 +1047,7 @@ export class ItemStoredTransaction extends PageUtility {
 				inputs.prop("disabled", false);
 			}
 		}
+
 		static updateForWho() {
 			ItemStoredTransaction.Checkout.forExternalContainer.hide();
 			ItemStoredTransaction.Checkout.forUserContainer.hide();
@@ -1047,6 +1062,7 @@ export class ItemStoredTransaction extends PageUtility {
 					break;
 			}
 		}
+
 		static async submitFormHandler(event) {
 			event.preventDefault();
 			console.log("Submitting Item Stored Checkout form.");
@@ -1134,6 +1150,7 @@ export class ItemStoredTransaction extends PageUtility {
 			);
 			Main.processStop();
 		}
+
 		static resetForm() {
 			ItemStoredTransaction.Set.messages.text("");
 			ItemStoredTransaction.Set.itemSelectContainer.hide();
@@ -1150,6 +1167,7 @@ export class ItemStoredTransaction extends PageUtility {
 			ItemSearchSelect.clearSearchInput(ItemStoredTransaction.Set.storedSelect, false);
 
 		}
+
 		static async setupForm(item, stored, buttonElement) {
 			Main.processStart();
 			if (buttonElement != null) {
@@ -1220,6 +1238,7 @@ export class ItemStoredTransaction extends PageUtility {
 
 			Main.processStop();
 		}
+
 		static async updateAmounts(item = null, stored = null, storageBlockId = null) {
 			console.log("Updating amounts");
 
@@ -1289,6 +1308,7 @@ export class ItemStoredTransaction extends PageUtility {
 				throw new Error("Should not be able to get here.");
 			}
 		}
+
 		static async submitFormHandler(event) {
 			event.preventDefault();
 			let transaction = {
@@ -1368,6 +1388,7 @@ export class ItemStoredTransaction extends PageUtility {
 			ItemStoredTransaction.Subtract.amountContainer.hide();
 			ItemStoredTransaction.Subtract.amountInputsContainer.text("");
 		}
+
 		static async setupForm(item, stored, buttonElement) {
 			Main.processStart();
 			if (buttonElement != null) {
@@ -1472,6 +1493,7 @@ export class ItemStoredTransaction extends PageUtility {
 
 			Main.processStop();
 		}
+
 		static typeUpdated(force = false) {
 			if (force || ItemStoredTransaction.Subtract.typeSelect.is(":visible")) {
 				console.log("Updating inputs based on selected subtract type.");
@@ -1492,6 +1514,7 @@ export class ItemStoredTransaction extends PageUtility {
 				}
 			}
 		}
+
 		static async updateAmount(item = null, stored = null, storageBlockId = null, force = false) {
 			if (force || ItemStoredTransaction.Subtract.amountInputsContainer.is(":visible")) {
 				console.log("Updating amounts");
@@ -1569,6 +1592,7 @@ export class ItemStoredTransaction extends PageUtility {
 				console.debug("Amounts not visible; not updating.");
 			}
 		}
+
 		static updateAllAmount() {
 			let inputs = ItemStoredTransaction.Subtract.amountInputsContainer.find("input, select");
 			if (ItemStoredTransaction.Subtract.amountSubtractAllInput.is(":checked")) {
@@ -1577,6 +1601,7 @@ export class ItemStoredTransaction extends PageUtility {
 				inputs.prop("disabled", false);
 			}
 		}
+
 		static async submitFormHandler(event) {
 			event.preventDefault();
 			console.log("Building and submitting subtract transaction.");
@@ -1674,6 +1699,7 @@ export class ItemStoredTransaction extends PageUtility {
 			ItemStoredTransaction.Transfer.toStoredContainer.hide();
 			ItemStoredSearchSelect.resetSearchInput(ItemStoredTransaction.Transfer.toStoredSelect);
 		}
+
 		static async setupForm(item, stored, buttonElement = null) {
 			Main.processStart();
 			if (buttonElement != null) {
@@ -1837,6 +1863,7 @@ export class ItemStoredTransaction extends PageUtility {
 			//TODO:: make & run update to block to not select same block as is selected in from
 			Main.processStop();
 		}
+
 		/**
 		 * Updates visibility of fields, selected/disabled in dropdowns based on what is selected
 		 */
@@ -1863,6 +1890,7 @@ export class ItemStoredTransaction extends PageUtility {
 				}
 			}
 		}
+
 		static updateToBlock(selectedBlockId = null, force = false) {
 			//TODO:: update for from stored
 			if (force || ItemStoredTransaction.Transfer.toBlockSelect.is(":visible")) {
@@ -1880,6 +1908,7 @@ export class ItemStoredTransaction extends PageUtility {
 				console.debug("ToBlock not visible; not updating.");
 			}
 		}
+
 		/**
 		 * Updates the amount input to the value of what is present in the stored selected.
 		 */
@@ -1955,6 +1984,7 @@ export class ItemStoredTransaction extends PageUtility {
 				console.debug("Amounts not visible; not updating.");
 			}
 		}
+
 		static updateAllAmount() {
 			let inputs = ItemStoredTransaction.Transfer.amountInputs.find("input, select");
 			if (ItemStoredTransaction.Transfer.amountTransferAllInput.is(":checked")) {
@@ -1963,6 +1993,7 @@ export class ItemStoredTransaction extends PageUtility {
 				inputs.prop("disabled", false);
 			}
 		}
+
 		static async submitFormHandler(event) {
 			event.preventDefault();
 			let transaction = {};
@@ -2009,19 +2040,43 @@ export class ItemStoredTransaction extends PageUtility {
 	}
 
 	static InTransit = class {
-		static Add = class{
+		static Add = class {
+			static Form = class {
+				static modal = $("#itemStoredTransactionInTransitAddModal");
+				static messages = $("#itemStoredTransactionInTransitAddMessages");
+				static form = $("#itemStoredTransactionInTransitAddForm");
+			}
+
+
+			static async setupForm(itemId = null, buttonElement = null) {
+
+			}
+
+			static async submitForm() {
+				console.log("Submitting Add In-Transit Transaction form");
+			}
+
+			/**
+			 * Handler for submitting the add in transit transaction form.
+			 * Wrapper for submitForm, in order to enable the use of "this" in that method.
+			 * @param event
+			 * @returns {Promise<void>}
+			 */
+			static async submitFormHandler(event) {
+				event.preventDefault();
+				await ItemStoredTransaction.InTransit.Add.submitForm();
+			}
+		}
+		static Cancel = class {
 
 		}
-		static Cancel = class{
+		static Receive = class {
 
 		}
-		static Receive = class{
+		static StoredToInTransit = class {
 
 		}
-		static StoredToInTransit = class{
-
-		}
-		static Update = class{
+		static Update = class {
 
 		}
 	}
@@ -2079,6 +2134,10 @@ export class ItemStoredTransaction extends PageUtility {
 
 		if (ItemStoredTransaction.Checkin.form) {
 			ItemStoredTransaction.Checkin.form.on("submit", ItemStoredTransaction.Checkin.submitFormHandler);
+		}
+
+		if (ItemStoredTransaction.InTransit.Add.Form.form) {
+			ItemStoredTransaction.InTransit.Add.Form.form.on("submit", ItemStoredTransaction.InTransit.Add.submitFormHandler);
 		}
 	}
 }
