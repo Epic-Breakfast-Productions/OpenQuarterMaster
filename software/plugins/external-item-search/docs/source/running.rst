@@ -323,3 +323,34 @@ Note:: URL configuration is noted here for completeness, but you should never ne
 			-
 			- .. code-block:: none
 
+.. dropdown:: Deezer
+
+	https://www.deezer.com/
+
+	.. list-table::
+		:header-rows: 1
+
+		*	- Config Key
+			- Description
+			- Values (Examples)
+			- Default
+
+		*	- .. code-block:: none
+
+				productLookup.providers.deezer.enabled
+			- If this provider is enabled or not.
+			- .. code-block:: none
+
+				true
+			- .. code-block:: none
+
+				true
+
+		*	- .. code-block:: none
+
+				productLookup.providers.deezer.url
+			- The base URL of the website for API calls for barcodes
+			-
+			- .. code-block:: none
+
+				https://api.deezer.com
