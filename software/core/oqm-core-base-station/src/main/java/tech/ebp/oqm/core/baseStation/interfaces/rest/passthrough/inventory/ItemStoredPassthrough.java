@@ -59,7 +59,7 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 		@HeaderParam("otherModalId") String otherModalId,
 		@HeaderParam("inputIdPrepend") String inputIdPrepend,
 		@HeaderParam("showItem") boolean showItem,
-		@HeaderParam("showStorage") boolean showStorage,
+		@HeaderParam("showStoredState") boolean showStoredState,
 		@HeaderParam("actionType") Optional<String> actionType
 	) {
 		return this.handleCall(
@@ -76,7 +76,7 @@ public class ItemStoredPassthrough extends PassthroughProvider {
 							,
 							this.searchResultTemplate
 								.data("showItem", showItem)
-								.data("showStorage", showStorage)
+								.data("showStoredState", showStoredState)
 								.data("showType", false)
 								.data("inventoryItem", item)
 							,
