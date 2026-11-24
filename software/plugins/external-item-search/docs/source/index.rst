@@ -23,6 +23,7 @@ Supported item providers (sources of our searches) (* = requires your own API ke
  - \* `Rebrickable <https://rebrickable.com/>`_
  - `Open Library <https://openlibrary.org>`_
  - \* `ISBNdb <https://isbndb.com/>`_
+ - `Deezer <https://www.deezer.com/>`_
 
 .. toctree::
 	:maxdepth: 3
