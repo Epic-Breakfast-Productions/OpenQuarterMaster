@@ -229,7 +229,7 @@ export class ItemStoredTransaction extends PageUtility {
 			Main.processStart();
 			console.log("Setting up item stored add form for item ", itemId);
 			this.resetForm(false);
-			//TODO:: populate stored dropdown
+			//TODO:: rework stored dropdown / select
 			let promises = [];
 			promises.push(Getters.InventoryItem.get(itemId, async function (item) {
 				let itemPromises = [];
