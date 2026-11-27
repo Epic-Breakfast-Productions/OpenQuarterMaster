@@ -3,6 +3,7 @@ package tech.ebp.oqm.plugin.imageSearch.service.imageSearch;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.time.StopWatch;
 import org.junit.jupiter.api.Test;
 import tech.ebp.oqm.plugin.imageSearch.model.search.ImageSearch;
 import tech.ebp.oqm.plugin.imageSearch.model.search.SearchResults;
@@ -29,12 +30,14 @@ class ImageSearchServiceTest extends RunningServerTest {
 
 	@Test
 	public void testBasicSearch() throws IOException {
-		this.setupOqmDb(TEST_DB);
-		log.info("Testing initDb");
+		setupOqmDb(TEST_DB);
+		log.info("Testing initVectors");
 
+		StopWatch sw = StopWatch.createStarted();
 		this.resnetVectorService.initVectors();
+		sw.stop();
 
-		log.info("Finished initDb");
+		log.info("Finished initVectors in: {}", sw.getDuration());
 
 		try (Stream<Path> stream = Files.list(Paths.get(TEST_IMG_DIR)); InputStream is = Files.newInputStream(stream.findFirst().get());) {
 			SearchResults results = this.imageSearchService.search(

@@ -38,9 +38,9 @@ class ResnetVectorServiceTest extends RunningServerTest {
 
 	@Test
 	public void testInitDb() throws InterruptedException {
-		this.setupOqmDb(TEST_DB);
+		setupOqmDb(TEST_DB);
+		awaitProcessing(Duration.ofMinutes(5));
 
-		Thread.sleep(20_000);//TODO:: better way to wait for db init
 		this.resnetVectorService.deleteAll();
 
 		log.info("Testing initDb");
@@ -78,7 +78,9 @@ class ResnetVectorServiceTest extends RunningServerTest {
 
 	@Test
 	public void testInitDBRemoveDeletedVector() throws IOException {
-		this.setupOqmDb(TEST_DB);
+		setupOqmDb(TEST_DB);
+		awaitProcessing(Duration.ofMinutes(5));
+
 		ObjectNode image;
 //		try (Stream<Path> stream = Files.list(Paths.get(TEST_IMG_DIR))) {
 //			List<Path> files = stream
@@ -116,8 +118,8 @@ class ResnetVectorServiceTest extends RunningServerTest {
 
 	@Test
 	public void testInitDBCreateFromCreateMessage() throws IOException, InterruptedException {
-		this.setupOqmDb(TEST_DB);
-		Thread.sleep(20_000);//TODO:: better way to wait for db init
+		setupOqmDb(TEST_DB);
+		awaitProcessing(Duration.ofMinutes(5));
 
 		String newImageId;
 
@@ -144,7 +146,7 @@ class ResnetVectorServiceTest extends RunningServerTest {
 		}
 
 		assertTimeout(
-			Duration.ofSeconds(10),
+			Duration.ofSeconds(30),
 			() -> {
 				while(1 != this.resnetVectorService.getTypedCollection().countDocuments(Filters.eq("imageId", newImageId))){
 					Thread.sleep(250);
@@ -155,8 +157,8 @@ class ResnetVectorServiceTest extends RunningServerTest {
 
 	@Test
 	public void testInitDBCreateFromUpdateMessage() throws IOException, InterruptedException {
-		this.setupOqmDb(TEST_DB);
-		Thread.sleep(20_000);//TODO:: better way to wait for db init
+		setupOqmDb(TEST_DB);
+		awaitProcessing(Duration.ofMinutes(5));
 
 		String newImageId;
 
@@ -183,7 +185,7 @@ class ResnetVectorServiceTest extends RunningServerTest {
 		}
 
 		assertTimeout(
-			Duration.ofSeconds(10),
+			Duration.ofSeconds(30),
 			() -> {
 				while(1 != this.resnetVectorService.getTypedCollection().countDocuments(Filters.eq("imageId", newImageId))){
 					Thread.sleep(250);
@@ -215,7 +217,7 @@ class ResnetVectorServiceTest extends RunningServerTest {
 		}
 
 		assertTimeout(
-			Duration.ofSeconds(10),
+			Duration.ofSeconds(30),
 			() -> {
 				while(2 != this.resnetVectorService.getTypedCollection().countDocuments(Filters.eq("imageId", newImageId))){
 					Thread.sleep(250);

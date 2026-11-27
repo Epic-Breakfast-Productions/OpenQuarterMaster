@@ -25,6 +25,7 @@ import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.ResnetProvi
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Instant;
 import java.util.Iterator;
 
 import static com.mongodb.client.model.Filters.and;
@@ -49,6 +50,9 @@ public class ResnetVectorService {
 
 	@Inject
 	ResnetProvider resnetProvider;
+
+	@Getter
+	Instant lastProcess;
 
 
 	protected MongoDatabase getMongoDatabase() {
@@ -79,6 +83,7 @@ public class ResnetVectorService {
 
 	public void processImage(String database, String imageId, int imageRevision) {
 		log.info("Processing image {}, revision: {}", imageId, imageRevision);
+		this.lastProcess = Instant.now();
 
 		//check if already processed, skip if exists
 		MongoCollection<ImageVector> collection = this.getTypedCollection();
@@ -131,6 +136,27 @@ public class ResnetVectorService {
 		);
 	}
 
+	public long cullDeleted(){
+		long output = 0;
+		Iterator<ImageVector> allVec = this.getAllVectors();
+		while (allVec.hasNext()) {
+			ImageVector imageVector = allVec.next();
+			String imageID = imageVector.getImageId();
+			String db = imageVector.getOqmDb();
+			// TODO:: check which error is being thrown
+			ObjectNode imageData = this.oqmCoreApiClientService
+				.imageGet(
+					this.serviceAccountService.getAuthString(), db, imageID)
+				.onFailure()
+				.recoverWithNull()
+				.await().indefinitely();
+			if(imageData == null) {
+				this.getTypedCollection().deleteOne(Filters.eq("_id", imageVector.getId()));
+				output++;
+			}
+		}
+		return output;
+	}
 
 	//Iterates db, operate on each image in turn
 	@WithSpan
@@ -168,25 +194,8 @@ public class ResnetVectorService {
 			}
 		}
 
-		// TODO:: remove vectors not in oqm core db
-		Iterator<ImageVector> allVec = this.getAllVectors();
-		while (allVec.hasNext()) {
-			ImageVector imageVector = allVec.next();
-			String imageID = imageVector.getImageId();
-			String db = imageVector.getOqmDb();
-			// TODO:: check which error is being thrown
-			ObjectNode imageData = this.oqmCoreApiClientService
-					.imageGet(
-							this.serviceAccountService.getAuthString(), db, imageID)
-					.onFailure()
-					.recoverWithNull()
-					.await().indefinitely();
-			if(imageData == null) {
-				this.getTypedCollection().deleteOne(Filters.eq("_id", imageVector.getId()));
-			}
-
-		}
-
+		//remove vectors not in oqm core db
+		this.cullDeleted();
 	}
 
 	public void deleteImage(String database, String imageId) {

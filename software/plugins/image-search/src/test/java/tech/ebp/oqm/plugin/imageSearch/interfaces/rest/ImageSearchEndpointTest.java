@@ -15,7 +15,7 @@ class ImageSearchEndpointTest extends RunningServerTest {
 
 	@BeforeAll
 	public static void setUp(){
-//		this.setupOqmDb(TEST_DB);
+		setupOqmDb(TEST_DB);
 	}
 
 
@@ -29,7 +29,6 @@ class ImageSearchEndpointTest extends RunningServerTest {
 
 	@Test
 	public void testSearchEndpointMulti(){
-		this.setupOqmDb(TEST_DB);
 		//TODO:: multiple searches at once
 	}
 
