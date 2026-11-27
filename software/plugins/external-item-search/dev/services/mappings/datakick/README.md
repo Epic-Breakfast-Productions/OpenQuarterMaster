@@ -1,3 +1,3 @@
 # Datakick Service
 
- - https://gtinsearch.org/api
+- https://gtinsearch.org/api

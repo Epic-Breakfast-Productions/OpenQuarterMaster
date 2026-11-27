@@ -1,7 +1,12 @@
 {
 	"request": {
-		"urlPathPattern": "/rebrickable/api/v3/lego/parts/012345/",
 		"method": "GET",
+		"urlPathTemplate": "/rebrickable/api/v3/lego/parts/{partNum}/",
+		"pathParameters": {
+			"partNum": {
+				"equalTo": "012345"
+			}
+		},
 		"headers": {
 			"Authorization": {
 				"equalTo": "key devKey"

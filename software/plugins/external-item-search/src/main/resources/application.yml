@@ -31,6 +31,9 @@ productLookup:
             url: https://api2.isbndb.com
             enabled: true
             apiKey: " "
+        deezer:
+            url: https://api.deezer.com
+            enabled: true
 
 quarkus:
     container-image:
@@ -67,6 +70,9 @@ quarkus:
             scope: jakarta.inject.Singleton
         isbndb:
             url: ${productLookup.providers.isbndb.url}
+            scope: jakarta.inject.Singleton
+        deezer:
+            url: ${productLookup.providers.deezer.url}
             scope: jakarta.inject.Singleton
     smallrye-openapi:
         info-title: External Item Search API
@@ -134,6 +140,8 @@ quarkus:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/openlibrary/
             isbndb:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/isbndb/
+            deezer:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/deezer/
 
 "%intTest":
     quarkus:
@@ -161,3 +169,5 @@ quarkus:
             isbndb:
                 url: http://localhost:${quarkus.wiremock.devservices.port}/isbndb/
                 apiKey: devKey
+            deezer:
+                url: http://localhost:${quarkus.wiremock.devservices.port}/deezer/

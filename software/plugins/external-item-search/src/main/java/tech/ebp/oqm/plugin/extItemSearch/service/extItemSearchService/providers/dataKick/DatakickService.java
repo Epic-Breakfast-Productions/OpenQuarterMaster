@@ -28,9 +28,9 @@ import java.util.*;
 @ApplicationScoped
 @Slf4j
 public class DatakickService extends ItemSearchService {
-	
+
 	private DataKickLookupClient dataKickLookupClient;
-	
+
 	@Inject
 	public DatakickService(
 		@RestClient
@@ -52,7 +52,7 @@ public class DatakickService extends ItemSearchService {
 				.cost("Free")
 		);
 	}
-	
+
 	/**
 	 * https://gtinsearch.org/api https://www.gtinsearch.org/api/items/0754523765792
 	 *
@@ -62,24 +62,32 @@ public class DatakickService extends ItemSearchService {
 	 */
 	public Collection<LookupResult> jsonNodeToSearchResults(LookupSource source, LookupMethod method, ArrayNode results) {
 		log.debug("Data from Datakick: {}", results);
-		
+
+		if(results.isEmpty()){
+			return List.of(
+				this.setupResponseBuilder(LookupResultNoResults.builder(), source, method)
+					.detail("No items found.")
+					.build()
+			);
+		}
+
 		List<LookupResult> resultsList = new ArrayList<>(results.size());
-		
+
 		for (JsonNode curResult : results) {
 			ObjectNode curResultJson = (ObjectNode) curResult;
 			String brandName = "";
 			String name = "";
 			Map<String, String> attributes = new HashMap<>();
-			
-			
+
+
 			for (Map.Entry<String, JsonNode> curField : curResultJson.properties()) {
 				String curFieldName = curField.getKey();
 				String curFieldVal = curField.getValue().asText();
-				
+
 				if (curField.getValue().isNull() || curFieldVal == null || curFieldVal.isBlank()) {
 					continue;
 				}
-				
+
 				switch (curFieldName) {
 					case "id":
 					case "user_id":
@@ -96,7 +104,7 @@ public class DatakickService extends ItemSearchService {
 						attributes.put(curFieldName, curFieldVal);
 				}
 			}
-			
+
 			resultsList.add(
 				this.setupResponseBuilder(ExtItemLookupResult.builder(), source, method)
 					.name(name)
@@ -107,7 +115,7 @@ public class DatakickService extends ItemSearchService {
 		}
 		return resultsList;
 	}
-	
+
 	@Override
 	protected Multi<LookupResult> performSearch(LookupSource source, LookupMethod method, String term) {
 		return switch (source) {
@@ -122,8 +130,8 @@ public class DatakickService extends ItemSearchService {
 			default -> throw new IllegalArgumentException("Invalid lookup source: " + source);
 		};
 	}
-	
-	
+
+
 	@Override
 	protected Optional<LookupResult> handleClientError(LookupSource source, LookupMethod method, ClientWebApplicationException e) {
 		if (e.getResponse().getStatus() == 404) {

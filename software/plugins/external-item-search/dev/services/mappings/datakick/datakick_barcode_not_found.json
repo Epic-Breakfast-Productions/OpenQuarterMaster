@@ -1,6 +1,13 @@
 {
 	"request": {
-		"urlPathPattern": "/datakick/api/items/(?!00888109010058(?=/|$))$",
+		"urlPathTemplate": "/datakick/api/items/{barcode}",
+		"pathParameters": {
+			"barcode": {
+				"not": {
+					"equalTo": "00888109010058"
+				}
+			}
+		},
 		"method": "GET"
 	},
 	"response": {
