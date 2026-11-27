@@ -2,8 +2,8 @@
 	"plugin": {
 		"storagotchi": {
 			"internalHost": "oqm-plugin-storagotchi",
-			"internalHttpPort": 80,
-			"internalHttpsPort": 443,
+			"internalHttpPort": 8080,
+			"internalHttpsPort": 8443,
 			"internalBaseUri": "http://#{plugin.storagotchi.internalHost}:#{plugin.storagotchi.internalHttpPort}",
 			"externalBaseUri": "#{infra.traefik.externalRootUri}/plugin/storagotchi",
 			"postgresUser": "oqm_plugin_storagotchi_main",

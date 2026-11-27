@@ -16,6 +16,7 @@
 */
 package tech.ebp.oqm.lib.core.api.quarkus.testSupport;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
@@ -29,6 +30,7 @@ import lombok.extern.slf4j.Slf4j;
 import net.datafaker.providers.base.Bool;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.models.ItemStorageType;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.InventoryItemSearch;
+import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.CategoryHelper;
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.ImageHelper;
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.ItemHelper;
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.StorageHelper;
@@ -48,8 +50,6 @@ import static io.restassured.RestAssured.given;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 
-
-	private static final RandomGenerator rand = RandomGenerator.getDefault();
 
 
 	public static void clearAllDbs(String auth){
@@ -73,7 +73,7 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 			return Optional.empty();
 		}
 
-		return Optional.of(list.get(rand.nextInt(list.size())));
+		return Optional.of(list.get(getRand().nextInt(list.size())));
 	}
 
 
@@ -84,6 +84,7 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 	) throws IOException {
 		List<String> images = new ArrayList<>(options.getNumImages());
 		List<String> storageBlocks = new ArrayList<>(options.getNumBlocks());
+		List<String> categories = new ArrayList<>(options.getNumBlocks());
 		List<ObjectNode> items = new ArrayList<>(options.getNumBlocks());
 
 		{//images
@@ -101,7 +102,7 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 					img.ifPresent(s->template.putArray("imageIds").add(s));
 				}
 
-				if(options.getBlockParents() && rand.nextInt(100) < 90){
+				if(options.getBlockParents() && getRand().nextInt(100) < 90){
 					Optional<String> parent = randFromList(storageBlocks);
 					parent.ifPresent(s->template.put("parent", s));
 				}
@@ -115,6 +116,27 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 				storageBlocks.add(curBlock.get("id").asText());
 			}
 		}
+
+		{//categories
+			for(int i = 0; i < options.getNumCategories(); i++){
+				ObjectNode template = CategoryHelper.getCategoryTemplate();
+
+
+				if(options.getCategoryParents() && getRand().nextInt(100) < 90){
+					Optional<String> parent = randFromList(categories);
+					parent.ifPresent(s->template.put("parent", s));
+				}
+
+				ObjectNode curCat = CategoryHelper.addCategory(
+					auth,
+					oqmDbNameId,
+					template
+				);
+
+				categories.add(curCat.get("id").asText());
+			}
+		}
+
 		{//inventory items
 			for(int i = 0; i < options.getNumItems(); i++){
 				ObjectNode template = ItemHelper.getItemTemplate(
@@ -124,6 +146,20 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 				if(options.getItemImages()){
 					Optional<String> img = randFromList(images);
 					img.ifPresent(s->template.putArray("imageIds").add(s));
+				}
+
+				if(!categories.isEmpty()){
+					Set<String> added = new HashSet<>();
+					ArrayNode catArray = template.putArray("categories");
+
+					for(int j = 0; j < getRand().nextInt(0, 3); j++){
+						Optional<String> cat = randFromList(categories);
+
+						if(cat.isPresent() && !added.contains(cat.get())){
+							added.add(cat.get());
+							catArray.add(cat.get());
+						}
+					}
 				}
 
 				//TODO::: storage blocks
@@ -138,21 +174,6 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 				items.add(curItem);
 			}
 		}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 	}
 
@@ -171,6 +192,9 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 		private Integer numBlocks = 50;
 
 		@Builder.Default
+		private Integer numCategories = 25;
+
+		@Builder.Default
 		private Integer numItems = 50;
 
 		@Builder.Default
@@ -178,6 +202,9 @@ public final class CoreApiLibTestDbManager extends CoreApiLibClientHelper {
 
 		@Builder.Default
 		private Boolean blockParents = true;
+
+		@Builder.Default
+		private Boolean categoryParents = true;
 
 		@Builder.Default
 		private Boolean itemImages = true;

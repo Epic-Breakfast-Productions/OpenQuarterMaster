@@ -96,3 +96,52 @@ Listed below are plugins we consider "released" and ready to use:
 
 * `External Item Search <https://docs.openquartermaster.com/components/software/plugin/extItemSearch/>`_ - A tool to get information about items from external sources.
 * `Storagotchi <https://github.com/Epic-Breakfast-Productions/OpenQuarterMaster/tree/main/software/plugins/storagotchi>`_ - A fun virtual pet to encourage inventory management.
+
+Common Specifications
+=====================
+
+The specifications outlined here are to define common practices and formats across the different services.
+
+Object References
+-----------------
+
+Object references are used to provide a common format to reference specific objects within the OQM ecosystem.
+
+Use cases include Bar/QR codes that can be scanned to point to specific objects.
+
+Format
+......
+
+``[oqm:]<object>:<id>[:<id>]``
+
+Where:
+
+- ``oqm`` - a signifier to tie the whole thing to OQM. Considered optional. Case insensitive. OQM components should handle this either being or not being present.
+- ``<object>`` - the notifier of what this reference is for. Either the full object type name or a defined abbreviation. Case insensitive.
+- ``<id>`` - the id of the object
+- Second ``<id>`` - In the case of stored item id's, specify the item id and then the stored item id
+
+Supported Objects
+.................
+
++----------------+-------------------+--------------------------------------------------------------------------------------------+--------------------------------------------+
+| Object Type    | Reference Name(s) | Notes                                                                                      | Examples                                   |
++================+===================+============================================================================================+============================================+
+| Storage Block  | ``storageblock``  |                                                                                            | ``oqm:storageblock:id``                    |
+|                | ``b``             |                                                                                            | ``oqm:b:id``                               |
++----------------+-------------------+--------------------------------------------------------------------------------------------+--------------------------------------------+
+| Inventory Item | ``inventoryitem`` |                                                                                            | ``oqm:inventoryitem:id``                   |
+|                | ``i``             |                                                                                            | ``oqm:i:id``                               |
++----------------+-------------------+--------------------------------------------------------------------------------------------+--------------------------------------------+
+| Stored Item    | ``stored``        | Requires two ``id`` declarations; first being the item, the second the actual stored       | ``oqm:stored:id:id``                       |
+|                | ``s``             |                                                                                            | ``oqm:s:id:id``                            |
++----------------+-------------------+--------------------------------------------------------------------------------------------+--------------------------------------------+
+
+Examples
+........
+
+- ``oqm:storageblock:asdedwec3frfs``
+- ``OQM:StorageBlock:asdedwec3frfs``
+- ``oqm:b:asdedwec3frfs``
+- ``b:asdedwec3frfs``
+- ``B:asdedwec3frfs``

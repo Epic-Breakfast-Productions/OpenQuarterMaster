@@ -1,0 +1,31 @@
+{
+  "request": {
+    "urlPathTemplate": "/deezer/album/{albumId}",
+    "method": "GET",
+    "pathParameters": {
+      "albumId": {
+        "not": {
+          "equalTo": "1048622292"
+        }
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "delayDistribution": {
+      "type": "lognormal",
+      "median": 3000,
+      "sigma": 0.4
+    },
+    "jsonBody": {
+      "error": {
+        "type": "DataException",
+        "message": "no data",
+        "code": 800
+      }
+    }
+  }
+}

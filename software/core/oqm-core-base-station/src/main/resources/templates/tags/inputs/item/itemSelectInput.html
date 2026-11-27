@@ -1,7 +1,7 @@
 <div class="mb-3 col">
 	<div class="input-group input-group-lg">
-		<input type="hidden" id="{id}-itemInputId" name="item">
-		<button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#itemSearchSelectModal" id="{id}-itemInputSearchButton" onclick="ItemSearchSelect.setupItemSearchModal('{id}-itemInput', this);">{#icons/search}{/icons/search}</button>
+		<input type="hidden" id="{id}-itemInputId" name="item" {#if onchange??}onchange="{onchange}"{/if}>
+		<button class="btn btn-outline-secondary" type="button"  data-bs-toggle="modal" data-bs-target="#itemSearchSelectModal" id="{id}-itemInputSearchButton" onclick="ItemSearchSelect.setupItemSearchModal('{id}-itemInput', this);">{#icons/search /}</button>
 		<input type="text" class="form-control" id="{id}-itemInputName" placeholder="Item" name="itemName" aria-describedby="{id}-itemNameInput-help" readonly>
 		<button class="btn btn-outline-secondary clearButton" type="button" id="{id}-itemInputClearButton" onclick="ItemSearchSelect.clearSearchInput($(this));">{#icons/remove}{/icons/remove}</button>
 	</div>

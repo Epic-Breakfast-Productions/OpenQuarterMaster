@@ -19,17 +19,17 @@ import static org.junit.jupiter.api.Assertions.*;
 @Slf4j
 @QuarkusTest
 class IdentifierBarcodeServiceTest extends CodeUtilTestBase {
-	
+
 	private static void writeToFile(String data, String dir, String fileName) {
 		Path outputPath = Path.of(
-			"build/test-results/" +
+			"build/test-results/addendum/" +
 			ConfigProvider.getConfig().getValue("quarkus.profile", String.class) +
 			"/barcodes/general/" + dir + "/" +
 			fileName + ".svg"
 		);
-		
+
 		log.info("Writing to {}: {}", outputPath, data);
-		
+
 		try{
 			outputPath.toFile().getParentFile().mkdirs();
 			Files.writeString(outputPath, data, StandardOpenOption.CREATE, StandardOpenOption.TRUNCATE_EXISTING);
@@ -37,10 +37,10 @@ class IdentifierBarcodeServiceTest extends CodeUtilTestBase {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	@Inject
 	IdentifierBarcodeService identifierBarcodeService;
-	
+
 	@ParameterizedTest
 	@MethodSource("getCodes")
 	public void generalIdBarcodeGenTest(String code, Identifier identifier) {
@@ -48,11 +48,11 @@ class IdentifierBarcodeServiceTest extends CodeUtilTestBase {
 		String data = identifierBarcodeService.getBarcodeData(identifier);
 		sw.stop();
 		log.info("Generated barcode for {} in {}", identifier, sw);
-		
+
 		assertNotNull(data);
 		assertFalse(data.isEmpty());
-		
+
 		writeToFile(data, "generalIds", identifier.getType() + "-" + identifier.getValue()+ "-" + identifier.getLabel());
 	}
-	
+
 }

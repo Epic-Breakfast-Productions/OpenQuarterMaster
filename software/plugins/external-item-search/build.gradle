@@ -1,11 +1,12 @@
 plugins {
 	id 'java'
 	id 'io.quarkus'
-	id "io.freefair.lombok" version "9.8.2"
+	id "io.freefair.lombok" version "9.8.3"
+	id 'jacoco'
 }
 
 group 'tech.ebp.openQuarterMaster'
-version '2.3.0'
+version '2.3.1'
 
 repositories {
 	mavenCentral()
@@ -29,10 +30,10 @@ dependencies {
 	implementation 'io.quarkus:quarkus-cache'
 	implementation 'io.quarkus:quarkus-arc'
 	implementation 'io.quarkiverse.wiremock:quarkus-wiremock:1.8.1'
-	implementation group: 'org.jsoup', name: 'jsoup', version: '1.23.2'
 
 	testImplementation 'io.quarkus:quarkus-junit5'
 	testImplementation 'io.rest-assured:rest-assured'
+	testImplementation 'io.quarkus:quarkus-jacoco' // https://quarkus.io/guides/tests-with-coverage
 //    compileOnly 'io.quarkiverse.mockserver:quarkus-mockserver-test:1.9.0'
 }
 
@@ -43,6 +44,13 @@ java {
 
 test {
 	systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+
+	finalizedBy jacocoTestReport
+	jacoco {
+		excludeClassLoaders = ["*QuarkusClassLoader"]
+		destinationFile = layout.buildDirectory.file("jacoco-quarkus.exec").get().asFile
+	}
+	jacocoTestReport.enabled = false
 }
 compileJava {
 	options.encoding = 'UTF-8'

@@ -1,6 +1,7 @@
 package tech.ebp.oqm.core.api.service.identifiers.upc;
 
 import lombok.NonNull;
+import org.apache.commons.validator.routines.checkdigit.CheckDigit;
 import org.apache.commons.validator.routines.checkdigit.EAN13CheckDigit;
 
 /**
@@ -15,9 +16,9 @@ import org.apache.commons.validator.routines.checkdigit.EAN13CheckDigit;
  * </ul>
  */
 public class UpcCodeUtilities {
-	
-	private static final EAN13CheckDigit VALIDATOR = new EAN13CheckDigit();
-	
+
+	private static final CheckDigit VALIDATOR = EAN13CheckDigit.EAN13_CHECK_DIGIT;
+
 	/**
 	 * Checks if a UPC-A code is valid.
 	 * <p>
@@ -36,9 +37,10 @@ public class UpcCodeUtilities {
 		if (code.length() != 12) {
 			return false;
 		}
-		return VALIDATOR.isValid(code);
+		// "0" added to match 13-length validator
+		return VALIDATOR.isValid("0" + code);
 	}
-	
+
 	/**
 	 *
 	 * Sources:
@@ -82,7 +84,7 @@ public class UpcCodeUtilities {
 		}
 		return upcA;
 	}
-	
+
 	/**
 	 *
 	 * Sources:
@@ -102,9 +104,9 @@ public class UpcCodeUtilities {
 		if (code.charAt(0) != '0') {
 			return false;
 		}
-		
+
 		String upcA = getUPCACodeFromUPCECode(code);
-		
+
 		return isValidUPCACode(upcA);
 	}
 }

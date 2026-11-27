@@ -1,0 +1,21 @@
+{
+  "request": {
+    "urlPath": "/deezer/search/album",
+    "method": "GET",
+    "queryParameters": {
+      "q": {
+        "equalTo": "no-such-album"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "jsonBody": {
+      "data": [],
+      "total": 0
+    }
+  }
+}

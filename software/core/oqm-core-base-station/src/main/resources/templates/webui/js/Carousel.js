@@ -1,8 +1,7 @@
 import { Rest } from "./Rest.js";
 
 export class Carousel {
-	static carouselTemplate= '{carouselLines}\
-	';
+	static carouselTemplate= `{#carousel id='' /}`;
 
 	static newCarousel(id, objectData=null, toAppendTo=null){
 		return new Promise(async (done, fail) => {
