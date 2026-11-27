@@ -2,6 +2,7 @@ package tech.ebp.oqm.lib.core.api.quarkus.testSupport;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.quarkus.rest.client.reactive.QuarkusRestClientBuilder;
+import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.datafaker.Faker;
@@ -14,17 +15,17 @@ import java.util.random.RandomGenerator;
 
 public abstract class CoreApiLibClientHelper {
 
-	@Setter
-	@Getter
+	@Setter(AccessLevel.PROTECTED)
+	@Getter(AccessLevel.PROTECTED)
 	private static ObjectMapper objectMapper = new ObjectMapper();
 
-	@Getter
+	@Getter(AccessLevel.PROTECTED)
 	private static final OqmCoreApiClientService coreApiClientService = null;
 
-	@Getter
+	@Getter(AccessLevel.PROTECTED)
 	private static final Faker faker = new Faker();
 
-	@Getter
+	@Getter(AccessLevel.PROTECTED)
 	private static final RandomGenerator rand = RandomGenerator.getDefault();
 
 
