@@ -13,7 +13,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientServ
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.files.FileUploadBody;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 import tech.ebp.oqm.plugin.imageSearch.testResources.testClasses.RunningServerTest;
-//import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
+//import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.resnet.ResnetVectorService;
 
 import java.io.*;
 import java.net.URISyntaxException;

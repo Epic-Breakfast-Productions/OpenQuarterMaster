@@ -12,7 +12,7 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientServ
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.TestAuthHelper;
 import tech.ebp.oqm.plugin.imageSearch.model.search.ImageSearch;
 import tech.ebp.oqm.plugin.imageSearch.model.search.SearchResults;
-import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
+import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.resnet.ResnetProvider;
 import tech.ebp.oqm.plugin.imageSearch.testResources.testClasses.RunningServerTest;
 
 
@@ -20,9 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
-import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -34,7 +32,7 @@ class ImageSearchServiceTest extends RunningServerTest {
 	ImageSearchService imageSearchService;
 
 	@Inject
-	ResnetVectorService resnetVectorService;
+	ResnetProvider resnetProvider;
 
 	@Getter
 	@RestClient
@@ -46,7 +44,7 @@ class ImageSearchServiceTest extends RunningServerTest {
 		log.info("Testing initVectors");
 
 		StopWatch sw = StopWatch.createStarted();
-		this.resnetVectorService.initVectors();
+		this.resnetProvider.initVectors();
 		sw.stop();
 
 		log.info("Finished initVectors in: {}", sw.getDuration());

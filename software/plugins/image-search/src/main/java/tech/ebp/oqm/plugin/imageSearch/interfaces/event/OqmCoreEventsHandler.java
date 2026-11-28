@@ -9,7 +9,8 @@ import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventNotificationWrap
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.EventType;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.HistoryEventFilter;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.messaging.ObjectType;
-import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
+import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.resnet.ResnetProvider;
+import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.resnet.ResnetVectorService;
 
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class OqmCoreEventsHandler {
 	private static final HistoryEventFilter.FilterOptions NEW_IMAGE_FILTER = HistoryEventFilter.FilterOptions.builder().eventType(List.of(EventType.CREATE, EventType.FILE_NEW_VERSION)).build();
 	private static final HistoryEventFilter.FilterOptions DELETED_IMAGE_FILTER = HistoryEventFilter.FilterOptions.builder().eventType(List.of(EventType.DELETE)).build();
 
+	@Inject
+	ResnetProvider resnetProvider;
 	@Inject
 	ResnetVectorService resnetVectorService;
 
@@ -35,7 +38,7 @@ public class OqmCoreEventsHandler {
 		){
 			if(HistoryEventFilter.filter(message, NEW_IMAGE_FILTER)){
 				log.info("Received {} event for image: {} / {}", message.getEvent().get("type").asText(), message.getEvent().get("objectId").asText(), message);
-				this.resnetVectorService.processImage(message.getDatabase(), message.getEvent().get("objectId").asText());
+				this.resnetProvider.processImage(message.getDatabase(), message.getEvent().get("objectId").asText());
 			} else if(HistoryEventFilter.filter(message, DELETED_IMAGE_FILTER)) {
 				log.info("Received DELETE event for image: {} / {}", message.getEvent().get("objectId").asText(), message);
 				this.resnetVectorService.deleteImage(message.getDatabase(), message.getEvent().get("objectId").asText());

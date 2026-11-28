@@ -1,39 +1,19 @@
 package tech.ebp.oqm.plugin.imageSearch.service.imageSearch;
 
-import io.micrometer.core.instrument.MeterRegistry;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
-
-import java.io.InputStream;
-import java.net.URL;
-
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import nu.pattern.OpenCV;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.opencv.core.*;
-import org.opencv.imgcodecs.Imgcodecs;
-import org.opencv.imgproc.Imgproc;
-import org.tensorflow.Result;
-import org.tensorflow.Tensor;
-import org.tensorflow.SavedModelBundle;
-import org.tensorflow.ndarray.FloatNdArray;
-import org.tensorflow.ndarray.StdArrays;
-import org.tensorflow.types.TFloat32;
 
 import java.io.IOException;
 import java.util.*;
 
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
 import tech.ebp.oqm.plugin.imageSearch.model.Model;
-import tech.ebp.oqm.plugin.imageSearch.model.resnet.ImageVector;
-import tech.ebp.oqm.plugin.imageSearch.model.search.ImageFinding;
 import tech.ebp.oqm.plugin.imageSearch.model.search.ImageSearch;
 import tech.ebp.oqm.plugin.imageSearch.model.search.SearchResults;
-import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.ResnetProvider;
-import tech.ebp.oqm.plugin.imageSearch.service.mongo.ResnetVectorService;
+import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.resnet.ResnetProvider;
 
 @Slf4j
 @ApplicationScoped

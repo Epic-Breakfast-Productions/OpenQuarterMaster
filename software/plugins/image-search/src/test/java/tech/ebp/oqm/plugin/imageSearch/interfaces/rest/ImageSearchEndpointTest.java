@@ -74,7 +74,4 @@ class ImageSearchEndpointTest extends RunningServerTest {
 		//TODO:: multiple searches at once
 	}
 
-
-
-
 }

@@ -1,47 +1,64 @@
-package tech.ebp.oqm.plugin.imageSearch.service.mongo;
+package tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.resnet;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.mongodb.client.MongoClient;
 import com.mongodb.client.MongoCollection;
-import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
+import io.micrometer.core.instrument.MeterRegistry;
 import io.opentelemetry.instrumentation.annotations.WithSpan;
+import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
-import org.bson.types.ObjectId;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
+import nu.pattern.OpenCV;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
+import org.opencv.core.Core;
+import org.opencv.core.CvType;
+import org.opencv.core.Mat;
+import org.opencv.core.MatOfByte;
+import org.opencv.core.Size;
+import org.opencv.imgcodecs.Imgcodecs;
+import org.opencv.imgproc.Imgproc;
+import org.tensorflow.Result;
+import org.tensorflow.SavedModelBundle;
+import org.tensorflow.Tensor;
+import org.tensorflow.ndarray.FloatNdArray;
+import org.tensorflow.ndarray.StdArrays;
+import org.tensorflow.types.TFloat32;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ImageSearch;
 import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
+import tech.ebp.oqm.plugin.imageSearch.model.Model;
 import tech.ebp.oqm.plugin.imageSearch.model.resnet.ImageVector;
-
-import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.ResnetProvider;
+import tech.ebp.oqm.plugin.imageSearch.model.search.ImageFinding;
+import tech.ebp.oqm.plugin.imageSearch.model.search.ImageSearch;
+import tech.ebp.oqm.plugin.imageSearch.model.search.SearchResults;
+import tech.ebp.oqm.plugin.imageSearch.service.ImageToItemCache;
+import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.ImageSearchService;
+import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.ImageSearchProvider;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.Iterator;
 
-import static com.mongodb.client.model.Filters.and;
-
 @Slf4j
 @ApplicationScoped
-public class ResnetVectorService {
+public class ResnetProvider extends ImageSearchProvider {
+
+	@Getter(AccessLevel.PRIVATE)
+	@Inject
+	ResnetDataProcessor resnetDataProcessor;
 
 	@Inject
-	@Getter(AccessLevel.PROTECTED)
-	MongoClient mongoClient;
+	ResnetVectorService resnetVectorService;
 
-	@Getter
-	@ConfigProperty(name = "quarkus.mongodb.database")
-	String database;
+	@Inject
+	ImageToItemCache imageToItemCache;
 
 	@RestClient
 	OqmCoreApiClientService oqmCoreApiClientService;
@@ -49,16 +66,14 @@ public class ResnetVectorService {
 	@Inject
 	KcClientAuthService serviceAccountService;
 
-	@Inject
-	ResnetProvider resnetProvider;
-
 	@Getter(AccessLevel.PROTECTED)
 	Instant lastProcess;
 
 	@Getter(AccessLevel.PROTECTED)
 	boolean initializing = false;
 
-	public boolean isProcessing(){
+	@Override
+	public boolean isProcessing() {
 		boolean processing = this.getLastProcess() != null &&
 			Duration.between(this.getLastProcess(), Instant.now()).getSeconds() < 5;
 
@@ -66,65 +81,31 @@ public class ResnetVectorService {
 	}
 
 
-	protected MongoDatabase getMongoDatabase() {
-		return this.getMongoClient().getDatabase(this.getDatabase());
-	}
-
-	public MongoCollection<ImageVector> getTypedCollection() {
-		return this.getMongoDatabase().getCollection("resnet-image-vectors", ImageVector.class);
-	}
-
-	public long getNumVectors(String database) {
-		return this.getTypedCollection().countDocuments(Filters.eq("oqmDb", database));
-	}
-
-	public Iterator<ImageVector> getAllVectors(String database) {
-		return this.getTypedCollection().find(Filters.eq("oqmDb", database)).iterator();
-
-		//example
-		//		and(
-		//			Filters.eq("imageId", id),
-		//			Filters.eq("database", database)
-		//		)
-	}
-
-	public Iterator<ImageVector> getAllVectors(){
-		return this.getTypedCollection().find().iterator();
-	}
-
 	public void processImage(String database, String imageId, int imageRevision) {
 		log.info("Processing revision {} of image {}", imageRevision, imageId);
 		this.lastProcess = Instant.now();
 
 		//check if already processed, skip if exists
-		MongoCollection<ImageVector> collection = this.getTypedCollection();
-		if (
-			collection.find(
-				Filters.and(
-					Filters.eq("imageId", imageId),
-					Filters.eq("revision", imageRevision)
-				)
-			).first() != null
-		) {
+		if (this.resnetVectorService.vectorExists(imageId, imageRevision)) {
 			log.info("Image {} already processed, skipping.", imageId);
 			return;
 		}
 
 		try (
 			InputStream is = (InputStream) this.oqmCoreApiClientService.imageGetRevisionData(this.serviceAccountService.getAuthString(), database, imageId, imageRevision + "")
-								 .await()
-								 .indefinitely()
-								 .getEntity()
+				.await()
+				.indefinitely()
+				.getEntity()
 		) {
 			ImageVector.ImageVectorBuilder builder = ImageVector.builder();
 
 			builder.oqmDb(database);
 			builder.imageId(imageId);
 			builder.imageRevision(imageRevision);
-			builder.vector(this.resnetProvider.generateImageFeatureVector(is));
+			builder.vector(this.resnetDataProcessor.generateImageFeatureVector(is));
 
-			this.getTypedCollection().insertOne(builder.build());
-		} catch(IOException e) {
+			this.resnetVectorService.addVector(builder.build());
+		} catch (IOException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -147,10 +128,10 @@ public class ResnetVectorService {
 		);
 	}
 
-	public synchronized long cullDeleted(){
+	public synchronized long cullDeleted() {
 		log.info("Culling images deleted in Core API.");
 		long output = 0;
-		Iterator<ImageVector> allVec = this.getAllVectors();
+		Iterator<ImageVector> allVec = this.resnetVectorService.getAllVectors();
 		while (allVec.hasNext()) {
 			ImageVector imageVector = allVec.next();
 			String imageID = imageVector.getImageId();
@@ -162,8 +143,8 @@ public class ResnetVectorService {
 				.onFailure()
 				.recoverWithNull()
 				.await().indefinitely();
-			if(imageData == null) {
-				this.getTypedCollection().deleteOne(Filters.eq("_id", imageVector.getId()));
+			if (imageData == null) {
+				this.resnetVectorService.deleteVector(imageVector);
 				output++;
 			}
 		}
@@ -177,7 +158,7 @@ public class ResnetVectorService {
 		this.initializing = true;
 		log.info("Processing images in all databases.");
 		try {
-			ImageSearch imageSearch = ImageSearch.builder()
+			tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ImageSearch imageSearch = tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.searchObjects.ImageSearch.builder()
 				.pageNum(1)
 				.pageSize(100)
 				.build();
@@ -216,11 +197,42 @@ public class ResnetVectorService {
 		}
 	}
 
-	public void deleteImage(String database, String imageId) {
-		this.getTypedCollection().deleteMany(Filters.and(Filters.eq("imageId", imageId), Filters.eq("oqmDb", database)));
-	}
 
-	public void deleteAll(){
-		this.getTypedCollection().deleteMany(Filters.empty());
+	@Override
+	public void search(ImageSearch query, SearchResults output) {
+		log.info("Getting similarities for query");
+
+		float[] queryFeatures;
+		try {
+			queryFeatures = this.getResnetDataProcessor().generateImageFeatureVector(query.file);
+		} catch (IOException e) {
+			throw new RuntimeException("Failed to get features for input file.", e);
+		}
+
+		for (Iterator<ImageVector> it = this.resnetVectorService.getAllVectors(query.oqmDbIdOrName); it.hasNext(); ) {
+			ImageVector curData = it.next();
+
+			log.trace("Processing image comparison with image: {}", curData.getImageId());
+			double simScore = this.getResnetDataProcessor().cosineSimilarity(queryFeatures, curData.getVector());
+
+			if (simScore < query.threshold) {
+				continue;
+			}
+
+			for (String curItemId : this.imageToItemCache.getItemsForImage(query.oqmDbIdOrName, curData.getImageId())) {
+				output.add(
+					ImageFinding.builder()
+						.model(Model.RESNET_v2)
+						.itemId(curItemId)
+						.imageId(curData.getImageId())
+						.score(simScore)
+						.build()
+				);
+			}
+
+			log.trace("Done processing image comparison with image: {}", curData.getImageId());
+		}
+
+		log.info("Done getting similarities for query.");
 	}
 }

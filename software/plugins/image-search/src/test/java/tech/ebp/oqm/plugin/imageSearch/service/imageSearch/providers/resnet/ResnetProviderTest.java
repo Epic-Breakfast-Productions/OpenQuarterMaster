@@ -1,4 +1,4 @@
-package tech.ebp.oqm.plugin.imageSearch.service.mongo;
+package tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.resnet;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.model.Filters;
@@ -25,18 +25,19 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.util.Iterator;
-import java.util.List;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 @Slf4j
 @QuarkusTest
-class ResnetVectorServiceTest extends RunningServerTest {
+class ResnetProviderTest extends RunningServerTest {
 
 	@Inject
 	ResnetVectorService resnetVectorService;
+
+	@Inject
+	ResnetProvider resnetProvider;
 
 	@Getter
 	@Inject
@@ -55,7 +56,7 @@ class ResnetVectorServiceTest extends RunningServerTest {
 
 		log.info("Testing initDb");
 
-		this.resnetVectorService.initVectors();
+		this.resnetProvider.initVectors();
 
 		log.info("Finished initDb");
 
@@ -105,7 +106,7 @@ class ResnetVectorServiceTest extends RunningServerTest {
 				.build()).getInsertedId().asObjectId().getValue();
 		//log.debug("Added image: {}", image);
 		//log.info("Testing initDb");
-		this.resnetVectorService.initVectors();
+		this.resnetProvider.initVectors();
 
 		//TODO:: Check if id is present or not after initVectors allegedly deletes
 		assertEquals(0, this.resnetVectorService.getTypedCollection().countDocuments(Filters.eq("_id", id)));
