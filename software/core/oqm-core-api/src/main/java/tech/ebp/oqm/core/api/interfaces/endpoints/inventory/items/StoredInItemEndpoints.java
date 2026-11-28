@@ -23,7 +23,9 @@ import tech.ebp.oqm.core.api.interfaces.endpoints.MainObjectProvider;
 import tech.ebp.oqm.core.api.model.object.history.ObjectHistoryEvent;
 import tech.ebp.oqm.core.api.model.object.storage.items.InventoryItem;
 import tech.ebp.oqm.core.api.model.object.storage.items.stored.Stored;
+import tech.ebp.oqm.core.api.model.object.storage.items.transactions.AppliedTransaction;
 import tech.ebp.oqm.core.api.model.rest.auth.roles.Roles;
+import tech.ebp.oqm.core.api.model.rest.search.AppliedTransactionSearch;
 import tech.ebp.oqm.core.api.model.rest.search.HistorySearch;
 import tech.ebp.oqm.core.api.model.rest.search.StoredSearch;
 import tech.ebp.oqm.core.api.service.mongo.InventoryItemService;
@@ -64,12 +66,12 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 		}
 		return inventoryItem;
 	}
-	
+
 	private Stored applyDefaults(Stored stored){
 		stored.applyDefaultsFromItem(this.getInventoryItem());
 		return stored;
 	}
-	
+
 	private SearchResult<Stored> applyDefaults(SearchResult<Stored> searchResult){
 		searchResult.getResults().forEach(this::applyDefaults);
 		return searchResult;
@@ -90,7 +92,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	) {
 		return this.applyDefaults(super.search(storedSearch));
 	}
-	
+
 	@Path("{storedItemId}")
 	@GET
 	@Operation(
@@ -120,7 +122,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	public Stored get(@PathParam("storedItemId") ObjectId id) {
 		return this.applyDefaults(super.get(id));
 	}
-	
+
 	@PUT
 	@Path("{storedItemId}")
 	@Operation(
@@ -155,14 +157,33 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 		ObjectNode updates
 	) {
 		log.info("Updating {} from REST interface with id {}", this.getObjectClass().getSimpleName(), id);
-		
+
 		Stored updated = this.getObjectService().update(this.getOqmDbIdOrName(), null, id, updates, this.getInteractingEntity());
-		
+
 		log.info("Updated {} with id {}", updated.getClass().getSimpleName(), id);
-		
+
 		return this.applyDefaults(updated);
 	}
-	
+
+	@GET
+	@Path("{storedItemId}/transaction")
+	@Operation(
+		summary = "Searches all of a stored item's stored item transactions."
+	)
+	@APIResponse(
+		responseCode = "200",
+		description = "Blocks retrieved."
+	)
+	@Produces(MediaType.APPLICATION_JSON)
+	@RolesAllowed(Roles.INVENTORY_VIEW)
+	public SearchResult<AppliedTransaction> searchStoredTransactions(
+		@PathParam("storedItemId") ObjectId id,
+		@BeanParam AppliedTransactionSearch storedSearch
+	) {
+		return this.appliedTransactionService.search(this.getOqmDbIdOrName(), storedSearch);
+	}
+
+
 	@GET
 	@Path("{storedItemId}/history")
 	@Operation(
@@ -190,7 +211,7 @@ public class StoredInItemEndpoints extends MainObjectProvider<Stored, StoredSear
 	) {
 		return super.getHistoryForObject(id, searchObject);
 	}
-	
+
 	@GET
 	@Path("history")
 	@Operation(

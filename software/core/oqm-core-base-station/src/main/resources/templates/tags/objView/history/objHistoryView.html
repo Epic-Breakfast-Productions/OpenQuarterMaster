@@ -8,24 +8,23 @@ Inputs:
     <div class="accordion-item">
         <h2 class="accordion-header historyViewAccordionHeader" id="{containerId}AccordionHeading">
             <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{containerId}AccordionCollapse" aria-controls="{containerId}AccordionCollapse">
-                {#icons/history addSpace=true}{/icons/history} History
+                {#icons/history addSpace=true /} History
             </button>
         </h2>
         <div id="{containerId}AccordionCollapse" class="accordion-collapse collapse" aria-labelledby="{containerId}AccordionHeading" data-bs-parent="#{containerId}Accordion">
             <div class="accordion-body table-responsive">
 				{/if}
 				<div class="historyView">
-					<div class="accordion" id="{containerId}SearchAccordion">
+					<div class="accordion historySearchAccordion" id="{containerId}SearchAccordion">
 						<div class="accordion-item">
-							<h2 class="accordion-header" id="{containerId}SearchAccordionHeading">
-								<button class="accordion-button collapsed thinAccordion" type="button" data-bs-toggle="collapse" data-bs-target="#{containerId}SearchAccordionCollapse" aria-controls="{containerId}SearchAccordionCollapse">
-									{#icons/search}{/icons/search} Search
+							<h2 class="accordion-header historySearchAccordionHeader" id="{containerId}SearchAccordionHeading">
+								<button class="accordion-button collapsed thinAccordion historySearchAccordionButton" type="button" data-bs-toggle="collapse" data-bs-target="#{containerId}SearchAccordionCollapse" aria-controls="{containerId}SearchAccordionCollapse">
+									{#icons/search /} Search
 								</button>
 							</h2>
-							<div id="{containerId}SearchAccordionCollapse" class="accordion-collapse collapse" aria-labelledby="{containerId}SearchAccordionHeading" data-bs-parent="#{containerId}SearchAccordion">
+							<div id="{containerId}SearchAccordionCollapse" class="accordion-collapse collapse historySearchAccordionCollapse" aria-labelledby="{containerId}SearchAccordionHeading" data-bs-parent="#{containerId}SearchAccordion">
 								<div class="accordion-body table-responsive">
-									{#include tags/objView/history/objHistorySearchForm id=(containerId + 'Form') objectUrl=objectUrl }
-									{/include}
+									{#include tags/objView/history/objHistorySearchForm id=(containerId + 'Form') objectUrl=objectUrl objectId=(objectId or false) /}
 								</div>
 							</div>
 						</div>

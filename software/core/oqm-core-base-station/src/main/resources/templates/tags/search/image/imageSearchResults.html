@@ -12,11 +12,13 @@
 
   if `actionType` is "select", callback will be "selectImage('<image name>', '<image id>', '<inputIdPrepend>')" on the select button
 !}
+{#if searchResults.get("numResults").asInt() >= config:['ui.image.search.topPaginationThreshold'] }
 <div class="row">
   <div class="col text-center m-1 searchResultsContainer">
-    {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
+    {#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
   </div>
 </div>
+{/if}
 <div class="row">
   {#if searchResults.get("empty").asBoolean()}
   <div class="col d-grid gap-2 text-center">
@@ -27,7 +29,7 @@
     {! TODO:: make the anchor of the page the id of the image !}
     <button type="button" class="btn btn-success btn-lg" data-bs-toggle="modal"
             data-bs-target="#addEditModal" onclick="setupAddEditForAdd();">
-      {#icons/add}{/icons/add} Add Image
+      {#icons/add /} Add Image
     </button>
     {/if}
   </div>
@@ -49,6 +51,6 @@
 </div>
 <div class="row">
   <div class="col text-center m-1 searchResultsContainer">
-    {#paginationButtons searchFormId=searchFormId searchResults=searchResults}{/paginationButtons}
+    {#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
   </div>
 </div>

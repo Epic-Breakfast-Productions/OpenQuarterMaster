@@ -10,7 +10,7 @@ export class ItemStoredSearch extends PageUtility {
 		event,
 		resultsContainerSelector,
 		showItem = false,
-		showStorage = false,
+		showStoredState = false,
 		forSelect = false,
 		selectDestination = ""
 	) {
@@ -41,8 +41,8 @@ export class ItemStoredSearch extends PageUtility {
 		if (showItem) {
 			headers['showItem'] = "true";
 		}
-		if (showStorage) {
-			headers['showStorage'] = "true";
+		if (showStoredState) {
+			headers['showStoredState'] = "true";
 		}
 		if (forSelect) {
 			headers['actionType'] = "select";

@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.SuperBuilder;
 import org.bson.codecs.pojo.annotations.BsonDiscriminator;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
+import tech.ebp.oqm.core.api.model.object.storage.items.stored.state.inTransit.InTransit;
 
 @Data
 @SuperBuilder(toBuilder = true)
@@ -16,10 +17,11 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 	include = JsonTypeInfo.As.EXISTING_PROPERTY, property = "type"
 )
 @JsonSubTypes({
-	@JsonSubTypes.Type(value = StoredInBlock.class, name = "STORED")
+	@JsonSubTypes.Type(value = StoredInBlock.class, name = "STORED"),
+	@JsonSubTypes.Type(value = InTransit.class, name = "IN_TRANSIT")
 })
 @JsonInclude(JsonInclude.Include.ALWAYS)
-@Schema(oneOf = {StoredInBlock.class})
+@Schema(oneOf = {StoredInBlock.class, InTransit.class})
 @BsonDiscriminator
 @NoArgsConstructor
 public abstract class StoredState {

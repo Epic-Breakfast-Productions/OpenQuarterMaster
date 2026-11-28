@@ -142,12 +142,22 @@ public class ItemStatsService {
 	}
 
 	private void addToStats(InventoryItem item, ItemStoredStats itemStoredStats, Stored stored) {
-		StoredInBlockStats storedInBlockStats = itemStoredStats.getStorageBlockStats().get(
-			((StoredInBlock) stored.getState()).getStorageBlock()
-		);
-
-		this.addToStats(item, storedInBlockStats, stored);
 		this.addToStats(item, (StatsWithTotalContaining) itemStoredStats, stored);
+
+		switch (stored.getState().getType()){
+			case STORED -> {
+				if(stored.getState().getType() == StoredStateType.STORED) {
+					StoredInBlockStats storedInBlockStats = itemStoredStats.getStorageBlockStats().get(
+						((StoredInBlock) stored.getState()).getStorageBlock()
+					);
+
+					this.addToStats(item, storedInBlockStats, stored);
+				}
+			}
+			case IN_TRANSIT -> {
+				this.addToStats(item, (StatsWithTotalContaining)itemStoredStats.getInTransitStoredStats(), stored);
+			}
+		}
 	}
 
 	//TODO:: wtf is this
@@ -200,7 +210,7 @@ public class ItemStatsService {
 		}
 
 		if (item.getId() != null) {
-			FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, new StoredSearch().setInventoryItemId(item.getId()));
+			FindIterable<Stored> storedInItem = this.getStoredService().listIterator(oqmDbIdOrName, cs, new StoredSearch().setStoredState(null).setInventoryItemId(item.getId()));
 			try (
 				MongoCursor<Stored> storedIterator = storedInItem.iterator()
 			) {

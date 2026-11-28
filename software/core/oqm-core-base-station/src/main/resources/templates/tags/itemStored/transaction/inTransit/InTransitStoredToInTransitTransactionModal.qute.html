@@ -1,0 +1,36 @@
+{#modal id='itemStoredTransactionInTransitStoredToInTransit' size='xl' title='Move Stored Item to In-Transit'}
+	{#titleIcon}
+		{#icons/transactionInTransitStoredToInTransit /}
+	{/titleIcon}
+	{#footerButtons}
+	<button type="submit" id="itemStoredTransactionInTransitStoredToInTransitFormSubmitButton" class="btn btn-success" form="itemStoredTransactionInTransitStoredToInTransitForm">
+		{#icons/add /} Move Stored Item to In Transit
+	</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col messages" id="itemStoredTransactionInTransitStoredToInTransitMessages"></div>
+	</div>
+
+	<form id='itemStoredTransactionInTransitStoredToInTransitForm'>
+		<input type="hidden" name="itemId" id="itemStoredTransactionInTransitStoredToInTransitFormItemIdInput" value=""/>
+		<div class="row">
+			<div class="col">
+				<div class="mb-3" id="itemStoredTransactionInTransitStoredToInTransitFormItemInputContainer">
+					<label for=itemStoredTransactionInTransitStoredToInTransitFormItem-itemInputSearchButton" class="form-label h3">{#icons/item}{/icons/item} Item:</label>
+					{#inputs/item/itemSelectInput id="itemStoredTransactionInTransitStoredToInTransitFormItem" /}
+				</div>
+				<div class="mb-3" id="itemStoredTransactionInTransitStoredToInTransitFormItemDisplayContainer">
+					<h3>
+						{#icons/item /} Item: <span id="itemStoredTransactionInTransitStoredToInTransitFormItemDisplayName"></span>
+					</h3>
+				</div>
+
+
+
+
+				<div id="itemStoredTransactionInTransitStoredToInTransitFormInputsContainer">
+				</div>
+			</div>
+		</div>
+	</form>
+{/modal}

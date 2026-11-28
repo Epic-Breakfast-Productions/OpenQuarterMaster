@@ -1,0 +1,36 @@
+{#modal id='itemStoredTransactionInTransitReceive' size='xl' title='Receive In-Transit Item'}
+	{#titleIcon}
+		{#icons/transactionInTransitReceive /}
+	{/titleIcon}
+	{#footerButtons}
+	<button type="submit" id="itemStoredTransactionInTransitReceiveFormSubmitButton" class="btn btn-success" form="itemStoredTransactionInTransitReceiveForm">
+		{#icons/add /} Receive Item In Transit
+	</button>
+	{/footerButtons}
+	<div class="row">
+		<div class="col messages" id="itemStoredTransactionInTransitReceiveMessages"></div>
+	</div>
+
+	<form id='itemStoredTransactionInTransitReceiveForm'>
+		<input type="hidden" name="itemId" id="itemStoredTransactionInTransitReceiveFormItemIdInput" value=""/>
+		<div class="row">
+			<div class="col">
+				<div class="mb-3" id="itemStoredTransactionInTransitReceiveFormItemInputContainer">
+					<label for=itemStoredTransactionInTransitReceiveFormItem-itemInputSearchButton" class="form-label h3">{#icons/item}{/icons/item} Item:</label>
+					{#inputs/item/itemSelectInput id="itemStoredTransactionInTransitReceiveFormItem" /}
+				</div>
+				<div class="mb-3" id="itemStoredTransactionInTransitReceiveFormItemDisplayContainer">
+					<h3>
+						{#icons/item /} Item: <span id="itemStoredTransactionInTransitReceiveFormItemDisplayName"></span>
+					</h3>
+				</div>
+
+
+
+
+				<div id="itemStoredTransactionInTransitReceiveFormInputsContainer">
+				</div>
+			</div>
+		</div>
+	</form>
+{/modal}

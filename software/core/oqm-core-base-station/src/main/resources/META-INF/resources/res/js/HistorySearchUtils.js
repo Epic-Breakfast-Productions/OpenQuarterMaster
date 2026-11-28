@@ -30,8 +30,9 @@ export class HistorySearchUtils extends PageUtility {
 		historySearchForm.submit();
 	}
 
-	static async runHistorySearch(historySearchFormJs, event) {
+	static async runHistorySearch(historySearchFormJs, event, spinner = true) {
 		event.preventDefault();
+		event.stopPropagation();
 
 		let historySearchForm = $(historySearchFormJs);
 		let historySearchContainer = historySearchForm

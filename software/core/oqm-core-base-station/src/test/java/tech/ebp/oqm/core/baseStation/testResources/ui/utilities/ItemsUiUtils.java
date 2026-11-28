@@ -30,7 +30,7 @@ public class ItemsUiUtils {
 		);
 	}
 
-	public static final String OBJ_KEY_LABEL = "label";
+	public static final String OBJ_KEY_LABEL = "name";
 	public static final String OBJ_KEY_TYPE = "storageType";
 
 	public static ObjectNode newItem(Page page, ObjectNode newItem, List<ObjectNode> storageBlocks) {
@@ -63,7 +63,7 @@ public class ItemsUiUtils {
 						ItemsPage.ADDEDIT_FORM_ADD_STORAGE_BUTTON
 					);
 				}
-				
+
 				List<Locator> associatedStorage = page1.locator(ItemsPage.ADDEDIT_FORM_STORAGE_CONTAINER).locator("div.blockSelection").all();
 				assertEquals(
 					storageBlocks.stream().map(block->block.get("id").asText()).toList(),
@@ -74,7 +74,7 @@ public class ItemsUiUtils {
 				} catch(InterruptedException e) {
 					throw new RuntimeException(e);
 				}
-				
+
 				page1.locator(ItemsPage.ADD_EDIT_FORM_SUBMIT_BUTTON).click();
 				MainAssertions.assertDoneProcessing(page1);
 				MessageAssertions.assertMessage(page1, MessageAssertions.SUCCESS_MESSAGE, "Success!", "Created item successfully!");
@@ -91,7 +91,7 @@ public class ItemsUiUtils {
 	public static ObjectNode newItem(Page page, List<ObjectNode> storageBlocks) {
 		return newItem(page, null, storageBlocks);
 	}
-	
+
 	public static String getViewItemEndpoint(ObjectNode itemInfo){
 		return ItemsPage.ITEMS_PAGE + "?view=" + itemInfo.get("id").asText();
 	}

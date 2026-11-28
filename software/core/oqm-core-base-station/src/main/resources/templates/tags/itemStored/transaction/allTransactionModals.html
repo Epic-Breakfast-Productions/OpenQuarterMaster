@@ -17,3 +17,18 @@
 {#if transfer.or(true) }
 {#itemStored/transaction/transferTransactionModal /}
 {/if}
+{#if inTransitAdd.or(true) }
+{#itemStored/transaction/inTransit/InTransitAddTransactionModal /}
+{/if}
+{#if inTransitCancel.or(true) }
+{#itemStored/transaction/inTransit/InTransitCancelTransactionModal /}
+{/if}
+{#if inTransitReceive.or(true) }
+{#itemStored/transaction/inTransit/InTransitReceiveTransactionModal /}
+{/if}
+{#if inTransitStoredToInTransit.or(true) }
+{#itemStored/transaction/inTransit/InTransitStoredToInTransitTransactionModal /}
+{/if}
+{#if inTransitUpdate.or(true) }
+{#itemStored/transaction/inTransit/InTransitUpdateTransactionModal /}
+{/if}

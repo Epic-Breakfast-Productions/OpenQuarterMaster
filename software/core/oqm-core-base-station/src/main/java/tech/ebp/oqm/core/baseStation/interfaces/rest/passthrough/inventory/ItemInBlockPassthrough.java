@@ -36,22 +36,22 @@ import java.util.Optional;
 @RequestScoped
 @Produces(MediaType.TEXT_HTML)
 public class ItemInBlockPassthrough extends PassthroughProvider {
-	
+
 	@Getter
 	@Inject
 	@Location("tags/search/itemStored/searchResults")
 	Template searchResultTemplate;
-	
+
 	@Getter
 	@PathParam("itemId")
 	String itemId;
 	@Getter
 	@PathParam("blockId")
 	String blockId;
-	
+
 	@Inject
 	SearchResultTweak searchResultTweak;
-	
+
 	@GET
 	@Path("stored")
 	@Operation(
@@ -69,7 +69,7 @@ public class ItemInBlockPassthrough extends PassthroughProvider {
 		@HeaderParam("otherModalId") String otherModalId,
 		@HeaderParam("inputIdPrepend") String inputIdPrepend,
 		@HeaderParam("showItem") boolean showItem,
-		@HeaderParam("showStorage") boolean showStorage,
+		@HeaderParam("showStoredState") boolean showStoredState,
 		@HeaderParam("actionType") Optional<String> actionType
 	) {
 		return this.handleCall(
@@ -81,7 +81,7 @@ public class ItemInBlockPassthrough extends PassthroughProvider {
 				,
 				this.searchResultTemplate
 					.data("showItem", showItem)
-					.data("showStorage", showStorage)
+					.data("showStoredState", showStoredState)
 				,
 				acceptType,
 				searchFormId,
@@ -91,5 +91,5 @@ public class ItemInBlockPassthrough extends PassthroughProvider {
 			)
 		);
 	}
-	
+
 }

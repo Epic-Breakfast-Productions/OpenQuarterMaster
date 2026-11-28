@@ -21,14 +21,14 @@ import javax.measure.Quantity;
 @NoArgsConstructor
 @Schema(title = "TransferAmountTransaction", description = "A transaction to transfer an amount between stored objects.")
 public class TransferAmountTransaction extends TransferTransaction {
-	
+
 	/**
 	 * The amount we are transferring.
 	 * <p>
 	 * Only specify when {@link TransferAmountTransaction#all} is `false`.
 	 */
 	private Quantity<?> amount;
-	
+
 	/**
 	 * Flag to specify to transfer all of what is in the source to the destination.
 	 * <p>
@@ -36,33 +36,33 @@ public class TransferAmountTransaction extends TransferTransaction {
 	 */
 	@lombok.Builder.Default
 	private boolean all = false;
-	
+
 	/**
 	 * If applicable, the storage block we are pulling the amount from. Used for BULK items.
 	 */
 	private ObjectId fromBlock;
-	
+
 	/**
 	 * If applicable, the specific stored item we are transferring from. Used for AMOUNT_LIST items.
 	 */
 	private ObjectId fromStored;
-	
+
 	/**
 	 * If applicable, the storage block we are putting the amount into. Used for BULK items.
 	 */
 	private ObjectId toBlock;
-	
+
 	/**
 	 * If applicable, the specific stored item we are transferring to. Used for AMOUNT_LIST
 	 */
 	private ObjectId toStored;
-	
+
 	@Override
 	@Schema(constValue = "TRANSFER_AMOUNT", readOnly = true, required = true, examples = "TRANSFER_AMOUNT")
 	public TransactionType getType() {
 		return TransactionType.TRANSFER_AMOUNT;
 	}
-	
+
 	@Override
 	public int getSchemaVersion() {
 		return 1;

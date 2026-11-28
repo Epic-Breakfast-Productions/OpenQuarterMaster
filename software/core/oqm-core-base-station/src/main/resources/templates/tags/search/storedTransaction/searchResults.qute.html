@@ -1,0 +1,50 @@
+<thead>
+{#if searchResults.get("numResults").asInt() >= config:['ui.itemStoredTransaction.search.topPaginationThreshold'] }
+	<tr>
+		<td colspan="100" class="text-center">
+				{#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
+		</td>
+	</tr>
+{/if}
+<tr>
+	<th>Type</th>
+	<th>User</th>
+	<th>Time</th>
+	<th>Description</th>
+</tr>
+</thead>
+<tbody>
+{#if searchResults.get("empty").asBoolean()}
+<tr>
+	<td colspan="6" class="text-center">
+		<h2>
+			No Transactions
+		</h2>
+	</td>
+</tr>
+{#else}
+{#for event in searchResults.get("results")}
+<tr class="itemResultRow align-middle">
+	<td class="event-type">
+		{event.get("transaction").get("type").asText()}
+	</td>
+	<td>
+		{#interactingEntityRef rootPrefix=rootPrefix entityRef=event.get("entityRef") /}
+	</td>
+	<td>
+		{cdi:DateTimeService.formatForUi(event.get("timestamp").asText())}
+	</td>
+	<td>
+		{! TODO:: other infos !}
+	</td>
+</tr>
+{/for}
+{/if}
+</tbody>
+<tfoot>
+<tr>
+	<td colspan="4" class="text-center searchResultsContainer">
+		{#paginationButtons searchFormId=searchFormId searchResults=searchResults /}
+	</td>
+</tr>
+</tfoot>

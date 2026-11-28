@@ -30,14 +30,14 @@ import static tech.ebp.oqm.core.baseStation.interfaces.ui.pageComponents.PageCom
 @Produces(MediaType.TEXT_HTML)
 @RequestScoped
 public class TransactionComponents extends PageComponentProvider {
-	
+
 	@Inject
 	@Location("tags/itemStored/transaction/buttons/transactionDropdown")
 	Template transactionDropdownTemplate;
-	
+
 	@RestClient
 	OqmCoreApiClientService coreApiClient;
-	
+
 	/**
 	 * TODO:: beanparam for button shows, item/stored id
 	 * @return
@@ -50,14 +50,14 @@ public class TransactionComponents extends PageComponentProvider {
 	) {
 		JsonNode item = null;
 		JsonNode stored = null;
-		
+
 		if(
 			query.getItem() != null ||
 			query.getStored() != null
 		){
 			Uni<ObjectNode> itemUni = query.getItem() != null ? this.coreApiClient.invItemGet(this.getBearerHeaderStr(), this.getSelectedDb(), query.getItem()) : null;
 			Uni<ObjectNode> storedUni = query.getStored() != null ? this.coreApiClient.invItemStoredGet(this.getBearerHeaderStr(), this.getSelectedDb(), query.getStored()) : null;
-			
+
 			if(itemUni != null){
 				item = itemUni.await().indefinitely();
 			}
@@ -65,9 +65,9 @@ public class TransactionComponents extends PageComponentProvider {
 				stored = storedUni.await().indefinitely();
 			}
 		}
-		
+
 		//TODO:: logic to do button flags
-		
+
 		return Response.ok(
 			this.transactionDropdownTemplate
 				.data("item", item)

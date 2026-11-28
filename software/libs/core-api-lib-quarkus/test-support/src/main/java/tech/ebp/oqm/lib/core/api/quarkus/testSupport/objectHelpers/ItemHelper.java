@@ -1,5 +1,6 @@
 package tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers;
 
+import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.restassured.http.ContentType;
 import io.restassured.http.Header;
@@ -8,6 +9,9 @@ import lombok.NoArgsConstructor;
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.CoreApiLibClientHelper;
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.CoreApiLibTestUtils;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static io.restassured.RestAssured.given;
@@ -35,7 +39,8 @@ public final class ItemHelper extends CoreApiLibClientHelper {
 	 * @return
 	 */
 	public static ObjectNode getItemTemplate(
-		String storageType
+		String storageType,
+		ArrayNode storageBlocks
 	){
 		ObjectNode output = getObjectMapper().createObjectNode();
 
@@ -43,8 +48,42 @@ public final class ItemHelper extends CoreApiLibClientHelper {
 		output.put("storageType", storageType);
 		output.put("description", getFaker().lorem().paragraph());
 
+		if(storageBlocks != null){
+			output.set("storageBlocks", storageBlocks);
+		}
+
 		return output;
 	}
+
+	public static ObjectNode getItemTemplate(
+		String storageType
+	){
+		return getItemTemplate(storageType, null);
+	}
+
+	public static ObjectNode storageIdsToStorageSetting(String blockId) {
+		return getObjectMapper().createObjectNode()
+				   .put("storageBlock", blockId);
+	}
+
+	public static ArrayNode storageIdsToStorageSettings(String... blockIds){
+		ArrayNode output = getObjectMapper().createArrayNode();
+
+		for(String curId : blockIds){
+			output.add(storageIdsToStorageSetting(curId));
+		}
+
+		return output;
+	}
+
+	public static ArrayNode storageIdsToStorageSettings(ObjectNode ... blocks){
+		return storageIdsToStorageSettings(Arrays.stream(blocks).map((b)->b.get("id").asText()).toArray(String[]::new));
+	}
+
+	public static ArrayNode storageIdsToStorageSettings(Collection<ObjectNode> blocks){
+		return storageIdsToStorageSettings(blocks.toArray(ObjectNode[]::new));
+	}
+
 
 	public static ObjectNode addItem(
 		String auth,

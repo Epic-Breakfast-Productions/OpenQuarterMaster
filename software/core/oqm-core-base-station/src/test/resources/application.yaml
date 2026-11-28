@@ -6,6 +6,8 @@ quarkus:
         category:
             "io.quarkus.micrometer.runtime":
                 level: INFO
+            "io.netty.handler.logging.LoggingHandler":
+                level: INFO
     smallrye-openapi:
         info-title: Open QuarterMaster Base Station API (TEST)
     http:

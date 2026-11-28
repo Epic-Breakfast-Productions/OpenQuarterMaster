@@ -15,28 +15,28 @@ import java.util.List;
 @NoArgsConstructor
 @Schema(description = "The paged search result from the given search.")
 public class SearchResult<T extends MainObject> {
-	
+
 	@Schema(description = "The results in this page of search.")
 	private List<T> results;
-	
+
 	@Schema(description = "The number of results in this the set or results.", examples = {"1"})
 	private int numResults;
-	
+
 	@Schema(description = "The number of results in the entire query, including all pages.", examples = {"2"})
 	private int numResultsForEntireQuery;
-	
+
 	@Schema(description = "If any real search query parameters were given.", examples = {"false"})
 	private boolean hadSearchQuery;
-	
+
 	@Schema(description = "The paging options used to inform the search.")
 	private PagingOptions pagingOptions;
-	
+
 	@Schema(description = "If any real search query parameters were given.")
 	private PagingCalculations pagingCalculations;
-	
+
 	@Schema(description = "The search object used to perform the search.")
 	private SearchObject<?> searchObject;
-	
+
 	public SearchResult(List<T> results) {
 		this(
 			results,
@@ -48,7 +48,7 @@ public class SearchResult<T extends MainObject> {
 			null
 		);
 	}
-	
+
 	public SearchResult(List<T> results, int numResultsForEntireQuery, boolean hadSearchQuery, PagingOptions pagingOptions, SearchObject<?> searchObject) {
 		this(
 			results,
@@ -60,13 +60,13 @@ public class SearchResult<T extends MainObject> {
 			searchObject
 		);
 	}
-	
+
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	@Schema(required = true, description = "If this search result is empty.", examples = {"false"})
 	public boolean isEmpty() {
 		return this.results.isEmpty();
 	}
-	
+
 	@Schema(description = "If there are any pages in the results. As in, if the number of results was greater than the page size.")
 	@JsonProperty(access = JsonProperty.Access.READ_ONLY)
 	public boolean isHasPages() {

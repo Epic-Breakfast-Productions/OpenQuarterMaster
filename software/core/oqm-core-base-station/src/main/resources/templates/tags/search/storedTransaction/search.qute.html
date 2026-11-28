@@ -1,0 +1,40 @@
+{!
+Inputs:
+    - containerId - the id to give the container where history events go
+    - objectUrl - the url of the object (w/o id) to get history for
+!}
+{#if accordion}
+<div class="accordion col transactionSearchContainerAccordion" id="{containerId}ContainerAccordion">
+    <div class="accordion-item">
+        <h2 class="accordion-header transactionSearchContainerAccordionHeader" id="{containerId}ContainerAccordionHeading">
+            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#{containerId}ContainerAccordionCollapse" aria-controls="{containerId}ContainerAccordionCollapse">
+                {#icons/transaction addSpace=true /} Transactions
+            </button>
+        </h2>
+        <div id="{containerId}ContainerAccordionCollapse" class="accordion-collapse collapse" aria-labelledby="{containerId}ContainerAccordionHeading" data-bs-parent="#{containerId}ContainerAccordion">
+            <div class="accordion-body table-responsive">
+				{/if}
+				<div class="historyView">
+					<div class="accordion historySearchAccordion" id="{containerId}SearchAccordion">
+						<div class="accordion-item">
+							<h2 class="accordion-header historySearchAccordionHeader" id="{containerId}SearchAccordionHeading">
+								<button class="accordion-button collapsed thinAccordion historySearchAccordionButton" type="button" data-bs-toggle="collapse" data-bs-target="#{containerId}SearchAccordionCollapse" aria-controls="{containerId}SearchAccordionCollapse">
+									{#icons/search /} Search
+								</button>
+							</h2>
+							<div id="{containerId}SearchAccordionCollapse" class="accordion-collapse collapse historySearchAccordionCollapse" aria-labelledby="{containerId}SearchAccordionHeading" data-bs-parent="#{containerId}SearchAccordion">
+								<div class="accordion-body table-responsive">
+									{#include tags/search/storedTransaction/searchForm id=(containerId + 'Form') itemId=itemId objectId=(objectId or false) rootPrefix=rootPrefix /}
+								</div>
+							</div>
+						</div>
+					</div>
+					<table class="table table-hover itemStoredTransactionSearchResults" id="{containerId}">
+					</table>
+				</div>
+				{#if accordion}
+            </div>
+        </div>
+    </div>
+</div>
+{/if}
