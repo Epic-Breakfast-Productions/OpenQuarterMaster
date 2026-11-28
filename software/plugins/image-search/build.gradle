@@ -4,6 +4,7 @@ plugins {
 	id 'java'
 	id 'io.quarkus'
 	id "io.freefair.lombok" version "8.14"
+	id 'jacoco'
 }
 
 group 'tech.ebp.oqm.plugin'
@@ -51,6 +52,13 @@ java {
 
 test {
 	systemProperty "java.util.logging.manager", "org.jboss.logmanager.LogManager"
+
+	finalizedBy jacocoTestReport
+	jacoco {
+		excludeClassLoaders = ["*QuarkusClassLoader"]
+		destinationFile = layout.buildDirectory.file("jacoco-quarkus.exec").get().asFile
+	}
+	jacocoTestReport.enabled = false
 }
 
 compileJava {
