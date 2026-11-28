@@ -1,0 +1,43 @@
+{
+  "manifest_version": 3,
+  "name": "OQM Cart Companion",
+  "version": "0.1.0",
+  "minimum_chrome_version": "120",
+  "description": "Turn Amazon purchases into reviewed, linked incoming inventory in OpenQuarterMaster.",
+  "permissions": [
+    "storage",
+    "alarms",
+    "activeTab"
+  ],
+  "host_permissions": [
+    "https://10.1.6.27/*"
+  ],
+  "optional_host_permissions": [
+    "https://*/*",
+    "http://localhost/*",
+    "http://127.0.0.1/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "OQM Cart Companion",
+    "default_popup": "popup.html"
+  },
+  "options_page": "app.html",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.amazon.com/*",
+        "https://amazon.com/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; base-uri 'none'"
+  }
+}
