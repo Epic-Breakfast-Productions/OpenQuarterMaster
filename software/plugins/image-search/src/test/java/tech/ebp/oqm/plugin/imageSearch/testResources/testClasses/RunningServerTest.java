@@ -1,26 +1,20 @@
 package tech.ebp.oqm.plugin.imageSearch.testResources.testClasses;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import jakarta.inject.Inject;
-import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.TestInfo;
 import org.junit.jupiter.api.parallel.Execution;
 import org.junit.jupiter.api.parallel.ExecutionMode;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.restClient.OqmCoreApiClientService;
-import tech.ebp.oqm.lib.core.api.quarkus.runtime.sso.KcClientAuthService;
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.CoreApiLibTestDbManager;
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.TestAuthHelper;
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.ImageHelper;
 import tech.ebp.oqm.lib.core.api.quarkus.testSupport.objectHelpers.ItemHelper;
-import tech.ebp.oqm.plugin.imageSearch.testResources.testUsers.TestUserService;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -35,6 +29,7 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 @Slf4j
 @Execution(ExecutionMode.SAME_THREAD)
+@NoArgsConstructor
 public abstract class RunningServerTest extends WebServerTest {
 
 	public static final String TEST_DB = "default"; //TODO:: instead of using this, get actual id from db
@@ -53,24 +48,11 @@ public abstract class RunningServerTest extends WebServerTest {
 		}
 	}
 
-	@Getter
-	@RestClient
-	OqmCoreApiClientService oqmCoreApiClientService;
+	boolean clearCoreApiAfterEach = true;
 
-	@Getter
-	@Inject
-	KcClientAuthService serviceAccountService;
-
-	@Getter
-	@ConfigProperty(name = "oqm.core.api.baseUri")
-	String coreApiBaseUri;
-
-
-	@Getter
-	private final TestUserService testUserService = TestUserService.getInstance();
-
-	@Inject
-	ObjectMapper objectMapper;
+	protected RunningServerTest(boolean clearCoreApiAfterEach) {
+		this.clearCoreApiAfterEach = clearCoreApiAfterEach;
+	}
 
 	@BeforeEach
 	public void beforeEach(TestInfo testInfo) {
@@ -83,14 +65,19 @@ public abstract class RunningServerTest extends WebServerTest {
 	) {
 		log.info("Running after method for test {}", testInfo.getDisplayName());
 
-		CoreApiLibTestDbManager.clearAllDbs(TestAuthHelper.getAuthString());
+		if (this.clearCoreApiAfterEach) {
+			this.cleanUp();
+		}
 
 		log.info("Completed after step.");
 	}
 
+	protected static void cleanUp() {
+		CoreApiLibTestDbManager.clearAllDbs(TestAuthHelper.getAuthString());
+	}
+
 
 	/**
-	 * TODO::: figure out how to integration test. Auth is the biggest issue
 	 *
 	 * @param dbName
 	 */
@@ -138,30 +125,40 @@ public abstract class RunningServerTest extends WebServerTest {
 	}
 
 	protected static boolean isProcessing() {
-		return given()
-			.when()
-			.get("/api/v1/status")
-			.then()
-			.statusCode(200)
-			.extract().as(ObjectNode.class)
-			.get("processing").asBoolean();
+		try {
+			return given()
+				.basePath("")
+				.when()
+				.get(URI.create("http://localhost:8081/api/v1/status"))
+				.then()
+				.statusCode(200)
+				.extract().as(ObjectNode.class)
+				.get("processing").asBoolean();
+		} catch (Exception | AssertionError e) {
+			log.warn("FAILED calling for status: ", e);
+			return true;//just returning true to continue await loop
+		}
 	}
 
 	protected static void awaitProcessing(Duration timeout) {
 		Instant start = Instant.now();
 		log.info("Waiting for processing of images to complete...");
-		do{
-			if(!isProcessing()){
+		do {
+			if (!isProcessing()) {
 				log.info("Done processing.");
 				return;
 			}
 			try {
-				Thread.sleep(100);
+				Thread.sleep(250);
 			} catch (InterruptedException e) {
 				throw new RuntimeException(e);
 			}
 		} while (Duration.between(start, Instant.now()).compareTo(timeout) < 0);
 
 		fail("Failed to wait for processing to complete.");
+	}
+
+	protected static void awaitProcessing() {
+		awaitProcessing(Duration.ofMinutes(5));
 	}
 }

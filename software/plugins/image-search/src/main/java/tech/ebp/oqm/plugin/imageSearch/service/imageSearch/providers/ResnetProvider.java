@@ -7,7 +7,6 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import nu.pattern.OpenCV;
-import org.bson.types.ObjectId;
 import org.opencv.core.Core;
 import org.opencv.core.CvType;
 import org.opencv.core.Mat;
@@ -80,8 +79,9 @@ public class ResnetProvider extends ImageSearchProvider {
 	 */
 	@WithSpan
 	public float[] generateImageFeatureVector(byte[] imageBytes) {
+		log.info("Generating image feature vector.");
 		try (
-			Tensor inputTensor = preprocessImage(imageBytes);
+			Tensor inputTensor = imageToTensor(imageBytes);
 			Result outputTensor = model.session().runner().feed(inputTensorName, inputTensor).fetch(outputTensorName).run()
 		) {
 			return StdArrays.array2dCopyOf((FloatNdArray) outputTensor.get(0))[0];
@@ -99,7 +99,8 @@ public class ResnetProvider extends ImageSearchProvider {
 	 Converts image file to matrix, resize, normalize values,
 	 convert to tensor type to prepare image for tensorflow model
 	 */
-	public static Tensor preprocessImage(byte[] imageBytes) {
+	private static Tensor imageToTensor(byte[] imageBytes) {
+		log.info("Generating tensor from image data.");
 		MatOfByte matOfBytes = new MatOfByte(imageBytes);
 		Mat mat = Imgcodecs.imdecode(matOfBytes, Imgcodecs.IMREAD_UNCHANGED);
 

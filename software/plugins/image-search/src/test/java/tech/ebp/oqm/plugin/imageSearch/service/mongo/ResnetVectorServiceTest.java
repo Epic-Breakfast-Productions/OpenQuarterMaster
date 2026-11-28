@@ -4,8 +4,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.mongodb.client.model.Filters;
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.inject.Inject;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.bson.types.ObjectId;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestInfo;
@@ -35,6 +37,14 @@ class ResnetVectorServiceTest extends RunningServerTest {
 
 	@Inject
 	ResnetVectorService resnetVectorService;
+
+	@Getter
+	@Inject
+	KcClientAuthService serviceAccountService;
+
+	@Getter
+	@RestClient
+	OqmCoreApiClientService oqmCoreApiClientService;
 
 	@Test
 	public void testInitDb() throws InterruptedException {

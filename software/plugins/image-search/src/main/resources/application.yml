@@ -21,6 +21,8 @@ quarkus:
     ssl-port: 8443
   log:
     level: "INFO"
+    console:
+        format: "%d{HH:mm:ss:SSS} [%-7p][%-32X{traceId}|%-2X{parentId}|%-21X{spanId}|%-5X{sampled}][%-48c{2.}|%-26t] %s%e%n"
   mongodb:
     database: "oqm-image-search"
     tracing:

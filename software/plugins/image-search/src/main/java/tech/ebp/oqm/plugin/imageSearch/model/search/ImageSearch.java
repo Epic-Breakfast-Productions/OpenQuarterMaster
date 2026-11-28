@@ -7,7 +7,9 @@ import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.core.MediaType;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.jboss.resteasy.reactive.PartType;
@@ -20,6 +22,8 @@ import java.util.Set;
 
 @ToString
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ImageSearch {
 
 	@Parameter(description = "The database we are concerning ourselves with.")

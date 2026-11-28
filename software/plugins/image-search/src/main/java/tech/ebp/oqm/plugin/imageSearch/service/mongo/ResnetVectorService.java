@@ -25,6 +25,7 @@ import tech.ebp.oqm.plugin.imageSearch.service.imageSearch.providers.ResnetProvi
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.time.Duration;
 import java.time.Instant;
 import java.util.Iterator;
 
@@ -51,8 +52,18 @@ public class ResnetVectorService {
 	@Inject
 	ResnetProvider resnetProvider;
 
-	@Getter
+	@Getter(AccessLevel.PROTECTED)
 	Instant lastProcess;
+
+	@Getter(AccessLevel.PROTECTED)
+	boolean initializing = false;
+
+	public boolean isProcessing(){
+		boolean processing = this.getLastProcess() != null &&
+			Duration.between(this.getLastProcess(), Instant.now()).getSeconds() < 5;
+
+		return processing || this.isInitializing();
+	}
 
 
 	protected MongoDatabase getMongoDatabase() {
@@ -82,7 +93,7 @@ public class ResnetVectorService {
 	}
 
 	public void processImage(String database, String imageId, int imageRevision) {
-		log.info("Processing image {}, revision: {}", imageId, imageRevision);
+		log.info("Processing revision {} of image {}", imageRevision, imageId);
 		this.lastProcess = Instant.now();
 
 		//check if already processed, skip if exists
@@ -136,14 +147,15 @@ public class ResnetVectorService {
 		);
 	}
 
-	public long cullDeleted(){
+	public synchronized long cullDeleted(){
+		log.info("Culling images deleted in Core API.");
 		long output = 0;
 		Iterator<ImageVector> allVec = this.getAllVectors();
 		while (allVec.hasNext()) {
 			ImageVector imageVector = allVec.next();
 			String imageID = imageVector.getImageId();
 			String db = imageVector.getOqmDb();
-			// TODO:: check which error is being thrown
+			// TODO:: check which error is being thrown, ensure dbdeleted exception
 			ObjectNode imageData = this.oqmCoreApiClientService
 				.imageGet(
 					this.serviceAccountService.getAuthString(), db, imageID)
@@ -155,47 +167,53 @@ public class ResnetVectorService {
 				output++;
 			}
 		}
+		log.info("Done culling images deleted in Core API.");
 		return output;
 	}
 
 	//Iterates db, operate on each image in turn
 	@WithSpan
 	public void initVectors() {
+		this.initializing = true;
 		log.info("Processing images in all databases.");
-		ImageSearch imageSearch = ImageSearch.builder()
-									  .pageNum(1)
-									  .pageSize(100)
-									  .build();
+		try {
+			ImageSearch imageSearch = ImageSearch.builder()
+				.pageNum(1)
+				.pageSize(100)
+				.build();
 
-		ArrayNode dbList = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
-		for (JsonNode db : dbList) {
+			ArrayNode dbList = this.oqmCoreApiClientService.manageDbList(this.serviceAccountService.getAuthString()).await().indefinitely();
+			for (JsonNode db : dbList) {
 
-			String curOqmDb = db.get("name").asText(); //circle back to
-			ObjectNode results;
+				String curOqmDb = db.get("name").asText(); //circle back to
+				ObjectNode results;
 
-			log.info("Processing images database: {}", curOqmDb);
+				log.info("Processing images database: {}", curOqmDb);
 
-			try {
-				do {
-					results = this.oqmCoreApiClientService.imageSearch(this.serviceAccountService.getAuthString(), curOqmDb, imageSearch).await().indefinitely();
+				try {
+					do {
+						results = this.oqmCoreApiClientService.imageSearch(this.serviceAccountService.getAuthString(), curOqmDb, imageSearch).await().indefinitely();
 
-					log.debug("Retrieved new page of results");
+						log.debug("Retrieved new page of results");
 
-					for (JsonNode curImageResult : results.get("results")) {
-						this.processImage(curOqmDb, (ObjectNode) curImageResult);
-					}
+						for (JsonNode curImageResult : results.get("results")) {
+							this.processImage(curOqmDb, (ObjectNode) curImageResult);
+						}
 
-					imageSearch.setPageNum(imageSearch.getPageNum() + 1);
-				} while (!results.get("pagingCalculations").get("onLastPage").asBoolean());
+						imageSearch.setPageNum(imageSearch.getPageNum() + 1);
+					} while (!results.get("pagingCalculations").get("onLastPage").asBoolean());
 
-			} catch(Exception e) {
-				log.error("Error processing images database: {}", curOqmDb, e);
-				throw new RuntimeException(e);
+				} catch (Exception e) {
+					log.error("Error processing images database: {}", curOqmDb, e);
+					throw new RuntimeException(e);
+				}
 			}
-		}
 
-		//remove vectors not in oqm core db
-		this.cullDeleted();
+			//remove vectors not in oqm core db
+			this.cullDeleted();
+		} finally {
+			this.initializing = false;
+		}
 	}
 
 	public void deleteImage(String database, String imageId) {
